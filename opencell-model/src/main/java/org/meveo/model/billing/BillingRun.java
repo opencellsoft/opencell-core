@@ -748,4 +748,20 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 	public void setSkipValidationScript(boolean skipValidationScript) {
 		this.skipValidationScript = skipValidationScript;
 	}
+
+	public Date getCollectionDate() {
+		return collectionDate;
+	}
+
+	public void setCollectionDate(Date collectionDate) {
+		this.collectionDate = collectionDate;
+	}
+
+	public Boolean getComputeDatesAtValidation() {
+		return computeDatesAtValidation;
+	}
+
+	public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
+		this.computeDatesAtValidation = computeDatesAtValidation;
+	}
 }

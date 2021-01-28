@@ -113,16 +113,17 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         String query = "SELECT rt.billing_account__id, \n" +
                 "                 rt.article_id, rt.description as label, SUM(rt.quantity) AS quantity, \n" +
                 "                 rt.unit_amount_without_tax, rt.unit_amount_with_tax,\n" +
-                "                 rt.amount_without_tax, rt.amount_with_tax, \n" +
+                "                 SUM(rt.amount_without_tax), SUM(rt.amount_with_tax), \n" +
                 "                 rt.offer_id, rt.service_instance_id,\n" +
                 "                 rt.usage_date, rt.start_date, rt.end_date,\n" +
-                "                 rt.order_number, rt.subscription_id, rt.tax_percent \n" +
+                "                 rt.order_number, rt.subscription_id, rt.tax_percent, " + 
+                "				  rt.order_id, rt.product_version_id, rt.order_lot_id\n" +
                 " FROM billing_rated_transaction rt WHERE id in (:ids) \n" +
                 " GROUP BY rt.billing_account__id, rt.article_id, rt.description, \n" +
                 "         rt.unit_amount_without_tax, rt.unit_amount_with_tax,\n" +
-                "         rt.amount_without_tax, rt.amount_with_tax, rt.offer_id,\n" +
-                "         rt.service_instance_id, rt.usage_date, rt.start_date,\n" +
-                "         rt.end_date, rt.order_number, rt.subscription_id, rt.tax_percent";
+                "         rt.offer_id, rt.service_instance_id, rt.usage_date, rt.start_date,\n" +
+                "         rt.end_date, rt.order_number, rt.subscription_id, rt.tax_percent," + 
+                "		  rt.order_id, rt.product_version_id, rt.order_lot_id";
         return ratedTransactionService.executeNativeSelectQuery(query, params);
     }
 
@@ -133,12 +134,14 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                 "              sum(rt.amount_with_tax) / sum(rt.quantity) as unit_price, \n" +
                 "              rt.amount_without_tax, rt.amount_with_tax, rt.offer_id, rt.service_instance_id, \n" +
                 "              EXTRACT(MONTH FROM rt.usage_date) valueDate, min(rt.start_date) as start_date, \n" +
-                "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent " +
+                "              max(rt.end_date) as end_date, rt.order_number, rt.tax_percent, " + 
+                "			   rt.order_id, rt.product_version_id, rt.order_lot_id \n" +
                 "    FROM billing_rated_transaction rt WHERE id in (:ids) \n" +
                 "    GROUP BY rt.billing_account__id, rt.article_id, rt.description,  \n" +
                 "             rt.amount_without_tax, rt.amount_with_tax, \n" +
                 "             rt.offer_id, rt.service_instance_id, EXTRACT(MONTH FROM rt.usage_date), rt.start_date, \n" +
-                "             rt.end_date, rt.order_number, rt.tax_percent";
+                "             rt.end_date, rt.order_number, rt.tax_percent, " + 
+                "			  rt.order_id, rt.product_version_id, rt.order_lot_id\n";
         return ratedTransactionService.executeNativeSelectQuery(query, params);
     }
 
