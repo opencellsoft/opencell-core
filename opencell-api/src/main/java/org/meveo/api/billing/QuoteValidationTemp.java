@@ -1,7 +1,9 @@
 package org.meveo.api.billing;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -62,17 +64,31 @@ public class QuoteValidationTemp extends ModuleScript {
 		if(quotesVersions.size() > 1)
 			throw new BusinessException("More than one quote version is published !!");
 		var quoteVersion = quotesVersions.get(0);
+		var orderByBillingAccount = new Hashtable<BillingAccount, List<QuoteOffer>>();
 		quoteVersion.getQuoteOffers().forEach(quoteOffer -> {
 			if(quoteOffer.getBillableAccount() == null) {
 				quoteOffer.setBillableAccount(cpqQuote.getBillableAccount());
 			}
-			CommercialOrder order = processCommercialOrder(cpqQuote, quoteVersion, quoteOffer.getBillableAccount());
-			OrderLot orderLot = processOrderCustomerService(quoteOffer.getQuoteLot(), order);
-			OrderOffer orderOffer = processOrderOffer(quoteOffer, order);
-			quoteOffer.getQuoteProduct().forEach(quoteProduct -> {
-				processOrderProduct(quoteProduct, order, orderLot, orderOffer);
-			});
+			if(orderByBillingAccount.get(quoteOffer.getBillableAccount()) != null) {
+				List<QuoteOffer> offers = orderByBillingAccount.get(quoteOffer.getBillableAccount());
+				if(offers == null)
+					offers = new ArrayList<>();
+				offers.add(quoteOffer);
+				orderByBillingAccount.put(quoteOffer.getBillableAccount(), offers);
+			}
 			
+		});
+		orderByBillingAccount.keySet().forEach(ba -> {
+			List<QuoteOffer> offers = orderByBillingAccount.get(ba);
+			CommercialOrder order = processCommercialOrder(cpqQuote, quoteVersion, ba);
+			offers.forEach(offer -> {
+				processOrderOffer(offer, order);
+				OrderLot orderLot = processOrderCustomerService(offer.getQuoteLot(), order);
+				OrderOffer orderOffer = processOrderOffer(offer, order);
+				offer.getQuoteProduct().forEach(quoteProduct -> {
+					processOrderProduct(quoteProduct, order, orderLot, orderOffer);
+				});
+			});
 		});
 		
 		
