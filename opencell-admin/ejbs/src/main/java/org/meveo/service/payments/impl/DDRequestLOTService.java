@@ -18,14 +18,7 @@
 package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -34,10 +27,13 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.jfree.util.Log;
 import org.meveo.admin.async.SepaDirectDebitAsync;
+import org.meveo.admin.async.SepaRejectedTransactionsAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.UnitSepaRejectedTransactionsJobBean;
 import org.meveo.admin.sepa.DDRejectFileInfos;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
@@ -77,6 +73,12 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 
 	@Inject
 	private SepaDirectDebitAsync sepaDirectDebitAsync;
+
+	@Inject
+	private SepaRejectedTransactionsAsync sepaRejectedTransactionsAsync;
+
+	@Inject
+	private UnitSepaRejectedTransactionsJobBean unitSepaRejectedTransactionsJobBean;
 
 	@Inject
 	private DDRequestBuilderFactory ddRequestBuilderFactory;
@@ -309,7 +311,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 * @param ddRejectFileInfos the dd reject file infos
 	 * @throws BusinessException the business exception
 	 */
-	public void processRejectFile(DDRejectFileInfos ddRejectFileInfos) throws BusinessException {
+	public void processRejectFile(DDRejectFileInfos ddRejectFileInfos, Long nbRuns, Long waitingMillis, JobExecutionResultImpl result)
+			throws BusinessException {
+
 		DDRequestLOT dDRequestLOT = null;
 		if (ddRejectFileInfos.getDdRequestLotId() != null) {
 			dDRequestLOT = findById(ddRejectFileInfos.getDdRequestLotId(), Arrays.asList("ddrequestItems"));
@@ -317,29 +321,84 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		if (dDRequestLOT != null) {
 			if (ddRejectFileInfos.isTheDDRequestFileWasRejected()) {
 				// original message rejected at protocol level control
-				CopyOnWriteArrayList<DDRequestItem> items = new CopyOnWriteArrayList<>(dDRequestLOT.getDdrequestItems());
-				for (DDRequestItem ddRequestItem : items) {
-					if (!ddRequestItem.hasError()) {
-						rejectPayment(ddRequestItem, "RJCT", ddRejectFileInfos.getFileName());
+				SubListCreator<DDRequestItem> subListCreator = new SubListCreator<>(dDRequestLOT.getDdrequestItems(), nbRuns.intValue());
+				List<Future<String>> futures = new ArrayList<>();
+				while (subListCreator.isHasNext()) {
+					futures.add(sepaRejectedTransactionsAsync.launchAndForgetPaymentsRejectionsWithCauseRJCT(ddRejectFileInfos.getFileName(),
+							subListCreator.getNextWorkSet(), result));
+					try {
+						Thread.sleep(waitingMillis);
+					} catch (InterruptedException e) {
+						log.error("", e);
 					}
 				}
-				dDRequestLOT.setReturnStatusCode(ddRejectFileInfos.getReturnStatusCode());
+				for (Future<String> future : futures) {
+					try {
+						future.get();
+					} catch (InterruptedException e) {
+						// It was cancelled from outside - no interest
+					} catch (ExecutionException e) {
+						Throwable cause = e.getCause();
+						if (result != null) {
+							result.registerError(cause.getMessage());
+							result.addReport(cause.getMessage());
+						}
+						log.error("Failed to execute async method", cause);
+					}
+				}
+				Set<Long> ddRequestLotIds = new HashSet<>();
+				ddRequestLotIds.add(dDRequestLOT.getId());
+				try {
+					unitSepaRejectedTransactionsJobBean.updateDDRequestLotsStatus(ddRequestLotIds, ddRejectFileInfos);
+				} catch (Exception e) {
+					Log.warn("Error on unitSepaRejectedTransactionsJobBean.updateDDRequestLotsStatus()", e);
+					if(result != null) {
+						result.registerError(e.getMessage());
+					}
+				}
 			}
-			dDRequestLOT.setReturnFileName(ddRejectFileInfos.getFileName());
 		}
-		for (Entry<Long, String> entry : ddRejectFileInfos.getListInvoiceRefsRejected().entrySet()) {
-			DDRequestItem ddRequestItem = ddRequestItemService.findById(entry.getKey(), Arrays.asList("ddRequestLOT"));
-			if (ddRequestItem == null) {
-				throw new BusinessException("Cant find item by id:" + entry.getKey());
-			}
 
-			rejectPayment(ddRequestItem, entry.getValue(), ddRejectFileInfos.getFileName());
-			ddRequestItem.getDdRequestLOT().setReturnStatusCode(ddRejectFileInfos.getReturnStatusCode());
-			ddRequestItem.getDdRequestLOT().setReturnFileName(ddRejectFileInfos.getFileName());
+		if (ddRejectFileInfos.getListInvoiceRefsRejected() != null && !ddRejectFileInfos.getListInvoiceRefsRejected().isEmpty()) {
+
+			List<Map.Entry<Long, String>> ddReqItemEntries = new ArrayList<>(ddRejectFileInfos.getListInvoiceRefsRejected().entrySet());
+			SubListCreator<Map.Entry<Long, String>> subListCreator = new SubListCreator<>(ddReqItemEntries, nbRuns.intValue());
+			List<Future<Set<Long>>> futures = new ArrayList<>();
+
+			while (subListCreator.isHasNext()) {
+				futures.add(sepaRejectedTransactionsAsync.launchAndForgetPaymentsRejectionsWithSpecificCause(ddRejectFileInfos.getFileName(),
+						subListCreator.getNextWorkSet(), result));
+				try {
+					Thread.sleep(waitingMillis);
+				} catch (InterruptedException e) {
+					log.error("", e);
+				}
+			}
+			Set<Long> ddRequestLotIds = new HashSet<>();
+			for (Future<Set<Long>> future : futures) {
+				try {
+					ddRequestLotIds.addAll(future.get());
+				} catch (InterruptedException e) {
+					// It was cancelled from outside - no interest
+				} catch (ExecutionException e) {
+					Throwable cause = e.getCause();
+					if (result != null) {
+						result.registerError(cause.getMessage());
+						result.addReport(cause.getMessage());
+					}
+					log.error("Failed to execute async method", cause);
+				}
+			}
+			try {
+				unitSepaRejectedTransactionsJobBean.updateDDRequestLotsStatus(ddRequestLotIds, ddRejectFileInfos);
+			} catch (Exception e) {
+				Log.warn("Error on unitSepaRejectedTransactionsJobBean.updateDDRequestLotsStatus()", e);
+				if(result != null) {
+					result.registerError(e.getMessage());
+				}
+			}
 		}
 	}
-	
-	
 
 	/**
 	 * Gets the missing field.
