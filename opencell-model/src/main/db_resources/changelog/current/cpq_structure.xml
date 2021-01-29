@@ -1473,6 +1473,8 @@
 	            <column name="valid_to" type="datetime" />
 	            <column name="quote_number" type="varchar(50)" />
 	            <column name="invoice_type_id" type="bigint" />
+	            <column name="pdf_filename" type="varchar(255)" />
+                <column name="xml_filename" type="varchar(255)" />
 	    	</createTable>
 
 	        <addForeignKeyConstraint baseColumnNames="cpq_quote_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_cpq_quote_id" deferrable="false" initiallyDeferred="false"
