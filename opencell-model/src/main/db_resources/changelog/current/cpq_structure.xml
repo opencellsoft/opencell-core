@@ -1848,33 +1848,6 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="missing-table-association" author="TarikFA">
-        <createTable tableName="cpq_offer_discount_plan">
-            <column name="offer_template_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="discount_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-
-        <addPrimaryKey columnNames="offer_template_id,discount_id" constraintName="cpq_offer_template_discount_pkey" tableName="cpq_offer_discount_plan" />
-        <addUniqueConstraint columnNames="offer_template_id,discount_id" constraintName="unique_cpq_offer_template_discount_ids" tableName="cpq_offer_discount_plan" />
-
-        <addForeignKeyConstraint baseTableName="cpq_offer_discount_plan" baseColumnNames="discount_id"
-                                 constraintName="cpq_offer_discount_plan_discount_id_fk" referencedTableName="cat_offer_template"
-                                 referencedColumnNames="id"/>
-
-
-        <addForeignKeyConstraint baseTableName="cpq_offer_discount_plan" baseColumnNames="offer_template_id"
-                                 constraintName="cpq_offer_discount_plan_offer_template_id_fk" referencedTableName="cat_discount_plan"
-                                 referencedColumnNames="id"/>
-
-    </changeSet>
-
-
-
-
      <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-">
    <createTable tableName="cpq_billing_account_tags">
        <column name="billing_account_id" type="bigint">
