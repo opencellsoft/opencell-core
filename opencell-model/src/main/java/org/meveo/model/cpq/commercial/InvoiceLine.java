@@ -18,6 +18,7 @@ import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -147,6 +148,14 @@ public class InvoiceLine extends BusinessEntity {
 	@OneToOne(fetch = LAZY)
 	@JoinColumn(name = "offer_template_id")
 	private OfferTemplate offerTemplate;
+	
+	@ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "product_version_id")
+	private ProductVersion productVersion;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_lot_id")
+	private OrderLot orderLot;
 
 	public InvoiceLine() {
 	}
@@ -381,5 +390,21 @@ public class InvoiceLine extends BusinessEntity {
 
 	public void setOfferTemplate(OfferTemplate offerTemplate) {
 		this.offerTemplate = offerTemplate;
+	}
+
+	public ProductVersion getProductVersion() {
+		return productVersion;
+	}
+
+	public void setProductVersion(ProductVersion productVersion) {
+		this.productVersion = productVersion;
+	}
+
+	public OrderLot getOrderLot() {
+		return orderLot;
+	}
+
+	public void setOrderLot(OrderLot orderLot) {
+		this.orderLot = orderLot;
 	}
 }
