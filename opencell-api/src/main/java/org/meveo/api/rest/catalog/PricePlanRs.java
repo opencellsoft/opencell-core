@@ -436,7 +436,7 @@ public interface PricePlanRs extends IBaseRs {
     Response addPricePlanMatrixLines(PricePlanMatrixLinesDto pricePlanMatrixLinesDto);
 
     @POST
-    @Path("/loadPrices")
+    @Path("/matrixRating")
     @Operation(summary = "load prices",
             tags = { "Price Plan" },
             description ="load prices",

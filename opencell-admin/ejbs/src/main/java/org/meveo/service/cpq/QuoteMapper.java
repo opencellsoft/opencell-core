@@ -50,7 +50,7 @@ public class QuoteMapper {
                 .collect(Collectors.toList());
 
         List<QuotePrice> allQuotesPrice = getAllOffersQuoteLineStream(quoteVersion).map(p -> p.getQuotePrices().stream()).flatMap(identity()).collect(toList());
-        Details details = new Details(new Quote(billableAccounts, quote.getQuoteNumber(), quote.getSendDate()), aggregatePricesPerType(allQuotesPrice));
+        Details details = new Details(new Quote(billableAccounts, quote.getQuoteNumber(), quote.getQuoteDate()), aggregatePricesPerType(allQuotesPrice));
 
         return new QuoteXmlDto(header, details);
     }
