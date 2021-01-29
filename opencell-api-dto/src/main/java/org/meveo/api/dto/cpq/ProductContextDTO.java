@@ -64,6 +64,9 @@ public class ProductContextDTO extends BaseEntityDto {
     @XmlElement
     private LinkedHashMap<String, Object> selectedAttributes;
     
+    @XmlElement
+    private LinkedHashMap<String, Object> selectedGroupedAttributes;
+    
 
 	/**
 	 * @return the productCode
@@ -113,6 +116,20 @@ public class ProductContextDTO extends BaseEntityDto {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
+	/**
+	 * @return the selectedGroupedAttributes
+	 */
+	public LinkedHashMap<String, Object> getSelectedGroupedAttributes() {
+		return selectedGroupedAttributes;
+	}
+	/**
+	 * @param selectedGroupedAttributes the selectedGroupedAttributes to set
+	 */
+	public void setSelectedGroupedAttributes(LinkedHashMap<String, Object> selectedGroupedAttributes) {
+		this.selectedGroupedAttributes = selectedGroupedAttributes;
+	}
+	
+	
     
     
     

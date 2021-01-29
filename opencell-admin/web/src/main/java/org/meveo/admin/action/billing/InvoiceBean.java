@@ -894,11 +894,11 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
     
     public void validateInvoice(Invoice invoice) throws BusinessException {
-        invoiceService.validateInvoice(invoice);
+        invoiceService.validateInvoice(invoice, true);
     }
     
     public void rebuildInvoice(Invoice invoice) throws BusinessException {
-        invoiceService.rebuildInvoice(invoice);
+        invoiceService.rebuildInvoice(invoice, true);
     }
     
     public void cancelInvoices() {
@@ -907,7 +907,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                 for (Invoice invoice : getSelectedEntities()) {
                     cancelInvoice(invoice);
                 }
-                messages.info(new BundleKey("messages", "info.invoicing.cancel"));
+                messages.info(new BundleKey("messages", "info.invoicing.cancelled"));
             } else {
                 messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));
             }
@@ -952,4 +952,29 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 	public boolean areSelectedInvoicesInvalidated() {
         return !CollectionUtils.isEmpty(getSelectedEntities()) && getSelectedEntities().stream().filter(i->(InvoiceStatusEnum.REJECTED.equals(i.getStatus())||InvoiceStatusEnum.SUSPECT.equals(i.getStatus()))).count()==0;
     }
+	
+    public boolean canChangeInvoiceStatus(InvoiceStatusEnum newStatus) {
+    	return canChangeInvoiceStatus(entity, newStatus);
+    }
+    public boolean canChangeInvoicesStatus(InvoiceStatusEnum newStatus) {
+    	if(getSelectedEntities() == null) {
+    		return true;
+    	}
+    	for(Invoice invoice: getSelectedEntities()) {
+    		if(!canChangeInvoiceStatus(invoice, newStatus)) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+
+	/**
+	 * @param invoice
+	 * @param newStatus
+	 * @return
+	 */
+	public boolean canChangeInvoiceStatus(Invoice invoice, InvoiceStatusEnum newStatus) {
+		final InvoiceStatusEnum status = invoice.getStatus();
+		return status!=null && newStatus.getPreviousStats().contains(status);
+	}
 }

@@ -68,10 +68,6 @@ public class QuoteProduct extends AuditableEntity {
     @NotNull
     private BigDecimal quantity = BigDecimal.ONE;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billable_account_id", referencedColumnName = "id")
-    private BillingAccount billableAccount;
-    
 
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "offer_quote_id", referencedColumnName = "id")
@@ -103,7 +99,6 @@ public class QuoteProduct extends AuditableEntity {
 		this.quoteVersion = copy.quoteVersion;
 		this.productVersion = copy.productVersion;
 		this.quantity = copy.quantity;
-		this.billableAccount = copy.billableAccount;
 		this.quoteOffre = copy.quoteOffre;
 		this.quoteAttributes = copy.quoteAttributes;
 	}
@@ -114,7 +109,6 @@ public class QuoteProduct extends AuditableEntity {
 		this.quoteVersion = other.quoteVersion;
 		this.productVersion = other.productVersion;
 		this.quantity = other.quantity;
-		this.billableAccount = other.billableAccount;
 		this.quoteOffre = other.quoteOffre;
 		this.quoteAttributes = other.quoteAttributes;
     }
@@ -170,19 +164,6 @@ public class QuoteProduct extends AuditableEntity {
 		this.quantity = quantity;
 	}
 
-	/**
-	 * @return the billableAccount
-	 */
-	public BillingAccount getBillableAccount() {
-		return billableAccount;
-	}
-
-	/**
-	 * @param billableAccount the billableAccount to set
-	 */
-	public void setBillableAccount(BillingAccount billableAccount) {
-		this.billableAccount = billableAccount;
-	}
 
 
 	/**
@@ -217,7 +198,7 @@ public class QuoteProduct extends AuditableEntity {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
-				+ Objects.hash(billableAccount, productVersion, quantity, quote, quoteOffre, quoteVersion);
+				+ Objects.hash(productVersion, quantity, quote, quoteOffre, quoteVersion);
 		return result;
 	}
 	@Override
@@ -227,8 +208,7 @@ public class QuoteProduct extends AuditableEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		QuoteProduct other = (QuoteProduct) obj;
-		return Objects.equals(billableAccount, other.billableAccount)
-				&& Objects.equals(productVersion, other.productVersion) && Objects.equals(quantity, other.quantity)
+		return  Objects.equals(productVersion, other.productVersion) && Objects.equals(quantity, other.quantity)
 				&& Objects.equals(quote, other.quote)
 				&& Objects.equals(quoteOffre, other.quoteOffre) && Objects.equals(quoteVersion, other.quoteVersion);
 	}

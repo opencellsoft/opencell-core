@@ -1,10 +1,15 @@
 package org.meveo.api.billing;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
@@ -59,36 +64,41 @@ public class QuoteValidationTemp extends ModuleScript {
 		if(quotesVersions.size() > 1)
 			throw new BusinessException("More than one quote version is published !!");
 		var quoteVersion = quotesVersions.get(0);
-		
-		System.out.println("code:" + cpqQuote.getCode() + " current status : " + cpqQuote.getStatus());
-		
+		var orderByBillingAccount = new Hashtable<String, List<QuoteOffer>>();
+		var billingAccount = new Hashtable<String, BillingAccount>();
 		quoteVersion.getQuoteOffers().forEach(quoteOffer -> {
-			var quoteOfferBillableCode = quoteOffer.getBillableAccount().getCode();
-			quoteOffer.getQuoteProduct().forEach(quoteProduct -> {
-				if(quoteProduct.getBillableAccount() != null && quoteOffer.getBillableAccount() != null) {
-					var quoteProductBillableCode = quoteProduct.getBillableAccount().getCode();
-					if(!quoteOfferBillableCode.contentEquals(quoteProductBillableCode)) {
-						createNewOrder(cpqQuote, quoteVersion, quoteOffer, quoteProduct);
-					}
-				}
-				
+			if(quoteOffer.getBillableAccount() == null) {
+				quoteOffer.setBillableAccount(cpqQuote.getBillableAccount());
+			}
+			List<QuoteOffer> offers = new ArrayList<>();
+			if(orderByBillingAccount.get(quoteOffer.getBillableAccount().getCode()) != null) {
+				offers = orderByBillingAccount.get(quoteOffer.getBillableAccount().getCode());
+			}
+			offers.add(quoteOffer);
+			orderByBillingAccount.put(quoteOffer.getBillableAccount().getCode(), offers);
+			billingAccount.put(quoteOffer.getBillableAccount().getCode(), quoteOffer.getBillableAccount());
+			
+		});
+		orderByBillingAccount.keySet().forEach(ba -> {
+			List<QuoteOffer> offers = orderByBillingAccount.get(ba);
+			BillingAccount billableAccount = billingAccount.get(ba);
+			CommercialOrder order = processCommercialOrder(cpqQuote, quoteVersion, billableAccount);
+			offers.forEach(offer -> {
+				processOrderOffer(offer, order);
+				OrderLot orderLot = processOrderCustomerService(offer.getQuoteLot(), order);
+				OrderOffer orderOffer = processOrderOffer(offer, order);
+				offer.getQuoteProduct().forEach(quoteProduct -> {
+					processOrderProduct(quoteProduct, order, orderLot, orderOffer);
+				});
 			});
 		});
 		
 		
 	}
-	
-	private void createNewOrder(CpqQuote cpqQuote, QuoteVersion quoteVersion, QuoteOffer quoteOffer, QuoteProduct quoteProduct) {
-		CommercialOrder order = processCommercialOrder(cpqQuote, quoteVersion);
-		OrderLot orderLot = processOrderCustomerService(quoteOffer.getQuoteLot(), order);
-		OrderOffer orderOffer = processOrderOffer(quoteOffer, order);
-		processOrderProduct(quoteProduct, order, orderLot, orderOffer);
-	}
-	
-	private CommercialOrder processCommercialOrder(CpqQuote cpqQuote, QuoteVersion quoteVersion) {
+	private CommercialOrder processCommercialOrder(CpqQuote cpqQuote, QuoteVersion quoteVersion, BillingAccount account) {
 		CommercialOrder order = new CommercialOrder();
 		order.setSeller(cpqQuote.getSeller());
-		order.setBillingAccount(cpqQuote.getBillableAccount());
+		order.setBillingAccount(account);
 		order.setQuote(cpqQuote);
 		order.setContract(cpqQuote.getContract());
 		order.setCustomerServiceBegin(quoteVersion.getStartDate());
@@ -118,12 +128,13 @@ public class QuoteValidationTemp extends ModuleScript {
 		}
 		return orderType;
 	}
-	
+	private static final String GENERIC_CODE = "COMMERCIAL_GEN";
 	private OrderOffer processOrderOffer(QuoteOffer quoteOffer, CommercialOrder order) {
 		OrderOffer offer = new OrderOffer();
 		offer.setOrder(order);
 		offer.setOfferTemplate(quoteOffer.getOfferTemplate());
-		offer.setCode("ORD_OFF_" + order.getId());
+		offer.setCode(GENERIC_CODE);
+		offer.setCode(orderOfferService.findDuplicateCode(offer));
 		orderOfferService.create(offer);
 		return offer;
 	}
@@ -135,7 +146,8 @@ public class QuoteValidationTemp extends ModuleScript {
 		orderProduct.setProductVersion(product.getProductVersion());
 		orderProduct.setQuantity(product.getQuantity());
 		orderProduct.setOrderOffer(orderOffer);
-		orderProduct.setCode("ORD_PDT_" + commercialOrder.getId());
+		orderProduct.setCode(GENERIC_CODE);
+		orderProduct.setCode(orderProductService.findDuplicateCode(orderProduct));
 		
 		orderProductService.create(orderProduct);
 		
@@ -162,13 +174,15 @@ public class QuoteValidationTemp extends ModuleScript {
 		orderAttribute.setStringValue(quoteAttribute.getStringValue());
 		orderAttribute.setDateValue(quoteAttribute.getDateValue());
 		orderAttribute.setDoubleValue(quoteAttribute.getDoubleValue());
-		orderAttribute.setCode("OR_ATTR_" + commercialOrder.getId());
+		orderAttribute.setCode(GENERIC_CODE);
+		orderAttribute.setCode(orderAttributeService.findDuplicateCode(orderAttribute));
 		orderAttributeService.create(orderAttribute);
 	}
 	
 	private OrderLot processOrderCustomerService(QuoteLot quoteLot, CommercialOrder commercialOrder) {
 		OrderLot orderCustomer = new OrderLot();
-		orderCustomer.setCode("ORD_CUST_SR_" + commercialOrder.getId());
+		orderCustomer.setCode(GENERIC_CODE);
+		orderCustomer.setCode(orderCustomerServiceService.findDuplicateCode(orderCustomer));
 		orderCustomer.setOrder(commercialOrder);
 		orderCustomerServiceService.create(orderCustomer);
 		return orderCustomer;
@@ -176,7 +190,7 @@ public class QuoteValidationTemp extends ModuleScript {
 	
 	private OrderArticleLine processOrderArticleLine(QuoteArticleLine quoteArticleLine, CommercialOrder commercialOrder, OrderLot orderCustomerService) {
 		OrderArticleLine articleLine = new OrderArticleLine();
-		articleLine.setCode("ORD_ART_LINE_" + commercialOrder.getId());
+		articleLine.setCode(orderArticleLineService.findDuplicateCode(articleLine));
 		articleLine.setOrder(commercialOrder);
 		articleLine.setOrderCustomerService(orderCustomerService);
 		articleLine.setQuantity(quoteArticleLine.getQuantity());
@@ -190,7 +204,8 @@ public class QuoteValidationTemp extends ModuleScript {
 		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(orderArticleLine.getId(), quoteVersion.getId());
 		quotePrices.forEach( price -> {
 			OrderPrice orderPrice = new OrderPrice();
-			orderPrice.setCode("OD_PRC_" + commercialOrder.getId());
+			orderPrice.setCode(GENERIC_CODE);
+			orderPrice.setCode(orderPriceService.findDuplicateCode(orderPrice));
 			orderPrice.setOrderArticleLine(orderArticleLine);
 			orderPrice.setOrder(commercialOrder);
 			orderPrice.setPriceLevelEnum(price.getPriceLevelEnum());

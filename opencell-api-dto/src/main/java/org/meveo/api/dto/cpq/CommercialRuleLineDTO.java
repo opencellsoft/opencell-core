@@ -25,6 +25,7 @@ public class CommercialRuleLineDTO extends BaseEntityDto{
 	private String attributeCode;
 	private String groupedAttributeCode;
 	private String attributeValue;
+	private String groupedAttributeValue;
 	private String tagCode;
 	private RuleOperatorEnum operator;
 	public CommercialRuleLineDTO() {
@@ -43,6 +44,7 @@ public class CommercialRuleLineDTO extends BaseEntityDto{
 		this.tagCode = commercialRuleLine.getSourceTag()!=null?commercialRuleLine.getSourceTag().getCode():null;
 		this.groupedAttributeCode = commercialRuleLine.getSourceGroupedAttributes()!=null?commercialRuleLine.getSourceGroupedAttributes().getCode():null;
 		this.attributeValue = commercialRuleLine.getSourceAttributeValue();
+		this.groupedAttributeValue = commercialRuleLine.getSourceGroupedAttributeValue();
 		
 	}
 	
@@ -149,6 +151,24 @@ public class CommercialRuleLineDTO extends BaseEntityDto{
 	public void setTagCode(String tagCode) {
 		this.tagCode = tagCode;
 	}
+
+
+	/**
+	 * @return the groupedAttributeValue
+	 */
+	public String getGroupedAttributeValue() {
+		return groupedAttributeValue;
+	}
+
+
+	/**
+	 * @param groupedAttributeValue the groupedAttributeValue to set
+	 */
+	public void setGroupedAttributeValue(String groupedAttributeValue) {
+		this.groupedAttributeValue = groupedAttributeValue;
+	}
+	
+	
 	
 	
     

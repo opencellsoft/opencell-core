@@ -331,15 +331,15 @@
                             <p:commandButton value="#{messages['invoice.generateDraft']}" icon="ui-icon-refresh" action="#{creationInvoiceBean.generateDraftInvoice()}"
                                 update=":formId:messages :formId:tabView:attachments buttonGenerate" process="@this" />
                             <p:commandButton value="#{messages['commons.validateInvoices']}"
-		                        action="#{creationInvoiceBean.validateInvoice(entity)}" icon="ui-icon-circle-check" >
+		                        action="#{creationInvoiceBean.validateInvoice()}" icon="ui-icon-circle-check" >
 		                        <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmValidateInvoice']}" icon="ui-icon-alert" />
 		                    </p:commandButton>
 		                    <p:commandButton value="#{messages['commons.cancelInvoices']}"
-		                        action="#{creationInvoiceBean.cancelInvoice(entity)}" icon="ui-icon-circle-close" >
+		                        action="#{creationInvoiceBean.cancelInvoice()}" icon="ui-icon-circle-close" >
 		                        <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmCancelInvoice']}" icon="ui-icon-alert" />
 		                    </p:commandButton>
 		                    <p:commandButton value="#{messages['commons.rebuildInvoices']}"
-		                        action="#{creationInvoiceBean.rebuildInvoice(entity)}" icon="ui-icon-refresh" >
+		                        action="#{creationInvoiceBean.rebuildInvoice()}" icon="ui-icon-refresh" >
 		                        <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmRebuildInvoice']}" icon="ui-icon-alert" />
 		                    </p:commandButton>
                         </p:outputPanel>
