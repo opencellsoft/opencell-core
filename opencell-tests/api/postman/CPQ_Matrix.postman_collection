@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "8f9d0830-56c4-4c4b-9d86-f91f34a221b6",
-		"name": "Matrix API",
+		"name": "CPQ Matrix",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -95,66 +95,6 @@
 				{
 					"name": "Template",
 					"item": [
-						{
-							"name": "Create Recurring Charge Template",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "{{auth}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{chargeTemplateCode}}\",\r\n    \"description\": \"This is recurring charge test description\",\r\n    \"invoiceSubCategory\": \"CMP_DATA\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"CMP_DATA\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": 24,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}"
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"recurringChargeTemplate",
-										"createOrUpdate"
-									]
-								}
-							},
-							"response": []
-						},
 						{
 							"name": "Customer Account Hierarchy",
 							"event": [
@@ -257,7 +197,7 @@
 							"response": []
 						},
 						{
-							"name": "Create Offer Template with Tags",
+							"name": "Create Recurring Charge Template",
 							"event": [
 								{
 									"listen": "test",
@@ -274,172 +214,45 @@
 									"type": "basic",
 									"basic": [
 										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										},
-										{
 											"key": "password",
 											"value": "{{opencell.password}}",
 											"type": "string"
 										},
 										{
-											"key": "saveHelperData",
-											"type": "any"
-										},
-										{
-											"key": "showPassword",
-											"value": false,
-											"type": "boolean"
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
 										}
 									]
 								},
 								"method": "POST",
 								"header": [
 									{
-										"key": "Content-Type",
-										"value": "application/json"
+										"key": "Authorization",
+										"value": "{{auth}}"
 									},
 									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{offerTemplateCode}}\",\r\n    \"description\": \"Classic Offer Template test description\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{productOneCode}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ],\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\"\r\n    ]\r\n}"
+									"raw": "{\r\n    \"code\": \"{{chargeTemplateCode}}\",\r\n    \"description\": \"This is recurring charge test description\",\r\n    \"invoiceSubCategory\": \"CMP_DATA\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"CMP_DATA\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": 24,\r\n    \"subscriptionProrata\": true,\r\n    \"terminationProrata\": true,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}"
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
+									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"offerTemplate",
+										"recurringChargeTemplate",
 										"createOrUpdate"
 									]
 								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Attribute",
-					"item": [
-						{
-							"name": "Create Grouped Attribute",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{groupedAttributeCode}}\",\r\n    \"description\": \"This is grouped attribute test description\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"productVersion\": 1\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/cpq/groupedAttributes",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"cpq",
-										"groupedAttributes"
-									]
-								},
-								"description": "Creating a new tag type"
-							},
-							"response": []
-						},
-						{
-							"name": "Create Billing Cycle Attribute",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{billingCycleAttribute}}\",\r\n  \"description\": \"This is billing cycle attribute description\",\r\n  \"attributeType\": \"TEXT\",\r\n  \"disabled\": true,\r\n  \"mandatory\": true,\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0\r\n  }",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/attribute",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"attribute"
-									]
-								},
-								"description": "Creating a new tag type"
-							},
-							"response": []
-						},
-						{
-							"name": "Create Engagment Duration Attribute",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{engagementAttributeCode}}\",\r\n  \"description\": \"This is engagement duration test description\",\r\n  \"attributeType\": \"NUMERIC\",\r\n  \"disabled\": true,\r\n  \"mandatory\": true,\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0\r\n  }",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/attribute",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"attribute"
-									]
-								},
-								"description": "Creating a new tag type"
 							},
 							"response": []
 						}
@@ -554,7 +367,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"longDescription\": \"This is a long test description of product version\",\r\n     \"statusDate\": \"2020-12-15\",\r\n     \"status\": \"DRAFT\",\r\n    \"currentVersion\": 1\r\n}",
+									"raw": "{\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"longDescription\": \"This is a long test description of product version\",\r\n    \"statusDate\": \"2020-12-15\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -614,6 +427,154 @@
 								"description": "the product with status DRAFT can be change to PUBLIED or CLOSED"
 							},
 							"response": []
+						},
+						{
+							"name": "Create Offer Template with Tags",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{offerTemplateCode}}\",\r\n    \"description\": \"Classic Offer Template test description\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{productOneCode}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ],\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\"\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"offerTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Attribute",
+					"item": [
+						{
+							"name": "Create Billing Cycle Attribute",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"code\": \"{{billingCycleAttribute}}\",\r\n  \"description\": \"This is billing cycle attribute description\",\r\n  \"attributeType\": \"TEXT\",\r\n  \"disabled\": true,\r\n  \"mandatory\": true,\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/attribute",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"attribute"
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Engagment Duration Attribute",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"code\": \"{{engagementAttributeCode}}\",\r\n  \"description\": \"This is engagement duration test description\",\r\n  \"attributeType\": \"NUMERIC\",\r\n  \"disabled\": true,\r\n  \"mandatory\": true,\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/attribute",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"attribute"
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
 						}
 					]
 				}
@@ -655,7 +616,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"code\": \"TEST_PRICE_MATRIX\",\n    \"eventCode\": \"{{chargeTemplateCode}}\",\n    \"amountWithoutTax\": 100\n}",
+							"raw": "{\n    \"code\": \"{{ppmCode}}\",\n    \"eventCode\": \"{{chargeTemplateCode}}\",\n    \"amountWithoutTax\": 100\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -747,7 +708,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"version\": 1,\n    \"label\": \"Default price plan matrix version\",\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2021-01-03\"\n    },\n    \"isMatrix\": true\n}",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"label\": \"Default price plan matrix version\",\n    \"version\": 1,\n    \"isMatrix\": true,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2021-01-03\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -801,7 +762,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"label\": \"default price plan matrix version\",\n    \"version\": 2,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2021-01-03\"\n    },\n    \"isMatrix\": true\n}",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"label\": \"default price plan matrix version\",\n    \"version\": 2,\n    \"isMatrix\": true,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2021-01-03\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -851,91 +812,6 @@
 					"response": []
 				},
 				{
-					"name": "Create ppmVersion with Columns & Lines",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "opencell.admin",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "opencell.admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"version\": 1,\n    \"label\": \"Default price plan matrix version - oneShot\",\n    \"validity\": {\n        \"from\" : \"2020-10-12\",\n        \"to\": \"2021-01-03\"\n    },\n    \"isMatrix\" : true,\n    \"amountWithoutTax\": 200,\n    \"columns\": [\n        {\n            \"code\": \"{{ppmColumnCode}}\",\n            \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n            \"pricePlanMatrixVersion\": 1,\n            \"productCode\": \"{{productOneCode}}\",\n            \"offerTemplateCode\": \"{{offerTemplate}}\",\n            \"attributeCode\": \"{{billingCycleAttribute}}\",\n            \"position\": 3,\n            \"isRange\": false,\n            \"elValue\": \"elValue\"\n        }\n    ],\n    \"lines\": [\n        {\n            \"pricetWithoutTax\": 20,\n            \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n            \"pricePlanMatrixVersion\": 1,\n            \"pricePlanMatrixValues\": [\n                {\n                    \"ppmColumnCode\": \"{{ppmColumnOneCode}}\",\n                    \"stringValue\": \"Monthly\"\n                },\n                {\n                    \"ppmColumnCode\": \"{{ppmColumnTwoCode}}\",\n                    \"stringValue\": \"Annulay\"\n                }\n            ]\n        },\n        {\n            \"pricetWithoutTax\": 50,\n            \"pricePlanMatrixCode\": \"{{ppmTwoCode}}\",\n            \"pricePlanMatrixVersion\": 1,\n            \"pricePlanMatrixValues\": [\n                {\n                    \"ppmColumnCode\": \"{{ppmColumnCode}}\",\n                    \"stringValue\": \"Monthly\"\n                },\n                {\n                    \"ppmColumnCode\": \"{{ppmColumnTwoCode}}\",\n                    \"stringValue\": \"Annulay\"\n                }\n            ]\n        }           \n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"catalog",
-								"pricePlan",
-								"pricePlanMatrixVersion"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Publish Price Plan Matrix Version",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "opencell.admin",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "opencell.admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/{{ppmCode}}/{{ppmVersion}}?status=PUBLISHED",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"catalog",
-								"pricePlan",
-								"pricePlanMatrixVersion",
-								"{{ppmCode}}",
-								"{{ppmVersion}}"
-							],
-							"query": [
-								{
-									"key": "status",
-									"value": "PUBLISHED"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Create Price Paln Matrix Column 1",
 					"event": [
 						{
@@ -968,7 +844,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"code\": \"{{ppmColumnOneCode}}\",\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\n    \"attributeCode\": \"{{billingCycleAttribute}}\",\n    \"productCode\": \"{{productOneCode}}\",\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"position\": 3,\n    \"isRange\": false\n}",
+							"raw": "{\n    \"code\": \"{{ppmColumnOneCode}}\",\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\n    \"attributeCode\": \"{{billingCycleAttribute}}\",\n    \"productCode\": \"{{productOneCode}}\",\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"position\": 3,\n    \"isRange\": false,\n    \"elValue\": \"elValue\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1084,13 +960,98 @@
 					"response": []
 				},
 				{
+					"name": "Create ppmVersion with Columns & Lines",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"version\": 1,\n    \"label\": \"Default price plan matrix version - oneShot\",\n    \"validity\": {\n        \"from\" : \"2020-10-12\",\n        \"to\": \"2021-01-03\"\n    },\n    \"isMatrix\" : true,\n    \"amountWithoutTax\": 200,\n    \"columns\": [\n        {\n            \"code\": \"{{ppmColumnOneCode}}\",\n            \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n            \"pricePlanMatrixVersion\": 1,\n            \"productCode\": \"{{productOneCode}}\",\n            \"offerTemplateCode\": \"{{offerTemplateCode}}\",\n            \"attributeCode\": \"{{billingCycleAttribute}}\",\n            \"position\": 3,\n            \"isRange\": false,\n            \"elValue\": \"elValue\"\n        }\n    ],\n    \"lines\": [\n        {\n            \"pricetWithoutTax\": 20,\n            \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n            \"pricePlanMatrixVersion\": 1,\n            \"pricePlanMatrixValues\": [\n                {\n                    \"ppmColumnCode\": \"{{ppmColumnOneCode}}\",\n                    \"stringValue\": \"Monthly\"\n                },\n                {\n                    \"ppmColumnCode\": \"{{ppmColumnTwoCode}}\",\n                    \"stringValue\": \"Annulay\"\n                }\n            ]\n        },\n        {\n            \"pricetWithoutTax\": 50,\n            \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n            \"pricePlanMatrixVersion\": 1,\n            \"pricePlanMatrixValues\": [\n                {\n                    \"ppmColumnCode\": \"{{ppmColumnOneCode}}\",\n                    \"stringValue\": \"Monthly\"\n                },\n                {\n                    \"ppmColumnCode\": \"{{ppmColumnTwoCode}}\",\n                    \"stringValue\": \"Annulay\"\n                }\n            ]\n        }           \n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixVersion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Publish Price Plan Matrix Version",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/{{ppmCode}}/{{ppmVersion}}?status=PUBLISHED",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixVersion",
+								"{{ppmCode}}",
+								"{{ppmVersion}}"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "PUBLISHED"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create Price Plan Matrix Line",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									""
+									"pm.globals.set(\"ppmLineId\",pm.response.json().pricePlanMatrixLinesDto[0].ppmLineId);"
 								],
 								"type": "text/javascript"
 							}
@@ -1158,7 +1119,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixLine/{{ppmVersion}}",
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixLine/{{ppmLineId}}",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -1166,7 +1127,115 @@
 								"catalog",
 								"pricePlan",
 								"pricePlanMatrixLine",
-								"{{ppmVersion}}"
+								"{{ppmLineId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create BILLING CYCLE Column",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"BILLING_CYCLE_COLUMN\",\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\n    \"attributeCode\": \"{{billingCycleAttribute}}\",\n    \"productCode\": \"{{productOneCode}}\",\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"position\": 3,\n    \"isRange\": false,\n    \"elValue\": \"elValue\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixColumn"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create ENGAGEMENT DURATION Column",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"ENGAGEMENT DURATION_COLUMN\",\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\n    \"attributeCode\": \"{{billingCycleAttribute}}\",\n    \"productCode\": \"{{productOneCode}}\",\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"position\": 3,\n    \"isRange\": false,\n    \"elValue\": \"elValue\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixColumn"
 							]
 						}
 					},
@@ -1194,7 +1263,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"pricetWithoutTax\": 24,\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n        \"ppmColumnCode\": \"{{ppmColumnOneCode}}\",\n        \"stringValue\": \"Monthly\"\n        },\n        {\n        \"ppmColumnCode\": \"{{ppmColumnTwoCode}}\",\n        \"longValue\": 24\n        }\n    ],\n    \"priority\": 1\n}",
+							"raw": "{\n    \"pricetWithoutTax\": 24,\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n            \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n            \"stringValue\": \"Monthly\"\n        },\n        {\n            \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n            \"longValue\": 24\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1237,7 +1306,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"pricetWithoutTax\": 15,\n    \"pricePlanMatrixCode\": \"PRICE_MATRIX_CODE\",\n    \"pricePlanMatrixVersion\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n        \"ppmColumnCode\": \"Billing_Cycle_COLUMN_CODE\",\n        \"stringValue\": \"Monthly\"\n        },\n        {\n        \"ppmColumnCode\": \"Engagment_duration_COLUMN_CODE\",\n        \"longValue\": 12\n        }\n    ],\n    \"priority\": 1\n}",
+							"raw": "{\n    \"pricetWithoutTax\": 15,\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n            \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n            \"stringValue\": \"Monthly\"\n        },\n        {\n            \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n            \"longValue\": 12\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1280,7 +1349,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"pricetWithoutTax\": 18,\n    \"pricePlanMatrixCode\": \"PRICE_MATRIX_CODE\",\n    \"pricePlanMatrixVersion\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n        \"ppmColumnCode\": \"Billing_Cycle_COLUMN_CODE\",\n        \"stringValue\": \"Annually\"\n        },\n        {\n        \"ppmColumnCode\": \"Engagment_duration_COLUMN_CODE\",\n        \"longValue\": 24\n        }\n    ],\n    \"priority\": 1\n}",
+							"raw": "{\n    \"pricetWithoutTax\": 18,\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n        \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n        \"stringValue\": \"Annually\"\n        },\n        {\n        \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n        \"longValue\": 24\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1323,7 +1392,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"pricetWithoutTax\": 13,\n    \"pricePlanMatrixCode\": \"PRICE_MATRIX_CODE\",\n    \"pricePlanMatrixVersion\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n        \"ppmColumnCode\": \"Billing_Cycle_COLUMN_CODE\",\n        \"stringValue\": \"Annually\"\n        },\n        {\n        \"ppmColumnCode\": \"Engagment_duration_COLUMN_CODE\",\n        \"longValue\": 12\n        }\n    ],\n    \"priority\": 1\n}",
+							"raw": "{\n    \"pricetWithoutTax\": 13,\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": 1,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n        \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n        \"stringValue\": \"Annually\"\n        },\n        {\n        \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n        \"longValue\": 12\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1366,7 +1435,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ppmCode\": \"PRICE_MATRIX_CODE\",\n    \"ppmVersion\": 1,\n    \"quoteProductId\": 1\n}",
+							"raw": "{\n    \"ppmCode\": \"{{ppmCode}}\",\n    \"ppmVersion\": 1,\n    \"quoteProductId\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1449,7 +1518,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"{{contractLineCode}}\",\r\n  \"description\": \"This is a contract line test desc\",\r\n  \"contractCode\": \"{{contractCode}}\",\r\n  \"offerTemplateCode\": \"{{offerTemplateCode}}\",\r\n  \"productCode\": \"{{productLineCode}}\",\r\n  \"serviceTemplateCode\": \"{{serviceTemplateCode}}\",\r\n  \"pricePlanCode\":\"{{ppmCode}}\"\r\n}",
+							"raw": "{\r\n  \"code\": \"{{contractLineCode}}\",\r\n  \"description\": \"This is a contract line test desc\",\r\n  \"contractCode\": \"{{contractCode}}\",\r\n  \"offerTemplateCode\": \"{{offerTemplateCode}}\",\r\n  \"productCode\": \"{{productLineCode}}\",\r\n  \"pricePlanCode\":\"{{ppmCode}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1568,7 +1637,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"filters\": {\r\n    \"status\": \"CANCELLED\"\r\n  },\r\n  \"sortOrder\": \"ASCENDING\"\r\n}",
+							"raw": "{\r\n  \"filters\": {\r\n    \"status\": \"In_Progress\"\r\n  },\r\n  \"sortOrder\": \"ASCENDING\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1621,7 +1690,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"ACCOUNTING_ARTICLE\",\r\n    \"description\": \"This is the accounting article desc\",\r\n    \"taxClass\": {\r\n        \"id\": -1\r\n    },\r\n    \"invoiceSubCategory\": {\r\n        \"id\": -2\r\n    }\r\n}",
+							"raw": "{\r\n    \"code\": \"{{accountingArticleCode}}\",\r\n    \"description\": \"This is the accounting article desc\",\r\n    \"taxClass\": {\r\n        \"id\": -1\r\n    },\r\n    \"invoiceSubCategory\": {\r\n        \"id\": -2\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1642,13 +1711,13 @@
 					"response": []
 				},
 				{
-					"name": "Create Article Mapping",
+					"name": "Create Article Mapping /!\\ None",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.globals.set(\"accountArticleOneId\",pm.response.json().id);"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -1754,7 +1823,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"quoteVersion\": 1,\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": 1,\r\n            \"quoteVersion\": 1,\r\n            \"quantity\": 1,\r\n            \"quoteAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": \"24\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": 1,\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": 1,\r\n            \"quoteVersion\": 1,\r\n            \"quantity\": 1,\r\n            \"quoteAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": \"24\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1792,7 +1861,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"quoteVersion\": 1,\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": 1,\r\n            \"quoteVersion\": 1,\r\n            \"quantity\": 1\r\n        },\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": 1,\r\n            \"quoteVersion\": 1,\r\n            \"quantity\": 1\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": 1,\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": 1,\r\n            \"quoteVersion\": 1,\r\n            \"quantity\": 1\r\n        },\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": 1,\r\n            \"quoteVersion\": 1,\r\n            \"quantity\": 1\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1813,7 +1882,7 @@
 					"response": []
 				},
 				{
-					"name": "Quote Quotation",
+					"name": "Quote Quotation /!\\ Swagger",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2000,10 +2069,6 @@
 	],
 	"variable": [
 		{
-			"key": "priceMatrixCode",
-			"value": "PRICE_MATRIX_CODE"
-		},
-		{
 			"key": "contractCode",
 			"value": "TEST_CONTRACT"
 		},
@@ -2036,10 +2101,6 @@
 			"value": "TEST_BA"
 		},
 		{
-			"key": "serviceTemplate",
-			"value": "SERVICE_TEPMLATE"
-		},
-		{
 			"key": "productLineCode",
 			"value": "TEST_PRODUCT_LINE"
 		},
@@ -2060,10 +2121,6 @@
 			"value": "CYC_INV_MT_1"
 		},
 		{
-			"key": "serviceTemplateCode",
-			"value": "TEST_SE_TEPMLATE"
-		},
-		{
 			"key": "offerTemplateCode",
 			"value": "OF_CLASSIC_COMMISSION"
 		},
@@ -2076,31 +2133,27 @@
 			"value": "TEST_CONTRACT_LINE"
 		},
 		{
-			"key": "billiableAccountOne",
-			"value": ""
-		},
-		{
-			"key": "billiableAccountTwo",
-			"value": ""
-		},
-		{
 			"key": "ppmColumnCode",
-			"value": ""
+			"value": "PRICE_PLAN_COLUMN"
 		},
 		{
 			"key": "ppmColumnOneCode",
-			"value": ""
+			"value": "PRICE_PLAN_COLUMN_1"
 		},
 		{
 			"key": "ppmColumnTwoCode",
-			"value": ""
-		},
-		{
-			"key": "ppmTwoCode",
-			"value": ""
+			"value": "PRICE_PLAN_COLUMN_2"
 		},
 		{
 			"key": "accountingArticleCode",
+			"value": "ACCOUNTING_ARTICLE"
+		},
+		{
+			"key": "engagementColumnCode",
+			"value": ""
+		},
+		{
+			"key": "billingCycleColumnCode",
 			"value": ""
 		}
 	]
