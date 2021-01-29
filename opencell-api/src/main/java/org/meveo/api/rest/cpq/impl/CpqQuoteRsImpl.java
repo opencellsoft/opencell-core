@@ -26,6 +26,7 @@ import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.tools.ant.taskdefs.Get;
 import org.meveo.api.billing.CpqQuoteApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -248,6 +249,16 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, new GetQuoteVersionDtoResponse().getActionStatus());
 	        }
+	}
+
+	@Override
+	public Response generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf) {
+		try{
+			cpqQuoteApi.generateQuoteXml(quoteCode, currentVersion, generatePdf);
+			return Response.ok(new GetQuoteVersionDtoResponse().getActionStatus()).build();
+		}catch(MeveoApiException e){
+			return errorResponse(e, new GetQuoteVersionDtoResponse().getActionStatus());
+		}
 	}
 
 

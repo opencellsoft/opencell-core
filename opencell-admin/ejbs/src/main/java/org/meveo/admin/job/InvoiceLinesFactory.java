@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -19,6 +20,10 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.cpq.ProductService;
+import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.cpq.order.CommercialOrderService;
+import org.meveo.service.cpq.order.OrderLotService;
 
 public class InvoiceLinesFactory {
 
@@ -34,7 +39,12 @@ public class InvoiceLinesFactory {
             (ServiceInstanceService) getServiceInterface(ServiceInstanceService.class.getSimpleName());
     private SubscriptionService subscriptionService =
             (SubscriptionService) getServiceInterface(SubscriptionService.class.getSimpleName());
-
+    private CommercialOrderService commercialOrderService = 
+    		(CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
+    private ProductVersionService productVersionService = 
+    		(ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName());
+    private OrderLotService orderLotService = 
+    		(OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
     public InvoiceLine create(Map<String, Object> record, AggregationConfiguration configuration) {
         InvoiceLine invoiceLine = initInvoiceLine(record);
         if(configuration.getAggregationOption() == NO_AGGREGATION) {
@@ -60,6 +70,13 @@ public class InvoiceLinesFactory {
                 .ifPresent(id -> invoiceLine.setServiceInstance(instanceService.findById(((BigInteger) id).longValue())));
         ofNullable(record.get("offer_id"))
                 .ifPresent(id -> invoiceLine.setOfferTemplate(offerTemplateService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("order_id"))
+        .ifPresent(id -> invoiceLine.setCommercialOrder(commercialOrderService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("product_version_id"))
+        .ifPresent(id -> invoiceLine.setProductVersion(productVersionService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("order_lot_id"))
+        .ifPresent(id -> invoiceLine.setOrderLot(orderLotService.findById(((BigInteger) id).longValue())));
+
         invoiceLine.setValueDate((Date) record.get("valueDate"));
         invoiceLine.setOrderNumber((String) record.get("order_number"));
         invoiceLine.setQuantity((BigDecimal) record.get("quantity"));

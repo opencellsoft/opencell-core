@@ -101,6 +101,12 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PricePlanMatrixColumn> columns;
+    
+    /**
+     * The lower number, the higher the priority is
+     */
+    @Column(name = "priority", columnDefinition = "int DEFAULT 0")
+    private int priority = 0;
 
     /**
      * @return the status
@@ -214,4 +220,18 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     public void setAmountWithTaxEL(String amountWithTaxEL) {
         this.amountWithTaxEL = amountWithTaxEL;
     }
+	/**
+	 * @return the priority
+	 */
+	public int getPriority() {
+		return priority;
+	}
+	/**
+	 * @param priority the priority to set
+	 */
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+    
+    
 }

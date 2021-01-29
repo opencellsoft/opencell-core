@@ -173,17 +173,6 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @JoinTable(name = "cpq_offer_template_tags", joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags = new ArrayList<Tag>();
     
-
-	/**
-	 * list of discount attached to this product
-	 */
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-				name = "cpq_offer_discount_plan",
-				joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"),
-				inverseJoinColumns = @JoinColumn(name = "discount_id", referencedColumnName = "id")				
-			)
-	private Set<DiscountPlan> discountList = new HashSet<>();
     
 	/**
 	 * list of attributes attached to this offer
@@ -536,19 +525,6 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 		this.offerComponents = offerComponents;
 	}
 
-	/**
-	 * @return the discountList
-	 */
-	public Set<DiscountPlan> getDiscountList() {
-		return discountList;
-	}
-
-	/**
-	 * @param discountList the discountList to set
-	 */
-	public void setDiscountList(Set<DiscountPlan> discountList) {
-		this.discountList = discountList;
-	}
 
 	/**
 	 * @return the attributes

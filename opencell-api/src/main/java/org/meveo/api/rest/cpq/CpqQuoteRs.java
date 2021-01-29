@@ -332,7 +332,7 @@ public interface CpqQuoteRs {
     public Response findQuoteItem(@Parameter(description = "", required = true) @PathParam("quoteOfferId") Long quoteOfferId); */
     
 
-    @GET
+    @POST
     @Path("/quoteQuotation")
     @Operation(summary = "Get quote quotation",
     tags = { "Quotation" },
@@ -342,6 +342,10 @@ public interface CpqQuoteRs {
     })
 	Response quoteQuotation(@Parameter(description = "quote code", required = false) @QueryParam("quoteCode") String quoteCode, 
 			@Parameter(description = "quote version number", required = false) @QueryParam("quoteVersion") int quoteVersion);
+
+    @GET
+    @Path("/generateQuoteXml")
+    Response generateQuoteXml(@QueryParam("quoteCode") String quoteCode, @QueryParam("currentVersion") int currentVersion, @QueryParam("generatePdf") boolean generatePdf);
     
     
     

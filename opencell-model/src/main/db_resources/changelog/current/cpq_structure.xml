@@ -706,6 +706,7 @@
 			<column name="amount_without_tax_el" type="varchar(255)" />
 			<column name="amount_with_tax_el" type="varchar(255)" />
 			<column name="is_matrix" type="${type.boolean}"/>
+			<column name="priority" type="int4" defaultValueNumeric="0"/>
 		</createTable>
 	</changeSet>
 
@@ -1453,6 +1454,7 @@
 	            </column>
 	            <column name="status_date" type="datetime" />
 	            <column name="send_date" type="datetime" />
+	            <column name="quote_date" type="datetime" />
 	            <column name="prestation_date_begin" type="datetime" />
 	            <column name="prestation_duration" type="int4" />
 	            <column name="opportunity_ref" type="varchar(50)" />
@@ -1846,33 +1848,6 @@
                                  constraintName="attribute_mapping_attribute_fk" referencedTableName="cpq_attribute"
                                  referencedColumnNames="id"/>
     </changeSet>
-
-    <changeSet id="missing-table-association" author="TarikFA">
-        <createTable tableName="cpq_offer_discount_plan">
-            <column name="offer_template_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-            <column name="discount_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-
-        <addPrimaryKey columnNames="offer_template_id,discount_id" constraintName="cpq_offer_template_discount_pkey" tableName="cpq_offer_discount_plan" />
-        <addUniqueConstraint columnNames="offer_template_id,discount_id" constraintName="unique_cpq_offer_template_discount_ids" tableName="cpq_offer_discount_plan" />
-
-        <addForeignKeyConstraint baseTableName="cpq_offer_discount_plan" baseColumnNames="discount_id"
-                                 constraintName="cpq_offer_discount_plan_discount_id_fk" referencedTableName="cat_offer_template"
-                                 referencedColumnNames="id"/>
-
-
-        <addForeignKeyConstraint baseTableName="cpq_offer_discount_plan" baseColumnNames="offer_template_id"
-                                 constraintName="cpq_offer_discount_plan_offer_template_id_fk" referencedTableName="cat_discount_plan"
-                                 referencedColumnNames="id"/>
-
-    </changeSet>
-
-
-
 
      <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-">
    <createTable tableName="cpq_billing_account_tags">
@@ -2889,10 +2864,13 @@
 		
 	        <addColumn tableName="cpq_quote_article_line">
 				<column name="quote_product_id" type="bigint" />
+				<column name="quote_lot_id" type="bigint" />
 	        </addColumn>
 	        
 			<addForeignKeyConstraint baseColumnNames="quote_product_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_product_id" deferrable="false" initiallyDeferred="false"
 									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
+			<addForeignKeyConstraint baseColumnNames="quote_lot_id" baseTableName="cpq_quote_article_line" constraintName="fk_cpq_quote_article_line_quote_lot_id" deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
 	</changeSet>
 		<changeSet id="#20210122-540-128" author="TarikFA">
 		
@@ -2949,6 +2927,20 @@
 								 constraintName="billing_offer_template_id_fk"
 								 referencedTableName="cat_offer_template" referencedColumnNames="id"/>
 	</changeSet>
+	<changeSet id="#5916_20210128" author="MohammedELAZZOUZI">
+        <addColumn tableName="cpq_invoice_line">
+            <column name="order_lot_id" type="bigint"/>
+        </addColumn>
+       		<addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="order_lot_id"
+							 constraintName="cpq_invoice_line__order_lot__fk"
+							 referencedTableName="cpq_order_lot" referencedColumnNames="id"/>
+        <addColumn tableName="cpq_invoice_line">
+            <column name="product_version_id" type="bigint"/>
+        </addColumn>
+  		<addForeignKeyConstraint baseTableName="cpq_invoice_line" baseColumnNames="product_version_id"
+							 constraintName="cpq_invoice_line__product_version__fk"
+							 referencedTableName="cpq_product_version" referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>
 
 
