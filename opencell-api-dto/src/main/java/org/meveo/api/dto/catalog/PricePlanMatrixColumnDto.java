@@ -25,20 +25,17 @@ public class PricePlanMatrixColumnDto extends BaseEntityDto {
     @NotNull
     private int pricePlanMatrixVersion;
 
-    @NotNull
     private String productCode;
 
-    @NotNull
     private String offerTemplateCode;
 
-    @NotNull
     private String attributeCode;
-    @NotNull
+   
     private int position;
 
     private ColumnTypeEnum type;
 
-    @NotNull
+   
     private String elValue;
 
     private Boolean isRange;

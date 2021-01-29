@@ -38,6 +38,7 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     private BigDecimal amountWithTax;
     private String amountWithoutTaxEL;
     private String amountWithTaxEL;
+    protected int priority=0;
 
     private Set<PricePlanMatrixColumnDto> columns;
 
@@ -58,6 +59,7 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         setAmountWithTax(pricePlanMatrixVersion.getAmountWithTax());
         setAmountWithoutTaxEL(pricePlanMatrixVersion.getAmountWithoutTaxEL());
         setAmountWithTaxEL(pricePlanMatrixVersion.getAmountWithTaxEL());
+        setPriority(pricePlanMatrixVersion.getPriority());
         if (pricePlanMatrixVersion.getLines() != null && !pricePlanMatrixVersion.getLines().isEmpty())
             lines = pricePlanMatrixVersion.getLines().stream()
                     .map(PricePlanMatrixLineDto::new)
@@ -172,4 +174,20 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     public void setColumns(Set<PricePlanMatrixColumnDto> columns) {
         this.columns = columns;
     }
+
+	/**
+	 * @return the priority
+	 */
+	public int getPriority() {
+		return priority;
+	}
+
+	/**
+	 * @param priority the priority to set
+	 */
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+    
+    
 }

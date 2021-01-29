@@ -706,6 +706,7 @@
 			<column name="amount_without_tax_el" type="varchar(255)" />
 			<column name="amount_with_tax_el" type="varchar(255)" />
 			<column name="is_matrix" type="${type.boolean}"/>
+			<column name="priority" type="int4" defaultValueNumeric="0"/>
 		</createTable>
 	</changeSet>
 

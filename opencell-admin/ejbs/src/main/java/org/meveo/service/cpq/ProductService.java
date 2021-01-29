@@ -86,10 +86,10 @@ public class ProductService extends BusinessService<Product> {
 	public Product updateProduct(Product product) throws BusinessException{
 		LOGGER.info("updating product {}", product.getCode());
 		
-		if(product.getStatus().equals(ProductStatusEnum.ACTIVE)) {
-			LOGGER.warn("the product {} can not be updated, because of its status => {}", product.getCode(), product.getStatus().toString());
-			throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, product.getCode(), product.getStatus().toString()));
-		}
+//		if(product.getStatus().equals(ProductStatusEnum.ACTIVE)) {
+//			LOGGER.warn("the product {} can not be updated, because of its status => {}", product.getCode(), product.getStatus().toString());
+//			throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, product.getCode(), product.getStatus().toString()));
+//		}
 		if(product.getStatus().equals(ProductStatusEnum.CLOSED)) {
 			LOGGER.warn("the product {} can not be updated, because of its status => {}", product.getCode(), product.getStatus().toString());
 			throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, product.getCode(), product.getStatus().toString()));

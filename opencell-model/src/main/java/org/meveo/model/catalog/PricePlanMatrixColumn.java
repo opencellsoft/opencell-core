@@ -52,22 +52,18 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     private ColumnTypeEnum type;
 
     @Column(name = "el_value")
-    @NotNull
     private String elValue;
 
     @OneToOne
     @JoinColumn(name = "offer_id")
-    @NotNull
     private OfferTemplate offerTemplate;
 
     @OneToOne
     @JoinColumn(name = "product_id")
-    @NotNull
     private Product product;
 
     @OneToOne
     @JoinColumn(name = "attribute_id")
-    @NotNull
     private Attribute attribute;
 
     @Type(type = "numeric_boolean")
