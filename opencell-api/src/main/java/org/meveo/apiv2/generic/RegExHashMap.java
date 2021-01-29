@@ -17,6 +17,9 @@ public class RegExHashMap<K,V> extends HashMap<K,V> {
     // list of regular expression values which match patterns
     private ArrayList<V> regExValues = new ArrayList<V>();
 
+    // pattern found
+    private Pattern patternFound;
+
     /**
      * Compile regular expression and add it to the regexp list as key.
      */
@@ -55,10 +58,19 @@ public class RegExHashMap<K,V> extends HashMap<K,V> {
 
         for (int i = 0; i < regExPatterns.size(); i++) {
             if (regExPatterns.get(i).matcher(cs).matches()) {
+                setPattern( regExPatterns.get(i) );
                 return true;
             }
         }
 
         return false;
+    }
+
+    public Pattern getPattern() {
+        return patternFound;
+    }
+
+    private void setPattern(Pattern aPattern) {
+        patternFound = aPattern;
     }
 }

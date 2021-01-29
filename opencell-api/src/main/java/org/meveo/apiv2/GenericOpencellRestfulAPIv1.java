@@ -53,6 +53,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
     // final useful strings
     private static final String FORWARD_SLASH = "/";
+    public static final String CODE_REGEX = "[^\\/^$]+";
 
     @Inject
     protected Logger log;
@@ -131,14 +132,26 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/account/customerAccount" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customerAccounts",
                                     ((Path) anAnnotation).value() );
+
+                            // Processing for request get list of customerAccounts based on a customerCode
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/accountManagement\\/customers\\/" + CODE_REGEX + "\\/customerAccounts" ) ,
+                                    ((Path) anAnnotation).value() + "/list" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/billingAccount" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/billingAccounts",
                                     ((Path) anAnnotation).value() );
+
+                            // Processing for request get list of billingAccounts based on a customerAccountCode
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/accountManagement\\/customerAccounts\\/" + CODE_REGEX + "\\/billingAccounts" ) ,
+                                    ((Path) anAnnotation).value() + "/list" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/userAccount" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/userAccounts",
                                     ((Path) anAnnotation).value() );
+
+                            // Processing for request get list of userAccounts based on a billingAccountCode
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/accountManagement\\/billingAccounts\\/" + CODE_REGEX + "\\/userAccounts" ) ,
+                                    ((Path) anAnnotation).value() + "/list" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/accountHierarchy" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/accountHierarchies",
@@ -149,24 +162,28 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
 
                             // Processing for different services of subscription: activation, suspension, termination, update of existing services
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/activation(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/activation" ) ,
                                     ((Path) anAnnotation).value() + "/activate" );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/suspension(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/suspension" ) ,
                                     ((Path) anAnnotation).value() + "/suspend" );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/termination(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/termination" ) ,
                                     ((Path) anAnnotation).value() + "/terminate" );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/services(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/services" ) ,
                                     ((Path) anAnnotation).value() + "/updateServices" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/access" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/accesses",
                                     ((Path) anAnnotation).value() );
 
-                            // Processing for get an accessPoint based on a subscriptionCode and an accessCode
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/accountManagement\\/subscriptions\\/[^\\/^$]*\\/accesses\\/[^\\/^$]*(?:$|\\W)" ) ,
+                            // Processing for request get list of accesses based on a subscriptionCode
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/accesses" ) ,
+                                    ((Path) anAnnotation).value() + "/list" );
+
+                            // Processing for request get an accessPoint based on a subscriptionCode and an accessCode
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/accesses\\/" + CODE_REGEX ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/billing/ratedTransaction" ) ) {
@@ -186,10 +203,10 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable an offerTemplate
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/offerTemplates\\/[^\\/^$]*\\/enable(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/offerTemplates\\/" + CODE_REGEX + "\\/enable" ) ,
                                     ((Path) anAnnotation).value() );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/offerTemplates\\/[^\\/^$]*\\/disable(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/offerTemplates\\/" + CODE_REGEX + "\\/disable" ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/oneShotChargeTemplate" ) ) {
@@ -197,10 +214,10 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable an oneShotChargeTemplate
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/oneShotChargeTemplates\\/[^\\/^$]*\\/enable(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/oneShotChargeTemplates\\/" + CODE_REGEX + "\\/enable" ) ,
                                     ((Path) anAnnotation).value() );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/oneShotChargeTemplates\\/[^\\/^$]*\\/disable(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/oneShotChargeTemplates\\/" + CODE_REGEX + "\\/disable" ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/recurringChargeTemplate" ) ) {
@@ -208,10 +225,10 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable a recurringChargeTemplate
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/recurringChargeTemplates\\/[^\\/^$]*\\/enable(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/recurringChargeTemplates\\/" + CODE_REGEX + "\\/enable" ) ,
                                     ((Path) anAnnotation).value() );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/recurringChargeTemplates\\/[^\\/^$]*\\/disable(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/recurringChargeTemplates\\/" + CODE_REGEX + "\\/disable" ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/usageChargeTemplate" ) ) {
@@ -219,10 +236,10 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable a usageChargeTemplate
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/usageChargeTemplates\\/[^\\/^$]*\\/enable(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/usageChargeTemplates\\/" + CODE_REGEX + "\\/enable" ) ,
                                     ((Path) anAnnotation).value() );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/usageChargeTemplates\\/[^\\/^$]*\\/disable(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/usageChargeTemplates\\/" + CODE_REGEX + "\\/disable" ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/serviceTemplate" ) ) {
@@ -230,10 +247,10 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable a serviceTemplate
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/serviceTemplates\\/[^\\/^$]*\\/enable(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/serviceTemplates\\/" + CODE_REGEX + "\\/enable" ) ,
                                     ((Path) anAnnotation).value() );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/serviceTemplates\\/[^\\/^$]*\\/disable(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/serviceTemplates\\/" + CODE_REGEX + "\\/disable" ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/pricePlan" ) ) {
@@ -241,10 +258,10 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable a pricePlan
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/pricePlans\\/[^\\/^$]*\\/enable(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/pricePlans\\/" + CODE_REGEX + "\\/enable" ) ,
                                     ((Path) anAnnotation).value() );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "(?:^|\\W)\\/v1\\/catalog\\/pricePlans\\/[^\\/^$]*\\/disable(?:$|\\W)" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/pricePlans\\/" + CODE_REGEX + "\\/disable" ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else {

@@ -12,6 +12,7 @@ import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
 import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.apiv2.generic.core.GenericRequestMapper;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
+import org.meveo.util.Inflector;
 
 import javax.enterprise.context.RequestScoped;
 import javax.interceptor.Interceptors;
@@ -21,6 +22,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Thang Nguyen
@@ -30,7 +34,6 @@ import java.util.List;
 public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
     private static final String METHOD_GET_ALL = "/list";
-    private static final String METHOD_GET_AN_ENTITY = "/";
     private static final String METHOD_CREATE = "/";
     private static final String METHOD_UPDATE = "/";
     private static final String METHOD_DELETE = "/";
@@ -126,21 +129,44 @@ System.out.println( "GET ALL ENTITIES 2 : " + redirectURI.toString() );
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + METHOD_GET_AN_ENTITY + "?"
-                    + entityClassName + "Code=" + entityCode);
+                    + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + entityClassName + "Code=" + entityCode);
 System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
             return httpClient.target( redirectURI ).request().get();
         }
-        // Handle the special endpoints: get an access point based on a subscriptionCode and an accessCode
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( getPath ) ) {
+            // Handle the special endpoints: get an access point based on a subscriptionCode and an accessCode
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( getPath );
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR
-                    + "subscriptionCode=" + segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 3).toString()
-                    + PAIR_QUERY_PARAM_SEPARATOR
-                    + "accessCode=" + segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 1).toString() );
+            queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
 
-System.out.println( "GET redirectURI an AccessPoint : " + redirectURI.toString() );
+            String originalPattern = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.getPattern().toString();
+            int indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX );
+            String aSmallPattern;
+            while ( indexCodeRegex >= 0 ) {
+                aSmallPattern = originalPattern.substring( 0,
+                        indexCodeRegex + GenericOpencellRestfulAPIv1.CODE_REGEX.length() );
+
+                Matcher matcher = Pattern.compile( aSmallPattern ).matcher( getPath );
+                // get the first occurrence matching smallStringPattern
+                if ( matcher.find() ) {
+                    String smallString = matcher.group(0);
+
+                    String[] matches = Pattern.compile( GenericOpencellRestfulAPIv1.CODE_REGEX )
+                            .matcher( smallString )
+                            .results()
+                            .map(MatchResult::group)
+                            .toArray(String[]::new);
+
+                    queryParams.append( Inflector.getInstance().singularize( matches[matches.length - 2] ) + "Code="
+                            + matches[matches.length - 1] + PAIR_QUERY_PARAM_SEPARATOR );
+                }
+
+                indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX, indexCodeRegex + 1 );
+            }
+
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                    + API_REST + pathIBaseRS + queryParams.substring( 0, queryParams.length() - 1 ) );
+
+System.out.println( "GET redirectURI IN MAP_REGEX : " + redirectURI.toString() );
             return httpClient.target( redirectURI ).request().get();
         }
 
