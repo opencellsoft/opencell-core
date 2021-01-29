@@ -259,9 +259,7 @@ public class QuoteOffer extends AuditableEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		QuoteOffer other = (QuoteOffer) obj;
-		return Objects.equals(billableAccount, other.billableAccount)
-				&& Objects.equals(offerTemplate, other.offerTemplate) && Objects.equals(quoteLot, other.quoteLot)
-				&& Objects.equals(quoteProduct, other.quoteProduct) && Objects.equals(quoteVersion, other.quoteVersion);
+		return Objects.equals(id, other.id);
 	}
 	
 	
