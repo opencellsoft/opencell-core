@@ -64,23 +64,25 @@ public class QuoteValidationTemp extends ModuleScript {
 		if(quotesVersions.size() > 1)
 			throw new BusinessException("More than one quote version is published !!");
 		var quoteVersion = quotesVersions.get(0);
-		var orderByBillingAccount = new Hashtable<BillingAccount, List<QuoteOffer>>();
+		var orderByBillingAccount = new Hashtable<String, List<QuoteOffer>>();
+		var billingAccount = new Hashtable<String, BillingAccount>();
 		quoteVersion.getQuoteOffers().forEach(quoteOffer -> {
 			if(quoteOffer.getBillableAccount() == null) {
 				quoteOffer.setBillableAccount(cpqQuote.getBillableAccount());
 			}
-			if(orderByBillingAccount.get(quoteOffer.getBillableAccount()) != null) {
-				List<QuoteOffer> offers = orderByBillingAccount.get(quoteOffer.getBillableAccount());
-				if(offers == null)
-					offers = new ArrayList<>();
-				offers.add(quoteOffer);
-				orderByBillingAccount.put(quoteOffer.getBillableAccount(), offers);
+			List<QuoteOffer> offers = new ArrayList<>();
+			if(orderByBillingAccount.get(quoteOffer.getBillableAccount().getCode()) != null) {
+				offers = orderByBillingAccount.get(quoteOffer.getBillableAccount().getCode());
 			}
+			offers.add(quoteOffer);
+			orderByBillingAccount.put(quoteOffer.getBillableAccount().getCode(), offers);
+			billingAccount.put(quoteOffer.getBillableAccount().getCode(), quoteOffer.getBillableAccount());
 			
 		});
 		orderByBillingAccount.keySet().forEach(ba -> {
 			List<QuoteOffer> offers = orderByBillingAccount.get(ba);
-			CommercialOrder order = processCommercialOrder(cpqQuote, quoteVersion, ba);
+			BillingAccount billableAccount = billingAccount.get(ba);
+			CommercialOrder order = processCommercialOrder(cpqQuote, quoteVersion, billableAccount);
 			offers.forEach(offer -> {
 				processOrderOffer(offer, order);
 				OrderLot orderLot = processOrderCustomerService(offer.getQuoteLot(), order);
@@ -126,11 +128,12 @@ public class QuoteValidationTemp extends ModuleScript {
 		}
 		return orderType;
 	}
-	
+	private static final String GENERIC_CODE = "COMMERCIAL_GEN";
 	private OrderOffer processOrderOffer(QuoteOffer quoteOffer, CommercialOrder order) {
 		OrderOffer offer = new OrderOffer();
 		offer.setOrder(order);
 		offer.setOfferTemplate(quoteOffer.getOfferTemplate());
+		offer.setCode(GENERIC_CODE);
 		offer.setCode(orderOfferService.findDuplicateCode(offer));
 		orderOfferService.create(offer);
 		return offer;
@@ -143,6 +146,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		orderProduct.setProductVersion(product.getProductVersion());
 		orderProduct.setQuantity(product.getQuantity());
 		orderProduct.setOrderOffer(orderOffer);
+		orderProduct.setCode(GENERIC_CODE);
 		orderProduct.setCode(orderProductService.findDuplicateCode(orderProduct));
 		
 		orderProductService.create(orderProduct);
@@ -170,12 +174,14 @@ public class QuoteValidationTemp extends ModuleScript {
 		orderAttribute.setStringValue(quoteAttribute.getStringValue());
 		orderAttribute.setDateValue(quoteAttribute.getDateValue());
 		orderAttribute.setDoubleValue(quoteAttribute.getDoubleValue());
+		orderAttribute.setCode(GENERIC_CODE);
 		orderAttribute.setCode(orderAttributeService.findDuplicateCode(orderAttribute));
 		orderAttributeService.create(orderAttribute);
 	}
 	
 	private OrderLot processOrderCustomerService(QuoteLot quoteLot, CommercialOrder commercialOrder) {
 		OrderLot orderCustomer = new OrderLot();
+		orderCustomer.setCode(GENERIC_CODE);
 		orderCustomer.setCode(orderCustomerServiceService.findDuplicateCode(orderCustomer));
 		orderCustomer.setOrder(commercialOrder);
 		orderCustomerServiceService.create(orderCustomer);
@@ -198,6 +204,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(orderArticleLine.getId(), quoteVersion.getId());
 		quotePrices.forEach( price -> {
 			OrderPrice orderPrice = new OrderPrice();
+			orderPrice.setCode(GENERIC_CODE);
 			orderPrice.setCode(orderPriceService.findDuplicateCode(orderPrice));
 			orderPrice.setOrderArticleLine(orderArticleLine);
 			orderPrice.setOrder(commercialOrder);
