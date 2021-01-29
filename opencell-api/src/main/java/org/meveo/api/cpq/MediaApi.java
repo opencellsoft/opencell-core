@@ -13,7 +13,6 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.MediaDto;
 import org.meveo.api.dto.cpq.MediaListResponsDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
@@ -26,8 +25,11 @@ import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.ProductService;
+
+import com.thoughtworks.xstream.io.binary.Token.Attribute;
 
 @Stateless
 public class MediaApi extends BaseApi {
@@ -43,10 +45,9 @@ public class MediaApi extends BaseApi {
 	@Inject private ProductService productService;
 	@Inject private ServiceTemplateService  serviceTemplateService;
 	@Inject private OfferTemplateService offerTemplateService;
+	@Inject private AttributeService attributeService;
 	
 	public MediaDto createMedia(MediaDto mediaDto) {
-		if(Strings.isEmpty(mediaDto.getProductCode()))
-			missingParameters.add("productCode");
 		if(Strings.isEmpty(mediaDto.getMediaName()))
 			missingParameters.add("mediaName");
 		if(Strings.isEmpty(mediaDto.getLabel()))
@@ -56,13 +57,13 @@ public class MediaApi extends BaseApi {
 		if(mediaDto.isMain() == null)
 			missingParameters.add("main");
 		handleMissingParameters();
-		//check if there any Media exist with productCode and mediaName
-		if(mediaService.findByProductAndMediaName(mediaDto.getProductCode(), mediaDto.getMediaName()) != null)
-			throw new EntityAlreadyExistsException(String.format(MEDIA_EXIST_ALREADY, mediaDto.getProductCode(), mediaDto.getMediaName()) );
-		final Product product = productService.findByCode(mediaDto.getProductCode());
-		if(product == null)
-			throw new EntityDoesNotExistsException(Product.class, mediaDto.getProductCode());
 		final Media m = new Media(); 
+		if(!Strings.isEmpty(mediaDto.getProductCode())) {
+			final Product product = productService.findByCode(mediaDto.getProductCode());
+			if(product == null)
+				throw new EntityDoesNotExistsException(Product.class, mediaDto.getProductCode());
+			m.setProduct(product);
+		}
 		if(!Strings.isEmpty(mediaDto.getServiceTemplateCode())) {
 			final ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(mediaDto.getServiceTemplateCode());
 			if(serviceTemplate == null)
@@ -75,7 +76,12 @@ public class MediaApi extends BaseApi {
 				throw new EntityDoesNotExistsException(OfferTemplate.class, mediaDto.getOfferCode());
 			m.setOffer(offerTemplate);
 		}
-		m.setProduct(product);
+		if(!Strings.isEmpty(mediaDto.getAttributeCode())) {
+			var attribute = attributeService.findByCode(mediaDto.getAttributeCode());
+			if(attribute == null)
+				throw new EntityDoesNotExistsException(Attribute.class, mediaDto.getAttributeCode());
+			m.setAttribute(attribute);
+		}
 		m.setMediaName(mediaDto.getMediaName());
 		m.setLabel(mediaDto.getLabel());
 		m.setMediaType(mediaDto.getMediaType());
@@ -88,34 +94,51 @@ public class MediaApi extends BaseApi {
 	}
 	
 	public MediaDto updateMedia(MediaDto mediaDto) {
-		if(Strings.isEmpty(mediaDto.getProductCode()))
-			missingParameters.add("productCode");
-		if(Strings.isEmpty(mediaDto.getMediaName()))
-			missingParameters.add("mediaName");
-		Media m = mediaService.findByProductAndMediaName(mediaDto.getProductCode(), mediaDto.getMediaName());
+		if(mediaDto.getId() == null)
+			missingParameters.add("id");
+		handleMissingParameters();
+		Media m = mediaService.findById(mediaDto.getId());
 		if(m == null)
-			throw new EntityDoesNotExistsException(String.format(MEDIA_DOESNT_EXIT, mediaDto.getProductCode(), mediaDto.getMediaName()));
+			throw new EntityDoesNotExistsException(Media.class, mediaDto.getId());
 		if(!Strings.isEmpty(mediaDto.getServiceTemplateCode())) {
 			final ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(mediaDto.getServiceTemplateCode());
 			if(serviceTemplate == null)
 				throw new EntityDoesNotExistsException(ServiceTemplate.class, mediaDto.getServiceTemplateCode());
 			m.setServiceTemplate(serviceTemplate);
 		}
-
+		
+		if(!Strings.isEmpty(mediaDto.getProductCode())) {
+			final Product product = productService.findByCode(mediaDto.getProductCode());
+			if(product == null)
+				throw new EntityDoesNotExistsException(Product.class, mediaDto.getProductCode());
+			m.setProduct(product);
+		}
+		
 		if(!Strings.isEmpty(mediaDto.getOfferCode())) {
 			final OfferTemplate offerTemplate = offerTemplateService.findByCode(mediaDto.getOfferCode());
 			if(offerTemplate == null)
 				throw new EntityDoesNotExistsException(OfferTemplate.class, mediaDto.getOfferCode());
 			m.setOffer(offerTemplate);
 		}
+		if(!Strings.isEmpty(mediaDto.getMediaName()))
+			m.setMediaName(mediaDto.getMediaName());
 		if(!Strings.isEmpty(mediaDto.getLabel()))
 			m.setLabel(mediaDto.getLabel());
 		if(mediaDto.getMediaType() != null)
 			m.setMediaType(mediaDto.getMediaType());
-		m.setMain(mediaDto.isMain());
-		m.setMediaPath(mediaDto.getMediaPath());
+
+		if(!Strings.isEmpty(mediaDto.getAttributeCode())) {
+			var attribute = attributeService.findByCode(mediaDto.getAttributeCode());
+			if(attribute == null)
+				throw new EntityDoesNotExistsException(Attribute.class, mediaDto.getAttributeCode());
+			m.setAttribute(attribute);
+		}
+		if(mediaDto.isMain() != null)
+			m.setMain(mediaDto.isMain());
+		if(!Strings.isEmpty(mediaDto.getMediaPath()))
+			m.setMediaPath(mediaDto.getMediaPath());
 		mediaService.update(m);
-		return mediaDto;
+		return new MediaDto(m);
 	}
 	
 	public MediaDto findByCode(String productCode, String mediaName) {

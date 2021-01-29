@@ -582,12 +582,10 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 		this.commercialRules = commercialRules;
 	}
 
-	
-	
-	
 
-    
-	
-    
-
+    public boolean haveProduct(String productCode) {
+	    return offerComponents.stream()
+                .filter(off -> off.getProduct() != null)
+                .anyMatch(off -> off.getProduct().getCode().equals(productCode));
+    }
 }

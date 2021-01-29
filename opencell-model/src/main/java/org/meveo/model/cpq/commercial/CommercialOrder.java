@@ -19,6 +19,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
@@ -35,6 +36,7 @@ import org.meveo.model.order.Order;
  * @version 11.0
  *
  */
+@WorkflowedEntity
 @Entity
 @Table(name = "cpq_commercial_order")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
