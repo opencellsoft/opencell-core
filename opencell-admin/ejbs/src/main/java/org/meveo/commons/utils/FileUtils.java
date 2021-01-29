@@ -747,13 +747,13 @@ public final class FileUtils {
     }
 
     /**
-     * Count lines of file
+     * Count lines of file '\n'
      * 
      * @param file
      * @return
      * @throws IOException
      */
-    public static int countLinesNew(File file) throws IOException {
+    public static int countLines(File file) throws IOException {
         InputStream is = new BufferedInputStream(new FileInputStream(file));
         try {
             byte[] c = new byte[1024];

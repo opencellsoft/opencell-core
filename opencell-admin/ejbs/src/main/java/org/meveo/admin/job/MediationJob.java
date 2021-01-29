@@ -155,12 +155,13 @@ public class MediationJob extends Job {
                 log.debug("There is no file in {} with extension {} to by processed by Mediation {} job", inputDir, cdrExtensions, result.getJobInstance().getCode());
                 return;
             }
-
             for (File file : files) {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
-
+                
+                int countLines = FileUtils.countLines(file);
+                jobExecutionService.initCounterElementsRemaining(result, countLines);
                 String fileName = file.getName();
                 mediationJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, jobInstance.getParametres(), nbRuns, waitingMillis, readerCode, parserCode, mappingConf,recordName);
                 

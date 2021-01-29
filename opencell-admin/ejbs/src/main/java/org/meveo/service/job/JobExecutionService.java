@@ -21,6 +21,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
@@ -32,6 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.MetadataBuilder;
+import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.annotation.RegistryType;
@@ -402,14 +405,25 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     }
 
     /**
-     * Metric of the number of running threads of jobs
+     * Init job counters for multiple executions
      * 
-     * @param jobExecutionResultImpl
-     * @param value
-     * @param name the name of metric
+     * @param jobInstance
      */
-    public void counterRunningThreads(JobExecutionResultImpl jobExecutionResultImpl, Long value) {
-        counterInc(jobExecutionResultImpl, "running_threads", value);
+    public void iniJobCounters(JobInstance jobInstance) {
+        String[] counterNames = new String[] { "is_running", "running_threads", "elements_remaining", "number_of_ok", "number_of_war", "number_of_ko" };
+
+        Tag tgName = new Tag("name", jobInstance.getCode());
+
+        for (String name : counterNames) {
+
+            String fullName = name + "_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode();
+            Optional<Entry<MetricID, Counter>> result = registry.getCounters().entrySet().stream().filter(m -> m.getKey().compareTo(new MetricID(fullName, tgName)) == 0).findAny();
+
+            if (result.isPresent()) {
+                Counter counter = result.get().getValue();
+                counter.inc(counter.getCount() * -1);
+            }
+        }
     }
 
     /**
@@ -461,6 +475,17 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      */
     public void counterInc(JobExecutionResultImpl jobExecutionResultImpl, String name) {
         counterInc(jobExecutionResultImpl, name, null);
+    }
+
+    /**
+     * Metric of the number of running threads of jobs
+     * 
+     * @param jobExecutionResultImpl
+     * @param value
+     * @param name the name of metric
+     */
+    public void counterRunningThreads(JobExecutionResultImpl jobExecutionResultImpl, Long value) {
+        counterInc(jobExecutionResultImpl, "running_threads", value);
     }
 
     /**

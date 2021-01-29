@@ -180,6 +180,8 @@ public class MediationFileProcessing {
                 cdr.setRejectReason(e.getMessage());
                 createOrUpdateCdr(cdr);
 			}
+
+            jobExecutionService.decCounterElementsRemaining(result);
 		}
 		return new AsyncResult<String>("OK");
 	}
