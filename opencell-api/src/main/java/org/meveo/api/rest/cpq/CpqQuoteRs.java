@@ -35,11 +35,15 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.GetListAccountingArticlePricesResponseDto;
+import org.meveo.api.dto.cpq.GetPdfQuoteRequestDto;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
+import org.meveo.api.dto.invoice.GetPdfInvoiceRequestDto;
+import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
+import org.meveo.api.dto.response.cpq.GetPdfQuoteResponseDto;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteOfferDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
@@ -339,5 +343,13 @@ public interface CpqQuoteRs {
 	Response quoteQuotation(@Parameter(description = "quote code", required = false) @QueryParam("quoteCode") String quoteCode, 
 			@Parameter(description = "quote version number", required = false) @QueryParam("quoteVersion") int quoteVersion);
     
+    
+    
+    /**
+     * Finds an quote based on quote number and optionally an quote code and return it as pdf as byte []. 
+     */
+    @POST
+    @Path("/findPdfQuote")
+    GetPdfQuoteResponseDto findPdfQuote(GetPdfQuoteRequestDto pdfQuoteRequestDto);
     
 }

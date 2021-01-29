@@ -38,7 +38,7 @@ import org.meveo.model.quote.QuoteStatusEnum;
 @Entity
 @WorkflowedEntity
 @ObservableEntity
-@Table(name = "cpq_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@Table(name = "cpq_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code","quoteNumber" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_seq")})
 public class CpqQuote extends BusinessEntity {
@@ -68,6 +68,8 @@ public class CpqQuote extends BusinessEntity {
 		this.salesPersonName = copy.salesPersonName;
 		this.billableAccount = copy.billableAccount;
 		this.validity = copy.validity;
+		this.pdfFilename=copy.pdfFilename;
+		this.xmlFilename=copy.xmlFilename;
 	}
 	/**
 	 * seller
@@ -191,7 +193,21 @@ public class CpqQuote extends BusinessEntity {
 	@JoinColumn(name = "invoice_type_id", nullable = false)
 	@NotNull
 	private InvoiceType orderInvoiceType;
-    
+	
+	   /**
+	  * XML file name
+	  */
+	 @Column(name = "xml_filename", length = 255)
+	 @Size(max = 255)
+	 private String xmlFilename;
+	 
+	 /**
+	  * PDF file name
+	  */
+	@Column(name = "pdf_filename", length = 255)
+	@Size(max = 255)
+	private String pdfFilename;
+	    
 	/**
 	 * @return the seller
 	 */
@@ -424,6 +440,35 @@ public class CpqQuote extends BusinessEntity {
 	public void setOrderInvoiceType(InvoiceType orderInvoiceType) {
 		this.orderInvoiceType = orderInvoiceType;
 	}
+
+	/**
+	 * @return the xmlFilename
+	 */
+	public String getXmlFilename() {
+		return xmlFilename;
+	}
+
+	/**
+	 * @param xmlFilename the xmlFilename to set
+	 */
+	public void setXmlFilename(String xmlFilename) {
+		this.xmlFilename = xmlFilename;
+	}
+
+	/**
+	 * @return the pdfFilename
+	 */
+	public String getPdfFilename() {
+		return pdfFilename;
+	}
+
+	/**
+	 * @param pdfFilename the pdfFilename to set
+	 */
+	public void setPdfFilename(String pdfFilename) {
+		this.pdfFilename = pdfFilename;
+	}
+	
 	
 	
 }

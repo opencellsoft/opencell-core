@@ -62,6 +62,7 @@ import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -1084,6 +1085,30 @@ public class CpqQuoteApi extends BaseApi {
     	return quoteOfferService.findByQuoteVersion(quoteVersion).stream().map(qo -> {
 																	    		return new QuoteOfferDTO(qo);
 																	    	}).collect(Collectors.toList());
+    }
+    
+    public byte[] getPdfQuote(String quoteCode, String quoteNumber,boolean generatePdfIfNoExist)
+            throws MissingParameterException, EntityDoesNotExistsException, Exception {
+        log.debug("getPdfQuote  quoteNumber:{}", quoteNumber);
+
+        if (StringUtils.isBlank(quoteCode)) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(quoteNumber)) {
+            missingParameters.add("quoteNumber");
+        }
+        handleMissingParameters();
+        CpqQuote quote = cpqQuoteService.findByQuoteNumberAndCode(quoteNumber,quoteCode);
+        if (quote == null) {
+            throw new EntityDoesNotExistsException(CpqQuote.class, quoteNumber, "quoteNumber", quoteCode, "Code");
+        } 
+        if (!cpqQuoteService.isCpqQuotePdfExist(quote)) {
+            if (generatePdfIfNoExist) {
+            	cpqQuoteService.produceQuotePdf(quote);
+            }
+        }
+        return cpqQuoteService.getQuotePdf(quote);
+
     }
 
 }

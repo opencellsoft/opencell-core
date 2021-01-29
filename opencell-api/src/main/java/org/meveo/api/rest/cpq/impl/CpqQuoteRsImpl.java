@@ -23,18 +23,19 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.billing.CpqQuoteApi;
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.cpq.GetPdfQuoteRequestDto;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
+import org.meveo.api.dto.response.cpq.GetPdfQuoteResponseDto;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteOfferDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
@@ -42,10 +43,10 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.CpqQuoteRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.quote.QuoteStatusEnum;
-import org.meveo.model.quote.QuoteVersion;
-import org.meveo.model.cpq.CpqQuote;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -77,6 +78,22 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, getQuoteDtoResponse.getActionStatus());
 	        }
+	}
+	
+	
+	@Override
+	public GetPdfQuoteResponseDto findPdfQuote(GetPdfQuoteRequestDto pdfQuoteRequestDto) {
+		GetPdfQuoteResponseDto result = new GetPdfQuoteResponseDto();
+		String quoteNumber = pdfQuoteRequestDto.getQuoteNumber();  
+		try {
+			result.setPdfContent(cpqQuoteApi.getPdfQuote(pdfQuoteRequestDto.getCode(), quoteNumber,pdfQuoteRequestDto.getGeneratePdf()));
+			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+		log.info("findPdfQuote Response={}", result);
+		return result;
 	}
 
 
