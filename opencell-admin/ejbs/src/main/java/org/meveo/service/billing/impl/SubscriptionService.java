@@ -20,7 +20,15 @@ package org.meveo.service.billing.impl;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -40,7 +48,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.Auditable;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -888,6 +895,44 @@ public class SubscriptionService extends BusinessService<Subscription> {
             return new ArrayList<>();
         }
 
+
+    }
+    
+    /**
+     * Find matching or overlapping versions for a given subscription code and date range
+     * 
+     * @param code Subscription code
+     * @param from Date period start date
+     * @param to Date period end date
+     * @param entityId Identifier of an entity to ignore (as not to match itself in case of update)
+     * @return Matched subscriptions
+     */
+    @SuppressWarnings("unchecked")
+    public List<Subscription> getMatchingVersions(String code, Date from, Date to, Long entityId) {
+    	
+    	QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
+    	
+    	if(entityId == null) {
+    		qb.addSql("s.id <> -1000L");
+    	}else {
+    		qb.addSqlCriterion("s.id <> :id", "id", entityId);
+    	}
+    	
+    	qb.addSqlCriterion("s.code = :code","code", code);
+    	
+    	 if (from != null && to != null) {
+             qb.addSqlCriterionMultiple("((s.validity.from is null or s.validity.from<=:endDate) AND (:startDate<s.validity.to or s.validity.to is null))", "startDate", from, "endDate", to);
+         } else if (from != null) {
+             qb.addSqlCriterion("(:startDate<s.validity.to or s.validity.to is null)", "startDate", from);
+         } else if (to != null) {
+             qb.addSqlCriterion("(s.validity.from is null or s.validity.from<=:endDate)", "endDate", to);
+         }
+    	 
+    	 try {
+             return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+         } catch (NoResultException e) {
+             return null;
+         }
 
     }
 }
