@@ -1109,7 +1109,6 @@ public class CpqQuoteApi extends BaseApi {
             }
 
             serviceInstance.setSubscription(subscription);
-            serviceInstance.setServiceTemplate(serviceTemplateService.findByCode(productCode));
 
             /***** @TODO Validate and populate customFields***/
             /***** @TODO Create attributeInstances***/
@@ -1119,7 +1118,7 @@ public class CpqQuoteApi extends BaseApi {
                 attributeInstance.setServiceInstance(serviceInstance);
                 serviceInstance.addAttributeInstance(attributeInstance);
             }
-            serviceInstanceService.serviceInstanciation(serviceInstance, null, null, true);
+            serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, true);
 
             List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances();
             for (SubscriptionChargeInstance oneShotChargeInstance : oneShotCharges) {
