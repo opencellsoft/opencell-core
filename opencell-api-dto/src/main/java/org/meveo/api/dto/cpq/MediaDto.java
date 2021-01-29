@@ -22,7 +22,7 @@ public class MediaDto extends BaseEntityDto{
 	private Long id;
 	
 	private String offerCode;
-	
+
 	private String productCode;
 
 	private String serviceTemplateCode;
@@ -52,6 +52,8 @@ public class MediaDto extends BaseEntityDto{
 		this.main = media.getMain();
 		this.mediaPath = media.getMediaPath();
 		this.mediaType = media.getMediaType();
+		if(media.getAttribute() != null)
+			this.attributeCode = media.getAttribute().getCode();
 	}
 	
 	/**
