@@ -36,6 +36,7 @@ import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
@@ -48,6 +49,7 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.WriteOff;
 import org.meveo.model.payments.Refund;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.crm.impl.ProviderService;
 
 /**
  * MatchingCode service implementation.
@@ -66,6 +68,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     @Inject
     private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;
+    
+    @Inject
+	private ProviderService providerService;
 
     /**
      * Match account operations.
@@ -222,11 +227,16 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         matchingCode.setMatchingDate(new Date());
         matchingCode.setMatchingType(matchingTypeEnum);
         create(matchingCode);
-        if (!listPaymentScheduleInstanceItem.isEmpty()) {
-            for (PaymentScheduleInstanceItem paymentScheduleInstanceItem : listPaymentScheduleInstanceItem) {
-                paymentScheduleInstanceItemService.applyOneShotPS(paymentScheduleInstanceItem);
-            }
-        }
+        
+        Provider provider = providerService.getProvider();
+		Object cfValue = provider.getCfValue("cf_prv_apply_adv_payment_charge");
+		if (cfValue == null || cfValue != null && (boolean) cfValue) {
+			if (!listPaymentScheduleInstanceItem.isEmpty()) {
+				for (PaymentScheduleInstanceItem paymentScheduleInstanceItem : listPaymentScheduleInstanceItem) {
+					paymentScheduleInstanceItemService.applyOneShotPS(paymentScheduleInstanceItem);
+				}
+			}
+		}
 
     }
 
