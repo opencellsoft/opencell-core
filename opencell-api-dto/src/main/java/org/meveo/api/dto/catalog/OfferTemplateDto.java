@@ -84,7 +84,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
     /** The  attribute */
     @XmlElementWrapper(name = "attributes")
     @XmlElement(name = "attributes")
-    protected List<AttributeDTO> attributes;
+    protected List<AttributeDTO> attributes=new ArrayList<AttributeDTO>();
     
     /** The medias */
     @XmlElementWrapper(name = "medias")
