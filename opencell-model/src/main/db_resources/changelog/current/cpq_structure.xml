@@ -1453,6 +1453,7 @@
 	            </column>
 	            <column name="status_date" type="datetime" />
 	            <column name="send_date" type="datetime" />
+	            <column name="quote_date" type="datetime" />
 	            <column name="prestation_date_begin" type="datetime" />
 	            <column name="prestation_duration" type="int4" />
 	            <column name="opportunity_ref" type="varchar(50)" />

@@ -22,6 +22,9 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -60,6 +63,7 @@ import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
@@ -234,6 +238,7 @@ public class CpqQuoteApi extends BaseApi {
         cpqQuote.setCustomerRef(quote.getExternalId());
         cpqQuote.setValidity(quote.getValidity());
         cpqQuote.setDescription(quote.getDescription());
+        cpqQuote.setQuoteDate(quote.getQuoteDate());
 
         cpqQuote.setOrderInvoiceType(invoiceTypeService.getDefaultQuote());
         try {
@@ -343,7 +348,7 @@ public class CpqQuoteApi extends BaseApi {
                 quoteXmlDir.mkdirs();
             }
 
-            String fileName = quoteVersion.getQuote().getQuoteNumber() != null ? quoteVersion.getQuote().getQuoteNumber() : UUID.randomUUID().toString();
+            String fileName = generateFileName(quoteVersion.getQuote());
             String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
 
             Files.write(Paths.get(xmlFilename), quoteXml.getBytes(), StandardOpenOption.CREATE);
@@ -352,6 +357,14 @@ public class CpqQuoteApi extends BaseApi {
             throw new BusinessException(exp.getMessage());
         }
 
+    }
+
+    private String generateFileName(CpqQuote quote) {
+        String quoteDate = new SimpleDateFormat("ddMMyyyy").format(quote.getQuoteDate());
+        ParamBean paramBean = ParamBean.getInstance();
+        String prefix = paramBean.getProperty("quote.filename.prefix", "quote");
+        String identifier = quote.getQuoteNumber() != null ? quote.getQuoteNumber() : quote.getCode();
+        return String.format("%s_%s-%s", quoteDate, prefix, identifier);
     }
 
     public GetQuoteDtoResponse getQuote(String quoteCode) {
@@ -399,6 +412,7 @@ public class CpqQuoteApi extends BaseApi {
         quote.setValidity(quoteDto.getValidity());
         quote.setStatus(quoteDto.getStatus());
         quote.setDescription(quoteDto.getDescription());
+        quote.setQuoteDate(quote.getQuoteDate());
         if(!Strings.isEmpty(quoteDto.getBillableAccountCode())) {
             var billableAccount = billingAccountService.findByCode(quoteDto.getBillableAccountCode());
             if(billableAccount == null)

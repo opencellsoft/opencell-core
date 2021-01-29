@@ -112,6 +112,13 @@ public class CpqQuote extends BusinessEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "send_date")
 	private Date sendDate;
+
+	/**
+	 * sendDate
+	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "quote_date")
+	private Date quoteDate;
 	/**
 	 * prestationDateBegin
 	 */
@@ -424,6 +431,12 @@ public class CpqQuote extends BusinessEntity {
 	public void setOrderInvoiceType(InvoiceType orderInvoiceType) {
 		this.orderInvoiceType = orderInvoiceType;
 	}
-	
-	
+
+	public Date getQuoteDate() {
+		return quoteDate == null ? new Date() : quoteDate;
+	}
+
+	public void setQuoteDate(Date quoteDate) {
+		this.quoteDate = quoteDate;
+	}
 }
