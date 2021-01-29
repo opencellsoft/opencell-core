@@ -6,6 +6,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
@@ -99,7 +100,6 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
             queryParamsMap = uriInfo.getQueryParameters();
-//            Class entityClass = GenericHelper.getEntityClass(entityClassName);
             GenericRequestMapper genericRequestMapper = new GenericRequestMapper( this.getClass(), PersistenceServiceHelper.getPersistenceService() );
             paginationConfig = genericRequestMapper.mapTo( GenericPagingAndFilteringUtils.constructImmutableGenericPagingAndFiltering(queryParamsMap) );
 
@@ -127,10 +127,19 @@ System.out.println( "GET ALL ENTITIES 2 : " + redirectURI.toString() );
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( pathGetAnEntity ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( pathGetAnEntity );
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
-            entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + entityClassName + "Code=" + entityCode);
+
+            // special handle for customerCategory
+            if ( pathIBaseRS.equals("/account/customer/category") ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + FORWARD_SLASH + entityCode);
+System.out.println( "GET A CUSTOMER CATEGORY : " + redirectURI.toString() );
+            }
+            else {
+                entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + entityClassName + "Code=" + entityCode);
 System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
+            }
             return httpClient.target( redirectURI ).request().get();
         }
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( getPath ) ) {
@@ -206,7 +215,7 @@ System.out.println( "POST redirectURI CREATE AN ENTITY : " + redirectURI.toStrin
                         + API_REST + pathIBaseRS
                         + FORWARD_SLASH + segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).getPath()
                         + FORWARD_SLASH + ENABLE_SERVICE + queryParams.substring( 0, queryParams.length() - 1 ) );
-                System.out.println( "POST redirectURI ENABLE A SERVICE : " + redirectURI.toString() );
+System.out.println( "POST redirectURI ENABLE A SERVICE : " + redirectURI.toString() );
             }
             // Handle the generic special endpoint: disable a service
             else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(DISABLE_SERVICE) ) {
@@ -214,7 +223,7 @@ System.out.println( "POST redirectURI CREATE AN ENTITY : " + redirectURI.toStrin
                         + API_REST + pathIBaseRS
                         + FORWARD_SLASH + segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).getPath()
                         + FORWARD_SLASH + DISABLE_SERVICE + queryParams.substring( 0, queryParams.length() - 1 ) );
-                System.out.println( "POST redirectURI DISABLE A SERVICE : " + redirectURI.toString() );
+System.out.println( "POST redirectURI DISABLE A SERVICE : " + redirectURI.toString() );
             }
 
             return httpClient.target( redirectURI )
@@ -292,6 +301,9 @@ System.out.println( "PUT redirectURI UPDATING SERVICES : " + redirectURI.toStrin
             }
             else if ( aDto instanceof AccountHierarchyDto) {
                 ((AccountHierarchyDto) aDto).setCustomerCode(entityCode);
+            }
+            else if ( aDto instanceof AccessDto) {
+                ((AccessDto) aDto).setCode(entityCode);
             }
 
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )

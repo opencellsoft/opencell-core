@@ -128,6 +128,10 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/account/customer" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customers",
                                     ((Path) anAnnotation).value() );
+
+                            // Processing for requests related to customerCategory
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customers/categories",
+                                    ((Path) anAnnotation).value() + "/category" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/customerAccount" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customerAccounts",
