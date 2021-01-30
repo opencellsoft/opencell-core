@@ -23,8 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -70,7 +68,6 @@ import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -94,6 +91,7 @@ import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -102,7 +100,6 @@ import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.TerminationReasonService;
-import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -121,6 +118,9 @@ import org.meveo.service.cpq.XmlQuoteFormatter;
 import org.meveo.service.cpq.order.QuotePriceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.quote.QuoteOfferService;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInterface;
 
 /**
  * @author Rachid.AITYAAZZA
@@ -188,7 +188,7 @@ public class CpqQuoteApi extends BaseApi {
     QuotePriceService quotePriceService;
 
     @Inject
-    private UserAccountService userAccountService;
+    private ScriptInstanceService scriptInstanceService;
 
     @Inject
     private QuoteMapper quoteMapper;
@@ -335,24 +335,47 @@ public class CpqQuoteApi extends BaseApi {
 
     public void generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf) {
         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
+        ParamBean paramBean = ParamBean.getInstance();
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 
         try {
-            String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion));
+        	String sellerCode=quoteVersion.getQuote().getSeller()!=null?quoteVersion.getQuote().getSeller().getCode():null;
+        	
+        	String quoteScriptCode = paramBean.getProperty("seller."+sellerCode+".quoteScript","");
+        	if(!StringUtils.isBlank(quoteScriptCode)) {
+        		 ScriptInstance scriptInstance=scriptInstanceService.findByCode(quoteScriptCode);
+        		 if(scriptInstance!=null) {
+        			 String quoteXmlScript = scriptInstance.getCode();
+                     ScriptInterface script = scriptInstanceService.getScriptInstance(quoteXmlScript);
+                     Map<String, Object> methodContext = new HashMap<String, Object>();
+                     methodContext.put("cpqQuote", quoteVersion);
+                     methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+                     methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+                     methodContext.put("XMLQuoteCreator", this);
+                     if (script != null) {
+                         script.execute(methodContext);
+                     }
+        		 }
+        		
+        	}else {
+        		  String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion));
 
-            String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
+                  String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
 
 
-            File quoteXmlDir = new File(meveoDir + "quotes" + File.separator + "xml");
-            if (!quoteXmlDir.exists()) {
-                quoteXmlDir.mkdirs();
-            }
+                  File quoteXmlDir = new File(meveoDir + "quotes" + File.separator + "xml");
+                  if (!quoteXmlDir.exists()) {
+                      quoteXmlDir.mkdirs();
+                  }
 
-            String fileName = generateFileName(quoteVersion.getQuote());
-            String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
+                  String fileName = generateFileName(quoteVersion.getQuote());
+                  String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
 
-            Files.write(Paths.get(xmlFilename), quoteXml.getBytes(), StandardOpenOption.CREATE);
+                  Files.write(Paths.get(xmlFilename), quoteXml.getBytes(), StandardOpenOption.CREATE);
+        	}
+        	
+          
         } catch (Exception exp) {
             log.error("Technical error", exp);
             throw new BusinessException(exp.getMessage());
