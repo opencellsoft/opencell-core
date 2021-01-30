@@ -130,9 +130,7 @@ public abstract class Job {
         auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
         auditOrigin.setAuditOriginName(jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
         // add counter metrics
-        Metadata metadata = new MetadataBuilder()
-                .withName("is_running_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode())
-                .build();
+        Metadata metadata = new MetadataBuilder().withName("is_running_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode()).build();
         // counter that return 1 when job is running
         Tag tgName = new Tag("name", jobInstance.getCode());
         Counter counter = registry.counter(metadata, tgName);
@@ -161,13 +159,19 @@ public abstract class Job {
 
                 if (jobCompleted != null && jobExecutionService.isJobRunningOnThis(jobInstance)) {
                     jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
-
-                    if (!jobCompleted) {
-                        execute(jobInstance, null);
-
-                    } else if (jobInstance.getFollowingJob() != null) {
-                        MeveoUser lastCurrentUser = currentUser.unProxy();
-                        jobExecutionService.executeNextJob(this, jobInstance, lastCurrentUser);
+                    try {
+                        if (!jobCompleted) {
+                            execute(jobInstance, null);
+                        } else if (jobInstance.getFollowingJob() != null) {
+                            MeveoUser lastCurrentUser = currentUser.unProxy();
+                            jobExecutionService.executeNextJob(this, jobInstance, lastCurrentUser);
+                        }
+                    } catch (Exception e) {
+                        if (!jobInstance.isStopOnError()) {
+                            MeveoUser lastCurrentUser = currentUser.unProxy();
+                            jobExecutionService.executeNextJob(this, jobInstance, lastCurrentUser);
+                        }
+                        throw new BusinessException(e);
                     }
                 }
 
