@@ -1499,9 +1499,7 @@
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote" />
 
 	        <addForeignKeyConstraint baseColumnNames="cpq_quote_version_id" baseTableName="cpq_quote_lot" constraintName="fk_cpq_quote_lot_cpq_quote_version_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" />
-	            
-	            <addUniqueConstraint columnNames="code,quote_number" tableName="cpq_quote" constraintName="uniquekey_code_quote_number" deferrable="false" initiallyDeferred="false" disabled="false"/>
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version" /> 
 
 	    </changeSet>
 

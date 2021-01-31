@@ -339,19 +339,16 @@ public class CpqQuoteApi extends BaseApi {
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 
         try {
-            String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion));
-
-            String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
-
-
+        	CpqQuote cpqQuote=quoteVersion.getQuote();
+            String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion)); 
+            String meveoDir = paramBeanFactory.getChrootDir() + File.separator; 
             File quoteXmlDir = new File(meveoDir + "quotes" + File.separator + "xml");
             if (!quoteXmlDir.exists()) {
                 quoteXmlDir.mkdirs();
             }
-
-            String fileName = generateFileName(quoteVersion.getQuote());
+            String fileName = cpqQuoteService.generateFileName(cpqQuote);
+            cpqQuote.setXmlFilename(fileName);
             String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
-
             Files.write(Paths.get(xmlFilename), quoteXml.getBytes(), StandardOpenOption.CREATE);
         } catch (Exception exp) {
             log.error("Technical error", exp);
@@ -359,14 +356,7 @@ public class CpqQuoteApi extends BaseApi {
         }
 
     }
-
-    private String generateFileName(CpqQuote quote) {
-        String quoteDate = new SimpleDateFormat("ddMMyyyy").format(quote.getQuoteDate());
-        ParamBean paramBean = ParamBean.getInstance();
-        String prefix = paramBean.getProperty("quote.filename.prefix", "quote");
-        String identifier = quote.getQuoteNumber() != null ? quote.getQuoteNumber() : quote.getCode();
-        return String.format("%s_%s-%s", quoteDate, prefix, identifier);
-    }
+ 
 
     public GetQuoteDtoResponse getQuote(String quoteCode) {
         if(Strings.isEmpty(quoteCode)) {
@@ -1151,14 +1141,11 @@ public class CpqQuoteApi extends BaseApi {
 
         if (StringUtils.isBlank(quoteCode)) {
             missingParameters.add("code");
-        }
-        if (StringUtils.isBlank(quoteNumber)) {
-            missingParameters.add("quoteNumber");
-        }
+        } 
         handleMissingParameters();
-        CpqQuote quote = cpqQuoteService.findByQuoteNumberAndCode(quoteNumber,quoteCode);
+        CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
         if (quote == null) {
-            throw new EntityDoesNotExistsException(CpqQuote.class, quoteNumber, "quoteNumber", quoteCode, "Code");
+            throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode, "Code");
         } 
         if (!cpqQuoteService.isCpqQuotePdfExist(quote)) {
             if (generatePdfIfNoExist) {
