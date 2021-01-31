@@ -157,7 +157,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		
 		product.getQuoteArticleLines().forEach(quoteArticleLine -> {
 			OrderArticleLine orderArticleLine = processOrderArticleLine(quoteArticleLine, commercialOrder, orderLot);
-			processOrderPrice(orderArticleLine, commercialOrder, product.getQuoteVersion());
+			processOrderPrice(orderArticleLine, commercialOrder, product.getQuoteOffre().getQuoteVersion());
 		});
 		
 		
@@ -195,6 +195,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		articleLine.setOrderCustomerService(orderCustomerService);
 		articleLine.setQuantity(quoteArticleLine.getQuantity());
 		articleLine.setQuantityService(quoteArticleLine.getServiceQuantity());
+		articleLine.setAccountingArticle(quoteArticleLine.getAccountingArticle());
 		
 		orderArticleLineService.create(articleLine);
 		return articleLine;
