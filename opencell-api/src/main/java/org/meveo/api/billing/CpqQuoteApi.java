@@ -340,9 +340,7 @@ public class CpqQuoteApi extends BaseApi {
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 
         try {
-            CpqQuote cpqQuote=quoteVersion.getQuote();
-            String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion)); 
-            String meveoDir = paramBeanFactory.getChrootDir() + File.separator; 
+            CpqQuote cpqQuote=quoteVersion.getQuote(); 
         	String sellerCode=quoteVersion.getQuote().getSeller()!=null?quoteVersion.getQuote().getSeller().getCode():null;
         	
         	String quoteScriptCode = paramBean.getProperty("seller."+sellerCode+".quoteScript","");
@@ -363,10 +361,7 @@ public class CpqQuoteApi extends BaseApi {
         		
         	}else {
         		  String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion));
-
                   String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
-
-
                   File quoteXmlDir = new File(meveoDir + "quotes" + File.separator + "xml");
                   if (!quoteXmlDir.exists()) {
                       quoteXmlDir.mkdirs();
