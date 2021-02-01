@@ -80,7 +80,7 @@ public class JobInstance extends EnableBusinessCFEntity {
     /**
      * Job category
      */
-    @Convert(converter=JobCategoryEnumCoverter.class)
+    @Convert(converter = JobCategoryEnumCoverter.class)
     @Column(name = "job_category")
     private JobCategoryEnum jobCategoryEnum;
 
@@ -130,6 +130,13 @@ public class JobInstance extends EnableBusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "verbose_report")
     private boolean verboseReport = true;
+
+    /**
+     * Whether a verbose error log will be kept.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "stop_on_error")
+    private boolean stopOnError = false;
 
     /** Code of provider, that job belongs to. */
     @Transient
@@ -308,15 +315,15 @@ public class JobInstance extends EnableBusinessCFEntity {
         } else if (!(obj instanceof JobInstance)) {
             return false;
         }
-        
-        JobInstance other = (JobInstance)obj;  
-        
+
+        JobInstance other = (JobInstance) obj;
+
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
-        
+
         return false;
-        
+
     }
 
     /**
@@ -428,5 +435,19 @@ public class JobInstance extends EnableBusinessCFEntity {
      */
     public void setVerboseReport(boolean verboseReport) {
         this.verboseReport = verboseReport;
+    }
+
+    /**
+     * @return the stopOnError
+     */
+    public boolean isStopOnError() {
+        return stopOnError;
+    }
+
+    /**
+     * @param stopOnError the stopOnError to set
+     */
+    public void setStopOnError(boolean stopOnError) {
+        this.stopOnError = stopOnError;
     }
 }

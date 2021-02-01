@@ -76,9 +76,7 @@ public class SepaRejectedTransactionsJob extends Job {
     private DDRequestBuilderFactory ddRequestBuilderFactory;
 
 
-    @JpaAmpNewTx
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         try {
             DDRequestBuilder ddRequestBuilder = null;
@@ -131,7 +129,27 @@ public class SepaRejectedTransactionsJob extends Job {
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
+
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
+
+        CustomFieldTemplate nbRuns = new CustomFieldTemplate();
+        nbRuns.setCode("RejectSepaJob_nbRuns");
+        nbRuns.setAppliesTo("JobInstance_SepaRejectedTransactionsJob");
+        nbRuns.setActive(true);
+        nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
+        nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+        nbRuns.setValueRequired(false);
+        result.put("nbRuns", nbRuns);
+
+        CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
+        waitingMillis.setCode("RejectSepaJob_waitingMillis");
+        waitingMillis.setAppliesTo("JobInstance_SepaRejectedTransactionsJob");
+        waitingMillis.setActive(true);
+        waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
+        waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
+        waitingMillis.setValueRequired(false);
+        result.put("waitingMillis", waitingMillis);
+
         CustomFieldTemplate inputDirectoryCF = new CustomFieldTemplate();
         inputDirectoryCF.setCode("RejectSepaJob_inputDir");
         inputDirectoryCF.setAppliesTo("JobInstance_SepaRejectedTransactionsJob");

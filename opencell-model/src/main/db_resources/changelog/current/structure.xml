@@ -3274,5 +3274,11 @@ END $$;]]>
 		<dropTable tableName="rating_edr_other_tmp"/>
     </changeSet>
     
+    <changeSet id="#5904_20210129" author="AmineBENAICHA">
+    	<addColumn tableName="meveo_job_instance">
+    		<column name="stop_on_error" type="${type.boolean}" 
+    			defaultValueNumeric="0" />
+		</addColumn>
+    </changeSet>
 
 </databaseChangeLog>

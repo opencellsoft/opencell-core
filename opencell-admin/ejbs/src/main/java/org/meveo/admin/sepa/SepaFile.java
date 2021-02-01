@@ -207,7 +207,6 @@ public class SepaFile extends AbstractDDRequestBuilder {
 				try {
 					if (REJECT_STS_CODE.equals(txInfAndSts.getTxSts())) {
 						ddRejectFileInfos.getListInvoiceRefsRejected().put(new Long(txInfAndSts.getOrgnlEndToEndId()), REJECT_STS_CODE);
-						ddRejectFileInfos.addItemOk();
 					}
 				} catch (Exception e) {
 					ddRejectFileInfos.addItemKo();
