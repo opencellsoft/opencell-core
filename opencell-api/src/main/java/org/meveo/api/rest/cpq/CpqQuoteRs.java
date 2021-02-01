@@ -338,22 +338,34 @@ public interface CpqQuoteRs {
     tags = { "Quotation" },
     description ="",
     responses = {
-            @ApiResponse(responseCode="200", description = "quotation is succefully done!",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class)))
+            @ApiResponse(responseCode="200", description = "quotation is succefully done!",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
     })
 	Response quoteQuotation(@Parameter(description = "quote code", required = false) @QueryParam("quoteCode") String quoteCode, 
 			@Parameter(description = "quote version number", required = false) @QueryParam("quoteVersion") int quoteVersion);
 
     @GET
     @Path("/generateQuoteXml")
-    Response generateQuoteXml(@QueryParam("quoteCode") String quoteCode, @QueryParam("currentVersion") int currentVersion, @QueryParam("generatePdf") boolean generatePdf);
+    @Operation(summary = "Generate the quote XML and optionnaly quote PDF if generatePdf is True ",
+    tags = { "Quotation" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quote XML is succefully generated!",content = @Content(schema = @Schema(implementation = GetPdfQuoteResponseDto.class)))
+    })
+    GetPdfQuoteResponseDto generateQuoteXml(@QueryParam("quoteCode") String quoteCode, @QueryParam("currentVersion") int currentVersion, @QueryParam("generatePdf") boolean generatePdf);
     
     
     
     /**
-     * Finds an quote based on quote number and optionally an quote code and return it as pdf as byte []. 
+     * get the quote PDF file. 
      */
-    @POST
-    @Path("/findPdfQuote")
-    GetPdfQuoteResponseDto findPdfQuote(GetPdfQuoteRequestDto pdfQuoteRequestDto);
+    @GET
+    @Path("/getQuotePDF")
+    @Operation(summary = "Get the quote PDF. if generatePdf is true, the PDF is generated and override existing one if already exists",
+    tags = { "Quotation" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quote PDF is succefully returned!",content = @Content(schema = @Schema(implementation = GetPdfQuoteResponseDto.class)))
+    })
+    GetPdfQuoteResponseDto getQuotePDF(@QueryParam("quoteCode") String quoteCode, @QueryParam("currentVersion") int currentVersion, @QueryParam("generatePdf") boolean generatePdf);;
     
 }

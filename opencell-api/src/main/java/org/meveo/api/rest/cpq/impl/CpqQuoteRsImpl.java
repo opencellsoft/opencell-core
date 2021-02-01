@@ -26,7 +26,6 @@ import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.tools.ant.taskdefs.Get;
 import org.meveo.api.billing.CpqQuoteApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -44,7 +43,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.CpqQuoteRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.quote.QuoteStatusEnum;
@@ -83,11 +81,10 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	
 	
 	@Override
-	public GetPdfQuoteResponseDto findPdfQuote(GetPdfQuoteRequestDto pdfQuoteRequestDto) {
+	public GetPdfQuoteResponseDto getQuotePDF(String quoteCode, int currentVersion, boolean generatePdf) {
 		GetPdfQuoteResponseDto result = new GetPdfQuoteResponseDto();
-		String quoteNumber = pdfQuoteRequestDto.getQuoteNumber();  
 		try {
-			result.setPdfContent(cpqQuoteApi.getPdfQuote(pdfQuoteRequestDto.getCode(), quoteNumber,pdfQuoteRequestDto.getGeneratePdf()));
+			result.setPdfContent(cpqQuoteApi.generateQuotePDF(quoteCode, currentVersion,generatePdf));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {
@@ -252,13 +249,17 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	}
 
 	@Override
-	public Response generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf) {
-		try{
-			cpqQuoteApi.generateQuoteXml(quoteCode, currentVersion, generatePdf);
-			return Response.ok(new GetQuoteVersionDtoResponse().getActionStatus()).build();
-		}catch(MeveoApiException e){
-			return errorResponse(e, new GetQuoteVersionDtoResponse().getActionStatus());
+	public GetPdfQuoteResponseDto generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf) {
+		GetPdfQuoteResponseDto result = new GetPdfQuoteResponseDto();
+		try {
+			result.setPdfContent(cpqQuoteApi.generateQuoteXml(quoteCode, currentVersion, generatePdf));
+			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
 		}
+		log.info("findPdfQuote Response={}", result);
+		return result;
 	}
 
 

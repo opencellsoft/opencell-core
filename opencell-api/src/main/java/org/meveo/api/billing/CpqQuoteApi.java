@@ -333,9 +333,10 @@ public class CpqQuoteApi extends BaseApi {
 			}
 		}
 
-    public void generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf) {
+    public byte[] generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf) {
         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
         ParamBean paramBean = ParamBean.getInstance();
+        byte[] xmlContent=null;
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 
@@ -357,8 +358,9 @@ public class CpqQuoteApi extends BaseApi {
                      if (script != null) {
                          script.execute(methodContext);
                      }
+                     xmlContent= (byte[]) methodContext.get(Script.RESULT_VALUE);
         		 }
-        		
+        		 
         	}else {
         		  String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion));
                   String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
@@ -366,11 +368,15 @@ public class CpqQuoteApi extends BaseApi {
                   if (!quoteXmlDir.exists()) {
                       quoteXmlDir.mkdirs();
                   }
- 
+                  xmlContent=quoteXml.getBytes();
             String fileName = cpqQuoteService.generateFileName(cpqQuote);
             cpqQuote.setXmlFilename(fileName);
             String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
                   Files.write(Paths.get(xmlFilename), quoteXml.getBytes(), StandardOpenOption.CREATE);
+        	}
+        	
+        	if(generatePdf) {
+        		return generateQuotePDF(quoteCode, currentVersion, true);
         	}
         	
           
@@ -378,7 +384,8 @@ public class CpqQuoteApi extends BaseApi {
             log.error("Technical error", exp);
             throw new BusinessException(exp.getMessage());
         }
-
+        
+        return xmlContent;
     }
  
 
@@ -1124,8 +1131,6 @@ public class CpqQuoteApi extends BaseApi {
 
             serviceInstance.setSubscription(subscription);
 
-            /***** @TODO Validate and populate customFields***/
-            /***** @TODO Create attributeInstances***/
             AttributeInstance attributeInstance = null;
             for (QuoteAttribute quoteAttribute : quoteProduct.getQuoteAttributes()) {
                 attributeInstance = new AttributeInstance(quoteAttribute);
@@ -1159,9 +1164,9 @@ public class CpqQuoteApi extends BaseApi {
         }).collect(Collectors.toList());
     }
     
-    public byte[] getPdfQuote(String quoteCode, String quoteNumber,boolean generatePdfIfNoExist)
+    public byte[] generateQuotePDF(String quoteCode, int currentVersion,boolean generatePdfIfNotExist)
             throws MissingParameterException, EntityDoesNotExistsException, Exception {
-        log.debug("getPdfQuote  quoteNumber:{}", quoteNumber);
+        log.debug("getPdfQuote  quoteCode:{}", quoteCode);
 
         if (StringUtils.isBlank(quoteCode)) {
             missingParameters.add("code");
@@ -1172,7 +1177,7 @@ public class CpqQuoteApi extends BaseApi {
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode, "Code");
         } 
         if (!cpqQuoteService.isCpqQuotePdfExist(quote)) {
-            if (generatePdfIfNoExist) {
+            if (generatePdfIfNotExist) {
             	cpqQuoteService.produceQuotePdf(quote);
             }
         }

@@ -40,7 +40,7 @@ public class GetPdfQuoteRequestDto extends BaseEntityDto {
     private String quoteNumber;
      
     
-    /** The quote number. */
+    /** The quote code. */
     private String code;
     
     /** The generate pdf. */
