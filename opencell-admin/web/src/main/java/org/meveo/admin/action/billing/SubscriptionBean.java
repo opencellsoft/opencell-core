@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -51,6 +52,7 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -78,7 +80,6 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.mediation.Access;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
@@ -271,6 +272,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             initTerminableServices(entity.getServiceInstances());
             selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
 
+        }
+        
+        if (entity.getValidity() == null) {
+            entity.setValidity(new DatePeriod());
         }
 
         return entity;
@@ -1336,5 +1341,31 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();
+    }
+    
+    /**
+     * 
+     * @param context
+     * @param components
+     * @param values
+     * @return
+     */
+    public boolean validateUniqueVersion(FacesContext context, List<UIInput> components, List<Object> values) {
+
+        if (values.size() != 3) {
+            throw new RuntimeException("Please bind validator to three components in the following order: subscription code, dateFrom, dateTo");
+        }
+
+        String code = (String) values.get(0);
+        Date from = (Date) values.get(1);
+        Date to = (Date) values.get(2);
+
+        List<Subscription> matchedVersions = subscriptionService.getMatchingVersions(code, from, to, entity.getId());
+
+        if (!matchedVersions.isEmpty()) {
+            return false;
+        }
+
+        return true;
     }
 }
