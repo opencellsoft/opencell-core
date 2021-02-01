@@ -4072,6 +4072,17 @@ END $$;]]>
 				end
 			where (id=-14 or code='AO_Job')
     	</sql>
+    </changeSet>        
+    
+    <changeSet id="#5909_20210118" author="AndriusKarpavicius">
+        <sql>CREATE INDEX audit_field_changes_history_index on ${db.schema.adapted}audit_field_changes_history (lower(entity_class), entity_id)</sql>
     </changeSet>
     
+    <changeSet id="#5904_20210129" author="AmineBENAICHA">
+    	<addColumn tableName="meveo_job_instance">
+    		<column name="stop_on_error" type="${type.boolean}" 
+    			defaultValueNumeric="0" />
+		</addColumn>
+    </changeSet>
+
 </databaseChangeLog>

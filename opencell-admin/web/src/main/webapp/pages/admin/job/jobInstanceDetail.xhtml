@@ -54,6 +54,7 @@
 
                         <hftl:formField label="#{messages['jobInstance.parametres']}" field="parametres" />
                         <hftl:formField label="#{messages['jobInstance.verboseReport']}" field="verboseReport" />
+                        <hftl:formField label="#{messages['jobInstance.stopOnError']}" field="stopOnError" />
                         <hftl:decorateFormField fieldId="timerFollowingJob" label="#{messages['timer.followingJob']}">
                             <p:selectOneMenu id="timerFollowingJob" value="#{jobInstanceBean.entity.followingJob}" rendered="#{jobInstanceBean.edit}">
                                 <hftl:objectConverter />
