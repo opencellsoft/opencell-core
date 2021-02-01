@@ -11,6 +11,7 @@ import javax.ws.rs.BadRequestException;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleFamily;
 import org.meveo.model.billing.AccountingCode;
@@ -51,6 +52,11 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         if(taxClass == null)
             throw new BadRequestException("No tax class found with id: " + accountingArticle.getTaxClass().getId());
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(accountingArticle.getInvoiceSubCategory().getId());
+
+        AccountingArticle accou = accountingArticleService.findByCode(accountingArticle.getCode());
+        if(accou != null){
+            throw new EntityAlreadyExistsException(AccountingArticle.class, accountingArticle.getCode());
+        }
         if(invoiceSubCategory == null)
             throw new BadRequestException("No invoice sub category found with id: " + accountingArticle.getInvoiceSubCategory().getId());
         accountingArticle.setTaxClass(taxClass);
@@ -133,37 +139,53 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
     }
 
     @Override
-    public Optional<AccountingArticle> delete(Long id) {
-       Optional<AccountingArticle> accountingArticle = findById(id);
-       if(accountingArticle.isPresent()) {
-    	   try {
-    		   accountingArticleService.remove(accountingArticle.get());
-           } catch (Exception e) {
-               throw new BadRequestException(e);
-           }
-       }
-       return accountingArticle;
+    public Optional<AccountingArticle> findByCode(String code) {
+        AccountingArticle accountingArticle = accountingArticleService.findByCode(code);
+        if(accountingArticle == null)
+            throw new BadRequestException("No Account Article class found with code: " + code);
+        return Optional.ofNullable(accountingArticle);
     }
-    
+
+    public List<AccountingArticle> findByAccountingCode(String code) {
+        List<AccountingArticle> accountingArticles = accountingArticleService.findByAccountingCode(code);
+        if(accountingArticles.isEmpty())
+            throw new BadRequestException("No Account Article class found with code: " + code);
+        return accountingArticles;
+    }
+
+    public List<AccountingArticle> deleteByAccountingCode(String accountingCode) {
+        List<AccountingArticle> accountingArticles = accountingArticleService.findByAccountingCode(accountingCode);
+        if(accountingArticles.isEmpty())
+            throw new BadRequestException("No accounting articles existe with code: " + accountingCode);
+        accountingArticles.stream()
+                .forEach(a -> accountingArticleService.remove(a));
+        return accountingArticles;
+    }
+
     @Override
-    public Optional<AccountingArticle> delete(String code) {
-    	Optional<AccountingArticle> accountingArticle = findByCode(code);
+    public Optional<AccountingArticle> delete(Long id) {
+        Optional<AccountingArticle> accountingArticle = findById(id);
         if(accountingArticle.isPresent()) {
-     	   try {
-     		   accountingArticleService.remove(accountingArticle.get());
+            try {
+                accountingArticleService.remove(accountingArticle.get());
             } catch (Exception e) {
                 throw new BadRequestException(e);
             }
         }
         return accountingArticle;
     }
-    
+
     @Override
-    public Optional<AccountingArticle> findByCode(String code) {
-    	AccountingArticle accountingArticle = accountingArticleService.findByCode(code);
-    	if(accountingArticle == null)
-    		throw new BadRequestException("No Account Article class found with code: " + code);
-    	return Optional.ofNullable(accountingArticle);
+    public Optional<AccountingArticle> delete(String code) {
+        Optional<AccountingArticle> accountingArticle = findByCode(code);
+        if(accountingArticle.isPresent()) {
+            try {
+                accountingArticleService.remove(accountingArticle.get());
+            } catch (Exception e) {
+                throw new BadRequestException(e);
+            }
+        }
+        return accountingArticle;
     }
 
 
