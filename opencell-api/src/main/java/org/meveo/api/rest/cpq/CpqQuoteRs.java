@@ -366,6 +366,25 @@ public interface CpqQuoteRs {
     responses = {
             @ApiResponse(responseCode="200", description = "quote PDF is succefully returned!",content = @Content(schema = @Schema(implementation = GetPdfQuoteResponseDto.class)))
     })
-    GetPdfQuoteResponseDto getQuotePDF(@QueryParam("quoteCode") String quoteCode, @QueryParam("currentVersion") int currentVersion, @QueryParam("generatePdf") boolean generatePdf);;
+    GetPdfQuoteResponseDto getQuotePDF(@QueryParam("quoteCode") String quoteCode, @QueryParam("currentVersion") int currentVersion, @QueryParam("generatePdf") boolean generatePdf);
+    
+
+    /**
+     * Get details of a single quote
+     * 
+     * @param id Product code
+     * @param info Http request context
+     * @return quote response
+     */
+    @GET
+    @Path("/quoteItem")
+    @Operation(summary = "Get f quote offer by quote id",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "The quote is succeffully retrieved",content = @Content(schema = @Schema(implementation = GetQuoteOfferDtoResponse.class))),
+            @ApiResponse(responseCode="404", description = "The quote offer doesn't exist",content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+    })
+    public Response findQuoteItem(@Parameter(description = "quote offer id", required = true) @QueryParam("quoteItemId") Long quoteItemId,	@Context UriInfo info);
     
 }

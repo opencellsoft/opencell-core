@@ -83,7 +83,7 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	private void init(QuoteOffer quoteOffer) {
 		quoteOfferId=quoteOffer.getId();
 		quoteCode=quoteOffer.getQuoteVersion().getQuote().getCode();
-		quoteVersion=quoteOffer.getQuoteVersion().getVersion();
+		quoteVersion=quoteOffer.getQuoteVersion().getQuoteVersion();
 		quoteLotCode=quoteOffer.getQuoteLot()!=null?quoteOffer.getQuoteLot().getCode():null;
 		offerCode=quoteOffer.getOfferTemplate().getCode();
 		billableAccountCode=quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount().getCode():null;
