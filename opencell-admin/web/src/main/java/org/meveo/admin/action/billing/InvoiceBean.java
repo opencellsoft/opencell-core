@@ -468,18 +468,19 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         }
     }
 
-    public boolean isXmlInvoiceAlreadyGenerated() {
-        if (entity.getXmlFilename() == null) {
+    public boolean isXmlGenerationPossible() {
+        if (entity.getXmlFilename() == null || InvoiceStatusEnum.CANCELED.equals(entity.getStatus())) {
             return false;
-
         } else if (xmlGenerated == null) {
             xmlGenerated = invoiceService.isInvoiceXmlExist(entity);
         }
         return xmlGenerated;
     }
 
-    public boolean isPdfInvoiceAlreadyGenerated() {
-
+    public boolean isPdfGenerationPossible() {
+        if (InvoiceStatusEnum.CANCELED.equals(entity.getStatus())) {
+            return false;
+        }
         if (!pdfGenerated.containsKey(entity.getId())) {
             pdfGenerated.put(entity.getId(), invoiceService.isInvoicePdfExist(entity));
         }
@@ -498,9 +499,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public void excludeBillingAccounts(BillingRun billingrun) {
         try {
-            log.debug("excludeBillingAccounts getSelectedEntities=" + getSelectedEntities().size());
-            if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
-                for (Invoice invoice : getSelectedEntities()) {
+            log.debug("excludeBillingAccounts getSelectedEntities=" + this.getSelectedEntities().size());
+            if (this.getSelectedEntities() != null && this.getSelectedEntities().size() > 0) {
+                for (Invoice invoice : this.getSelectedEntities()) {
                     invoiceService.cancelInvoice(invoice);
                     billingrun.getInvoices().remove(invoice);
                 }
@@ -913,8 +914,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     
     public void cancelInvoices() {
         try {
-            if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
-                for (Invoice invoice : getSelectedEntities()) {
+            if (this.getSelectedEntities() != null && this.getSelectedEntities().size() > 0) {
+                for (Invoice invoice : this.getSelectedEntities()) {
                     cancelInvoice(invoice);
                 }
                 messages.info(new BundleKey("messages", "info.invoicing.cancelled"));
@@ -930,8 +931,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     
     public void validateInvoices() {
         try {
-            if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
-                for (Invoice invoice : getSelectedEntities()) {
+            if (this.getSelectedEntities() != null && this.getSelectedEntities().size() > 0) {
+                for (Invoice invoice : this.getSelectedEntities()) {
                     validateInvoice(invoice);
                 }
                 messages.info(new BundleKey("messages", "info.invoicing.validated"));
@@ -947,8 +948,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     
     public void moveInvoices(BillingRun billingRun) {
         try {
-            if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
-            	invoiceService.moveInvoices(getSelectedEntities(), billingRun.getId());
+            if (this.getSelectedEntities() != null && this.getSelectedEntities().size() > 0) {
+            	invoiceService.moveInvoices(this.getSelectedEntities(), billingRun.getId());
                 messages.info(new BundleKey("messages", "info.invoicing.move"));
             } else {
                 messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));
@@ -958,33 +959,59 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             messages.error(new BundleKey("messages", "error.execution"));
         }
     }
-
-	public boolean areSelectedInvoicesInvalidated() {
-        return !CollectionUtils.isEmpty(getSelectedEntities()) && getSelectedEntities().stream().filter(i->(InvoiceStatusEnum.REJECTED.equals(i.getStatus())||InvoiceStatusEnum.SUSPECT.equals(i.getStatus()))).count()==0;
-    }
 	
-    public boolean canChangeInvoiceStatus(InvoiceStatusEnum newStatus) {
-    	return canChangeInvoiceStatus(entity, newStatus);
-    }
-    public boolean canChangeInvoicesStatus(InvoiceStatusEnum newStatus) {
-    	if(getSelectedEntities() == null) {
-    		return true;
+    
+    /**
+	 * 
+	 */
+	public boolean canCancelInvoice(Invoice invoice) {
+		if(invoice==null) {
+			return true;
+		}
+		final InvoiceStatusEnum status = invoice.getStatus();
+		return status==InvoiceStatusEnum.SUSPECT || status==InvoiceStatusEnum.REJECTED;
+	}
+	
+	/**
+	 * 
+	 */
+	public boolean canValidateInvoice(Invoice invoice) {
+		if(invoice==null) {
+			return true;
+		}
+		final InvoiceStatusEnum status = invoice.getStatus();
+		return status==InvoiceStatusEnum.SUSPECT || status==InvoiceStatusEnum.REJECTED;
+	}
+	
+    /**
+	 * 
+	 */
+	public boolean canCancelInvoices() {
+		if(CollectionUtils.isEmpty(this.getSelectedEntities())) {
+    		return false;
     	}
-    	for(Invoice invoice: getSelectedEntities()) {
-    		if(!canChangeInvoiceStatus(invoice, newStatus)) {
+    	for(Invoice invoice: this.getSelectedEntities()) {
+    		if(!canCancelInvoice(invoice)) {
     			return false;
     		}
     	}
     	return true;
-    }
-
-	/**
-	 * @param invoice
-	 * @param newStatus
-	 * @return
-	 */
-	public boolean canChangeInvoiceStatus(Invoice invoice, InvoiceStatusEnum newStatus) {
-		final InvoiceStatusEnum status = invoice.getStatus();
-		return status!=null && newStatus.getPreviousStats().contains(status);
 	}
+	
+	/**
+	 * 
+	 */
+	public boolean canValidateInvoices() {
+		if(CollectionUtils.isEmpty(this.getSelectedEntities())) {
+    		return false;
+    	}
+    	for(Invoice invoice: this.getSelectedEntities()) {
+    		if(!canValidateInvoice(invoice)) {
+    			return false;
+    		}
+    	}
+    	return true;
+	}
+
+
 }

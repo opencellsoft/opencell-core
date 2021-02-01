@@ -36,7 +36,6 @@ import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSequence;
-import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.crm.Customer;
@@ -374,9 +373,6 @@ public class ServiceSingleton {
      * @throws BusinessException General business exception
      */
     private Invoice assignInvoiceNumber(Invoice invoice, boolean isVirtual) throws BusinessException {
-		if(invoice.getStatus()!=InvoiceStatusEnum.VALIDATED) {
-			throw new BusinessException("cannot assign invoice number to invoice with status: "+invoice.getStatus()); 
-		}
         InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
 
         String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
