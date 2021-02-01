@@ -65,32 +65,50 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
                 );
     }
 
-    @Override
+	@Override
 	public Response find(String accountingArticleCode, Request request) {
 		return accountingArticleApiService.findByCode(accountingArticleCode)
-					.map(accounting -> {
-						EntityTag etag = new EntityTag(Integer.toString(accounting.hashCode()));
-	                    CacheControl cc = new CacheControl();
-	                    cc.setMaxAge(1000);
-	                    Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
-	                    if (builder != null) {
-	                        builder.cacheControl(cc);
-	                        return builder.build();
-	                    }
-	                    return Response.ok().cacheControl(cc).tag(etag)
-	                            .entity(toResourceOrderWithLink(mapper.toResource(accounting))).build();
-					}).orElseThrow(NotFoundException::new);
+				.map(accounting -> {
+					EntityTag etag = new EntityTag(Integer.toString(accounting.hashCode()));
+					CacheControl cc = new CacheControl();
+					cc.setMaxAge(1000);
+					Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
+					if (builder != null) {
+						builder.cacheControl(cc);
+						return builder.build();
+					}
+					return Response.ok().cacheControl(cc).tag(etag)
+							.entity(toResourceOrderWithLink(mapper.toResource(accounting))).build();
+				}).orElseThrow(NotFoundException::new);
 	}
 
-    @Override
+	public Response findByAccountingCode(String accountingCode, Request request) {
+		List<AccountingArticle> accountingArticles = accountingArticleApiService.findByAccountingCode(accountingCode);
+		return mapToAccountingArticlesResponse(null, null, null, request, accountingArticles);
+	}
+
+	@Override
 	public Response delete(String accountingArticleCode, Request request) {
+		ActionStatus result = new ActionStatus();
+		result.setJson(null);
+		try {
+			accountingArticleApiService.delete(accountingArticleCode)
+					.map(accountingArticle -> Response.ok().entity(toResourceOrderWithLink(mapper.toResource(accountingArticle))).build())
+					.orElse(Response.status(Response.Status.NOT_FOUND).entity(result).build());
+			return Response.ok(result).build();
+		}catch(BadRequestException e) {
+			result.setStatus(ActionStatusEnum.FAIL);
+			result.setMessage(e.getMessage());
+			return Response.status(Response.Status.NOT_FOUND).entity(result).build();
+		}
+	}
+
+	public Response deleteByAccountingCode(String accountingArticleCode, Request request) {
     	ActionStatus result = new ActionStatus();
     	result.setJson(null);
     	try {
-    		accountingArticleApiService.delete(accountingArticleCode)
-											.map(accountingArticle -> Response.ok().entity(toResourceOrderWithLink(mapper.toResource(accountingArticle))).build())
-												.orElse(Response.status(Response.Status.NOT_FOUND).entity(result).build());
-            return Response.ok(result).build();
+			List<AccountingArticle> accountingArticles = accountingArticleApiService.deleteByAccountingCode(accountingArticleCode);
+			return mapToAccountingArticlesResponse(null, null, null, request, accountingArticles);
     	}catch(BadRequestException e) {
     		result.setStatus(ActionStatusEnum.FAIL);
     		result.setMessage(e.getMessage());
@@ -100,23 +118,27 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 
 	public Response list(Long offset, Long limit, String sort, String orderBy, Map<String, Object> filter, Request request) {
         List<AccountingArticle> accoutnigArticleEntities = accountingArticleApiService.list(offset, limit, sort, orderBy, filter);
-        EntityTag etag = new EntityTag(Integer.toString(accoutnigArticleEntities.hashCode()));
-        CacheControl cc = new CacheControl();
-        cc.setMaxAge(1000);
-        Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
-        if (builder != null) {
-            builder.cacheControl(cc);
-            return builder.build();
-        }
-        ImmutableAccountingArticle[] accountingList = accoutnigArticleEntities
-                .stream()
-                .map(accoutingArticle -> toResourceOrderWithLink(mapper.toResource(accoutingArticle)))
-                .toArray(ImmutableAccountingArticle[]::new);
-        Long orderCount = accountingArticleApiService.getCount(filter);
-        AccountingArticles articles = ImmutableAccountingArticles.builder().addData(accountingList).offset(offset).limit(limit).total(orderCount)
-                .build().withLinks(new LinkGenerator.PaginationLinkGenerator(AccountingArticleResource.class)
-                        .offset(offset).limit(limit).total(orderCount).build());
-        return Response.ok().cacheControl(cc).tag(etag).entity(articles).build();
+		return mapToAccountingArticlesResponse(offset, limit, filter, request, accoutnigArticleEntities);
+	}
+
+	private Response mapToAccountingArticlesResponse(Long offset, Long limit, Map<String, Object> filter, Request request, List<AccountingArticle> accoutnigArticleEntities) {
+		EntityTag etag = new EntityTag(Integer.toString(accoutnigArticleEntities.hashCode()));
+		CacheControl cc = new CacheControl();
+		cc.setMaxAge(1000);
+		Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
+		if (builder != null) {
+			builder.cacheControl(cc);
+			return builder.build();
+		}
+		ImmutableAccountingArticle[] accountingList = accoutnigArticleEntities
+				.stream()
+				.map(accoutingArticle -> toResourceOrderWithLink(mapper.toResource(accoutingArticle)))
+				.toArray(ImmutableAccountingArticle[]::new);
+		Long orderCount = accountingArticleApiService.getCount(filter);
+		AccountingArticles articles = ImmutableAccountingArticles.builder().addData(accountingList).offset(offset).limit(limit).total(orderCount)
+				.build().withLinks(new LinkGenerator.PaginationLinkGenerator(AccountingArticleResource.class)
+						.offset(offset).limit(limit).total(orderCount).build());
+		return Response.ok().cacheControl(cc).tag(etag).entity(articles).build();
 	}
 
 	@Override

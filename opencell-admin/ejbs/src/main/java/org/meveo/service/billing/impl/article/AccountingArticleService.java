@@ -71,4 +71,10 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		}
 		return  result != null ? Optional.of(result) : Optional.empty();
 	}
+
+	public List<AccountingArticle> findByAccountingCode(String accountingCode) {
+		return getEntityManager().createNamedQuery("AccountingArticle.findByAccountingCode", AccountingArticle.class)
+				.setParameter("accountingCode", accountingCode)
+				.getResultList();
+	}
 }

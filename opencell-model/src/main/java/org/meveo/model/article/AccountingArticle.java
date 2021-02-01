@@ -13,6 +13,8 @@ import org.meveo.model.tax.TaxClass;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.HashMap;
@@ -25,6 +27,7 @@ import static javax.persistence.FetchType.LAZY;
 @Table(name = "billing_accounting_article")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_accounting_article_seq"), })
+@NamedQuery(name = "AccountingArticle.findByAccountingCode", query = "select a from AccountingArticle a where a.accountingCode.code = :accountingCode")
 public class AccountingArticle extends EnableBusinessCFEntity {
 
     /**
@@ -44,7 +47,7 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @JoinColumn(name = "article_family_id")
     private ArticleFamily articleFamily;
 
-    @OneToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
 
