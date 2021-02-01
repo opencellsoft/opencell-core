@@ -312,9 +312,14 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         }
         log.info("remove matching code ....");
         remove(matchingCode);
-        if (paymentScheduleInstanceItem != null) {
-            paymentScheduleInstanceItemService.applyOneShotRejectPS(paymentScheduleInstanceItem);
-        }
+        
+        Provider provider = providerService.getProvider();
+		Object cfValue = provider.getCfValue("cf_prv_apply_adv_payment_charge");
+		if (cfValue == null || cfValue != null && (boolean) cfValue) {
+			if (paymentScheduleInstanceItem != null) {
+	            paymentScheduleInstanceItemService.applyOneShotRejectPS(paymentScheduleInstanceItem);
+	        }
+		}
         log.info("successfully end cancelMatching!");
     }
 
