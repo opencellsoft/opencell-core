@@ -99,7 +99,7 @@ public class AttributeDTO extends EnableBusinessDto {
     /** The medias */
     @XmlElementWrapper(name = "medias")
     @XmlElement(name = "medias")
-    protected List<MediaDto> medias;
+    protected List<MediaDto> medias = new ArrayList<MediaDto>();
     
     
     /** The tags */
