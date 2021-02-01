@@ -8,6 +8,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
 import org.meveo.apiv2.generic.core.GenericHelper;
@@ -15,6 +16,7 @@ import org.meveo.apiv2.generic.core.GenericRequestMapper;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 import org.meveo.util.Inflector;
 
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.RequestScoped;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.client.Entity;
@@ -65,6 +67,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private String entityClassName;
     private StringBuilder queryParams;
     private static PaginationConfiguration paginationConfig;
+    private static PagingAndFiltering pagingAndFiltering;
     private MultivaluedMap<String, String> queryParamsMap;
 
     @Context
@@ -80,13 +83,17 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         return paginationConfig;
     }
 
+    public static PagingAndFiltering getPagingAndFiltering(){
+        return pagingAndFiltering;
+    }
+
     /*
      * This request is used to retrieve all entities, or also a particular entity
      */
     @Override
     public Response getAllEntitiesOrGetAnEntity() throws URISyntaxException {
         String getPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
-        
+
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
         StringBuilder suffixPathBuilder = new StringBuilder();
         for (int i = 0; i < segmentsOfPathAPIv2.size() - 1; i++ )
@@ -102,6 +109,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             queryParamsMap = uriInfo.getQueryParameters();
             GenericRequestMapper genericRequestMapper = new GenericRequestMapper( this.getClass(), PersistenceServiceHelper.getPersistenceService() );
             paginationConfig = genericRequestMapper.mapTo( GenericPagingAndFilteringUtils.constructImmutableGenericPagingAndFiltering(queryParamsMap) );
+            pagingAndFiltering = GenericPagingAndFilteringUtils.constructPagingAndFiltering(queryParamsMap);
 
             if ( ! queryParamsMap.isEmpty() ) {
                 queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
@@ -122,7 +130,7 @@ System.out.println( "GET ALL ENTITIES 1 : " + redirectURI.toString() );
                         + METHOD_GET_ALL );
 System.out.println( "GET ALL ENTITIES 2 : " + redirectURI.toString() );
             }
-            return httpClient.target( redirectURI ).request().get();
+            return Response.temporaryRedirect( redirectURI ).build();
         }
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( pathGetAnEntity ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( pathGetAnEntity );
@@ -140,7 +148,7 @@ System.out.println( "GET A CUSTOMER CATEGORY : " + redirectURI.toString() );
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + entityClassName + "Code=" + entityCode);
 System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
             }
-            return httpClient.target( redirectURI ).request().get();
+            return Response.temporaryRedirect( redirectURI ).build();
         }
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( getPath ) ) {
             // Handle the special endpoints: get an access point based on a subscriptionCode and an accessCode
@@ -176,7 +184,7 @@ System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
                     + API_REST + pathIBaseRS + queryParams.substring( 0, queryParams.length() - 1 ) );
 
 System.out.println( "GET redirectURI IN MAP_REGEX : " + redirectURI.toString() );
-            return httpClient.target( redirectURI ).request().get();
+            return Response.temporaryRedirect( redirectURI ).build();
         }
 
         return Response.status(Response.Status.NOT_FOUND).build();
@@ -197,18 +205,17 @@ System.out.println( "GET redirectURI IN MAP_REGEX : " + redirectURI.toString() )
 
         if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( postPath ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( postPath );
-            
+
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_CREATE );
 System.out.println( "POST redirectURI CREATE AN ENTITY : " + redirectURI.toString() );
 
-            return httpClient.target( redirectURI )
-                    .request(MediaType.APPLICATION_JSON)
-                    .post( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
+            return Response.temporaryRedirect( redirectURI )
+                    .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
         }
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( postPath ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( postPath );
-            
+
             // Handle the generic special endpoint: enable a service
             if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(ENABLE_SERVICE) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
@@ -226,9 +233,8 @@ System.out.println( "POST redirectURI ENABLE A SERVICE : " + redirectURI.toStrin
 System.out.println( "POST redirectURI DISABLE A SERVICE : " + redirectURI.toString() );
             }
 
-            return httpClient.target( redirectURI )
-                    .request(MediaType.APPLICATION_JSON)
-                    .post( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
+            return Response.temporaryRedirect( redirectURI )
+                    .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
         }
 
         return Response.status(Response.Status.NOT_FOUND).build();
@@ -253,9 +259,8 @@ System.out.println( "POST redirectURI DISABLE A SERVICE : " + redirectURI.toStri
                         + API_REST + pathIBaseRS );
 
 System.out.println( "PUT redirectURI ACTIVATION : " + redirectURI.toString() );
-                return httpClient.target( redirectURI )
-                        .request(MediaType.APPLICATION_JSON)
-                        .put( Entity.json(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+                return Response.temporaryRedirect( redirectURI )
+                        .entity( Entity.json(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) ).build();
             }
             // Handle the special endpoint: suspension of a subscription
             else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(SUSPENSION_SERVICE) ) {
@@ -263,9 +268,8 @@ System.out.println( "PUT redirectURI ACTIVATION : " + redirectURI.toString() );
                         + API_REST + pathIBaseRS );
 
 System.out.println( "PUT redirectURI SUSPENSION : " + redirectURI.toString() );
-                return httpClient.target( redirectURI )
-                        .request(MediaType.APPLICATION_JSON)
-                        .put( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
+                return Response.temporaryRedirect( redirectURI )
+                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
             }
             // Handle the special endpoint: termination of a subscription
             else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(TERMINATION_SERVICE) ) {
@@ -273,9 +277,8 @@ System.out.println( "PUT redirectURI SUSPENSION : " + redirectURI.toString() );
                         + API_REST + pathIBaseRS );
 
 System.out.println( "PUT redirectURI TERMINATION : " + redirectURI.toString() );
-                return httpClient.target( redirectURI )
-                        .request(MediaType.APPLICATION_JSON)
-                        .put( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
+                return Response.temporaryRedirect( redirectURI )
+                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
             }
             // Handle the special endpoint: update existing services of a subscription
             else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(UPDATING_SERVICE) ) {
@@ -283,9 +286,8 @@ System.out.println( "PUT redirectURI TERMINATION : " + redirectURI.toString() );
                         + API_REST + pathIBaseRS );
 
 System.out.println( "PUT redirectURI UPDATING SERVICES : " + redirectURI.toString() );
-                return httpClient.target( redirectURI )
-                        .request(MediaType.APPLICATION_JSON)
-                        .put( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
+                return Response.temporaryRedirect( redirectURI )
+                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
             }
         }
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( pathUpdateAnEntity ) ) {
@@ -310,9 +312,9 @@ System.out.println( "PUT redirectURI UPDATING SERVICES : " + redirectURI.toStrin
                     + API_REST + pathIBaseRS + METHOD_UPDATE );
 System.out.println( "PUT redirectURI UPDATE AN ENTITY : " + redirectURI.toString() );
 
-            return httpClient.target( redirectURI )
-                    .request(MediaType.APPLICATION_JSON)
-                    .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
+            String updatedEntity = httpClient.target( redirectURI ).request().put( Entity.entity( aDto, MediaType.APPLICATION_JSON ), String.class );
+
+            return Response.ok( updatedEntity ).build();
         }
 
         return Response.status(Response.Status.NOT_FOUND).build();
@@ -333,8 +335,13 @@ System.out.println( "PUT redirectURI UPDATE AN ENTITY : " + redirectURI.toString
                     + API_REST + pathIBaseRS + METHOD_DELETE
                     + entityCode);
 System.out.println( "DELETE redirectURI : " + redirectURI.toString() );
-            return httpClient.target( redirectURI ).request().delete();
+            return Response.temporaryRedirect( redirectURI ).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+    @PreDestroy
+    public void destroy() {
+        this.httpClient.close();
     }
 }
