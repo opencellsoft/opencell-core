@@ -44,7 +44,9 @@ import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
+import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.WriteOff;
 import org.meveo.model.payments.Refund;
@@ -230,7 +232,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         
 		if (!listPaymentScheduleInstanceItem.isEmpty()) {
 			for (PaymentScheduleInstanceItem paymentScheduleInstanceItem : listPaymentScheduleInstanceItem) {
-				paymentScheduleInstanceItemService.applyOneShotPS(paymentScheduleInstanceItem);
+				if(paymentScheduleInstanceItemService.isApplyAdvPaymentCharge(paymentScheduleInstanceItem)) {
+					paymentScheduleInstanceItemService.applyOneShotPS(paymentScheduleInstanceItem);
+				}
 			}
 		}
 
@@ -308,9 +312,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         }
         log.info("remove matching code ....");
         remove(matchingCode);
-        if (paymentScheduleInstanceItem != null) {
-            paymentScheduleInstanceItemService.applyOneShotRejectPS(paymentScheduleInstanceItem);
-        }
+		if (paymentScheduleInstanceItem != null && paymentScheduleInstanceItemService.isApplyAdvPaymentCharge(paymentScheduleInstanceItem)) {
+			paymentScheduleInstanceItemService.applyOneShotRejectPS(paymentScheduleInstanceItem);
+		}
         log.info("successfully end cancelMatching!");
     }
 

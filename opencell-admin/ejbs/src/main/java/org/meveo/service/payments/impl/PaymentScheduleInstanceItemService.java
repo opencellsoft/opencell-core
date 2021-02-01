@@ -59,6 +59,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.PaymentScheduleStatusEnum;
+import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.PersistenceService;
@@ -109,6 +110,12 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
     
     @Inject
     private TaxClassService taxClassService;
+    
+    @Inject
+    private PaymentScheduleInstanceService paymentScheduleInstanceService;
+    
+    @Inject
+    private PaymentScheduleTemplateService paymentScheduleTemplateService;
 
     /** The Constant HUNDRED. */
     private static final BigDecimal HUNDRED = new BigDecimal("100");
@@ -431,4 +438,20 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             return null;
         }
     }
+    
+	public boolean isApplyAdvPaymentCharge(PaymentScheduleInstanceItem paymentScheduleInstanceItem) {
+		boolean applyAdvPaymentCharge = true;
+		if (paymentScheduleInstanceItem != null) {
+			PaymentScheduleInstance paymentScheduleInstance = paymentScheduleInstanceItem.getPaymentScheduleInstance();
+			if (paymentScheduleInstance != null) {
+				paymentScheduleInstance = paymentScheduleInstanceService.retrieveIfNotManaged(paymentScheduleInstance);
+				PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleInstance != null ? paymentScheduleInstance.getPaymentScheduleTemplate() : null;
+				if (paymentScheduleTemplate != null) {
+					paymentScheduleTemplate = paymentScheduleTemplateService.retrieveIfNotManaged(paymentScheduleTemplate);
+					applyAdvPaymentCharge = paymentScheduleTemplate != null && paymentScheduleTemplate.getApplyAdvPaymentCharge() != null ? paymentScheduleTemplate.getApplyAdvPaymentCharge() : Boolean.TRUE;
+				}
+			}
+		}
+		return applyAdvPaymentCharge;
+	}
 }

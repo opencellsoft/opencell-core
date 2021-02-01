@@ -177,6 +177,13 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity implements I
     @Type(type = "numeric_boolean")
     @Column(name = "use_banking_calender")
     private Boolean useBankingCalendar = Boolean.TRUE;
+    
+    /**
+     * Apply Adv Payment Charge
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "apply_adv_payment_charge")
+	private Boolean applyAdvPaymentCharge = Boolean.TRUE;
 
     /**
      * Gets the payment label.
@@ -483,4 +490,23 @@ public class PaymentScheduleTemplate extends EnableBusinessCFEntity implements I
     public void setUseBankingCalendar(Boolean useBankingCalendar) {
         this.useBankingCalendar = useBankingCalendar;
     }
+
+	/**
+	 * Apply Adv Payment Charge.
+	 * 
+	 * @return
+	 */
+	public Boolean getApplyAdvPaymentCharge() {
+		return applyAdvPaymentCharge;
+	}
+
+	/**
+	 * Set Apply Adv Payment Charge.
+	 * 
+	 * @param applyAdvPaymentCharge
+	 */
+	public void setApplyAdvPaymentCharge(Boolean applyAdvPaymentCharge) {
+		this.applyAdvPaymentCharge = applyAdvPaymentCharge;
+	}
+	
 }

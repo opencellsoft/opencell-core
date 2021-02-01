@@ -232,6 +232,7 @@ public class PaymentScheduleApi extends BaseApi {
         paymentScheduleTemplate.setPaymentDayInMonthEl(paymentScheduleTemplateDto.getPaymentDayInMonthEl());
         paymentScheduleTemplate.setScriptInstance(scriptInstance);
         paymentScheduleTemplate.setUseBankingCalendar(paymentScheduleTemplateDto.getUseBankingCalendar());
+        paymentScheduleTemplate.setApplyAdvPaymentCharge(paymentScheduleTemplateDto.getApplyAdvPaymentCharge());
         // populate customFields
         try {
             populateCustomFields(paymentScheduleTemplateDto.getCustomFields(), paymentScheduleTemplate, true);
@@ -365,6 +366,10 @@ public class PaymentScheduleApi extends BaseApi {
         if (paymentScheduleTemplateDto.getUseBankingCalendar() != null) {
             paymentScheduleTemplate.setUseBankingCalendar(paymentScheduleTemplateDto.getUseBankingCalendar());
         }
+        if (paymentScheduleTemplateDto.getApplyAdvPaymentCharge() != null) {
+            paymentScheduleTemplate.setApplyAdvPaymentCharge(paymentScheduleTemplateDto.getApplyAdvPaymentCharge());
+        }
+        
         // populate customFields
         try {
             populateCustomFields(paymentScheduleTemplateDto.getCustomFields(), paymentScheduleTemplate, false);

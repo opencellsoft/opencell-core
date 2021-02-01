@@ -117,6 +117,11 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
      * Use banking calendar.
      */
     private Boolean useBankingCalendar;
+    
+    /**
+     * Apply Adv Payment Charge
+     */
+    private Boolean applyAdvPaymentCharge = Boolean.TRUE;
 
     /**
      * Instantiates a new payment schedule template dto.
@@ -154,6 +159,7 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
         this.paymentDayInMonthEl = paymentScheduleTemplate.getPaymentDayInMonthEl();
         this.scriptInstanceCode = (paymentScheduleTemplate.getScriptInstance() != null) ? paymentScheduleTemplate.getScriptInstance().getCode() : null;
         this.useBankingCalendar = paymentScheduleTemplate.getUseBankingCalendar();
+        this.applyAdvPaymentCharge = paymentScheduleTemplate.getApplyAdvPaymentCharge();
     }
 
     /**
@@ -479,4 +485,21 @@ public class PaymentScheduleTemplateDto extends BusinessEntityDto {
     public void setUseBankingCalendar(Boolean useBankingCalendar) {
         this.useBankingCalendar = useBankingCalendar;
     }
+
+	/**
+	 * @return Boolean
+	 */
+	public Boolean getApplyAdvPaymentCharge() {
+		return applyAdvPaymentCharge;
+	}
+
+	/**
+	 * Sets the Apply Adv Payment Charge flag
+	 * @param applyAdvPaymentCharge
+	 */
+	public void setApplyAdvPaymentCharge(Boolean applyAdvPaymentCharge) {
+		this.applyAdvPaymentCharge = applyAdvPaymentCharge;
+	}
+    
+    
 }
