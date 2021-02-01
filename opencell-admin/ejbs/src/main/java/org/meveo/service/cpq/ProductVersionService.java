@@ -112,7 +112,7 @@ public class ProductVersionService extends
     			services.getGroupedAttributes();
 			}
     	}
-    	var serviceTemplateList = productVersion.getAttributes();
+    	var serviceTemplateList = new ArrayList<>(productVersion.getAttributes());
     	var tagList = new ArrayList<>(productVersion.getTags());
 
     	detach(productVersion);
