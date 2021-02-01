@@ -274,5 +274,17 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 		       return errorResponse(e, result.getActionStatus());
         }
 	}
+
+
+	@Override
+	public Response findQuoteItem(Long quoteItemId, UriInfo info) {
+		GetQuoteOfferDtoResponse result = new GetQuoteOfferDtoResponse();
+		try {
+			result.setQuoteOfferDto(cpqQuoteApi.findById(quoteItemId));
+	          return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+        }
+	}
    
 }

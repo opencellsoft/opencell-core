@@ -1164,6 +1164,13 @@ public class CpqQuoteApi extends BaseApi {
         }).collect(Collectors.toList());
     }
     
+    public QuoteOfferDTO findById(Long quoteItemId) {
+    	QuoteOffer offer = quoteOfferService.findById(quoteItemId);
+    	if(offer == null)
+    		throw new EntityDoesNotExistsException(QuoteOffer.class, quoteItemId);
+    	return new QuoteOfferDTO(offer);
+    }
+    
     public byte[] generateQuotePDF(String quoteCode, int currentVersion,boolean generatePdfIfNotExist)
             throws MissingParameterException, EntityDoesNotExistsException, Exception {
         log.debug("getPdfQuote  quoteCode:{}", quoteCode);
