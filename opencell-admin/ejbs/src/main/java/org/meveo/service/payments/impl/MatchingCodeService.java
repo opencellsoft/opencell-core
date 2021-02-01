@@ -228,13 +228,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         matchingCode.setMatchingType(matchingTypeEnum);
         create(matchingCode);
         
-        Provider provider = providerService.getProvider();
-		Object cfValue = provider.getCfValue("cf_prv_apply_adv_payment_charge");
-		if (cfValue == null || cfValue != null && (boolean) cfValue) {
-			if (!listPaymentScheduleInstanceItem.isEmpty()) {
-				for (PaymentScheduleInstanceItem paymentScheduleInstanceItem : listPaymentScheduleInstanceItem) {
-					paymentScheduleInstanceItemService.applyOneShotPS(paymentScheduleInstanceItem);
-				}
+		if (!listPaymentScheduleInstanceItem.isEmpty()) {
+			for (PaymentScheduleInstanceItem paymentScheduleInstanceItem : listPaymentScheduleInstanceItem) {
+				paymentScheduleInstanceItemService.applyOneShotPS(paymentScheduleInstanceItem);
 			}
 		}
 
@@ -312,14 +308,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         }
         log.info("remove matching code ....");
         remove(matchingCode);
-        
-        Provider provider = providerService.getProvider();
-		Object cfValue = provider.getCfValue("cf_prv_apply_adv_payment_charge");
-		if (cfValue == null || cfValue != null && (boolean) cfValue) {
-			if (paymentScheduleInstanceItem != null) {
-	            paymentScheduleInstanceItemService.applyOneShotRejectPS(paymentScheduleInstanceItem);
-	        }
-		}
+        if (paymentScheduleInstanceItem != null) {
+            paymentScheduleInstanceItemService.applyOneShotRejectPS(paymentScheduleInstanceItem);
+        }
         log.info("successfully end cancelMatching!");
     }
 
