@@ -3527,6 +3527,11 @@ END $$;]]>
         </addColumn>
 
     </changeSet>
-
+    
+    <changeSet id="#5922_20210201" author="M.ELYOUSSOUFI">
+        <addColumn tableName="ar_payment_schedule_tmpl">
+            <column name="apply_adv_payment_charge" type="${type.boolean}" defaultValueNumeric="1"/>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
