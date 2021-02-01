@@ -29,7 +29,7 @@ public enum InvoiceStatusEnum {
     /**
      * invoice entity has been created but incomplete
      */
-    NEW(1, "invoiceStatusEnum.new", null),
+    NEW(1, "invoiceStatusEnum.new", new InvoiceStatusEnum[]{null}),
 
     /**
      * invoice has been marked as suspect by automatic controls (this status doesn’t block automatic generation)
@@ -54,7 +54,7 @@ public enum InvoiceStatusEnum {
     /**
      * invoice is validated and cannot be edited anymore (this a final status)
      */
-    VALIDATED(6, "invoiceStatusEnum.validated", new InvoiceStatusEnum[] {NEW, DRAFT});
+    VALIDATED(6, "invoiceStatusEnum.validated", new InvoiceStatusEnum[] {null, NEW, DRAFT});
 
     
     private Integer id;
@@ -64,7 +64,7 @@ public enum InvoiceStatusEnum {
     InvoiceStatusEnum(Integer id, String label, InvoiceStatusEnum[] previousStats) {
         this.id = id;
         this.label = label;
-        this.previousStats=previousStats==null?null:Arrays.asList(previousStats);
+        this.previousStats=Arrays.asList(previousStats);
     }
 
     public Integer getId() {

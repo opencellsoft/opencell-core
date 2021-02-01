@@ -189,7 +189,8 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.debug("moveInvoice request={}", billingRunId);
         try {
-            invoicingApi.moveInvoice(billingRunId, invoiceValidationDto.getInvoices());
+            Long newBR = invoicingApi.moveInvoice(billingRunId, invoiceValidationDto.getInvoices());
+            result.setMessage(newBR + "");
         } catch (Exception e) {
             processException(e, result);
         }

@@ -55,6 +55,7 @@ import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.RatedTransaction;
@@ -645,8 +646,12 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) {
-    	if(entity.getId()!=null && !amountsAndlinesUpdated) {
-    		return getListViewName();
+    	if(entity.getId()!=null) {
+    		if( !amountsAndlinesUpdated) {
+    			return getListViewName();
+    		} else{
+    			entity = invoiceService.retrieveIfNotManaged(entity);
+    		}
     	}
     	List<RatedTransaction> rts = null;
     	for (Entry<String, TaxInvoiceAgregate> entry : aggregateHandler.getTaxInvAgregateMap().entrySet()) {
@@ -1299,5 +1304,23 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         invoiceService.rebuildInvoice(entity, false);
         return saveOrUpdate(false);
     }
+    
+    /**
+	 * 
+	 */
+	public boolean canCancelInvoice() {
+		return canChangeInvoiceStatusTo(InvoiceStatusEnum.CANCELED);
+	}
+	
+	/**
+	 * 
+	 */
+	public boolean canValidateInvoice() {
+		return canChangeInvoiceStatusTo(InvoiceStatusEnum.DRAFT);
+	}
+    
+	public boolean canChangeInvoiceStatusTo(InvoiceStatusEnum newStatus) {
+		return entity!=null && entity.getStatus()!=null && newStatus.getPreviousStats().contains(entity.getStatus());
+	}
     
 }
