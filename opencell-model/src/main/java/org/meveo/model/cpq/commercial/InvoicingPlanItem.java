@@ -37,10 +37,10 @@ public class InvoicingPlanItem extends BusinessEntity {
 	@NotNull
 	private InvoicingPlan billingPlan;
 	
-	@Column(name = "advancement", length = 20, nullable = false)
+	@Column(name = "advancement", nullable = false)
 	@NotNull
-	private String advancement;
-
+	private Integer advancement;
+	
 	@Column(name = "rate_to_bill",nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
 	@NotNull
 	private BigDecimal rateToBill;
@@ -62,14 +62,14 @@ public class InvoicingPlanItem extends BusinessEntity {
 	/**
 	 * @return the advancement
 	 */
-	public String getAdvancement() {
+	public Integer getAdvancement() {
 		return advancement;
 	}
 
 	/**
 	 * @param advancement the advancement to set
 	 */
-	public void setAdvancement(String advancement) {
+	public void setAdvancement(Integer advancement) {
 		this.advancement = advancement;
 	}
 
