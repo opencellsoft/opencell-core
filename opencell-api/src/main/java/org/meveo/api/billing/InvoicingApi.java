@@ -267,9 +267,10 @@ public class InvoicingApi extends BaseApi {
 	/**
 	 * @param billingRunId
 	 * @param invoices
+	 * @return billingRunId the id of the new billing run.
 	 */
-	public void moveInvoice(Long billingRunId, List<Long> invoices) {
-		invoiceService.moveInvoices(billingRunId, invoices);
+	public Long moveInvoice(Long billingRunId, List<Long> invoices) {
+		return invoiceService.moveInvoices(billingRunId, invoices);
 	}
 
 	/**
