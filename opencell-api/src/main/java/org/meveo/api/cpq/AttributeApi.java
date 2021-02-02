@@ -133,6 +133,12 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if(postData.getUnitNbDecimal() != null) {
 			attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
 		}
+		if(attribute.getTags() != null && !attribute.getTags().isEmpty()) {
+			for (Tag tag : attribute.getTags()) {
+				tag.setAttribute(null);
+				tagService.update(tag);
+			}
+		}
 		processTags(postData,attribute);
 		attributeService.update(attribute);
 		return attribute;

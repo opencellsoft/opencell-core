@@ -123,7 +123,7 @@ public class Attribute extends EnableBusinessCFEntity{
     private List<Media> medias = new ArrayList<>();
     
     
-    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     @OrderBy("id")
     private List<Tag> tags = new ArrayList<>();
     
