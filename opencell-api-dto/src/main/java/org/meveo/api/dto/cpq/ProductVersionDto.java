@@ -2,6 +2,7 @@ package org.meveo.api.dto.cpq;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -88,7 +89,11 @@ public class ProductVersionDto extends BaseEntityDto {
          this.status = productVersion.getStatus();
          this.statusDate = productVersion.getStatusDate();
          this.longDescription =productVersion.getLongDescription();
-         this.validity = productVersion.getValidity(); 
+         this.validity = productVersion.getValidity();
+         this.tagCodes = productVersion.getTags()
+                 .stream()
+                 .map(tag -> tag.getCode())
+                 .collect(Collectors.toSet());
     }
    
     

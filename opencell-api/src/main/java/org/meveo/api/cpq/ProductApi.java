@@ -152,6 +152,7 @@ public class ProductApi extends BaseApi {
 				productVersion.setStatus(VersionStatusEnum.DRAFT);
 				productVersion.setStatusDate(Calendar.getInstance().getTime());
 				productVersionService.create(productVersion);
+				response.setCurrentProductVersion(new ProductVersionDto(productVersion));
 			}
 			return response;
 		} catch (BusinessException e) {
