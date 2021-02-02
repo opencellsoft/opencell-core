@@ -105,8 +105,7 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 		if(commercialRuleHeader==null) {
 			throw new EntityDoesNotExistsException(CommercialRuleHeader.class, dto.getCode());
 		}
-		if(dto.getCommercialRuleItems() != null && !dto.getCommercialRuleItems().isEmpty())
-			commercialRuleHeader.getCommercialRuleItems().clear();
+		commercialRuleHeader.getCommercialRuleItems().clear();
 		populateCommercialRuleHeader(dto, commercialRuleHeader);
 		commercialRuleHeaderService.update(commercialRuleHeader);
 		return commercialRuleHeader;
