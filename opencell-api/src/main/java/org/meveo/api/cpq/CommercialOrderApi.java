@@ -386,4 +386,9 @@ public class CommercialOrderApi extends BaseApi {
 			missingParameters.add("orderDate");
 		handleMissingParameters();
 	}
+
+	public CommercialOrderDto orderValidationProcess(Long orderId){
+		CommercialOrder commercialOrder = commercialOrderService.orderValidationProcess(orderId);
+		return new CommercialOrderDto(commercialOrder);
+	}
 }

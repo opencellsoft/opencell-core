@@ -7,7 +7,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.map.HashedMap;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.CpqQuote;
@@ -113,6 +112,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		order.setOrderProgress(1);
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		order.setProgressDate(Calendar.getInstance().getTime());
+		order.setUserAccount(account.getUsersAccounts().get(0));
 		commercialOrderService.create(order);
 		return order;
 	}

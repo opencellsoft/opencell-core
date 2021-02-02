@@ -6,6 +6,7 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.commercial.OrderAttribute;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,6 +35,13 @@ public class AttributeInstance extends AttributeValue {
         stringValue=quoteAttribute.getStringValue();
         dateValue=quoteAttribute.getDateValue();
         doubleValue=quoteAttribute.getDoubleValue();
+    }
+
+    public AttributeInstance(OrderAttribute orderAttribute) {
+        attribute=orderAttribute.getAttribute();
+        stringValue=orderAttribute.getStringValue();
+        dateValue=orderAttribute.getDateValue();
+        doubleValue=orderAttribute.getDoubleValue();
     }
 
     public ServiceInstance getServiceInstance() {

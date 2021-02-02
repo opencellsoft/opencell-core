@@ -311,9 +311,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 })
                 .collect(Collectors.toList());
         serviceTemplate.setServiceTerminationCharges(serviceChargeTemplateTerminations);
+        if(!isVirtual)
+            serviceTemplateService.create(serviceTemplate);
         serviceInstance.setServiceTemplate(serviceTemplate);
         serviceInstanciation(serviceInstance, null, subscriptionAmount, terminationAmount, isVirtual);
         serviceInstance.setServiceTemplate(null);
+        if(!isVirtual) {
+            serviceTemplateService.remove(serviceTemplate);
+        }
     }
 
     public static <T> T initializeAndUnproxy(T entity) {
@@ -549,7 +554,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         serviceInstance = update(serviceInstance);
 
         // execute subscription script
-        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+        if (serviceInstance.getServiceTemplate()!= null && serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
             serviceModelScriptService.activateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode());
         }
 
