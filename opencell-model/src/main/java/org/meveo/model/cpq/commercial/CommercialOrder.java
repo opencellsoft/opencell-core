@@ -13,12 +13,14 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
@@ -36,6 +38,7 @@ import org.meveo.model.order.Order;
  * @version 11.0
  *
  */
+@ObservableEntity
 @WorkflowedEntity
 @Entity
 @Table(name = "cpq_commercial_order")
@@ -44,6 +47,9 @@ import org.meveo.model.order.Order;
 public class CommercialOrder extends AuditableEntity {
 
 
+	@Transient
+	private Integer orderProgressTmp;
+	
 	public CommercialOrder() {
 	}
 
@@ -518,6 +524,20 @@ public class CommercialOrder extends AuditableEntity {
 	 */
 	public void setAccess(Access access) {
 		this.access = access;
+	}
+
+	/**
+	 * @return the orderProgressTmp
+	 */
+	public Integer getOrderProgressTmp() {
+		return orderProgressTmp;
+	}
+
+	/**
+	 * @param orderProgressTmp the orderProgressTmp to set
+	 */
+	public void setOrderProgressTmp(Integer orderProgressTmp) {
+		this.orderProgressTmp = orderProgressTmp;
 	}
 
 }

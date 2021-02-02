@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -12,6 +13,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.service.base.PersistenceService;
@@ -26,9 +28,11 @@ import org.meveo.service.billing.impl.ServiceSingleton;
 @Stateless
 public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
-
     @Inject
     private ServiceSingleton serviceSingleton;
+    @Inject
+    @AdvancementRateIncreased
+    protected Event<CommercialOrder> entityAdvancementRateIncreasedEventProducer;
     
 	public CommercialOrder duplicate(CommercialOrder entity) {
 		final CommercialOrder duplicate = new CommercialOrder(entity);
@@ -69,5 +73,18 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		queryBuilder.addCriterion("co.orderType.code", "=", orderTypeCode, false);
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
+	}
+
+	//override update
+	// check if orderPgross ==> fire
+	@Override
+	public CommercialOrder update(CommercialOrder entity) throws BusinessException {
+		var currentOrder = entity.getOrderProgressTmp() != null ? entity.getOrderProgressTmp() : Integer.MAX_VALUE;
+		var nextOrder = entity.getOrderProgress();
+		super.update(entity);
+		if(currentOrder < nextOrder) {
+			entityAdvancementRateIncreasedEventProducer.fire(entity);
+		}
+		return entity;
 	}
 }
