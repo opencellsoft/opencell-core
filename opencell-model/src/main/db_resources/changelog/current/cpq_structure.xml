@@ -2577,8 +2577,9 @@
 	            <column name="billing_plan_id" type="bigint" >
 	                <constraints nullable="false" />
 	            </column>
-	            <column name="advancement" type="varchar(20)" >
-	                <constraints nullable="false" />
+	                
+	            <column name="advancement" type ="int4">
+	            	<constraints nullable="false" />
 	            </column>
 	            <column name="rate_to_bill" type="numeric(23, 12)" >
 	                <constraints nullable="false" />

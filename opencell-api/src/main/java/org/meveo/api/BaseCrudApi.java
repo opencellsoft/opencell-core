@@ -23,7 +23,6 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -313,4 +312,5 @@ public abstract class BaseCrudApi<E extends BaseEntity, T extends BaseEntityDto>
 
         return null;
     }
+    
 }
