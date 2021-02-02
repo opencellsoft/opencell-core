@@ -827,13 +827,20 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     }
 
     public void setStatus(InvoiceStatusEnum status) {
-    	if(status!=null 
-    			&& ((status.getPreviousStats()==null && this.status==null)
-    					|| (status.getPreviousStats().contains(this.status)))) {
+    	if(status!=null && status.getPreviousStats().contains(this.status)) {
 	        this.status = status;
 	        setStatusDate(new Date());
     	} else {
     		throw new ValidationException("Not possible to change invoice status from "+this.status+" to "+status) ;
+    	}
+    }
+    
+    public void rebuildStatus(InvoiceStatusEnum status) {
+    	if(status==InvoiceStatusEnum.DRAFT || status==InvoiceStatusEnum.SUSPECT || status==InvoiceStatusEnum.REJECTED) {
+			setStatusDate(new Date());
+	        this.status = status;
+    	} else {
+    		throw new ValidationException("Not possible to rebuild invoice status with "+status) ;
     	}
     }
 

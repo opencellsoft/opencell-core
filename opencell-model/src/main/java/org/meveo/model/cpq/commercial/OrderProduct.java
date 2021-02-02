@@ -1,12 +1,15 @@
 package org.meveo.model.cpq.commercial;
 
 import java.math.BigDecimal;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -55,6 +58,9 @@ public class OrderProduct extends BusinessEntity {
 	@Column(name = "quantity", nullable = false, scale = NB_DECIMALS, precision = NB_PRECISION)
 	@NotNull
 	private BigDecimal quantity;
+
+	@OneToMany(mappedBy = "orderProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<OrderAttribute> orderAttributes;
 
 
 	/**
@@ -135,7 +141,11 @@ public class OrderProduct extends BusinessEntity {
 		this.productVersion = productVersion;
 	}
 
-	
-	
-	
+	public List<OrderAttribute> getOrderAttributes() {
+		return orderAttributes;
+	}
+
+	public void setOrderAttributes(List<OrderAttribute> orderAttributes) {
+		this.orderAttributes = orderAttributes;
+	}
 }

@@ -1,10 +1,11 @@
 package org.meveo.model.cpq.commercial;
 
+import static javax.persistence.CascadeType.ALL;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -76,7 +77,7 @@ public class CommercialOrder extends AuditableEntity {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -84,20 +85,20 @@ public class CommercialOrder extends AuditableEntity {
 	@JoinColumn(name = "seller_id", nullable = false)
 	@NotNull
 	private Seller seller;
-	
+
 	@Column(name = "order_number", length = 50)
 	@Size(max = 50)
 	private String orderNumber;
-	
+
 	@Column(name = "label", length = 255)
 	private String label;
 
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "billing_account_id", nullable = false)
 	@NotNull
 	private BillingAccount billingAccount;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cpq_quote_id")
 	private CpqQuote quote;
@@ -105,7 +106,7 @@ public class CommercialOrder extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_type_id", nullable = false)
 	@NotNull
@@ -115,15 +116,15 @@ public class CommercialOrder extends AuditableEntity {
 	@JoinColumn(name = "invoicing_plan_id")
 	private InvoicingPlan invoicingPlan;
 
-	
+
 	@Column(name ="status", nullable = false)
 	@NotNull
 	private String status;
-	
+
 	@Column(name = "status_date", nullable = false)
 	@NotNull
 	private Date statusDate;
-	
+
 
 	@Column(name = "order_progress", nullable = false)
 	@NotNull
@@ -132,19 +133,19 @@ public class CommercialOrder extends AuditableEntity {
 	@Column(name = "progress_date", nullable = false)
 	@NotNull
 	private Date progressDate;
-	
+
 
 	@Column(name = "order_date", nullable = false)
 	@NotNull
 	private Date orderDate;
-	
+
 
 	@Column(name = "realisation_date")
 	private Date realisationDate;
 
 	@Column(name = "customer_service_begin")
 	private Date customerServiceBegin;
-	
+
 
 	@Column(name = "customer_service_duration")
 	private int customerServiceDuration;
@@ -152,33 +153,36 @@ public class CommercialOrder extends AuditableEntity {
 	@Column(name = "external_reference", length = 50)
 	@Size(max = 50)
 	private String externalReference;
-	
+
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_parent_id")
 	private Order orderParent;
-	
-	
-	@JoinTable(name = "cpq_commercial_order_billing_invoice", 
-				joinColumns = @JoinColumn(name = "commercial_order_id"),
-				inverseJoinColumns = @JoinColumn(name = "invoice_id"))
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+
+
+	@JoinTable(name = "cpq_commercial_order_billing_invoice",
+			joinColumns = @JoinColumn(name = "commercial_order_id"),
+			inverseJoinColumns = @JoinColumn(name = "invoice_id"))
+	@OneToMany(fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
 	private List<Invoice> invoices = new ArrayList<Invoice>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "invoice_type_id", nullable = false)
 	@NotNull
 	private InvoiceType orderInvoiceType;
-	
+
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_account_id")
 	private UserAccount userAccount;
-	
+
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "access_id")
 	private Access access;
+
+	@OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
+	private List<OrderOffer> offers;
 
 	/**
 	 * @return the seller
@@ -476,7 +480,6 @@ public class CommercialOrder extends AuditableEntity {
 	}
 
 
-
 	/**
 	 * @return the orderInvoiceType
 	 */
@@ -540,4 +543,11 @@ public class CommercialOrder extends AuditableEntity {
 		this.orderProgressTmp = orderProgressTmp;
 	}
 
+	public List<OrderOffer> getOffers() {
+		return offers;
+	}
+
+	public void setOffers(List<OrderOffer> offers) {
+		this.offers = offers;
+	}
 }

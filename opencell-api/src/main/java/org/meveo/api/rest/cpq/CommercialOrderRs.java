@@ -136,4 +136,15 @@ public interface CommercialOrderRs {
             @ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
      	   })
     public Response findByOrderNumber(@Parameter(required = true) @PathParam("orderNumber") String orderNumber);
+
+	@POST
+	@Path("/validateOrder/{orderId}")
+	@Operation(summary = "Launch the order validation process",
+			tags = { "Order management" },
+			description ="Launch the order validation process",
+			responses = {
+					@ApiResponse(responseCode="200", description = "The order is successfully validated",content = @Content(schema = @Schema(implementation = GetCommercialOrderDtoResponse.class))),
+					@ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+			})
+	public Response orderValidationProcess(@Parameter(required = true) @PathParam("orderId") Long orderId);
 }
