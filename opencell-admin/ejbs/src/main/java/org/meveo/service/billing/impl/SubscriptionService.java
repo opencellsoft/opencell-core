@@ -873,11 +873,11 @@ public class SubscriptionService extends BusinessService<Subscription> {
     	qb.addSqlCriterion("s.code = :code","code", code);
     	
     	 if (from != null && to != null) {
-             qb.addSqlCriterionMultiple("((s.validity.from is null or s.validity.from<=:endDate) AND (:startDate<s.validity.to or s.validity.to is null))", "startDate", from, "endDate", to);
+             qb.addSqlCriterionMultiple("((date(s.validity.from) is null or date(s.validity.from<=:endDate)) AND (:startDate<date(s.validity.to) or s.validity.to is null))", "startDate", from, "endDate", to);
          } else if (from != null) {
-             qb.addSqlCriterion("(:startDate<s.validity.to or s.validity.to is null)", "startDate", from);
+             qb.addSqlCriterion("(:startDate<date(s.validity.to) or s.validity.to is null)", "startDate", from);
          } else if (to != null) {
-             qb.addSqlCriterion("(s.validity.from is null or s.validity.from<=:endDate)", "endDate", to);
+             qb.addSqlCriterion("(s.validity.from is null or date(s.validity.from)<=:endDate)", "endDate", to);
          }
     	 
     	 try {
