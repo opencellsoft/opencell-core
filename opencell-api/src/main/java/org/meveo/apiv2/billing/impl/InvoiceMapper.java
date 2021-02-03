@@ -38,7 +38,7 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 				.invoiceAdjustmentCurrentSellerNb(entity.getInvoiceAdjustmentCurrentSellerNb())
 				.invoiceAdjustmentCurrentProviderNb(entity.getInvoiceAdjustmentCurrentProviderNb())
 				.previousInvoiceNumber(entity.getPreviousInvoiceNumber()).draft(entity.getDraft())
-				.code(entity.getCode()).description(entity.getDescription()).build();
+				.description(entity.getDescription()).build();
 	}
 
 	private ImmutableResource buildById(BaseEntity entity) {
