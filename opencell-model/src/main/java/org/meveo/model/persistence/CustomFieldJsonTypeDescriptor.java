@@ -18,6 +18,8 @@
 
 package org.meveo.model.persistence;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,6 +75,12 @@ public class CustomFieldJsonTypeDescriptor extends AbstractTypeDescriptor<Custom
                 return null;
             }
         }
+        
+        if (FALSE_STR.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_CUSTOM_FIELDS_PROPERTY, FALSE_STR)) && string.startsWith(ENCRYPTION_CHECK_STRING)) {
+        	Map<String, List<CustomFieldValue>> cfValues = new HashMap<String, List<CustomFieldValue>>();
+        	cfValues.put("AES",new ArrayList<CustomFieldValue>());
+        	return new CustomFieldValues(cfValues);
+		}
         
         Map<String, List<CustomFieldValue>> cfValues = JacksonUtil.fromString(string, new TypeReference<Map<String, List<CustomFieldValue>>>() {
         });
