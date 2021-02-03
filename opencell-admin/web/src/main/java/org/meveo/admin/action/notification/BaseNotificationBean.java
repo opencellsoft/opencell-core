@@ -39,6 +39,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
@@ -145,6 +146,8 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                 events.add(NotificationEventTypeEnum.INVOICE_NUMBER_ASSIGNED);
                 events.add(NotificationEventTypeEnum.XML_GENERATED);
                 events.add(NotificationEventTypeEnum.PDF_GENERATED);
+            }else if(clazzStr.equals(CommercialOrder.class.getName())) {
+                events.add(NotificationEventTypeEnum.ADVT_RATE_INCREASED);
             }
         } else if (hasNotificableEntity(clazz)) {
             // No longer is being used

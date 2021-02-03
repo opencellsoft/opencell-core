@@ -1,8 +1,23 @@
 package org.meveo.service.cpq.order;
 
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -16,23 +31,10 @@ import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
-import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * @author Tarik FA.
@@ -43,10 +45,11 @@ import java.util.stream.Collectors;
 @Stateless
 public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
-
     @Inject
     private ServiceSingleton serviceSingleton;
     @Inject
+    @AdvancementRateIncreased
+    protected Event<CommercialOrder> entityAdvancementRateIncreasedEventProducer;
     private ServiceInstanceService serviceInstanceService;
     @Inject
 	private SubscriptionService subscriptionService;
@@ -92,6 +95,17 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		return query.getResultList();
 	}
 
+	@Override
+	public CommercialOrder update(CommercialOrder entity) throws BusinessException {
+		var currentOrder = entity.getOrderProgressTmp() != null ? entity.getOrderProgressTmp() : Integer.MAX_VALUE;
+		var nextOrder = entity.getOrderProgress();
+		super.update(entity);
+		if(currentOrder < nextOrder) {
+			entityAdvancementRateIncreasedEventProducer.fire(entity);
+		}
+		return entity;
+	}
+		
 	public CommercialOrder orderValidationProcess(Long orderId) {
 		CommercialOrder order = findById(orderId);
 		if(order == null)

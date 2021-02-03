@@ -137,7 +137,14 @@ public enum NotificationEventTypeEnum {
     /**
      * Invoice number assigned
      */
-    INVOICE_NUMBER_ASSIGNED;
+    INVOICE_NUMBER_ASSIGNED,
+    
+    /**
+     * 
+     * check if order progress is incrasing
+     */
+    ADVT_RATE_INCREASED
+    ;
 
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();

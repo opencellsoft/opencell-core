@@ -154,6 +154,8 @@ public class CommercialOrderApi extends BaseApi {
 		if(!order.getStatus().equals(CommercialOrderEnum.DRAFT.toString())) {
 			throw new BusinessApiException("The Order can not be edited, the status must not be : " + order.getStatus());
 		}
+		if(order.getOrderProgress() != null)
+			order.setOrderProgressTmp(Integer.valueOf(order.getOrderProgress().intValue()));
 		
 		if(!Strings.isEmpty(orderDto.getSellerCode())) {
 			final Seller seller = sellerService.findByCode(orderDto.getSellerCode());
