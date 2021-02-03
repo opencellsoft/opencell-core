@@ -12,9 +12,9 @@ import org.meveo.model.billing.Tax;
 import org.meveo.model.payments.PaymentMethod;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,7 +43,7 @@ public class GenericModule extends SimpleModule {
             }
         });
         addSerializer(HibernateProxy.class, new LazyProxySerializer(nestedEntities, sharedEntityToSerialize));
-        addSerializer(List.class, new ListCustomSerializer(nestedEntities, sharedEntityToSerialize, nestedDepth));
+        addSerializer(Collection.class, new ListCustomSerializer(nestedEntities, sharedEntityToSerialize, nestedDepth));
         addDeserializer(ChargeInstance.class, new ChargeInstanceDeserializer());
         addDeserializer(PaymentMethod.class, new PaymentDeserializer());
         addKeyDeserializer(Tax.class, new KeyDeserializer() {

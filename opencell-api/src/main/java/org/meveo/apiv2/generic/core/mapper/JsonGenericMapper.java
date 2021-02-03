@@ -14,6 +14,9 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import org.hibernate.collection.internal.AbstractPersistentCollection;
+import org.hibernate.collection.internal.PersistentBag;
+import org.hibernate.collection.internal.PersistentSet;
 import org.meveo.apiv2.generic.GenericPaginatedResource;
 import org.meveo.apiv2.generic.core.mapper.module.GenericModule;
 import org.meveo.model.IEntity;
@@ -21,10 +24,7 @@ import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 public class JsonGenericMapper extends ObjectMapper{
     private SimpleFilterProvider simpleFilterProvider;
@@ -33,7 +33,8 @@ public class JsonGenericMapper extends ObjectMapper{
         setUpConfig();
         registerModule(module);
         this.simpleFilterProvider = simpleFilterProvider;
-        addMixIn(IEntity.class, BaseEntityMixIn.class);
+        addMixIn(IEntity.class, CollectionMixIn.class);
+        //addMixIn(IEntity.class, BaseEntityMixIn.class);
         addMixIn(GenericPaginatedResource.class, GenericPaginatedResourceMixIn.class);
         addMixIn(CustomFieldValues.class, EntityCustomFieldValuesFilterMixIn.class);
         addMixIn(CustomFieldValue.class, EntityCustomFieldValueFilterMixIn.class);
@@ -125,14 +126,13 @@ public class JsonGenericMapper extends ObjectMapper{
     @JsonFilter("EntitySubObjectFieldFilter")
     private abstract class EntitySubObjectFieldFilterMixIn {}
 
-    @JsonFilter("EntityForbiddenFieldsFilter")
-    private interface ForbiddenFieldsMixIn {}
+    @JsonFilter("CollectionFilter")
+    private abstract class CollectionMixIn {}
 
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private interface InfiniteRecursionMixIn {}
 
     @JsonFilter("EntityForbiddenFieldsFilter")
-    //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private class BaseEntityMixIn{}
 
     @JsonFilter("GenericPaginatedResourceFilter")
@@ -143,19 +143,10 @@ public class JsonGenericMapper extends ObjectMapper{
         private Module module;
         private Set<String> nestedEntities;
         private Long nestedDepth;
+        private boolean shouldExtractList;
 
         public static Builder getBuilder(){
             return new Builder();
-        }
-
-        public Builder withModule(Module module){
-            this.module = module;
-            return this;
-        }
-
-        public Builder withSimpleFilterProvider(SimpleFilterProvider simpleFilterProvider){
-            this.simpleFilterProvider = simpleFilterProvider;
-            return this;
         }
 
         public Builder withNestedEntities(Set<String> nestedEntities){
@@ -168,13 +159,18 @@ public class JsonGenericMapper extends ObjectMapper{
             return this;
         }
 
+        public Builder withExtractList(boolean shouldExtractList){
+            this.shouldExtractList = shouldExtractList;
+            return this;
+        }
+
         public JsonGenericMapper build(){
             module = GenericModule.Builder.getBuilder()
                     .withEntityToLoad(nestedEntities)
                     .withNestedDepth(nestedDepth)
                     .build();
             if(simpleFilterProvider == null){
-                simpleFilterProvider = new GenericSimpleFilterProvider();
+                simpleFilterProvider = new GenericSimpleFilterProvider(shouldExtractList);
             }
             return new JsonGenericMapper(module, simpleFilterProvider);
         }

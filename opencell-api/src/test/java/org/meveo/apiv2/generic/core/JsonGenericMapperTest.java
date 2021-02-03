@@ -246,7 +246,7 @@ public class JsonGenericMapperTest {
         subscription.setServiceInstances(Arrays.asList(serviceInstance));
         serviceInstance.setSubscription(subscription);
         ImmutableGenericPaginatedResource immutableGenericPaginatedResource = ImmutableGenericPaginatedResource.builder().total(1l).limit(0l).offset(0l).addData(subscription).build();
-
+        jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().withExtractList(true).build();
         // When
         HashSet<String> fields = new HashSet<>();
         String transform = jsonGenericMapper.toJson(fields, Subscription.class, immutableGenericPaginatedResource);
