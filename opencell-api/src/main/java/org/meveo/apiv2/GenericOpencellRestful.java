@@ -31,8 +31,10 @@ import java.util.stream.Stream;
 @ApplicationPath("/api/rest/v2")
 public class GenericOpencellRestful extends Application {
     private static final String GENERIC_API_REQUEST_LOGGING_CONFIG_KEY = "generic.api.request.logging";
+    private static final String GENERIC_API_REQUEST_EXTRACT_LIST_CONFIG_KEY = "generic.api.extract.list";
     private static final String API_LIST_DEFAULT_LIMIT_KEY = "api.list.defaultLimit";
     private static String GENERIC_API_REQUEST_LOGGING_CONFIG;
+    private static boolean GENERIC_API_REQUEST_EXTRACT_LIST;
     public static List<Map<String,String>> VERSION_INFO = new ArrayList<Map<String, String>>();
     public static Map<String,List<String>> ENTITIES_MAP = new HashMap();
     public static long API_LIST_DEFAULT_LIMIT;
@@ -46,6 +48,7 @@ public class GenericOpencellRestful extends Application {
     public void init() {
         API_LIST_DEFAULT_LIMIT = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT_KEY, 100);
         GENERIC_API_REQUEST_LOGGING_CONFIG = paramBeanFactory.getInstance().getProperty(GENERIC_API_REQUEST_LOGGING_CONFIG_KEY, "false");
+        GENERIC_API_REQUEST_EXTRACT_LIST = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty(GENERIC_API_REQUEST_EXTRACT_LIST_CONFIG_KEY, "true"));
         loadVersionInformation();
         loadEntitiesList();
     }
@@ -100,5 +103,9 @@ public class GenericOpencellRestful extends Application {
             listEntities.add( entry.getValue().getSimpleName() );
         }
         ENTITIES_MAP.put( "entities", listEntities );
+    }
+
+    public boolean shouldExtractList(){
+        return GENERIC_API_REQUEST_EXTRACT_LIST;
     }
 }

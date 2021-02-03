@@ -11,11 +11,12 @@ import org.meveo.apiv2.generic.GenericPaginatedResource;
 import org.meveo.model.IEntity;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-class ListCustomSerializer extends StdSerializer<List> implements GenericSerializer{
+class ListCustomSerializer extends StdSerializer<Collection> implements GenericSerializer{
 
     private JsonSerializer<Object> serializer;
     private final Set<String> nestedEntities;
@@ -23,25 +24,23 @@ class ListCustomSerializer extends StdSerializer<List> implements GenericSeriali
     private final Long nestedDepth;
 
     ListCustomSerializer(Set<String> nestedEntities, Set<IEntity> sharedEntityToSerialize, Long nestedDepth) {
-        super(List.class);
+        super(Collection.class);
         this.nestedEntities = nestedEntities;
         this.sharedEntityToSerialize = sharedEntityToSerialize;
         this.nestedDepth = nestedDepth;
     }
 
     @Override
-    public boolean isEmpty(SerializerProvider provider, List value) {
+    public boolean isEmpty(SerializerProvider provider, Collection value) {
         return super.isEmpty(provider, value) || value.isEmpty();
     }
-
     @Override
-    public void serialize(List list, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(Collection collection, JsonGenerator gen, SerializerProvider provider) throws IOException {
         Object currentValue = gen.getCurrentValue();
         String currentName = gen.getOutputContext().getCurrentName();
         String pathToRoot = getPathToRoot(gen);
-
-        if(!list.isEmpty() && list.get(0) instanceof IEntity){
-            List<? extends IEntity> listIEntity = (List<? extends IEntity>) list;
+        if(!collection.isEmpty() && collection.iterator().next() instanceof IEntity){
+            Collection<? extends IEntity> collectionIEntity = (Collection<? extends IEntity>) collection;
             boolean nestedEntityCandidate = isNestedEntityCandidate(pathToRoot, currentName);
 
             boolean isDepthToBig;
@@ -55,15 +54,15 @@ class ListCustomSerializer extends StdSerializer<List> implements GenericSeriali
             }
 
             if (currentValue instanceof GenericPaginatedResource || nestedEntityCandidate || isDepthToBig) {
-                gen.writeStartArray(listIEntity.size());
-                for (IEntity iEntity : listIEntity) {
+                gen.writeStartArray(collectionIEntity.size());
+                for (IEntity iEntity : collectionIEntity) {
                     sharedEntityToSerialize.add(iEntity);
                     gen.writeObject(iEntity);
                 }
                 gen.writeEndArray();
             } else {
-                gen.writeStartArray(listIEntity.size());
-                for (IEntity iEntity : listIEntity) {
+                gen.writeStartArray(collectionIEntity.size());
+                for (IEntity iEntity : collectionIEntity) {
                     gen.writeStartObject();
                     gen.writeFieldName("id");
                     gen.writeNumber((Long) iEntity.getId());
@@ -74,7 +73,7 @@ class ListCustomSerializer extends StdSerializer<List> implements GenericSeriali
         }
 
         else{
-            resolveSerializer(provider).serialize(list, gen, provider);
+            resolveSerializer(provider).serialize(collection, gen, provider);
         }
     }
 
@@ -88,7 +87,7 @@ class ListCustomSerializer extends StdSerializer<List> implements GenericSeriali
 
     private JsonSerializer resolveSerializer(SerializerProvider provider) throws JsonMappingException {
         if(serializer == null){
-            serializer = BeanSerializerFactory.instance.createSerializer(provider, TypeFactory.defaultInstance().constructType(List.class));
+            serializer = BeanSerializerFactory.instance.createSerializer(provider, TypeFactory.defaultInstance().constructType(Collection.class));
         }
         return serializer;
     }
