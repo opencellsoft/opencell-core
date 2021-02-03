@@ -59,9 +59,9 @@
                                 <h:panelGroup id="userNamePanel" layout="block">
                                     <hftl:formField
                                         label="#{messages[(customerBean.entity.name.title != null and customerBean.entity.name.title.isCompany)?'name.company':'name.lastName']}"
-                                        field="name" childField="lastName" required="#{customerBean.entity.name.title != null}" />
+                                        field="name" childField="lastName" required="#{customerBean.entity.name.title != null}"  disabled = "#{customerBean.isEncrypted(customerBean.entity.name.lastName)}"/>
                                     <hftl:formField label="#{messages['name.firstName']}" field="name" childField="firstName"
-                                        rendered="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany}" />
+                                        rendered="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany}" disabled = "#{customerBean.isEncrypted(customerBean.entity.name.firstName)}" />
                                 </h:panelGroup>
 
 
@@ -108,10 +108,10 @@
                         <p:tab title="#{messages['customer.tab.information']}" id="tab1">
                             <p:fieldset legend="#{messages['commons.contacts']}">
                                 <hftl:formField label="#{messages['contactInformation.email']}" field="contactInformation" childField="email" popup="false" required="false"
-                                    id="email" validateEmail="true" />
+                                    id="email" validateEmail="true" disabled = "#{customerBean.isEncrypted(customerBean.entity.contactInformation.email)}"/>
 
-                                <hftl:formField label="#{messages['contactInformation.phone']}" maxlength="50" field="contactInformation" childField="phone" popup="false" />
-                                <hftl:formField label="#{messages['contactInformation.mobile']}" maxlength="50" field="contactInformation" childField="mobile" popup="false" />
+                                <hftl:formField label="#{messages['contactInformation.phone']}" maxlength="50" field="contactInformation" childField="phone" popup="false" disabled = "#{customerBean.isEncrypted(customerBean.entity.contactInformation.phone)}"/>
+                                <hftl:formField label="#{messages['contactInformation.mobile']}" maxlength="50" field="contactInformation" childField="mobile" popup="false" disabled = "#{customerBean.isEncrypted(customerBean.entity.contactInformation.mobile)}"/>
                             </p:fieldset>
                             <p:fieldset legend="#{messages['commons.address']}">
                                 <hftl:formField label="#{messages['address.address1']}" field="address" id="address1" childField="address1" popup="false" />
