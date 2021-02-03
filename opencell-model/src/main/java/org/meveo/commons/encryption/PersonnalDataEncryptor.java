@@ -56,6 +56,9 @@ public class PersonnalDataEncryptor implements IEncryptionConverter {
 		if (TRUE_STR
 				.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_PERSONNAL_DATA_PROPERTY, FALSE_STR))) {
 			return decrypt(dbData);
+		}else if(dbData != null && FALSE_STR
+				.equalsIgnoreCase(ParamBean.getInstance().getProperty(ENCRYPT_PERSONNAL_DATA_PROPERTY, FALSE_STR)) && dbData.startsWith(AES_ALOGRITHM)) {
+			return ON_ERROR_RETURN;
 		}
 		return dbData;
 	}
