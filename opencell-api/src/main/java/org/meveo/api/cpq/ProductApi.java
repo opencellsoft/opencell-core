@@ -195,29 +195,34 @@ public class ProductApi extends BaseApi {
 				else
 					createProductVersion(productDto.getCurrentProductVersion());
 			}
+			Set<DiscountPlan> discountList = new HashSet<>();
 			if(productDto.getDiscountList() != null && !productDto.getDiscountList().isEmpty()){
-				product.getDiscountList().clear();
-	    		product.getDiscountList().addAll(productDto.getDiscountList().stream()
+				Set<DiscountPlan> discountListUsingObjects = productDto.getDiscountList().stream()
 						.map(discount -> {
 							DiscountPlan discountPlan = discountPlanService.findByCode(discount.getCode());
-							if(discountPlan == null)
+							if (discountPlan == null)
 								createDiscountPlan(discount);
 							return discountPlan;
 						})
-						.collect(Collectors.toSet()));
+						.collect(Collectors.toSet());
+				discountList.addAll(discountListUsingObjects);
 			}
 
 	    	if(productDto.getDiscountListCodes() != null && !productDto.getDiscountListCodes().isEmpty()){
-				product.getDiscountList().clear();
-	    		product.getDiscountList().addAll(productDto.getDiscountListCodes().stream()
+				Set<DiscountPlan> discountListUsingCodes = productDto.getDiscountListCodes().stream()
 						.map(discountCode -> {
 							DiscountPlan discountPlan = discountPlanService.findByCode(discountCode);
-							if(discountPlan == null)
+							if (discountPlan == null)
 								throw new EntityDoesNotExistsException(DiscountPlan.class, discountCode);
 							return discountPlan;
 						})
-						.collect(Collectors.toSet())
-				);
+						.collect(Collectors.toSet());
+				discountList.addAll(discountListUsingCodes);
+			}
+
+	    	if(!discountList.isEmpty()){
+	    		product.getDiscountList().clear();
+	    		product.getDiscountList().addAll(discountList);
 			}
 
 			product.setReference(productDto.getReference());
@@ -238,7 +243,7 @@ public class ProductApi extends BaseApi {
 	 * @param codeProduct
 	 * @param status
 	 * @return
-	 * @throws ProductException when the status is unknown and the status 
+	 * @throws MeveoApiException when the status is unknown and the status
 	 */
 	public void updateStatus(String codeProduct, ProductStatusEnum status){
 		if(Strings.isEmpty(codeProduct)) {

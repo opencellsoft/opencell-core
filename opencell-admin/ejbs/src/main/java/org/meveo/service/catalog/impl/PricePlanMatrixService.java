@@ -59,6 +59,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -731,7 +732,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
         Set<AttributeValue> attributeValues = pricePlanMatrixColumns.stream()
                 .map(column -> quoteAttributeService.findByAttributeAndQuoteProduct(column.getAttribute().getId(), quoteProduct.getId()))
-                .filter(column -> column != null)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
         return pricePlanMatrixLineService.loadMatchedLinesForProductQuote(pricePlanMatrixVersion, attributeValues, quoteProduct.getId())

@@ -38,15 +38,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
 
     public PricePlanMatrixVersion findByPricePlanAndVersion(String pricePlanMatrixCode, int currentVersion) {
-        try {
-            return (PricePlanMatrixVersion) this.getEntityManager()
-                    .createNamedQuery("PricePlanMatrixVersion.findByPricePlanAndVersion")
+
+            List<PricePlanMatrixVersion> ppmVersions = this.getEntityManager()
+                    .createNamedQuery("PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", PricePlanMatrixVersion.class)
                     .setParameter("currentVersion", currentVersion)
                     .setParameter("pricePlanMatrixCode", pricePlanMatrixCode.toLowerCase())
-                    .getSingleResult();
-        }catch(NoResultException e) {
-            return null;
-        }
+                    .getResultList();
+            return ppmVersions.isEmpty() ? null : ppmVersions.get(0);
     }
 
     public PricePlanMatrixVersion updatePricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
