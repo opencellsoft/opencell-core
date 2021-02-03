@@ -107,9 +107,9 @@ public class AttributeDTO extends EnableBusinessDto {
     @XmlElement(name = "tags")
     protected List<String> tagCodes=new ArrayList<String>();
     
-    @XmlElementWrapper(name = "assignedAttributes")
-    @XmlElement(name = "assignedAttributes")
-    protected List<String> assignedAttributes=new ArrayList<String>();
+    @XmlElementWrapper(name = "assignedAttributeCodes")
+    @XmlElement(name = "assignedAttributeCodes")
+    private List<String> assignedAttributeCodes=new ArrayList<String>();
     
     private Integer unitNbDecimal = BaseEntity.NB_DECIMALS;
     
@@ -145,7 +145,7 @@ public class AttributeDTO extends EnableBusinessDto {
         }
         if (attribute.getAssignedAttributes()!=null) {
         	for (Attribute attr:attribute.getAssignedAttributes()) {
-        		assignedAttributes.add(attr.getCode());
+        		assignedAttributeCodes.add(attr.getCode());
         	}
         }
         
@@ -372,20 +372,23 @@ public class AttributeDTO extends EnableBusinessDto {
 
 
 
+
+
+
 	/**
-	 * @return the assignedAttributes
+	 * @return the assignedAttributeCodes
 	 */
-	public List<String> getAssignedAttributes() {
-		return assignedAttributes;
+	public List<String> getAssignedAttributeCodes() {
+		return assignedAttributeCodes;
 	}
 
 
 
 	/**
-	 * @param assignedAttributes the assignedAttributes to set
+	 * @param assignedAttributeCodes the assignedAttributeCodes to set
 	 */
-	public void setAssignedAttributes(List<String> assignedAttributes) {
-		this.assignedAttributes = assignedAttributes;
+	public void setAssignedAttributeCodes(List<String> assignedAttributeCodes) {
+		this.assignedAttributeCodes = assignedAttributeCodes;
 	}
 
 

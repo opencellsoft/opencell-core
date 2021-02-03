@@ -88,6 +88,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
 		attributeService.create(attribute);
 		processTags(postData,attribute);
+		processAssignedAttributes(postData,attribute);
 		return attribute;
 	}
 	
@@ -106,6 +107,22 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 			attribute.getTags().addAll(tags);
 		}
 	} 
+	
+	private void processAssignedAttributes(AttributeDTO postData, Attribute attribute) {
+		List<String> assignedAttrCodes = postData.getAssignedAttributeCodes(); 
+		if(assignedAttrCodes != null && !assignedAttrCodes.isEmpty()){
+			Set<Attribute> assignedAttributes=new HashSet<Attribute>();
+			for(String code:assignedAttrCodes) {
+				Attribute attr=attributeService.findByCode(code);
+				if(attr == null) { 
+					throw new EntityDoesNotExistsException(Attribute.class,code);
+				} 
+				attr.setParentAttribute(attribute);
+				assignedAttributes.add(attr);
+			}
+			attribute.getAssignedAttributes().addAll(assignedAttributes);
+		}
+	}
 	
 
 
@@ -140,6 +157,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 			}
 		}
 		processTags(postData,attribute);
+		processAssignedAttributes(postData,attribute);
 		attributeService.update(attribute);
 		return attribute;
 	}
@@ -167,7 +185,14 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 			tagDtos.add(tagDto);
 		}
 		
-		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute,chargeTemplateDtos,tagDtos); 
+		AttributeDTO attributeDto=null;
+		List<AttributeDTO> assignedAttributes=new ArrayList<AttributeDTO>();
+		for(Attribute attr : attribute.getAssignedAttributes()) {
+			attributeDto=new AttributeDTO(attr);
+			assignedAttributes.add(attributeDto);
+		}
+		
+		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute,chargeTemplateDtos,tagDtos,assignedAttributes); 
 		return result;
 	}
 

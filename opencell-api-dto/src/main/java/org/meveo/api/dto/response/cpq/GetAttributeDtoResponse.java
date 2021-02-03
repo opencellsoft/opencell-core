@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @SuppressWarnings("serial")
 @XmlRootElement(name = "GetAttributeDtoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JsonIgnoreProperties({ "chargeTemplateCodes","commercialRuleCodes","tagCodes"})
+@JsonIgnoreProperties({ "chargeTemplateCodes","commercialRuleCodes","tagCodes","assignedAttributeCodes"})
 public class GetAttributeDtoResponse extends AttributeDTO{
  
 	@XmlElementWrapper(name = "chargeTemplates")
@@ -44,6 +44,10 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 	@XmlElementWrapper(name = "tags")
     @XmlElement(name = "tags")
     private List<TagDto> tags;
+	
+	@XmlElementWrapper(name = "assignedAttributes")
+    @XmlElement(name = "assignedAttributes")
+    private List<AttributeDTO> assignedAttributes;
 
 
     /**
@@ -69,10 +73,11 @@ public class GetAttributeDtoResponse extends AttributeDTO{
         actionStatus = new ActionStatus(status, errorCode, message);
     }
     
-    public GetAttributeDtoResponse(Attribute attribute, Set<ChargeTemplateDto> chargeTemplates, List<TagDto> tags) {
+    public GetAttributeDtoResponse(Attribute attribute, Set<ChargeTemplateDto> chargeTemplates, List<TagDto> tags,List<AttributeDTO> assignedAttributes) {
  		super(attribute);
  		this.chargeTemplates = chargeTemplates;
  		this.tags=tags;
+ 		this.assignedAttributes=assignedAttributes;
  	}
     
 
@@ -137,6 +142,22 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 	public void setTags(List<TagDto> tags) {
 		this.tags = tags;
 	}
+
+	/**
+	 * @return the assignedAttributes
+	 */
+	public List<AttributeDTO> getAssignedAttributes() {
+		return assignedAttributes;
+	}
+
+	/**
+	 * @param assignedAttributes the assignedAttributes to set
+	 */
+	public void setAssignedAttributes(List<AttributeDTO> assignedAttributes) {
+		this.assignedAttributes = assignedAttributes;
+	}
+	
+	
 
 
 
