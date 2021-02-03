@@ -166,6 +166,9 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         if (postData.getApplyTerminatedChargeToDateEL() != null) {
             chargeTemplate.setApplyTerminatedChargeToDateEL(StringUtils.getDefaultIfEmpty(postData.getApplyTerminatedChargeToDateEL(), null));
         }
+        if (postData.getRecurrenceType() != null) {
+            chargeTemplate.setRecurrenceType(postData.getRecurrenceType());
+        }
 
         return chargeTemplate;
     }
