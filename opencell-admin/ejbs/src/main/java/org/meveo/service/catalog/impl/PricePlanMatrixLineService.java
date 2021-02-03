@@ -161,7 +161,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         List<PricePlanMatrixLine> priceLines = findByPricePlanMatrixVersion(pricePlanMatrixVersion);
         return priceLines.stream()
                 .filter(line -> line.match(attributeValues))
-                .sorted(Comparator.comparing(PricePlanMatrixLine::getPriority).reversed())
+                .sorted(Comparator.comparing(PricePlanMatrixLine::getPriority))
                 .collect(Collectors.toList());
     }
 

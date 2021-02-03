@@ -44,7 +44,7 @@ import java.util.Set;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersion", query = "select p from PricePlanMatrixVersion p where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode"),
+        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", query = "select p from PricePlanMatrixVersion p where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode order by p.pricePlanMatrix.priority asc"),
         @NamedQuery(name = "PricePlanMatrixVersion.lastVersion", query = "select max(p.currentVersion) from PricePlanMatrixVersion p where p.pricePlanMatrix.code=:pricePlanMatrixCode"),
         @NamedQuery(name = "PricePlanMatrixVersion.getLastPublishedVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode and p.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED order by p.currentVersion desc ")
 })

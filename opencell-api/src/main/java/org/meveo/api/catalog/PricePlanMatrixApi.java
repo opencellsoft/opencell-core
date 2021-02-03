@@ -31,6 +31,7 @@ import org.meveo.api.dto.catalog.MatrixRatingRequest;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -46,6 +47,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.scripts.ScriptInstance;
@@ -549,7 +551,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
         handleMissingParameters();
 
-        PricePlanMatrixVersion ppmVersion = loadMatrixVersion(loadPricesRequest.getPpmCode(), loadPricesRequest.getPpmVersion());
+        PricePlanMatrixVersion ppmVersion = loadPublishedMatrixVersion(loadPricesRequest.getPpmCode(), loadPricesRequest.getPpmVersion());
 
         QuoteProduct quoteProduct = quoteProductService.findById(loadPricesRequest.getQuoteProductId());
         if(quoteProduct == null)
@@ -558,10 +560,12 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         return pricePlanMatrixService.loadPrices(ppmVersion, quoteProduct);
     }
 
-    private PricePlanMatrixVersion loadMatrixVersion(String ppmCode, Integer ppmVersion) {
+    private PricePlanMatrixVersion loadPublishedMatrixVersion(String ppmCode, Integer ppmVersion) {
         PricePlanMatrixVersion ppm = pricePlanMatrixVersionService.findByPricePlanAndVersion(ppmCode, ppmVersion);
         if(ppm == null)
             throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, "ppmCode", ppmCode, "version", ppmVersion.toString());
+        if(ppm.getStatus() != VersionStatusEnum.PUBLISHED)
+            throw new BusinessApiException("Price Plan Matrix: (code: " + ppmCode + ", version: " + ppmVersion + ") is not published");
         return ppm;
     }
 
@@ -577,7 +581,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
         handleMissingParameters();
 
-        PricePlanMatrixVersion pricePlanMatrixVersion = loadMatrixVersion(request.getPpmCode(), request.getPpmVersion());
+        PricePlanMatrixVersion pricePlanMatrixVersion = loadPublishedMatrixVersion(request.getPpmCode(), request.getPpmVersion());
 
         ChargeInstance chargeInstance = loadEntityByCode(serviceInstanceService, request.getChargeInstanceCode(), ChargeInstance.class);
 

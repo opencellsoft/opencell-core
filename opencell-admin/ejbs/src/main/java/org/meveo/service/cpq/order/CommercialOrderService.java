@@ -98,11 +98,13 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderId);
 
 
-		if (CommercialOrderEnum.COMPLETED.toString().equalsIgnoreCase(order.getStatus())) {
+		if (!CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus())) {
 			return order;
 		}
 
-		for(OrderOffer offer : order.getOffers().stream().filter(o -> !o.getProducts().isEmpty()).collect(Collectors.toList())){
+		List<OrderOffer> validOffers = order.getOffers().stream().filter(o -> !o.getProducts().isEmpty()).collect(Collectors.toList());
+
+		for(OrderOffer offer : validOffers){
 			Subscription subscription = new Subscription();
 			subscription.setCode(UUID.randomUUID().toString());
 			subscription.setSeller(order.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
@@ -125,7 +127,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			subscriptionService.activateInstantiatedService(subscription);
 		}
 
-		order.setStatus(CommercialOrderEnum.COMPLETED.toString());
+		order.setStatus(CommercialOrderEnum.VALIDATED.toString());
 		order.setStatusDate(new Date());
 
 		update(order);
