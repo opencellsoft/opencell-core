@@ -26,7 +26,8 @@ public interface GenericResource {
                     @ApiResponse(responseCode="200", description = "paginated results successfully retrieved with hypermedia links"),
                     @ApiResponse(responseCode = "400", description = "bad request when entityName not well formed or entity unrecognized")
     })
-    Response getAll(@Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
+    Response getAll(@Parameter(description = "extractList flag to return or not nested List") @QueryParam("extractList") Boolean extractList,
+                    @Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
                     @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig);
 
     @POST
@@ -39,7 +40,8 @@ public interface GenericResource {
                     @ApiResponse(responseCode = "404", description = "baseEntityObject not found", content = @Content(schema = @Schema(implementation = ApiException.class))),
                     @ApiResponse(responseCode = "400", description = "bad request when entityName not well formed or entity unrecognized")
     })
-    Response get(@Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
+    Response get(@Parameter(description = "extractList flag to return or not nested List") @QueryParam("extractList") Boolean extractList,
+                 @Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
                  @Parameter(description = "The id here is the database primary key of the wanted record", required = true) @PathParam("id") Long id,
                  @Parameter(description = "requestDto carries the wanted fields ex: {fields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig);
 
