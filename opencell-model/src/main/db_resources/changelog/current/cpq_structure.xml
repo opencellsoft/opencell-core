@@ -2489,9 +2489,7 @@
 	            <column name="updater" type="varchar(100)" />
 				<!-- Auditable End -->
 
-	            <column name="invoice_id" type="bigint" >
-	            	<constraints nullable="false"/>
-	            </column>
+	            <column name="invoice_id" type="bigint" />
 	            <column name="prestation" type="varchar(255)" />
 	            <column name="accounting_article_id" type="bigint" >
 	            	<constraints nullable="false"/>
@@ -2944,6 +2942,34 @@
 							 constraintName="cpq_invoice_line__product_version__fk"
 							 referencedTableName="cpq_product_version" referencedColumnNames="id"/>
     </changeSet>
+
+	<changeSet id="#214_20210203" author="NabilOUACHI">
+		<addColumn tableName="cpq_quote_price">
+			<column name="charge_template_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseTableName="cpq_quote_price" baseColumnNames="charge_template_id"
+								 constraintName="fk_cpq_quote_price_charge_template_id"
+								 referencedTableName="cat_charge_template" referencedColumnNames="id"/>
+		<addColumn tableName="order_price">
+			<column name="charge_template_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseTableName="order_price" baseColumnNames="charge_template_id"
+								 constraintName="fk_order_price_charge_template_id"
+								 referencedTableName="cat_charge_template" referencedColumnNames="id"/>
+		<addColumn tableName="order_article_line">
+			<column name="order_product_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseTableName="order_article_line" baseColumnNames="order_product_id"
+								 constraintName="fk_order_article_line_order_product_id"
+								 referencedTableName="cpq_order_product" referencedColumnNames="id"/>
+
+		<addColumn tableName="cpq_commercial_order">
+			<column name="rate_invoiced" type="int">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+
+	</changeSet>
 </databaseChangeLog>
 
 

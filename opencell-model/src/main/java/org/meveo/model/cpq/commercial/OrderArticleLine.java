@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -54,6 +56,10 @@ public class OrderArticleLine extends BusinessEntity {
 	@Column(name = "quantity_service", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
 	@NotNull
 	private BigDecimal quantityService;
+
+	@OneToOne
+	@JoinColumn(name = "order_product_id")
+	private OrderProduct orderProduct;
 
 	/**
 	 * @return the order
@@ -133,5 +139,12 @@ public class OrderArticleLine extends BusinessEntity {
 	public void setQuantityService(BigDecimal quantityService) {
 		this.quantityService = quantityService;
 	}
-	
+
+	public OrderProduct getOrderProduct() {
+		return orderProduct;
+	}
+
+	public void setOrderProduct(OrderProduct orderProduct) {
+		this.orderProduct = orderProduct;
+	}
 }

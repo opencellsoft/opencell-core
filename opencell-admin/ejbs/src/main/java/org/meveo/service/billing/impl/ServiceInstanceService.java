@@ -290,7 +290,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 .filter(pc -> pc.getChargeTemplate() != null)
                 .map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
                 .filter(charge -> charge instanceof OneShotChargeTemplate)
-                .filter(ch -> ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION)
+                .filter(ch -> (((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION) || ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER)
                 .map(ch -> {
                     ServiceChargeTemplateSubscription serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
                     serviceChargeTemplateSubscription.setChargeTemplate((OneShotChargeTemplate) ch);
@@ -410,7 +410,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         for (ServiceChargeTemplateSubscription serviceChargeTemplate : serviceTemplate.getServiceSubscriptionCharges()) {
             SubscriptionChargeInstance chargeInstance = (SubscriptionChargeInstance) oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate, subscriptionAmount, null, true,
-                isVirtual);
+                    isVirtual || (serviceChargeTemplate.getChargeTemplate().getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER));
             serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
         }
 

@@ -934,9 +934,11 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setCurrencyCode(wo.getCurrency() != null ? wo.getCurrency().getCurrencyCode() : null);
             quotePrice.setQuoteArticleLine(quoteArticleLine);
             quotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
-            Integer durationTermInMonth = ((RecurringChargeTemplate) wo.getChargeInstance().getChargeTemplate()).getDurationTermInMonth();
-            if (PriceTypeEnum.RECURRING.equals(quotePrice.getPriceTypeEnum()) && durationTermInMonth != null) {
-                quotePrice.setRecurrenceDuration(Long.valueOf(durationTermInMonth));
+            quotePrice.setChargeTemplate(wo.getChargeInstance().getChargeTemplate());
+            if (PriceTypeEnum.RECURRING.equals(quotePrice.getPriceTypeEnum())) {
+                Integer durationTermInMonth = ((RecurringChargeTemplate) wo.getChargeInstance().getChargeTemplate()).getDurationTermInMonth();
+                if(durationTermInMonth != null)
+                    quotePrice.setRecurrenceDuration(Long.valueOf(durationTermInMonth));
                 //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
             }
             quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax());

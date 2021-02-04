@@ -5,6 +5,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
@@ -16,6 +17,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -75,6 +77,10 @@ public class QuotePrice extends AuditableEntity {
 
 	@Column(name = "recurrence_periodicity")
 	private String recurrencePeriodicity;
+
+	@OneToOne
+	@JoinColumn(name= "charge_template_id")
+	private ChargeTemplate chargeTemplate;
 
 	public QuoteArticleLine getQuoteArticleLine() {
 		return quoteArticleLine;
@@ -186,5 +192,13 @@ public class QuotePrice extends AuditableEntity {
 
 	public void setPriceLevelEnum(PriceLevelEnum priceLevelEnum) {
 		this.priceLevelEnum = priceLevelEnum;
+	}
+
+	public ChargeTemplate getChargeTemplate() {
+		return chargeTemplate;
+	}
+
+	public void setChargeTemplate(ChargeTemplate chargeTemplate) {
+		this.chargeTemplate = chargeTemplate;
 	}
 }

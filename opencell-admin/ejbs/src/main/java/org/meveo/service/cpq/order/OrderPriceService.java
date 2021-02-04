@@ -2,8 +2,11 @@ package org.meveo.service.cpq.order;
 
 import javax.ejb.Stateless;
 
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.OrderPrice;
 import org.meveo.service.base.BusinessService;
+
+import java.util.List;
 
 /**
  * @author Tarik FAKHOURI
@@ -14,4 +17,9 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class OrderPriceService extends BusinessService<OrderPrice> {
 
+    public List<OrderPrice> findByOrder(CommercialOrder commercialOrder) {
+        return getEntityManager().createNamedQuery("OrderPrice.findByOrder", OrderPrice.class)
+                .setParameter("commercialOrder", commercialOrder)
+                .getResultList();
+    }
 }
