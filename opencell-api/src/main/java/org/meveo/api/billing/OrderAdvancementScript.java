@@ -113,7 +113,6 @@ public class OrderAdvancementScript extends ModuleScript {
             invoiceLine.setAmountWithTax(amountWithTaxToBeInvoiced);
             invoiceLine.setAmountTax(taxAmountToBeInvoiced);
             invoiceLine.setTaxRate(totalTaxRate);
-            invoiceLine.setInvoice(new OrderInvoice());
             invoiceLinesService.create(invoiceLine);
 
             commercialOrder.addInvoicedRate(invoicingPlanItem.getRateToBill());
