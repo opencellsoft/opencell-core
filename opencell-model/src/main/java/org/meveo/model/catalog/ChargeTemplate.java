@@ -43,7 +43,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
@@ -59,8 +58,6 @@ import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
-import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.enums.RecurrenceDurationEnum;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxClass;
