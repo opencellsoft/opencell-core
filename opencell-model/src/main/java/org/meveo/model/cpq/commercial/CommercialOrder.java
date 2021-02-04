@@ -183,6 +183,11 @@ public class CommercialOrder extends AuditableEntity {
 
 	@OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
 	private List<OrderOffer> offers;
+	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_lot_id")
+	private OrderLot orderLot;
 
 	/**
 	 * @return the seller
@@ -549,5 +554,19 @@ public class CommercialOrder extends AuditableEntity {
 
 	public void setOffers(List<OrderOffer> offers) {
 		this.offers = offers;
+	}
+
+	/**
+	 * @return the orderLot
+	 */
+	public OrderLot getOrderLot() {
+		return orderLot;
+	}
+
+	/**
+	 * @param orderLot the orderLot to set
+	 */
+	public void setOrderLot(OrderLot orderLot) {
+		this.orderLot = orderLot;
 	}
 }

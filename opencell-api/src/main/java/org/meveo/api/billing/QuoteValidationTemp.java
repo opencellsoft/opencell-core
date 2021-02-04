@@ -183,7 +183,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		OrderLot orderCustomer = new OrderLot();
 		orderCustomer.setCode(GENERIC_CODE);
 		orderCustomer.setCode(orderCustomerServiceService.findDuplicateCode(orderCustomer));
-		orderCustomer.setOrder(commercialOrder);
+		//orderCustomer.setOrder(commercialOrder);
 		orderCustomerServiceService.create(orderCustomer);
 		return orderCustomer;
 	}

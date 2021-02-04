@@ -45,6 +45,8 @@ public class QuoteVersionDto extends BaseEntityDto {
 	private Date endDate;
 	/** billing code */
 	private String billingPlanCode;
+	/** quote lot attached to quote version **/
+	private String quoteLotCode;
 
 	/**
 	 * Instantiates a new product version dto.
@@ -171,6 +173,20 @@ public class QuoteVersionDto extends BaseEntityDto {
 	 */
 	public void setBillingPlanCode(String billingPlanCode) {
 		this.billingPlanCode = billingPlanCode;
+	}
+
+	/**
+	 * @return the quoteLotCode
+	 */
+	public String getQuoteLotCode() {
+		return quoteLotCode;
+	}
+
+	/**
+	 * @param quoteLotCode the quoteLotCode to set
+	 */
+	public void setQuoteLotCode(String quoteLotCode) {
+		this.quoteLotCode = quoteLotCode;
 	}
 
 
