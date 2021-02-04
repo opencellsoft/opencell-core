@@ -115,6 +115,7 @@ public class OrderAdvancementScript extends ModuleScript {
             invoiceLine.setTaxRate(totalTaxRate);
             invoiceLinesService.create(invoiceLine);
 
+            commercialOrder.setOrderProgressTmp(orderProgress);
             commercialOrder.addInvoicedRate(invoicingPlanItem.getRateToBill());
             commercialOrderService.update(commercialOrder);
         }
