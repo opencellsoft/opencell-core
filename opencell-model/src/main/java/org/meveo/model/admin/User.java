@@ -60,7 +60,6 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IReferenceEntity;
-import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.ReferenceIdentifierCode;
 import org.meveo.model.ReferenceIdentifierDescription;
@@ -69,10 +68,10 @@ import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
+import org.meveo.model.ISearchable;
 
 /**
  * Application user
- * 
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
@@ -84,7 +83,8 @@ import org.meveo.model.shared.Name;
 @ReferenceIdentifierCode("userName")
 @ReferenceIdentifierDescription("email")
 @Table(name = "adm_user")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "adm_user_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "adm_user_seq"), })
 @NamedQueries({ @NamedQuery(name = "User.listUsersInMM", query = "SELECT u FROM User u LEFT JOIN u.roles as role WHERE role.name IN (:roleNames)"),
         @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u WHERE lower(u.userName)=:username", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
         @NamedQuery(name = "User.updateLastLoginById", query = "update User set lastLoginDate=:lastLoginDate where id=:id"),
@@ -298,22 +298,21 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
 
     /**
      * Returns all the secured entities associated with this user's roles.
-     * 
      * @return list of secured entities
      */
-    public List<SecuredEntity> getRoleSecuredEntities() {
-        List<SecuredEntity> result = new ArrayList<>();
+	public List<SecuredEntity> getRoleSecuredEntities() {
+		List<SecuredEntity> result = new ArrayList<>();
 
-        if (getRoles() != null && !getRoles().isEmpty()) {
-            for (Role r : getRoles()) {
-                if (r.getSecuredEntities() != null && !r.getSecuredEntities().isEmpty()) {
-                    result.addAll(r.getSecuredEntities());
-                }
-            }
-        }
+		if (getRoles() != null && !getRoles().isEmpty()) {
+			for (Role r : getRoles()) {
+				if (r.getSecuredEntities() != null && !r.getSecuredEntities().isEmpty()) {
+					result.addAll(r.getSecuredEntities());
+				}
+			}
+		}
 
-        return result;
-    }
+		return result;
+	}
 
     public UserHierarchyLevel getUserLevel() {
         return userLevel;
@@ -336,14 +335,14 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
      */
     @PrePersist
     public void setUUIDIfNull() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID().toString();
-        }
+    	if (uuid == null) {
+    		uuid = UUID.randomUUID().toString();
+    	}
     }
 
     @Override
     public String getUuid() {
-        setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
+    	setUUIDIfNull(); // setting uuid if null to be sure that the existing code expecting uuid not null will not be impacted
         return uuid;
     }
 
