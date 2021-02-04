@@ -43,6 +43,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.finance.ReportExtractService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 /**
@@ -70,6 +71,9 @@ public class ReportExtractJobBean extends BaseJobBean implements Serializable {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -81,6 +85,7 @@ public class ReportExtractJobBean extends BaseJobBean implements Serializable {
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
+        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
@@ -103,7 +108,9 @@ public class ReportExtractJobBean extends BaseJobBean implements Serializable {
                 reportExtractIds = reportExtractService.listIds();
             }
 
-            log.debug("Reports to execute={}" + (reportExtractIds == null ? null : reportExtractIds.size()));
+            int reportsToExecute = reportExtractIds == null ? null : reportExtractIds.size();
+            log.debug("Reports to execute={}" + reportsToExecute);
+            jobExecutionService.initCounterElementsRemaining(result, reportsToExecute);
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             SubListCreator subListCreator = new SubListCreator(reportExtractIds, nbRuns.intValue());
@@ -131,13 +138,13 @@ public class ReportExtractJobBean extends BaseJobBean implements Serializable {
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
+                    jobExecutionService.registerError(result, cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }
         } catch (Exception e) {
             log.error("Failed to run recurring rating job", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
         log.debug("end running RecurringRatingJobBean!");
     }

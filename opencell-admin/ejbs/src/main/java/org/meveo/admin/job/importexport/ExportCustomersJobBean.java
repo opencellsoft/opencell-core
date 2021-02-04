@@ -102,9 +102,11 @@ public class ExportCustomersJobBean {
             }
             List<Customer> customers = customerService.listBySellerCode(seller.getCode());
             seller.setCustomers(customersToDto(customers));
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         int nbItems = sellers.getSeller() != null ? sellers.getSeller().size() : 0;
         result.setNbItemsToProcess(nbItems);
+        jobExecutionService.initCounterElementsRemaining(result, nbItems);
         try {
             JAXBUtils.marshaller(sellers, new File(dir + File.separator + "CUSTOMER_" + timestamp + ".xml"));
             result.setNbItemsCorrectlyProcessed(nbItems);

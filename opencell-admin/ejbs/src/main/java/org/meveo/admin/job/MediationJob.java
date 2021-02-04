@@ -83,7 +83,9 @@ public class MediationJob extends Job {
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
+        jobExecutionService.counterInc(result, "running_threads", nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
+
         Boolean oneFilePerJob = (Boolean) this.getParamOrCFValue(jobInstance, "oneFilePerJob", Boolean.FALSE);
         
 //        EntityReferenceWrapper reader = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
@@ -153,12 +155,13 @@ public class MediationJob extends Job {
                 log.debug("There is no file in {} with extension {} to by processed by Mediation {} job", inputDir, cdrExtensions, result.getJobInstance().getCode());
                 return;
             }
-
             for (File file : files) {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
-
+                
+                int countLines = FileUtils.countLines(file);
+                jobExecutionService.initCounterElementsRemaining(result, countLines);
                 String fileName = file.getName();
                 mediationJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, jobInstance.getParametres(), nbRuns, waitingMillis, readerCode, parserCode, mappingConf,recordName);
                 
@@ -175,7 +178,7 @@ public class MediationJob extends Job {
 
         } catch (Exception e) {
             log.error("Failed to run mediation job", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
     }
 

@@ -136,9 +136,9 @@ public class MediationFileProcessing {
 	                synchronized (outputFileWriter) {
 	                    outputFileWriter.println(cdr.getLine());
 	                }
-	                result.registerSucces();
+	                jobExecutionService.registerSucces(result);
 				} else {
-				    result.registerError("file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
+				    jobExecutionService.registerError(result, "file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
 				    cdr.setStatus(CDRStatusEnum.ERROR);
 				    createOrUpdateCdr(cdr);
 				    
@@ -175,11 +175,13 @@ public class MediationFileProcessing {
 				synchronized (rejectFileWriter) {
 					rejectFileWriter.println((cdr != null ? cdr.getLine() : "") + "\t" + errorReason);
 				}
-				result.registerError("file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + errorReason);
+				jobExecutionService.registerError(result, "file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + errorReason);
                 cdr.setStatus(CDRStatusEnum.ERROR);
                 cdr.setRejectReason(e.getMessage());
                 createOrUpdateCdr(cdr);
 			}
+
+            jobExecutionService.decCounterElementsRemaining(result);
 		}
 		return new AsyncResult<String>("OK");
 	}

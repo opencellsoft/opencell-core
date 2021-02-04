@@ -139,9 +139,11 @@ public abstract class Job {
 
         auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
         auditOrigin.setAuditOriginName(jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
-        // add counter metrics
+        // Init counters
+        jobExecutionService.iniJobCounters(jobInstance);
+        // Add counter metrics
         Metadata metadata = new MetadataBuilder().withName("is_running_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode()).build();
-        // counter that return 1 when job is running
+        // Counter that return 1 when job is running
         Tag tgName = new Tag("name", jobInstance.getCode());
         Counter counter = registry.counter(metadata, tgName);
         counter.inc();

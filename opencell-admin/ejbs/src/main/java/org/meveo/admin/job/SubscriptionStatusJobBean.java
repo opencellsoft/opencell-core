@@ -41,6 +41,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 /**
@@ -67,6 +68,9 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 	@Inject
 	@EndOfTerm
 	protected Event<ServiceInstance> serviceEndOfTermEventProducer;
+	
+	@Inject
+    protected JobExecutionService jobExecutionService;
 
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -131,10 +135,10 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 				endOfTermEventProducer.fire(subscription);
 			}
 
-			result.registerSucces();
+			jobExecutionService.registerSucces(result);
 		} catch (Exception e) {
 			log.error("Failed to process status of subscription {} ", subscriptionId, e);
-			result.registerError("Failed to process status of subscription " + subscriptionId + ":" + e.getMessage());
+			jobExecutionService.registerError(result, "Failed to process status of subscription " + subscriptionId + ":" + e.getMessage());
 		}
 	}
 
@@ -192,10 +196,10 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 				serviceEndOfTermEventProducer.fire(serviceInstance);
 			}
 
-			result.registerSucces();
+			jobExecutionService.registerSucces(result);
 		} catch (Exception e) {
 			log.error("Failed to process status of serviceInstance with id={}. {}", serviceId, e.getMessage());
-			result.registerError("Failed to process status of serviceInstance with id=" + serviceId + ". " + e.getMessage());
+			jobExecutionService.registerError(result, "Failed to process status of serviceInstance with id=" + serviceId + ". " + e.getMessage());
 		}
 	}
 }

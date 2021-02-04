@@ -40,6 +40,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.bi.impl.FlatFileService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.ICdrReader;
@@ -76,6 +77,9 @@ public class MediationJobBean {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     /** The cdr file name. */
     String cdrFileName;
@@ -182,7 +186,7 @@ public class MediationJobBean {
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
+                    jobExecutionService.registerError(result, cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }

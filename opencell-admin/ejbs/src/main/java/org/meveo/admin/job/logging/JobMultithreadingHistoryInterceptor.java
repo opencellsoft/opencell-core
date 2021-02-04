@@ -61,12 +61,14 @@ public class JobMultithreadingHistoryInterceptor implements Serializable {
 
                 if (parameter instanceof JobExecutionResultImpl) {
                     JobExecutionResultImpl executionResult = (JobExecutionResultImpl) parameter;
-                    JobExecutionResultImpl updateEntity = jobExecutionService.findById(executionResult.getId());
-                    if (updateEntity != null) {
-                        JobExecutionResultImpl.updateFromInterface(executionResult, updateEntity);
-                        jobExecutionService.update(updateEntity);
-                        log.debug("Job execution result updated");
-                        break;
+                    synchronized (executionResult) {
+                        JobExecutionResultImpl updateEntity = jobExecutionService.findById(executionResult.getId());
+                        if (updateEntity != null) {
+                            JobExecutionResultImpl.updateFromInterface(executionResult, updateEntity);
+                            jobExecutionService.update(updateEntity);
+                            log.debug("Job execution result updated");
+                            break;
+                        }
                     }
                 }
             }

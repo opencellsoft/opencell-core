@@ -93,6 +93,7 @@ public class SendInvoiceJobBean extends BaseJobBean {
 
             List<Invoice> invoices = invoiceService.findByNotAlreadySentAndDontSend(billingRunCodes, invoiceDateRangeFrom, invoiceDateRangeTo);
             result.setNbItemsToProcess(invoices.size());
+            jobExecutionService.initCounterElementsRemaining(result, invoices.size());
             int i = 0;
             for (Invoice invoice : invoices) {
                 String overrideEmail = invoiceService.evaluateOverrideEmail(overrideEmailEl, userMap, invoice);
@@ -106,20 +107,21 @@ public class SendInvoiceJobBean extends BaseJobBean {
                 }
                 if (!hasPdf(invoice)) {
                     log.warn("Pdf file not found for the invoice:" + invoice.getId());
-                    result.registerWarning("Pdf file not found");
+                    jobExecutionService.registerWarning(result, "Pdf file not found");
                     continue;
                 }
                 Boolean isSent = invoiceService.sendByEmail(invoice, MailingTypeEnum.BATCH, overrideEmail);
                 if (!isSent) {
-                    result.registerError("could not send the invoice by Email");
+                    jobExecutionService.registerError(result, "could not send the invoice by Email");
                     continue;
                 }
-                result.registerSucces();
+                jobExecutionService.registerSucces(result);
+                jobExecutionService.decCounterElementsRemaining(result);
             }
 
         } catch (BusinessException e) {
             log.error("Failed to run the job : SendInvoiceJob", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
 
     }

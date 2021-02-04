@@ -21,22 +21,24 @@ import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 import static org.meveo.model.shared.DateUtils.guessDate;
 
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.service.dataCollector.DataCollectorService;
-import org.slf4j.Logger;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+
+import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.dataCollector.DataCollectorService;
+import org.meveo.service.job.JobExecutionService;
+import org.slf4j.Logger;
 
 @Stateless
 public class DataCollectorJobBean extends BaseJobBean {
@@ -50,6 +52,9 @@ public class DataCollectorJobBean extends BaseJobBean {
 
     @Inject
     private Logger log;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     @Interceptors({JobLoggingInterceptor.class, PerformanceInterceptor.class})
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -76,11 +81,11 @@ public class DataCollectorJobBean extends BaseJobBean {
                 }
                 dataCollectorService.updateLastRun(codes, new Date());
                 result.setReport(report);
-                result.registerSucces();
+                jobExecutionService.registerSucces(result);
             }
         } catch (Exception exception) {
             log.error("Failed to run DataCollector job ", exception);
-            result.registerError(exception.getMessage());
+            jobExecutionService.registerError(result, exception.getMessage());
         }
     }
 

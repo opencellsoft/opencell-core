@@ -88,6 +88,7 @@ public class PaymentScheduleProcessingAsync {
             }
             unitPaymentScheduleJobBean.execute(result, item);
 
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<String>("OK");
     }

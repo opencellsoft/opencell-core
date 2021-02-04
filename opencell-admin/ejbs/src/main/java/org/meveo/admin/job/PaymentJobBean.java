@@ -18,8 +18,6 @@
 
 package org.meveo.admin.job;
 
-import static org.meveo.service.script.payment.AccountOperationFilterScript.LIST_AO_TO_PAY;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -35,7 +32,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.async.PaymentAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
@@ -44,7 +40,6 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -52,8 +47,8 @@ import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.AccountOperationService;
-import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
@@ -89,6 +84,9 @@ public class PaymentJobBean extends BaseJobBean {
 	@Inject
 	@CurrentUser
 	protected MeveoUser currentUser;
+	
+	@Inject
+    protected JobExecutionService jobExecutionService;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -100,6 +98,7 @@ public class PaymentJobBean extends BaseJobBean {
 		if (nbRuns == -1) {
 			nbRuns = (long) Runtime.getRuntime().availableProcessors();
 		}
+		jobExecutionService.counterRunningThreads(result, nbRuns);
 		Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
 
 		try {
@@ -170,6 +169,7 @@ public class PaymentJobBean extends BaseJobBean {
 			log.debug("nb aos for payment/refund:" + aos.size());
 
 			result.setNbItemsToProcess(aos.size());
+			jobExecutionService.initCounterElementsRemaining(result, aos.size());
 
 			List<Future<String>> futures = new ArrayList<Future<String>>();
 			SubListCreator subListCreator = new SubListCreator(aos, nbRuns.intValue());
@@ -198,14 +198,14 @@ public class PaymentJobBean extends BaseJobBean {
 
 				} catch (ExecutionException e) {
 					Throwable cause = e.getCause();
-					result.registerError(cause.getMessage());
+					jobExecutionService.registerError(result, cause.getMessage());
 					result.addReport(cause.getMessage());
 					log.error("Failed to execute async method", cause);
 				}
 			}
 		} catch (Exception e) {
 			log.error("Failed to run usage rating job", e);
-			result.registerError(e.getMessage());
+			jobExecutionService.registerError(result, e.getMessage());
 			result.addReport(e.getMessage());
 		}
 	}

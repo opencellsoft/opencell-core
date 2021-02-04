@@ -79,6 +79,7 @@ public class CheckPaymentScheduleCallbackAsync {
                 break;
             }
             unitCheckPaymentScheduleCallbackJobBean.execute(result, id);
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<String>("OK");
     }
