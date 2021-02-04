@@ -208,7 +208,7 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 			}
 			commercialRuleHeader.setTargetGroupedAttributes(groupedAttributes);
 		}
-		if(dto.getDisabled()==null)
+		if(dto.getDisabled()!=null)
 			commercialRuleHeader.setDisabled(dto.getDisabled());
 		
 		populateCommercialRuleItems(dto,commercialRuleHeader);
