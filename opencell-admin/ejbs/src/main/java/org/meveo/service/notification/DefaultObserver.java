@@ -42,6 +42,7 @@ import org.meveo.event.CounterPeriodEvent;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.event.logging.LoggedEvent;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
+import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
@@ -68,6 +69,7 @@ import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldHistory;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.InboundRequest;
@@ -164,7 +166,7 @@ public class DefaultObserver {
         checkEvent(NotificationEventTypeEnum.CREATED, e);
     }
 
-    public void entityUpdated(@Observes @Updated BaseEntity e) throws BusinessException {
+    public void entityUpdated(@Observes @Updated @AdvancementRateIncreased BaseEntity e) throws BusinessException {
         log.debug("Defaut observer: Entity {} with id {} updated", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.UPDATED, e);
     }
@@ -311,6 +313,18 @@ public class DefaultObserver {
     public void invoiceNumberAssigned(@Observes @InvoiceNumberAssigned Invoice invoice) throws BusinessException {
         log.debug("Defaut observer: Assigned a number to the invoice {} ", invoice.getId());
         checkEvent(NotificationEventTypeEnum.INVOICE_NUMBER_ASSIGNED, invoice);
+    }
+    
+
+    /**
+     * Handle OrderProgress from Commercial Order
+     * 
+     * @param invoice Invoice
+     * @throws BusinessException General business exception
+     */
+    public void commercialOrderOrderProgress(@Observes @AdvancementRateIncreased CommercialOrder commercialOrder) throws BusinessException {
+        log.debug("Defaut observer: check order progress for order {}", commercialOrder.getId());
+        checkEvent(NotificationEventTypeEnum.ADVT_RATE_INCREASED, commercialOrder);
     }
 
     private void fieldUpdated(BaseEntity entity, AuditableFieldEvent field, NotificationEventTypeEnum notificationType) throws BusinessException {

@@ -5,6 +5,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.cpq.Product;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -26,7 +27,11 @@ import static javax.persistence.FetchType.LAZY;
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_article_mapping_line_seq"), })
 public class ArticleMappingLine extends BusinessEntity {
 
-    @OneToOne(fetch = LAZY)
+    public ArticleMappingLine() {
+		super();
+	}
+
+	@OneToOne(fetch = LAZY)
     @JoinColumn(name = "article_mapping_id")
     private ArticleMapping articleMapping;
 
@@ -42,8 +47,8 @@ public class ArticleMappingLine extends BusinessEntity {
     private OfferTemplate offerTemplate;
 
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "product_template_id")
-    private ProductTemplate productTemplate;
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "charge_template_id")
@@ -85,12 +90,12 @@ public class ArticleMappingLine extends BusinessEntity {
         this.offerTemplate = offerTemplate;
     }
 
-    public ProductTemplate getProductTemplate() {
-        return productTemplate;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductTemplate(ProductTemplate productTemplate) {
-        this.productTemplate = productTemplate;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public ChargeTemplate getChargeTemplate() {

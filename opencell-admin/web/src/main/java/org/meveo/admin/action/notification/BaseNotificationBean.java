@@ -38,6 +38,8 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
@@ -134,7 +136,7 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                 events.add(NotificationEventTypeEnum.REJECTED);
             } else if (clazzStr.equals(CounterPeriod.class.getName())) {
                 events.add(NotificationEventTypeEnum.COUNTER_DEDUCED);
-            } else if (clazzStr.equals(Subscription.class.getName()) || clazzStr.equals(ServiceInstance.class.getName())) {
+            } else if (clazzStr.equals(Subscription.class.getName()) || clazzStr.equals(ServiceInstance.class.getName()) || clazzStr.equals(CpqQuote.class.getName())) {
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
                 events.add(NotificationEventTypeEnum.RENEWAL_UPDATED);
                 events.add(NotificationEventTypeEnum.END_OF_TERM);
@@ -144,6 +146,8 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                 events.add(NotificationEventTypeEnum.INVOICE_NUMBER_ASSIGNED);
                 events.add(NotificationEventTypeEnum.XML_GENERATED);
                 events.add(NotificationEventTypeEnum.PDF_GENERATED);
+            }else if(clazzStr.equals(CommercialOrder.class.getName())) {
+                events.add(NotificationEventTypeEnum.ADVT_RATE_INCREASED);
             }
         } else if (hasNotificableEntity(clazz)) {
             // No longer is being used

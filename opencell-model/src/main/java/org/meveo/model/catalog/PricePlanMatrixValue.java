@@ -4,6 +4,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.QuoteAttribute;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +18,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @ExportIdentifier({ "code" })
@@ -25,7 +30,7 @@ import java.util.Date;
 @NamedQuery(name="PricePlanMatrixValue.findByPricePlanMatrixLine", query = "select p from PricePlanMatrixValue p where p.pricePlanMatrixLine=:pricePlanMatrixLine")
 public class PricePlanMatrixValue extends BaseEntity {
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "ppm_column_id")
     @NotNull
     private PricePlanMatrixColumn pricePlanMatrixColumn;
@@ -137,5 +142,33 @@ public class PricePlanMatrixValue extends BaseEntity {
 
     public void setToDoubleValue(Double toDoubleValue) {
         this.toDoubleValue = toDoubleValue;
+    }
+
+    public boolean match(Set<AttributeValue> attributesValue) {
+        return attributesValue.stream()
+                .anyMatch( attributeValue -> attributeValue.getAttribute().equals(pricePlanMatrixColumn.getAttribute())
+                        && pricePlanMatrixColumn.getType().valueMatch(this, attributeValue));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PricePlanMatrixValue that = (PricePlanMatrixValue) o;
+        return Objects.equals(pricePlanMatrixColumn, that.pricePlanMatrixColumn) &&
+                Objects.equals(pricePlanMatrixLine, that.pricePlanMatrixLine) &&
+                Objects.equals(longValue, that.longValue) &&
+                Objects.equals(doubleValue, that.doubleValue) &&
+                Objects.equals(stringValue, that.stringValue) &&
+                Objects.equals(dateValue, that.dateValue) &&
+                Objects.equals(fromDateValue, that.fromDateValue) &&
+                Objects.equals(toDateValue, that.toDateValue) &&
+                Objects.equals(fromDoubleValue, that.fromDoubleValue) &&
+                Objects.equals(toDoubleValue, that.toDoubleValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), pricePlanMatrixColumn, pricePlanMatrixLine, longValue, doubleValue, stringValue, dateValue, fromDateValue, toDateValue, fromDoubleValue, toDoubleValue);
     }
 }

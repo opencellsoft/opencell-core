@@ -38,6 +38,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -58,13 +59,16 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
-import org.meveo.model.cpq.commercial.InfoOrder;
+import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.commercial.OrderInfo;
 import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
+import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
@@ -533,7 +537,11 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     private String rejectReason;
     
     @Embedded
-    private InfoOrder infoOrder;
+    private OrderInfo infoOrder;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_article_id")
+    private AccountingArticle accountingArticle;
 
     /**
      * Constructor
@@ -1426,14 +1434,24 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 	/**
 	 * @return the infoOrder
 	 */
-	public InfoOrder getInfoOrder() {
+	public OrderInfo getOrderInfo() {
 		return infoOrder;
 	}
 
 	/**
 	 * @param infoOrder the infoOrder to set
 	 */
-	public void setInfoOrder(InfoOrder infoOrder) {
+	public void setOrderInfo(OrderInfo infoOrder) {
 		this.infoOrder = infoOrder;
 	}
+
+    public AccountingArticle getAccountingArticle() {
+        return accountingArticle;
+    }
+
+    public void setAccountingArticle(AccountingArticle accountingArticle) {
+        this.accountingArticle = accountingArticle;
+    }
+
+   
 }

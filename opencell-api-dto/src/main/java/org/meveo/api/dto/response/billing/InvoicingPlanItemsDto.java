@@ -16,48 +16,51 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.dto.response.catalog;
+package org.meveo.api.dto.response.billing;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.catalog.ServiceTypeDto;
-import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.api.dto.response.billing.InvoicingPlanItemDto;
 
-/**
- * The Class GetServiceTypeResponseDto.
- *
- * @author Mbarek-Ay
- */
-@XmlRootElement(name = "GetServiceTypeResponseDto")
+
+@XmlRootElement(name = "InvoicingPlanItems")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetServiceTypeResponseDto extends BaseResponse {
+public class InvoicingPlanItemsDto implements Serializable {
 
     /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -2517820224350375764L;
+    private static final long serialVersionUID = -8214042837650403747L;
 
-    /** The service template. */
-    private ServiceTypeDto serviceType;
+    /** The invoicingPlanItem. */
+    private List<InvoicingPlanItemDto> invoicingPlanItem;
 
-	/**
-	 * @return the serviceType
-	 */
-	public ServiceTypeDto getServiceType() {
-		return serviceType;
-	}
+    /**
+     * Gets the invoicingPlanItem.
+     *
+     * @return the invoicingPlanItem
+     */
+    public List<InvoicingPlanItemDto> getInvoicingPlanItem() {
+        if (invoicingPlanItem == null)
+            invoicingPlanItem = new ArrayList<InvoicingPlanItemDto>();
+        return invoicingPlanItem;
+    }
 
-	/**
-	 * @param serviceType the serviceType to set
-	 */
-	public void setServiceType(ServiceTypeDto serviceType) {
-		this.serviceType = serviceType;
-	}
+    /**
+     * Sets the invoicingPlanItem.
+     *
+     * @param invoicingPlanItem the new invoicingPlanItem
+     */
+    public void setInvoicingPlanItem(List<InvoicingPlanItemDto> invoicingPlanItem) {
+        this.invoicingPlanItem = invoicingPlanItem;
+    }
 
-	@Override
-	public String toString() {
-		return "GetServiceTypeResponseDto [serviceType=" + serviceType + "]";
-	}
-
-    
+    @Override
+    public String toString() {
+        return "InvoicingPlanItemsDto [invoicingPlanItem=" + invoicingPlanItem + "]";
+    }
 }

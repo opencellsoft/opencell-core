@@ -25,21 +25,20 @@ public class PricePlanMatrixColumnDto extends BaseEntityDto {
     @NotNull
     private int pricePlanMatrixVersion;
 
-    @NotNull
     private String productCode;
 
-    @NotNull
     private String offerTemplateCode;
 
-    @NotNull
     private String attributeCode;
-    @NotNull
+   
     private int position;
-    @NotNull
+
     private ColumnTypeEnum type;
 
-    @NotNull
+   
     private String elValue;
+
+    private Boolean isRange;
 
     public PricePlanMatrixColumnDto() {
     }
@@ -54,6 +53,7 @@ public class PricePlanMatrixColumnDto extends BaseEntityDto {
         this.position = pricePlanMatrixColumn.getPosition();
         this.type = pricePlanMatrixColumn.getType();
         this.elValue = pricePlanMatrixColumn.getElValue();
+        this.isRange = pricePlanMatrixColumn.getRange();
     }
 
     public String getCode() {
@@ -126,5 +126,13 @@ public class PricePlanMatrixColumnDto extends BaseEntityDto {
 
     public void setPricePlanMatrixVersion(int pricePlanMatrixVersion) {
         this.pricePlanMatrixVersion = pricePlanMatrixVersion;
+    }
+
+    public Boolean getRange() {
+        return isRange == null ? false : isRange;
+    }
+
+    public void setRange(Boolean range) {
+        isRange = range;
     }
 }

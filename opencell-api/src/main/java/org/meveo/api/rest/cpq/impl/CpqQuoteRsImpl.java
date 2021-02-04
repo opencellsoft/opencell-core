@@ -18,21 +18,24 @@
 
 package org.meveo.api.rest.cpq.impl;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.billing.CpqQuoteApi;
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.cpq.GetPdfQuoteRequestDto;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
+import org.meveo.api.dto.response.cpq.GetPdfQuoteResponseDto;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteOfferDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
@@ -40,9 +43,9 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.CpqQuoteRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.quote.QuoteStatusEnum;
-import org.meveo.model.cpq.CpqQuote;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -74,6 +77,21 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, getQuoteDtoResponse.getActionStatus());
 	        }
+	}
+	
+	
+	@Override
+	public GetPdfQuoteResponseDto getQuotePDF(String quoteCode, int currentVersion, boolean generatePdf) {
+		GetPdfQuoteResponseDto result = new GetPdfQuoteResponseDto();
+		try {
+			result.setPdfContent(cpqQuoteApi.generateQuotePDF(quoteCode, currentVersion,generatePdf));
+			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+		log.info("findPdfQuote Response={}", result);
+		return result;
 	}
 
 
@@ -153,9 +171,9 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 	@Override
 	public Response createQuoteVersion(QuoteVersionDto quoteVersion, UriInfo info) {
-		GetQuoteVersionDtoResponse result = new GetQuoteVersionDtoResponse();
+		GetQuoteVersionDtoResponse result = null;
 		try {
-            result.setQuoteVersionDto(cpqQuoteApi.createQuoteVersion(quoteVersion));
+			result=cpqQuoteApi.createQuoteVersion(quoteVersion);
             return Response.ok(result).build();
         } catch (MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());
@@ -221,10 +239,52 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	        }
     }
 
-//	@Override
-//	public Response quoteQuotation(String quoteCode, int quoteVersion, UriInfo info) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	@Override
+	public Response quoteQuotation(String quoteCode, int quoteVersion) {
+		try {
+		          return Response.ok(cpqQuoteApi.quoteQuotation(quoteCode, quoteVersion)).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, new GetQuoteVersionDtoResponse().getActionStatus());
+	        }
+	}
+
+	@Override
+	public GetPdfQuoteResponseDto generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf) {
+		GetPdfQuoteResponseDto result = new GetPdfQuoteResponseDto();
+		try {
+			result.setPdfContent(cpqQuoteApi.generateQuoteXml(quoteCode, currentVersion, generatePdf));
+			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+		log.info("findPdfQuote Response={}", result);
+		return result;
+	}
+
+
+	@Override
+	public Response findQuoteItems(String quoteCode, int quoteVersion, UriInfo info) {
+		GetQuoteVersionDtoResponse result = new GetQuoteVersionDtoResponse();
+		try {
+            List<QuoteOfferDTO> quoteOffers = cpqQuoteApi.findQuoteOffer(quoteCode, quoteVersion);
+            result.setQuoteItems(quoteOffers);
+	          return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+        }
+	}
+
+
+	@Override
+	public Response findQuoteItem(Long quoteItemId, UriInfo info) {
+		GetQuoteOfferDtoResponse result = new GetQuoteOfferDtoResponse();
+		try {
+			result.setQuoteOfferDto(cpqQuoteApi.findById(quoteItemId));
+	          return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+        }
+	}
    
 }

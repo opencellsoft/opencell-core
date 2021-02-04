@@ -27,7 +27,11 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
 	private int pricePlanMatrixVersion;
 
+	private String description;
+
 	private List<PricePlanMatrixValueDto> pricePlanMatrixValues = new ArrayList<PricePlanMatrixValueDto>();
+
+	private Integer priority;
 
 	public PricePlanMatrixLineDto() {
 	}
@@ -35,6 +39,8 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 	public PricePlanMatrixLineDto(PricePlanMatrixLine pricePlanMatrixLine) {
 		this.ppmLineId = pricePlanMatrixLine.getId();
 		this.pricetWithoutTax = pricePlanMatrixLine.getPricetWithoutTax();
+		this.description = pricePlanMatrixLine.getDescription();
+		this.priority = pricePlanMatrixLine.getPriority();
 		this.pricePlanMatrixCode = pricePlanMatrixLine.getPricePlanMatrixVersion().getPricePlanMatrix().getCode();
 		this.pricePlanMatrixVersion = pricePlanMatrixLine.getPricePlanMatrixVersion().getCurrentVersion();
 		pricePlanMatrixValues = pricePlanMatrixLine.getPricePlanMatrixValues()
@@ -99,5 +105,21 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 
 	public void setPricePlanMatrixVersion(int pricePlanMatrixVersion) {
 		this.pricePlanMatrixVersion = pricePlanMatrixVersion;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Integer getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Integer priority) {
+		this.priority = priority;
 	}
 }

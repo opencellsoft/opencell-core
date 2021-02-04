@@ -30,7 +30,9 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
 /**
@@ -56,6 +58,7 @@ public class AttributeDTO extends EnableBusinessDto {
     /**
      * Corresponding to minimum one shot charge template code.
      */
+    @NotNull
     protected AttributeTypeEnum attributeType;
     
     /**
@@ -85,8 +88,6 @@ public class AttributeDTO extends EnableBusinessDto {
     
     protected boolean ruled=Boolean.FALSE;
     
-    protected String value;
-    
     @XmlElementWrapper(name = "chargeTemplateCodes")
     @XmlElement(name = "chargeTemplateCodes") 
     private List<String> chargeTemplateCodes = new ArrayList<String>();
@@ -94,6 +95,23 @@ public class AttributeDTO extends EnableBusinessDto {
     @XmlElementWrapper(name = "commercialRuleCodes")
     @XmlElement(name = "commercialRuleCodes") 
     protected List<String> commercialRuleCodes=new ArrayList<String>();
+    
+    /** The medias */
+    @XmlElementWrapper(name = "medias")
+    @XmlElement(name = "medias")
+    protected List<MediaDto> medias = new ArrayList<MediaDto>();
+    
+    
+    /** The tags */
+    @XmlElementWrapper(name = "tags")
+    @XmlElement(name = "tags")
+    protected List<String> tagCodes=new ArrayList<String>();
+    
+    @XmlElementWrapper(name = "assignedAttributeCodes")
+    @XmlElement(name = "assignedAttributeCodes")
+    private List<String> assignedAttributeCodes=new ArrayList<String>();
+    
+    private Integer unitNbDecimal = BaseEntity.NB_DECIMALS;
     
     public AttributeDTO() {
     }
@@ -114,6 +132,24 @@ public class AttributeDTO extends EnableBusinessDto {
         attributeType=attribute.getAttributeType();
         groupedAttributeCode=attribute.getGroupedAttributes()!=null?attribute.getGroupedAttributes().getCode():null;
         display=attribute.isDisplay();
+        code=attribute.getCode();
+        description=attribute.getDescription();
+        id=attribute.getId();
+        mandatory=attribute.isMandatory();
+        unitNbDecimal = attribute.getUnitNbDecimal();
+        
+        if (attribute.getMedias()!=null) {
+        	for (Media media:attribute.getMedias()) {
+        		medias.add(new MediaDto(media));
+        	}
+        }
+        if (attribute.getAssignedAttributes()!=null) {
+        	for (Attribute attr:attribute.getAssignedAttributes()) {
+        		assignedAttributeCodes.add(attr.getCode());
+        	}
+        }
+        
+        
     }
 
  
@@ -279,21 +315,6 @@ public class AttributeDTO extends EnableBusinessDto {
 
 
 
-	/**
-	 * @return the value
-	 */
-	public String getValue() {
-		return value;
-	}
-
-
-
-	/**
-	 * @param value the value to set
-	 */
-	public void setValue(String value) {
-		this.value = value;
-	}
 
 
 
@@ -314,6 +335,86 @@ public class AttributeDTO extends EnableBusinessDto {
 	}
 
 
+
+	/**
+	 * @return the medias
+	 */
+	public List<MediaDto> getMedias() {
+		return medias;
+	}
+
+
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<MediaDto> medias) {
+		this.medias = medias;
+	}
+
+
+
+	/**
+	 * @return the tagCodes
+	 */
+	public List<String> getTagCodes() {
+		return tagCodes;
+	}
+
+
+
+	/**
+	 * @param tagCodes the tagCodes to set
+	 */
+	public void setTagCodes(List<String> tagCodes) {
+		this.tagCodes = tagCodes;
+	}
+
+
+
+
+
+
+	/**
+	 * @return the assignedAttributeCodes
+	 */
+	public List<String> getAssignedAttributeCodes() {
+		return assignedAttributeCodes;
+	}
+
+
+
+	/**
+	 * @param assignedAttributeCodes the assignedAttributeCodes to set
+	 */
+	public void setAssignedAttributeCodes(List<String> assignedAttributeCodes) {
+		this.assignedAttributeCodes = assignedAttributeCodes;
+	}
+
+
+
+	/**
+	 * @return the unitNbDecimal
+	 */
+	public Integer getUnitNbDecimal() {
+		return unitNbDecimal;
+	}
+
+
+
+	/**
+	 * @param unitNbDecimal the unitNbDecimal to set
+	 */
+	public void setUnitNbDecimal(Integer unitNbDecimal) {
+		this.unitNbDecimal = unitNbDecimal;
+	}
+
+
+ 
+	
+
+
+	
  
 
 

@@ -1,12 +1,15 @@
 package org.meveo.model.cpq.commercial;
 
 import java.math.BigDecimal;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -14,7 +17,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
 
 /** 
  * @author Tarik F.
@@ -40,7 +43,7 @@ public class OrderProduct extends BusinessEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_service_commercial_id")
-	private OrderCustomerService orderServiceCommercial;
+	private OrderLot orderServiceCommercial;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_offer_id", nullable = false)
@@ -48,13 +51,16 @@ public class OrderProduct extends BusinessEntity {
 	private OrderOffer orderOffer;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_id")
-	private Product product;
+	@JoinColumn(name = "product_version_id")
+	private ProductVersion productVersion;
 
     
 	@Column(name = "quantity", nullable = false, scale = NB_DECIMALS, precision = NB_PRECISION)
 	@NotNull
 	private BigDecimal quantity;
+
+	@OneToMany(mappedBy = "orderProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<OrderAttribute> orderAttributes;
 
 
 	/**
@@ -76,7 +82,7 @@ public class OrderProduct extends BusinessEntity {
 	/**
 	 * @return the orderServiceCommercial
 	 */
-	public OrderCustomerService getOrderServiceCommercial() {
+	public OrderLot getOrderServiceCommercial() {
 		return orderServiceCommercial;
 	}
 
@@ -84,7 +90,7 @@ public class OrderProduct extends BusinessEntity {
 	/**
 	 * @param orderServiceCommercial the orderServiceCommercial to set
 	 */
-	public void setOrderServiceCommercial(OrderCustomerService orderServiceCommercial) {
+	public void setOrderServiceCommercial(OrderLot orderServiceCommercial) {
 		this.orderServiceCommercial = orderServiceCommercial;
 	}
 
@@ -104,23 +110,6 @@ public class OrderProduct extends BusinessEntity {
 		this.orderOffer = orderOffer;
 	}
 
-
-	/**
-	 * @return the product
-	 */
-	public Product getProduct() {
-		return product;
-	}
-
-
-	/**
-	 * @param product the product to set
-	 */
-	public void setProduct(Product product) {
-		this.product = product;
-	}
-
-
 	/**
 	 * @return the quantity
 	 */
@@ -136,7 +125,27 @@ public class OrderProduct extends BusinessEntity {
 		this.quantity = quantity;
 	}
 
-	
-	
-	
+
+	/**
+	 * @return the productVersion
+	 */
+	public ProductVersion getProductVersion() {
+		return productVersion;
+	}
+
+
+	/**
+	 * @param productVersion the productVersion to set
+	 */
+	public void setProductVersion(ProductVersion productVersion) {
+		this.productVersion = productVersion;
+	}
+
+	public List<OrderAttribute> getOrderAttributes() {
+		return orderAttributes;
+	}
+
+	public void setOrderAttributes(List<OrderAttribute> orderAttributes) {
+		this.orderAttributes = orderAttributes;
+	}
 }

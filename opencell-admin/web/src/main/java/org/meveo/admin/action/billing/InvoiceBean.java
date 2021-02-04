@@ -53,6 +53,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceCategoryDTO;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
 import org.meveo.model.billing.RatedTransaction;
@@ -466,18 +467,19 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         }
     }
 
-    public boolean isXmlInvoiceAlreadyGenerated() {
-        if (entity.getXmlFilename() == null) {
+    public boolean isXmlGenerationPossible() {
+        if (entity.getXmlFilename() == null || InvoiceStatusEnum.CANCELED.equals(entity.getStatus())) {
             return false;
-
         } else if (xmlGenerated == null) {
             xmlGenerated = invoiceService.isInvoiceXmlExist(entity);
         }
         return xmlGenerated;
     }
 
-    public boolean isPdfInvoiceAlreadyGenerated() {
-
+    public boolean isPdfGenerationPossible() {
+        if (InvoiceStatusEnum.CANCELED.equals(entity.getStatus())) {
+            return false;
+        }
         if (!pdfGenerated.containsKey(entity.getId())) {
             pdfGenerated.put(entity.getId(), invoiceService.isInvoicePdfExist(entity));
         }
@@ -496,9 +498,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     public void excludeBillingAccounts(BillingRun billingrun) {
         try {
-            log.debug("excludeBillingAccounts getSelectedEntities=" + getSelectedEntities().size());
-            if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
-                for (Invoice invoice : getSelectedEntities()) {
+            log.debug("excludeBillingAccounts getSelectedEntities=" + this.getSelectedEntities().size());
+            if (this.getSelectedEntities() != null && this.getSelectedEntities().size() > 0) {
+                for (Invoice invoice : this.getSelectedEntities()) {
                     invoiceService.cancelInvoice(invoice);
                     billingrun.getInvoices().remove(invoice);
                 }
@@ -887,4 +889,120 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     public void setLinkedInvoices(Set<Invoice> linkedInvoices) {
         entity.setLinkedInvoices(linkedInvoices);
     }
+
+    public void cancelInvoice(Invoice invoice) throws BusinessException {
+        invoiceService.cancelInvoiceWithoutDelete(invoice);
+    }
+    
+    public void validateInvoice(Invoice invoice) throws BusinessException {
+        invoiceService.validateInvoice(invoice, true);
+    }
+    
+    public void rebuildInvoice(Invoice invoice) throws BusinessException {
+        invoiceService.rebuildInvoice(invoice, true);
+    }
+    
+    public void cancelInvoices() {
+        try {
+            if (this.getSelectedEntities() != null && this.getSelectedEntities().size() > 0) {
+                for (Invoice invoice : this.getSelectedEntities()) {
+                    cancelInvoice(invoice);
+                }
+                messages.info(new BundleKey("messages", "info.invoicing.cancelled"));
+            } else {
+                messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to cancel invoices!", e);
+            messages.error(new BundleKey("messages", "error.execution"));
+        }
+    }
+    
+    public void validateInvoices() {
+        try {
+            if (this.getSelectedEntities() != null && this.getSelectedEntities().size() > 0) {
+                for (Invoice invoice : this.getSelectedEntities()) {
+                    validateInvoice(invoice);
+                }
+                messages.info(new BundleKey("messages", "info.invoicing.validated"));
+            } else {
+                messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to validate invoices!", e);
+            messages.error(new BundleKey("messages", "error.execution"));
+        }
+    }
+    
+    public void moveInvoices(BillingRun billingRun) {
+        try {
+            if (this.getSelectedEntities() != null && this.getSelectedEntities().size() > 0) {
+            	invoiceService.moveInvoices(this.getSelectedEntities(), billingRun.getId());
+                messages.info(new BundleKey("messages", "info.invoicing.move"));
+            } else {
+                messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));
+            }
+        } catch (Exception e) {
+            log.error("Failed to move invoices!", e);
+            messages.error(new BundleKey("messages", "error.execution"));
+        }
+    }
+	
+    public boolean canChangeInvoiceStatus(InvoiceStatusEnum newStatus) {
+    	return canChangeInvoiceStatus(entity, newStatus);
+    }
+    public boolean canChangeInvoicesStatus(InvoiceStatusEnum newStatus) {
+    	if(CollectionUtils.isEmpty(this.getSelectedEntities())) {
+    		return false;
+    	}
+    	for(Invoice invoice: this.getSelectedEntities()) {
+    		if(!canChangeInvoiceStatus(invoice, newStatus)) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
+    /**
+	 * 
+	 */
+	public boolean canCancelInvoice(Invoice invoice) {
+		return canChangeInvoiceStatus(invoice, InvoiceStatusEnum.CANCELED);
+	}
+	
+	/**
+	 * 
+	 */
+	public boolean canValidateInvoice(Invoice invoice) {
+		return canChangeInvoiceStatus(invoice, InvoiceStatusEnum.DRAFT);
+	}
+	
+    /**
+	 * 
+	 */
+	public boolean canCancelInvoices() {
+		return canChangeInvoicesStatus(InvoiceStatusEnum.CANCELED);
+	}
+	
+	/**
+	 * 
+	 */
+	public boolean canValidateInvoices() {
+		return canChangeInvoicesStatus(InvoiceStatusEnum.DRAFT);
+	}
+
+	/**
+	 * @param invoice
+	 * @param newStatus
+	 * @return
+	 */
+	public boolean canChangeInvoiceStatus(Invoice invoice, InvoiceStatusEnum newStatus) {
+		if(invoice==null) {
+			return true;
+		}
+		final InvoiceStatusEnum status = invoice.getStatus();
+		return status!=null && newStatus.getPreviousStats().contains(status);
+	}
 }

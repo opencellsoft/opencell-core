@@ -10,16 +10,19 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanMatrixVersionDto extends BaseEntityDto {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1105680934764861643L;
+     *
+     */
+    private static final long serialVersionUID = 1105680934764861643L;
 
-	@NotNull
+    @NotNull
     private String pricePlanMatrixCode;
 
     private VersionStatusEnum statusEnum;
@@ -31,20 +34,41 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     protected DatePeriod validity = new DatePeriod();
     @NotNull
     private Boolean isMatrix;
-    private BigDecimal priceWithoutTax;
+    private BigDecimal amountWithoutTax;
+    private BigDecimal amountWithTax;
+    private String amountWithoutTaxEL;
+    private String amountWithTaxEL;
+    protected int priority=0;
+
+    private Set<PricePlanMatrixColumnDto> columns;
+
+    private Set<PricePlanMatrixLineDto> lines;
 
     public PricePlanMatrixVersionDto() {
     }
 
     public PricePlanMatrixVersionDto(PricePlanMatrixVersion pricePlanMatrixVersion) {
         setLabel(pricePlanMatrixVersion.getLabel());
-        setMatrix(pricePlanMatrixVersion.getMatrix());
+        setMatrix(pricePlanMatrixVersion.isMatrix());
         setPricePlanMatrixCode(pricePlanMatrixVersion.getPricePlanMatrix().getCode());
-        setPriceWithoutTax(pricePlanMatrixVersion.getPriceWithoutTax());
         setVersion(pricePlanMatrixVersion.getCurrentVersion());
         setStatusEnum(pricePlanMatrixVersion.getStatus());
         setStatusDate(pricePlanMatrixVersion.getStatusDate());
         setValidity(pricePlanMatrixVersion.getValidity());
+        setAmountWithoutTax(pricePlanMatrixVersion.getAmountWithoutTax());
+        setAmountWithTax(pricePlanMatrixVersion.getAmountWithTax());
+        setAmountWithoutTaxEL(pricePlanMatrixVersion.getAmountWithoutTaxEL());
+        setAmountWithTaxEL(pricePlanMatrixVersion.getAmountWithTaxEL());
+        setPriority(pricePlanMatrixVersion.getPriority());
+        if (pricePlanMatrixVersion.getLines() != null && !pricePlanMatrixVersion.getLines().isEmpty())
+            lines = pricePlanMatrixVersion.getLines().stream()
+                    .map(PricePlanMatrixLineDto::new)
+                    .collect(Collectors.toSet());
+        if (pricePlanMatrixVersion.getColumns() != null && !pricePlanMatrixVersion.getColumns().isEmpty()) {
+            columns = pricePlanMatrixVersion.getColumns().stream()
+                    .map(PricePlanMatrixColumnDto::new)
+                    .collect(Collectors.toSet());
+        }
     }
 
     public String getPricePlanMatrixCode() {
@@ -103,13 +127,67 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
         isMatrix = matrix;
     }
 
-    public BigDecimal getPriceWithoutTax() {
-        return priceWithoutTax;
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
     }
 
-    public void setPriceWithoutTax(BigDecimal priceWithoutTax) {
-        this.priceWithoutTax = priceWithoutTax;
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
     }
 
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
 
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
+
+    public String getAmountWithoutTaxEL() {
+        return amountWithoutTaxEL;
+    }
+
+    public void setAmountWithoutTaxEL(String amountWithoutTaxEL) {
+        this.amountWithoutTaxEL = amountWithoutTaxEL;
+    }
+
+    public String getAmountWithTaxEL() {
+        return amountWithTaxEL;
+    }
+
+    public void setAmountWithTaxEL(String amountWithTaxEL) {
+        this.amountWithTaxEL = amountWithTaxEL;
+    }
+
+    public Set<PricePlanMatrixLineDto> getLines() {
+        return lines == null ? new HashSet<>() : lines;
+    }
+
+    public void setLines(Set<PricePlanMatrixLineDto> lines) {
+        this.lines = lines;
+    }
+
+    public Set<PricePlanMatrixColumnDto> getColumns() {
+        return columns;
+    }
+
+    public void setColumns(Set<PricePlanMatrixColumnDto> columns) {
+        this.columns = columns;
+    }
+
+	/**
+	 * @return the priority
+	 */
+	public int getPriority() {
+		return priority;
+	}
+
+	/**
+	 * @param priority the priority to set
+	 */
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+    
+    
 }

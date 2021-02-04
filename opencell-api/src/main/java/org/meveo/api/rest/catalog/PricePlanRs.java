@@ -18,26 +18,6 @@
 
 package org.meveo.api.rest.catalog;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
-import org.meveo.api.dto.catalog.PricePlanMatrixDto;
-import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
-import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
-import org.meveo.api.dto.response.catalog.GetPricePlanMatrixColumnResponseDto;
-import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
-import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
-import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
-import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
-import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.PATCH;
-import org.meveo.model.catalog.PricePlanMatrixColumn;
-import org.meveo.model.cpq.enums.VersionStatusEnum;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -49,6 +29,28 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.catalog.LoadPricesRequest;
+import org.meveo.api.dto.catalog.MatrixRatingRequest;
+import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
+import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
+import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
+import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
+import org.meveo.api.rest.IBaseRs;
+import org.meveo.api.rest.PATCH;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.PricePlanMatrix}.
@@ -69,11 +71,11 @@ public interface PricePlanRs extends IBaseRs {
      */
     @POST
     @Path("/")
-    @Operation(summary = "This endpoint allows to delete a price plan matrix",
-            tags = { "PricePlanMatrix" },
+    @Operation(summary = "create a price plan ",
+            tags = { "Price Plan" },
             description ="create a price plan matrix",
             responses = {
-                    @ApiResponse(responseCode="200", description = "the price plan column successfully created"),
+                    @ApiResponse(responseCode="200", description = "the price plan is successfully created"),
                     @ApiResponse(responseCode = "400", description = "Internat error")
             })
     ActionStatus create(PricePlanMatrixDto postData);
@@ -86,6 +88,13 @@ public interface PricePlanRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+    @Operation(summary = "Update an existing price plan matrix",
+    tags = { "Price Plan" },
+    description ="Update an existing price plan matrix",
+    responses = {
+            @ApiResponse(responseCode="200", description = "the price plan is successfully updated"),
+            @ApiResponse(responseCode = "400", description = "Internat error")
+    })
     ActionStatus update(PricePlanMatrixDto postData);
 
     /**
@@ -96,6 +105,13 @@ public interface PricePlanRs extends IBaseRs {
      */
     @GET
     @Path("/")
+    @Operation(summary = "find a price plan matrix with a given code",
+    tags = { "Price Plan" },
+    description ="Find a price plan matrix with a given code",
+    responses = {
+            @ApiResponse(responseCode="200", description = "the price plan is successfully retreived",content = @Content(schema = @Schema(implementation = GetPricePlanResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "Internat error")
+    })
     GetPricePlanResponseDto find(@QueryParam("pricePlanCode") String pricePlanCode);
 
     /**
@@ -106,6 +122,13 @@ public interface PricePlanRs extends IBaseRs {
      */
     @DELETE
     @Path("/{pricePlanCode}")
+    @Operation(summary = "Remove an existing price plan matrix with a given code",
+    tags = { "Price Plan" },
+    description ="Remove an existing price plan matrix with a given code",
+    responses = {
+            @ApiResponse(responseCode="200", description = "the price plan is successfully removed",content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+            @ApiResponse(responseCode = "400", description = "Internat error")
+    })
     ActionStatus remove(@PathParam("pricePlanCode") String pricePlanCode);
 
     /**
@@ -116,6 +139,13 @@ public interface PricePlanRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+    @Operation(summary = "List price plan matrix",
+    tags = { "Price Plan" },
+    description ="List price plan matrix",
+    responses = {
+            @ApiResponse(responseCode="200", description = "price plans are successfully retreived",content = @Content(schema = @Schema(implementation = PricePlanMatrixesResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "Internat error")
+    })
     PricePlanMatrixesResponseDto listPricePlanByEventCode(@QueryParam("eventCode") String eventCode);
 
     /**
@@ -126,6 +156,13 @@ public interface PricePlanRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+    @Operation(summary = "Create new or update an existing price plan matrix ",
+    tags = { "Price Plan" },
+    description ="Create new or update an existing price plan matrix",
+    responses = {
+            @ApiResponse(responseCode="200", description = "the price plan is successfully created/updated"),
+            @ApiResponse(responseCode = "400", description = "Internat error")
+    })
     ActionStatus createOrUpdate(PricePlanMatrixDto postData);
 
     /**
@@ -136,6 +173,13 @@ public interface PricePlanRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+    @Operation(summary = "Enable a Price plan with a given code",
+    tags = { "Price Plan" },
+    description ="Enable a Price plan with a given code",
+    responses = {
+            @ApiResponse(responseCode="200", description = "the price plan is successfully enabled"),
+            @ApiResponse(responseCode = "400", description = "Internat error")
+    })
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -146,13 +190,20 @@ public interface PricePlanRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+    @Operation(summary = "Disable a Price plan with a given code",
+    tags = { "Price Plan" },
+    description ="Disable a Price plan with a given code",
+    responses = {
+            @ApiResponse(responseCode="200", description = "the price plan is successfully disabled"),
+            @ApiResponse(responseCode = "400", description = "Internat error")
+    })
     ActionStatus disable(@PathParam("code") String code);
 
 
     @POST
     @Path("/pricePlanMatrixVersion")
-    @Operation(summary = "This endpoint allows to create or update a price plan version",
-            tags = { "PricePlanMatrixVersion" },
+    @Operation(summary = "create or update a price plan version",
+            tags = { "Price Plan" },
             description ="create a price plan version if it doesn't exist or update an existing price plan version",
             responses = {
                     @ApiResponse(responseCode="200", description = "the price plan version successfully created or updated",
@@ -170,8 +221,8 @@ public interface PricePlanRs extends IBaseRs {
      */
     @DELETE
     @Path("/pricePlanMatrixVersion/{pricePlanMatrixCode}/{pricePlanMatrixVersion}")
-    @Operation(summary = "This endpoint allows to remove a price plan version",
-            tags = { "PricePlanMatrixVersion"},
+    @Operation(summary = "remove a price plan version",
+            tags = { "Price Plan"},
             description ="remove a price plan version with price plan code and current version",
             responses = {
                     @ApiResponse(responseCode="200", description = "the price plan version successfully deleted",
@@ -191,8 +242,8 @@ public interface PricePlanRs extends IBaseRs {
      */
     @PATCH
     @Path("/pricePlanMatrixVersion/{pricePlanMatrixCode}/{pricePlanMatrixVersion}")
-    @Operation(summary = "This endpoint allows to update the price plan version status",
-            tags = { "PricePlanMatrixVersion" },
+    @Operation(summary = "update the price plan version status",
+            tags = { "Price Plan" },
             description ="the product with status DRAFT can be change to PUBLIED or CLOSED ",
             responses = {
                     @ApiResponse(responseCode="200", description = "the price plan version successfully updated",  content = @Content(schema = @Schema(implementation = GetPricePlanVersionResponseDto.class))),
@@ -200,6 +251,17 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode = "400", description = "the status of the price plan matrix is already closed")
             })
     Response updatePricePlanMatrixVersionStatus(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode, @Parameter @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion, @Parameter @QueryParam("status") VersionStatusEnum status);
+
+    @POST
+    @Path("/pricePlanMatrixVersions")
+    @Operation(summary = "get the price plan versions",
+            tags = { "Price Plan" },
+            description ="load the list of ppm versions",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the list of price plan version successfully updated",  content = @Content(schema = @Schema(implementation = GetPricePlanVersionResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Unknown error")
+            })
+    Response listPricePlanMatrixVersions(PagingAndFiltering pagingAndFiltering);
 
     /**
      *
@@ -209,8 +271,8 @@ public interface PricePlanRs extends IBaseRs {
      */
     @POST
     @Path("/pricePlanMatrixVersion/duplicate/{pricePlanMatrixCode}/{pricePlanMatrixVersion}")
-    @Operation(summary = "This endpoint allows to duplicate a price plan matrix version",
-            tags = { "PricePlanMatrixVersion" },
+    @Operation(summary = "duplicate a price plan matrix version",
+            tags = { "Price Plan" },
             description ="duplicate a product version",
             responses = {
                     @ApiResponse(responseCode="200", description = "the price plan version successfully duplicated"),
@@ -228,8 +290,8 @@ public interface PricePlanRs extends IBaseRs {
      */
     @POST
     @Path("/pricePlanMatrixColumn")
-    @Operation(summary = "This endpoint allows to create a price plan matrix column",
-            tags = { "PricePlanMatrixColumn" },
+    @Operation(summary = "create a price plan matrix column",
+            tags = { "Price Plan" },
             description ="create a price plan matrix column",
             responses = {
                     @ApiResponse(responseCode="201", description = "the price plan column successfully created"),
@@ -247,8 +309,8 @@ public interface PricePlanRs extends IBaseRs {
      */
     @PUT
     @Path("/pricePlanMatrixColumn")
-    @Operation(summary = "This endpoint allows to update a price plan matrix column",
-            tags = { "PricePlanMatrixColumn" },
+    @Operation(summary = "update a price plan matrix column",
+            tags = { "Price Plan" },
             description ="update a price plan matrix column",
             responses = {
                     @ApiResponse(responseCode="200", description = "the price plan column successfully updated"),
@@ -264,8 +326,8 @@ public interface PricePlanRs extends IBaseRs {
      */
     @GET
     @Path("/pricePlanMatrixColumn")
-    @Operation(summary = "This endpoint allows to get a price plan matrix column",
-            tags = { "PricePlanMatrixColumn" },
+    @Operation(summary = "get a price plan matrix column",
+            tags = { "Price Plan" },
             description ="get a price plan matrix column",
             responses = {
                     @ApiResponse(responseCode="200", description = "the price plan column successfully loaded"),
@@ -281,8 +343,8 @@ public interface PricePlanRs extends IBaseRs {
      */
     @DELETE
     @Path("/pricePlanMatrixColumn/{pricePlanMatrixColumnCode}")
-    @Operation(summary = "This endpoint allows to delete a price plan matrix column",
-            tags = { "PricePlanMatrixColumn" },
+    @Operation(summary = "delete a price plan matrix column",
+            tags = { "Price Plan" },
             description ="delete a price plan matrix column",
             responses = {
                     @ApiResponse(responseCode="200", description = "the price plan column successfully deleted"),
@@ -299,8 +361,8 @@ public interface PricePlanRs extends IBaseRs {
      */
     @POST
     @Path("/addPricePlanMatrixLine")
-    @Operation(summary = "This endpoint allows to add a price plan matrix line",
-            tags = { "PricePlanMatrixLine" },
+    @Operation(summary = "add a price plan matrix line",
+            tags = { "Price Plan" },
             description ="add a price plan matrix line",
             responses = {
                     @ApiResponse(responseCode="201", description = "the price plan line successfully added"),
@@ -316,12 +378,71 @@ public interface PricePlanRs extends IBaseRs {
      */
     @PUT
     @Path("/updatePricePlanMatrixLine")
-    @Operation(summary = "This endpoint allows to update a price plan matrix line",
-            tags = { "PricePlanMatrixLine" },
+    @Operation(summary = "update a price plan matrix line",
+            tags = { "Price Plan" },
             description ="update a price plan matrix line",
             responses = {
                     @ApiResponse(responseCode="200", description = "the price plan line successfully updated"),
                     @ApiResponse(responseCode = "400", description = "Internat error")
             })
     Response updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto);
+
+    @DELETE
+    @Path("/pricePlanMatrixLine/{pricePlanMatrixLineId}")
+    @Operation(summary = "delete a price plan matrix line",
+            tags = { "Price Plan" },
+            description ="delete a price plan matrix line",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan line successfully deleted"),
+                    @ApiResponse(responseCode = "400", description = "Internal error")
+            })
+    ActionStatus removePricePlanMatrixLine(@PathParam("pricePlanMatrixLineId") Long pricePlanMatrixLineId);
+
+    @GET
+    @Path("/pricePlanMatrixLine/{pricePlanMatrixLineId}")
+    @Operation(summary = "get a price plan matrix line",
+            tags = { "Price Plan" },
+            description ="get a price plan matrix line",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the price plan line successfully loaded"),
+                    @ApiResponse(responseCode = "400", description = "Internal error")
+            })
+    Response getPricePlanMatrixLine(@PathParam("pricePlanMatrixLineId") Long pricePlanMatrixLineId);
+
+    @POST
+    @Path("/loadPrices")
+    @Operation(summary = "load prices",
+            tags = { "Price Plan" },
+            description ="load prices",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the prices are successfully loaded"),
+                    @ApiResponse(responseCode = "400", description = "Internal error")
+            })
+    Response loadPrices(LoadPricesRequest loadPricesRequest);
+
+    /**
+     * add all price plan matrix lines
+     *
+     */
+    @POST
+    @Path("/addPricePlanMatrixLines")
+    @Operation(summary = "add all price plan matrix lines",
+            tags = { "Price Plan" },
+            description ="add all price plan matrix lines",
+            responses = {
+                    @ApiResponse(responseCode="201", description = "the price plan line successfully added",content = @Content(schema = @Schema(implementation = GetPricePlanVersionResponseDto.class))),
+                    @ApiResponse(responseCode = "400", description = "Internat error")
+            })
+    Response addPricePlanMatrixLines(PricePlanMatrixLinesDto pricePlanMatrixLinesDto);
+
+    @POST
+    @Path("/matrixRating")
+    @Operation(summary = "load prices",
+            tags = { "Price Plan" },
+            description ="load prices",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the prices are successfully loaded"),
+                    @ApiResponse(responseCode = "400", description = "Internal error")
+            })
+    Response matrixRating(MatrixRatingRequest request);
 }

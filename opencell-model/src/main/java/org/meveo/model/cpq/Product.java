@@ -35,7 +35,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
@@ -57,7 +57,10 @@ import org.meveo.model.crm.CustomerBrand;
 		@NamedQuery(name = "Product.getProductLine", query = "select p from Product p where p.productLine.id=:id"),
 		@NamedQuery(name = "Product.findByCode", query = "select p from Product p where p.code=:code")
 })
-public class Product extends BusinessEntity {
+public class Product extends EnableBusinessCFEntity {
+
+	public Product() {
+	}
 
 	/**
 	 * 
@@ -116,7 +119,7 @@ public class Product extends BusinessEntity {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "model_chlidren")
 	@CollectionTable(name = "cpq_product_model_children", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"))
-	private Set<String> modelChlidren=new HashSet<String>();
+	private Set<String> modelChildren =new HashSet<String>();
 	
 
 	/**
@@ -167,7 +170,12 @@ public class Product extends BusinessEntity {
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<ProductChargeTemplateMapping> productCharges = new ArrayList<>();
 
-
+	
+	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("id")
+	private List<Media> medias = new ArrayList<>();
+		
+		
 
 	/**
 	 * @return the status
@@ -266,18 +274,18 @@ public class Product extends BusinessEntity {
 
 
 	/**
-	 * @return the modelChlidren
+	 * @return the modelChildren
 	 */
-	public Set<String> getModelChlidren() {
-		return modelChlidren;
+	public Set<String> getModelChildren() {
+		return modelChildren;
 	}
 
 
 	/**
-	 * @param modelChlidren the modelChlidren to set
+	 * @param modelChildren the modelChildren to set
 	 */
-	public void setModelChlidren(Set<String> modelChlidren) {
-		this.modelChlidren = modelChlidren;
+	public void setModelChildren(Set<String> modelChildren) {
+		this.modelChildren = modelChildren;
 	}
 
 
@@ -334,7 +342,7 @@ public class Product extends BusinessEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(brand, discountFlag, discountList, model, modelChlidren, productLine,
+		result = prime * result + Objects.hash(brand, discountFlag, discountList, model, modelChildren, productLine,
 				reference, status, statusDate);
 		return result;
 	}
@@ -355,7 +363,7 @@ public class Product extends BusinessEntity {
 	        }
 		return Objects.equals(brand, other.brand) && discountFlag == other.discountFlag
 				&& Objects.equals(discountList, other.discountList) && Objects.equals(model, other.model)
-				&& Objects.equals(modelChlidren, other.modelChlidren) && Objects.equals(productLine, other.productLine)
+				&& Objects.equals(modelChildren, other.modelChildren) && Objects.equals(productLine, other.productLine)
 				&& Objects.equals(reference, other.reference) && status == other.status
 				&& Objects.equals(statusDate, other.statusDate)&& Objects.equals(packageFlag, other.packageFlag);
 	}
@@ -375,8 +383,6 @@ public class Product extends BusinessEntity {
 	public void setProductVersions(List<ProductVersion> productVersions) {
 		this.productVersions = productVersions;
 	}
-
-
 
 
 	/**
@@ -401,4 +407,22 @@ public class Product extends BusinessEntity {
 	public void setProductCharges(List<ProductChargeTemplateMapping> productCharges) {
 		this.productCharges = productCharges;
 	}
+
+
+	/**
+	 * @return the medias
+	 */
+	public List<Media> getMedias() {
+		return medias;
+	}
+
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<Media> medias) {
+		this.medias = medias;
+	}
+	
+	
 }

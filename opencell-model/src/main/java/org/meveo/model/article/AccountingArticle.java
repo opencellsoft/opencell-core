@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -12,18 +13,23 @@ import org.meveo.model.tax.TaxClass;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import java.util.HashMap;
 import java.util.Map;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity@CustomFieldEntity(cftCodePrefix = "Article")
-@Table(name = "billing_accounting_article")
+@Table(name = "billing_accounting_article", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_accounting_article_seq"), })
-public class AccountingArticle extends BusinessEntity {
+@NamedQuery(name = "AccountingArticle.findByAccountingCode", query = "select a from AccountingArticle a where a.accountingCode.code = :accountingCode")
+public class AccountingArticle extends EnableBusinessCFEntity {
 
     /**
 	 * 
@@ -42,7 +48,7 @@ public class AccountingArticle extends BusinessEntity {
     @JoinColumn(name = "article_family_id")
     private ArticleFamily articleFamily;
 
-    @OneToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
 
@@ -58,15 +64,11 @@ public class AccountingArticle extends BusinessEntity {
     @Column(name = "analytic_code_3")
     private String analyticCode3;
 
-    @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
-    private CustomFieldValues cfValues;
-
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
 
-    private AccountingArticle() {
+    public AccountingArticle() {
     }
 
     public AccountingArticle(Long id) {
@@ -112,14 +114,6 @@ public class AccountingArticle extends BusinessEntity {
         this.accountingCode = accountingCode;
     }
 
-    public CustomFieldValues getCfValues() {
-        return cfValues;
-    }
-
-    public void setCfValues(CustomFieldValues cfValues) {
-        this.cfValues = cfValues;
-    }
-
     public ArticleMappingLine getArticleMappingLine() {
         return articleMappingLine;
     }
@@ -129,6 +123,12 @@ public class AccountingArticle extends BusinessEntity {
     }
 
     public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public Map<String, String> getDescriptionI18nNotNull() {
+        if(descriptionI18n == null)
+            descriptionI18n = new HashMap<>();
         return descriptionI18n;
     }
 

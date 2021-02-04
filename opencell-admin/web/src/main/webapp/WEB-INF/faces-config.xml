@@ -668,6 +668,11 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 		<redirect />
 	</navigation-case>
 	<navigation-case>
+		<from-outcome>updateInvoiceDetail</from-outcome>
+		<to-view-id>/pages/billing/invoices/updateInvoiceDetail.xhtml</to-view-id>
+		<redirect />
+	</navigation-case>
+	<navigation-case>
 		<from-outcome>invoiceAggregatedDetail</from-outcome>
 		<to-view-id>/pages/billing/invoices/createInvoiceDetail.xhtml</to-view-id>
 		<redirect include-view-params="true">

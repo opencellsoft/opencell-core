@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -12,6 +13,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.OfferTemplate;
+
+import java.util.List;
 
 /** 
  * @author Tarik F.
@@ -40,6 +43,9 @@ public class OrderOffer extends BusinessEntity {
 	@NotNull
 	private OfferTemplate offerTemplate;
 
+	@OneToMany(mappedBy = "orderOffer", fetch = FetchType.LAZY)
+	private List<OrderProduct> products;
+
 	/**
 	 * @return the order
 	 */
@@ -67,6 +73,12 @@ public class OrderOffer extends BusinessEntity {
 	public void setOfferTemplate(OfferTemplate offerTemplate) {
 		this.offerTemplate = offerTemplate;
 	}
-	
-	
+
+	public List<OrderProduct> getProducts() {
+		return products;
+	}
+
+	public void setProducts(List<OrderProduct> products) {
+		this.products = products;
+	}
 }

@@ -5,6 +5,8 @@ import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
 import java.util.List;
 
 @Value.Immutable
@@ -12,8 +14,10 @@ import java.util.List;
 @JsonDeserialize(as = ImmutableArticleMappingLine.class)
 public interface ArticleMappingLine extends Resource {
 
+	@NotNull
     Resource getArticleMapping();
 
+    @NotNull
     Resource getAccountingArticle();
 
     @Nullable
@@ -38,5 +42,5 @@ public interface ArticleMappingLine extends Resource {
     String getMappingKeyEL();
 
     @Nullable
-    List<AttributeMapping> getAttributesMapping();
+    List<org.meveo.apiv2.article.AttributeMapping> getAttributesMapping();
 }

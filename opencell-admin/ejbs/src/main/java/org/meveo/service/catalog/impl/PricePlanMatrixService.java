@@ -17,20 +17,6 @@
  */
 package org.meveo.service.catalog.impl;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -38,19 +24,44 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.AttributeInstance;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.model.quote.QuoteProduct;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.cpq.QuoteAttributeService;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Wassim Drira
@@ -61,6 +72,15 @@ import org.meveo.service.base.BusinessService;
  */
 @Stateless
 public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
+
+    @Inject
+    private PricePlanMatrixColumnService pricePlanMatrixColumnService;
+
+    @Inject
+    private QuoteAttributeService quoteAttributeService;
+
+    @Inject
+    private PricePlanMatrixLineService pricePlanMatrixLineService;
 
     // private ParamBean param = ParamBean.getInstance();
 
@@ -81,7 +101,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         create(pp);
     }
 
-    private void validatePricePlan(PricePlanMatrix pp) {
+    public void validatePricePlan(PricePlanMatrix pp) {
         List<PricePlanMatrix> pricePlanMatrices = listByChargeCode(pp.getEventCode());
         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrices){
             if(!pricePlanMatrix.getId().equals(pp.getId()) &&
@@ -703,5 +723,31 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         }
 
         return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+    }
+
+    public List<PricePlanMatrixLineDto> loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, QuoteProduct quoteProduct) {
+
+        // add check on offerTemplate
+        List<PricePlanMatrixColumn> pricePlanMatrixColumns = pricePlanMatrixColumnService.findByProduct(quoteProduct.getProductVersion().getProduct());
+
+        Set<AttributeValue> attributeValues = pricePlanMatrixColumns.stream()
+                .map(column -> quoteAttributeService.findByAttributeAndQuoteProduct(column.getAttribute().getId(), quoteProduct.getId()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        return pricePlanMatrixLineService.loadMatchedLinesForProductQuote(pricePlanMatrixVersion, attributeValues, quoteProduct.getId())
+                .stream()
+                .map(PricePlanMatrixLineDto::new)
+                .collect(Collectors.toList());
+
+    }
+
+    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) {
+        String serviceCode = chargeInstance.getServiceInstance().getCode();
+        Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()
+                            .stream()
+                            .map(attributeInstance -> (AttributeValue)attributeInstance)
+                            .collect(Collectors.toSet());
+        return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, serviceCode);
     }
 }

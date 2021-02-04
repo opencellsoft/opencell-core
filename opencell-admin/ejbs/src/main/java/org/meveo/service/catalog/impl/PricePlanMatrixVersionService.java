@@ -1,17 +1,22 @@
 package org.meveo.service.catalog.impl;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.PersistenceService;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author Tarik FA.
@@ -19,32 +24,27 @@ import java.util.List;
  */
 @Stateless
 public class PricePlanMatrixVersionService extends PersistenceService<PricePlanMatrixVersion>{
+
+
     public static final String STATUS_OF_THE_PRICE_PLAN_MATRIX_VERSION_D_IS_S_IT_CAN_NOT_BE_UPDATED_NOR_REMOVED = "status of the price plan matrix version (%d) is %s, it can not be updated nor removed";
+
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
 
     @Override
 	public void create(PricePlanMatrixVersion entity) throws BusinessException {
-    	var pricePlanMatrixVersion = this.findLastVersionByCode(entity.getPricePlanMatrix().getCode());
-    	entity.setCurrentVersion(pricePlanMatrixVersion.size() == 0 ? 1 : pricePlanMatrixVersion.get(0).getCurrentVersion() + 1);
-		super.create(entity);
+        super.create(entity);
     }
-
-	@SuppressWarnings("unchecked")
-	public List<PricePlanMatrixVersion> findLastVersionByCode(String code) {
-			return this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.findByCode")
-																			.setParameter("code", code).getResultList();
-	}
 
 
     public PricePlanMatrixVersion findByPricePlanAndVersion(String pricePlanMatrixCode, int currentVersion) {
-        try {
-            return (PricePlanMatrixVersion) this.getEntityManager()
-                    .createNamedQuery("PricePlanMatrixVersion.findByPricePlanAndVersion")
+
+            List<PricePlanMatrixVersion> ppmVersions = this.getEntityManager()
+                    .createNamedQuery("PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", PricePlanMatrixVersion.class)
                     .setParameter("currentVersion", currentVersion)
                     .setParameter("pricePlanMatrixCode", pricePlanMatrixCode.toLowerCase())
-                    .getSingleResult();
-        }catch(NoResultException e) {
-            return null;
-        }
+                    .getResultList();
+            return ppmVersions.isEmpty() ? null : ppmVersions.get(0);
     }
 
     public PricePlanMatrixVersion updatePricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion) {
@@ -86,10 +86,11 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new BusinessException("Failed to clone price plan matrix version", e);
         }
-        Integer lastVersion = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion", Integer.class)
-                .setParameter("pricePlanMatrixCode", pricePlanMatrixVersion.getPricePlanMatrix().getCode())
-                .getSingleResult();
+        String ppmCode = pricePlanMatrixVersion.getPricePlanMatrix().getCode();
+        Integer lastVersion = getLastVersion(ppmCode);
         duplicate.setId(null);
+        duplicate.setColumns(new HashSet<>());
+        duplicate.setLines(new HashSet<>());
         duplicate.setVersion(0);
         duplicate.setCurrentVersion(lastVersion + 1);
         duplicate.setStatus(VersionStatusEnum.DRAFT);
@@ -102,4 +103,30 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
 
         return duplicate;
     }
+
+    private Integer getLastVersion(String ppmCode) {
+        return this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion", Integer.class)
+                    .setParameter("pricePlanMatrixCode", ppmCode)
+                    .getSingleResult();
+    }
+
+    public PricePlanMatrixVersionDto load(Long id) {
+        PricePlanMatrixVersion pricePlanMatrixVersion = findById(id);
+        return new PricePlanMatrixVersionDto(pricePlanMatrixVersion);
+    }
+    
+    @SuppressWarnings("unchecked")
+	public PricePlanMatrixVersion getLastPublishedVersion(String ppmCode) {
+        List<PricePlanMatrixVersion> result=(List<PricePlanMatrixVersion>) this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getLastPublishedVersion")
+                    .setParameter("pricePlanMatrixCode", ppmCode)
+                    .getResultList();
+        
+        return result.isEmpty()?null:result.get(0);
+    }
+    
+    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) {
+    	return pricePlanMatrixService.loadPrices(pricePlanMatrixVersion, chargeInstance);
+    }
+    
+    
 }

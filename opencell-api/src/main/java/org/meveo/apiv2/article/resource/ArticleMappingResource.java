@@ -20,7 +20,7 @@ public interface ArticleMappingResource {
     @POST
     @Path("/")
     @Operation(summary = "This endpoint allows to create an article mapping resource",
-            tags = { "articleMapping" },
+            tags = { "AccountingArticle" },
             description ="create new article mapping resource",
             responses = {
                     @ApiResponse(responseCode="200", description = "the article mapping resource successfully created, and the id is returned in the response"),

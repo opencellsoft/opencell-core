@@ -1,5 +1,6 @@
 package org.meveo.api.cpq;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,8 +14,7 @@ import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
-import org.meveo.api.dto.cpq.ProductDto;
-import org.meveo.api.dto.cpq.ProductVersionDto;
+import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
@@ -27,11 +27,13 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.cpq.TagService;
 
 /**
  * @author Mbarek-Ay
@@ -54,15 +56,15 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 	
 	@Inject
 	private ProductService  productService;
+	
+	@Inject
+	private TagService  tagService;
 
 	@Override
 	public Attribute create(AttributeDTO postData) throws MeveoApiException, BusinessException {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
-		}
-		if (StringUtils.isBlank(postData.getGroupedAttributeCode())) {
-			missingParameters.add("GroupedAttributeCode");
 		}
 		if (attributeService.findByCode(postData.getCode()) != null) {
 			throw new EntityAlreadyExistsException(Attribute.class, postData.getCode());
@@ -71,11 +73,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		handleMissingParametersAndValidate(postData);
 
 		// check if groupedAttributes  exists
-		GroupedAttributes groupedAttributes = groupedAttributeService.findByCode(postData.getGroupedAttributeCode());
-		if (groupedAttributes == null) {
-			throw new EntityDoesNotExistsException(GroupedAttributes.class, postData.getGroupedAttributeCode());
-		}
-
+		GroupedAttributes groupedAttributes = groupedAttributeService.findByCode(postData.getGroupedAttributeCode()); 
 		Attribute attribute = new Attribute();
 		attribute.setCode(postData.getCode());
 		attribute.setDescription(postData.getDescription());
@@ -87,9 +85,43 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setSequence(postData.getSequence());
 		attribute.setAllowedValues(postData.getAllowedValues());
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
-
+		attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
 		attributeService.create(attribute);
+		processTags(postData,attribute);
+		processAssignedAttributes(postData,attribute);
 		return attribute;
+	}
+	
+	private void processTags(AttributeDTO postData, Attribute attribute) {
+		List<String> tagCodes = postData.getTagCodes(); 
+		if(tagCodes != null && !tagCodes.isEmpty()){
+			Set<Tag> tags=new HashSet<Tag>();
+			for(String code:tagCodes) {
+				Tag tag=tagService.findByCode(code);
+				if(tag == null) { 
+					throw new EntityDoesNotExistsException(Tag.class,code);
+				}
+				tag.setAttribute(attribute);
+				tags.add(tag);
+			}
+			attribute.getTags().addAll(tags);
+		}
+	} 
+	
+	private void processAssignedAttributes(AttributeDTO postData, Attribute attribute) {
+		List<String> assignedAttrCodes = postData.getAssignedAttributeCodes(); 
+		if(assignedAttrCodes != null && !assignedAttrCodes.isEmpty()){
+			Set<Attribute> assignedAttributes=new HashSet<Attribute>();
+			for(String code:assignedAttrCodes) {
+				Attribute attr=attributeService.findByCode(code);
+				if(attr == null) { 
+					throw new EntityDoesNotExistsException(Attribute.class,code);
+				} 
+				attr.setParentAttribute(attribute);
+				assignedAttributes.add(attr);
+			}
+			attribute.getAssignedAttributes().addAll(assignedAttributes);
+		}
 	}
 	
 
@@ -99,21 +131,12 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 
 		if (StringUtils.isBlank(postData.getCode())) {
 			missingParameters.add("code");
-		}
-		if (StringUtils.isBlank(postData.getGroupedAttributeCode())) {
-			missingParameters.add("GroupedAttributeCode");
-		}
-
+		} 
 		Attribute attribute=attributeService.findByCode(postData.getCode());
 		if (attribute== null) {
 			throw new EntityDoesNotExistsException(Attribute.class, postData.getCode());
-		}
-
-		// check if groupedAttributes  exists
-		GroupedAttributes groupedAttributes = groupedAttributeService.findByCode(postData.getGroupedAttributeCode());
-		if (groupedAttributes == null) {
-			throw new EntityDoesNotExistsException(GroupedAttributes.class, postData.getGroupedAttributeCode());
-		}  
+		} 
+		GroupedAttributes groupedAttributes = groupedAttributeService.findByCode(postData.getGroupedAttributeCode()); 
 		attribute.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 		attribute.setDescription(postData.getDescription());
 		attribute.setGroupedAttributes(groupedAttributes);
@@ -124,7 +147,17 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setSequence(postData.getSequence());
 		attribute.setAllowedValues(postData.getAllowedValues());
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
-
+		if(postData.getUnitNbDecimal() != null) {
+			attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
+		}
+		if(attribute.getTags() != null && !attribute.getTags().isEmpty()) {
+			for (Tag tag : attribute.getTags()) {
+				tag.setAttribute(null);
+				tagService.update(tag);
+			}
+		}
+		processTags(postData,attribute);
+		processAssignedAttributes(postData,attribute);
 		attributeService.update(attribute);
 		return attribute;
 	}
@@ -145,8 +178,21 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 			chargeTemplateDto=new ChargeTemplateDto(charge,entityToDtoConverter.getCustomFieldsDTO(charge));
 			chargeTemplateDtos.add(chargeTemplateDto);
 		}
+		TagDto tagDto=null;
+		List<TagDto> tagDtos=new ArrayList<TagDto>();
+		for(Tag tag : attribute.getTags()) {
+			tagDto=new TagDto(tag);
+			tagDtos.add(tagDto);
+		}
 		
-		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute,chargeTemplateDtos); 
+		AttributeDTO attributeDto=null;
+		List<AttributeDTO> assignedAttributes=new ArrayList<AttributeDTO>();
+		for(Attribute attr : attribute.getAssignedAttributes()) {
+			attributeDto=new AttributeDTO(attr);
+			assignedAttributes.add(attributeDto);
+		}
+		
+		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute,chargeTemplateDtos,tagDtos,assignedAttributes); 
 		return result;
 	}
 

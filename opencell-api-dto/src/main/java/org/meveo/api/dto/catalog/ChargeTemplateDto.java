@@ -49,8 +49,7 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -5143285194077662656L;
 
-    /** The invoice sub category. */
-    @XmlElement(required = true)
+    /** The invoice sub category. */ 
     private String invoiceSubCategory;
 
     /** The amount editable. */

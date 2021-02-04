@@ -18,21 +18,9 @@
 
 package org.meveo.api.dto.cpq;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.commons.utils.CustomDateSerializer;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.quote.QuoteStatusEnum;
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * DTO to create or update a quote
@@ -42,7 +30,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @XmlRootElement(name = "QuoteDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class QuoteDTO extends BusinessEntityDto{
+public class QuoteDTO extends BaseQuoteDTO{
 
     /**
 	 * 
@@ -52,28 +40,6 @@ public class QuoteDTO extends BusinessEntityDto{
 	
     private QuoteVersionDto quoteVersion;
 
-    private Date quoteDate = new Date();
-
-    private DatePeriod validity = new DatePeriod();
-
-    private QuoteStatusEnum status = QuoteStatusEnum.IN_PROGRESS;
- 
-    @NotNull
-	private String applicantAccountCode;
-	private String billableAccountCode;
-	
-	private String contractCode;
-	@JsonSerialize(using = CustomDateSerializer.class)
-	private Date quoteLotDateBegin;
-	private int quoteLotDuration;
-	private String opportunityRef;
-	private String sellerCode;
-	@JsonSerialize(using = CustomDateSerializer.class)
-	private Date sendDate;
-	private String quoteNumber;
-
-
-    private String externalId;
 
 	/**
 	 * @return the quoteVersion
@@ -90,216 +56,7 @@ public class QuoteDTO extends BusinessEntityDto{
 		this.quoteVersion = quoteVersion;
 	}
 
-
-	/**
-	 * @return the quoteDate
-	 */
-	public Date getQuoteDate() {
-		return quoteDate;
-	}
-
-
-	/**
-	 * @param quoteDate the quoteDate to set
-	 */
-	public void setQuoteDate(Date quoteDate) {
-		this.quoteDate = quoteDate;
-	}
-
-
-	/**
-	 * @return the validity
-	 */
-	public DatePeriod getValidity() {
-		return validity;
-	}
-
-
-	/**
-	 * @param validity the validity to set
-	 */
-	public void setValidity(DatePeriod validity) {
-		this.validity = validity;
-	}
-
-
-	/**
-	 * @return the status
-	 */
-	public QuoteStatusEnum getStatus() {
-		return status;
-	}
-
-
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(QuoteStatusEnum status) {
-		this.status = status;
-	}
-
-
-
-	/**
-	 * @return the applicantAccountCode
-	 */
-	public String getApplicantAccountCode() {
-		return applicantAccountCode;
-	}
-
-
-	/**
-	 * @param applicantAccountCode the applicantAccountCode to set
-	 */
-	public void setApplicantAccountCode(String applicantAccountCode) {
-		this.applicantAccountCode = applicantAccountCode;
-	}
-
-
-	/**
-	 * @return the billableAccountCode
-	 */
-	public String getBillableAccountCode() {
-		return billableAccountCode;
-	}
-
-
-	/**
-	 * @param billableAccountCode the billableAccountCode to set
-	 */
-	public void setBillableAccountCode(String billableAccountCode) {
-		this.billableAccountCode = billableAccountCode;
-	}
-
-
-	/**
-	 * @return the contractCode
-	 */
-	public String getContractCode() {
-		return contractCode;
-	}
-
-
-	/**
-	 * @param contractCode the contractCode to set
-	 */
-	public void setContractCode(String contractCode) {
-		this.contractCode = contractCode;
-	}
-
-	/**
-	 * @return the opportunityRef
-	 */
-	public String getOpportunityRef() {
-		return opportunityRef;
-	}
-
-
-	/**
-	 * @param opportunityRef the opportunityRef to set
-	 */
-	public void setOpportunityRef(String opportunityRef) {
-		this.opportunityRef = opportunityRef;
-	}
-
-
-	/**
-	 * @return the externalId
-	 */
-	public String getExternalId() {
-		return externalId;
-	}
-
-
-	/**
-	 * @param externalId the externalId to set
-	 */
-	public void setExternalId(String externalId) {
-		this.externalId = externalId;
-	}
-
-
-	/**
-	 * @return the sellerCode
-	 */
-	public String getSellerCode() {
-		return sellerCode;
-	}
-
-
-	/**
-	 * @param sellerCode the sellerCode to set
-	 */
-	public void setSellerCode(String sellerCode) {
-		this.sellerCode = sellerCode;
-	}
-
-
-	/**
-	 * @return the quoteLotDateBegin
-	 */
-	public Date getQuoteLotDateBegin() {
-		return quoteLotDateBegin;
-	}
-
-
-	/**
-	 * @param quoteLotDateBegin the quoteLotDateBegin to set
-	 */
-	public void setQuoteLotDateBegin(Date quoteLotDateBegin) {
-		this.quoteLotDateBegin = quoteLotDateBegin;
-	}
-
-
-	/**
-	 * @return the quoteLotDuration
-	 */
-	public int getQuoteLotDuration() {
-		return quoteLotDuration;
-	}
-
-
-	/**
-	 * @param quoteLotDuration the quoteLotDuration to set
-	 */
-	public void setQuoteLotDuration(int quoteLotDuration) {
-		this.quoteLotDuration = quoteLotDuration;
-	}
-
-
-	/**
-	 * @return the sendDate
-	 */
-	public Date getSendDate() {
-		return sendDate;
-	}
-
-
-	/**
-	 * @param sendDate the sendDate to set
-	 */
-	public void setSendDate(Date sendDate) {
-		this.sendDate = sendDate;
-	}
-
-
-	/**
-	 * @return the quoteNumber
-	 */
-	public String getQuoteNumber() {
-		return quoteNumber;
-	}
-
-
-	/**
-	 * @param quoteNumber the quoteNumber to set
-	 */
-	public void setQuoteNumber(String quoteNumber) {
-		this.quoteNumber = quoteNumber;
-	}
-
-
-
+   
 	
     
    

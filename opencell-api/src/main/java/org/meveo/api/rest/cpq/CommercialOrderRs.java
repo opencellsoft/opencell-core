@@ -2,6 +2,7 @@ package org.meveo.api.rest.cpq;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -13,6 +14,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
+import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
+import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -109,4 +114,37 @@ public interface CommercialOrderRs {
 	            @ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 	    })
 	public Response validate(@Parameter(required = true) @PathParam("commercialOrderId") Long orderId);
+	
+	@POST
+    @Path("/list")
+    @Operation(summary = "Get commercial orders matching the given criteria",
+    tags = { "Order management" },
+    description ="Get commercial orders matching the given criteria",
+    responses = {
+            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListCommercialOrderDtoResponse.class)))
+    })
+    public Response listCommercialOrder(PagingAndFiltering pagingAndFiltering);
+	
+
+	@GET
+    @Path("/{orderNumber}")
+    @Operation(summary = "Get commercial orders matching the given order number",
+    tags = { "Order management" },
+    description ="Get commercial order matching the given order number",
+    responses = {
+            @ApiResponse(responseCode="200", description = "The order is succefully retrieved",content = @Content(schema = @Schema(implementation = GetCommercialOrderDtoResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+     	   })
+    public Response findByOrderNumber(@Parameter(required = true) @PathParam("orderNumber") String orderNumber);
+
+	@POST
+	@Path("/validateOrder/{orderId}")
+	@Operation(summary = "Launch the order validation process",
+			tags = { "Order management" },
+			description ="Launch the order validation process",
+			responses = {
+					@ApiResponse(responseCode="200", description = "The order is successfully validated",content = @Content(schema = @Schema(implementation = GetCommercialOrderDtoResponse.class))),
+					@ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+			})
+	public Response orderValidationProcess(@Parameter(required = true) @PathParam("orderId") Long orderId);
 }

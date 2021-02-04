@@ -108,6 +108,12 @@ public class GenerateInvoiceRequestDto {
      * apply mode for invoice minimum rules
      */
     private String applyMinimum;
+    
+    
+    /**
+     * if true then validation script is NOT executed
+     */
+    private Boolean skipValidation = false;
 
     /**
      * Instantiates a new generate invoice request dto.
@@ -375,4 +381,18 @@ public class GenerateInvoiceRequestDto {
     public void setApplyMinimum(String applyMinimum) {
         this.applyMinimum = applyMinimum;
     }
+
+	/**
+	 * @return the skipValidation
+	 */
+	public Boolean getSkipValidation() {
+		return skipValidation;
+	}
+
+	/**
+	 * @param skipValidation the skipValidation to set
+	 */
+	public void setSkipValidation(Boolean skipValidation) {
+		this.skipValidation = skipValidation;
+	}
 }

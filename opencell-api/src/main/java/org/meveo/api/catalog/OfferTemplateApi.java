@@ -20,6 +20,7 @@ package org.meveo.api.catalog;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -351,6 +352,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         offerTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
         offerTemplate.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
+        offerTemplate.setStatusDate(Calendar.getInstance().getTime());
 
         if (!StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
             OneShotChargeTemplate minimumChargeTemplate = oneShotChargeTemplateService.findByCode(postData.getMinimumChargeTemplate());
@@ -662,6 +664,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         dto.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
         dto.setMinimumAmountElSpark(offerTemplate.getMinimumAmountElSpark());
         dto.setMinimumLabelElSpark(offerTemplate.getMinimumLabelElSpark());
+        dto.setOfferTemplate(new OfferTemplateDto(offerTemplate,entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false));
         
         if (loadOfferServiceTemplate && offerTemplate.getOfferServiceTemplates() != null && !offerTemplate.getOfferServiceTemplates().isEmpty()) {
             List<OfferServiceTemplateDto> offerTemplateServiceDtos = new ArrayList<>();
@@ -704,11 +707,11 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         			product = offerComponent.getProduct();
         			offerProductsDto = new OfferProductsDto();
         			if (product != null && ProductStatusEnum.ACTIVE.equals(product.getStatus())) {
-
+        				ProductDto productDTO=new ProductDto(product);
+    					offerProductsDto.setOfferTemplateCode(offerTemplate.getCode()); 
         				productVersionList=productVersionService.getVersionsByStatusAndProduct(VersionStatusEnum.PUBLISHED, product.getCode());
         				if(productVersionList!=null && !productVersionList.isEmpty()) {  
-        					ProductDto productDTO=new ProductDto(product);
-        					offerProductsDto.setOfferTemplateCode(offerTemplate.getCode());   
+        					  
         					for(ProductVersion productVersion : productVersionList) {  
         						if(productVersion.getValidity().isCorrespondsToPeriod(new Date())) {
         							if(!requestedTagTypes.isEmpty()) {
@@ -719,10 +722,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         							productDTO.setCurrentProductVersion(getProductVersionResponse);
         							break;
         							}
-        						
-        					} 
-        					offerProductsDto.setProduct(productDTO);
+        					}  	
         				}
+        				offerProductsDto.setProduct(productDTO);
         				offerProducts.add(offerProductsDto);
         			} 
 

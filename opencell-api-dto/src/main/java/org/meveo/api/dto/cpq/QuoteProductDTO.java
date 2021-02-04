@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteProduct;
 
 /**
@@ -63,11 +64,8 @@ public class QuoteProductDTO extends BaseEntityDto{
     private BigDecimal quantity;
     
     private List<QuoteAttributeDTO> quoteAttributes=new ArrayList<QuoteAttributeDTO>();
-
-    private String quoteLotCode;
     
     private List<AccountingArticlePricesDTO> accountingArticlePrices = new ArrayList<AccountingArticlePricesDTO>();
-    
     
     public QuoteProductDTO() {
     	super();
@@ -85,7 +83,6 @@ public class QuoteProductDTO extends BaseEntityDto{
 		productCode=quoteProduct.getProductVersion().getProduct().getCode();
 		productVersion=quoteProduct.getProductVersion().getCurrentVersion();
 		quantity=quoteProduct.getQuantity();
-		quoteLotCode=quoteProduct.getQuoteLot()!=null?quoteProduct.getQuoteLot().getCode():null;
 	}
 	
 	public QuoteProductDTO(QuoteProduct quoteProduct, boolean loadAttributes) {
@@ -96,6 +93,10 @@ public class QuoteProductDTO extends BaseEntityDto{
 			for(QuoteAttribute quoteAttribute:quoteProduct.getQuoteAttributes()) {
 				quoteAttributes.add(new QuoteAttributeDTO(quoteAttribute));
 			}
+		}
+		accountingArticlePrices=new ArrayList<AccountingArticlePricesDTO>();
+		for(QuoteArticleLine quoteArticleLine:quoteProduct.getQuoteArticleLines()) {
+			accountingArticlePrices.add(new AccountingArticlePricesDTO(quoteArticleLine));
 		}
 		
 	}
@@ -189,20 +190,6 @@ public class QuoteProductDTO extends BaseEntityDto{
 	}
 
 	/**
-	 * @return the quoteLotCode
-	 */
-	public String getQuoteLotCode() {
-		return quoteLotCode;
-	}
-
-	/**
-	 * @param quoteLotCode the quoteLotCode to set
-	 */
-	public void setQuoteLotCode(String quoteLotCode) {
-		this.quoteLotCode = quoteLotCode;
-	}
-
-	/**
 	 * @return the accountingArticlePrices
 	 */
 	public List<AccountingArticlePricesDTO> getAccountingArticlePrices() {
@@ -231,12 +218,4 @@ public class QuoteProductDTO extends BaseEntityDto{
 	public void setQuoteProductId(Long quoteProductId) {
 		this.quoteProductId = quoteProductId;
 	}
-
-
-    
-    
-    
-    
-    
-   
 }

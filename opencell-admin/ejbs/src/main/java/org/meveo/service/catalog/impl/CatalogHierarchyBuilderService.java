@@ -52,6 +52,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
@@ -66,6 +67,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
@@ -81,6 +83,7 @@ import org.meveo.model.quote.QuoteVersion;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.QuoteAttributeService;
@@ -161,6 +164,9 @@ public class CatalogHierarchyBuilderService {
     
     @Inject
     private OfferComponentService offerComponentService;
+    
+    @Inject
+    private MediaService mediaService;
 
     @Inject
     @CurrentUser
@@ -184,7 +190,8 @@ public class CatalogHierarchyBuilderService {
         }
     }
    
-	public void duplicateProduct(Product entity, ProductVersion productVersion, Set<DiscountPlan> discountPlans, Set<String> modelChildren, List<OfferComponent> offerComponents, String prefix) {
+	public void duplicateProduct(Product entity, ProductVersion productVersion, Set<DiscountPlan> discountPlans, 
+										Set<String> modelChildren, List<OfferComponent> offerComponents, List<Media> medias, String prefix) {
     	if(productVersion != null) {
     		ProductVersion tmpProductVersion = productVersionService.findById(productVersion.getId());
     		tmpProductVersion.getTags().size();
@@ -216,9 +223,9 @@ public class CatalogHierarchyBuilderService {
     		});
     	}
     	if(modelChildren != null) {
-    		entity.setModelChlidren(new HashSet<String>());
+    		entity.setModelChildren(new HashSet<String>());
     		modelChildren.forEach( model -> {
-    			entity.getModelChlidren().add(model);
+    			entity.getModelChildren().add(model);
     		});
     	}
     	
@@ -237,6 +244,17 @@ public class CatalogHierarchyBuilderService {
     	        }
     			offerComponentService.create(newOffer);
     			entity.getOfferComponents().add(newOffer);
+    		});
+    	}
+    	
+    	if(medias != null) {
+    		entity.setMedias(new ArrayList<>());
+    		medias.forEach(media -> {
+    			mediaService.detach(media);
+    			Media newMedia = new Media(media); 
+    			newMedia.setProduct(entity);
+    			mediaService.create(newMedia);
+    			entity.getMedias().add(newMedia);
     		});
     	}
     }
@@ -477,34 +495,9 @@ public class CatalogHierarchyBuilderService {
                 String chargeTemplateCode = productCharge.getCode();
                 List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
                 if (pricePlanMatrixes != null) {
-                    try {
-                        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-                            String ppCode = prefix + pricePlanMatrix.getCode();
-                            PricePlanMatrix ppMatrix = pricePlanMatrixService.findByCode(ppCode);
-                            if (ppMatrix != null) {
-                                continue;
-                            }
-
-                            PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-                            BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-                            newPriceplanmaMatrix.setAuditable(null);
-                            newPriceplanmaMatrix.setId(null);
-                            newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-                            newPriceplanmaMatrix.setCode(ppCode);
-                            newPriceplanmaMatrix.setVersion(0);
-                            newPriceplanmaMatrix.setOfferTemplate(null);
-
-                            if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-                                continue;
-                            } else {
-                                pricePlansInMemory.add(newPriceplanmaMatrix);
-                            }
-
-                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
-                        }
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        throw new BusinessException(e.getMessage());
-                    }
+                    for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+		            	duplicatePricePlanMatrix(pricePlanMatrix, prefix, chargeTemplateCode, pricePlansInMemory);
+		            	}
                 }
             }
         }
@@ -638,6 +631,7 @@ public class CatalogHierarchyBuilderService {
         serviceTemplate.getServiceSubscriptionCharges().size();
         serviceTemplate.getServiceTerminationCharges().size();
         serviceTemplate.getServiceUsageCharges().size();
+        serviceTemplate.getMedias().size();
 
         ServiceTemplate newServiceTemplate = new ServiceTemplate();
         String newCode = prefix + serviceTemplate.getCode();
@@ -662,6 +656,7 @@ public class CatalogHierarchyBuilderService {
             newServiceTemplate.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
             newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
             newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
+            newServiceTemplate.setMedias(new ArrayList<Media>());
             
             this.duplicateAndSetImgPath(serviceTemplate, newServiceTemplate, serviceConfiguration != null ? serviceConfiguration.getImagePath() : "");
 
@@ -717,142 +712,92 @@ public class CatalogHierarchyBuilderService {
 	
     private void duplicatePrices(ServiceTemplate serviceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory) throws BusinessException {
 
-        try {
-            // create price plans
-            if (serviceTemplate.getServiceRecurringCharges() != null && !serviceTemplate.getServiceRecurringCharges().isEmpty()) {
-                for (ServiceChargeTemplateRecurring serviceCharge : serviceTemplate.getServiceRecurringCharges()) {
-                    // create price plan
-                    String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                    List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
-                    if (pricePlanMatrixes != null) {
-                        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-                            String ppCode = prefix + pricePlanMatrix.getCode();
-                            PricePlanMatrix ppMatrix = pricePlanMatrixService.findByCode(ppCode);
-                            if (ppMatrix != null) {
-                                continue;
-                            }
+        // create price plans
+		if (serviceTemplate.getServiceRecurringCharges() != null && !serviceTemplate.getServiceRecurringCharges().isEmpty()) {
+		    for (ServiceChargeTemplateRecurring serviceCharge : serviceTemplate.getServiceRecurringCharges()) {
+		        // create price plan
+		        String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
+		        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
+		        if (pricePlanMatrixes != null) {
+		            for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+		            	duplicatePricePlanMatrix(pricePlanMatrix, prefix, chargeTemplateCode, pricePlansInMemory);
+		            	}
+		        }
+		    }
+		}
 
-                            PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-                            BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-                            newPriceplanmaMatrix.setAuditable(null);
-                            newPriceplanmaMatrix.setId(null);
-                            newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-                            newPriceplanmaMatrix.setCode(ppCode);
-                            newPriceplanmaMatrix.setVersion(0);
-                            newPriceplanmaMatrix.setOfferTemplate(null);
+		if (serviceTemplate.getServiceSubscriptionCharges() != null && !serviceTemplate.getServiceSubscriptionCharges().isEmpty()) {
+		    for (ServiceChargeTemplateSubscription serviceCharge : serviceTemplate.getServiceSubscriptionCharges()) {
+		        // create price plan
+		        String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
+		        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
+		        if (pricePlanMatrixes != null) {
+		            for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+		            	duplicatePricePlanMatrix(pricePlanMatrix, prefix, chargeTemplateCode, pricePlansInMemory);
+		            }
+		        }
+		    }
+		}
 
-                            if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-                                continue;
-                            } else {
-                                pricePlansInMemory.add(newPriceplanmaMatrix);
-                            }
+		if (serviceTemplate.getServiceTerminationCharges() != null && !serviceTemplate.getServiceTerminationCharges().isEmpty()) {
+		    for (ServiceChargeTemplateTermination serviceCharge : serviceTemplate.getServiceTerminationCharges()) {
+		        // create price plan
+		        String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
+		        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
+		        if (pricePlanMatrixes != null) {
+		            for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+		            	duplicatePricePlanMatrix(pricePlanMatrix, prefix, chargeTemplateCode, pricePlansInMemory);}
+		        }
+		    }
+		}
 
-                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
-                        }
-                    }
-                }
-            }
-
-            if (serviceTemplate.getServiceSubscriptionCharges() != null && !serviceTemplate.getServiceSubscriptionCharges().isEmpty()) {
-                for (ServiceChargeTemplateSubscription serviceCharge : serviceTemplate.getServiceSubscriptionCharges()) {
-                    // create price plan
-                    String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                    List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
-                    if (pricePlanMatrixes != null) {
-                        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-                            String ppCode = prefix + pricePlanMatrix.getCode();
-                            if (pricePlanMatrixService.findByCode(ppCode) != null) {
-                                continue;
-                            }
-
-                            PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-                            BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-                            newPriceplanmaMatrix.setAuditable(null);
-                            newPriceplanmaMatrix.setId(null);
-                            newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-                            newPriceplanmaMatrix.setCode(ppCode);
-                            newPriceplanmaMatrix.setVersion(0);
-                            newPriceplanmaMatrix.setOfferTemplate(null);
-
-                            if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-                                continue;
-                            } else {
-                                pricePlansInMemory.add(newPriceplanmaMatrix);
-                            }
-
-                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
-                        }
-                    }
-                }
-            }
-
-            if (serviceTemplate.getServiceTerminationCharges() != null && !serviceTemplate.getServiceTerminationCharges().isEmpty()) {
-                for (ServiceChargeTemplateTermination serviceCharge : serviceTemplate.getServiceTerminationCharges()) {
-                    // create price plan
-                    String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                    List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
-                    if (pricePlanMatrixes != null) {
-                        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-                            String ppCode = prefix + pricePlanMatrix.getCode();
-                            if (pricePlanMatrixService.findByCode(ppCode) != null) {
-                                continue;
-                            }
-
-                            PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-                            BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-                            newPriceplanmaMatrix.setAuditable(null);
-                            newPriceplanmaMatrix.setId(null);
-                            newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-                            newPriceplanmaMatrix.setCode(ppCode);
-                            newPriceplanmaMatrix.setVersion(0);
-                            newPriceplanmaMatrix.setOfferTemplate(null);
-
-                            if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-                                continue;
-                            } else {
-                                pricePlansInMemory.add(newPriceplanmaMatrix);
-                            }
-
-                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
-                        }
-                    }
-                }
-            }
-
-            if (serviceTemplate.getServiceUsageCharges() != null && !serviceTemplate.getServiceUsageCharges().isEmpty()) {
-                for (ServiceChargeTemplateUsage serviceCharge : serviceTemplate.getServiceUsageCharges()) {
-                    String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                    List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
-                    if (pricePlanMatrixes != null) {
-                        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-                            String ppCode = prefix + pricePlanMatrix.getCode();
-                            if (pricePlanMatrixService.findByCode(ppCode) != null) {
-                                continue;
-                            }
-
-                            PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-                            BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-                            newPriceplanmaMatrix.setAuditable(null);
-                            newPriceplanmaMatrix.setId(null);
-                            newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-                            newPriceplanmaMatrix.setCode(ppCode);
-                            newPriceplanmaMatrix.setVersion(0);
-                            newPriceplanmaMatrix.setOfferTemplate(null);
-
-                            if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-                                continue;
-                            } else {
-                                pricePlansInMemory.add(newPriceplanmaMatrix);
-                            }
-
-                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
-                        }
-                    }
-                }
-            }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new BusinessException(e.getMessage());
-        }
+		if (serviceTemplate.getServiceUsageCharges() != null && !serviceTemplate.getServiceUsageCharges().isEmpty()) {
+		    for (ServiceChargeTemplateUsage serviceCharge : serviceTemplate.getServiceUsageCharges()) {
+		        String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
+		        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
+		        if (pricePlanMatrixes != null) {
+		            for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+		            	duplicatePricePlanMatrix(pricePlanMatrix, prefix, chargeTemplateCode, pricePlansInMemory);}
+		        }
+		    }
+		}
+    }
+    
+    private void duplicatePricePlanMatrix(PricePlanMatrix pricePlanMatrix, String prefix, String chargeTemplateCode, List<PricePlanMatrix> pricePlansInMemory) throws BusinessException {
+    	try {
+	    	pricePlanMatrix.getVersions().size();
+	    	var versions = new ArrayList<>(pricePlanMatrix.getVersions());
+	    	pricePlanMatrix.getVersions().clear();
+	    	
+	        String ppCode = prefix + pricePlanMatrix.getCode();
+	        if (pricePlanMatrixService.findByCode(ppCode) != null) {
+	            return;
+	        }
+	    	
+	        PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix(pricePlanMatrix);
+	        newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
+	        newPriceplanmaMatrix.setCode(ppCode);
+	        newPriceplanmaMatrix.setVersion(0);
+	        newPriceplanmaMatrix.setOfferTemplate(null);
+	        newPriceplanmaMatrix.setVersions(new ArrayList<>());
+	        
+	        if(versions != null) {
+	        	for (PricePlanMatrixVersion version : versions) {
+	        		newPriceplanmaMatrix.getVersions().add(version);
+				}
+	        }
+	
+	        if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
+	            return;
+	        } else {
+	            pricePlansInMemory.add(newPriceplanmaMatrix);
+	        }
+	
+	        pricePlanMatrixService.createPP(newPriceplanmaMatrix);
+    	}catch(RuntimeException e) {
+    		throw new BusinessException(e.getMessage());
+    	}
+    
     }
 
     private ChargeTemplate setChargeTemplate(ChargeTemplate chargeTemplate, ChargeTemplate newChargeTemplate, List<ChargeTemplate> chargeTemplateInMemory, String prefix)

@@ -2,6 +2,7 @@ package org.meveo.api.dto.cpq;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,16 +25,18 @@ public class CommercialRuleHeaderDTO extends BusinessEntityDto{
 	private static final long serialVersionUID = 2921006853398452396L;
 	
 	
-	private RuleTypeEnum ruleType;
-	private String ruleEl;
-	private String offerCode;  
-	private String productCode;
-	private Integer productVersion;
-	private String attributeCode;
-	private String tagCode;
-	private String groupedAttributeCode;
-	private String targetAttributeValue; 
-	private List<CommercialRuleItemDTO> commercialRuleItems=new ArrayList<CommercialRuleItemDTO>();
+	protected RuleTypeEnum ruleType;
+	protected String ruleEl;
+	protected String offerCode;  
+	protected String productCode;
+	protected Integer productVersion;
+	protected String attributeCode;
+	protected String tagCode;
+	protected String groupedAttributeCode;
+	protected String targetAttributeValue; 
+	protected Boolean isTarget=Boolean.TRUE;
+	protected Boolean disabled=Boolean.FALSE;
+	protected List<CommercialRuleItemDTO> commercialRuleItems=new ArrayList<CommercialRuleItemDTO>();
 	 
 	
 	
@@ -57,7 +60,15 @@ public class CommercialRuleHeaderDTO extends BusinessEntityDto{
 		this.attributeCode = commercialRuleHeader.getTargetAttribute()!=null?commercialRuleHeader.getTargetAttribute().getCode():null;
 		this.tagCode = commercialRuleHeader.getTargetTag()!=null?commercialRuleHeader.getTargetTag().getCode():null;
 		this.groupedAttributeCode = commercialRuleHeader.getTargetGroupedAttributes()!=null?commercialRuleHeader.getTargetGroupedAttributes().getCode():null;
-		this.targetAttributeValue = commercialRuleHeader.getTargetAttributeValue(); 
+		this.targetAttributeValue = commercialRuleHeader.getTargetAttributeValue();  
+		if(commercialRuleHeader.getCommercialRuleItems()!= null && !commercialRuleHeader.getCommercialRuleItems().isEmpty()) {
+    		commercialRuleItems = commercialRuleHeader.getCommercialRuleItems().stream().map(d -> {
+    			final CommercialRuleItemDTO ruleItem = new CommercialRuleItemDTO(d);
+    			return ruleItem;
+    		}).collect(Collectors.toList());
+    	}
+		this.disabled=commercialRuleHeader.isDisabled();
+		
 	}
 	/**
 	 * @return the ruleType
@@ -180,6 +191,30 @@ public class CommercialRuleHeaderDTO extends BusinessEntityDto{
 	 */
 	public void setRuleEl(String ruleEl) {
 		this.ruleEl = ruleEl;
+	}
+	/**
+	 * @return the isTarget
+	 */
+	public Boolean getIsTarget() {
+		return isTarget;
+	}
+	/**
+	 * @param isTarget the isTarget to set
+	 */
+	public void setIsTarget(Boolean isTarget) {
+		this.isTarget = isTarget;
+	}
+	/**
+	 * @return the disabled
+	 */
+	public Boolean getDisabled() {
+		return disabled;
+	}
+	/**
+	 * @param disabled the disabled to set
+	 */
+	public void setDisabled(Boolean disabled) {
+		this.disabled = disabled;
 	}
 	
 	

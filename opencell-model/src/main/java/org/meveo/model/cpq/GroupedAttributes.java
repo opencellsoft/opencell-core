@@ -1,10 +1,16 @@
 package org.meveo.model.cpq;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -13,6 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 
 /**
  * 
@@ -58,6 +65,9 @@ public class GroupedAttributes extends BusinessEntity {
     @Column(name = "sequence")
     private Integer sequence;
 
+    @OneToMany(mappedBy = "targetGroupedAttributes", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
 
 	/**
 	 * @return the mandatory
@@ -122,6 +132,23 @@ public class GroupedAttributes extends BusinessEntity {
 		this.productVersion = productVersion;
 	}
 
+
+	/**
+	 * @return the commercialRules
+	 */
+	public List<CommercialRuleHeader> getCommercialRules() {
+		return commercialRules;
+	}
+
+
+	/**
+	 * @param commercialRules the commercialRules to set
+	 */
+	public void setCommercialRules(List<CommercialRuleHeader> commercialRules) {
+		this.commercialRules = commercialRules;
+	}
+
+	
 
 	
 	 

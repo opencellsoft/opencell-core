@@ -111,6 +111,17 @@ public class CommercialRuleRsImpl extends BaseRs implements CommercialRuleRs {
 			return errorResponse(e, result.getActionStatus());
 		} 
 	}
+	
+	@Override
+	public Response findOfferRules(String offerCode) {
+		GetListCommercialRulesResponseDto result = new GetListCommercialRulesResponseDto();
+		try { 
+			result=commercialRuleApi.findOfferRules(offerCode);
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		} 
+	}
 
 	 
 }

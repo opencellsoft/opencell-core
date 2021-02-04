@@ -1,17 +1,24 @@
 package org.meveo.api.catalog;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetListPricePlanMatrixVersionResponseDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.PricePlanMatrixValueService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
+import org.primefaces.model.SortOrder;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -25,6 +32,10 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
+    @Inject
+    private PricePlanMatrixValueService pricePlanMatrixValueService;
+    @Inject
+    private PricePlanMatrixColumnService pricePlanMatrixColumnService;
 
     @Override
     public PricePlanMatrixVersion create(PricePlanMatrixVersionDto pricePlanMatrixVersionDto) throws MeveoApiException, BusinessException {
@@ -36,7 +47,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         return createOrUpdate(dtoData);
     }
 
-    public void removePricePlanMatrixVersion(String pricePlanMatrixCode, int currentVersion){
+    public void removePricePlanMatrixVersion(String pricePlanMatrixCode, int currentVersion) {
         if (StringUtils.isBlank(currentVersion)) {
             missingParameters.add("currentVersion");
         }
@@ -47,11 +58,11 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 
         try {
             PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, currentVersion);
-            if(pricePlanMatrixVersion==null) {
+            if (pricePlanMatrixVersion == null) {
                 throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, pricePlanMatrixCode, "pricePlanMatrixCode", "" + currentVersion, "currentVersion");
             }
             pricePlanMatrixVersionService.removePriceMatrixVersion(pricePlanMatrixVersion);
-        }catch (BusinessException exp){
+        } catch (BusinessException exp) {
             throw new MeveoApiException(exp);
         }
     }
@@ -75,7 +86,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 
         PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, currentVersion);
 
-        if(pricePlanMatrixVersion == null){
+        if (pricePlanMatrixVersion == null) {
             pricePlanMatrixVersion = populatePricePlanMatrixVersion(new PricePlanMatrixVersion(), pricePlanMatrixVersionDto, VersionStatusEnum.DRAFT, Calendar.getInstance().getTime());
             pricePlanMatrixVersionService.create(pricePlanMatrixVersion);
         } else {
@@ -89,18 +100,22 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 
     private PricePlanMatrixVersion populatePricePlanMatrixVersion(PricePlanMatrixVersion pricePlanMatrixVersion, PricePlanMatrixVersionDto pricePlanMatrixVersionDto, VersionStatusEnum status, Date statusTime) {
         PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanMatrixVersionDto.getPricePlanMatrixCode());
-        if(pricePlanMatrix == null)
+        if (pricePlanMatrix == null)
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanMatrixVersionDto.getPricePlanMatrixCode());
         pricePlanMatrixVersion.setPricePlanMatrix(pricePlanMatrix);
         pricePlanMatrixVersion.setCurrentVersion(pricePlanMatrixVersionDto.getVersion());
         pricePlanMatrixVersion.setValidity(pricePlanMatrixVersionDto.getValidity());
-        if(status != null)
+        if (status != null)
             pricePlanMatrixVersion.setStatus(status);
-        if(statusTime != null)
+        if (statusTime != null)
             pricePlanMatrixVersion.setStatusDate(statusTime);
-        pricePlanMatrixVersion.setPriceWithoutTax(pricePlanMatrixVersionDto.getPriceWithoutTax());
+        pricePlanMatrixVersion.setAmountWithoutTax(pricePlanMatrixVersionDto.getAmountWithoutTax());
+        pricePlanMatrixVersion.setAmountWithTax(pricePlanMatrixVersionDto.getAmountWithTax());
+        pricePlanMatrixVersion.setAmountWithoutTaxEL(pricePlanMatrixVersionDto.getAmountWithoutTaxEL());
+        pricePlanMatrixVersion.setAmountWithTaxEL(pricePlanMatrixVersionDto.getAmountWithTaxEL());
         pricePlanMatrixVersion.setMatrix(pricePlanMatrixVersionDto.getMatrix());
         pricePlanMatrixVersion.setLabel(pricePlanMatrixVersionDto.getLabel());
+        pricePlanMatrixVersion.setPriority(pricePlanMatrixVersionDto.getPriority());
         pricePlanMatrix.getVersions().add(pricePlanMatrixVersion);
         return pricePlanMatrixVersion;
     }
@@ -108,8 +123,8 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
     public GetPricePlanVersionResponseDto updateProductVersionStatus(String pricePlanMatrixCode, int currentVersion, VersionStatusEnum status) {
         try {
             PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, currentVersion);
-            if(pricePlanMatrixVersion==null) {
-                throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class,pricePlanMatrixCode,"pricePlanMatrixCode",""+currentVersion,"currentVersion");
+            if (pricePlanMatrixVersion == null) {
+                throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, pricePlanMatrixCode, "pricePlanMatrixCode", "" + currentVersion, "currentVersion");
             }
             pricePlanMatrixVersionService.updateProductVersionStatus(pricePlanMatrixVersion, status);
             return new GetPricePlanVersionResponseDto(pricePlanMatrixVersion);
@@ -122,12 +137,39 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
 
         try {
             PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, currentVersion);
-            if(pricePlanMatrixVersion==null) {
-                throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class,pricePlanMatrixCode,"pricePlanMatrixCode",""+currentVersion,"currentVersion");
+            if (pricePlanMatrixVersion == null) {
+                throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, pricePlanMatrixCode, "pricePlanMatrixCode", "" + currentVersion, "currentVersion");
             }
             return new GetPricePlanVersionResponseDto(pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion));
         } catch (BusinessException e) {
             throw new MeveoApiException(e);
         }
+    }
+
+    public PricePlanMatrixVersionDto load(Long id) {
+        return pricePlanMatrixVersionService.load(id);
+    }
+
+    public GetListPricePlanMatrixVersionResponseDto listPricePlanMatrixVersions(PagingAndFiltering pagingAndFiltering) {
+
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+        String sortBy = DEFAULT_SORT_ORDER_ID;
+        if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+            sortBy = pagingAndFiltering.getSortBy();
+        }
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, Product.class);
+        Long totalCount = pricePlanMatrixVersionService.count(paginationConfiguration);
+        GetListPricePlanMatrixVersionResponseDto result = new GetListPricePlanMatrixVersionResponseDto();
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        if(totalCount > 0) {
+            pricePlanMatrixVersionService.list(paginationConfiguration).stream().forEach(version -> {
+                result.getPpmVersions().add(new PricePlanMatrixVersionDto(version));
+            });
+        }
+        return result;
     }
 }

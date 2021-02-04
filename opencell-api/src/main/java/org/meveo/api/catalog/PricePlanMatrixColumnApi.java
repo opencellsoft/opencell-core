@@ -50,6 +50,10 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
         }
 
         PricePlanMatrixColumn pricePlanMatrixColumn = new PricePlanMatrixColumn();
+        Attribute attribute = loadEntityByCode(attributeService, dtoData.getAttributeCode(), Attribute.class);
+        pricePlanMatrixColumn.setAttribute(attribute);
+        pricePlanMatrixColumn.setRange(dtoData.getRange());
+        pricePlanMatrixColumn.setType(attribute.getAttributeType().getColumnType(dtoData.getRange()));
         populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn);
 
 
@@ -67,6 +71,10 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
         populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn);
 
         return pricePlanMatrixColumnService.update(pricePlanMatrixColumn);
+    }
+
+    public void removePricePlanColumn(String code){
+        pricePlanMatrixColumnService.removePricePlanColumn(code);
     }
 
     @Override
@@ -99,26 +107,20 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
         if (StringUtils.isBlank(dtoData.getProductCode())) {
             missingParameters.add("productCode");
         }
-        if (StringUtils.isBlank(dtoData.getType())) {
-            missingParameters.add("type");
-        }
 
         handleMissingParametersAndValidate(dtoData);
     }
 
     private void populatePricePlanMatrixColumn(PricePlanMatrixColumnDto dtoData, PricePlanMatrixColumn pricePlanMatrixColumn) {
-
         PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
         if(pricePlanMatrixVersion == null){
             throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, dtoData.getPricePlanMatrixCode(), "pricePlanMatrixCode", ""+dtoData.getPricePlanMatrixVersion(), "pricePlanMatrixVersion");
         }
         pricePlanMatrixColumn.setPricePlanMatrixVersion(pricePlanMatrixVersion);
         pricePlanMatrixColumn.setProduct(loadEntityByCode(productService, dtoData.getProductCode(), Product.class));
-        pricePlanMatrixColumn.setAttribute(loadEntityByCode(attributeService, dtoData.getAttributeCode(), Attribute.class));
         pricePlanMatrixColumn.setOfferTemplate(loadEntityByCode(offerTemplateService, dtoData.getOfferTemplateCode(), OfferTemplate.class));
         pricePlanMatrixColumn.setCode(dtoData.getCode());
         pricePlanMatrixColumn.setElValue(dtoData.getElValue());
         pricePlanMatrixColumn.setPosition(dtoData.getPosition());
-        pricePlanMatrixColumn.setType(dtoData.getType());
     }
 }

@@ -6,7 +6,9 @@ import javax.ws.rs.core.Response;
 import org.meveo.api.cpq.CommercialOrderApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
+import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.cpq.CommercialOrderRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -42,7 +44,7 @@ public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 		ActionStatus status = new ActionStatus();
 		try {
 			commercialOrderApi.delete(orderId);;
-			return Response.ok().build();
+			return Response.ok(status).build();
 		}catch(MeveoApiException e) {
 			return errorResponse(e, status);
 		}
@@ -77,6 +79,42 @@ public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 			result.setCommercialOrderDto(commercialOrderApi.validate(orderId));
 			return Response.ok(result).build();
 		}catch(MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		}
+	}
+
+	@Override
+	public Response listCommercialOrder(PagingAndFiltering pagingAndFiltering) {
+		GetListCommercialOrderDtoResponse result = new GetListCommercialOrderDtoResponse();
+
+	        try {  
+	    			result = commercialOrderApi.listCommercialOrder(pagingAndFiltering);
+	    			
+	    			return Response.ok(result).build(); 
+	        	
+	        } catch (MeveoApiException e) { 
+	            return errorResponse(e, result.getActionStatus());
+	        } 
+	}
+
+	@Override
+	public Response findByOrderNumber(String orderNumber) {
+		GetCommercialOrderDtoResponse result = new GetCommercialOrderDtoResponse();
+	    try {
+	    	result.setCommercialOrderDto(commercialOrderApi.findByOrderNumber(orderNumber));
+	        return Response.ok(result).build();
+	    } catch (MeveoApiException e) {
+		       return errorResponse(e, result.getActionStatus());
+	    }
+	}
+
+	@Override
+	public Response orderValidationProcess(Long orderId) {
+		GetCommercialOrderDtoResponse result = new GetCommercialOrderDtoResponse();
+		try {
+			result.setCommercialOrderDto(commercialOrderApi.orderValidationProcess(orderId));
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
 			return errorResponse(e, result.getActionStatus());
 		}
 	}

@@ -1,5 +1,6 @@
 package org.meveo.api.dto.response.cpq;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -14,6 +15,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
+import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.model.cpq.Attribute;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @SuppressWarnings("serial")
 @XmlRootElement(name = "GetAttributeDtoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JsonIgnoreProperties({ "chargeTemplateCodes","commercialRuleCodes"})
+@JsonIgnoreProperties({ "chargeTemplateCodes","commercialRuleCodes","tagCodes","assignedAttributeCodes"})
 public class GetAttributeDtoResponse extends AttributeDTO{
  
 	@XmlElementWrapper(name = "chargeTemplates")
@@ -38,13 +40,15 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 	@XmlElementWrapper(name = "commercialRules")
     @XmlElement(name = "commercialRules")
     private Set<CommercialRuleHeaderDTO> commercialRules;
+	
+	@XmlElementWrapper(name = "tags")
+    @XmlElement(name = "tags")
+    private List<TagDto> tags;
+	
+	@XmlElementWrapper(name = "assignedAttributes")
+    @XmlElement(name = "assignedAttributes")
+    private List<AttributeDTO> assignedAttributes;
 
-	
-	
-    
- 
- 
- 
 
     /**
      * The status response of the web service response.
@@ -69,9 +73,11 @@ public class GetAttributeDtoResponse extends AttributeDTO{
         actionStatus = new ActionStatus(status, errorCode, message);
     }
     
-    public GetAttributeDtoResponse(Attribute attribute, Set<ChargeTemplateDto> chargeTemplates) {
+    public GetAttributeDtoResponse(Attribute attribute, Set<ChargeTemplateDto> chargeTemplates, List<TagDto> tags,List<AttributeDTO> assignedAttributes) {
  		super(attribute);
  		this.chargeTemplates = chargeTemplates;
+ 		this.tags=tags;
+ 		this.assignedAttributes=assignedAttributes;
  	}
     
 
@@ -122,6 +128,37 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 	public void setCommercialRules(Set<CommercialRuleHeaderDTO> commercialRules) {
 		this.commercialRules = commercialRules;
 	}
+
+	/**
+	 * @return the tags
+	 */
+	public List<TagDto> getTags() {
+		return tags;
+	}
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<TagDto> tags) {
+		this.tags = tags;
+	}
+
+	/**
+	 * @return the assignedAttributes
+	 */
+	public List<AttributeDTO> getAssignedAttributes() {
+		return assignedAttributes;
+	}
+
+	/**
+	 * @param assignedAttributes the assignedAttributes to set
+	 */
+	public void setAssignedAttributes(List<AttributeDTO> assignedAttributes) {
+		this.assignedAttributes = assignedAttributes;
+	}
+	
+	
+
 
 
 

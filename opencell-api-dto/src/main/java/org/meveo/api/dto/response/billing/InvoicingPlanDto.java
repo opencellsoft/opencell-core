@@ -16,67 +16,36 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.dto.catalog;
+package org.meveo.api.dto.response.billing;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.api.dto.CustomFieldsDto;
 
-/**
- * The Class ServiceTypeDto.
- *
- * @author Mbarek-Ay
- */
-@XmlRootElement(name = "ServiceTypeDto")
+@XmlRootElement(name = "InvoicingPlan")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceTypeDto extends BusinessEntityDto {
+public class InvoicingPlanDto extends BusinessEntityDto {
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -184991112321568824L;
- 
-
-    /** The language descriptions. */
-    private AttributeTypeEnum serviceType;;
-
-    /**
-     * Instantiates a new title dto.
-     */
-    public ServiceTypeDto() {
-
-    }
-    
-    
-
-	public ServiceTypeDto(AttributeTypeEnum serviceType) {
-		super();
-		this.serviceType = serviceType;
-	}
- 
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = 1L;
 
 	/**
-	 * @return the serviceType
+	 * Instantiates a new invoicingPlan dto.
 	 */
-	public AttributeTypeEnum getServiceType() {
-		return serviceType;
+	public InvoicingPlanDto() {
 	}
-
-
 
 	/**
-	 * @param serviceType the serviceType to set
+	 * Instantiates a new invoicingPlan dto.
+	 *
+	 * @param invoicingPlan        the invoicingPlan entity
+	 * @param customFieldInstances Custom field values. Not applicable here.
 	 */
-	public void setServiceType(AttributeTypeEnum serviceType) {
-		this.serviceType = serviceType;
+	public InvoicingPlanDto(org.meveo.model.cpq.commercial.InvoicingPlan invoicingPlan,
+			CustomFieldsDto customFieldInstances) {
+		super(invoicingPlan);
 	}
-
-
-
-	@Override
-	public String toString() {
-		return "ServiceTypeDto [serviceType=" + serviceType + "]";
-	}
- 
 }

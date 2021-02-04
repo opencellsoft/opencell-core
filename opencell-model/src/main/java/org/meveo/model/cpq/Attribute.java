@@ -3,9 +3,12 @@
  */
 package org.meveo.model.cpq;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -17,6 +20,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -24,10 +29,12 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 
 /**
  * @author Rachid.AIT-YAAZZA
@@ -53,9 +60,11 @@ public class Attribute extends EnableBusinessCFEntity{
 	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
 	private GroupedAttributes groupedAttributes;
 	
+	  
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Attribute parentAttribute;
 	 
-	
-	
 	
 	  /**
      * Mandatory
@@ -108,6 +117,26 @@ public class Attribute extends EnableBusinessCFEntity{
     @Column(name = "display")
     @NotNull
     protected boolean display;
+    
+    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<Media> medias = new ArrayList<>();
+    
+    
+    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
+    @OrderBy("id")
+    private List<Tag> tags = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "targetAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "parentAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy("id")
+    private List<Attribute> assignedAttributes = new ArrayList<>();
+    
+    @Column(name = "unit_nb_decimal")
+    protected int unitNbDecimal = BaseEntity.NB_DECIMALS;
 
     public Attribute(){
 
@@ -230,6 +259,95 @@ public class Attribute extends EnableBusinessCFEntity{
 	public void setChargeTemplates(Set<ChargeTemplate> chargeTemplates) {
 		this.chargeTemplates = chargeTemplates;
 	}
+
+	/**
+	 * @return the medias
+	 */
+	public List<Media> getMedias() {
+		return medias;
+	}
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<Media> medias) {
+		this.medias = medias;
+	}
+
+	/**
+	 * @return the tags
+	 */
+	public List<Tag> getTags() {
+		return tags;
+	}
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+	}
+
+	/**
+	 * @return the commercialRules
+	 */
+	public List<CommercialRuleHeader> getCommercialRules() {
+		return commercialRules;
+	}
+
+	/**
+	 * @param commercialRules the commercialRules to set
+	 */
+	public void setCommercialRules(List<CommercialRuleHeader> commercialRules) {
+		this.commercialRules = commercialRules;
+	}
+
+	/**
+	 * @return the assignedAttributes
+	 */
+	public List<Attribute> getAssignedAttributes() {
+		return assignedAttributes;
+	}
+
+	/**
+	 * @param assignedAttributes the assignedAttributes to set
+	 */
+	public void setAssignedAttributes(List<Attribute> assignedAttributes) {
+		this.assignedAttributes = assignedAttributes;
+	}
+
+	/**
+	 * @return the parentAttribute
+	 */
+	public Attribute getParentAttribute() {
+		return parentAttribute;
+	}
+
+	/**
+	 * @param parentAttribute the parentAttribute to set
+	 */
+	public void setParentAttribute(Attribute parentAttribute) {
+		this.parentAttribute = parentAttribute;
+	}
+
+	/**
+	 * @return the unitNbDecimal
+	 */
+	public int getUnitNbDecimal() {
+		return unitNbDecimal;
+	}
+
+	/**
+	 * @param unitNbDecimal the unitNbDecimal to set
+	 */
+	public void setUnitNbDecimal(int unitNbDecimal) {
+		this.unitNbDecimal = unitNbDecimal;
+	}
+	
+	
+	
+	
+	
     
     
 

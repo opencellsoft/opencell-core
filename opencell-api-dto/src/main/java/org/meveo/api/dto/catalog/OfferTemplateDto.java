@@ -19,6 +19,7 @@
 package org.meveo.api.dto.catalog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
+import org.meveo.api.dto.cpq.MediaDto;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplate;
@@ -79,10 +81,19 @@ public class OfferTemplateDto extends ProductOfferingDto {
     protected List<DiscountPlanDto> allowedDiscountPlans;
     
     
-    /** The offer product templates. */
+    /** The  attribute */
     @XmlElementWrapper(name = "attributes")
     @XmlElement(name = "attributes")
-    protected List<AttributeDTO> attributes;
+    protected List<AttributeDTO> attributes=new ArrayList<AttributeDTO>();
+    
+    /** The medias */
+    @XmlElementWrapper(name = "medias")
+    @XmlElement(name = "medias")
+    protected List<MediaDto> medias;
+    
+    @XmlElementWrapper(name = "commercialRuleCodes")
+    @XmlElement(name = "commercialRuleCodes") 
+    protected List<String> commercialRuleCodes=new ArrayList<String>();
     
 
     /** The renewal rule. */
@@ -125,6 +136,8 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElementWrapper(name = "tagCodes")
     @XmlElement(name = "tagCodes")
     protected Set<String> tagCodes = new HashSet<String>();
+    
+    protected Date statusDate;
 
     /**
      * Instantiates a new offer template dto.
@@ -143,6 +156,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
     public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
         super(offerTemplate, customFieldsDto, asLink);
         id = offerTemplate.getId();
+        statusDate=offerTemplate.getStatusDate();
 
         if (offerTemplate.getBusinessOfferModel() != null) {
             setBomCode(offerTemplate.getBusinessOfferModel().getCode());
@@ -427,10 +441,50 @@ public class OfferTemplateDto extends ProductOfferingDto {
 		this.attributes = attributes;
 	}
 
+	/**
+	 * @return the medias
+	 */
+	public List<MediaDto> getMedias() {
+		return medias;
+	}
 
-	
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<MediaDto> medias) {
+		this.medias = medias;
+	}
+
+	/**
+	 * @return the statusDate
+	 */
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+	/**
+	 * @param statusDate the statusDate to set
+	 */
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
+
+	/**
+	 * @return the commercialRuleCodes
+	 */
+	public List<String> getCommercialRuleCodes() {
+		return commercialRuleCodes;
+	}
+
+	/**
+	 * @param commercialRuleCodes the commercialRuleCodes to set
+	 */
+	public void setCommercialRuleCodes(List<String> commercialRuleCodes) {
+		this.commercialRuleCodes = commercialRuleCodes;
+	}
 
 
+   
 
 
  

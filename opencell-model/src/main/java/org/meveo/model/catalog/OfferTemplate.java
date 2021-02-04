@@ -18,6 +18,7 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +37,10 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
@@ -49,8 +53,10 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 
 /**
  * @author Edward P. Legaspi, Andrius Karpavicius
@@ -167,17 +173,6 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @JoinTable(name = "cpq_offer_template_tags", joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags = new ArrayList<Tag>();
     
-
-	/**
-	 * list of discount attached to this product
-	 */
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-				name = "cpq_offer_discount_plan",
-				joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"),
-				inverseJoinColumns = @JoinColumn(name = "discount_id", referencedColumnName = "id")				
-			)
-	private Set<DiscountPlan> discountList = new HashSet<>();
     
 	/**
 	 * list of attributes attached to this offer
@@ -189,6 +184,23 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
 			)
     private List<Attribute> attributes = new ArrayList<Attribute>();
+	
+	
+    @OneToMany(mappedBy = "offer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<Media> medias = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "targetOfferTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
+    
+    /**
+     * date of status : it set automatically when ever the status of offerTemplate is changed
+     */
+    @Column(name = "status_date", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)   
+    private Date statusDate;
+	
      
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
@@ -513,19 +525,6 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 		this.offerComponents = offerComponents;
 	}
 
-	/**
-	 * @return the discountList
-	 */
-	public Set<DiscountPlan> getDiscountList() {
-		return discountList;
-	}
-
-	/**
-	 * @param discountList the discountList to set
-	 */
-	public void setDiscountList(Set<DiscountPlan> discountList) {
-		this.discountList = discountList;
-	}
 
 	/**
 	 * @return the attributes
@@ -541,11 +540,52 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 		this.attributes = attributes;
 	}
 
-	
-	
+	/**
+	 * @return the medias
+	 */
+	public List<Media> getMedias() {
+		return medias;
+	}
 
-    
-	
-    
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<Media> medias) {
+		this.medias = medias;
+	}
 
+	/**
+	 * @return the statusDate
+	 */
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+	/**
+	 * @param statusDate the statusDate to set
+	 */
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
+
+	/**
+	 * @return the commercialRules
+	 */
+	public List<CommercialRuleHeader> getCommercialRules() {
+		return commercialRules;
+	}
+
+	/**
+	 * @param commercialRules the commercialRules to set
+	 */
+	public void setCommercialRules(List<CommercialRuleHeader> commercialRules) {
+		this.commercialRules = commercialRules;
+	}
+
+
+    public boolean haveProduct(String productCode) {
+	    return offerComponents.stream()
+                .filter(off -> off.getProduct() != null)
+                .anyMatch(off -> off.getProduct().getCode().equals(productCode));
+    }
 }

@@ -17,63 +17,54 @@
  */
 package org.meveo.model.billing;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Invoice status.
  */
 public enum InvoiceStatusEnum {
 
-    /**
-     * when invoice created
-     */
-    CREATED(1, "invoiceStatusEnum.created"),
     
     /**
-     * when produced by a job (xml custom, xml, pdf...)
+     * invoice entity has been created but incomplete
      */
-    GENERATED(2, "invoiceStatusEnum.generated"),
+    NEW(1, "invoiceStatusEnum.new", new InvoiceStatusEnum[]{null}),
+
+    /**
+     * invoice has been marked as suspect by automatic controls (this status doesn’t block automatic generation)
+     */
+    SUSPECT(2, "invoiceStatusEnum.suspect", new InvoiceStatusEnum[]{NEW}), 
+
+    /**
+     * invoice has been rejected by automatic controls (this status block automatic generation)
+     */
+    REJECTED(3, "invoiceStatusEnum.rejected", new InvoiceStatusEnum[]{NEW, SUSPECT}), 
     
     /**
-     * when exported by a job (email or custom processing)
+     * invoice is complete but not validated. It can be edited.
      */
-    SENT(3, "invoiceStatusEnum.sent"),
+    DRAFT(4, "invoiceStatusEnum.draft", new InvoiceStatusEnum[]{NEW, SUSPECT, REJECTED}),
+
+    /**
+     * invoice has been canceled (all related rated transactions are released. This is a final status)
+     */
+    CANCELED(5, "invoiceStatusEnum.canceled", new InvoiceStatusEnum[]{NEW, SUSPECT, REJECTED}),
     
     /**
-     *  when fully paid (matched status)
+     * invoice is validated and cannot be edited anymore (this a final status)
      */
-    PAID(4, "invoiceStatusEnum.paid"),
-    
-    /**
-     * when partially paid (unmatched amount >0)
-     */
-    PPAID(5, "invoiceStatusEnum.ppaid"),
-    
-    /**
-     * when when no payment and due date
-     */
-    UNPAID(6, "invoiceStatusEnum.unpaid"),
-    
-    /**
-     * when writen off (matched to a write off AO)
-     */
-    ABANDONED(7, "invoiceStatusEnum.abandonned"),
-    
-    /**
-     * when when refunded (by a credit note through linkedToInvoice )
-     */
-    REFUNDED(8, "invoiceStatusEnum.refunded"),
-    
-    /**
-     * when when invoice AO is disputed or into dunning active
-     */
-    DISPUTED(9, "invoiceStatusEnum.disputed");
+    VALIDATED(6, "invoiceStatusEnum.validated", new InvoiceStatusEnum[] {null, NEW, DRAFT});
+
     
     private Integer id;
     private String label;
+    private List<InvoiceStatusEnum> previousStats;
 
-    InvoiceStatusEnum(Integer id, String label) {
+    InvoiceStatusEnum(Integer id, String label, InvoiceStatusEnum[] previousStats) {
         this.id = id;
         this.label = label;
-
+        this.previousStats=Arrays.asList(previousStats);
     }
 
     public Integer getId() {
@@ -100,4 +91,12 @@ public enum InvoiceStatusEnum {
         }
         return null;
     }
+
+	/**
+	 * @return the nextStats
+	 */
+	public List<InvoiceStatusEnum> getPreviousStats() {
+		return previousStats;
+	}
+
 }

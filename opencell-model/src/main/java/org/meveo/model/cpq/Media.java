@@ -31,11 +31,26 @@ import org.meveo.model.cpq.enums.MediaTypeEnum;
  *
  */
 @Entity
-@Table(name = "cpq_media", uniqueConstraints = @UniqueConstraint(columnNames = { "product_id", "media_name" }))
+@Table(name = "cpq_media")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_media_seq")})
 @NamedQuery(name = "Media.findByProductAndMediaName", query = "select m from Media m left join  m.product mp where mp.code=:productCode and m.mediaName=:mediaName")
 public class Media extends BaseEntity{
+
+	public Media(Media copy) {
+		this.offer = copy.offer;
+		this.product = copy.product;
+		this.attribute = copy.attribute;
+		this.serviceTemplate = copy.serviceTemplate;
+		this.mediaName = copy.mediaName;
+		this.label = copy.label;
+		this.main = copy.main;
+		this.mediaType = copy.mediaType;
+		this.mediaPath = copy.mediaPath;
+	}
+
+	public Media() {
+	}
 
 	/**
 	 * 

@@ -67,7 +67,7 @@ public class ProductVersionService extends
         int currentVersion=productVersion.getCurrentVersion();
         log.info("updating productVersion with product code={} and current version={}",productCode,currentVersion);
         if(!productVersion.getStatus().equals(VersionStatusEnum.DRAFT)) {
-            log.warn("the product with product code={} and current version={}, it must be DRAFT status.", productCode,currentVersion);
+            log.warn("the product with product code={} and current version={}, it must be different from PUBLISH status.", productCode,currentVersion);
             throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE,productVersion.getId(), productVersion.getStatus().toString()));
         }
         update(productVersion);
@@ -112,7 +112,7 @@ public class ProductVersionService extends
     			services.getGroupedAttributes();
 			}
     	}
-    	var serviceTemplateList = productVersion.getAttributes();
+    	var serviceTemplateList = new ArrayList<>(productVersion.getAttributes());
     	var tagList = new ArrayList<>(productVersion.getTags());
 
     	detach(productVersion);

@@ -21,11 +21,14 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -50,11 +53,16 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.shared.DateUtils;
@@ -226,7 +234,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     // validate service is in offer service list
     private boolean checkServiceAssociatedWithOffer(ServiceInstance serviceInstance) throws BusinessException {
         OfferTemplate offer = serviceInstance.getSubscription().getOffer();
-        if (offer != null && !offer.containsServiceTemplate(serviceInstance.getServiceTemplate())) {
+        if (offer != null && !offer.containsServiceTemplate(serviceInstance.getServiceTemplate()) && !offer.haveProduct(serviceInstance.getCode())) {
             throw new ValidationException("Service " + serviceInstance.getCode() + " is not associated with Offer");
         }
 
@@ -248,6 +256,85 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         serviceInstanciation(serviceInstance, null, subscriptionAmount, terminationAmount, isVirtual);
     }
 
+    public void cpqServiceInstanciation(ServiceInstance serviceInstance, Product product, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual) throws BusinessException {
+
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+        serviceTemplate.setCode(product.getCode());
+        serviceTemplate.setDescription(product.getDescription());
+
+        List<ServiceChargeTemplateRecurring> serviceChargeTemplateRecurrings = product.getProductCharges().stream()
+                .filter(pc -> pc.getChargeTemplate() != null)
+                .map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
+                .filter(charge -> charge instanceof RecurringChargeTemplate)
+                .map(ch -> {
+                    ServiceChargeTemplateRecurring serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
+                    serviceChargeTemplateRecurring.setChargeTemplate((RecurringChargeTemplate)ch);
+                    return serviceChargeTemplateRecurring;
+                })
+                .collect(Collectors.toList());
+        serviceTemplate.setServiceRecurringCharges(serviceChargeTemplateRecurrings);
+
+        List<ServiceChargeTemplateUsage> serviceChargeTemplateUsages = product.getProductCharges().stream()
+                .filter(pc -> pc.getChargeTemplate() != null)
+                .map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
+                .filter(charge -> charge instanceof UsageChargeTemplate)
+                .map(ch -> {
+                    ServiceChargeTemplateUsage serviceChargeTemplateRecurring = new ServiceChargeTemplateUsage();
+                    serviceChargeTemplateRecurring.setChargeTemplate((UsageChargeTemplate)ch);
+                    return serviceChargeTemplateRecurring;
+                })
+                .collect(Collectors.toList());
+        serviceTemplate.setServiceUsageCharges(serviceChargeTemplateUsages);
+
+        List<ServiceChargeTemplateSubscription> serviceChargeTemplateSubscriptions = product.getProductCharges().stream()
+                .filter(pc -> pc.getChargeTemplate() != null)
+                .map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
+                .filter(charge -> charge instanceof OneShotChargeTemplate)
+                .filter(ch -> ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION)
+                .map(ch -> {
+                    ServiceChargeTemplateSubscription serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
+                    serviceChargeTemplateSubscription.setChargeTemplate((OneShotChargeTemplate) ch);
+                    return serviceChargeTemplateSubscription;
+                })
+                .collect(Collectors.toList());
+        serviceTemplate.setServiceSubscriptionCharges(serviceChargeTemplateSubscriptions);
+
+        List<ServiceChargeTemplateTermination> serviceChargeTemplateTerminations = product.getProductCharges().stream()
+                .filter(pc -> pc.getChargeTemplate() != null)
+                .map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
+                .filter(charge -> charge instanceof OneShotChargeTemplate)
+                .filter(ch -> ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION)
+                .map(ch -> {
+                    ServiceChargeTemplateTermination serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
+                    serviceChargeTemplateTermination.setChargeTemplate((OneShotChargeTemplate) ch);
+                    return serviceChargeTemplateTermination;
+                })
+                .collect(Collectors.toList());
+        serviceTemplate.setServiceTerminationCharges(serviceChargeTemplateTerminations);
+        if(!isVirtual)
+            serviceTemplateService.create(serviceTemplate);
+        serviceInstance.setServiceTemplate(serviceTemplate);
+        serviceInstanciation(serviceInstance, null, subscriptionAmount, terminationAmount, isVirtual);
+        serviceInstance.setServiceTemplate(null);
+        if(!isVirtual) {
+            serviceTemplateService.remove(serviceTemplate);
+        }
+    }
+
+    public static <T> T initializeAndUnproxy(T entity) {
+        if (entity == null) {
+            throw new
+                    NullPointerException("Entity passed for initialization is null");
+        }
+
+        Hibernate.initialize(entity);
+        if (entity instanceof HibernateProxy) {
+            entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer()
+                    .getImplementation();
+        }
+        return entity;
+    }
+
     /**
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
@@ -265,9 +352,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         log.debug("Will instantiate service {} for subscription {} quantity {}", serviceInstance.getCode(), serviceInstance.getSubscription().getCode(), serviceInstance.getQuantity());
 
-        ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
-
         Subscription subscription = serviceInstance.getSubscription();
+        ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new IncorrectSusbcriptionException("Subscription is not active");
@@ -299,7 +385,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         } else {
             serviceInstance.setDescription(serviceTemplate.getDescription());
         }
-        serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());
+        serviceInstance.setInvoicingCalendar(serviceTemplate.getInvoicingCalendar());
 
         SubscriptionRenewal serviceRenewal = serviceTemplate.getServiceRenewal();
         serviceInstance.setServiceRenewal(serviceRenewal);
@@ -317,7 +403,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         subscription.getServiceInstances().add(serviceInstance);
 
-        for (ServiceChargeTemplateRecurring serviceChargeTemplateRecurring : serviceTemplate.getServiceRecurringCharges()) {
+        for (ServiceChargeTemplateRecurring serviceChargeTemplateRecurring : serviceTemplate.getServiceRecurringCharges()) { //
             RecurringChargeInstance chargeInstance = recurringChargeInstanceService.recurringChargeInstanciation(serviceInstance, serviceChargeTemplateRecurring, isVirtual);
             serviceInstance.getRecurringChargeInstances().add(chargeInstance);
         }
@@ -468,7 +554,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         serviceInstance = update(serviceInstance);
 
         // execute subscription script
-        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+        if (serviceInstance.getServiceTemplate()!= null && serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
             serviceModelScriptService.activateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode());
         }
 

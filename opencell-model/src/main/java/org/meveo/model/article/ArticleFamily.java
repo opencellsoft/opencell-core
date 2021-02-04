@@ -1,11 +1,10 @@
 package org.meveo.model.article;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.billing.AccountingCode;
-import org.meveo.model.crm.custom.CustomFieldValues;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+
+import java.util.Map;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,11 +15,13 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Map;
-import java.util.UUID;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.crm.custom.CustomFieldValues;
 
 @Entity
 @Table(name = "billing_article_family")
@@ -59,7 +60,7 @@ public class ArticleFamily extends BusinessEntity implements ICustomFieldEntity 
     @Column(name = "cf_values_accum", columnDefinition = "text")
     private CustomFieldValues cfAccumulatedValues;
 
-    private ArticleFamily() {
+    public ArticleFamily() {
     }
 
     public ArticleFamily(Long id){

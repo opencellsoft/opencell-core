@@ -9,23 +9,35 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @ExportIdentifier({ "code" })
 @Table(name = "cpq_price_plan_matrix_column")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_column_sq"), })
+@NamedQueries({
+        @NamedQuery(name = "PricePlanMatrixColumn.findByAttributes", query = "select p from PricePlanMatrixColumn p where p.attribute in :attribute"),
+        @NamedQuery(name = "PricePlanMatrixColumn.findByProduct", query = "select p from PricePlanMatrixColumn p where p.product in :product")
+})
 public class PricePlanMatrixColumn extends BusinessEntity {
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "ppm_version_id")
     @NotNull
     private PricePlanMatrixVersion pricePlanMatrixVersion;
@@ -40,23 +52,26 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     private ColumnTypeEnum type;
 
     @Column(name = "el_value")
-    @NotNull
     private String elValue;
 
     @OneToOne
     @JoinColumn(name = "offer_id")
-    @NotNull
     private OfferTemplate offerTemplate;
 
     @OneToOne
     @JoinColumn(name = "product_id")
-    @NotNull
     private Product product;
 
     @OneToOne
     @JoinColumn(name = "attribute_id")
-    @NotNull
     private Attribute attribute;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_range")
+    private Boolean isRange;
+
+    @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PricePlanMatrixValue> pricePlanMatrixValues;
 
     public PricePlanMatrixVersion getPricePlanMatrixVersion() {
         return pricePlanMatrixVersion;
@@ -112,5 +127,21 @@ public class PricePlanMatrixColumn extends BusinessEntity {
 
     public void setOfferTemplate(OfferTemplate offerTemplate) {
         this.offerTemplate = offerTemplate;
+    }
+
+    public Set<PricePlanMatrixValue> getPricePlanMatrixValues() {
+        return pricePlanMatrixValues;
+    }
+
+    public void setPricePlanMatrixValues(Set<PricePlanMatrixValue> pricePlanMatrixValues) {
+        this.pricePlanMatrixValues = pricePlanMatrixValues;
+    }
+
+    public Boolean getRange() {
+        return isRange;
+    }
+
+    public void setRange(Boolean range) {
+        isRange = range;
     }
 }

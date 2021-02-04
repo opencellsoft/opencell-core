@@ -25,6 +25,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InvoiceType;
@@ -34,7 +36,9 @@ import org.meveo.model.quote.QuoteStatusEnum;
 
 
 @Entity
-@Table(name = "cpq_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@WorkflowedEntity
+@ObservableEntity
+@Table(name = "cpq_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_seq")})
 public class CpqQuote extends BusinessEntity {
@@ -64,6 +68,8 @@ public class CpqQuote extends BusinessEntity {
 		this.salesPersonName = copy.salesPersonName;
 		this.billableAccount = copy.billableAccount;
 		this.validity = copy.validity;
+		this.pdfFilename=copy.pdfFilename;
+		this.xmlFilename=copy.xmlFilename;
 	}
 	/**
 	 * seller
@@ -77,6 +83,7 @@ public class CpqQuote extends BusinessEntity {
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "applicant_account_id", nullable = false)
+	@NotNull
 	private BillingAccount applicantAccount;
 	
 	/**
@@ -107,6 +114,13 @@ public class CpqQuote extends BusinessEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "send_date")
 	private Date sendDate;
+
+	/**
+	 * sendDate
+	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "quote_date")
+	private Date quoteDate;
 	/**
 	 * prestationDateBegin
 	 */
@@ -159,7 +173,8 @@ public class CpqQuote extends BusinessEntity {
 	 * billing account invoice code
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "billable_account_id")
+	@JoinColumn(name = "billable_account_id", nullable = false)
+	@NotNull
 	private BillingAccount billableAccount;
 	
 
@@ -185,7 +200,21 @@ public class CpqQuote extends BusinessEntity {
 	@JoinColumn(name = "invoice_type_id", nullable = false)
 	@NotNull
 	private InvoiceType orderInvoiceType;
-    
+	
+	   /**
+	  * XML file name
+	  */
+	 @Column(name = "xml_filename", length = 255)
+	 @Size(max = 255)
+	 private String xmlFilename;
+	 
+	 /**
+	  * PDF file name
+	  */
+	@Column(name = "pdf_filename", length = 255)
+	@Size(max = 255)
+	private String pdfFilename;
+	    
 	/**
 	 * @return the seller
 	 */
@@ -418,6 +447,39 @@ public class CpqQuote extends BusinessEntity {
 	public void setOrderInvoiceType(InvoiceType orderInvoiceType) {
 		this.orderInvoiceType = orderInvoiceType;
 	}
-	
-	
+
+	public Date getQuoteDate() {
+		return quoteDate == null ? new Date() : quoteDate;
+	}
+
+	public void setQuoteDate(Date quoteDate) {
+		this.quoteDate = quoteDate;
+	}
+/**
+	 * @return the xmlFilename
+	 */
+	public String getXmlFilename() {
+		return xmlFilename;
+	}
+
+	/**
+	 * @param xmlFilename the xmlFilename to set
+	 */
+	public void setXmlFilename(String xmlFilename) {
+		this.xmlFilename = xmlFilename;
+	}
+
+	/**
+	 * @return the pdfFilename
+	 */
+	public String getPdfFilename() {
+		return pdfFilename;
+	}
+
+	/**
+	 * @param pdfFilename the pdfFilename to set
+	 */
+	public void setPdfFilename(String pdfFilename) {
+		this.pdfFilename = pdfFilename;
+	}	
 }

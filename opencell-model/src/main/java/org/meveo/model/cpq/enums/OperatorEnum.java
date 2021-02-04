@@ -11,20 +11,20 @@ import java.util.stream.Stream;
  */
 public enum OperatorEnum {
 
-	ET(0), 
-	OU(1);
+	AND("AND"), 
+	OR("OR");
 	
-	private OperatorEnum(int value) {
+	private OperatorEnum(String value) {
 		this.value = value;
 	}
 	
-	private int value;
+	private String value;
 	
-	public int getValue() {
+	public String getValue() {
 		return this.value;
 	}
 
-	public Optional<OperatorEnum> getCurrentStatus(int value) {
+	public Optional<OperatorEnum> getCurrentStatus(String value) {
 		return Stream.of(OperatorEnum.values()).filter(v -> v.value == value).findFirst();
 	}
 }

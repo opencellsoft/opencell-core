@@ -35,11 +35,15 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.GetListAccountingArticlePricesResponseDto;
+import org.meveo.api.dto.cpq.GetPdfQuoteRequestDto;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
+import org.meveo.api.dto.invoice.GetPdfInvoiceRequestDto;
+import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
+import org.meveo.api.dto.response.cpq.GetPdfQuoteResponseDto;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteOfferDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
@@ -158,6 +162,26 @@ public interface CpqQuoteRs {
             @ApiResponse(responseCode="200", description = "The quote item is succeffully updated",content = @Content(schema = @Schema(implementation = GetQuoteOfferDtoResponse.class)))
     })
     public Response updateQuoteItem(@Parameter(description = "Product quote information", required = true) QuoteOfferDTO quoteitem, @Context UriInfo info);
+    
+    /**
+     * Get details of a single quote
+     * 
+     * @param id Product code
+     * @param info Http request context
+     * @return quote response
+     */
+    @GET
+    @Path("/quoteItem/{quoteCode}/{quoteVersion}")
+    @Operation(summary = "Get List of quote offer by quote code and quote version number",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "The quote is succeffully retrieved",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class))),
+            @ApiResponse(responseCode="404", description = "The quote offer doesn't exist",content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+    })
+    public Response findQuoteItems(@Parameter(description = "Product quote code", required = true) @PathParam("quoteCode") String quoteCode, 
+    								@Parameter(description = "Product quote code", required = true) @PathParam("quoteVersion") int quoteVersion,
+    								@Context UriInfo info);
 
     /**
      * Delete a quote.
@@ -308,16 +332,59 @@ public interface CpqQuoteRs {
     public Response findQuoteItem(@Parameter(description = "", required = true) @PathParam("quoteOfferId") Long quoteOfferId); */
     
 
-//    @GET
-//    @Path("/quoteQuotation")
-//    @Operation(summary = "Get quote quotation",
-//    tags = { "Quotation" },
-//    description ="",
-//    responses = {
-//            @ApiResponse(responseCode="200", description = "quotation is succefully done!",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class)))
-//    })
-//	Response quoteQuotation(@Parameter(description = "quote code", required = false) @QueryParam("quoteCode") String quoteCode, 
-//			@Parameter(description = "quote version number", required = false) @QueryParam("quoteVersion") int quoteVersion, UriInfo info);
+    @POST
+    @Path("/quoteQuotation")
+    @Operation(summary = "Get quote quotation",
+    tags = { "Quotation" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quotation is succefully done!",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+    })
+	Response quoteQuotation(@Parameter(description = "quote code", required = false) @QueryParam("quoteCode") String quoteCode, 
+			@Parameter(description = "quote version number", required = false) @QueryParam("quoteVersion") int quoteVersion);
+
+    @GET
+    @Path("/generateQuoteXml")
+    @Operation(summary = "Generate the quote XML and optionnaly quote PDF if generatePdf is True ",
+    tags = { "Quotation" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quote XML is succefully generated!",content = @Content(schema = @Schema(implementation = GetPdfQuoteResponseDto.class)))
+    })
+    GetPdfQuoteResponseDto generateQuoteXml(@QueryParam("quoteCode") String quoteCode, @QueryParam("currentVersion") int currentVersion, @QueryParam("generatePdf") boolean generatePdf);
     
+    
+    
+    /**
+     * get the quote PDF file. 
+     */
+    @GET
+    @Path("/getQuotePDF")
+    @Operation(summary = "Get the quote PDF. if generatePdf is true, the PDF is generated and override existing one if already exists",
+    tags = { "Quotation" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quote PDF is succefully returned!",content = @Content(schema = @Schema(implementation = GetPdfQuoteResponseDto.class)))
+    })
+    GetPdfQuoteResponseDto getQuotePDF(@QueryParam("quoteCode") String quoteCode, @QueryParam("currentVersion") int currentVersion, @QueryParam("generatePdf") boolean generatePdf);
+    
+
+    /**
+     * Get details of a single quote
+     * 
+     * @param id Product code
+     * @param info Http request context
+     * @return quote response
+     */
+    @GET
+    @Path("/quoteItem")
+    @Operation(summary = "Get f quote offer by quote id",
+    tags = { "Quote management" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "The quote is succeffully retrieved",content = @Content(schema = @Schema(implementation = GetQuoteOfferDtoResponse.class))),
+            @ApiResponse(responseCode="404", description = "The quote offer doesn't exist",content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+    })
+    public Response findQuoteItem(@Parameter(description = "quote offer id", required = true) @QueryParam("quoteItemId") Long quoteItemId,	@Context UriInfo info);
     
 }

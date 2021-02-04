@@ -144,5 +144,15 @@ public interface CommercialRuleRs extends IBaseRs {
  })
  public Response findTagRules ( @Parameter(description = "tag code", required = true) @QueryParam("tagCode") String tagCode);
 	
+ @GET
+ @Path("/offerRules")
+ @Operation(summary = "Get offer commercial rules",
+ tags = { "CommercialRules" },
+ description ="Get offer commercial rules",
+ responses = {
+         @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListCommercialRulesResponseDto.class)))
+ })
+ public Response findOfferRules ( @Parameter(description = "offer code", required = true) @QueryParam("offerCode") String offerCode);
+	
 	 
 }

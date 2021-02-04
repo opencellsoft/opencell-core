@@ -36,6 +36,7 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.shared.DateUtils;
@@ -61,6 +62,10 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
 
     private static final long serialVersionUID = 1L;
 
+    public static final String POST_INVOICING_REPORT = "/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false&postReport=true&objectId=";
+
+    public static final String POST_INVOICING_REPORT_EDIT = "/pages/billing/invoicing/postInvoicingReports.xhtml?edit=true&postReport=true&objectId=";
+    
     @Inject
     private BillingRunService billingRunService;
 
@@ -222,6 +227,10 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
         }
         return null;
     }
+    
+    public Boolean canBeValidated() {
+    	 return !billingRunService.isBillingRunContainingRejectedInvoices(entity.getId());
+    }
 
     public String cancel() {
         try {
@@ -265,7 +274,7 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
 
     public String postInvoicingRepport(long id) {
         try {
-            return "/pages/billing/invoicing/postInvoicingReports.xhtml?edit=false&postReport=true&objectId=" + id;
+			return POST_INVOICING_REPORT + id;
 
         } catch (Exception e) {
             log.error("Failed to retrieve post-invoicing report", e);
@@ -291,4 +300,5 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
     public void setLaunchInvoicingRejectedBA(boolean launchInvoicingRejectedBA) {
         this.launchInvoicingRejectedBA = launchInvoicingRejectedBA;
     }
+    
 }

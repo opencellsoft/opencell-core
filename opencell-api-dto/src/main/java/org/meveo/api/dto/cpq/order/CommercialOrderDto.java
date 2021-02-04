@@ -5,9 +5,9 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.account.AccessDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.order.OrderStatusEnum;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -45,12 +45,15 @@ public class CommercialOrderDto extends BaseEntityDto {
 	private int customerServiceDuration;
 	private String externalReference;
 	private String orderParentCode;
+	private String userAccountCode;
+	private AccessDto accessDto; 
 	
 	
 	public CommercialOrderDto() {
 	}
 
 	public CommercialOrderDto(CommercialOrder order) {
+		this.id = order.getId();
 		this.sellerCode = order.getSeller().getCode();
 		this.orderNumber = order.getOrderNumber();
 		this.label = order.getLabel();
@@ -72,6 +75,10 @@ public class CommercialOrderDto extends BaseEntityDto {
 		this.externalReference = order.getExternalReference();
 		if(order.getOrderParent() != null)
 			this.orderParentCode = order.getOrderParent().getCode();
+		if(order.getUserAccount() != null)
+			this.userAccountCode = order.getUserAccount().getCode();
+		if(order.getAccess() != null)
+			this.accessDto = new AccessDto(order.getAccess(), null);
 	}
 	
 	/**
@@ -293,6 +300,34 @@ public class CommercialOrderDto extends BaseEntityDto {
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the userAccountCode
+	 */
+	public String getUserAccountCode() {
+		return userAccountCode;
+	}
+
+	/**
+	 * @param userAccountCode the userAccountCode to set
+	 */
+	public void setUserAccountCode(String userAccountCode) {
+		this.userAccountCode = userAccountCode;
+	}
+
+	/**
+	 * @return the accessDto
+	 */
+	public AccessDto getAccessDto() {
+		return accessDto;
+	}
+
+	/**
+	 * @param accessDto the accessDto to set
+	 */
+	public void setAccessDto(AccessDto accessDto) {
+		this.accessDto = accessDto;
 	}
 	
 	
