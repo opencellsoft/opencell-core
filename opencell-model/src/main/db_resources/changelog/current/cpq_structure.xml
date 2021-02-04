@@ -2944,6 +2944,15 @@
 							 constraintName="cpq_invoice_line__product_version__fk"
 							 referencedTableName="cpq_product_version" referencedColumnNames="id"/>
     </changeSet>
+    
+    <changeSet id="#5937_20210204" author="TarikFA">
+    	<addColumn tableName="cat_charge_template">
+            <column name="attribute_id" type="bigint"/>
+    	</addColumn>
+  		<addForeignKeyConstraint baseTableName="cat_charge_template" baseColumnNames="attribute_id"
+							 constraintName="fk_cat_charge_template_attribute_id"
+							 referencedTableName="cpq_attribute" referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>
 
 
