@@ -3001,7 +3001,17 @@
 				<constraints nullable="false"/>
 			</column>
 		</addColumn>
-		
+	</changeSet>
+
+	<changeSet id="Invoice_lines_job_202001145" author="ZBariki">
+		<preConditions onFail="MARK_RAN">
+			<foreignKeyConstraintExists foreignKeyName="fk_cpq_invoice_line_invoice_id"/>
+		</preConditions>
+		<dropForeignKeyConstraint baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_invoice_id"/>
+		<addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="cpq_invoice_line"
+								 constraintName="fk_cpq_invoice_line_invoice_id" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_invoice" />
 	</changeSet>
 </databaseChangeLog>
 

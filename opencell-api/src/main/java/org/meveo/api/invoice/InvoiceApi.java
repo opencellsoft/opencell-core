@@ -415,7 +415,8 @@ public class InvoiceApi extends BaseApi {
         List<GenerateInvoiceResultDto> invoicesDtos = new ArrayList<>();
         ICustomFieldEntity customFieldEntity = new Invoice();
         customFieldEntity = this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), customFieldEntity, false);
-        List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft, customFieldEntity.getCfValues());
+        List<Invoice> invoices =
+                invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft, customFieldEntity.getCfValues(), false);
 
         // For backward compatibility with API
         if (invoices == null || invoices.isEmpty()) {
