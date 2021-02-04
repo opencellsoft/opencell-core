@@ -47,6 +47,7 @@ public class CommercialOrderDto extends BaseEntityDto {
 	private String orderParentCode;
 	private String userAccountCode;
 	private AccessDto accessDto; 
+	private String orderLotCode;
 	
 	
 	public CommercialOrderDto() {
@@ -79,6 +80,8 @@ public class CommercialOrderDto extends BaseEntityDto {
 			this.userAccountCode = order.getUserAccount().getCode();
 		if(order.getAccess() != null)
 			this.accessDto = new AccessDto(order.getAccess(), null);
+		if(order.getOrderLot() != null)
+			this.orderLotCode = order.getOrderLot().getCode();
 	}
 	
 	/**
@@ -328,6 +331,20 @@ public class CommercialOrderDto extends BaseEntityDto {
 	 */
 	public void setAccessDto(AccessDto accessDto) {
 		this.accessDto = accessDto;
+	}
+
+	/**
+	 * @return the orderLotCode
+	 */
+	public String getOrderLotCode() {
+		return orderLotCode;
+	}
+
+	/**
+	 * @param orderLotCode the orderLotCode to set
+	 */
+	public void setOrderLotCode(String orderLotCode) {
+		this.orderLotCode = orderLotCode;
 	}
 	
 	

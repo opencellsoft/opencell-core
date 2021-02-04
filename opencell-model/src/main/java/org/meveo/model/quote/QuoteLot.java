@@ -1,19 +1,20 @@
 package org.meveo.model.quote;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -22,10 +23,10 @@ import org.meveo.model.BusinessEntity;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "cpq_quote_lot", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "cpq_quote_version_id"}))
+@Table(name = "cpq_quote_lot", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_lot_seq")})
-@NamedQuery(name = "QuoteLot.findByCodeAndVersion", query = "select q from QuoteLot q where q.code=:code and q.quoteVersion.id=:quoteVersionId")
+//@NamedQuery(name = "QuoteLot.findByCodeAndVersion", query = "select q from QuoteLot q where q.code=:code and q.quoteVersion.id=:quoteVersionId")
 //@NamedQuery(name = "QuoteCustomerService.findLastVersionByCode", query = "select qcs from QuoteCustomerService qcs left join qcs.quote qq where qq.code=:codeQuote order by qcs.quoteVersion desc")
 public class QuoteLot extends BusinessEntity {
 
@@ -34,10 +35,9 @@ public class QuoteLot extends BusinessEntity {
     /**
      * quote
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cpq_quote_version_id", nullable = false, referencedColumnName = "id")
-	@NotNull
-    private QuoteVersion quoteVersion;
+    @OneToMany(mappedBy = "quoteLot", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy("id")
+    private List<QuoteVersion> quoteVersions;
     
 	
 	/**
@@ -100,7 +100,7 @@ public class QuoteLot extends BusinessEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(duration, executionDate, name, quoteVersion);
+		result = prime * result + Objects.hash(duration, executionDate, name);
 		return result;
 	}
 
@@ -114,8 +114,21 @@ public class QuoteLot extends BusinessEntity {
 			return false;
 		QuoteLot other = (QuoteLot) obj;
 		return duration == other.duration && Objects.equals(executionDate, other.executionDate)
-				&& Objects.equals(name, other.name) 
-				&& Objects.equals(quoteVersion, other.quoteVersion);
+				&& Objects.equals(name, other.name);
+	}
+
+	/**
+	 * @return the quoteVersion
+	 */
+	public List<QuoteVersion> getQuoteVersions() {
+		return quoteVersions;
+	}
+
+	/**
+	 * @param quoteVersion the quoteVersion to set
+	 */
+	public void setQuoteVersions(List<QuoteVersion> quoteVersion) {
+		this.quoteVersions = quoteVersion;
 	}
 	
 	

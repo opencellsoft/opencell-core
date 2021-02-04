@@ -52,7 +52,7 @@ public class QuoteLotService extends BusinessService<QuoteLot> {
 		}
 	}
 	
-	public QuoteLot findByCodeAndQuoteVersion(String quoteCustomerServiceCode, Long quoteVersionId) {
+	/*public QuoteLot findByCodeAndQuoteVersion(String quoteCustomerServiceCode, Long quoteVersionId) {
 		try {
 			return (QuoteLot) this.getEntityManager().createNamedQuery("QuoteLot.findByCodeAndVersion")
 																	.setParameter("code", quoteCustomerServiceCode)
@@ -62,7 +62,7 @@ public class QuoteLotService extends BusinessService<QuoteLot> {
 			return null;
 		}
 		
-	}
+	}*/
 	
 	
 	
