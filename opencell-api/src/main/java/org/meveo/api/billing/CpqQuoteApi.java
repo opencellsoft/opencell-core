@@ -400,10 +400,10 @@ public class CpqQuoteApi extends BaseApi {
         if(quote == null)
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
 
-		QuoteValidationTemp temp = new QuoteValidationTemp();
+		/*QuoteValidationTemp temp = new QuoteValidationTemp();
 		Map<String, Object> methodContext = new HashMap<String, Object>();
 		methodContext.put("cpqQuote", quote);
-		temp.execute(methodContext );
+		temp.execute(methodContext );*/
         return populateToDto(quote,true,true,true);
     }
 
