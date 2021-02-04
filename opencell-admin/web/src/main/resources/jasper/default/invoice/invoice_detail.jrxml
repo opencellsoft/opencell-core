@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.5.0.final using JasperReports Library version 5.5.2  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice_detail" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="169c5323-2cc3-4a80-bb5b-169e57c4a4d9">
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice_detail" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="169c5323-2cc3-4a80-bb5b-169e57c4a4d9">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.xml"/>
 	<queryString language="xPath">
 		<![CDATA[/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line]]>
 	</queryString>
 	<field name="useraccount_code" class="java.lang.String">
 		<fieldDescription><![CDATA[ancestor::userAccount/@code]]></fieldDescription>
 	</field>
-	<field name="label_line" class="java.lang.String">
-		<fieldDescription><![CDATA[label]]></fieldDescription>
+	<field name="code_line" class="java.lang.String">
+		<fieldDescription><![CDATA[article/@code]]></fieldDescription>
 	</field>
-	<field name="sortIndex" class="java.lang.String">
-		<fieldDescription><![CDATA[@sortIndex]]></fieldDescription>
+	<field name="label_line" class="java.lang.String">
+		<fieldDescription><![CDATA[article/@label]]></fieldDescription>
 	</field>
 	<field name="customerID" class="java.lang.String">
 		<fieldDescription><![CDATA[/invoice/@customerAccountCode]]></fieldDescription>
@@ -190,7 +191,6 @@
 	<field name="amountWithTax" class="java.lang.Double">
 		<fieldDescription><![CDATA[sum(amountWithTax)]]></fieldDescription>
 	</field>
-	<sortField name="sortIndex" type="Variable"/>
 	<sortField name="useraccount_description" order="Descending"/>
 	<sortField name="code" order="Descending"/>
 	<sortField name="unitAmountWithoutTax" order="Descending"/>
@@ -202,9 +202,6 @@
 	</variable>
 	<variable name="amountWithTax" class="java.lang.Double" resetType="Group" resetGroup="2" calculation="Sum">
 		<variableExpression><![CDATA[$F{amountWithTax}]]></variableExpression>
-	</variable>
-	<variable name="sortIndex" class="java.lang.Integer">
-		<variableExpression><![CDATA["".equals($F{sortIndex})?Integer.MAX_VALUE:Integer.valueOf($F{sortIndex})]]></variableExpression>
 	</variable>
 	<filterExpression><![CDATA[$F{count1}>0]]></filterExpression>
 	<group name="1">
@@ -246,7 +243,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{label_line}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{code_line}+ " - " +$F{label_line}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
 					<reportElement positionType="Float" x="516" y="0" width="64" height="15" isPrintWhenDetailOverflows="true" uuid="36419c39-6603-4092-9dbe-b643b28ad12a"/>
