@@ -75,7 +75,6 @@ public class UserInfoManagement {
                     }
                 }
                 user.setLastLoginDate(new Date());
-                user.setEmail(currentUser.getEmail());
                 user.updateAudit(currentUser);
                 em.persist(user);
                 em.flush();
