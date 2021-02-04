@@ -51,7 +51,7 @@ public interface CommercialOrderRs {
 	            @ApiResponse(responseCode = "404", description = "One of attached fields is unknown", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 	    })
 	public Response create(CommercialOrderDto orderDto);
-	
+
 
 	@PUT
 	@Operation(summary = "update an existing order",
@@ -63,6 +63,30 @@ public interface CommercialOrderRs {
 	            @ApiResponse(responseCode = "404", description = "One of attached fields is unknown", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 	    })
 	public Response update(CommercialOrderDto orderDto);
+
+	@PATCH
+	@Path("/{commercialOrderId}/userAccount/{userAccountCode}")
+	@Operation(summary = "update commercial order user account",
+			tags = { "Order management" },
+			description ="",
+			responses = {
+					@ApiResponse(responseCode="200", description = "The order is succeffully updated",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class))),
+					@ApiResponse(responseCode = "412", description = "Missing required parameters", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
+					@ApiResponse(responseCode = "404", description = "One of attached fields is unknown", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+			})
+	Response updateUserAccount(@Parameter(required = true) @PathParam("commercialOrderId") Long commercialOrderId, @Parameter(required = true) @PathParam("userAccountCode") String userAccountCode);
+
+	@PATCH
+	@Path("/{commercialOrderId}/invoicingPlan/{invoicingPlanCode}")
+	@Operation(summary = "update commercial order invoicing plan",
+			tags = { "Order management" },
+			description ="",
+			responses = {
+					@ApiResponse(responseCode="200", description = "The order is succeffully updated",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class))),
+					@ApiResponse(responseCode = "412", description = "Missing required parameters", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
+					@ApiResponse(responseCode = "404", description = "One of attached fields is unknown", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+			})
+	Response updateOrderInvoicingPlan(@Parameter(required = true) @PathParam("commercialOrderId") Long commercialOrderId, @Parameter(required = true) @PathParam("invoicingPlanCode") String invoicingPlanCode);
 	
 	@DELETE
 	@Path("/{orderId}")

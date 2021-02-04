@@ -156,8 +156,8 @@ public class QuoteValidationTemp extends ModuleScript {
 		});
 		
 		product.getQuoteArticleLines().forEach(quoteArticleLine -> {
-			OrderArticleLine orderArticleLine = processOrderArticleLine(quoteArticleLine, commercialOrder, orderLot);
-			processOrderPrice(orderArticleLine, commercialOrder, product.getQuoteOffre().getQuoteVersion());
+			OrderArticleLine orderArticleLine = processOrderArticleLine(quoteArticleLine, commercialOrder, orderLot, orderProduct);
+			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffre().getQuoteVersion());
 		});
 		
 		
@@ -188,7 +188,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		return orderCustomer;
 	}
 	
-	private OrderArticleLine processOrderArticleLine(QuoteArticleLine quoteArticleLine, CommercialOrder commercialOrder, OrderLot orderCustomerService) {
+	private OrderArticleLine processOrderArticleLine(QuoteArticleLine quoteArticleLine, CommercialOrder commercialOrder, OrderLot orderCustomerService, OrderProduct orderProduct) {
 		OrderArticleLine articleLine = new OrderArticleLine();
 		articleLine.setCode(orderArticleLineService.findDuplicateCode(articleLine));
 		articleLine.setOrder(commercialOrder);
@@ -196,13 +196,13 @@ public class QuoteValidationTemp extends ModuleScript {
 		articleLine.setQuantity(quoteArticleLine.getQuantity());
 		articleLine.setQuantityService(quoteArticleLine.getServiceQuantity());
 		articleLine.setAccountingArticle(quoteArticleLine.getAccountingArticle());
-		
+		articleLine.setOrderProduct(orderProduct);
 		orderArticleLineService.create(articleLine);
 		return articleLine;
 	}
 	
-	private void processOrderPrice(OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion) {
-		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(orderArticleLine.getId(), quoteVersion.getId());
+	private void processOrderPrice(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion) {
+		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(quoteArticleLineId, quoteVersion.getId());
 		quotePrices.forEach( price -> {
 			OrderPrice orderPrice = new OrderPrice();
 			orderPrice.setCode(GENERIC_CODE);
@@ -220,6 +220,7 @@ public class QuoteValidationTemp extends ModuleScript {
 			orderPrice.setCurrencyCode(price.getCurrencyCode());
 			orderPrice.setRecurrenceDuration(price.getRecurrenceDuration());
 			orderPrice.setRecurrencePeriodicity(price.getRecurrencePeriodicity());
+			orderPrice.setChargeTemplate(price.getChargeTemplate());
 			orderPriceService.create(orderPrice);
 		});
 	}

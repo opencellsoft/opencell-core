@@ -7,7 +7,9 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.quote.QuotePrice;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 
@@ -28,5 +30,12 @@ public class QuotePriceService extends PersistenceService<QuotePrice> {
 		queryBuilder.addCriterion("qp.quoteVersion.id", "=", quoteVersionId, false);
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
+	}
+
+	public void removeByQuoteVersionAndPriceLevel(QuoteVersion quoteVersion, PriceLevelEnum priceLevel) {
+		getEntityManager().createNamedQuery("QuotePrice.removeByQuoteVersionAndPriceLevel")
+				.setParameter("quoteVersion", quoteVersion)
+				.setParameter("priceLevelEnum", priceLevel)
+				.executeUpdate();
 	}
 }
