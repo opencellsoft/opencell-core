@@ -29,6 +29,28 @@ public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 	}
 
 	@Override
+	public Response updateUserAccount(Long commercialOrderId, String userAccountCode) {
+		GetCommercialOrderDtoResponse result = new GetCommercialOrderDtoResponse();
+		try {
+			result.setCommercialOrderDto(commercialOrderApi.updateUserAccount(commercialOrderId, userAccountCode));
+			return Response.ok(result).build();
+		}catch(MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		}
+	}
+
+	@Override
+	public Response updateOrderInvoicingPlan(Long commercialOrderId, String invoicingPlanCode) {
+		GetCommercialOrderDtoResponse result = new GetCommercialOrderDtoResponse();
+		try {
+			result.setCommercialOrderDto(commercialOrderApi.updateOrderInvoicingPlan(commercialOrderId, invoicingPlanCode));
+			return Response.ok(result).build();
+		}catch(MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		}
+	}
+
+	@Override
 	public Response update(CommercialOrderDto orderDto) {
 		GetCommercialOrderDtoResponse result = new GetCommercialOrderDtoResponse();
 		try {

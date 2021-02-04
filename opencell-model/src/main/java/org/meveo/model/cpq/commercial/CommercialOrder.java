@@ -2,6 +2,7 @@ package org.meveo.model.cpq.commercial;
 
 import static javax.persistence.CascadeType.ALL;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -129,6 +130,10 @@ public class CommercialOrder extends AuditableEntity {
 	@Column(name = "order_progress", nullable = false)
 	@NotNull
 	private Integer orderProgress = Integer.valueOf(0);
+
+	@Column(name = "rate_invoiced", nullable = false)
+	@NotNull
+	private Integer rateInvoiced = Integer.valueOf(0);
 
 	@Column(name = "progress_date", nullable = false)
 	@NotNull
@@ -549,5 +554,17 @@ public class CommercialOrder extends AuditableEntity {
 
 	public void setOffers(List<OrderOffer> offers) {
 		this.offers = offers;
+	}
+
+	public Integer getRateInvoiced() {
+		return rateInvoiced;
+	}
+
+	public void setRateInvoiced(Integer rateInvoiced) {
+		this.rateInvoiced = rateInvoiced;
+	}
+
+	public void addInvoicedRate(BigDecimal rateToBill) {
+		this.rateInvoiced = this.rateInvoiced.intValue() + rateToBill.intValue();
 	}
 }

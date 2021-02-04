@@ -5,6 +5,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 
 import javax.persistence.Column;
@@ -14,6 +15,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -23,6 +27,7 @@ import java.math.BigDecimal;
 @Table(name = "order_price", uniqueConstraints = @UniqueConstraint(columnNames = {"id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "order_price_seq")})
+@NamedQuery(name="OrderPrice.findByOrder", query = "select o from OrderPrice o where o.order=:commercialOrder")
 public class OrderPrice extends BusinessEntity {
 
 
@@ -79,6 +84,10 @@ public class OrderPrice extends BusinessEntity {
 
     @Column(name = "recurrence_periodicity")
     private String recurrencePeriodicity;
+
+    @OneToOne
+    @JoinColumn(name= "charge_template_id")
+    private ChargeTemplate chargeTemplate;
 
     public OrderArticleLine getOrderArticleLine() {
         return orderArticleLine;
@@ -190,5 +199,13 @@ public class OrderPrice extends BusinessEntity {
 
     public void setRecurrencePeriodicity(String recurrencePeriodicity) {
         this.recurrencePeriodicity = recurrencePeriodicity;
+    }
+
+    public ChargeTemplate getChargeTemplate() {
+        return chargeTemplate;
+    }
+
+    public void setChargeTemplate(ChargeTemplate chargeTemplate) {
+        this.chargeTemplate = chargeTemplate;
     }
 }

@@ -24,6 +24,7 @@ import java.util.function.BiFunction;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
@@ -34,8 +35,10 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.meveo.service.cpq.AttributeService;
 
 /**
  * @author Edward P. Legaspi
@@ -46,6 +49,8 @@ public class UsageChargeTemplateApi extends ChargeTemplateApi<UsageChargeTemplat
 
     @Inject
     private UsageChargeTemplateService usageChargeTemplateService;
+    
+    @Inject private AttributeService attributeService;
 
     @Override
     public UsageChargeTemplate create(UsageChargeTemplateDto postData) throws MeveoApiException, BusinessException {
@@ -101,6 +106,10 @@ public class UsageChargeTemplateApi extends ChargeTemplateApi<UsageChargeTemplat
             chargeTemplate.setCode(postData.getCode());
         } else {
             chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+        }
+        
+        if(!Strings.isEmpty(postData.getUsageQuantityAttributeCode())) {
+        	chargeTemplate.setUsageQuantityAttribute(loadEntityByCode(attributeService, postData.getUsageQuantityAttributeCode(), Attribute.class));
         }
 
         super.dtoToEntity(postData, chargeTemplate, isNew);
