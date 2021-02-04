@@ -93,7 +93,7 @@ public class UnitPaymentJobBean {
                 result.addReport("AccountOperation id  : " + listAOids + " RejectReason : " + doPaymentResponseDto.getErrorMessage());
                 this.checkPaymentRetry(doPaymentResponseDto.getErrorCode(), listAOids, aoFilterScript);
             } else if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.PENDING == doPaymentResponseDto.getPaymentStatus()){
-                jobExecutionService.registerError(result);               
+                jobExecutionService.registerSucces(result);               
             }            
 
         } catch (Exception e) {

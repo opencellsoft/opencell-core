@@ -77,7 +77,7 @@ public class ScriptingAsync {
             if (context.containsKey(Script.JOB_RESULT_NB_OK)) {
                 result.setNbItemsCorrectlyProcessed(convert(context.get(Script.JOB_RESULT_NB_OK)));
             } else {
-                jobExecutionService.registerError(result);
+                jobExecutionService.registerSucces(result);
             }
             if (context.containsKey(Script.JOB_RESULT_NB_WARN)) {
                 result.setNbItemsProcessedWithWarning(convert(context.get(Script.JOB_RESULT_NB_WARN)));
@@ -111,7 +111,7 @@ public class ScriptingAsync {
 			if (context.containsKey(Script.JOB_RESULT_NB_OK)) {
 				result.setNbItemsCorrectlyProcessed(convert(context.get(Script.JOB_RESULT_NB_OK)));
 			} else {
-				jobExecutionService.registerError(result);
+				jobExecutionService.registerSucces(result);
 			}
 			if (context.containsKey(Script.JOB_RESULT_NB_WARN)) {
 				result.setNbItemsProcessedWithWarning(convert(context.get(Script.JOB_RESULT_NB_WARN)));

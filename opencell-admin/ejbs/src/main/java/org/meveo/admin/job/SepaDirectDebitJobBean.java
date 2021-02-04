@@ -201,17 +201,17 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns, waitingMillis, result);
 							log.info("end createPaymentsOrRefundsForDDRequestLot");
 							if (isEmpty(ddRequestLOT.getRejectedCause())) {
-								jobExecutionService.registerError(result);
+								jobExecutionService.registerSucces(result);
 							}
 						}
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {
 						dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddrequestLotOp.getDdrequestLOT(), nbRuns, waitingMillis, result);
-						jobExecutionService.registerError(result);
+						jobExecutionService.registerSucces(result);
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
 						dDRequestLOTService.generateDDRquestLotFile(ddrequestLotOp.getDdrequestLOT(), ddRequestBuilderInterface, appProvider);
-						jobExecutionService.registerError(result);
+						jobExecutionService.registerSucces(result);
 					}
 					ddrequestLotOp.setStatus(DDRequestOpStatusEnum.PROCESSED);
 					dDRequestLotOpService.update(ddrequestLotOp);

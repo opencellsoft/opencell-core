@@ -53,7 +53,7 @@ public class UnitGenericWorkflowJobBean {
     public void execute(JobExecutionResultImpl result, BusinessEntity be, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
         try {
             genericWorkflowService.executeWorkflow(be, workflowInstance, genericWorkflow);
-            jobExecutionService.registerError(result);
+            jobExecutionService.registerSucces(result);
         } catch (Exception e) {
             log.error("Failed to unit generic workflow for {}", workflowInstance, e);
             jobExecutionService.registerError(result, workflowInstance.getClass().getName() + workflowInstance.getId(), e.getMessage());

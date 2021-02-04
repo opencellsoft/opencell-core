@@ -201,7 +201,7 @@ public class DWHQueryBean {
                         }
                     }
                     mq.increaseMeasureDate();
-                    jobExecutionService.registerError(result);
+                    jobExecutionService.registerSucces(result);
                 }
             } catch (Exception e) {
                 jobExecutionService.registerError(result, "Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query: " + e.getMessage());

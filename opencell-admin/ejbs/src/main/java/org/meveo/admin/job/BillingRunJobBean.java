@@ -148,7 +148,7 @@ public class BillingRunJobBean extends BaseJobBean {
                 }
                 billingRunService.create(billingRun);
                 // result.setNbItemsCorrectlyProcessed(++nbItemsToProcess);
-                jobExecutionService.registerError(result);
+                jobExecutionService.registerSucces(result);
 
             }
             result.setNbItemsToProcess(nbItemsToProcess + nbItemsProcessedWithError);

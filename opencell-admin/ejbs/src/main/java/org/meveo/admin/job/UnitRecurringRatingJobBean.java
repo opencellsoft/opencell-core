@@ -59,7 +59,7 @@ public class UnitRecurringRatingJobBean implements Serializable {
         try {
             RatingStatus ratingStatus = recurringChargeInstanceService.applyRecurringCharge(chargeInstanceId, maxDate, false);
             if (ratingStatus.getNbRating() == 1) {
-                jobExecutionService.registerError(result);
+                jobExecutionService.registerSucces(result);
             } else {
                 if (ratingStatus.getStatus() != RatingStatusEnum.NOT_RATED_FALSE_FILTER) {
                     jobExecutionService.registerWarning(result, chargeInstanceId + " not rated");

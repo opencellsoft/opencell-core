@@ -90,7 +90,7 @@ public class UnitAccountOperationsGenerationJobBean {
                 script.execute(context);
             }
             
-            jobExecutionService.registerError(result);
+            jobExecutionService.registerSucces(result);
 
         } catch (Exception e) {
             log.error("Failed to generate acount operations", e);

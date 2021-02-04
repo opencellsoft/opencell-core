@@ -95,7 +95,7 @@ public class FiltringJobAsync {
             try {
 
                 unitFilteringJobBean.execute(result, filtredEntity, scriptInterface, recordVariableName);
-                jobExecutionService.registerError(result);
+                jobExecutionService.registerSucces(result);
 
             } catch (Exception e) {
 

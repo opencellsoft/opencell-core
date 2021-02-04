@@ -131,7 +131,7 @@ public class InternalNotificationJobBean {
                     Object o = ValueExpressionWrapper.evaluateExpression(notification.getElFilter(), userMap, Boolean.class);
                     try {
                         if (!(Boolean) o) {
-                            jobExecutionService.registerError(result);
+                            jobExecutionService.registerSucces(result);
                             continue;
                         }
                     } catch (Exception e) {
@@ -145,7 +145,7 @@ public class InternalNotificationJobBean {
                             paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), userMap, String.class));
                         }
                         scriptInstanceService.execute(notification.getScriptInstance().getCode(), paramsEvaluated);
-                        jobExecutionService.registerError(result);
+                        jobExecutionService.registerSucces(result);
                     } else {
                         log.debug("No script instance on this Notification");
                     }

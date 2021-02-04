@@ -135,7 +135,7 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 				endOfTermEventProducer.fire(subscription);
 			}
 
-			jobExecutionService.registerError(result);
+			jobExecutionService.registerSucces(result);
 		} catch (Exception e) {
 			log.error("Failed to process status of subscription {} ", subscriptionId, e);
 			jobExecutionService.registerError(result, "Failed to process status of subscription " + subscriptionId + ":" + e.getMessage());
@@ -196,7 +196,7 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 				serviceEndOfTermEventProducer.fire(serviceInstance);
 			}
 
-			jobExecutionService.registerError(result);
+			jobExecutionService.registerSucces(result);
 		} catch (Exception e) {
 			log.error("Failed to process status of serviceInstance with id={}. {}", serviceId, e.getMessage());
 			jobExecutionService.registerError(result, "Failed to process status of serviceInstance with id=" + serviceId + ". " + e.getMessage());

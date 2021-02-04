@@ -71,7 +71,7 @@ public class ReRatingJobBean extends BaseJobBean implements Serializable {
                 }
                 try {
                     ratingService.reRateInNewTx(walletOperationId, useSamePricePlan);
-                    jobExecutionService.registerError(result);
+                    jobExecutionService.registerSucces(result);
                 } catch (Exception e) {
                     // rejectededOperationProducer.fire(walletOperationId);
                     log.error("Failed to rerate operation {}", walletOperationId, e.getMessage());

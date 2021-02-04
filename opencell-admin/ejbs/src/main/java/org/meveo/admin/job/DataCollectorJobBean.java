@@ -81,7 +81,7 @@ public class DataCollectorJobBean extends BaseJobBean {
                 }
                 dataCollectorService.updateLastRun(codes, new Date());
                 result.setReport(report);
-                jobExecutionService.registerError(result);
+                jobExecutionService.registerSucces(result);
             }
         } catch (Exception exception) {
             log.error("Failed to run DataCollector job ", exception);

@@ -78,7 +78,7 @@ public class UnitReportExtractJobBean {
             
             reportExtractService.runReport(entity, null, ReportExtractExecutionOrigin.JOB);
 
-            jobExecutionService.registerError(result);
+            jobExecutionService.registerSucces(result);
 
         } catch (Exception e) {
             log.error("Failed to generate acount operations", e);

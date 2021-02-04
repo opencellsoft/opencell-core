@@ -146,7 +146,7 @@ public class GDPRJobBean extends BaseJobBean {
 				bulkProspectDelete(oldCustomerProspects, result);
 			}
 			
-			jobExecutionService.registerError(result);
+			jobExecutionService.registerSucces(result);
 			result.setNbItemsToProcess(nbItemsToProcess);
 			
 		} catch (Exception e) {

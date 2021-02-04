@@ -329,7 +329,7 @@ public class InvoicingAsync {
             }
             try {
                 invoiceService.produceInvoicePdfInNewTransaction(invoiceId, new ArrayList<>());
-                jobExecutionService.registerError(result);
+                jobExecutionService.registerSucces(result);
 
             } catch (Exception e) {
 
@@ -371,7 +371,7 @@ public class InvoicingAsync {
             }
             try {
                 invoiceService.produceInvoiceXmlInNewTransaction(invoiceId, new ArrayList<>());
-                jobExecutionService.registerError(result);
+                jobExecutionService.registerSucces(result);
             } catch (Exception e) {
 
                 jobExecutionErrorService.registerJobError(result.getJobInstance(), invoiceId, e);

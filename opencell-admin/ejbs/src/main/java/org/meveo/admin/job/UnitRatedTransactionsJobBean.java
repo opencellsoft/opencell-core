@@ -63,7 +63,7 @@ public class UnitRatedTransactionsJobBean {
             WalletOperation walletOperation = walletOperationService.findById(walletOperationId);
             
             ratedTransactionService.createRatedTransaction(walletOperation, false);
-            jobExecutionService.registerError(result);
+            jobExecutionService.registerSucces(result);
 
         } catch (Exception e) {
             log.error("Failed to rate transaction for wallet operation {}", walletOperationId, e);
@@ -77,7 +77,7 @@ public class UnitRatedTransactionsJobBean {
         log.debug("Running with aggregatedWo={}", aggregatedWo);
         try {
             ratedTransactionService.createRatedTransaction(aggregatedWo, aggregationSettings, invoicingDate);
-            jobExecutionService.registerError(result);
+            jobExecutionService.registerSucces(result);
 
         } catch (Exception e) {
             log.error("Failed to rate transaction for aggregatedWo {}", aggregatedWo, e);

@@ -83,7 +83,7 @@ public class InvoicingJobBean extends BaseJobBean {
                 try {
                     billingRunService.detach(billingRun);
                     billingRunService.validate(billingRun, nbRuns.longValue(), waitingMillis.longValue(), result.getJobInstance().getId(), result);
-                    jobExecutionService.registerError(result);
+                    jobExecutionService.registerSucces(result);
                 } catch (Exception e) {
                     log.error("Failed to run invoicing", e);
                     jobExecutionService.registerError(result, e.getMessage());

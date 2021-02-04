@@ -153,7 +153,7 @@ public class ImportCatalogJobBean {
                         Row row = (Row) rowsObj[rowIndex];
                         try {
                             pricePlanService.importExcelLine(row);
-                            jobExecutionService.registerError(result);
+                            jobExecutionService.registerSucces(result);
                         } catch (BusinessException ex) {
                             jobExecutionService.registerError(result, ex.getMessage() + ";");
                         }

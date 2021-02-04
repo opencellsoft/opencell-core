@@ -106,7 +106,7 @@ public class MediationReprocessing {
                     log.debug("Processing cdr id:{}", cdr.getId());
 
                     cdrParserService.createEdrs(edrs, cdr);
-                    jobExecutionService.registerError(result);
+                    jobExecutionService.registerSucces(result);
                 } else {
                     jobExecutionService.registerError(result, "cdr =" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
                     cdrService.updateReprocessedCdr(cdr);

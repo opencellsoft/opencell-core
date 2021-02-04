@@ -62,7 +62,7 @@ public class UnitCheckPaymentScheduleCallbackJobBean {
             paymentScheduleInstanceItemService.checkPaymentRecordInvoice(recordedInvoice);
            
 
-            jobExecutionService.registerError(result);
+            jobExecutionService.registerSucces(result);
 
         } catch (Exception e) {
             log.error("Failed to generate acount operations", e);

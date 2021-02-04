@@ -115,7 +115,7 @@ public class SendInvoiceJobBean extends BaseJobBean {
                     jobExecutionService.registerError(result, "could not send the invoice by Email");
                     continue;
                 }
-                jobExecutionService.registerError(result);
+                jobExecutionService.registerSucces(result);
                 jobExecutionService.decCounterElementsRemaining(result);
             }
 

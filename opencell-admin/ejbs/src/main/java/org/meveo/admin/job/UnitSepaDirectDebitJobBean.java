@@ -143,7 +143,7 @@ public class UnitSepaDirectDebitJobBean {
 				}
 			}
 			if (result != null) {
-				jobExecutionService.registerError(result);
+				jobExecutionService.registerSucces(result);
 			}
 		} else {
 			paymentErrorTypeEnum = PaymentErrorTypeEnum.ERROR;

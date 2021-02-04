@@ -234,11 +234,11 @@ public class FlatFileProcessing {
                 synchronized (outputFileWriter) {
                     if(nbLinesToProcess == 1) {
                         outputFileWriter.println(recordContext.getLineContent());
-                        jobExecutionService.registerError(result);
+                        jobExecutionService.registerSucces(result);
                     } else {
                         for(RecordContext rContext : recordContexts) {
                             outputFileWriter.println(rContext.getLineContent());
-                            jobExecutionService.registerError(result);
+                            jobExecutionService.registerSucces(result);
                         }                   
                     }
                 }
@@ -259,7 +259,7 @@ public class FlatFileProcessing {
                     synchronized (rejectFileWriter) {                   
                         for(RecordContext rContext : recordContexts) {
                             rejectFileWriter.println(rContext.getLineContent());
-                            jobExecutionService.registerError(result);
+                            jobExecutionService.registerSucces(result);
                         }      
                     }
                     result.getErrors().add("--> " + e.getMessage());

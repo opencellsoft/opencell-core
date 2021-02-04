@@ -73,7 +73,7 @@ public class PrepaidWalletMatchJobBean {
                 log.debug("match wallet={}", wallet.getId());
                 try {
                     oneShotChargeInstanceService.matchPrepaidWallet(wallet, matchingChargeCode);
-                    jobExecutionService.registerError(result);
+                    jobExecutionService.registerSucces(result);
                 } catch (Exception e) {
                     log.error("Failed to match prepaid wallet {}", wallet.getId(), e);
                     jobExecutionService.registerError(result, e.getMessage());

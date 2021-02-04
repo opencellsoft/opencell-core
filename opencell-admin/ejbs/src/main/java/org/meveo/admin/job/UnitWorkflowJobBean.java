@@ -57,7 +57,7 @@ public class UnitWorkflowJobBean {
     public void execute(JobExecutionResultImpl result, BusinessEntity entity, Workflow workflow) {
         try {
             workflowService.executeWorkflow(entity, workflow);
-            jobExecutionService.registerError(result);
+            jobExecutionService.registerSucces(result);
         } catch (Exception e) {
             log.error("Failed to unit workflow for {}", entity, e);
             jobExecutionService.registerError(result, entity.getClass().getName() + entity.getId(), e.getMessage());

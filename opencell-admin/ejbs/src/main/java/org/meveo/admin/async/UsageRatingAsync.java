@@ -81,7 +81,7 @@ public class UsageRatingAsync {
             }
             try {
                 usageRatingService.ratePostpaidUsage(edrId);
-                jobExecutionService.registerError(result);
+                jobExecutionService.registerSucces(result);
 
             } catch (Exception e) {
 

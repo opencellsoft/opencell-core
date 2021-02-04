@@ -204,7 +204,7 @@ public class CustomTableImportJob extends Job {
                 }
 
                 customTableService.importData(customTable, file, appendImportedData);
-                jobExecutionService.registerError(result);
+                jobExecutionService.registerSucces(result);
                 FileUtils.moveFile(outputDir, file, filename);
 
             } catch (Exception e) {
