@@ -12,8 +12,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
 import org.meveo.apiv2.generic.core.GenericHelper;
-import org.meveo.apiv2.generic.core.GenericRequestMapper;
-import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
+import org.meveo.apiv2.generic.core.filter.FactoryFilterMapper;
 import org.meveo.util.Inflector;
 
 import javax.annotation.PreDestroy;
@@ -24,10 +23,14 @@ import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Thang Nguyen
@@ -87,6 +90,29 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         return pagingAndFiltering;
     }
 
+    public void generatePagingConfig(PagingAndFiltering pagingAndFiltering){
+        paginationConfig = new PaginationConfiguration(pagingAndFiltering.getOffset().intValue(), pagingAndFiltering.getLimit().intValue(),
+                evaluateFilters(pagingAndFiltering.getFilters(), this.getClass() ), pagingAndFiltering.getFullTextFilter(),
+                Collections.emptyList(), pagingAndFiltering.getSortBy(),
+                pagingAndFiltering.getSortOrder());
+    }
+
+    public Map<String, Object> evaluateFilters(Map<String, Object> filters, Class clazz) {
+        return Stream.of(filters.keySet().toArray())
+                .map(key -> {
+                    String keyObject = (String) key;
+                    if(!"SQL".equalsIgnoreCase(keyObject) && !"$FILTER".equalsIgnoreCase(keyObject)){
+
+                        String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
+                        return Collections.singletonMap(keyObject,
+                                new FactoryFilterMapper().create(fieldName, filters.get(key), clazz, null).map());
+                    }
+                    return Collections.singletonMap(keyObject, filters.get(key));
+                })
+                .flatMap (map -> map.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
     /*
      * This request is used to retrieve all entities, or also a particular entity
      */
@@ -107,9 +133,10 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
             queryParamsMap = uriInfo.getQueryParameters();
-            GenericRequestMapper genericRequestMapper = new GenericRequestMapper( this.getClass(), PersistenceServiceHelper.getPersistenceService() );
-            paginationConfig = genericRequestMapper.mapTo( GenericPagingAndFilteringUtils.constructImmutableGenericPagingAndFiltering(queryParamsMap) );
+//            GenericRequestMapper genericRequestMapper = new GenericRequestMapper( this.getClass(), PersistenceServiceHelper.getPersistenceService() );
+//            paginationConfig = genericRequestMapper.mapTo( GenericPagingAndFilteringUtils.constructImmutableGenericPagingAndFiltering(queryParamsMap) );
             pagingAndFiltering = GenericPagingAndFilteringUtils.constructPagingAndFiltering(queryParamsMap);
+            generatePagingConfig( pagingAndFiltering );
 
             if ( ! queryParamsMap.isEmpty() ) {
                 queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
