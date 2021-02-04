@@ -259,7 +259,7 @@ public class FlatFileProcessing {
                     synchronized (rejectFileWriter) {                   
                         for(RecordContext rContext : recordContexts) {
                             rejectFileWriter.println(rContext.getLineContent());
-                            jobExecutionService.registerSucces(result);
+                            jobExecutionService.registerError(result);
                         }      
                     }
                     result.getErrors().add("--> " + e.getMessage());
