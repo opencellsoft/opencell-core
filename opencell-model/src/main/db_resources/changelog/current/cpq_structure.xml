@@ -1520,9 +1520,7 @@
 			<column name="updater" type="varchar(100)" />
 			<!-- Auditable End -->
 
-			<column name="quote_article_line_id" type="bigint" >
-				<constraints nullable="false"/>
-			</column>
+			<column name="quote_article_line_id" type="bigint" />
 			<column name="quote_version_id" type="bigint" >
 				<constraints nullable="false"/>
 			</column>
@@ -2968,7 +2966,6 @@
 				<constraints nullable="false"/>
 			</column>
 		</addColumn>
-
 	</changeSet>
 </databaseChangeLog>
 

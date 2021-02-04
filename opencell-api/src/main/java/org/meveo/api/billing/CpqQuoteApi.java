@@ -397,10 +397,10 @@ public class CpqQuoteApi extends BaseApi {
         if(quote == null)
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
 
-		/*QuoteValidationTemp temp = new QuoteValidationTemp();
+		QuoteValidationTemp temp = new QuoteValidationTemp();
 		Map<String, Object> methodContext = new HashMap<String, Object>();
 		methodContext.put("cpqQuote", quote);
-		temp.execute(methodContext );*/
+		temp.execute(methodContext );
         return populateToDto(quote,true,true,true);
     }
 
@@ -875,12 +875,17 @@ public class CpqQuoteApi extends BaseApi {
         Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = accountingArticlePrices.stream()
                 .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
+        quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
         List<PriceDTO> quotePrices = pricesPerType
                 .keySet()
                 .stream()
-                .map(key -> reducePrices(key, pricesPerType))
+                .map(key -> reducePrices(key, pricesPerType, quoteVersion))
                 .filter(Optional::isPresent)
-                .map(price -> new PriceDTO(price.get()))
+                .map(price -> {
+                    QuotePrice quotePrice = price.get();
+                    quotePriceService.create(quotePrice);
+                    return new PriceDTO(quotePrice);
+                })
                 .collect(Collectors.toList());
 
         GetQuoteVersionDtoResponse response = new GetQuoteVersionDtoResponse(quoteVersion, true, true, true);
@@ -888,11 +893,12 @@ public class CpqQuoteApi extends BaseApi {
         return response;
     }
 
-    private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType) {
+    private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType, QuoteVersion quoteVersion) {
         return pricesPerType.get(key).stream().reduce((a, b) -> {
             QuotePrice quotePrice = new QuotePrice();
             quotePrice.setPriceTypeEnum(key);
             quotePrice.setPriceLevelEnum(PriceLevelEnum.QUOTE);
+            quotePrice.setQuoteVersion(quoteVersion);
             quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
             quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
             quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
