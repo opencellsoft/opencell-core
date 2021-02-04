@@ -25,6 +25,8 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
@@ -50,6 +52,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     @Inject
     @AdvancementRateIncreased
     protected Event<CommercialOrder> entityAdvancementRateIncreasedEventProducer;
+    @Inject
     private ServiceInstanceService serviceInstanceService;
     @Inject
 	private SubscriptionService subscriptionService;
@@ -172,11 +175,17 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			}
 		serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, false);
 
-			List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances();
-			for (SubscriptionChargeInstance oneShotChargeInstance : oneShotCharges) {
-				oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
-				oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
-			}
+			List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances()
+					.stream()
+					.filter(oneShotChargeInstance -> ((OneShotChargeTemplate)oneShotChargeInstance.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION)
+					.map(oneShotChargeInstance -> {
+						oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
+						oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
+						return oneShotChargeInstance;
+					}).collect(Collectors.toList());
+			serviceInstance.getSubscriptionChargeInstances().clear();
+			serviceInstance.getSubscriptionChargeInstances().addAll(oneShotCharges);
+
 
 			List<RecurringChargeInstance> recurringChargeInstances = serviceInstance.getRecurringChargeInstances();
 			for (RecurringChargeInstance recurringChargeInstance : recurringChargeInstances) {

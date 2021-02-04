@@ -27,7 +27,7 @@ public class CommercialRuleRsImpl extends BaseRs implements CommercialRuleRs {
 	public Response create(CommercialRuleHeaderDTO commercialRuleDTO) {
 		GetCommercialRuleDtoResponse result = new GetCommercialRuleDtoResponse();
 		try {
-			commercialRuleApi.create(commercialRuleDTO);
+			result.setId(commercialRuleApi.create(commercialRuleDTO).getId());
 			return Response.ok(result).build();
 		} catch(MeveoApiException e) {
 			return errorResponse(e, result.getActionStatus());

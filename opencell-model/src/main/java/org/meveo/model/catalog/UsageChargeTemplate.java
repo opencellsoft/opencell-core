@@ -117,7 +117,7 @@ public class UsageChargeTemplate extends ChargeTemplate {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attribute_id")
-    private Attribute usgaeQuantityAttribute;
+    private Attribute usageQuantityAttribute;
 
     public String getFilterParam1() {
         return filterParam1;
@@ -208,16 +208,16 @@ public class UsageChargeTemplate extends ChargeTemplate {
     }
 
 	/**
-	 * @return the usgaeQuantityAttribute
+	 * @return the usageQuantityAttribute
 	 */
-	public Attribute getUsgaeQuantityAttribute() {
-		return usgaeQuantityAttribute;
+	public Attribute getUsageQuantityAttribute() {
+		return usageQuantityAttribute;
 	}
 
 	/**
-	 * @param usgaeQuantityAttribute the usgaeQuantityAttribute to set
+	 * @param usageQuantityAttribute the usageQuantityAttribute to set
 	 */
-	public void setUsgaeQuantityAttribute(Attribute usgaeQuantityAttribute) {
-		this.usgaeQuantityAttribute = usgaeQuantityAttribute;
+	public void setUsageQuantityAttribute(Attribute usageQuantityAttribute) {
+		this.usageQuantityAttribute = usageQuantityAttribute;
 	}
 }

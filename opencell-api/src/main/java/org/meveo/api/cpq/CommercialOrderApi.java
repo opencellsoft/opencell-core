@@ -3,7 +3,9 @@ package org.meveo.api.cpq;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -12,6 +14,8 @@ import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.billing.OrderAdvancementScript;
+import org.meveo.api.billing.QuoteValidationTemp;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
@@ -148,6 +152,36 @@ public class CommercialOrderApi extends BaseApi {
 		}
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		commercialOrderService.create(order);
+		return new CommercialOrderDto(order);
+	}
+
+	public CommercialOrderDto updateUserAccount(Long commercialOrderId, String userAccountCode){
+		if(commercialOrderId == null)
+			missingParameters.add("commercialOrderId");
+		if(userAccountCode == null)
+			missingParameters.add("userAccountCode");
+		handleMissingParameters();
+		CommercialOrder order = commercialOrderService.findById(commercialOrderId);
+		if (order == null)
+			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
+		UserAccount userAccount = loadEntityByCode(userAccountService, userAccountCode, UserAccount.class);
+		order.setUserAccount(userAccount);
+		order = commercialOrderService.update(order);
+		return new CommercialOrderDto(order);
+	}
+
+	public CommercialOrderDto updateOrderInvoicingPlan(Long commercialOrderId, String invoicingPlanCode){
+		if(commercialOrderId == null)
+			missingParameters.add("commercialOrderId");
+		if(invoicingPlanCode == null)
+			missingParameters.add("userAccountCode");
+		handleMissingParameters();
+		CommercialOrder order = commercialOrderService.findById(commercialOrderId);
+		if (order == null)
+			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
+		InvoicingPlan invoicingPlan = loadEntityByCode(invoicingPlanService, invoicingPlanCode, InvoicingPlan.class);
+		order.setInvoicingPlan(invoicingPlan);
+		order = commercialOrderService.update(order);
 		return new CommercialOrderDto(order);
 	}
 	
@@ -369,6 +403,13 @@ public class CommercialOrderApi extends BaseApi {
 		 result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 		 if(totalCount > 0) {
 			 commercialOrderService.list(paginationConfiguration).stream().forEach(co -> {
+			 	/*if(co.getId() == 3){
+					OrderAdvancementScript temp = new OrderAdvancementScript();
+					Map<String, Object> methodContext = new HashMap<String, Object>();
+					co.setOrderProgress(30);
+					methodContext.put("commercialOrder", co);
+					temp.execute(methodContext );
+				}*/
 				 result.getCommercialOrderDtos().add(new CommercialOrderDto(co));
 			 });
 		 }

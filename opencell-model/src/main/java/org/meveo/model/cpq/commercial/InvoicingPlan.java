@@ -1,12 +1,17 @@
 package org.meveo.model.cpq.commercial;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
+
+import java.util.List;
 
 
 /** 
@@ -24,5 +29,15 @@ public class InvoicingPlan extends BusinessEntity {
 	 * 
 	 */
 	private static final long serialVersionUID = -8433284624540252795L;
-	
+
+	@OneToMany(mappedBy = "billingPlan", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<InvoicingPlanItem> invoicingPlanItems;
+
+	public List<InvoicingPlanItem> getInvoicingPlanItems() {
+		return invoicingPlanItems;
+	}
+
+	public void setInvoicingPlanItems(List<InvoicingPlanItem> invoicingPlanItems) {
+		this.invoicingPlanItems = invoicingPlanItems;
+	}
 }
