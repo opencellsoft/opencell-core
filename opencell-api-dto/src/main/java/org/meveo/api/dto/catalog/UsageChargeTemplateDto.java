@@ -70,6 +70,8 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
      * Overrides the triggerNextCharge switch.
      */
     protected String triggerNextChargeEL;
+    
+    private String usageQuantityAttributeCode;
 
     /**
      * Instantiates a new usage charge template dto.
@@ -93,6 +95,8 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
         priority = usageChargeTemplate.getPriority();
         triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
         triggerNextChargeEL = usageChargeTemplate.getTriggerNextChargeEL();
+        if(usageChargeTemplate.getUsgaeQuantityAttribute() != null)
+        	this.usageQuantityAttributeCode = usageChargeTemplate.getUsgaeQuantityAttribute().getCode();
 
     }
 
@@ -207,5 +211,19 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
         return "UsageChargeTemplateDto [" + super.toString() + ",filterParam1=" + filterParam1 + ", filterParam2=" + filterParam2 + ", filterParam3=" + filterParam3 + ", filterParam4=" + filterParam4 + ", priority="
                 + priority + ", triggerNextCharge=" + triggerNextCharge + ", triggerNextChargeEL=" + triggerNextChargeEL + "]";
     }
+
+	/**
+	 * @return the usageQuantityAttributeCode
+	 */
+	public String getUsageQuantityAttributeCode() {
+		return usageQuantityAttributeCode;
+	}
+
+	/**
+	 * @param usageQuantityAttributeCode the usageQuantityAttributeCode to set
+	 */
+	public void setUsageQuantityAttributeCode(String usageQuantityAttributeCode) {
+		this.usageQuantityAttributeCode = usageQuantityAttributeCode;
+	}
 
 }

@@ -10,6 +10,8 @@ import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
+import org.meveo.apiv2.article.resource.AccountingArticleResource;
+import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.ImmutableFile;
 import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.billing.ImmutableInvoices;
@@ -23,6 +25,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 
 	@Inject
 	private InvoiceApiService invoiceApiService;
+	
 
 	private static final InvoiceMapper invoiceMapper = new InvoiceMapper();
 
@@ -46,6 +49,11 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	@Override
 	public Response getInvoices(Long offset, Long limit, String sort, String orderBy, String filter, Request request) {
 		List<Invoice> invoicesEntity = invoiceApiService.list(offset, limit, sort, orderBy, filter);
+		return buildInvoicesReturn(offset, limit, filter, request, invoicesEntity);
+	}
+
+	private Response buildInvoicesReturn(Long offset, Long limit, String filter, Request request,
+			List<Invoice> invoicesEntity) {
 		EntityTag etag = new EntityTag(Integer.toString(invoicesEntity.hashCode()));
 		CacheControl cc = new CacheControl();
 		cc.setMaxAge(1000);
@@ -88,4 +96,39 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		return Response.ok().entity(file).build();
 
 	}
+
+	@Override
+	public Response getAdvancedPaymentInvoices(Long offset, Long limit, String sort, String orderBy, String filter,
+			Request request) {
+		List<Invoice> invoicesEntity = invoiceApiService.listAdvancedPaymentInvoices(offset, limit, sort, orderBy, filter);
+		return buildInvoicesReturn(offset, limit, filter, request, invoicesEntity);
+	}
+
+	@Override
+	public Response createAdvancedPaymentInvoices(BasicInvoice basicInvoice) {
+        Invoice invoice = invoiceApiService.create(basicInvoice);
+        return Response
+                .created(LinkGenerator.getUriBuilderFromResource(AccountingArticleResource.class, invoice.getId()).build())
+                .entity(toResourceInvoiceWithLink(invoiceMapper.toResource(invoice)))
+                .build();
+	}
+
+	@Override
+	public Response getAdvancedPaymentInvoice(Long id, Request request) {
+		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+		final String typeCode = invoice.getInvoiceType().getCode();
+		if(!InvoiceApiService.ADV.equals(typeCode)) {
+			throw new NotFoundException("invoice with id '"+id+"' is of type "+typeCode);
+		}
+		return buildInvoiceResponse(request, invoice);
+	}
+
+	@Override
+	public Response getAdvancedPaymentInvoice(String invoiceNumber, Request request) {
+		Invoice invoice = invoiceApiService.findByInvoiceNumberAndTypeCode(InvoiceApiService.ADV, invoiceNumber)
+				.orElseThrow(NotFoundException::new);
+		return buildInvoiceResponse(request, invoice);
+	}
+
+
 }

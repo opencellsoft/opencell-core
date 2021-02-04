@@ -185,8 +185,6 @@ public interface Invoice extends Resource {
 	@JsonProperty("draft")
 	Boolean getDraft();
 
-	String getCode();
-
 	@Nullable
 	String getDescription();
 

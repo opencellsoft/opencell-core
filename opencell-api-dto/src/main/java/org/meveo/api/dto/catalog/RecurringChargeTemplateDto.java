@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.catalog.RecurrenceTypeEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 
 /**
@@ -83,6 +84,9 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
      * Expression to determine and override the date that recurring charge should be charged to upon charge/service termination
      */
     private String applyTerminatedChargeToDateEL;
+    
+    
+    private RecurrenceTypeEnum recurrenceType = RecurrenceTypeEnum.CALENDAR;
 
     /**
      * Instantiates a new recurring charge template dto.
@@ -115,6 +119,7 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
         if (recurringChargeTemplate.getCalendar() != null) {
             calendar = recurringChargeTemplate.getCalendar().getCode();
         }
+        recurrenceType=recurringChargeTemplate.getRecurrenceType();
     }
 
     /**
@@ -324,8 +329,24 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
     public void setApplyTerminatedChargeToDateEL(String applyTerminatedChargeToDateEL) {
         this.applyTerminatedChargeToDateEL = applyTerminatedChargeToDateEL;
     }
+    
+    
 
-    /*
+    /**
+	 * @return the recurrenceType
+	 */
+	public RecurrenceTypeEnum getRecurrenceType() {
+		return recurrenceType;
+	}
+
+	/**
+	 * @param recurrenceType the recurrenceType to set
+	 */
+	public void setRecurrenceType(RecurrenceTypeEnum recurrenceType) {
+		this.recurrenceType = recurrenceType;
+	}
+
+	/*
      * (non-Javadoc)
      * 
      * @see org.meveo.api.dto.catalog.ChargeTemplateDto#toString()

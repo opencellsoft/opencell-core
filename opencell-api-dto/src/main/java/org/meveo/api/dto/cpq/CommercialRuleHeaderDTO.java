@@ -67,6 +67,7 @@ public class CommercialRuleHeaderDTO extends BusinessEntityDto{
     			return ruleItem;
     		}).collect(Collectors.toList());
     	}
+		this.disabled=commercialRuleHeader.isDisabled();
 		
 	}
 	/**

@@ -46,7 +46,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -57,6 +56,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
@@ -92,6 +92,7 @@ import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -106,6 +107,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -118,6 +120,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceModeEnum;
+import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
@@ -140,6 +143,7 @@ import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
@@ -152,6 +156,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -300,6 +305,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     @InvoiceNumberAssigned
     private Event<Invoice> invoiceNumberAssignedEventProducer;
+    
+    @Inject
+	private AccountingArticleService accountingArticleService;
 
     @Inject
     protected ParamBeanFactory paramBeanFactory;
@@ -3688,7 +3696,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
         CustomerAccount customerAccount = invoice.getBillingAccount().getCustomerAccount();
         Order order = invoice.getOrder();
 
-        // Determine invoice due date delay either from Order, Customer account or Billing cycle
+        Date dueDate = calculateDueDate(invoice, billingCycle, billingAccount, customerAccount, order);
+
+        invoice.setDueDate(dueDate);
+    }
+
+	private Date calculateDueDate(Invoice invoice, BillingCycle billingCycle, BillingAccount billingAccount,
+			CustomerAccount customerAccount, Order order) {
+		// Determine invoice due date delay either from Order, Customer account or Billing cycle
         Integer delay = 0;
         if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
             delay = evaluateDueDelayExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
@@ -3704,9 +3719,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         Date dueDate = DateUtils.addDaysToDate(invoice.getInvoiceDate(), delay);
-
-        invoice.setDueDate(dueDate);
-    }
+		return dueDate;
+	}
 
     /**
      * Resolve Invoice production date delay for a given billing run
@@ -4402,6 +4416,96 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
         return getInvoicePdf(invoice);
+	}
+	
+	public Invoice createAdvancePaymentInvoice(BasicInvoice resource) {
+		Invoice invoice = new Invoice();
+		InvoiceLine line = new InvoiceLine();
+		Order order = null;
+		BillingAccount billingAccount = null;
+
+		final String orderCode = resource.getOrderCode();
+		final String billingAccountCode = resource.getBillingAccountCode();
+		final String articleCode = resource.getArticleCode() != null ? resource.getArticleCode() : "ADV-STD";
+		final BigDecimal amountWithTax = resource.getAmountWithTax();
+		final Date invoiceDate = resource.getInvoiceDate() != null ? resource.getInvoiceDate() : new Date();
+		if (orderCode != null) {
+			order = orderService.findByCode(orderCode);
+			if (order == null) {
+				throw new EntityNotFoundException("No Order found with code " + orderCode);
+			}
+			invoice.setOrder(order);
+			line.setOrderNumber(order.getOrderNumber());
+		}
+
+		if (billingAccountCode != null) {
+			billingAccount = billingAccountService.findByCode(billingAccountCode);
+			if (billingAccount == null) {
+				throw new EntityNotFoundException("No billingAccount found with code " + billingAccountCode);
+			}
+			invoice.setBillingAccount(billingAccount);
+			line.setBillingAccount(billingAccount);
+		}
+		if (articleCode != null) {
+			AccountingArticle accountingArticle = accountingArticleService.findByCode(articleCode);
+			if (accountingArticle == null) {
+				throw new EntityNotFoundException("No accountingArticle found with code " + articleCode);
+			}
+			line.setAccountingArticle(accountingArticle);
+			// line.setTaxRate(accountingArticle.);
+		}
+		line.setQuantity(BigDecimal.ONE);
+		line.setAmountWithTax(amountWithTax);
+		line.setRawAmount(amountWithTax);
+		line.setAmountWithoutTax(amountWithTax);
+		line.setAmountTax(BigDecimal.ZERO);
+		line.setUnitPrice(amountWithTax);
+		line.setDiscountAmount(BigDecimal.ZERO);
+		line.setLabel(resource.getLabel());
+		
+		
+		invoice.setPaymentStatus(InvoicePaymentStatusEnum.NONE);
+		invoice.setStartDate(invoiceDate);
+		invoice.setAmountWithTax(amountWithTax);
+		invoice.setRawAmount(amountWithTax);
+		invoice.setAmountWithoutTax(amountWithTax);
+		invoice.setAmountTax(BigDecimal.ZERO);
+		invoice.setDiscountAmount(BigDecimal.ZERO);
+		invoice.setInvoiceDate(invoiceDate);
+		invoice.setNetToPay(amountWithTax);
+
+		Date dueDate = calculateDueDate(invoice, billingAccount.getBillingCycle(), billingAccount,
+				billingAccount.getCustomerAccount(), order);
+		invoice.setDueDate(dueDate);
+		invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
+		invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+		InvoiceType advType = invoiceTypeService.findByCode("ADV");
+		invoice.setInvoiceType(advType);
+		serviceSingleton.assignInvoiceNumber(invoice);
+		postCreate(invoice);
+		return invoice;
+	}
+
+	/**
+	 * @param invoiceNumber
+	 * @param typeCode
+	 * @return
+	 */
+	public Invoice findByInvoiceNumberAndTypeCode(String invoiceNumber, String typeCode) {
+        QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null);
+        qb.addCriterion("i.invoiceNumber", "=", invoiceNumber, true);
+        qb.addCriterion("i.invoiceType.code","=", typeCode, true);
+        try {
+            return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            log.info("Invoice with invoice number {} and code {} was not found. Returning null.", invoiceNumber, typeCode);
+            return null;
+        } catch (NonUniqueResultException e) {
+            log.info("Multiple invoices with invoice number {} and code {} was found. Returning null.", invoiceNumber, typeCode);
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
 	}
 
 }
