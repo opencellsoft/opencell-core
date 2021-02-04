@@ -1,10 +1,17 @@
 package org.meveo.api.dto.cpq.xml;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.Date;
 import java.util.List;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Quote {
 
+    @XmlElementWrapper(name = "billableAccounts")
+    @XmlElement(name = "billableAccount")
     private List<BillableAccount> billableAccounts;
     private String quoteNumber;
     private Date quoteDate;
