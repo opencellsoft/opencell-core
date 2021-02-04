@@ -573,6 +573,7 @@ public class CommercialOrder extends AuditableEntity {
 	 */
 	public void setOrderLot(OrderLot orderLot) {
 		this.orderLot = orderLot;
+	}
 	public Integer getRateInvoiced() {
 		return rateInvoiced;
 	}

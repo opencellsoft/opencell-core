@@ -2970,6 +2970,10 @@
   		<addForeignKeyConstraint baseTableName="cpq_commercial_order" baseColumnNames="order_lot_id"
 							 constraintName="fk_cpq_commercial_order_order_lot_id"
 							 referencedTableName="cpq_order_lot" referencedColumnNames="id"/>
+							 
+		<dropColumn tableName="cpq_quote_lot">
+			<column name="quote_version" />
+		</dropColumn>
     </changeSet>
 
 	<changeSet id="#214_20210203" author="NabilOUACHI">
@@ -2997,6 +3001,7 @@
 				<constraints nullable="false"/>
 			</column>
 		</addColumn>
+		
 	</changeSet>
 </databaseChangeLog>
 

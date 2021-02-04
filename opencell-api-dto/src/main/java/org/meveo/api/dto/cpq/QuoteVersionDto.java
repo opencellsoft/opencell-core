@@ -1,17 +1,15 @@
 package org.meveo.api.dto.cpq;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteVersion;
 
 /**
@@ -67,6 +65,8 @@ public class QuoteVersionDto extends BaseEntityDto {
 		this.endDate = q.getEndDate();
 		this.billingPlanCode = q.getBillingPlanCode();
 		this.startDate = q.getStartDate();
+		if(q.getQuoteLot() != null)
+			this.quoteLotCode = q.getQuoteLot().getCode();
 	}
 
 	/**
