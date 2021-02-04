@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class QuoteLine {
+    @XmlAttribute
     private BigDecimal quantity;
 
     @XmlAttribute
