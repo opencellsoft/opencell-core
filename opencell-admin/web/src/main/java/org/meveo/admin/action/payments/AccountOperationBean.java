@@ -246,6 +246,18 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
             return null;
         }
     }
+    
+    /**
+    * get AOs attached to an accounting writing
+    */	
+    public LazyDataModel<AccountOperation> getAccountOperations(AccountingWriting aw) {
+        if (aw != null) {
+            filters.put("list accountingWritings", aw);
+            return getLazyDataModel();
+        } else {
+            return null;
+        }
+    }
 
     @Override
     protected List<String> getFormFieldsToFetch() {

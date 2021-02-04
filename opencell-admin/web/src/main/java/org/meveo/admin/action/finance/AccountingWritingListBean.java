@@ -41,16 +41,17 @@ import org.meveo.model.payments.RecordedInvoice;
 @Named
 @ConversationScoped
 public class AccountingWritingListBean extends AccountingWritingBean {
-	
-	private static final long serialVersionUID = 1L;
 
-	/**
-	 * selected Accounting writing id
-	 */
-	private AccountingWriting selectedAccountingWriting;
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * selected Accounting writing id
+     */
+    private AccountingWriting selectedAccountingWriting;
 
     /**
      * get selectedAccountingWriting
+     *
      * @return selected Accounting Writing
      */
     public AccountingWriting getSelectedAccountingWriting() {
@@ -58,38 +59,17 @@ public class AccountingWritingListBean extends AccountingWritingBean {
     }
 
     /**
-	 * select Accounting writing by it's ID
-	 * @param accountingWritingId selected Accounting writing id
-	 */
-	public void selectAccountingWriting(Long accountingWritingId) {
-		this.selectedAccountingWriting = getPersistenceService().findById(accountingWritingId);
-	}
-	
-	/**
-	 * get AOs linked to the selected Accounting writing
-	 * @return list of {@code AccountOperation}
-	 */
-	public List<AccountOperation> getAccountOperations(){
-	    if (selectedAccountingWriting != null) {
-            return selectedAccountingWriting.getAccountOperations();
-        } else {
-	        return null;
-        }
-	}
-	
-	/**
-	 * check if an AO is a recorded invoice
-	 * 
-	 * @param accountOperation AO
-	 * @return True or False
-	 */
-	public boolean isRecordedInvoice(AccountOperation accountOperation) {
-		return accountOperation instanceof RecordedInvoice;
-	}
-	
-	/**
+     * select Accounting writing by it's ID
+     *
+     * @param accountingWritingId selected Accounting writing id
+     */
+    public void selectAccountingWriting(Long accountingWritingId) {
+        this.selectedAccountingWriting = getPersistenceService().findById(accountingWritingId);
+    }
+
+    /**
      * Get invoices linked to the AO
-     * 
+     *
      * @param accountOperation AO
      * @return invoices
      */
@@ -99,51 +79,16 @@ public class AccountingWritingListBean extends AccountingWritingBean {
             return recordedInvoice.getInvoices();
         } else if (accountOperation instanceof Payment || accountOperation instanceof OtherCreditAndCharge) {
             List<MatchingAmount> listMatchingAmount = accountOperation.getMatchingAmounts();
-            for(MatchingAmount ma : listMatchingAmount) {
+            for (MatchingAmount ma : listMatchingAmount) {
                 MatchingCode mc = ma.getMatchingCode();
-                for(MatchingAmount ma2 : mc.getMatchingAmounts()) {
+                for (MatchingAmount ma2 : mc.getMatchingAmounts()) {
                     AccountOperation ao = ma2.getAccountOperation();
-                    if(ao instanceof RecordedInvoice) {
+                    if (ao instanceof RecordedInvoice) {
                         return ao.getInvoices();
                     }
                 }
             }
         }
-        return new ArrayList<Invoice>();
+        return new ArrayList<>();
     }
-	
-	/**
-	 * display invoice page linked to an AO if it's a recorded invoice
-	 * 
-	 * @param accountOperation AO
-	 * @return page's URL
-	 */
-	public String displayInvoice(AccountOperation accountOperation) {
-        if (isRecordedInvoice(accountOperation)) {
-        	return "/pages/payments/accountOperations/showInvoice.xhtml";
-        } else {
-        	return null;
-        }
-    }
-	
-	/**
-	 * display AO view page
-	 * 
-	 * @param accountOperation AO to display
-	 * @return AO page link
-	 */
-	public String displayOperation(AccountOperation accountOperation) {
-        String page = "/pages/payments/accountOperations/showOcc.xhtml";
-        if (accountOperation instanceof RecordedInvoice) {
-            page = "/pages/payments/accountOperations/showInvoice.xhtml";
-        }
-        if (accountOperation instanceof AutomatedPayment) {
-            page = "/pages/payments/accountOperations/showAutomatedPayment.xhtml";
-        }
-        if (accountOperation instanceof Payment) {
-            page = "/pages/payments/accountOperations/showPayment.xhtml";
-        }
-        return page;
-    }
-
 }
