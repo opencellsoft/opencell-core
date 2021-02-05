@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import static javax.persistence.FetchType.LAZY;
+import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 
 
 /** 
@@ -167,6 +168,11 @@ public class InvoiceLine extends BusinessEntity {
 
 	@Transient
 	private boolean taxRecalculated;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false)
+	@NotNull
+	private InvoiceLineStatusEnum status = OPEN;
 
 	public InvoiceLine() {
 	}
@@ -436,5 +442,13 @@ public class InvoiceLine extends BusinessEntity {
 		amountWithoutTax = amounts[0];
 		amountWithTax = amounts[1];
 		amountTax = amounts[2];
+	}
+
+	public InvoiceLineStatusEnum getStatus() {
+		return status;
+	}
+
+	public void setStatus(InvoiceLineStatusEnum status) {
+		this.status = status;
 	}
 }
