@@ -230,7 +230,7 @@ public class ProductApi extends BaseApi {
 			product.setModelChildren(productDto.getModelChildren());
 			product.setDiscountFlag(productDto.isDiscountFlag());
 			product.setPackageFlag(productDto.isPackageFlag());
-			product.setProductCharges(createProductChargeTemplateMappings(product, productDto.getChargeTemplateCodes()));
+			createProductChargeTemplateMappings(product, productDto.getChargeTemplateCodes());
 			
 			productService.updateProduct(product);
 		} catch (BusinessException e) {
@@ -543,7 +543,7 @@ public class ProductApi extends BaseApi {
 		product.setModel(productDto.getModel());
 		product.setModelChildren(productDto.getModelChildren());
 		product.setDiscountFlag(productDto.isDiscountFlag());
-		product.setProductCharges(createProductChargeTemplateMappings(product, productDto.getChargeTemplateCodes()));
+		createProductChargeTemplateMappings(product, productDto.getChargeTemplateCodes());
 		/***@TODO : update product chargeTemplates
 		 * Use this method to get them by code : chargeTemplateService.getChargeTemplatesByCodes(productDto.getChargeTemplateCodes())***/
 		
@@ -562,16 +562,18 @@ public class ProductApi extends BaseApi {
 		return discountPlan;
 	}
 
-	private List<ProductChargeTemplateMapping> createProductChargeTemplateMappings(Product product, List<String> chargeTemplateCodes) {
+	private void createProductChargeTemplateMappings(Product product, List<String> chargeTemplateCodes) {
+    	product.getProductCharges().clear();
 		Set<ChargeTemplate> chargeTemplates = chargeTemplateService.getChargeTemplatesByCodes(chargeTemplateCodes);
-    	return chargeTemplates.stream()
-					.map(ch -> {
-						ProductChargeTemplateMapping<ChargeTemplate> chargeTemplateProductChargeTemplateMapping = new ProductChargeTemplateMapping<>();
-						chargeTemplateProductChargeTemplateMapping.setProduct(product);
-						chargeTemplateProductChargeTemplateMapping.setChargeTemplate(ch);
-						return chargeTemplateProductChargeTemplateMapping;
+		List<ProductChargeTemplateMapping> productCharges = chargeTemplates.stream()
+				.map(ch -> {
+					ProductChargeTemplateMapping<ChargeTemplate> chargeTemplateProductChargeTemplateMapping = new ProductChargeTemplateMapping<>();
+					chargeTemplateProductChargeTemplateMapping.setProduct(product);
+					chargeTemplateProductChargeTemplateMapping.setChargeTemplate(ch);
+					return chargeTemplateProductChargeTemplateMapping;
 
-					}).collect(Collectors.toList());
+				}).collect(Collectors.toList());
+		product.getProductCharges().addAll(productCharges);
 	}
 
 	public void removeProduct(String codeProduct) {
