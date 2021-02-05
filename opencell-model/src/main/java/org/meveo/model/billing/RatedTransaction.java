@@ -58,6 +58,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderInfo;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
@@ -530,6 +531,10 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     
     @Embedded
     private OrderInfo infoOrder;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_line_id")
+    private InvoiceLine invoiceLine;
 
     public RatedTransaction() {
         super();
@@ -1360,4 +1365,12 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 	public void setOrderInfo(OrderInfo infoOrder) {
 		this.infoOrder = infoOrder;
 	}
+
+    public InvoiceLine getInvoiceLine() {
+        return invoiceLine;
+    }
+
+    public void setInvoiceLine(InvoiceLine invoiceLine) {
+        this.invoiceLine = invoiceLine;
+    }
 }

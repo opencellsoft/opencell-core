@@ -88,6 +88,9 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
     
     private RecurrenceTypeEnum recurrenceType = RecurrenceTypeEnum.CALENDAR;
 
+    private String attributeDurationCode;
+    
+    private String attributeCalendarCode;
     /**
      * Instantiates a new recurring charge template dto.
      */
@@ -120,6 +123,8 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
             calendar = recurringChargeTemplate.getCalendar().getCode();
         }
         recurrenceType=recurringChargeTemplate.getRecurrenceType();
+        this.attributeCalendarCode = recurringChargeTemplate.getAttributeCalendar() != null ? recurringChargeTemplate.getAttributeCalendar().getCode() : null;
+        this.attributeDurationCode = recurringChargeTemplate.getAttributeDuration() != null ? recurringChargeTemplate.getAttributeDuration().getCode() : null;
     }
 
     /**
@@ -357,4 +362,32 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
                 + terminationProrata + ", applyInAdvance=" + applyInAdvance + ", shareLevel=" + shareLevel + ", calendarCodeEl=" + calendarCodeEl + ", durationTermInMonthEl=" + durationTermInMonthEl
                 + ", subscriptionProrataEl=" + subscriptionProrataEl + ", terminationProrataEl=" + terminationProrataEl + ", applyInAdvanceEl=" + applyInAdvanceEl + "]";
     }
+
+	/**
+	 * @return the attributeDurationCode
+	 */
+	public String getAttributeDurationCode() {
+		return attributeDurationCode;
+	}
+
+	/**
+	 * @param attributeDurationCode the attributeDurationCode to set
+	 */
+	public void setAttributeDurationCode(String attributeDurationCode) {
+		this.attributeDurationCode = attributeDurationCode;
+	}
+
+	/**
+	 * @return the attributeCalendarCode
+	 */
+	public String getAttributeCalendarCode() {
+		return attributeCalendarCode;
+	}
+
+	/**
+	 * @param attributeCalendarCode the attributeCalendarCode to set
+	 */
+	public void setAttributeCalendarCode(String attributeCalendarCode) {
+		this.attributeCalendarCode = attributeCalendarCode;
+	}
 }

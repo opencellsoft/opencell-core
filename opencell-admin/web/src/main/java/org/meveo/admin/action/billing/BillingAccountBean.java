@@ -272,7 +272,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             generateInvoiceRequestDto.setFirstTransactionDate(null);
             generateInvoiceRequestDto.setLastTransactionDate(new Date());
             generateInvoiceRequestDto.setOrderNumber(null);
-            List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, null, false, null);
+            List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, null, false, null, false);
 
             StringBuilder invoiceNumbers = new StringBuilder();
             for (Invoice invoice : invoices) {
@@ -320,7 +320,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             generateInvoiceRequestDto.setGeneratePDF(true);
             generateInvoiceRequestDto.setInvoicingDate(new Date());
             generateInvoiceRequestDto.setLastTransactionDate(new Date());
-            List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, null, true, null);
+            List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, null, true, null, false);
             for (Invoice invoice : invoices) {
                 invoiceService.produceFilesAndAO(false, true, false, invoice.getId(), true, new ArrayList<>());
                 String fileName = invoiceService.getFullPdfFilePath(invoice, false);
