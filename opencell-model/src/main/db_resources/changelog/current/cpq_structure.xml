@@ -3016,6 +3016,10 @@
 								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 								 referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
 	</changeSet>
+	<changeSet id="#20210205_540_223" author="TarikFA">
+		<modifyDataType tableName="cpq_media" columnName="media_path" newDataType="varchar(255)"/>
+		<modifyDataType tableName="cpq_media" columnName="media_name" newDataType="varchar(255)"/>
+	</changeSet>
 </databaseChangeLog>
 
 
