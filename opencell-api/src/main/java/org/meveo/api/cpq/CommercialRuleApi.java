@@ -162,7 +162,6 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 
 		if(!Strings.isEmpty(dto.getRuleEl()))
 			commercialRuleHeader.setRuleEl(dto.getRuleEl()); 
-		dto.setDisabled(commercialRuleHeader.isDisabled());
 
 		if(!StringUtils.isBlank(dto.getOfferCode())) {
 			OfferTemplate offerTemplate =offerTemplateService.findByCode(dto.getOfferCode());
