@@ -37,9 +37,13 @@ import org.meveo.service.cpq.order.OrderProductService;
 import org.meveo.service.cpq.order.OrderTypeService;
 import org.meveo.service.cpq.order.QuotePriceService;
 import org.meveo.service.script.module.ModuleScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial")
 public class QuoteValidationTemp extends ModuleScript {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(QuoteVersionService.class);
 
 	private QuoteVersionService quoteVersionService = (QuoteVersionService) getServiceInterface(QuoteVersionService.class.getSimpleName());
     private InvoiceTypeService invoiceTypeService = (InvoiceTypeService) getServiceInterface(InvoiceTypeService.class.getSimpleName());
@@ -59,6 +63,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		final CpqQuote cpqQuote = (CpqQuote) methodContext.get("cpqQuote");
 		if(cpqQuote == null)
 			throw new BusinessException("No Quote found");
+		LOGGER.info("start creation order from quote code {}", cpqQuote.getCode());
 		var quotesVersions = quoteVersionService.findByQuoteIdAndStatusActive(cpqQuote.getId());
 		if(quotesVersions.size() > 1)
 			throw new BusinessException("More than one quote version is published !!");
@@ -91,6 +96,7 @@ public class QuoteValidationTemp extends ModuleScript {
 				});
 			});
 		});
+		LOGGER.info("End creation order from quote code {}, number of order created is {}", cpqQuote.getCode(), orderByBillingAccount.size());
 		
 		
 	}
@@ -112,7 +118,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		order.setOrderProgress(1);
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		order.setProgressDate(Calendar.getInstance().getTime());
-		order.setUserAccount(account.getUsersAccounts().get(0));
+		order.setUserAccount(account.getUsersAccounts().size() > 0 ? account.getUsersAccounts().get(0) : null);
 		commercialOrderService.create(order);
 		return order;
 	}
