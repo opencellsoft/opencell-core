@@ -37,6 +37,7 @@ import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
@@ -164,13 +165,26 @@ public class ProductApi extends BaseApi {
 	 * @param productDto
 	 * @throws ProductException
 	 */
-	public void updateProduct(ProductDto productDto){
-
+	public void updateProduct(String productCode, ProductDto productDto){
+		if(Strings.isEmpty(productCode)){
+			missingParameters.add("productCode");
+		}
+		
+		if(Strings.isEmpty(productDto.getCode())){
+			missingParameters.add("productCode");
+		}
+		
+		handleMissingParameters();
 		try {
-			Product product = productService.findByCode(productDto.getCode());
+			Product product = productService.findByCode(productCode);
 			if (product == null) {
-				throw new EntityDoesNotExistsException(Product.class,productDto.getCode());
-			}   
+				throw new EntityDoesNotExistsException(Product.class, productCode);
+			}
+			
+			if(!productCode.equalsIgnoreCase(productDto.getCode()) &&  productService.findByCode(productDto.getCode()) != null)
+				throw new EntityAlreadyExistsException(Product.class,productDto.getCode());
+			
+			product.setCode(productDto.getCode());
 			product.setDescription(productDto.getLabel());
 			if(!StringUtils.isBlank(productDto.getProductLineCode())) {
 				ProductLine productLine=productLineService.findByCode(productDto.getProductLineCode());
