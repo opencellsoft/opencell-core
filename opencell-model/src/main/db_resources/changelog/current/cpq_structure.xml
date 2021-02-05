@@ -2976,6 +2976,21 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="" author="">
+		<addColumn tableName="cat_charge_template">
+			<column name="attribute_duration_id" type="bigint"/>
+			<column name="attribute_calendar_id" type="bigint"/>
+		</addColumn>
+		
+		<addForeignKeyConstraint baseTableName="cat_charge_template" baseColumnNames="attribute_duration_id"
+								 constraintName="fk_cat_charge_templat_attribute_duration_id"
+								 referencedTableName="cpq_attribute" referencedColumnNames="id"/>
+								 
+		<addForeignKeyConstraint baseTableName="cat_charge_template" baseColumnNames="attribute_calendar_id"
+								 constraintName="fk_cat_charge_template_attribute_calendar_id"
+								 referencedTableName="cpq_attribute" referencedColumnNames="id"/>
+	</changeSet>
 </databaseChangeLog>
 
 
