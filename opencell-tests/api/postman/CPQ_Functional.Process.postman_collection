@@ -1,0 +1,5830 @@
+{
+	"info": {
+		"_postman_id": "8f9d0830-56c4-4c4b-9d86-f91f34a221b6",
+		"name": "CPQ Functional Process",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Setup",
+			"item": [
+				{
+					"name": "Tags",
+					"item": [
+						{
+							"name": "Create Tag Type 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{tagTypeOneCode}}\",\r\n    \"description\": \"This is tag type one test description\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/cpq/tags/tagType",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"cpq",
+										"tags",
+										"tagType"
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Tag 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{tagOneCode}}\",\r\n    \"name\": \"TAG_1_NAME\",\r\n    \"description\": \"This is tag One test description\",\r\n    \"tagTypeCode\": \"{{tagTypeOneCode}}\",\r\n    \"sellerCode\": \"{{sellerCode}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/cpq/tags",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"cpq",
+										"tags"
+									]
+								},
+								"description": "Creating a new tag"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Tag Type 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{tagTypeTwoCode}}\",\r\n    \"description\": \"This is tag type Two test description\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/cpq/tags/tagType",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"cpq",
+										"tags",
+										"tagType"
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Tag 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"code\": \"{{tagTwoCode}}\",\r\n  \"description\": \"This is tag two test description\",\r\n  \"name\":\"TAG_2_NAME\",\r\n  \"tagTypeCode\": \"{{tagTypeTwoCode}}\",\r\n  \"sellerCode\": \"{{sellerCode}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/cpq/tags",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"cpq",
+										"tags"
+									]
+								},
+								"description": "Creating a new tag"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Tag Type VIP",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{tagTypeVipCode}}\",\r\n    \"description\": \"This is tag type VIP test description\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/cpq/tags/tagType",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"cpq",
+										"tags",
+										"tagType"
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Tag VIP",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"code\": \"{{tagVipCode}}\",\r\n  \"description\": \"This is tag VIP test description\",\r\n  \"name\":\"TAG_VIP_NAME\",\r\n  \"tagTypeCode\": \"{{tagTypeVipCode}}\",\r\n  \"sellerCode\": \"{{sellerCode}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/cpq/tags",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"cpq",
+										"tags"
+									]
+								},
+								"description": "Creating a new tag"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Hierarchy",
+					"item": [
+						{
+							"name": "Customer Account Hierarchy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman.",
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"crmAccountType\": \"C_UA\",\n    \"code\": \"{{billableAccountCode}}\",\n    \"description\": \"description_entity\",\n    \"crmParentCode\": \"{{sellerCode}}\",\n    \"name\": {\n        \"title\": \"MR\",\n        \"lastName\": \"FIRST_NAME\"\n    },\n    \"vatNo\": \"FR89810129666\",\n    \"registrationNo\": \"810129666\",\n    \"address\": {\n        \"address1\": \"14 rue Crespin du Gast\",\n        \"zipCode\": \"75011\",\n        \"city\": \"PARIS\",\n        \"state\": \"Paris Area\",\n        \"country\": \"FR\"\n    },\n    \"email\": \"contact@opencell.com\",\n    \"contactInformation\": {\n        \"email\": \"contact@opencell.com}\"\n    },\n    \"language\": \"FRA\",\n    \"customerCategory\": \"CLIENT\",\n    \"customerBrand\": \"DEFAULT\",\n    \"currency\": \"EUR\",\n    \"billingCycle\": \"CYC_INV_MT_1\",\n    \"country\": \"FR\",\n    \"electronicBilling\": true,\n    \"externalRef1\": \"FR 89810129666\"\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"accountHierarchy",
+										"createOrUpdateCRMAccountHierarchy"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Billing Account with Tags",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{billableAccountCode}}\",\r\n    \"description\": \"This is billing account test decription\",\r\n    \"customerAccount\": \"{{billableAccountCode}}\",\r\n    \"billingCycle\": \"{{billingCycleCode}}\",\r\n    \"language\": \"FRA\",\r\n    \"country\": \"FR\",\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagTwoCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/billingAccount/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"billingAccount",
+										"createOrUpdate"
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Charges",
+					"item": [
+						{
+							"name": "Create Recurring Charge Template",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{chargeTemplateCode}}\",\r\n    \"description\": \"This is the recurring charge test description\",\r\n    \"invoiceSubCategory\": \"CMP_DATA\",\r\n    \"disabled\": false,\r\n    \"unitNbDecimal\": 4,\r\n    \"roundingModeDtoEnum\": \"NEAREST\",\r\n    \"taxClassCode\": \"CMP_DATA\",\r\n    \"calendar\": \"MONTHLY\",\r\n    \"durationTermInMonth\": 24,\r\n    \"subscriptionProrata\": false,\r\n    \"terminationProrata\": false,\r\n    \"applyInAdvance\": true,\r\n    \"triggeredEdrs\": null\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/recurringChargeTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"recurringChargeTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create OneShot Charge Template",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{oneShotTemplateCode}}\",\r\n    \"description\": \"This is the one shot charge test description\",\r\n    \"oneShotChargeTemplateType\":\"OTHER\"\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/oneShotChargeTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"oneShotChargeTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Products",
+					"item": [
+						{
+							"name": "Create Or Update Product Line",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{productLineCode}}\",\r\n    \"description\": \"This is product line test description\",\r\n    \"sellerCode\": \"{{sellerCode}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/productLine",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"productLine"
+									]
+								},
+								"description": "Create a product line if it doesn't exist or update an existing product line"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Product 1",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.globals.set(\"productOneVersion\",pm.response.json().id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{productOneCode}}\",\r\n    \"label\": \"This is the product one label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"chargeTemplateCodes\": [\r\n        \"{{chargeTemplateCode}}\"\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product"
+									]
+								},
+								"description": "Creation of the product"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Product 1",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.globals.set(\"productOneVersion\",pm.response.json().id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{productOneCode}}\",\r\n    \"label\": \"This is the product one label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"chargeTemplateCodes\": [\r\n        \"{{chargeTemplateCode}}\",\r\n        \"{{oneShotTemplateCode}}\"\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product"
+									]
+								},
+								"description": "Creation of the product"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Product 1 Version 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.globals.set(\"productOneVersion\",JSON.parse(pm.request.body).currentVersion);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"longDescription\": \"This is a long test description of product version\",\r\n    \"statusDate\": \"2020-12-15\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/productVersion",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"productVersion"
+									]
+								},
+								"description": "create a product version if it doesn't exist or update an existing product line"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Product 1 Version 2 with Tags",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"currentVersion\": 2,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-11-24\",\r\n        \"to\": \"2020-11-25\"\r\n    },\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagTwoCode}}\"\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/productVersion",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"productVersion"
+									]
+								},
+								"description": "create a product version if it doesn't exist or update an existing product line"
+							},
+							"response": []
+						},
+						{
+							"name": "Read  Product Version 1",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/productVersion/{{productOneCode}}/{{productOneVersion}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"productVersion",
+										"{{productOneCode}}",
+										"{{productOneVersion}}"
+									]
+								},
+								"description": "Find all related product versions to a product"
+							},
+							"response": []
+						},
+						{
+							"name": "Read  Product 1 Version 2 with Tags",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/productVersion/{{productOneCode}}/{{productTwoVersion}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"productVersion",
+										"{{productOneCode}}",
+										"{{productTwoVersion}}"
+									]
+								},
+								"description": "Find all related product versions to a product"
+							},
+							"response": []
+						},
+						{
+							"name": "Activate Product 1",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/{{productOneCode}}/update/status?status=ACTIVE",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"{{productOneCode}}",
+										"update",
+										"status"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "ACTIVE"
+										}
+									]
+								},
+								"description": "Creation of the product"
+							},
+							"response": []
+						},
+						{
+							"name": "Publish Product 1 Version 1",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/productVersion/{{productOneCode}}/{{productOneVersion}}?status=PUBLISHED",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"productVersion",
+										"{{productOneCode}}",
+										"{{productOneVersion}}"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "PUBLISHED"
+										}
+									]
+								},
+								"description": "the product with status DRAFT can be change to PUBLIED or CLOSED"
+							},
+							"response": []
+						},
+						{
+							"name": "Read  Product 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.globals.set(\"productOneId\",pm.response.json().id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product?productCode={{productOneCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product"
+									],
+									"query": [
+										{
+											"key": "productCode",
+											"value": "{{productOneCode}}"
+										}
+									]
+								},
+								"description": "Retrieving a product with its code"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Product 2",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{productTwoCode}}\",\r\n    \"label\": \"this is the product two label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"chargeTemplateCodes\": [\r\n        \"{{oneShotTemplateCode}}\"\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product"
+									]
+								},
+								"description": "Creation of the product"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Product 2 Version 1 with Tags",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productCode\": \"{{productTwoCode}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-09-08\",\r\n        \"to\": \"2021-05-15\"\r\n    },\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/productVersion",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"productVersion"
+									]
+								},
+								"description": "create a product version if it doesn't exist or update an existing product line"
+							},
+							"response": []
+						},
+						{
+							"name": "Activate Product 2",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/{{productTwoCode}}/update/status?status=ACTIVE",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"{{productTwoCode}}",
+										"update",
+										"status"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "ACTIVE"
+										}
+									]
+								},
+								"description": "Creation of the product"
+							},
+							"response": []
+						},
+						{
+							"name": "Read  Product 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.globals.set(\"productOneId\",pm.response.json().id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product?productCode={{productTwoCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product"
+									],
+									"query": [
+										{
+											"key": "productCode",
+											"value": "{{productTwoCode}}"
+										}
+									]
+								},
+								"description": "Retrieving a product with its code"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Offer Template with Tags",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{offerTemplateCode}}\",\r\n    \"description\": \"Classic Offer Template test description\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{productOneCode}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ],\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"offerTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Attributes",
+					"item": [
+						{
+							"name": "Create Billing Cycle Attribute",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"code\": \"{{billingCycleAttribute}}\",\r\n  \"description\": \"This is billing cycle attribute description\",\r\n  \"attributeType\": \"TEXT\",\r\n  \"disabled\": true,\r\n  \"mandatory\": true,\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/attribute",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"attribute"
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						},
+						{
+							"name": "Read Billing Cycle Attribute",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.globals.set(\"billingCycleAttributeId\",pm.response.json().id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/attribute?code={{billingCycleAttribute}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"attribute"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "{{billingCycleAttribute}}"
+										}
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Engagment Duration Attribute",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"code\": \"{{engagementAttributeCode}}\",\r\n  \"description\": \"This is engagement duration test description\",\r\n  \"attributeType\": \"NUMERIC\",\r\n  \"disabled\": true,\r\n  \"mandatory\": true,\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/attribute",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"attribute"
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						},
+						{
+							"name": "Read Engagement Duration Attribute",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.globals.set(\"engagementAttributeId\",pm.response.json().id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/attribute?code={{engagementAttributeCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"attribute"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "{{engagementAttributeCode}}"
+										}
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Grouped Attribute",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{groupedAttributeCode}}\",\r\n    \"description\": \"This is grouped attribute test description\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"productVersion\": \"{{productOneVersion}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/cpq/groupedAttributes",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"cpq",
+										"groupedAttributes"
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Commercial Rules",
+					"item": [
+						{
+							"name": "Create Commercial Rule 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{commercialRuleOneCode}}\",\r\n    \"description\": \"This is commercial rule 1 test description\",\r\n    \"ruleType\": \"PRE_REQUISITE\",\r\n    \"ruleEl\": \"ruleEl1\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"productVersion\": 1,\r\n    \"attributeCode\": \"{{billingCycleAttribute}}\",\r\n    \"tagCode\": \"{{tagOneCode}}\",\r\n    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n    \"targetAttributeValue\": \"VALUE_ONE\",\r\n    \"commercialRuleItems\": [\r\n        {\r\n            \"operator\": \"AND\",\r\n            \"commercialRuleLines\": [\r\n                {\r\n                    \"offerCode\": \"{{offerTemplateCode}}\",\r\n                    \"productCode\": \"{{productOneCode}}\",\r\n                    \"productVersion\": 1,\r\n                    \"attributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n                    \"attributeValue\": \"Attribute value of commercial rule 1\",\r\n                    \"tagCode\": \"{{tagOneCode}}\",\r\n                    \"operator\": 0\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule/",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read  Commercial Rule 1",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule?code={{commercialRuleOneCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "{{commercialRuleOneCode}}"
+										}
+									]
+								},
+								"description": "Retrieving a product with its code"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Commercial Rule 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{commercialRuleTwoCode}}\",\r\n    \"description\": \"This is commercial rule 2 test description\",\r\n    \"ruleType\": \"PRE_REQUISITE\",\r\n    \"ruleEl\": \"ruleEl1\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"productVersion\": 1,\r\n    \"attributeCode\": \"{{engagementAttributeCode}}\",\r\n    \"tagCode\": \"{{tagTwoCode}}\",\r\n    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n    \"targetAttributeValue\": \"VALUE_TWO\",\r\n    \"commercialRuleItems\": [\r\n        {\r\n            \"operator\": \"AND\",\r\n            \"commercialRuleLines\": [\r\n                {\r\n                    \"offerCode\": \"{{offerTemplateCode}}\",\r\n                    \"productCode\": \"{{productOneCode}}\",\r\n                    \"productVersion\": 1,\r\n                    \"attributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n                    \"attributeValue\": \"Attribute value of commercial rule 2\",\r\n                    \"tagCode\": \"{{tagTwoCode}}\",\r\n                    \"operator\": 0\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule/",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read  Commercial Rule 2",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule?code={{commercialRuleTwoCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "{{commercialRuleTwoCode}}"
+										}
+									]
+								},
+								"description": "Retrieving a product with its code"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Commercial Rule 3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{commercialRuleThreeCode}}\",\r\n    \"description\": \"This is commercial rule 3 test description\",\r\n    \"ruleType\": \"PRE_REQUISITE\",\r\n    \"ruleEl\": \"ruleEl1\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"productVersion\": 1,\r\n    \"attributeCode\": \"{{engagementAttributeCode}}\",\r\n    \"tagCode\": \"{{tagTwoCode}}\",\r\n    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n    \"targetAttributeValue\": \"VALUE_TWO\",\r\n    \"commercialRuleItems\": [\r\n        {\r\n            \"operator\": \"AND\",\r\n            \"commercialRuleLines\": [\r\n                {\r\n                    \"offerCode\": \"{{offerTemplateCode}}\",\r\n                    \"productCode\": \"{{productOneCode}}\",\r\n                    \"productVersion\": 1,\r\n                    \"attributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n                    \"attributeValue\": \"Attribute value of commercial rule 2\",\r\n                    \"tagCode\": \"{{tagVipCode}}\",\r\n                    \"operator\": 0\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule/",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read  Commercial Rule 3",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule?code={{commercialRuleThreeCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "{{commercialRuleThreeCode}}"
+										}
+									]
+								},
+								"description": "Retrieving a product with its code"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Commercial Rule 3",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule/{{commercialRuleThreeCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule",
+										"{{commercialRuleThreeCode}}"
+									]
+								},
+								"description": "Remove a product by its code"
+							},
+							"response": []
+						},
+						{
+							"name": "Read Commercial Rules with Given Criteria",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"filters\": {\r\n    \"ruleType\": \"PRE_REQUISITE\"\r\n  }\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule/list",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Commercial Rules by Tag Code",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule/tagRules?tagCode={{tagOneCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule",
+										"tagRules"
+									],
+									"query": [
+										{
+											"key": "tagCode",
+											"value": "{{tagOneCode}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Commercial Rules with Criteria",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule/productRules?offerCode={{offerTemplateCode}}&productCode={{productOneCode}}&productVersion={{productOneVersion}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule",
+										"productRules"
+									],
+									"query": [
+										{
+											"key": "offerCode",
+											"value": "{{offerTemplateCode}}"
+										},
+										{
+											"key": "productCode",
+											"value": "{{productOneCode}}"
+										},
+										{
+											"key": "productVersion",
+											"value": "{{productOneVersion}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create TV_DECODER Product",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{tvDecoderProductCode}}\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"label\": \"This is the tv decoder product label\",\r\n    \"status\": \"ACTIVE\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product"
+									]
+								},
+								"description": "Creation of the product"
+							},
+							"response": []
+						},
+						{
+							"name": "Activate TV_DECODER Product",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/{{tvDecoderProductCode}}/update/status?status=ACTIVE",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"{{tvDecoderProductCode}}",
+										"update",
+										"status"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "ACTIVE"
+										}
+									]
+								},
+								"description": "the product with status DRAFT can be change to ACTIVE or CLOSED, if the product status is ACTIVE then the only value possible is CLOSED otherwise it will throw exception"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Product Version of TV_DECODER",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"productCode\": \"{{tvDecoderProductCode}}\",\r\n  \"shortDescription\": \"Product version TV_DECODER description\",\r\n  \"currentVersion\": 1,\r\n  \"status\": \"DRAFT\",\r\n  \"statusDate\": \"2020-11-24\",\r\n   \"validity\":{\r\n   \"from\": \"2020-11-24\",\r\n   \"to\": \"2022-12-25\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/productVersion",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"productVersion"
+									]
+								},
+								"description": "create a product version if it doesn't exist or update an existing product line"
+							},
+							"response": []
+						},
+						{
+							"name": "Publish TV_DECODER Product Version",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/productVersion/{{tvDecoderProductCode}}/1?status=PUBLISHED",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"productVersion",
+										"{{tvDecoderProductCode}}",
+										"1"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "PUBLISHED"
+										}
+									]
+								},
+								"description": "the product with status DRAFT can be change to PUBLIED or CLOSED"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Grouped TV Attribute",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{tvGroupedAttributeCode}}\",\r\n    \"productCode\": \"{{tvDecoderProductCode}}\",\r\n    \"description\": \"This is the grouped tv attribute desc\",\r\n    \"productVersion\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/cpq/groupedAttributes",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"cpq",
+										"groupedAttributes"
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						},
+						{
+							"name": "Create SETUP_PRICE Attribute",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"code\": \"{{setupPriceAttribute}}\",\r\n  \"description\": \"This is setup price attribute desc\", \r\n  \"disabled\": true,\r\n  \"groupedAttributeCode\": \"{{tvGroupedAttributeCode}}\",\r\n  \"attributeType\":\"TEXT\",\r\n  \"allowedValues\": [\r\n    \"115\",\"205\"\r\n  ],\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0,\r\n  \"mandatory\": true\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/attribute",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"attribute"
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						},
+						{
+							"name": "Create BRAND Attribute",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"code\": \"{{brandAttribute}}\",\r\n  \"description\": \"This is brand attribute desc\", \r\n  \"disabled\": true,\r\n  \"groupedAttributeCode\": \"{{tvGroupedAttributeCode}}\", \r\n  \"attributeType\":\"TEXT\",\r\n  \"allowedValues\": [\r\n    \"SAMSUNG\",\"SONY\"\r\n  ],\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0,\r\n  \"mandatory\": true\r\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/attribute",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"attribute"
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						},
+						{
+							"name": "Create TELEVISION Product",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{tvProductCode}}\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"label\": \"This is TV product test description\",\r\n    \"status\": \"ACTIVE\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product"
+									]
+								},
+								"description": "Creation of the product"
+							},
+							"response": []
+						},
+						{
+							"name": "Activate TELEVISION Product",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/{{tvProductCode}}/update/status?status=ACTIVE",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"{{tvProductCode}}",
+										"update",
+										"status"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "ACTIVE"
+										}
+									]
+								},
+								"description": "the product with status DRAFT can be change to ACTIVE or CLOSED, if the product status is ACTIVE then the only value possible is CLOSED otherwise it will throw exception"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Product Version of TELEVISION",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.globals.set(\"tvProductVersion\",JSON.parse(pm.request.body).currentVersion);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productCode\": \"{{tvProductCode}}\",\r\n    \"shortDescription\": \"TELEVISION product version description\",\r\n    \"currentVersion\": 1,\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for TELEVISION product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-11-24\",\r\n        \"to\": \"2022-12-25\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/productVersion",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"productVersion"
+									]
+								},
+								"description": "create a product version if it doesn't exist or update an existing product line"
+							},
+							"response": []
+						},
+						{
+							"name": "Publish TELEVISION Product Version",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/productVersion/{{tvProductCode}}/{{tvProductVersion}}?status=PUBLISHED",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"productVersion",
+										"{{tvProductCode}}",
+										"{{tvProductVersion}}"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "PUBLISHED"
+										}
+									]
+								},
+								"description": "the product with status DRAFT can be change to PUBLIED or CLOSED"
+							},
+							"response": []
+						},
+						{
+							"name": "Read TELEVISION Product",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product?productCode={{tvProductCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product"
+									],
+									"query": [
+										{
+											"key": "productCode",
+											"value": "{{tvProductCode}}"
+										}
+									]
+								},
+								"description": "Retrieving a product with its code"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Bouquets Attribute",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{bouquetsAttribute}}\",\r\n    \"description\": \"This is bouquets attribute desc\",\r\n    \"disabled\": true,\r\n    \"groupedAttributeCode\": \"{{tvGroupedAttributeCode}}\",\r\n    \"attributeType\": \"TEXT\",\r\n    \"allowedValues\": [\r\n        \"Netflix\",\r\n        \"Canal\"\r\n    ],\r\n    \"display\": true,\r\n    \"sequence\": 0,\r\n    \"priority\": 0,\r\n    \"mandatory\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/attribute",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"attribute"
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						},
+						{
+							"name": "Create TV DECODER Offer",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{tvDecoderOffer}}\",\r\n    \"description\": \"This the desc of TV and decoder offer\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{tvDecoderProductCode}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"offerTemplate",
+										"createOrUpdate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Commercial Rule Header",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "  {\r\n  \"code\": \"{{tvCommercialRuleCode}}\",\r\n  \"description\": \"This is TV commerciale rule desc\", \r\n  \"offerCode\": \"{{tvDecoderOffer}}\",\r\n  \"ruleType\": \"PRE_REQUISITE\", \r\n  \"productCode\": \"{{tvProductCode}}\",\r\n  \"productVersion\": \"1\",\r\n  \"commercialRuleItems\": [\r\n    {\r\n      \"operator\": \"AND\",\r\n      \"commercialRuleLines\": [\r\n        {\r\n          \"productCode\": \"{{tvDecoderProductCode}}\",  \r\n          \"attributeCode\": \"{{brandAttribute}}\",  \r\n          \"attributeValue\": \"SONY\",\r\n          \"operator\": \"EQUAL\"\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}\r\n  "
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule/",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read TV Commercial Rule",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule?code={{tvCommercialRuleCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "{{tvCommercialRuleCode}}"
+										}
+									]
+								},
+								"description": "Retrieving a product with its code"
+							},
+							"response": []
+						},
+						{
+							"name": "List Products with Attributes",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"offerCode\": \"{{tvDecoderOffer}}\",\r\n    \"selectedProducts\": [\r\n        {\r\n            \"productCode\": \"{{tvProductCode}}\"\r\n        },\r\n        {\r\n            \"productCode\": \"{{tvDecoderProductCode}}\",\r\n            \"selectedAttributes\": {\r\n                \"brand\": \"SONY\"\r\n            }\r\n        }\r\n    ],\r\n    \"customerContextDTO\": {\r\n        \"requestedTagTypes\": []\r\n    }\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/catalog/product/cpq/list",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"catalog",
+										"product",
+										"cpq",
+										"list"
+									]
+								},
+								"description": "List Products with Attributes that Match The Quote Offer Context"
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Media Management",
+					"item": [
+						{
+							"name": "Create The Media",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"mediaName\": \"{{mediaName}}\",\r\n    \"label\": \"This is media name label\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"mediaType\": \"IMAGE\",\r\n    \"main\": true,\r\n    \"mediaPath\": \"/path/created/dir\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/media",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"media"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read The Media",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.globals.set(\"mediaId\",pm.response.json().mediaDto.id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/media/{{productOneCode}}/{{mediaName}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"media",
+										"{{productOneCode}}",
+										"{{mediaName}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Media",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\":\"{{mediaId}}\",\r\n    \"mediaName\": \"{{mediaName}}\",\r\n    \"label\": \"This is an updated media name label\",\r\n    \"productCode\": \"{{productTwoCode}}\",\r\n    \"mediaType\": \"VIDEO\",\r\n    \"main\": true,\r\n    \"mediaPath\": \"/newPath/updated/newDir\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/media",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"media"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Media Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/media/{{productTwoCode}}/{{mediaName}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"media",
+										"{{productTwoCode}}",
+										"{{mediaName}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Media by Product Code",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filters\": {\r\n        \"productCode\": \"{{productTwoCode}}\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/media/list",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"media",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Media",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/media/{{productTwoCode}}/{{mediaName}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"media",
+										"{{productTwoCode}}",
+										"{{mediaName}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Price Plan Matrix Process",
+			"item": [
+				{
+					"name": "Create Price Plan Matrix 1 w/ Recurring Charge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"{{ppmCode}}\",\n    \"eventCode\": \"{{chargeTemplateCode}}\",\n    \"amountWithoutTax\": 100\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Price Plan Matrix with Recurring Charge",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan?pricePlanCode={{ppmCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan"
+							],
+							"query": [
+								{
+									"key": "pricePlanCode",
+									"value": "{{ppmCode}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Price Plan Matrix 2 w/ OneShot Charge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"{{ppmOsCode}}\",\n    \"eventCode\": \"{{oneShotTemplateCode}}\",\n    \"amountWithoutTax\": 120\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Price Plan Matrix with OneShot Charge",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan?pricePlanCode={{ppmOsCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan"
+							],
+							"query": [
+								{
+									"key": "pricePlanCode",
+									"value": "{{ppmOsCode}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "disable Price Plan Matrix 1",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/{{ppmCode}}/disable",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"{{ppmCode}}",
+								"disable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enable Price Plan Matrix 1",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/{{ppmCode}}/enable",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"{{ppmCode}}",
+								"enable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Price Plan Matrix 2",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"{{ppmOsCode}}\",\n    \"eventCode\": \"{{oneShotTemplateCode}}\",\n    \"description\": \"This is an updated price plan description\",\n    \"amountWithoutTax\": 250\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Read Price Plan Matrix by Charge Code",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/list?eventCode={{chargeTemplateCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"list"
+							],
+							"query": [
+								{
+									"key": "eventCode",
+									"value": "{{chargeTemplateCode}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Price Plan Matrix 1 Version 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.globals.set(\"ppmVersion\",pm.response.json().pricePlanVersion.version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"label\": \"Default price plan matrix version\",\n    \"version\": 2,\n    \"isMatrix\": true,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2021-01-03\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixVersion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Price Plan Matrix 2 Version 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.globals.set(\"ppmOsVersion\",pm.response.json().pricePlanVersion.version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmOsCode}}\",\n    \"label\": \"Default price plan matrix version\",\n    \"amountWithTax\": 100,\n    \"amountWithoutTax\": 90,\n    \"version\": 2,\n    \"isMatrix\": false,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2023-01-03\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixVersion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Duplicate Price Plan Matrix Version",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/duplicate/{{ppmOsCode}}/{{ppmOsVersion}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixVersion",
+								"duplicate",
+								"{{ppmOsCode}}",
+								"{{ppmOsVersion}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Price Plan Matrix Versions",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersions",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixVersions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Publish Price Plan Matrix Version",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/{{ppmCode}}/{{ppmVersion}}?status=PUBLISHED",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixVersion",
+								"{{ppmCode}}",
+								"{{ppmVersion}}"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "PUBLISHED"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create BILLING CYCLE Column",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"{{billingCycleColumnCode}}\",\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\n    \"attributeCode\": \"{{billingCycleAttribute}}\",\n    \"productCode\": \"{{productOneCode}}\",\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmVersion}},\n    \"elValue\": \"elValue\",\n    \"isRange\": false,\n    \"position\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixColumn"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Billing Cycle Column",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn?pricePlanMatrixColumnCode={{billingCycleColumnCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixColumn"
+							],
+							"query": [
+								{
+									"key": "pricePlanMatrixColumnCode",
+									"value": "{{billingCycleColumnCode}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create ENGAGEMENT DURATION Column",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"{{engagementColumnCode}}\",\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\n    \"attributeCode\": \"{{engagementAttributeCode}}\",\n    \"productCode\": \"{{productOneCode}}\",\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmVersion}},\n    \"elValue\": \"elValue\",\n    \"isRange\": false,\n    \"position\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixColumn"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Engagement Duration Column",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixColumn?pricePlanMatrixColumnCode={{engagementColumnCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixColumn"
+							],
+							"query": [
+								{
+									"key": "pricePlanMatrixColumnCode",
+									"value": "{{engagementColumnCode}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Price Plan Matrix Line (Monthly 24)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.globals.set(\"ppmLineM24Id\",pm.response.json().pricePlanMatrixLinesDto[0].ppmLineId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmVersion}},\n    \"pricetWithoutTax\": 24,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n            \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n            \"stringValue\": \"Monthly\"\n        },\n        {\n            \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n            \"longValue\": 24\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/addPricePlanMatrixLine",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"addPricePlanMatrixLine"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Price Plan Matrix Line (Monthly 24)",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixLine/{{ppmLineM24Id}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixLine",
+								"{{ppmLineM24Id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Price Plan Matrix Line",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ppmLineId\":\"{{ppmLineM24Id}}\",\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmVersion}},\n    \"pricetWithoutTax\": 100,\n    \"pricePlanMatrixValues\": [\n        {\n            \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n            \"stringValue\": \"Monthly\",\n            \"longValue\": 25,\n            \"doubleValue\": 12.5,\n            \"dateValue\": \"2020-12-31\",\n            \"fromDateValue\": \"2021-01-01\",\n            \"toDateValue\": \"2021-12-31\",\n            \"fromDoubleValue\": 12.34,\n            \"toDoubleValue\": 20.34\n        },\n        {\n            \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n            \"doubleValue\": 12.5,\n            \"longValue\": 24,\n            \"dateValue\": \"2020-12-31\",\n            \"fromDateValue\": \"2021-01-01\",\n            \"toDateValue\": \"2021-12-31\",\n            \"fromDoubleValue\": 12.34,\n            \"toDoubleValue\": 20.34\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/updatePricePlanMatrixLine",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"updatePricePlanMatrixLine"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Updated Price Plan Matrix Line",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixLine/{{ppmLineM24Id}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixLine",
+								"{{ppmLineM24Id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Price Plan Matrix Line (Monthly 12)",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmVersion}},\n    \"pricetWithoutTax\": 15,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n            \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n            \"stringValue\": \"Monthly\"\n        },\n        {\n            \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n            \"longValue\": 12\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/addPricePlanMatrixLine",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"addPricePlanMatrixLine"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Price Plan Matrix Line (Annually 24)",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmVersion}},\n    \"pricetWithoutTax\": 18,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n        \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n        \"stringValue\": \"Annually\"\n        },\n        {\n        \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n        \"longValue\": 24\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/addPricePlanMatrixLine",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"addPricePlanMatrixLine"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Price Plan Matrix Line (Annually 12)",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmVersion}},\n    \"pricetWithoutTax\": 13,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n        \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n        \"stringValue\": \"Annually\"\n        },\n        {\n        \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n        \"longValue\": 12\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/addPricePlanMatrixLine",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"addPricePlanMatrixLine"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Quote Product",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/generic/all/QuoteProduct",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"generic",
+								"all",
+								"QuoteProduct"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Load All Product Prices /!\\",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ppmCode\": \"{{ppmCode}}\",\n    \"ppmVersion\": {{ppmVersion}},\n    \"quoteProductId\": 1\n}\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/loadPrices",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"loadPrices"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Contract",
+			"item": [
+				{
+					"name": "Create New Contract",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"{{contractCode}}\",\r\n  \"description\": \"This is the contract test description\",\r\n  \"contractAccountLevel\":\"BILLING_ACCOUNT\",\r\n  \"accountCode\":\"{{billableAccountCode}}\",\r\n  \"contractDate\": \"2020-12-31\",\r\n  \"beginDate\": \"2021-01-01\",\r\n  \"endDate\": \"2021-12-31\"\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contract",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contract"
+							]
+						},
+						"description": "Creating a new contract"
+					},
+					"response": []
+				},
+				{
+					"name": "Find The Contract",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contract/{{contractCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contract",
+								"{{contractCode}}"
+							]
+						},
+						"description": "Find a Contract type by contractCode"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Contract Line",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"{{contractLineCode}}\",\r\n  \"description\": \"This is a contract line test desc\",\r\n  \"contractCode\": \"{{contractCode}}\",\r\n  \"offerTemplateCode\": \"{{offerTemplateCode}}\",\r\n  \"productCode\": \"{{productLineCode}}\",\r\n  \"pricePlanCode\":\"{{ppmCode}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contract/contractLine",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contract",
+								"contractLine"
+							]
+						},
+						"description": "Creating a new contract Line"
+					},
+					"response": []
+				},
+				{
+					"name": "List Contracts by Account Code & Account Level",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contract?contractAccountLevel={{contractAccountLevel}}&accountCode={{billableAccountCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contract"
+							],
+							"query": [
+								{
+									"key": "contractAccountLevel",
+									"value": "{{contractAccountLevel}}",
+									"description": "CUSTOMER, CUSTOMER_ACCOUNT or BILLING_ACCOUNT"
+								},
+								{
+									"key": "accountCode",
+									"value": "{{billableAccountCode}}"
+								}
+							]
+						},
+						"description": "Find a Contract type by contractCode and contractAccountLevel parameters"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order Management",
+			"item": [
+				{
+					"name": "Order Type",
+					"item": [
+						{
+							"name": "Create Order Type",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\":\"{{orderTypeCode}}\",\r\n    \"description\":\"This is the order type test description\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/order-type",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"order-type"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Order Type",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/order-type/{{orderTypeCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"order-type",
+										"{{orderTypeCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Order Type",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\":\"{{orderTypeCode}}\",\r\n    \"description\":\"This is the updated order type desc\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/order-type",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"order-type"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Updated Order Type",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/order-type/{{orderTypeCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"order-type",
+										"{{orderTypeCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Order Types with Given Criteria",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"filters\": {\r\n    \"description\": \"This is the updated order type desc\"\r\n  }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/order-type/list",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"order-type",
+										"list"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Commercial Order",
+					"item": [
+						{
+							"name": "Create Commercial Order 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.globals.set(\"orderOneId\",pm.response.json().commercialOrderDto.id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"orderTypeCode\": \"{{orderTypeCode}}\",\r\n    \"billingAccountCode\": \"{{billableAccountCode}}\",\r\n    \"sellerCode\": \"{{sellerCode}}\",\r\n    \"label\": \"Commercial order label\",\r\n    \"orderProgress\": 1,\r\n    \"progressDate\": \"2021-01-15\",\r\n    \"orderDate\": \"2021-01-19\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialOrder",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialOrder"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Commercial Order 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.globals.set(\"orderTwoId\",pm.response.json().commercialOrderDto.id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"orderTypeCode\": \"{{orderTypeCode}}\",\r\n    \"billingAccountCode\": \"{{billableAccountCode}}\",\r\n    \"sellerCode\": \"{{sellerCode}}\",\r\n    \"label\": \"Commercial order label\",\r\n    \"orderProgress\": 1,\r\n    \"progressDate\": \"2021-01-15\",\r\n    \"orderDate\": \"2021-01-19\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialOrder",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialOrder"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update Commercial Order Status to Finalized",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialOrder/{{orderTwoId}}/status/update?statusTarget=Finalized",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialOrder",
+										"{{orderTwoId}}",
+										"status",
+										"update"
+									],
+									"query": [
+										{
+											"key": "statusTarget",
+											"value": "Finalized"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Commercial Order Status to Completed",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialOrder/{{orderTwoId}}/status/update?statusTarget=Completed",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialOrder",
+										"{{orderTwoId}}",
+										"status",
+										"update"
+									],
+									"query": [
+										{
+											"key": "statusTarget",
+											"value": "Completed"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Validate Commercial Order",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.globals.set(\"orderNumber\",pm.response.json().commercialOrderDto.orderNumber);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialOrder/validate/{{orderTwoId}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialOrder",
+										"validate",
+										"{{orderTwoId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Commercial Order",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/commercialOrder/{{orderNumber}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialOrder",
+										"{{orderNumber}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Duplicate Commercial Order",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialOrder/duplicate/{{orderTwoId}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialOrder",
+										"duplicate",
+										"{{orderTwoId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cancel Commercial Order 2",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialOrder/{{orderTwoId}}/status/update?statusTarget=Canceled",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialOrder",
+										"{{orderTwoId}}",
+										"status",
+										"update"
+									],
+									"query": [
+										{
+											"key": "statusTarget",
+											"value": "Canceled"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List Commercial Orders",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "opencell.admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "opencell.admin",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"filters\": {\r\n    \"orderTypeCode\": \"{{orderTypeCode}}\"\r\n  }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialOrder/list",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialOrder",
+										"list"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Quote Process",
+			"item": [
+				{
+					"name": "Create a Quote",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{quoteCode}}\",\r\n    \"description\": \"This is a quote test description\",\r\n    \"quoteDate\": \"2020-12-14\",\r\n    \"applicantAccountCode\": \"{{billableAccountCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"sellerCode\": \"{{sellerCode}}\",\r\n    \"quoteVersion\": {\r\n        \"shortDescription\": \"Quote version description\",\r\n        \"quoteCode\": \"{{quoteCode}}\",\r\n        \"currentVersion\": 1,\r\n        \"statusDate\": \"2020-12-14\",\r\n        \"startDate\": \"2020-12-14\",\r\n        \"endDate\": \"2020-12-31\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quote/false",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"false"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read The Quote",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/quote/{{quoteCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"{{quoteCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update The Quote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{quoteCode}}\",\r\n    \"description\": \"This is an updated quote test description\",\r\n    \"quoteDate\": \"2020-12-14\",\r\n    \"status\": \"Approved\",\r\n    \"applicantAccountCode\": \"{{billableAccountCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"sellerCode\": \"{{sellerCode}}\",\r\n    \"quoteVersion\": {\r\n        \"quoteCode\": \"{{quoteCode}}\",\r\n        \"shortDescription\": \"Quote version updated description\",\r\n        \"currentVersion\": 1,\r\n        \"status\": \"PUBLISHED\",\r\n        \"statusDate\": \"2020-12-14\",\r\n        \"startDate\": \"2020-12-14\",\r\n        \"endDate\": \"2020-12-31\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quote/false",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"false"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Updated Quote",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/quote/{{quoteCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"{{quoteCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Quotes with Criteria",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"filters\": {\r\n    \"status\": \"Approved\"\r\n  },\r\n  \"sortOrder\": \"ASCENDING\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quote/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Accounting Article",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.globals.set(\"accountArticleId\",pm.response.json().id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{accountingArticleCode}}\",\r\n    \"description\": \"This is the accounting article desc\",\r\n    \"taxClass\": {\r\n        \"id\": -1\r\n    },\r\n    \"invoiceSubCategory\": {\r\n        \"id\": -2\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/article",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"article"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read The Accounting Article",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.globals.set(\"accounteArticleId\",pm.response.json().id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/v2/article/{{accountingArticleCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"article",
+								"{{accountingArticleCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Accounting Article",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\" : \"{{accounteArticleCode}}\",\r\n    \"description\" : \"This is the accounting article updated desc\",\r\n    \"taxClass\" : {\r\n        \"id\" : -1\r\n    },\r\n    \"invoiceSubCategory\" : {\r\n        \"id\" : -2\r\n    }\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/article/{{accounteArticleId}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"article",
+								"{{accounteArticleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Updated Accounting Article",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/v2/article/{{accountingArticleCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"article",
+								"{{accountingArticleCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Article Mapping",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.globals.set(\"articleMappingOneId\",pm.response.json().id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"ACCOUNT_MAPPING\",\r\n    \"description\": \"This is the article mapping desc\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/articleMapping",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"articleMapping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Article Mapping Line",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"articleMapping\": {\r\n        \"id\": {{articleMappingOneId}}\r\n    },\r\n    \"attributesMapping\": [\r\n        {\r\n            \"attribute\": {\r\n                \"id\": {{billingCycleAttributeId}}\r\n            },\r\n            \"attributeValue\": \"Monthly\"\r\n        },\r\n        {\r\n            \"attribute\": {\r\n                \"id\": {{engagementAttributeId}}\r\n            },\r\n            \"attributeValue\": \"24\"\r\n        }\r\n    ],\r\n    \"product\": {\r\n        \"id\": {{productOneId}}\r\n    },\r\n    \"accountingArticle\": {\r\n        \"id\": {{accountArticleId}}\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/articleMappingLine",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"articleMappingLine"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Accounting Articles by Tax Class",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"taxClass.id\" : -1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/article/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"article",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Quote Offer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.globals.set(\"quoteOfferId\", pm.response.json().quoteOfferDto.quoteOfferId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{quoteVersion}},\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\":{{productOneVersion}},\r\n            \"quoteVersion\": {{quoteVersion}},\r\n            \"quantity\": 1,\r\n            \"quoteAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 24\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quote/quoteItem",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"quoteItem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Quote Offer",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quoteOfferId\": {{quoteOfferId}},\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{quoteVersion}},\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productTwoVersion}},\r\n            \"quoteVersion\": {{quoteVersion}},\r\n            \"quantity\": 1,\r\n            \"quoteAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Annually\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 12\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quote/quoteItem",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"quoteItem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Quote Offer /!\\",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/quote/quoteItem??quoteItemId={{quoteOfferId}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"quoteItem"
+							],
+							"query": [
+								{
+									"key": "?quoteItemId",
+									"value": "{{quoteOfferId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Quote Quotation /!\\",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/quote/quoteQuotation?quoteCode={{quoteCode}}&quoteVersion={{quoteVersion}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"quoteQuotation"
+							],
+							"query": [
+								{
+									"key": "quoteCode",
+									"value": "{{quoteCode}}"
+								},
+								{
+									"key": "quoteVersion",
+									"value": "{{quoteVersion}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Place The Order",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quote/placeOrder/{{quoteCode}}/{{quoteVersion}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"placeOrder",
+								"{{quoteCode}}",
+								"{{quoteVersion}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update The Commercial Order [UA Added]",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"{{orderOneId}}\",\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"orderTypeCode\": \"{{orderTypeCode}}\",\r\n    \"billingAccountCode\": \"{{billableAccountCode}}\",\r\n    \"userAccountCode\":\"{{billableAccountCode}}\",\r\n    \"sellerCode\": \"{{sellerCode}}\",\r\n    \"label\": \"This is the updated commercial order label\",\r\n    \"progressDate\": \"2021-02-15\",\r\n    \"orderDate\": \"2021-02-28\",\r\n    \"orderProgress\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/commercialOrder",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"commercialOrder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Commercial Orders",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filters\": {}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/commercialOrder/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"commercialOrder",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate Commercial Order",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/commercialOrder/validateOrder/{{orderOneId}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"commercialOrder",
+								"validateOrder",
+								"{{orderOneId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generate XML",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/quote/generateQuoteXml?quoteCode={{quoteCode}}&currentVersion={{quoteVersion}}&generatePdf=false",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"generateQuoteXml"
+							],
+							"query": [
+								{
+									"key": "quoteCode",
+									"value": "{{quoteCode}}"
+								},
+								{
+									"key": "currentVersion",
+									"value": "{{quoteVersion}}"
+								},
+								{
+									"key": "generatePdf",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List products w/ Customer & Commercial Rules",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"selectedProducts\": [\r\n        {\r\n            \"productCode\": \"{{billingCycleAttribute}}\"\r\n        }\r\n    ],\r\n    \"customerContextDTO\": {\r\n        \"requestedTagTypes\": [\r\n            \"{{tagOneCode}}\"\r\n        ]\r\n    }\r\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/cpq/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"cpq",
+								"list"
+							]
+						},
+						"description": "List products with the customer context and commercial Rules"
+					},
+					"response": []
+				},
+				{
+					"name": "List Offers matched w/ Customer  & Seller Contexts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"billingAccountCode\": \"{{billableAccountCode}}\",\r\n    \"sellerTags\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagTwoCode}}\"\r\n    ],\r\n    \"customerTags\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ],\r\n    \"requestedTagTypes\": [\r\n        \"{{tagTypeVipCode}}\"\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/offerTemplate/cpq/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"offerTemplate",
+								"cpq",
+								"list"
+							]
+						},
+						"description": "List all offers that matching the customer and the seller contexts"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "opencell.admin",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "opencell.admin",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Status is SUCCESS\", () => {",
+					"  pm.expect(pm.response.code).to.be.oneOf([200,201]);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "contractCode",
+			"value": "TEST_CONTRACT"
+		},
+		{
+			"key": "quoteCode",
+			"value": "TEST_QUOTE"
+		},
+		{
+			"key": "productOneCode",
+			"value": "TEST_PRODUCT_1"
+		},
+		{
+			"key": "productTwoCode",
+			"value": "TEST_PRODUCT_2"
+		},
+		{
+			"key": "groupedAttributeCode",
+			"value": "TEST_GR_ATTRIBUTE"
+		},
+		{
+			"key": "tagTypeOneCode",
+			"value": "TEST_TAG_TYPE_1"
+		},
+		{
+			"key": "tagTypeTwoCode",
+			"value": "TEST_TAG_TYPE_2"
+		},
+		{
+			"key": "tagOneCode",
+			"value": "TEST_TAG_1"
+		},
+		{
+			"key": "tagTwoCode",
+			"value": "TEST_TAG_2"
+		},
+		{
+			"key": "sellerCode",
+			"value": "SELLER_US"
+		},
+		{
+			"key": "chargeTemplateCode",
+			"value": "REC_CH_TEMPLATE"
+		},
+		{
+			"key": "billableAccountCode",
+			"value": "TEST_C_UA"
+		},
+		{
+			"key": "productLineCode",
+			"value": "TEST_PRODUCT_LINE"
+		},
+		{
+			"key": "billingCycleAttribute",
+			"value": "BILLING_CYCLE_ATTRIBUTE"
+		},
+		{
+			"key": "engagementAttributeCode",
+			"value": "ENGAGEMENT_DURATION_ATTRIBUTE"
+		},
+		{
+			"key": "billingCycleCode",
+			"value": "CYC_INV_MT_1"
+		},
+		{
+			"key": "offerTemplateCode",
+			"value": "OF_CLASSIC_COMMISSION"
+		},
+		{
+			"key": "ppmCode",
+			"value": "TEST_PRICE_MATRIX"
+		},
+		{
+			"key": "contractLineCode",
+			"value": "TEST_CONTRACT_LINE"
+		},
+		{
+			"key": "ppmColumnCode",
+			"value": "PRICE_PLAN_COLUMN"
+		},
+		{
+			"key": "accountingArticleCode",
+			"value": "ACCOUNTING_ARTICLE"
+		},
+		{
+			"key": "engagementColumnCode",
+			"value": "ENGAGEMENT_DURATION_COLUMN"
+		},
+		{
+			"key": "billingCycleColumnCode",
+			"value": "BILLING_CYCLE_COLUMN"
+		},
+		{
+			"key": "commercialRuleOneCode",
+			"value": "COMMERCIAL_RULE_1"
+		},
+		{
+			"key": "commercialRuleTwoCode",
+			"value": "COMMERCIAL_RULE_2"
+		},
+		{
+			"key": "commercialRuleThreeCode",
+			"value": "COMMERCIAL_RULE_3"
+		},
+		{
+			"key": "tagTwoCode",
+			"value": "TEST_TAG_2"
+		},
+		{
+			"key": "tvDecoderProductCode",
+			"value": "TV_DECODER"
+		},
+		{
+			"key": "tvGroupedAttributeCode",
+			"value": "TV_GR_ATTRIBUTE"
+		},
+		{
+			"key": "setupPriceAttribute",
+			"value": "SETUP_PRICE_ATTRIBUTE"
+		},
+		{
+			"key": "brandAttribute",
+			"value": "BRAND_ATTRIBUTE"
+		},
+		{
+			"key": "tvProductCode",
+			"value": "TELEVISION"
+		},
+		{
+			"key": "bouquetsAttribute",
+			"value": "BOUQUETS"
+		},
+		{
+			"key": "tvDecoderOffer",
+			"value": "TV_DECODER_OFFER"
+		},
+		{
+			"key": "tvCommercialRuleCode",
+			"value": "TV_COMMERCIAL_RULE"
+		},
+		{
+			"key": "orderTypeCode",
+			"value": "TEST_ORDER_TYPE"
+		},
+		{
+			"key": "tagTypeVipCode",
+			"value": "TEST_TAG_TYPE_VIP"
+		},
+		{
+			"key": "tagVipCode",
+			"value": "TEST_TAG_VIP"
+		},
+		{
+			"key": "mediaName",
+			"value": "TEST_MEDIA_NAME"
+		},
+		{
+			"key": "contractAccountLevel",
+			"value": "BILLING_ACCOUNT"
+		},
+		{
+			"key": "oneShotTemplateCode",
+			"value": "OS_CH_TEMPLATE"
+		},
+		{
+			"key": "ppmOsCode",
+			"value": "TEST_OS_PRICE_MATRIX"
+		}
+	]
+}
