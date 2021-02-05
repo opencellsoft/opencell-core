@@ -87,7 +87,7 @@ public interface ProductRs extends IBaseRs{
 	 * @return
 	 */
 	@PUT
-	@Path("/")
+	@Path("/{productCode}")
     @Operation(summary = "This endpoint allows to update a product ",
     tags = { "Product" },
     description ="to update the product the status must be DRAFT otherwise exception will be thrown",
@@ -97,7 +97,8 @@ public interface ProductRs extends IBaseRs{
             @ApiResponse(responseCode = "404", description = "Unknown producth"),
             @ApiResponse(responseCode = "400", description = "the status of the product is different to DRAFT")
     })
-	Response updateProduct(@Parameter(description = "product dto for updating a product", required = true) ProductDto productDto);
+	Response updateProduct(@Parameter(description = "code of the product to be updated", required = true) @PathParam("productCode") String productCode, 
+							@Parameter(description = "product dto for updating a product", required = true) ProductDto productDto);
 	
 	/**
 	 * 

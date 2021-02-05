@@ -51,10 +51,10 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 	}
 
 	@Override
-	public Response updateProduct(ProductDto productDto) {
+	public Response updateProduct(String productCode, ProductDto productDto) {
 		GetProductDtoResponse result = new GetProductDtoResponse();
         try {
-        	productApi.updateProduct(productDto);
+        	productApi.updateProduct(productCode, productDto);
         	return Response.ok(result).build();
         } catch(MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());
