@@ -40,6 +40,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 
 /**
  * The Class SubCategoryInvoiceAgregate.
@@ -133,6 +134,9 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
     @Transient
     private List<RatedTransaction> ratedtransactionsToAssociate = new ArrayList<>();
+
+    @Transient
+    private List<InvoiceLine> invoiceLinesToAssociate = new ArrayList<>();
 
     /**
      * Tracks cumulative amounts by tax
@@ -565,5 +569,40 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      */
     public void setAmountsByTax(Map<Tax, BigDecimal> amountsByTax) {
         this.amountsByTax = amountsByTax;
+    }
+
+    public List<InvoiceLine> getInvoiceLinesToAssociate() {
+        return invoiceLinesToAssociate;
+    }
+
+    public void setInvoiceLinesToAssociate(List<InvoiceLine> invoiceLinesToAssociate) {
+        this.invoiceLinesToAssociate = invoiceLinesToAssociate;
+    }
+
+    public void addInvoiceLine(InvoiceLine invoiceLine, boolean isEnterprise, boolean addAmounts) {
+
+        if (this.itemNumber == null) {
+            this.itemNumber = 0;
+        }
+        this.itemNumber++;
+        this.invoiceLinesToAssociate.add(invoiceLine);
+
+        BigDecimal amount = isEnterprise? invoiceLine.getAmountWithoutTax(): invoiceLine.getAmountWithTax();
+        if(addAmounts) {
+            if (isEnterprise) {
+                addAmountWithoutTax(invoiceLine.getAmountWithoutTax());
+            } else {
+                addAmountWithTax(invoiceLine.getAmountWithTax());
+            }
+            addAmountTax(invoiceLine.getAmountTax());
+        }
+        if (amountsByTax == null) {
+            amountsByTax = new HashMap<>();
+        }
+        if (!amountsByTax.containsKey(invoiceLine.getTax())) {
+            amountsByTax.put(invoiceLine.getTax(), amount);
+        } else {
+            amountsByTax.put(invoiceLine.getTax(), amountsByTax.get(invoiceLine.getTax()).add(amount));
+        }
     }
 }

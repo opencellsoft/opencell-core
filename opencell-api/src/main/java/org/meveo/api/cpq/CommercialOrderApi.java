@@ -31,6 +31,7 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
+import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderType;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.order.Order;
@@ -43,6 +44,7 @@ import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.InvoicingPlanService;
+import org.meveo.service.cpq.order.OrderLotService;
 import org.meveo.service.cpq.order.OrderTypeService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderService;
@@ -70,6 +72,7 @@ public class CommercialOrderApi extends BaseApi {
     @Inject private UserAccountService userAccountService;
     @Inject private AccessService accessService;
     @Inject private SubscriptionService subscriptionService;
+    @Inject private OrderLotService orderLotService;
 	
 	public CommercialOrderDto create(CommercialOrderDto orderDto) {
 		checkParam(orderDto);
@@ -142,6 +145,10 @@ public class CommercialOrderApi extends BaseApi {
 			if(orderParent == null)
 				throw new EntityDoesNotExistsException(Order.class, orderDto.getOrderParentCode());
 			order.setOrderParent(orderParent);
+		}
+		if(!Strings.isEmpty(orderDto.getOrderLotCode())) {
+			OrderLot orderLot = loadEntityByCode(orderLotService, orderDto.getOrderLotCode(), OrderLot.class);
+			order.setOrderLot(orderLot);
 		}
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		commercialOrderService.create(order);
@@ -272,6 +279,11 @@ public class CommercialOrderApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Order.class, orderDto.getOrderParentCode());
 			order.setOrderParent(orderParent);
 		}
+
+		if(!Strings.isEmpty(orderDto.getOrderLotCode())) {
+			OrderLot orderLot = loadEntityByCode(orderLotService, orderDto.getOrderLotCode(), OrderLot.class);
+			order.setOrderLot(orderLot);
+		}
 		commercialOrderService.update(order);
 		return new CommercialOrderDto(order);
 	}
@@ -377,7 +389,8 @@ public class CommercialOrderApi extends BaseApi {
 					 .replace("billingAccountCode", "billingAccount.code")
 					 .replace("quoteCode", "quote.code")
 					 .replace("contractCode", "contract.code")
-					 .replace("orderTypeCode", "orderType.code");
+					 .replace("orderTypeCode", "orderType.code")
+					 .replace("orderLotCode", "orderLot.code");
 			 filters.put(key.replace(key, newKey), value);
 		 });
 		 pagingAndFiltering.getFilters().clear();

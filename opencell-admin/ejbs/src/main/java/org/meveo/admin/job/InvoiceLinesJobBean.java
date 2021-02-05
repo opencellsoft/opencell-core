@@ -1,5 +1,12 @@
 package org.meveo.admin.job;
 
+import static java.lang.Long.valueOf;
+import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
+import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
+
 import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.job.AggregationConfiguration.AggregationOption;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
@@ -24,13 +31,6 @@ import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import java.util.*;
-
-import static java.lang.Long.valueOf;
-import static java.lang.String.format;
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
-import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
-import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 
 @Stateless
 public class InvoiceLinesJobBean extends BaseJobBean {
@@ -113,7 +113,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
         String query = "SELECT rt.billing_account__id, \n" +
                 "                 rt.article_id, rt.description as label, SUM(rt.quantity) AS quantity, \n" +
                 "                 rt.unit_amount_without_tax, rt.unit_amount_with_tax,\n" +
-                "                 SUM(rt.amount_without_tax), SUM(rt.amount_with_tax), \n" +
+                "                 SUM(rt.amount_without_tax) as sum_without_Tax, SUM(rt.amount_with_tax) as sum_with_tax, \n" +
                 "                 rt.offer_id, rt.service_instance_id,\n" +
                 "                 rt.usage_date, rt.start_date, rt.end_date,\n" +
                 "                 rt.order_number, rt.subscription_id, rt.tax_percent, " + 
@@ -152,7 +152,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                 InvoiceLine invoiceLine = linesFactory.create(record, aggregationConfiguration);
                 invoiceLinesService.create(invoiceLine);
             } catch (Exception exception) {
-                log.info(exception.getMessage());
+                log.error(exception.getMessage());
             }
         }
     }

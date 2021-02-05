@@ -22,7 +22,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -87,6 +86,7 @@ import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteArticleLine;
+import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteStatusEnum;
@@ -261,6 +261,9 @@ public class CpqQuoteApi extends BaseApi {
 		quoteVersion.setEndDate(quoteVersionDto.getEndDate());
 		quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
 		quoteVersion.setQuote(cpqQuote);
+		if(!Strings.isEmpty(quoteVersionDto.getQuoteLotCode())) {
+			quoteVersion.setQuoteLot(loadEntityByCode(quoteLotService, quoteVersionDto.getQuoteLotCode(), QuoteLot.class));
+		}
 		return quoteVersion;
 	}
 	
@@ -397,10 +400,10 @@ public class CpqQuoteApi extends BaseApi {
         if(quote == null)
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
 
-		/*QuoteValidationTemp temp = new QuoteValidationTemp();
+		QuoteValidationTemp temp = new QuoteValidationTemp();
 		Map<String, Object> methodContext = new HashMap<String, Object>();
 		methodContext.put("cpqQuote", quote);
-		temp.execute(methodContext );*/
+		temp.execute(methodContext );
         return populateToDto(quote,true,true,true);
     }
 
