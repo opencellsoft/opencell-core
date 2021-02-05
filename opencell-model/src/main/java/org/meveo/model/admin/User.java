@@ -19,10 +19,8 @@ package org.meveo.model.admin;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -88,8 +86,10 @@ import org.meveo.model.ISearchable;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "adm_user_seq"), })
 @NamedQueries({ @NamedQuery(name = "User.listUsersInMM", query = "SELECT u FROM User u LEFT JOIN u.roles as role WHERE role.name IN (:roleNames)"),
-        @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u WHERE lower(u.userName)=:username", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
+        @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u WHERE lower(u.userName)=:username", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }),
+        @NamedQuery(name = "User.updateLastLoginById", query = "update User set lastLoginDate=:lastLoginDate where id=:id"),
+        @NamedQuery(name = "User.updateLastLoginByUsername", query = "update User set lastLoginDate=:lastLoginDate where lower(userName)=:username") })
+
 public class User extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
