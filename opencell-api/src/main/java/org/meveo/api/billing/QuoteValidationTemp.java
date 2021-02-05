@@ -174,8 +174,6 @@ public class QuoteValidationTemp extends ModuleScript {
 		orderAttribute.setStringValue(quoteAttribute.getStringValue());
 		orderAttribute.setDateValue(quoteAttribute.getDateValue());
 		orderAttribute.setDoubleValue(quoteAttribute.getDoubleValue());
-		orderAttribute.setCode(GENERIC_CODE);
-		orderAttribute.setCode(orderAttributeService.findDuplicateCode(orderAttribute));
 		orderAttributeService.create(orderAttribute);
 	}
 	

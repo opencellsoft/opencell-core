@@ -2975,6 +2975,16 @@
 				<constraints nullable="false"/>
 			</column>
 		</addColumn>
+
+		<sql>
+			<![CDATA[
+				alter table cpq_invoice_line alter column invoice_id drop not null;
+				alter table cpq_quote_price alter column quote_article_line_id drop not null;
+				alter table cpq_order_item drop column code;
+				alter table cpq_order_item drop column description;
+				alter table cpq_order_item rename column attribute_id to cpq_attribute_id;
+			]]>
+		</sql>
 	</changeSet>
 </databaseChangeLog>
 

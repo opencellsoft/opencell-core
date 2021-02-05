@@ -1,6 +1,7 @@
 package org.meveo.model.cpq.enums;
 
 import org.meveo.model.catalog.ColumnTypeEnum;
+import org.meveo.model.cpq.AttributeValue;
 
 /**
  * 
@@ -38,6 +39,11 @@ public enum AttributeTypeEnum {
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return ColumnTypeEnum.Double;
 		}
+
+		@Override
+		public Object getValue(AttributeValue attributeValue) {
+			return attributeValue.getDoubleValue();
+		}
 	},
 	
 	/** List of multiple numerical value: choice of a multiple values among a list of numbers **/
@@ -62,6 +68,11 @@ public enum AttributeTypeEnum {
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return isRange ? ColumnTypeEnum.Range_Numeric : ColumnTypeEnum.Double;
 		}
+
+		@Override
+		public Object getValue(AttributeValue attributeValue) {
+			return attributeValue.getDoubleValue();
+		}
 	},
 	
 	/** numeric with predefined decimale **/
@@ -77,6 +88,11 @@ public enum AttributeTypeEnum {
 		@Override
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return ColumnTypeEnum.Range_Date;
+		}
+
+		@Override
+		public Object getValue(AttributeValue attributeValue) {
+			return attributeValue.getDateValue();
 		}
 	},
 	
@@ -120,4 +136,8 @@ public enum AttributeTypeEnum {
 	};
 
 	public abstract ColumnTypeEnum getColumnType(Boolean isRange);
+
+	public Object getValue(AttributeValue attributeValue) {
+		return attributeValue.getStringValue();
+	}
 }

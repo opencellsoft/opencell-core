@@ -33,6 +33,7 @@ import static javax.persistence.FetchType.LAZY;
 @Table(name = "cpq_invoice_line", uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_invoice_line_seq")})
+@NamedQuery(name="InvoiceLine.findByCommercialOrder", query = "select il from InvoiceLine il where il.commercialOrder = :commercialOrder")
 public class InvoiceLine extends BusinessEntity {
 
 	@ManyToOne(fetch = LAZY)
