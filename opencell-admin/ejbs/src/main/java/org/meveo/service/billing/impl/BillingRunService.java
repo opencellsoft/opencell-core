@@ -177,6 +177,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
+    private static int rtPaginationSize = 30000;
+
     /**
      * Generate pre invoicing reports.
      *
@@ -959,10 +961,14 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     public List<RatedTransaction> loadRTsByBillingRuns(List<BillingRun> billingRuns){
+        List<RatedTransaction> ratedTransactions = new ArrayList<>();
         for(BillingRun billingRun : billingRuns){
             List<? extends IBillableEntity> billableEntities = getEntitiesToInvoice(billingRun);
+            for (IBillableEntity be :  billableEntities){
+                ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), null, rtPaginationSize));
+            }
         }
-        return null;
+        return ratedTransactions;
     }
 
     /**
@@ -1233,7 +1239,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         for (Object[] result : resultSet) {
             Amounts amounts = new Amounts((BigDecimal) result[0], (BigDecimal) result[1]);
             Long invoiceId = (Long) result[2];
-            
+
             Long baId = (Long) result[3];
             Long caId = (Long) result[4];
             Long custId = (Long) result[5];
@@ -1628,4 +1634,35 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		}
 		return null;
 	}
+
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public void createAggregatesAndInvoiceWithIl(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws BusinessException {
+        List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun);
+        SubListCreator<? extends IBillableEntity> subListCreator;
+        try {
+            subListCreator = new SubListCreator<>(entities, (int) nbRuns);
+        } catch (Exception e1) {
+            throw new BusinessException("cannot create  aggregates and invoice with nbRuns=" + nbRuns);
+        }
+        List<Future<String>> asyncReturns = new ArrayList<>();
+        MeveoUser lastCurrentUser = currentUser.unProxy();
+        while (subListCreator.isHasNext()) {
+            asyncReturns.add(invoicingAsync.createAggregatesAndInvoiceAsyncWithIL(subListCreator.getNextWorkSet(),
+                    billingRun, jobInstanceId, null, lastCurrentUser, false));
+            try {
+                Thread.sleep(waitingMillis);
+            } catch (InterruptedException e) {
+                log.error("Failed to create aggregates and invoice waiting for thread", e);
+                throw new BusinessException(e);
+            }
+        }
+        for (Future<String> futureItsNow : asyncReturns) {
+            try {
+                futureItsNow.get();
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Failed to create aggregates and invoice getting future", e);
+                throw new BusinessException(e);
+            }
+        }
+    }
 }

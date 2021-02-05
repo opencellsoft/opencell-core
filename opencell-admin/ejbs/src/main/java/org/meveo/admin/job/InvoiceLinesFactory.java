@@ -1,5 +1,6 @@
 package org.meveo.admin.job;
 
+import static java.math.BigDecimal.ZERO;
 import static java.util.Optional.ofNullable;
 import static java.util.UUID.randomUUID;
 import static org.meveo.admin.job.AggregationConfiguration.AggregationOption.NO_AGGREGATION;
@@ -12,7 +13,6 @@ import java.util.Map;
 
 import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -20,7 +20,6 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderLotService;
@@ -80,13 +79,15 @@ public class InvoiceLinesFactory {
         invoiceLine.setValueDate((Date) record.get("valueDate"));
         invoiceLine.setOrderNumber((String) record.get("order_number"));
         invoiceLine.setQuantity((BigDecimal) record.get("quantity"));
-        invoiceLine.setDiscountAmount(BigDecimal.ZERO);
-        invoiceLine.setDiscountRate(BigDecimal.ZERO);
+        invoiceLine.setDiscountAmount(ZERO);
+        invoiceLine.setDiscountRate(ZERO);
         BigDecimal taxPercent = (BigDecimal) record.get("tax_percent");
         invoiceLine.setTaxRate(taxPercent);
-        BigDecimal amountWithTax = (BigDecimal) record.get("amount_with_tax");
+        BigDecimal amountWithTax = ofNullable((BigDecimal) record.get("sum_with_tax"))
+                .orElse(ZERO);
         invoiceLine.setAmountWithTax(amountWithTax);
-        invoiceLine.setAmountWithoutTax((BigDecimal) record.get("amount_without_tax"));
+        invoiceLine.setAmountWithoutTax(ofNullable((BigDecimal) record.get("sum_without_Tax"))
+                .orElse(ZERO));
         invoiceLine.setAmountTax(taxPercent.divide(new BigDecimal(100)).multiply(amountWithTax));
         return invoiceLine;
     }

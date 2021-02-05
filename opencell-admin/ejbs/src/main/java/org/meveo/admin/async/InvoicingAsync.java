@@ -377,4 +377,27 @@ public class InvoicingAsync {
 
         return new AsyncResult<Boolean>(allOk);
     }
+
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Future<String> createAggregatesAndInvoiceAsyncWithIL(List<? extends IBillableEntity> entities,
+                                                                BillingRun billingRun, Long jobInstanceId, MinAmountForAccounts minAmountForAccounts,
+                                                                MeveoUser lastCurrentUser, boolean automaticInvoiceCheck) {
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+        for (IBillableEntity entityToInvoice : entities) {
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                break;
+            }
+            try {
+                invoiceService.createAggregatesAndInvoiceWithILInNewTransaction(entityToInvoice, billingRun,
+                        null, null, null, null,
+                        minAmountForAccounts, false, automaticInvoiceCheck);
+            } catch (Exception e1) {
+                log.error("Failed to create invoices for entity {}/{}",
+                        entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
+            }
+        }
+
+        return new AsyncResult<>("OK");
+    }
 }

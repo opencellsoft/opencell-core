@@ -2977,7 +2977,7 @@
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="" author="">
+	<changeSet id="20210204_540" author="TarikFA">
 		<addColumn tableName="cat_charge_template">
 			<column name="attribute_duration_id" type="bigint"/>
 			<column name="attribute_calendar_id" type="bigint"/>
@@ -2990,6 +2990,31 @@
 		<addForeignKeyConstraint baseTableName="cat_charge_template" baseColumnNames="attribute_calendar_id"
 								 constraintName="fk_cat_charge_template_attribute_calendar_id"
 								 referencedTableName="cpq_attribute" referencedColumnNames="id"/>
+
+	</changeSet>
+	<changeSet id="Invoice_lines_job_202001145" author="ZBariki">
+		<preConditions onFail="MARK_RAN">
+			<foreignKeyConstraintExists foreignKeyName="fk_cpq_invoice_line_invoice_id"/>
+		</preConditions>
+		<dropForeignKeyConstraint baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_invoice_id"/>
+		<addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="cpq_invoice_line"
+								 constraintName="fk_cpq_invoice_line_invoice_id" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_invoice" />
+	</changeSet>
+	<changeSet id="Invoicing_job_20210205_45" author="ZBariki">
+		<addColumn tableName="cpq_invoice_line">
+			<column name="status" type="varchar(255)">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+		<addColumn tableName="billing_rated_transaction">
+			<column name="invoice_line_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="invoice_line_id" baseTableName="billing_rated_transaction"
+								 constraintName="fk_billing_rated_transaction_invoice_line_id" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
 	</changeSet>
 </databaseChangeLog>
 
