@@ -18,15 +18,6 @@
 
 package org.meveo.api.account;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -36,38 +27,30 @@ import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.account.UserAccountsDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
-import org.meveo.api.exception.BusinessApiException;
-import org.meveo.api.exception.DeleteReferencedEntityException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.EntityNotAllowedException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.*;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.apiv2.generic.GenericResourceAPIv1Impl;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.AccountStatusEnum;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.ProductInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.ProductInstanceService;
-import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -276,7 +259,7 @@ public class UserAccountApi extends AccountEntityApi {
         }
 
         UserAccountsDto result = new UserAccountsDto();
-        List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
+        List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount, GenericResourceAPIv1Impl.getPaginationConfiguration());
         if (userAccounts != null) {
             for (UserAccount ua : userAccounts) {
                 result.getUserAccount().add(accountHierarchyApi.userAccountToDto(ua));
