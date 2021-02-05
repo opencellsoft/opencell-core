@@ -31,6 +31,7 @@ import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.CustomerAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericResourceAPIv1Impl;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -114,6 +115,7 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
     @Override
     public CustomerAccountsResponseDto listByCustomer(String customerCode) {
         CustomerAccountsResponseDto result = new CustomerAccountsResponseDto();
+        result.setPaging( GenericResourceAPIv1Impl.getPagingAndFiltering() );
 
         try {
             result.setCustomerAccounts(customerAccountApi.listByCustomer(customerCode));

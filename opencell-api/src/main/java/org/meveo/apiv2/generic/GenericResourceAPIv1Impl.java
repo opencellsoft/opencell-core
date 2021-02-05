@@ -91,8 +91,16 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     }
 
     public void generatePagingConfig(PagingAndFiltering pagingAndFiltering){
-        paginationConfig = new PaginationConfiguration(pagingAndFiltering.getOffset().intValue(), pagingAndFiltering.getLimit().intValue(),
-                evaluateFilters(pagingAndFiltering.getFilters(), this.getClass() ), pagingAndFiltering.getFullTextFilter(),
+        Map<String, Object> filters = pagingAndFiltering.getFilters();
+
+        if ( filters == null )
+            paginationConfig = new PaginationConfiguration(pagingAndFiltering.getOffset(), pagingAndFiltering.getLimit(),
+                    null, pagingAndFiltering.getFullTextFilter(),
+                    Collections.emptyList(), pagingAndFiltering.getSortBy(),
+                    pagingAndFiltering.getSortOrder());
+        else
+            paginationConfig = new PaginationConfiguration(pagingAndFiltering.getOffset(), pagingAndFiltering.getLimit(),
+                evaluateFilters( filters, this.getClass() ), pagingAndFiltering.getFullTextFilter(),
                 Collections.emptyList(), pagingAndFiltering.getSortBy(),
                 pagingAndFiltering.getSortOrder());
     }
@@ -181,6 +189,10 @@ System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
             // Handle the special endpoints: get an access point based on a subscriptionCode and an accessCode
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( getPath );
             queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
+
+            queryParamsMap = uriInfo.getQueryParameters();
+            pagingAndFiltering = GenericPagingAndFilteringUtils.constructPagingAndFiltering(queryParamsMap);
+            generatePagingConfig( pagingAndFiltering );
 
             String originalPattern = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.getPattern().toString();
             int indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX );
