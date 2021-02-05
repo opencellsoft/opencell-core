@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("serial")
@@ -59,6 +60,11 @@ public class OrderAdvancementScript extends ModuleScript {
 
             InvoicingPlanItem invoicingPlanItem = itemsToBill.get(0);
 
+            BigDecimal newRateInvoiced = invoicingPlanItem.getRateToBill().add(BigDecimal.valueOf(commercialOrder.getRateInvoiced()));
+            if (newRateInvoiced.compareTo(BigDecimal.valueOf(100)) > 0) {
+                throw new BusinessException("the invoicing plan rate is grater than remaining rate to invoice");
+            }
+
             List<OrderPrice> pricesToBill = orderPriceService.findByOrder(commercialOrder).stream()
                     .filter(this::isPriceRelatedToOneShotChargeTemplateOfTypeOther)
                     .collect(Collectors.toList());
@@ -68,29 +74,26 @@ public class OrderAdvancementScript extends ModuleScript {
                 return;
             }
 
-            if ((invoicingPlanItem.getRateToBill().add(BigDecimal.valueOf(commercialOrder.getRateInvoiced()))).compareTo(BigDecimal.valueOf(100)) > 0) {
-                throw new BusinessException("the invoicing plan rate is grater than remaining rate to invoice");
-            }
-
+            Function<OrderPrice, BigDecimal> getAmountWithoutTax = OrderPrice::getAmountWithoutTax;
             BigDecimal totalAmountWithoutTax = pricesToBill.stream()
-                    .map(OrderPrice::getAmountWithoutTax)
+                    .map(getAmountWithoutTax)
                     .reduce(BigDecimal.valueOf(0), BigDecimal::add);
+            BigDecimal amountWithoutTaxToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithoutTax);
 
             BigDecimal totalAmountWithTax = pricesToBill.stream()
-                    .map(OrderPrice::getAmountWithoutTax)
+                    .map(OrderPrice::getAmountWithTax)
                     .reduce(BigDecimal.valueOf(0), BigDecimal::add);
+            BigDecimal amountWithTaxToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithTax);
 
             BigDecimal totalTax = pricesToBill.stream()
                     .map(OrderPrice::getTaxAmount)
                     .reduce(BigDecimal.valueOf(0), BigDecimal::add);
+            BigDecimal taxAmountToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalTax);
 
             BigDecimal totalTaxRate = pricesToBill.stream()
                     .map(OrderPrice::getTaxRate)
                     .reduce(BigDecimal.valueOf(0), BigDecimal::add);
 
-            BigDecimal amountWithoutTaxToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithoutTax);
-            BigDecimal amountWithTaxToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithTax);
-            BigDecimal taxAmountToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalTax);
 
             String articleCode = ParamBean.getInstance().getProperty("advancePayment.accountingArticleCode", "ACT-STD");
 
@@ -116,8 +119,14 @@ public class OrderAdvancementScript extends ModuleScript {
             invoiceLinesService.create(invoiceLine);
 
             commercialOrder.setOrderProgressTmp(orderProgress);
-            commercialOrder.addInvoicedRate(invoicingPlanItem.getRateToBill());
-            commercialOrderService.update(commercialOrder);
+            commercialOrder.setRateInvoiced(newRateInvoiced.intValue());
+            commercialOrder = commercialOrderService.update(commercialOrder);
+
+            if(newRateInvoiced.compareTo(BigDecimal.valueOf(100)) == 0){
+
+            }
+
+
         }
 
 
