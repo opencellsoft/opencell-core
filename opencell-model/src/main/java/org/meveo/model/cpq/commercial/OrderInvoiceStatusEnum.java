@@ -7,12 +7,13 @@ package org.meveo.model.cpq.commercial;
  */
 public enum OrderInvoiceStatusEnum{
 
+	NEW("New"),
 	DRAFT("Draft"),
 	Validate("Validate");
 	
 	private String value;
 	
-	private OrderInvoiceStatusEnum(String value) {
+	OrderInvoiceStatusEnum(String value) {
 		this.value = value;
 	}
 	
