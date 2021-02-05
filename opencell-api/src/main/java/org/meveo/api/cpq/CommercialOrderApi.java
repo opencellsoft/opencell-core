@@ -390,10 +390,10 @@ public class CommercialOrderApi extends BaseApi {
 		 result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 		 if(totalCount > 0) {
 			 commercialOrderService.list(paginationConfiguration).stream().forEach(co -> {
-			 	/*if(co.getId() == 3){
+			 	/*if(co.getId() == 1){
 					OrderAdvancementScript temp = new OrderAdvancementScript();
 					Map<String, Object> methodContext = new HashMap<String, Object>();
-					co.setOrderProgress(30);
+					co.setOrderProgress(100);
 					methodContext.put("commercialOrder", co);
 					temp.execute(methodContext );
 				}*/

@@ -4,6 +4,7 @@ import javax.ejb.Stateless;
 
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.PersistenceService;
 
 /**
  * @author Tarik FAKHOURI
@@ -12,6 +13,6 @@ import org.meveo.service.base.BusinessService;
  *
  */
 @Stateless
-public class OrderAttributeService extends BusinessService<OrderAttribute> {
+public class OrderAttributeService extends PersistenceService<OrderAttribute> {
 
 }

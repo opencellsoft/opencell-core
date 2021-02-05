@@ -1,12 +1,11 @@
 package org.meveo.service.billing.impl;
 
-import static java.util.Collections.emptyList;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
@@ -19,14 +18,22 @@ import javax.persistence.NoResultException;
 import java.util.Date;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+
 @Stateless
 public class InvoiceLinesService extends BusinessService<InvoiceLine> {
 
     @Inject
     private FilterService filterService;
 
+    public List<InvoiceLine> findByCommercialOrder(CommercialOrder commercialOrder) {
+        return getEntityManager().createNamedQuery("InvoiceLine.findByCommercialOrder", InvoiceLine.class)
+                .setParameter("commercialOrder", commercialOrder)
+                .getResultList();
+    }
+
     public List<InvoiceLine> listInvoiceLinesToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate,
-                                              Date lastTransactionDate, Filter filter, int pageSize) throws BusinessException {
+                                                       Date lastTransactionDate, Filter filter, int pageSize) throws BusinessException {
         if (filter != null) {
             return (List<InvoiceLine>) filterService.filteredListAsObjects(filter, null);
 

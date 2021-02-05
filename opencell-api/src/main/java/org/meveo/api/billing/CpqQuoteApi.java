@@ -77,6 +77,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
@@ -397,10 +398,10 @@ public class CpqQuoteApi extends BaseApi {
         if(quote == null)
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
 
-		QuoteValidationTemp temp = new QuoteValidationTemp();
+		/*QuoteValidationTemp temp = new QuoteValidationTemp();
 		Map<String, Object> methodContext = new HashMap<String, Object>();
 		methodContext.put("cpqQuote", quote);
-		temp.execute(methodContext );
+		temp.execute(methodContext );*/
         return populateToDto(quote,true,true,true);
     }
 
@@ -987,27 +988,7 @@ public class CpqQuoteApi extends BaseApi {
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
                 for (AttributeInstance attributeInstance : serviceInstance.getAttributeInstances()) {
                     Attribute attribute = attributeInstance.getAttribute();
-                    Object value = null;
-                    switch (attribute.getAttributeType()) {
-                        case TEXT:
-                        case LIST_TEXT:
-                        case LIST_MULTIPLE_TEXT:
-                        case LIST_MULTIPLE_NUMERIC: {
-                            value = attributeInstance.getStringValue();
-                            break;
-                        }
-                        case NUMERIC:
-                        case LIST_NUMERIC: {
-                            value = attributeInstance.getDoubleValue();
-                            break;
-                        }
-                        case DATE: {
-                            value = attributeInstance.getDateValue();
-                            break;
-                        }
-                        default:
-                            value = attributeInstance.getStringValue();
-                    }
+                    Object value = attribute.getAttributeType().getValue(attributeInstance);
                     if (value != null) {
                         attributes.put(attributeInstance.getAttribute().getCode(), value);
                     }
