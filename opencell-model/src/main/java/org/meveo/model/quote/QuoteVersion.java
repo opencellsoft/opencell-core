@@ -102,6 +102,15 @@ public class QuoteVersion extends BaseEntity{
     @OneToMany(mappedBy = "quoteVersion", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
 	private List<QuoteOffer> quoteOffers=new ArrayList<QuoteOffer>();
+    
+
+    /**
+     * quote
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cpq_quote_lot_id")
+    private QuoteLot quoteLot;
+    
 	/**
 	 * @return the quoteVersion
 	 */
@@ -251,6 +260,20 @@ public class QuoteVersion extends BaseEntity{
 	 */
 	public void setQuoteOffers(List<QuoteOffer> quoteOffers) {
 		this.quoteOffers = quoteOffers;
+	}
+
+	/**
+	 * @return the quoteLot
+	 */
+	public QuoteLot getQuoteLot() {
+		return quoteLot;
+	}
+
+	/**
+	 * @param quoteLot the quoteLot to set
+	 */
+	public void setQuoteLot(QuoteLot quoteLot) {
+		this.quoteLot = quoteLot;
 	}
 
 	

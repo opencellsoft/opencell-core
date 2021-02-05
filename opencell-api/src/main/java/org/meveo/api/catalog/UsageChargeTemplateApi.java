@@ -109,7 +109,7 @@ public class UsageChargeTemplateApi extends ChargeTemplateApi<UsageChargeTemplat
         }
         
         if(!Strings.isEmpty(postData.getUsageQuantityAttributeCode())) {
-        	chargeTemplate.setUsgaeQuantityAttribute(loadEntityByCode(attributeService, postData.getUsageQuantityAttributeCode(), Attribute.class));
+        	chargeTemplate.setUsageQuantityAttribute(loadEntityByCode(attributeService, postData.getUsageQuantityAttributeCode(), Attribute.class));
         }
 
         super.dtoToEntity(postData, chargeTemplate, isNew);
