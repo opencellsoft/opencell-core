@@ -82,10 +82,13 @@
                 </p:tabView>
 
                 <hf:formButtons execute="#{jobInstanceBean.isAllowedToExecute(jobInstanceBean.entity) and currentUser.hasRole('useJob')}"
-                    stop="#{jobInstanceBean.isTimerRunning(jobInstanceBean.entity)== JobRunningStatusEnum.RUNNING_THIS}" executeLabel="#{messages['job.executeJobNow']}"
-                    stopLabel="#{messages['job.stopJobNow']}" backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true"
-                    submitPartialProcess=":formId:tabView" showEnableDisableButton="#{currentUser.hasRole('useJob')}" showDeleteButton="#{currentUser.hasRole('useJob')}"
-                    killConversationOnSave="false" killConversationOnBack="false" />
+                    stop="#{jobInstanceBean.isTimerRunning(jobInstanceBean.entity)== JobRunningStatusEnum.RUNNING_THIS}"
+                    stopByForce="#{jobInstanceBean.isTimerRunning(jobInstanceBean.entity)== JobRunningStatusEnum.RUNNING_THIS}" executeLabel="#{messages['job.executeJobNow']}"
+                    stopLabel="#{messages['action.stop']}" stopConfirmationMessage="#{messages['jobInstance.job.stopConfirmation']}"
+                    stopByForceLabel="#{messages['action.stopNow']}" stopByForceConfirmationMessage="#{messages['jobInstance.job.stopNowConfirmation']}"
+                    backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true" submitPartialProcess=":formId:tabView"
+                    showEnableDisableButton="#{currentUser.hasRole('useJob')}" showDeleteButton="#{currentUser.hasRole('useJob')}" killConversationOnSave="false"
+                    killConversationOnBack="false" />
 
 
             </hftl:formPanel>
@@ -115,6 +118,12 @@
                                 </h:outputText>
                             </p:column>
 
+
+                            <p:column sortBy="#{entity.nbItemsToProcess}" headerText="#{messages['jobExecution.nbToProcess']}" width="10%">
+                                <h:outputText value="#{entity.nbItemsToProcess}" />
+                            </p:column>
+
+
                             <p:column sortBy="#{entity.nbItemsCorrectlyProcessed}" headerText="#{messages['jobExecution.nbOk']}" width="5%">
                                 <h:outputText value="#{entity.nbItemsCorrectlyProcessed}" />
                             </p:column>
@@ -127,6 +136,7 @@
                                 <h:outputText value="#{entity.nbItemsProcessedWithError}" />
                             </p:column>
 
+                            <hftl:column label="#{messages['jobExecution.status']}" field="status.label" isMessage="true" />
                             <hftl:column label="#{messages['jobExecution.report']}" field="report" showTruncated="true" truncateToSize="10000" truncateToInListSize="160" />
 
                         </p:dataTable>
@@ -153,8 +163,10 @@
                             backView="jobInstances" valueIdField="entity.subscription.id" width="15%"
                             rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
                         <hftl:column label="#{messages['invoice.invoiceNumber']}" field="entity.invoiceNumberOrTemporaryNumber" entityView="invoiceDetail" backView="jobInstances"
-                            valueIdField="entity.id" width="20%" rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='Invoice'}" />
-                        <hftl:column label="#{messages['invoice.invoiceDate']}" field="entity.invoiceDate" isDate="true" width="10%" rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='Invoice'}" />
+                            valueIdField="entity.id" width="20%"
+                            rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='Invoice'}" />
+                        <hftl:column label="#{messages['invoice.invoiceDate']}" field="entity.invoiceDate" isDate="true" width="10%"
+                            rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='Invoice'}" />
                         <hftl:column label="#{messages['jobInstance.error.periodFrom']}" field="periodFrom" isDate="true" width="7%"
                             rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
                         <hftl:column label="#{messages['jobInstance.error.periodTo']}" field="periodTo" isDate="true" width="7%"

@@ -18,29 +18,28 @@
 
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.admin.async.SubListCreator;
-import org.meveo.admin.async.UsageRatingAsync;
+import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.EdrService;
-import org.meveo.service.job.Job;
-import org.slf4j.Logger;
+import org.meveo.service.billing.impl.UsageRatingService;
+import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 
 @Stateless
-public class UsageRatingJobBean extends BaseJobBean {
+public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
+
+    private static final long serialVersionUID = 6091764740338888327L;
 
     /**
      * Number of EDRS to process in a single job run
@@ -48,83 +47,64 @@ public class UsageRatingJobBean extends BaseJobBean {
     private static int PROCESS_NR_IN_JOB_RUN = 2000000;
 
     @Inject
-    private Logger log;
-
-    @Inject
     private EdrService edrService;
 
     @Inject
-    private UsageRatingAsync usageRatingAsync;
+    private UsageRatingService usageRatingService;
 
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
+    private Date rateUntilDate = null;
+    private String ratingGroup = null;
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::rateEDR, this::hasMore, null, JobSpeedEnum.FAST);
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbRuns == -1) {
-            nbRuns = (long) Runtime.getRuntime().availableProcessors();
-        }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
-
-        try {
-            Date rateUntilDate = null;
-            String ratingGroup = null;
-            try {
-                rateUntilDate = (Date) this.getParamOrCFValue(jobInstance, "rateUntilDate");
-                ratingGroup = (String) this.getParamOrCFValue(jobInstance, "ratingGroup");
-            } catch (Exception e) {
-                log.warn("Cant get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
-            }
-
-            List<Long> edrIds = edrService.getEDRsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
-
-            result.setNbItemsToProcess(edrIds.size());
-
-            List<Future<String>> futures = new ArrayList<>();
-            SubListCreator<Long> subListCreator = new SubListCreator(edrIds, nbRuns.intValue());
-            log.info("Will rate {} EDRS", edrIds.size());
-
-            MeveoUser lastCurrentUser = currentUser.unProxy();
-            while (subListCreator.isHasNext()) {
-                futures.add(usageRatingAsync.launchAndForget(subListCreator.getNextWorkSet(), result, lastCurrentUser));
-
-                if (subListCreator.isHasNext()) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-            }
-            // Wait for all async methods to finish
-            for (Future<String> future : futures) {
-                try {
-                    future.get();
-
-                } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
-
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
-                    result.addReport(cause.getMessage());
-                    log.error("Failed to execute async method", cause);
-                }
-            }
-
-            // Check if there are any more EDRS to process and mark job as completed if there are none
-            edrIds = edrService.getEDRsToRate(rateUntilDate, ratingGroup, 1);
-            result.setDone(edrIds.isEmpty());
-
-        } catch (Exception e) {
-            log.error("Failed to run usage rating job", e);
-            result.registerError(e.getMessage());
-            result.addReport(e.getMessage());
-        }
+        rateUntilDate = null;
+        ratingGroup = null;
     }
 
+    /**
+     * Initialize job settings and retrieve data to process
+     * 
+     * @param jobExecutionResult Job execution result
+     * @return An iterator over a list of Wallet operation Ids to convert to Rated transactions
+     */
+    private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
+
+        rateUntilDate = null;
+        ratingGroup = null;
+        try {
+            rateUntilDate = (Date) this.getParamOrCFValue(jobInstance, "rateUntilDate");
+            ratingGroup = (String) this.getParamOrCFValue(jobInstance, "ratingGroup");
+        } catch (Exception e) {
+            log.warn("Cant get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
+        }
+
+        List<Long> ids = edrService.getEDRsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
+
+        return Optional.of(new SynchronizedIterator<Long>(ids));
+    }
+
+    /**
+     * Rate EDR usage
+     * 
+     * @param edrId EDR id to rate
+     * @param jobExecutionResult Job execution result
+     */
+    private void rateEDR(Long edrId, JobExecutionResultImpl jobExecutionResult) {
+        usageRatingService.ratePostpaidUsage(edrId);
+    }
+
+    private boolean hasMore(JobInstance jobInstance) {
+        List<Long> ids = edrService.getEDRsToRate(rateUntilDate, ratingGroup, 1);
+        return !ids.isEmpty();
+    }
+
+    @Override
+    protected boolean isProcessItemInNewTx() {
+        return false;
+    }
 }

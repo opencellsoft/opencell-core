@@ -36,7 +36,7 @@ import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
 /**
- * The Class RatedTransactionsJob create RatedTransaction for all OPEN WalletOperations.
+ * Job definition to convert Open Wallet operations to Rated transactions
  * 
  * @author Edward P. Legaspi
  * @author Abdellatif BARI

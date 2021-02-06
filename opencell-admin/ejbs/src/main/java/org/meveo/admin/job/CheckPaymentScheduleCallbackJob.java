@@ -33,9 +33,9 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
-
 /**
- * The Class CheckPaymentScheduleCallbackJob launch check if a payment was rejected or not.
+ * Job definition to check if payment was rejected or not
+ * 
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
@@ -52,12 +52,10 @@ public class CheckPaymentScheduleCallbackJob extends Job {
         checkPaymentScheduleCallbackJobBean.execute(result, jobInstance);
     }
 
-
     @Override
     public MeveoJobCategoryEnum getJobCategory() {
         return MeveoJobCategoryEnum.PAYMENT;
     }
-
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {

@@ -45,12 +45,13 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionError;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.RecurringChargeJobExecutionError;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.service.base.IEntityService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionErrorService;
+import org.meveo.service.job.JobExecutionResultService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.job.RecurringChargeJobExecutionErrorService;
@@ -74,7 +75,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     private JobExecutionService jobExecutionService;
 
     @Inject
-    private RecurringChargeJobExecutionErrorService recurringRatingJobExecutionErrorService;
+    private JobExecutionResultService jobExecutionResultService;
 
     @Inject
     private JobExecutionErrorService jobExecutionErrorService;
@@ -140,26 +141,27 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
     @ActionMethod
     public String execute() {
-        try {
-            jobExecutionService.manualExecute(entity);
-            messages.info(new BundleKey("messages", "info.entity.executed"), entity.getJobTemplate());
-        } catch (Exception e) {
-            messages.error(new BundleKey("messages", "error.execution"));
-            return null;
-        }
+
+        jobExecutionService.executeJob(entity, null, JobLauncherEnum.GUI);
+        messages.info(new BundleKey("messages", "jobInstance.job.laucnhed"), entity.getJobTemplate());
 
         return getEditViewName();
     }
 
     @ActionMethod
     public String stop() {
-        try {
-            jobExecutionService.stopJob(entity);
-            messages.info(new BundleKey("messages", "info.entity.stopped"), entity.getJobTemplate());
-        } catch (Exception e) {
-            messages.error(new BundleKey("messages", "error.execution"));
-            return null;
-        }
+
+        jobExecutionService.stopJob(entity);
+        messages.info(new BundleKey("messages", "jobInstance.job.requestedToStop"), entity.getJobTemplate());
+
+        return getEditViewName();
+    }
+
+    @ActionMethod
+    public String stopByForce() {
+
+        jobExecutionService.stopJobByForce(entity);
+        messages.info(new BundleKey("messages", "jobInstance.job.requestedToStopByForce"), entity.getJobTemplate());
 
         return getEditViewName();
     }
@@ -300,7 +302,7 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
                 @Override
                 protected IPersistenceService<JobExecutionResultImpl> getPersistenceServiceImpl() {
-                    return jobExecutionService;
+                    return jobExecutionResultService;
                 }
 
                 @Override

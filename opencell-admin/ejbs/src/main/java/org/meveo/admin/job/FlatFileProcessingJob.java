@@ -209,13 +209,13 @@ public class FlatFileProcessingJob extends Job {
                 return;
             }
             for (File file : files) {
-                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+                if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                     break;
                 }
 
                 String fileName = file.getName();
-                flatFileProcessingJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext, filenameVariableName, formatTransfo, nbLinesToProcess,
-                    errorAction, nbRuns, waitingMillis);
+                flatFileProcessingJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext, filenameVariableName, formatTransfo,
+                    nbLinesToProcess, errorAction, nbRuns, waitingMillis);
 
                 result.addReport("Processed file: " + fileName);
                 if (oneFilePerJob) {
@@ -225,7 +225,7 @@ public class FlatFileProcessingJob extends Job {
 
             // Process one file at a time
             if (oneFilePerJob && files.length > 1) {
-                result.setDone(false);
+                result.setMoreToProcess(true);
             }
 
         } catch (Exception e) {

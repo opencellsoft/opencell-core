@@ -56,6 +56,7 @@ import org.meveo.service.crm.impl.ImportIgnoredException;
 import org.meveo.service.crm.impl.SubscriptionImportService;
 import org.meveo.service.crm.impl.SubscriptionServiceException;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -121,7 +122,7 @@ public class ImportSubscriptionsJobBean {
         log.info("InputFiles job to import={}", numberOfFiles);
 
         for (File file : files) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
             File currentFile = null;
@@ -188,8 +189,7 @@ public class ImportSubscriptionsJobBean {
         }
 
         for (org.meveo.model.jaxb.subscription.Subscription jaxbSubscription : jaxbSubscriptions.getSubscription()) {
-            i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobInstanceId)) {
                 break;
             }
             try {
@@ -219,6 +219,7 @@ public class ImportSubscriptionsJobBean {
                 nbSubscriptionsError++;
                 log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Error");
             }
+            i++;
         }
 
         generateReport(fileName);

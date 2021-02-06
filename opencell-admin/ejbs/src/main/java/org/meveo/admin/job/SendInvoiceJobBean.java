@@ -19,20 +19,19 @@
 package org.meveo.admin.job;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -40,88 +39,86 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.job.JobExecutionService;
-import org.slf4j.Logger;
+import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 
 /**
- * A bean used to send invoices by Email
+ * /** Job implementation to send invoice PDF by email
  * 
  * @author HORRI Khalid
  * @lastModifiedVersion 7.0
  */
-public class SendInvoiceJobBean extends BaseJobBean {
+public class SendInvoiceJobBean extends IteratorBasedJobBean<Invoice> {
+
+    private static final long serialVersionUID = -6541907298222206427L;
 
     @Inject
-    protected Logger log;
+    private InvoiceService invoiceService;
 
-    @Inject
-    private JobExecutionService jobExecutionService;
+    private String overrideEmailEl;
 
-    @Inject
-    InvoiceService invoiceService;
-
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        Boolean sendDraft = Boolean.FALSE;
-        if(this.getParamOrCFValue(jobInstance, "sendDraft") != null) {
-            sendDraft = (Boolean) this.getParamOrCFValue(jobInstance, "sendDraft");
-        }
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::sendByEmail, null, null, JobSpeedEnum.NORMAL);
+    }
+
+    /**
+     * Initialize job settings and retrieve data to process
+     * 
+     * @param jobExecutionResult Job execution result
+     * @return An iterator over a list of Wallet operation Ids to re-rate
+     */
+    @SuppressWarnings("unchecked")
+    private Optional<Iterator<Invoice>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+
+        boolean sendDraft = (boolean) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "sendDraft", false);
 
         List<String> billingRunCodes = null;
         Date invoiceDateRangeFrom = null;
         Date invoiceDateRangeTo = null;
 
-        if(this.getParamOrCFValue(jobInstance, "SendInvoiceJob_billingCycle") != null){
-            billingRunCodes = ((List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "SendInvoiceJob_billingRun"))
-                    .stream()
-                    .map(EntityReferenceWrapper::getCode)
-                    .collect(Collectors.toList());
+        if (this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "SendInvoiceJob_billingCycle") != null) {
+            billingRunCodes = ((List<EntityReferenceWrapper>) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "SendInvoiceJob_billingRun")).stream().map(EntityReferenceWrapper::getCode)
+                .collect(Collectors.toList());
 
         }
-        if(this.getParamOrCFValue(jobInstance, "invoiceDateRangeFrom") != null){
-           invoiceDateRangeFrom = ValueExpressionWrapper.evaluateExpression((String) this.getParamOrCFValue(jobInstance, "invoiceDateRangeFrom"), new HashMap<>(), Date.class);
+        if (this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "invoiceDateRangeFrom") != null) {
+            invoiceDateRangeFrom = ValueExpressionWrapper.evaluateExpression((String) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "invoiceDateRangeFrom"), new HashMap<>(), Date.class);
         }
-        if(this.getParamOrCFValue(jobInstance, "invoiceDateRangeTo") != null){
-            invoiceDateRangeTo = ValueExpressionWrapper.evaluateExpression((String) this.getParamOrCFValue(jobInstance, "invoiceDateRangeTo"), new HashMap<>(), Date.class);
+        if (this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "invoiceDateRangeTo") != null) {
+            invoiceDateRangeTo = ValueExpressionWrapper.evaluateExpression((String) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "invoiceDateRangeTo"), new HashMap<>(), Date.class);
         }
+
+        overrideEmailEl = (String) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "overrideEmailEl");
+
+        List<Invoice> invoices = invoiceService.findByNotAlreadySentAndDontSend(billingRunCodes, invoiceDateRangeFrom, invoiceDateRangeTo, sendDraft);
+
+        return Optional.of(new SynchronizedIterator<Invoice>(invoices));
+    }
+
+    /**
+     * Send invoice PDF by email
+     * 
+     * @param invoice Invoice to send
+     * @param jobExecutionResult Job execution result
+     */
+    private void sendByEmail(Invoice invoice, JobExecutionResultImpl jobExecutionResult) {
 
         HashMap<Object, Object> userMap = new HashMap<Object, Object>();
-        userMap.put("context", jobInstance);
-        String overrideEmailEl = (String) this.getParamOrCFValue(jobInstance, "overrideEmailEl");
-        try {
+        userMap.put("context", jobExecutionResult.getJobInstance());
 
-            List<Invoice> invoices = invoiceService.findByNotAlreadySentAndDontSend(billingRunCodes, invoiceDateRangeFrom, invoiceDateRangeTo);
-            result.setNbItemsToProcess(invoices.size());
-            int i = 0;
-            for (Invoice invoice : invoices) {
-                String overrideEmail = invoiceService.evaluateOverrideEmail(overrideEmailEl, userMap, invoice);
-                i++;
-                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
-                    break;
-                }
-                if (invoiceService.isDraft(invoice) && !sendDraft) {
-                    log.warn("Sending draft invoice is deactivated");
-                    continue;
-                }
-                if (!hasPdf(invoice)) {
-                    log.warn("Pdf file not found for the invoice:" + invoice.getId());
-                    result.registerWarning("Pdf file not found");
-                    continue;
-                }
-                Boolean isSent = invoiceService.sendByEmail(invoice, MailingTypeEnum.BATCH, overrideEmail);
-                if (!isSent) {
-                    result.registerError("could not send the invoice by Email");
-                    continue;
-                }
-                result.registerSucces();
-            }
+        String overrideEmail = invoiceService.evaluateOverrideEmail(overrideEmailEl, userMap, invoice);
 
-        } catch (BusinessException e) {
-            log.error("Failed to run the job : SendInvoiceJob", e);
-            result.registerError(e.getMessage());
+        if (!hasPdf(invoice)) {
+            throw new ValidationException("Pdf file not found for Invoice " + invoice.getId());
         }
 
+        invoice = invoiceService.retrieveIfNotManaged(invoice);
+
+        boolean isSent = invoiceService.sendByEmail(invoice, MailingTypeEnum.BATCH, overrideEmail);
+        if (!isSent) {
+            throw new ValidationException("Could not send Invoice " + invoice.getId());
+        }
     }
 
     private boolean hasPdf(Invoice invoice) {

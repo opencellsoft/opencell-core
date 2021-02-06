@@ -35,6 +35,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.BaseJobBean;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
@@ -46,12 +47,13 @@ import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.slf4j.Logger;
 
 @Stateless
-public class DWHQueryBean {
+public class DWHQueryBean extends BaseJobBean{
 
     @Inject
     private MeasurableQuantityService mqService;
@@ -120,8 +122,7 @@ public class DWHQueryBean {
         
         int ji = 0;
         for (MeasurableQuantity mq : mqList) {
-            ji++;
-            if (ji % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            if (ji % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
             if (StringUtils.isBlank(mq.getSqlQuery())) {
@@ -206,6 +207,7 @@ public class DWHQueryBean {
                 result.registerError("Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query: " + e.getMessage());
                 log.error("Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query", e);
             }
+            ji++;
         }
     }
 }

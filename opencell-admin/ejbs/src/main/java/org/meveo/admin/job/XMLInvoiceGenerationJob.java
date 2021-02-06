@@ -37,10 +37,10 @@ import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
 /**
- * The Class XMLInvoiceGenerationJob generate XML for all valid invoices that dont have it..
+ * Job definition to generate invoice XML for all valid invoices that don't have it
  * 
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @author Andrius Karpavicius
  */
 @Stateless
 public class XMLInvoiceGenerationJob extends Job {
@@ -52,7 +52,7 @@ public class XMLInvoiceGenerationJob extends Job {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        xmlInvoiceGenerationJobBean.execute(result, jobInstance.getParametres(), jobInstance);
+        xmlInvoiceGenerationJobBean.execute(result, jobInstance);
     }
 
     @Override

@@ -48,6 +48,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -102,7 +103,6 @@ public class ExportAccountsJobBean {
             logResult();
         } catch (JAXBException e) {
             log.error("Failed to export accounts job", e);
-            result.getErrors().add(e.getMessage());
             result.setReport(e.getMessage());
             result.setNbItemsProcessedWithError(nbItems);
         }
@@ -123,12 +123,12 @@ public class ExportAccountsJobBean {
         BillingAccounts dto = new BillingAccounts();
         int i = 0;
         for (org.meveo.model.billing.BillingAccount ba : bas) {
-            i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobInstanceId)) {
                 break;
             }
             BillingAccount billingAcc = billingAccountToDto(ba, dateFormat, jobInstanceId);
             dto.getBillingAccount().add(billingAcc);
+            i++;
         }
         return dto;
     }
@@ -171,11 +171,11 @@ public class ExportAccountsJobBean {
         UserAccounts dto = new UserAccounts();
         int i = 0;
         for (org.meveo.model.billing.UserAccount userAcc : usersAccounts) {
-            i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobInstanceId)) {
                 break;
             }
             dto.getUserAccount().add(userAccountToDto(userAcc, dateFormat));
+            i++;
         }
         return dto;
     }

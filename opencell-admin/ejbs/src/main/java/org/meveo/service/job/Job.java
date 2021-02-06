@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timeout;
@@ -31,6 +30,7 @@ import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
@@ -42,7 +42,6 @@ import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.annotation.RegistryType;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
-import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.event.qualifier.Processed;
 import org.meveo.model.audit.ChangeOriginEnum;
@@ -50,7 +49,9 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.UserService;
@@ -89,6 +90,9 @@ public abstract class Job {
     protected JobExecutionService jobExecutionService;
 
     @Inject
+    protected JobExecutionResultService jobExecutionResultService;
+
+    @Inject
     private JobExecutionInJaasService jobExecutionInJaasService;
 
     @EJB
@@ -115,8 +119,8 @@ public abstract class Job {
     @ApplicationProvider
     protected Provider appProvider;
 
-    @Inject
-    private JobCacheContainerProvider jobCacheContainerProvider;
+    @Resource(lookup = "java:jboss/ee/concurrency/executor/default")
+    ManagedExecutorService executor;
 
     @Inject
     private AuditOrigin auditOrigin;
@@ -132,13 +136,15 @@ public abstract class Job {
      * 
      * @param jobInstance Job instance to execute
      * @param executionResult Job execution results
+     * @return True if job executed completely and no more data is left to process
      * @throws BusinessException business exception
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void execute(JobInstance jobInstance, JobExecutionResultImpl executionResult) throws BusinessException {
+    public JobExecutionResultStatusEnum execute(JobInstance jobInstance, JobExecutionResultImpl executionResult) throws BusinessException {
 
         auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
         auditOrigin.setAuditOriginName(jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
+
         // add counter metrics
         Metadata metadata = new MetadataBuilder().withName("is_running_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode()).build();
         // counter that return 1 when job is running
@@ -146,85 +152,64 @@ public abstract class Job {
         Counter counter = registry.counter(metadata, tgName);
         counter.inc();
 
-        if (executionResult == null) {
-            executionResult = new JobExecutionResultImpl();
-            executionResult.setJobInstance(jobInstance);
-            jobExecutionService.create(executionResult);
-        }
+        JobRunningStatusEnum jobRunningStatus = jobExecutionService.markJobAsRunning(jobInstance, jobInstance.isLimitToSingleNode(), executionResult != null ? executionResult.getId() : null, null);
 
-        JobRunningStatusEnum isRunning = jobCacheContainerProvider.markJobAsRunning(jobInstance.getId(), jobInstance.isLimitToSingleNode());
-        if (isRunning == JobRunningStatusEnum.NOT_RUNNING || (isRunning == JobRunningStatusEnum.RUNNING_OTHER && !jobInstance.isLimitToSingleNode())) {
-            log.info("Starting Job {} of type {}  with currentUser {}. Processors available {}, paralel procesors requested {}. Job parameters {}", jobInstance.getCode(),
-                jobInstance.getJobTemplate(), currentUser.toString(), Runtime.getRuntime().availableProcessors(),
-                customFieldInstanceService.getCFValue(jobInstance, CF_NB_RUNS, false), jobInstance.getParametres());
+        if (jobRunningStatus == JobRunningStatusEnum.NOT_RUNNING || jobRunningStatus == JobRunningStatusEnum.LOCKED_THIS
+                || (!jobInstance.isLimitToSingleNode() && (jobRunningStatus == JobRunningStatusEnum.RUNNING_OTHER || jobRunningStatus == JobRunningStatusEnum.LOCKED_OTHER))) {
+
+            log.info("Starting Job {} of type {}  with currentUser {}. Processors available {}, paralel procesors requested {}. Job parameters {}", jobInstance.getCode(), jobInstance.getJobTemplate(),
+                currentUser.toString(), Runtime.getRuntime().availableProcessors(), customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false), jobInstance.getParametres());
+
+            if (executionResult == null) {
+                executionResult = new JobExecutionResultImpl(jobInstance, JobLauncherEnum.TRIGGER);
+                jobExecutionResultService.persistResult(executionResult);
+            }
 
             try {
                 execute(executionResult, jobInstance);
                 executionResult.close();
 
+                boolean jobCanceled = jobExecutionService.isJobCancelled(jobInstance.getId());
+                boolean moreToProcess = executionResult.isMoreToProcess();
+
+                jobExecutionService.markJobAsFinished(jobInstance);
+
+                executionResult.setStatus(jobCanceled ? JobExecutionResultStatusEnum.CANCELLED : moreToProcess ? JobExecutionResultStatusEnum.COMPLETED_MORE : JobExecutionResultStatusEnum.COMPLETED);
+
                 log.trace("Job {} of type {} executed. Persisting job execution results", jobInstance.getCode(), jobInstance.getJobTemplate());
 
-                Boolean jobCompleted = jobExecutionService.persistResult(this, executionResult, jobInstance);
-                log.info("Job {} of type {} execution finished. Job completed {}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobCompleted);
-                eventJobProcessed.fire(executionResult);
+                jobExecutionResultService.persistResult(executionResult);
 
-                if (jobCompleted != null && jobExecutionService.isJobRunningOnThis(jobInstance)) {
-                    jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
-                    try {
-                        if (!jobCompleted) {
-                            execute(jobInstance, null);
-                        } else if (jobInstance.getFollowingJob() != null) {
-                            MeveoUser lastCurrentUser = currentUser.unProxy();
-                            jobExecutionService.executeNextJob(this, jobInstance, lastCurrentUser);
-                        }
-                    } catch (Exception e) {
-                        if (!jobInstance.isStopOnError()) {
-                            MeveoUser lastCurrentUser = currentUser.unProxy();
-                            jobExecutionService.executeNextJob(this, jobInstance, lastCurrentUser);
-                        }
-                        throw new BusinessException(e);
-                    }
+                log.info("Job {} of type {} execution finished. Job {}", jobInstance.getCode(), jobInstance.getJobTemplate(),
+                    jobCanceled ? "was canceled." : moreToProcess ? "completed, with more data to process." : "completed.");
+
+                if (!moreToProcess) {
+                    eventJobProcessed.fire(executionResult);
                 }
 
-            } catch (Exception e) {
-                log.error("Failed to execute a job {} of type {}", jobInstance.getJobTemplate(), jobInstance.getJobTemplate(), e);
-                throw new BusinessException(e);
-            } finally {
-                counter.inc(-1);
-                jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
-            }
+                return executionResult.getStatus();
 
-        } else {
-            try {
-                log.info("Job {} of type {} execution will be skipped. Reason: isRunning={}", jobInstance.getCode(), jobInstance.getJobTemplate(), isRunning);
-
-                // Mark job a finished. Applies in cases where execution result was already saved to db - like when executing job from API
-                if (!executionResult.isTransient()) {
-                    executionResult.close();
-                    jobExecutionService.persistResult(this, executionResult, jobInstance);
-                }
             } catch (Exception e) {
                 log.error("Failed to execute a job {} of type {}", jobInstance.getJobTemplate(), jobInstance.getJobTemplate(), e);
                 throw new BusinessException(e);
             } finally {
                 // revert counter to return 0 at the end of the job
                 counter.inc(-1);
+                jobExecutionService.markJobAsFinished(jobInstance);
             }
+
+        } else {
+            log.info("Job {} of type {} execution will be skipped. Reason: jobStatus={}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobRunningStatus);
+
+            // Mark job a finished and remove execution result from history
+            executionResult.close();
+            jobExecutionResultService.remove(executionResult);
+
+            // revert counter to return 0 at the end of the job
+            counter.inc(-1);
+
+            return JobExecutionResultStatusEnum.CANCELLED;
         }
-    }
-
-    /**
-     * Execute job instance with results published to a given job execution result entity. Executed in Asynchronous mode.
-     * 
-     * @param jobInstance Job instance to execute
-     * @param result Job execution results
-     * @throws BusinessException business exception
-     */
-    @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void executeInNewTrans(JobInstance jobInstance, JobExecutionResultImpl result) throws BusinessException {
-
-        execute(jobInstance, result);
     }
 
     /**

@@ -52,13 +52,12 @@ import org.meveo.model.NotifiableEntity;
 @Entity
 @Table(name = "job_execution")
 @NotifiableEntity
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "job_execution_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "job_execution_seq"), })
 @NamedQueries({ @NamedQuery(name = "JobExecutionResult.countHistoryToPurgeByDate", query = "select count(*) FROM JobExecutionResultImpl hist WHERE hist.startDate<=:date"),
         @NamedQuery(name = "JobExecutionResult.purgeHistoryByDate", query = "delete JobExecutionResultImpl hist WHERE hist.startDate<=:date"),
         @NamedQuery(name = "JobExecutionResult.countHistoryToPurgeByDateAndJobInstance", query = "select count(*) FROM JobExecutionResultImpl hist WHERE hist.startDate<=:date and hist.jobInstance=:jobInstance"),
-        @NamedQuery(name = "JobExecutionResult.purgeHistoryByDateAndJobInstance", query = "delete JobExecutionResultImpl hist WHERE hist.startDate<=:date and hist.jobInstance=:jobInstance") })
-
+        @NamedQuery(name = "JobExecutionResult.purgeHistoryByDateAndJobInstance", query = "delete JobExecutionResultImpl hist WHERE hist.startDate<=:date and hist.jobInstance=:jobInstance"),
+        @NamedQuery(name = "JobExecutionResult.updateProgress", query = "update JobExecutionResultImpl set nbItemsToProcess=:nbItemsToProcess, nbItemsCorrectlyProcessed=:nbItemsCorrectlyProcessed, nbItemsProcessedWithError=:nbItemsProcessedWithError, nbItemsProcessedWithWarning=:nbItemsProcessedWithWarning, report=:report, status=:status where id=:id") })
 public class JobExecutionResultImpl extends BaseEntity {
     private static final long serialVersionUID = 430457580612075457L;
 
@@ -108,11 +107,11 @@ public class JobExecutionResultImpl extends BaseEntity {
     private long nbItemsProcessedWithError;
 
     /**
-     * True if the job finished processing completely. If false the Jobservice will execute it again immediately
+     * Job execution status
      */
-    @Type(type = "numeric_boolean")
-    @Column(name = "job_done")
-    private boolean done = true;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "job_status", length = 14)
+    private JobExecutionResultStatusEnum status;
 
     /**
      * How job was launched
@@ -140,10 +139,42 @@ public class JobExecutionResultImpl extends BaseEntity {
     private String report;
 
     /**
+     * Indicates that job has not completed fully - there might be more data to process
+     */
+    @Transient
+    private boolean moreToProcess = false;
+
+    /**
+     * Constructor
+     */
+    public JobExecutionResultImpl() {
+
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param jobInstance Job instance
+     */
+    public JobExecutionResultImpl(JobInstance jobInstance, JobLauncherEnum jobLauncher) {
+        this.jobInstance = jobInstance;
+        this.status = JobExecutionResultStatusEnum.RUNNING;
+        this.startDate = new Date();
+        this.jobLauncherEnum = jobLauncher;
+    }
+
+    /**
      * Increment a count of successfully processed items
      */
     public synchronized void registerSucces() {
         nbItemsCorrectlyProcessed++;
+    }
+    
+    /**
+     * Decrement a count of successfully processed items
+     */
+    public synchronized void unRegisterSucces() {
+        nbItemsCorrectlyProcessed--;
     }
 
     /**
@@ -162,7 +193,11 @@ public class JobExecutionResultImpl extends BaseEntity {
      * @param warning Message to log
      */
     public synchronized void registerWarning(String warning) {
-        warnings.add(warning);
+        if (jobInstance.isVerboseReport() && !StringUtils.isBlank(warning)) {
+            addReport(warning);
+            warnings.add(warning);
+        }
+
         nbItemsProcessedWithWarning++;
     }
 
@@ -183,6 +218,7 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
     public synchronized void registerError(String error) {
         if (jobInstance.isVerboseReport() && !StringUtils.isBlank(error)) {
+            addReport(error);
             errors.add(error);
         }
         nbItemsProcessedWithError++;
@@ -210,52 +246,6 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
     public void close() {
         this.endDate = new Date();
-        this.addReport(getErrorsAString());
-        this.addReport(getWarningAString());
-    }
-
-    /**
-     * Create a copy of job execution statistics
-     * 
-     * @param jobInstance Job instance
-     * @param res Job execution statistics
-     * @return A new JobExecutionResultImpl instance
-     */
-    public static JobExecutionResultImpl createFromInterface(JobInstance jobInstance, JobExecutionResultImpl res) {
-        JobExecutionResultImpl result = new JobExecutionResultImpl();
-        result.setJobInstance(jobInstance);
-        result.setEndDate(res.getEndDate());
-        result.setStartDate(res.getStartDate());
-        result.setErrors(res.getErrors());
-        result.setNbItemsCorrectlyProcessed(res.getNbItemsCorrectlyProcessed());
-        result.setNbItemsProcessedWithError(res.getNbItemsProcessedWithError());
-        result.setNbItemsProcessedWithWarning(res.getNbItemsProcessedWithWarning());
-        result.setNbItemsToProcess(res.getNbItemsToProcess());
-        result.setReport(res.getReport());
-        result.setWarnings(res.getWarnings());
-        result.setDone(res.isDone());
-        result.setId(res.getId());
-        return result;
-    }
-
-    /**
-     * Update one JobExecutionResultImpl entity with data from another
-     * 
-     * @param source An entity to update from
-     * @param target An entity to update
-     */
-    public static void updateFromInterface(JobExecutionResultImpl source, JobExecutionResultImpl target) {
-        target.setEndDate(source.getEndDate());
-        target.setStartDate(source.getStartDate());
-        target.setErrors(source.getErrors());
-        target.setNbItemsCorrectlyProcessed(source.getNbItemsCorrectlyProcessed());
-        target.setNbItemsProcessedWithError(source.getNbItemsProcessedWithError());
-        target.setNbItemsProcessedWithWarning(source.getNbItemsProcessedWithWarning());
-        target.setNbItemsToProcess(source.getNbItemsToProcess());
-        target.setReport(source.getReport());
-        target.setWarnings(source.getWarnings());
-        target.setDone(source.isDone());
-        target.setId(source.getId());
     }
 
     /**
@@ -439,29 +429,39 @@ public class JobExecutionResultImpl extends BaseEntity {
     }
 
     /**
+     * Increment a count of items processed with error and log an error always, irrelevant of verbose report flag.
+     * 
+     * @param error Message to log
+     */
+    public synchronized void addErrorReport(String error) {
+        if (!StringUtils.isBlank(error)) {
+            addReport(error);
+            errors.add(error);
+        }
+        nbItemsProcessedWithError++;
+    }
+
+    /**
      * Append message to report
      * 
      * @param messageToAppend A message to append
      */
-
     public synchronized void addReport(String messageToAppend) {
         this.report = (this.report == null ? "" : (this.report + " \n ")) + messageToAppend;
     }
 
     /**
-     * 
-     * @return True if job finished processing all data completely
+     * @return Job execution status
      */
-    public boolean isDone() {
-        return done;
+    public JobExecutionResultStatusEnum getStatus() {
+        return status;
     }
 
     /**
-     * 
-     * @param done True if job finished processing all data completely
+     * @param status Job execution status
      */
-    public void setDone(boolean done) {
-        this.done = done;
+    public void setStatus(JobExecutionResultStatusEnum status) {
+        this.status = status;
     }
 
     /**
@@ -495,33 +495,23 @@ public class JobExecutionResultImpl extends BaseEntity {
     }
 
     /**
-     * @return Errors as a string
+     * @return Indicates that job has not completed fully - there might be more data to process
      */
-    public String getErrorsAString() {
-        StringBuffer errorsBuffer = new StringBuffer();
-        for (String error : errors) {
-            errorsBuffer.append(error + "\n");
-        }
-        return errorsBuffer.toString();
+    public boolean isMoreToProcess() {
+        return moreToProcess;
     }
 
     /**
-     * 
-     * @return Warnings as a string
+     * @param moreToProcess Indicates that job has not completed fully - there might be more data to process
      */
-    public String getWarningAString() {
-        StringBuffer warningBuffer = new StringBuffer();
-        for (String warning : warnings) {
-            warningBuffer.append(warning + "\n");
-        }
-        return warningBuffer.toString();
+    public void setMoreToProcess(boolean moreToProcess) {
+        this.moreToProcess = moreToProcess;
     }
 
     @Override
     public String toString() {
-        return "JobExecutionResultImpl [jobInstanceCode=" + (jobInstance == null ? null : jobInstance.getCode()) + ", startDate=" + startDate + ", endDate=" + endDate
-                + ", nbItemsToProcess=" + nbItemsToProcess + ", nbItemsCorrectlyProcessed=" + nbItemsCorrectlyProcessed + ", nbItemsProcessedWithWarning="
-                + nbItemsProcessedWithWarning + ", nbItemsProcessedWithError=" + nbItemsProcessedWithError + ", done=" + done + ", jobLauncherEnum=" + jobLauncherEnum
-                + ", warnings=" + warnings + ", errors=" + errors + ", report=" + report + "]";
+        return "JobExecutionResultImpl [jobInstanceCode=" + (jobInstance == null ? null : jobInstance.getCode()) + ", startDate=" + startDate + ", endDate=" + endDate + ", nbItemsToProcess=" + nbItemsToProcess
+                + ", nbItemsCorrectlyProcessed=" + nbItemsCorrectlyProcessed + ", nbItemsProcessedWithWarning=" + nbItemsProcessedWithWarning + ", nbItemsProcessedWithError=" + nbItemsProcessedWithError + ", status="
+                + status + ", jobLauncherEnum=" + jobLauncherEnum + ", report=" + report + "]";
     }
 }

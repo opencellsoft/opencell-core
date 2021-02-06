@@ -18,96 +18,68 @@
 
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.async.CheckPaymentScheduleCallbackAsync;
-import org.meveo.admin.async.SubListCreator;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.job.Job;
+import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
+import org.meveo.service.payments.impl.PaymentScheduleInstanceItemService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
-import org.slf4j.Logger;
 
 /**
+ * Job implementation to check if payment was rejected or not
+ * 
  * @author anasseh
- * @lastModifiedVersion 5.2
+ * @author Andrius Karpavicius
  **/
 @Stateless
-public class CheckPaymentScheduleCallbackJobBean extends BaseJobBean {
+public class CheckPaymentScheduleCallbackJobBean extends IteratorBasedJobBean<Long> {
 
-    @Inject
-    private Logger log;
+    private static final long serialVersionUID = 3912010469445989038L;
 
     @Inject
     private RecordedInvoiceService recordedInvoiceService;
 
     @Inject
-    private CheckPaymentScheduleCallbackAsync checkPaymentScheduleCallbackAsync;
+    private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;
 
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbRuns == -1) {
-            nbRuns = (long) Runtime.getRuntime().availableProcessors();
-        }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
-
-        try {
-            List<Long> ids = recordedInvoiceService.queryInvoiceIdsForPS();
-            log.debug("invoices to traite:" + (ids == null ? null : ids.size()));
-
-            List<Future<String>> futures = new ArrayList<Future<String>>();
-            SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
-            log.debug("block to run:" + subListCreator.getBlocToRun());
-            log.debug("nbThreads:" + nbRuns);
-            MeveoUser lastCurrentUser = currentUser.unProxy();
-            while (subListCreator.isHasNext()) {
-                futures.add(checkPaymentScheduleCallbackAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
-                if (subListCreator.isHasNext()) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-            }
-            // Wait for all async methods to finish
-            for (Future<String> future : futures) {
-                try {
-                    future.get();
-                } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
-
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
-                    log.error("Failed to execute async method", cause);
-                }
-            }
-        } catch (Exception e) {
-            log.error("Failed to run accountOperation generation  job", e);
-            result.registerError(e.getMessage());
-        }
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::checkPaymentStatus, null, null, JobSpeedEnum.NORMAL);
     }
 
+    /**
+     * Initialize job settings and retrieve data to process
+     * 
+     * @param jobExecutionResult Job execution result
+     * @return An iterator over a list of invoice Ids to check payment status for
+     */
+    private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+
+        List<Long> ids = recordedInvoiceService.queryInvoiceIdsForPS();
+
+        return Optional.of(new SynchronizedIterator<Long>(ids));
+    }
+
+    /**
+     * Check payment status
+     * 
+     * @param invoiceId Invoice id
+     * @param jobExecutionResult Job execution result
+     */
+    private void checkPaymentStatus(Long invoiceId, JobExecutionResultImpl jobExecutionResult) {
+
+        RecordedInvoice recordedInvoice = recordedInvoiceService.findById(invoiceId);
+        paymentScheduleInstanceItemService.checkPaymentRecordInvoice(recordedInvoice);
+    }
 }

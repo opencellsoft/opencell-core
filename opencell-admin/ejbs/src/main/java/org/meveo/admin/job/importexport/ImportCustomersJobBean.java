@@ -70,6 +70,7 @@ import org.meveo.service.crm.impl.CustomerImportService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ImportWarningException;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 
@@ -176,7 +177,7 @@ public class ImportCustomersJobBean {
         log.info("InputFiles job " + numberOfFiles + " to import");
 
         for (File file : files) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
             File currentFile = null;
@@ -303,8 +304,7 @@ public class ImportCustomersJobBean {
 
                 List<org.meveo.model.jaxb.customer.Customer> customerList = sell.getCustomers().getCustomer();
                  for (org.meveo.model.jaxb.customer.Customer cust : customerList) {
-                    ji++;
-                    if (ji % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                    if (ji % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobInstanceId)) {
                         break;
                     }
                     if (customerCheckError(sell, cust)) {
@@ -315,6 +315,7 @@ public class ImportCustomersJobBean {
 
                     nbCustomers++;
                     createCustomer(fileName, seller, sell, cust, i);
+                    ji++;
                 }
             } catch (Exception e) {
                 createSellerError(sell, ExceptionUtils.getRootCause(e).getMessage());

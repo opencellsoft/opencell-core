@@ -36,7 +36,7 @@ import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
 /**
- * The Class PaymentScheduleProcessingJob, process PaymentScheduleInstanceItems
+ * Job definition to process payment schedules
  * 
  * @author anasseh
  * @author Abdellatif BARI

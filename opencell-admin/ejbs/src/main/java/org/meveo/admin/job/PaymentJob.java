@@ -37,7 +37,7 @@ import org.meveo.model.payments.PaymentGateway;
 import org.meveo.service.job.Job;
 
 /**
- * The Class PaymentJob, create payment or payout for all opened account operations.
+ * Job definition to create payment or payout for all opened account operations.
  * 
  * @author anasseh
  * @author Said Ramli
@@ -48,7 +48,7 @@ import org.meveo.service.job.Job;
 public class PaymentJob extends Job {
 
     private static final String APPLIES_TO_NAME = "JobInstance_PaymentJob";
-    
+
     /** The payment job bean. */
     @Inject
     private PaymentJobBean paymentJobBean;
@@ -187,7 +187,7 @@ public class PaymentJob extends Job {
         fromDueDate.setDefaultValue("");
         fromDueDate.setGuiPosition("tab:Configuration:0;field:8");
         result.put("PaymentJob_fromDueDate", fromDueDate);
-        
+
         CustomFieldTemplate toDueDate = new CustomFieldTemplate();
         toDueDate.setCode("PaymentJob_toDueDate");
         toDueDate.setAppliesTo(APPLIES_TO_NAME);
@@ -198,7 +198,7 @@ public class PaymentJob extends Job {
         toDueDate.setDefaultValue("");
         toDueDate.setGuiPosition("tab:Configuration:0;field:9");
         result.put("PaymentJob_toDueDate", toDueDate);
-        
+
         // CF to set a custom script filtering AOs to pay
         CustomFieldTemplate aoFilterScript = new CustomFieldTemplate();
         final String cfAoFilterScriptCode = "PaymentJob_aoFilterScript";
@@ -212,8 +212,8 @@ public class PaymentJob extends Job {
         aoFilterScript.setDefaultValue("");
         aoFilterScript.setGuiPosition("tab:Configuration:0;field:10");
         result.put(cfAoFilterScriptCode, aoFilterScript);
-        
-        // CF to set a custom script computing Due date range 
+
+        // CF to set a custom script computing Due date range
         CustomFieldTemplate dueDateRangeScript = new CustomFieldTemplate();
         final String cfDueDateRangeScriptCode = "PaymentJob_dueDateRangeScript";
         dueDateRangeScript.setCode(cfDueDateRangeScriptCode);

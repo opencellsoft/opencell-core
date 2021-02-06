@@ -19,6 +19,8 @@
 package org.meveo.admin.job;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -28,6 +30,11 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
+/**
+ * Job definition to match prepaid wallets
+ * 
+ * @author Andrius Karpavicius
+ */
 @Stateless
 public class PrepaidWalletMatchJob extends Job {
 
@@ -35,9 +42,9 @@ public class PrepaidWalletMatchJob extends Job {
     private PrepaidWalletMatchJobBean prepaidWalletMatchJobBean;
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        prepaidWalletMatchJobBean.execute(jobInstance.getParametres(), result);
-
+        prepaidWalletMatchJobBean.execute(result, jobInstance);
     }
 
     @Override

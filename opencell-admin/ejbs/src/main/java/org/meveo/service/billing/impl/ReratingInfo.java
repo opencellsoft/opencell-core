@@ -2,6 +2,8 @@ package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
 import org.meveo.model.catalog.OfferTemplate;
@@ -37,6 +39,11 @@ public class ReratingInfo implements Serializable {
     private Date fromDate;
 
     /**
+     * Additional Wallet operation filtering criteria with field name as a key. Custom field names are prefixed by "CF." value.
+     */
+    private Map<String, Object> additionalCriteria;
+
+    /**
      * @return Offer template identifier
      */
     public Long getOfferTemplateId() {
@@ -64,6 +71,10 @@ public class ReratingInfo implements Serializable {
         return fromDate;
     }
 
+    public Map<String, Object> getAdditionalCriteria() {
+        return additionalCriteria;
+    }
+
     /**
      * Re-rate details
      * 
@@ -71,12 +82,20 @@ public class ReratingInfo implements Serializable {
      * @param serviceTemplate Service template
      * @param chargeType Charge type
      * @param fromDate Starting which date to re-rate
+     * @param additionalCriteria Additional Wallet operation filtering criteria with field name as a key. Custom field names are prefixed by "CF." value.
      */
-    public ReratingInfo(OfferTemplate offerTemplate, ServiceTemplate serviceTemplate, ChargeMainTypeEnum chargeType, Date fromDate) {
+    public ReratingInfo(OfferTemplate offerTemplate, ServiceTemplate serviceTemplate, ChargeMainTypeEnum chargeType, Date fromDate, Object... additionalCriteria) {
         super();
         this.offerTemplateId = offerTemplate.getId();
         this.serviceTemplateId = serviceTemplate.getId();
         this.chargeType = chargeType;
         this.fromDate = fromDate;
+
+        if (additionalCriteria.length > 1) {
+            this.additionalCriteria = new HashMap<>();
+            for (int i = 0; i < additionalCriteria.length; i=i+2) {
+                this.additionalCriteria.put((String) additionalCriteria[i], additionalCriteria[i + 1]);
+            }
+        }
     }
 }

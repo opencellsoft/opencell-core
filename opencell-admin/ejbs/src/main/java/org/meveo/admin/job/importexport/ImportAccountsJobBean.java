@@ -60,6 +60,7 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.crm.impl.AccountImportService;
 import org.meveo.service.crm.impl.ImportWarningException;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -141,7 +142,7 @@ public class ImportAccountsJobBean {
         log.info("InputFiles job " + numberOfFiles + " to import");
 
         for (File file : files) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
             File currentFile = null;
@@ -240,8 +241,7 @@ public class ImportAccountsJobBean {
         }
 
         for (org.meveo.model.jaxb.account.BillingAccount billingAccountDto : billingAccounts.getBillingAccount()) {
-            i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobInstanceId)) {
                 break;
             }
 
@@ -252,6 +252,7 @@ public class ImportAccountsJobBean {
             }
 
             createBillingAccount(seller, billingAccountDto, fileName, i);
+            i++;
         }
 
         generateReport(fileName);

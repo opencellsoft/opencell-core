@@ -18,6 +18,14 @@
 
 package org.meveo.admin.job;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
@@ -27,13 +35,9 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * A Job to send invoices by Email
+ * Job definition to send invoice PDF by email
+ * 
  * @author HORRI Khalid
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -43,14 +47,16 @@ public class SendInvoiceJob extends Job {
 
     @Inject
     SendInvoiceJobBean sendInvoiceJobBean;
+
     /**
      * The actual job execution logic implementation.
      *
-     * @param result      Job execution results
+     * @param result Job execution results
      * @param jobInstance Job instance to execute
      * @throws BusinessException Any exception
      */
     @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         sendInvoiceJobBean.execute(result, jobInstance);
     }

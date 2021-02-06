@@ -159,7 +159,7 @@ public class CustomTableImportJob extends Job {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
+//    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> launchAndForget(String customTableDir, List<File> files, JobExecutionResultImpl result, String parameter, MeveoUser lastCurrentUser)
             throws BusinessException {
 

@@ -40,7 +40,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
-import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 
@@ -103,11 +103,11 @@ public class MeasurableQuantityAggregationJob extends Job {
     private void aggregateMeasuredValues(JobExecutionResultImpl result, StringBuilder report, List<MeasurableQuantity> mq) throws BusinessException {
         int i = 0;
         for (MeasurableQuantity measurableQuantity : mq) {
-            i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
             aggregateMeasuredValues(result, report, measurableQuantity);
+            i++;
         }
     }
 
@@ -115,11 +115,11 @@ public class MeasurableQuantityAggregationJob extends Job {
         BigDecimal mvTotal = BigDecimal.ZERO;
         int i = 0;
         for (MeasuredValue mv : mvList) {
-            i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobInstanceId)) {
                 break;
             }
             mvTotal = mvTotal.add(mv.getValue());
+            i++;
         }
         return mvTotal;
     }

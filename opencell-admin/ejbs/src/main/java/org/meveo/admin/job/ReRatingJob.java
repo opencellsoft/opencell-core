@@ -19,6 +19,8 @@
 package org.meveo.admin.job;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -29,7 +31,7 @@ import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
 /**
- * The Class ReRatingJob re rate WalletOperation that have re_rate status.
+ * Job definition to rerate wallet operations
  */
 @Stateless
 public class ReRatingJob extends Job {
@@ -39,13 +41,13 @@ public class ReRatingJob extends Job {
     private ReRatingJobBean reRatingJobBean;
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        reRatingJobBean.execute(result, "justPrice".equalsIgnoreCase(jobInstance.getParametres()));
+        reRatingJobBean.execute(result, jobInstance);
     }
 
     @Override
     public JobCategoryEnum getJobCategory() {
         return MeveoJobCategoryEnum.RATING;
     }
-
 }

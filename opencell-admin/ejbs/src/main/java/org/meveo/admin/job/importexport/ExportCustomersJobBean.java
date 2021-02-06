@@ -48,6 +48,7 @@ import org.meveo.model.jaxb.customer.Sellers;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -96,12 +97,13 @@ public class ExportCustomersJobBean {
                                            // "yyyy-MM-dd"));
         int i = 0;
         for (org.meveo.model.jaxb.customer.Seller seller : sellers.getSeller()) {
-            i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            
+            if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
             List<Customer> customers = customerService.listBySellerCode(seller.getCode());
             seller.setCustomers(customersToDto(customers));
+            i++;
         }
         int nbItems = sellers.getSeller() != null ? sellers.getSeller().size() : 0;
         result.setNbItemsToProcess(nbItems);
@@ -111,7 +113,6 @@ public class ExportCustomersJobBean {
             logResult();
         } catch (JAXBException e) {
             log.error("Failed to export customers job", e);
-            result.getErrors().add(e.getMessage());
             result.setReport(e.getMessage());
             result.setNbItemsProcessedWithError(nbItems);
         }

@@ -37,7 +37,8 @@ import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
 /**
- * The Class PurgeJob purge old data for job execution history, counter periods .
+ * Job definition to purge old data for job execution history, counter periods.
+ * 
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */

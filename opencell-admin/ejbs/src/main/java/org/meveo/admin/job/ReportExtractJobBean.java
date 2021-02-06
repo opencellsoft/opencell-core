@@ -18,35 +18,33 @@
 
 package org.meveo.admin.job;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.async.ReportExtractAsync;
-import org.meveo.admin.async.SubListCreator;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ReportExtractExecutionException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.finance.ReportExtract;
+import org.meveo.model.finance.ReportExtractExecutionOrigin;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.finance.ReportExtractService;
-import org.meveo.service.job.Job;
-import org.slf4j.Logger;
+import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
+import org.meveo.service.script.finance.ReportExtractScript;
 
 /**
- * List all ReportExtract and dispatched for asynch execution.
+ * Job implementation to run ReportExtracts and generate the file with matching records
  * 
  * @author Edward P. Legaspi
  * @version %I%, %G%
@@ -54,91 +52,88 @@ import org.slf4j.Logger;
  * @lastModifiedVersion 5.1
  **/
 @Stateless
-public class ReportExtractJobBean extends BaseJobBean implements Serializable {
+public class ReportExtractJobBean extends IteratorBasedJobBean<Long> {
 
     private static final long serialVersionUID = 9159856207913605563L;
 
     @Inject
-    private Logger log;
-
-    @Inject
     private ReportExtractService reportExtractService;
 
-    @Inject
-    private ReportExtractAsync reportExtractAsync;
+    private String startDate;
+    private String endDate;
 
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("start in running with parameter={}", jobInstance.getParametres());
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::runReport, null, null, JobSpeedEnum.FAST);
+        startDate = null;
+        endDate = null;
+    }
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbRuns == -1) {
-            nbRuns = (long) Runtime.getRuntime().availableProcessors();
-        }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
+    /**
+     * Initialize job settings and retrieve data to process
+     * 
+     * @param jobExecutionResult Job execution result
+     * @return An iterator over a list of Report Ids to produce reports
+     */
+    private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
         try {
-            Date startDate = null, endDate = null;
-            try {
-                startDate = (Date) this.getParamOrCFValue(jobInstance, "startDate");
-                endDate = (Date) this.getParamOrCFValue(jobInstance, "endDate");
-            } catch (Exception e) {
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
+
+            ParamBean paramBean = ParamBean.getInstance();
+
+            Date date = (Date) this.getParamOrCFValue(jobInstance, "startDate");
+            if (date != null) {
+                startDate = DateUtils.formatDateWithPattern(date, paramBean.getDateFormat());
             }
 
-            // Resolve report extracts from CF value
-            List<Long> reportExtractIds = null;
-            List<EntityReferenceWrapper> reportExtractReferences = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, ReportExtractJob.CF_REPORTS);
-            if (reportExtractReferences != null && !reportExtractReferences.isEmpty()) {
-                reportExtractIds = reportExtractService.findByCodes(reportExtractReferences.stream().map(er -> er.getCode()).collect(Collectors.toList())).stream().map(re -> re.getId()).collect(Collectors.toList());
-
-                // Or use all reports
-            } else {
-                reportExtractIds = reportExtractService.listIds();
+            date = (Date) this.getParamOrCFValue(jobInstance, "endDate");
+            if (date != null) {
+                endDate = DateUtils.formatDateWithPattern(date, paramBean.getDateFormat());
             }
 
-            log.debug("Reports to execute={}" + (reportExtractIds == null ? null : reportExtractIds.size()));
-
-            List<Future<String>> futures = new ArrayList<Future<String>>();
-            SubListCreator subListCreator = new SubListCreator(reportExtractIds, nbRuns.intValue());
-
-            MeveoUser lastCurrentUser = currentUser.unProxy();
-            while (subListCreator.isHasNext()) {
-                futures.add(reportExtractAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, startDate, endDate, lastCurrentUser));
-                if (subListCreator.isHasNext()) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                        Thread.currentThread().interrupt();
-
-                    }
-                }
-            }
-            // Wait for all async methods to finish
-            for (Future<String> future : futures) {
-                try {
-                    future.get();
-                } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
-                    Thread.currentThread().interrupt();
-
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
-                    log.error("Failed to execute async method", cause);
-                }
-            }
         } catch (Exception e) {
-            log.error("Failed to run recurring rating job", e);
-            result.registerError(e.getMessage());
+            log.warn("Cant get customFields for {}", jobInstance, e.getMessage());
         }
-        log.debug("end running RecurringRatingJobBean!");
+
+        // Resolve report extracts from CF value
+        List<Long> ids = null;
+        List<EntityReferenceWrapper> reportExtractReferences = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, ReportExtractJob.CF_REPORTS);
+        if (reportExtractReferences != null && !reportExtractReferences.isEmpty()) {
+            ids = reportExtractService.findByCodes(reportExtractReferences.stream().map(er -> er.getCode()).collect(Collectors.toList())).stream().map(re -> re.getId()).collect(Collectors.toList());
+
+            // Or use all reports
+        } else {
+            ids = reportExtractService.listIds();
+        }
+
+        return Optional.of(new SynchronizedIterator<Long>(ids));
+    }
+
+    /**
+     * Run report
+     * 
+     * @param reportExtractId Report extract ID
+     * @param jobExecutionResult Job execution result
+     */
+    private void runReport(Long reportExtractId, JobExecutionResultImpl jobExecutionResult) {
+
+        ReportExtract reportExtract = reportExtractService.findById(reportExtractId);
+
+        if (startDate != null) {
+            reportExtract.getParams().put(ReportExtractScript.START_DATE, startDate);
+        }
+        if (endDate != null) {
+            reportExtract.getParams().put(ReportExtractScript.END_DATE, endDate);
+        }
+
+        try {
+            reportExtractService.runReport(reportExtract, null, ReportExtractExecutionOrigin.JOB);
+
+        } catch (ReportExtractExecutionException e) {
+            throw new BusinessException(e);
+        }
     }
 }

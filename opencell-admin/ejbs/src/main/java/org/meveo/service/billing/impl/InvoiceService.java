@@ -17,10 +17,10 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
-import static java.util.stream.Collectors.toList;
-import static java.util.Optional.ofNullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -48,7 +48,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -272,12 +271,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private InvoiceSubCategoryService invoiceSubcategoryService;
-    
-    /**
-     * The billing run extension service.
-     */
-    @Inject
-    private BillingRunExtensionService billingRunExtensionService;
 
     @Inject
     private TaxMappingService taxMappingService;
@@ -661,7 +654,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             paymentMethod = resolvePaymentMethod(billingAccount, billingCycle, defaultPaymentMethod, rt);
 
-            String invoiceKey = billingAccount.getId() + "_" + rt.getSeller().getId() + "_" + invoiceType.getId() + "_" + isPrepaid + ((paymentMethod == null)?"":"_" + paymentMethod.getId());
+            String invoiceKey = billingAccount.getId() + "_" + rt.getSeller().getId() + "_" + invoiceType.getId() + "_" + isPrepaid + ((paymentMethod == null) ? "" : "_" + paymentMethod.getId());
             RatedTransactionGroup rtGroup = rtGroups.get(invoiceKey);
 
             if (rtGroup == null) {
@@ -906,7 +899,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     @SuppressWarnings("unchecked")
     private List<Invoice> createAggregatesAndInvoiceFromRTs(IBillableEntity entityToInvoice, BillingRun billingRun, Filter ratedTransactionFilter, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate,
-            boolean isDraft, BillingCycle defaultBillingCycle, BillingAccount billingAccount, PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balance, boolean automaticInvoiceCheck) throws BusinessException {
+            boolean isDraft, BillingCycle defaultBillingCycle, BillingAccount billingAccount, PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balance, boolean automaticInvoiceCheck)
+            throws BusinessException {
 
         List<Invoice> invoiceList = new ArrayList<>();
         boolean moreRatedTransactionsExpected = true;
@@ -974,7 +968,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
 
                     Invoice invoice = invoiceAggregateProcessingInfo.invoice;
-                    
+
                     // Create aggregates.
                     // Indicate that no more RTs to process only in case when all RTs were retrieved for processing in a single query page.
                     // In other case - need to close invoices when all RTs are processed
@@ -1100,7 +1094,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     }
 
-	private void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
+    private void setInitialCollectionDate(Invoice invoice, BillingCycle billingCycle, BillingRun billingRun) {
 
         if (billingCycle.getCollectionDateDelayEl() == null) {
             invoice.setInitialCollectionDate(invoice.getDueDate());
@@ -1151,49 +1145,49 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-	 * @param invoiceList
-	 */
-	private void applyAutomaticInvoiceCheck(List<Invoice> invoiceList, boolean automaticInvoiceCheck) {
-		if (automaticInvoiceCheck) {
-			for (Invoice invoice : invoiceList) {
-				applyAutomaticInvoiceCheck(invoice, automaticInvoiceCheck);
-			}
-		}
-	}
-	
+     * @param invoiceList
+     */
+    private void applyAutomaticInvoiceCheck(List<Invoice> invoiceList, boolean automaticInvoiceCheck) {
+        if (automaticInvoiceCheck) {
+            for (Invoice invoice : invoiceList) {
+                applyAutomaticInvoiceCheck(invoice, automaticInvoiceCheck);
+            }
+        }
+    }
+
     /**
-	 * @param invoice
-	 * @param automaticInvoiceCheck
-	 */
-	private void applyAutomaticInvoiceCheck(Invoice invoice, boolean automaticInvoiceCheck) {
-		if (invoice.getInvoiceType() != null && invoice.getInvoiceType().getInvoiceValidationScript() != null) {
-			ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
-			if (scriptInstance != null) {
-				ScriptInterface script = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
-				if (script != null) {
-					Map<String, Object> methodContext = new HashMap<String, Object>();
-					methodContext.put(Script.CONTEXT_ENTITY, invoice);
-					methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
-					methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
-					methodContext.put("billingRun", invoice.getBillingRun());
-					script.execute(methodContext);
-					Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
-					if(status!=null && status instanceof InvoiceValidationStatusEnum) {
-						if(InvoiceValidationStatusEnum.REJECTED.equals((InvoiceValidationStatusEnum)status)){
-							invoice.setStatus(InvoiceStatusEnum.REJECTED);
-							invoice.setRejectReason((String)methodContext.get(Script.INVOICE_VALIDATION_REASON));
+     * @param invoice
+     * @param automaticInvoiceCheck
+     */
+    private void applyAutomaticInvoiceCheck(Invoice invoice, boolean automaticInvoiceCheck) {
+        if (invoice.getInvoiceType() != null && invoice.getInvoiceType().getInvoiceValidationScript() != null) {
+            ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
+            if (scriptInstance != null) {
+                ScriptInterface script = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
+                if (script != null) {
+                    Map<String, Object> methodContext = new HashMap<String, Object>();
+                    methodContext.put(Script.CONTEXT_ENTITY, invoice);
+                    methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+                    methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+                    methodContext.put("billingRun", invoice.getBillingRun());
+                    script.execute(methodContext);
+                    Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
+                    if (status != null && status instanceof InvoiceValidationStatusEnum) {
+                        if (InvoiceValidationStatusEnum.REJECTED.equals((InvoiceValidationStatusEnum) status)) {
+                            invoice.setStatus(InvoiceStatusEnum.REJECTED);
+                            invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
 
-						} else if(InvoiceValidationStatusEnum.SUSPECT.equals((InvoiceValidationStatusEnum)status)){
-							invoice.setStatus(InvoiceStatusEnum.SUSPECT);
-							invoice.setRejectReason((String)methodContext.get(Script.INVOICE_VALIDATION_REASON));
-						} 
-					}
-				}
-			}
-		}
-	}
+                        } else if (InvoiceValidationStatusEnum.SUSPECT.equals((InvoiceValidationStatusEnum) status)) {
+                            invoice.setStatus(InvoiceStatusEnum.SUSPECT);
+                            invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	/**
+    /**
      * Check if the electronic billing is enabled.
      *
      * @param invoice the invoice.
@@ -1295,14 +1289,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Produce invoice pdf in new transaction.
      *
      * @param invoiceId id of invoice
+     * @param draftWalletOperationsId Wallet operations (ids) to include in a draft invoice
      * @throws BusinessException business exception
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void produceInvoicePdfInNewTransaction(Long invoiceId, List<Long> walletOperationIds) throws BusinessException {
+    public void produceInvoicePdfInNewTransaction(Long invoiceId, List<Long> draftWalletOperationsId) throws BusinessException {
         Invoice invoice = findById(invoiceId);
-        invoice.setDraftRatedTransactions(getDraftRatedTransactions(walletOperationIds));
-        produceInvoicePdf(invoice);
+        produceInvoicePdf(invoice, draftWalletOperationsId);
     }
 
     /**
@@ -1310,11 +1304,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
      *
      *
      * @param invoice Invoice
+     * @param draftWalletOperationsId Wallet operations (ids) to include in a draft invoice
      * @return Update invoice entity
      * @throws BusinessException business exception
      */
-    public Invoice produceInvoicePdf(Invoice invoice) throws BusinessException {
+    public Invoice produceInvoicePdf(Invoice invoice, List<Long> draftWalletOperationsId) throws BusinessException {
 
+        if (draftWalletOperationsId != null) {
+            invoice.setDraftRatedTransactions(getDraftRatedTransactions(draftWalletOperationsId));
+        }
         produceInvoicePdfNoUpdate(invoice);
         invoice.setStatus(InvoiceStatusEnum.GENERATED);
 
@@ -1929,30 +1927,36 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Produce invoice xml in new transaction.
      *
      * @param invoiceId invoice's id
-     * @param draftWalletOperationsId
+     * @param draftWalletOperationsId Wallet operations (ids) to include in a draft invoice
      * @throws BusinessException business exception
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void produceInvoiceXmlInNewTransaction(Long invoiceId, List<Long> draftWalletOperationsId) throws BusinessException {
         Invoice invoice = findById(invoiceId);
-        invoice.setDraftRatedTransactions(getDraftRatedTransactions(draftWalletOperationsId));
-        produceInvoiceXml(invoice);
+        produceInvoiceXml(invoice, draftWalletOperationsId);
     }
 
     /**
      * Produce invoice's XML file and update invoice record in DB.
      *
      * @param invoice Invoice to produce XML for
+     * @param draftWalletOperationsId Wallet operations (ids) to include in a draft invoice
      * @return Update invoice entity
      * @throws BusinessException business exception
      */
-    public Invoice produceInvoiceXml(Invoice invoice) throws BusinessException {
+    public Invoice produceInvoiceXml(Invoice invoice, List<Long> draftWalletOperationsId) throws BusinessException {
+
+        if (draftWalletOperationsId != null) {
+            invoice.setDraftRatedTransactions(getDraftRatedTransactions(draftWalletOperationsId));
+        }
 
         produceInvoiceXmlNoUpdate(invoice);
         invoice.setStatus(InvoiceStatusEnum.GENERATED);
+
         invoice = updateNoCheck(invoice);
         entityUpdatedEventProducer.fire(invoice);
+
         return invoice;
     }
 
@@ -2103,7 +2107,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (regenerate || invoice.getXmlFilename() == null || !isInvoiceXmlExist(invoice)) {
             produceInvoiceXmlNoUpdate(invoice);
         }
-        invoice = produceInvoicePdf(invoice);
+        invoice = produceInvoicePdf(invoice, null);
         return invoice;
     }
 
@@ -2244,7 +2248,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         MinAmountForAccounts minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated(entity, applyMinimumModeEnum);
 
-        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft, generateInvoiceRequestDto.getSkipValidation());
+        List<Invoice> invoices = createAgregatesAndInvoice(entity, null, ratedTxFilter, invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft,
+            generateInvoiceRequestDto.getSkipValidation());
 
         return invoices;
     }
@@ -2301,7 +2306,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void cancelInvoice(Invoice invoice) throws BusinessException {
         cancelInvoice(invoice, true);
     }
-    
+
     /**
      * Cancel invoice without delete.
      *
@@ -2312,145 +2317,144 @@ public class InvoiceService extends PersistenceService<Invoice> {
         cancelInvoice(invoice, false);
     }
 
-	public void cancelInvoice(Invoice invoice, boolean remove) {
-		if (invoice.getRecordedInvoice() != null) {
+    public void cancelInvoice(Invoice invoice, boolean remove) {
+        if (invoice.getRecordedInvoice() != null) {
             throw new BusinessException("Can't cancel an invoice that present in AR");
         }
         ratedTransactionService.deleteSupplementalRTs(invoice);
         ratedTransactionService.uninvoiceRTs(invoice);
         invoice.setStatus(InvoiceStatusEnum.CANCELED);
-        if(remove) {
-        	super.remove(invoice);
+        if (remove) {
+            super.remove(invoice);
         } else {
-        	super.update(invoice);
+            super.update(invoice);
         }
         log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
-	}
+    }
 
     public void validateInvoice(Invoice invoice) {
         invoice.setStatus(InvoiceStatusEnum.DRAFT);
         update(invoice);
     }
-    
-	/**
-	 * @param billingRunId
-	 * @param invoices
-	 */
-	public void rebuildInvoices(Long billingRunId, List<Long> invoiceIds) throws BusinessException {
-		List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.REJECTED, InvoiceStatusEnum.SUSPECT));
-		for(Invoice invoice :invoices) {
-			rebuildInvoice(invoice);
-		}
-	}
-	
-	/**
-	 * @param billingRunId
-	 * @param invoices
-	 */
-	public void rejectInvoices(Long billingRunId, List<Long> invoiceIds) {
-		List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.SUSPECT ,InvoiceStatusEnum.REJECTED));
-		for(Invoice invoice :invoices) {
-			invoice.setStatus(InvoiceStatusEnum.REJECTED);
-		}
-	}
 
-	
-	/**
-	 * @param billingRunId
-	 * @param invoices
-	 */
-	public void validateInvoices(Long billingRunId, List<Long> invoiceIds) {
-		List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.REJECTED, InvoiceStatusEnum.SUSPECT));
-		for(Invoice invoice :invoices) {
-			validateInvoice(invoice);
-		}
-	}
-	
-	/**
-	 * @param billingRunId
-	 */
-	public void deleteInvoices(Long billingRunId) {
-		BillingRun br = getBrById(billingRunId);
-		deleteInvoicesByStatus(br, Arrays.asList(InvoiceStatusEnum.CANCELED));
-	}
+    /**
+     * @param billingRunId
+     * @param invoices
+     */
+    public void rebuildInvoices(Long billingRunId, List<Long> invoiceIds) throws BusinessException {
+        List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.REJECTED, InvoiceStatusEnum.SUSPECT));
+        for (Invoice invoice : invoices) {
+            rebuildInvoice(invoice);
+        }
+    }
 
-	/**
-	 * @param billingRunId
-	 * @param invoices
-	 */
-	public void cancelInvoices(Long billingRunId, List<Long> invoiceIds, Boolean deleteCanceledInvoices) {
-		
-		List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.REJECTED));
-		invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
-		if(deleteCanceledInvoices) {
-			deleteInvoices(billingRunId);
-		}
-	}
+    /**
+     * @param billingRunId
+     * @param invoices
+     */
+    public void rejectInvoices(Long billingRunId, List<Long> invoiceIds) {
+        List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.SUSPECT, InvoiceStatusEnum.REJECTED));
+        for (Invoice invoice : invoices) {
+            invoice.setStatus(InvoiceStatusEnum.REJECTED);
+        }
+    }
 
-	/**
-	 * @param billingRunId
-	 * @param invoiceIds
-	 */
-	public void moveInvoices(Long billingRunId, List<Long> invoiceIds) {
-		List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.REJECTED, InvoiceStatusEnum.SUSPECT));
-		BillingRun nextBR = billingRunService.findOrCreateNextBR(billingRunId);
-		getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
-	}
-	
-	/**
-	 * @param id
-	 * @param invoices
-	 */
-	public void moveInvoices(List<Invoice> invoices, Long billingRunId) {
-		moveInvoices(billingRunId, invoices.stream().map(x->x.getId()).collect(Collectors.toList()));
-	}
+    /**
+     * @param billingRunId
+     * @param invoices
+     */
+    public void validateInvoices(Long billingRunId, List<Long> invoiceIds) {
+        List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.REJECTED, InvoiceStatusEnum.SUSPECT));
+        for (Invoice invoice : invoices) {
+            validateInvoice(invoice);
+        }
+    }
 
-	private List<Invoice> extractInvalidInvoiceList(Long billingRunId, List<Long> invoiceIds, List<InvoiceStatusEnum> statusList) throws BusinessException {
-		BillingRun br = null;
-		List<Invoice> invoices = new ArrayList<Invoice>();
-		if(billingRunId!=null) {
-			br = getBrById(billingRunId);
-		}
-		if(CollectionUtils.isEmpty(invoiceIds)) {
-			return br != null ? findInvoicesByStatusAndBR(billingRunId, statusList) : new ArrayList<Invoice>();
-		}
-		for (Long invoiceId : invoiceIds) {
-			Invoice invoice = invoiceService.findById(invoiceId);
-			if (invoice == null) {
-				throw new ActionForbiddenException("Invoice with ID " + invoiceId + " does not exist ");
-			} else if (br!= null && invoice.getBillingRun() != br) {
-				throw new ActionForbiddenException("Invoice with ID " + invoiceId + " is not associated to Billing Run with ID " + billingRunId);
-			} else if (!statusList.contains(invoice.getStatus())) {
-				throw new ActionForbiddenException("Action forbidden for invoice with ID " + invoiceId + ": invoice status is " + invoice.getStatus());
-			} else {
-				invoices.add(invoice);
-			}
-		}
-		return invoices;
-	}
+    /**
+     * @param billingRunId
+     */
+    public void deleteInvoices(Long billingRunId) {
+        BillingRun br = getBrById(billingRunId);
+        deleteInvoicesByStatus(br, Arrays.asList(InvoiceStatusEnum.CANCELED));
+    }
 
-	/**
-	 * @param billingRunId
-	 * @param statusList
-	 * @return
-	 */
-	private List<Invoice> findInvoicesByStatusAndBR(Long billingRunId, List<InvoiceStatusEnum> statusList) {
-		return getEntityManager().createNamedQuery("Invoice.findByStatusAndBR", Invoice.class).setParameter("billingRunId", billingRunId).setParameter("statusList", statusList).getResultList();
-	}
+    /**
+     * @param billingRunId
+     * @param invoices
+     */
+    public void cancelInvoices(Long billingRunId, List<Long> invoiceIds, Boolean deleteCanceledInvoices) {
 
-	private BillingRun getBrById(Long billingRunId)  throws BusinessException{
-		BillingRun br = billingRunService.findById(billingRunId);
-		if (br == null) {
-			throw new EntityDoesNotExistsException(BillingRun.class, billingRunId);
-		}
-		return br;
-	}
+        List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.REJECTED));
+        invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
+        if (deleteCanceledInvoices) {
+            deleteInvoices(billingRunId);
+        }
+    }
+
+    /**
+     * @param billingRunId
+     * @param invoiceIds
+     */
+    public void moveInvoices(Long billingRunId, List<Long> invoiceIds) {
+        List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.REJECTED, InvoiceStatusEnum.SUSPECT));
+        BillingRun nextBR = billingRunService.findOrCreateNextBR(billingRunId);
+        getEntityManager().createNamedQuery("Invoice.moveToBRByIds").setParameter("billingRun", nextBR).setParameter("invoiceIds", invoiceIds).executeUpdate();
+    }
+
+    /**
+     * @param id
+     * @param invoices
+     */
+    public void moveInvoices(List<Invoice> invoices, Long billingRunId) {
+        moveInvoices(billingRunId, invoices.stream().map(x -> x.getId()).collect(Collectors.toList()));
+    }
+
+    private List<Invoice> extractInvalidInvoiceList(Long billingRunId, List<Long> invoiceIds, List<InvoiceStatusEnum> statusList) throws BusinessException {
+        BillingRun br = null;
+        List<Invoice> invoices = new ArrayList<Invoice>();
+        if (billingRunId != null) {
+            br = getBrById(billingRunId);
+        }
+        if (CollectionUtils.isEmpty(invoiceIds)) {
+            return br != null ? findInvoicesByStatusAndBR(billingRunId, statusList) : new ArrayList<Invoice>();
+        }
+        for (Long invoiceId : invoiceIds) {
+            Invoice invoice = invoiceService.findById(invoiceId);
+            if (invoice == null) {
+                throw new ActionForbiddenException("Invoice with ID " + invoiceId + " does not exist ");
+            } else if (br != null && invoice.getBillingRun() != br) {
+                throw new ActionForbiddenException("Invoice with ID " + invoiceId + " is not associated to Billing Run with ID " + billingRunId);
+            } else if (!statusList.contains(invoice.getStatus())) {
+                throw new ActionForbiddenException("Action forbidden for invoice with ID " + invoiceId + ": invoice status is " + invoice.getStatus());
+            } else {
+                invoices.add(invoice);
+            }
+        }
+        return invoices;
+    }
+
+    /**
+     * @param billingRunId
+     * @param statusList
+     * @return
+     */
+    private List<Invoice> findInvoicesByStatusAndBR(Long billingRunId, List<InvoiceStatusEnum> statusList) {
+        return getEntityManager().createNamedQuery("Invoice.findByStatusAndBR", Invoice.class).setParameter("billingRunId", billingRunId).setParameter("statusList", statusList).getResultList();
+    }
+
+    private BillingRun getBrById(Long billingRunId) throws BusinessException {
+        BillingRun br = billingRunService.findById(billingRunId);
+        if (br == null) {
+            throw new EntityDoesNotExistsException(BillingRun.class, billingRunId);
+        }
+        return br;
+    }
 
     public void rebuildInvoice(Invoice invoice) {
-    	applyAutomaticInvoiceCheck(Arrays.asList(invoice), true);
-    	update(invoice);
+        applyAutomaticInvoiceCheck(Arrays.asList(invoice), true);
+        update(invoice);
     }
-    
+
     /**
      * Evaluate integer expression.
      *
@@ -2692,8 +2696,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private void recalculateDate(Invoice invoice, BillingRun billingRun, BillingAccount billingAccount, BillingCycle billingCycle) {
 
-        int delay =
-                billingCycle.getInvoiceDateDelayEL() == null ? 0 : InvoiceService.resolveImmediateInvoiceDateDelay(billingCycle.getInvoiceDateDelayEL(), invoice, billingAccount);
+        int delay = billingCycle.getInvoiceDateDelayEL() == null ? 0 : InvoiceService.resolveImmediateInvoiceDateDelay(billingCycle.getInvoiceDateDelayEL(), invoice, billingAccount);
         Date invoiceDate = DateUtils.addDaysToDate(new Date(), delay);
         invoiceDate = DateUtils.setTimeToZero(invoiceDate);
         invoice.setInvoiceDate(invoiceDate);
@@ -2972,7 +2975,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 log.error("The invoice to be sent by Email is null!!");
                 return false;
             }
-            invoice = refreshOrRetrieve(invoice);
+            // invoice = refreshOrRetrieve(invoice);
             if (invoice.getPdfFilename() == null) {
                 log.warn("The Pdf for the invoice is not generated!!");
                 return false;
@@ -3070,30 +3073,35 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Return a list of invoices that not already sent and can be sent : dontsend:false.
      *
-     * @return a list of invoices
-     * @throws BusinessException
-     * @param billingCycleCodes
-     * @param invoiceDateRangeFrom
-     * @param invoiceDateRangeTo
+     * @param billingCycleCodes Billing cycles. Optional.
+     * @param invoiceDateRangeFrom Invoice date range - start. Optional.
+     * @param invoiceDateRangeTo Invoice date range - end. Optional.
+     * @param includeDraft True to include draft invoices
+     * @return A list of invoices matching billing cycles and invoice dates
      */
     @SuppressWarnings("unchecked")
-    public List<Invoice> findByNotAlreadySentAndDontSend(List<String> billingCycleCodes, Date invoiceDateRangeFrom, Date invoiceDateRangeTo) throws BusinessException {
-        List<Invoice> result = new ArrayList<Invoice>();
+    public List<Invoice> findByNotAlreadySentAndDontSend(List<String> billingCycleCodes, Date invoiceDateRangeFrom, Date invoiceDateRangeTo, boolean includeDraft) throws BusinessException {
         QueryBuilder qb = new QueryBuilder(Invoice.class, "i", null);
         qb.addCriterionEntity("alreadySent", false);
         qb.addCriterionEntity("dontSend", false);
-        if(billingCycleCodes != null)
+        if (billingCycleCodes != null) {
             qb.addCriterionEntityInList("billingRun.code", billingCycleCodes);
-        if(invoiceDateRangeFrom != null)
-            qb.addCriterionDateRangeFromTruncatedToDay("invoiceDate", invoiceDateRangeFrom);
-        if(invoiceDateRangeTo != null)
-            qb.addCriterionDateRangeToTruncatedToDay("invoiceDate", invoiceDateRangeTo, false, false);
-        try {
-            result = (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
-        } catch (NoResultException e) {
-            throw new BusinessException(e.getMessage(), e);
         }
-        return result;
+        if (invoiceDateRangeFrom != null) {
+            qb.addCriterionDateRangeFromTruncatedToDay("invoiceDate", invoiceDateRangeFrom);
+        }
+        if (invoiceDateRangeTo != null) {
+            qb.addCriterionDateRangeToTruncatedToDay("invoiceDate", invoiceDateRangeTo, false, false);
+        }
+        if (!includeDraft) {
+            qb.addSql("invoiceNumber IS NOT NULL");
+            InvoiceType draftInvoiceType = invoiceTypeService.getDefaultDraft();
+            if (draftInvoiceType != null) {
+                qb.addCriterionEntity("invoiceType", draftInvoiceType, "<>", false);
+            }
+        }
+
+        return (List<Invoice>) qb.getQuery(getEntityManager()).getResultList();
     }
 
     /**
@@ -3361,7 +3369,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addAmountWithTax(scAggregate.getAmountWithTax());
             invoice.addAmountTax(isExonerated ? BigDecimal.ZERO : scAggregate.getAmountTax());
         }
-        
+
         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
@@ -3495,23 +3503,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
          */
 
         // Update net to pay amount
-        final BigDecimal amountWithTax = invoice.getAmountWithTax()!=null ? invoice.getAmountWithTax() : BigDecimal.ZERO;
-		invoice.setNetToPay(amountWithTax.add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
+        final BigDecimal amountWithTax = invoice.getAmountWithTax() != null ? invoice.getAmountWithTax() : BigDecimal.ZERO;
+        invoice.setNetToPay(amountWithTax.add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
     }
 
     private List<DiscountPlanInstance> fromBillingAccount(BillingAccount billingAccount) {
-        return billingAccount.getUsersAccounts().stream()
-                .map(userAccount -> userAccount.getSubscriptions())
-                .map(this::addSubscriptionDiscountPlan)
-                .flatMap(Collection::stream)
-                .collect(toList());
+        
+        
+        //  return billingAccount.getUsersAccounts().stream().map(userAccount -> userAccount.getSubscriptions()).map(this::addSubscriptionDiscountPlan).flatMap(Collection::stream).collect(toList());
+        // TODO commented out for performance kill
+        return new ArrayList<DiscountPlanInstance>();
     }
 
     private List<DiscountPlanInstance> addSubscriptionDiscountPlan(List<Subscription> subscriptions) {
-        return subscriptions.stream()
-                .map(Subscription::getDiscountPlanInstances)
-                .flatMap(Collection::stream)
-                .collect(toList());
+        return subscriptions.stream().map(Subscription::getDiscountPlanInstances).flatMap(Collection::stream).collect(toList());
     }
 
     private SubCategoryInvoiceAgregate getDiscountAggregates(BillingAccount billingAccount, Invoice invoice, boolean isEnterprise, int rounding, RoundingModeEnum roundingMode, int invoiceRounding,
@@ -3717,7 +3722,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         invoice.setBillingAccount(billingAccount);
         invoice.setSeller(seller);
-        invoice.setStatus(automaticInvoiceCheck? InvoiceStatusEnum.DRAFT : InvoiceStatusEnum.CREATED);
+        invoice.setStatus(automaticInvoiceCheck ? InvoiceStatusEnum.DRAFT : InvoiceStatusEnum.CREATED);
         invoice.setInvoiceType(invoiceType);
         invoice.setPrepaid(isPrepaid);
         invoice.setInvoiceDate(invoiceDate);
@@ -3914,7 +3919,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (ratedTransactions.isEmpty())
                 invoicesToRemove.add(invSubCat);
         }
-        for(InvoiceSubCategory invoiceSubCategory : invoicesToRemove)
+        for (InvoiceSubCategory invoiceSubCategory : invoicesToRemove)
             existingRtsTolinkMap.remove(invoiceSubCategory);
     }
 
@@ -4247,7 +4252,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void deleteInvoices(BillingRun billingRun) {
         getEntityManager().createNamedQuery("Invoice.deleteByBR").setParameter("billingRunId", billingRun.getId()).executeUpdate();
     }
-    
+
     /**
      * Delete invoices associated to a billing run matching status
      *
@@ -4464,21 +4469,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return ValueExpressionWrapper.evaluateExpression(el, Integer.class, parameters);
     }
 
-	/**
-	 * @param billingRun 
-	 * @param toMove
-	 */
-	public void moveInvoicesByStatus(BillingRun billingRun, List<InvoiceStatusEnum> toMove) {
-		BillingRun nextBR = billingRunService.findOrCreateNextBR(billingRun.getId());
-		getEntityManager().createNamedQuery("Invoice.moveToBR").setParameter("nextBR", nextBR).setParameter("billingRunId", billingRun.getId()).setParameter("statusList", toMove).executeUpdate();
-	}
+    /**
+     * @param billingRun
+     * @param toMove
+     */
+    public void moveInvoicesByStatus(BillingRun billingRun, List<InvoiceStatusEnum> toMove) {
+        BillingRun nextBR = billingRunService.findOrCreateNextBR(billingRun.getId());
+        getEntityManager().createNamedQuery("Invoice.moveToBR").setParameter("nextBR", nextBR).setParameter("billingRunId", billingRun.getId()).setParameter("statusList", toMove).executeUpdate();
+    }
 
-	/**
-	 * @param toCancel
-	 */
-	public void cancelInvoicesByStatus(BillingRun billingRun, List<InvoiceStatusEnum> toCancel) {
-		List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), toCancel);
-		invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
-	}
+    /**
+     * @param toCancel
+     */
+    public void cancelInvoicesByStatus(BillingRun billingRun, List<InvoiceStatusEnum> toCancel) {
+        List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), toCancel);
+        invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
+    }
 
 }

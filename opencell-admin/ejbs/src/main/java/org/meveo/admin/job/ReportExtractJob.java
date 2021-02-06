@@ -38,7 +38,7 @@ import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
 /**
- * When executed this job will run all the ReportExtract and generates the file with matching records.
+ * Job definition to run ReportExtracts and generate the file with matching records
  * 
  * @author Edward P. Legaspi
  * @author Abdellatif BARI

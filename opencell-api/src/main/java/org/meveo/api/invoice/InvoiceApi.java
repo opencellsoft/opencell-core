@@ -225,7 +225,7 @@ public class InvoiceApi extends BaseApi {
         }
         // pdf and xml are added to response if requested
         if ((invoiceDTO.isReturnXml() != null && invoiceDTO.isReturnXml()) || (invoiceDTO.isReturnPdf() != null && invoiceDTO.isReturnPdf())) {
-            invoice = invoiceService.produceInvoiceXml(invoice);
+            invoice = invoiceService.produceInvoiceXml(invoice, null);
             String invoiceXml = invoiceService.getInvoiceXml(invoice);
             if ((invoiceDTO.isReturnXml() != null && invoiceDTO.isReturnXml())) {
                 response.setXmlInvoice(invoiceXml);
@@ -234,7 +234,7 @@ public class InvoiceApi extends BaseApi {
         }
 
         if (invoiceDTO.isReturnPdf() != null && invoiceDTO.isReturnPdf()) {
-            invoice = invoiceService.produceInvoicePdf(invoice);
+            invoice = invoiceService.produceInvoicePdf(invoice, null);
             byte[] invoicePdf = invoiceService.getInvoicePdf(invoice);
             response.setPdfInvoice(invoicePdf);
             response.setPdfFilename(invoice.getPdfFilename());
@@ -324,16 +324,6 @@ public class InvoiceApi extends BaseApi {
             billingRun.setBillableBillingAcountNumber(billableBillingAcountNumber);
         }
         return billingRunService.update(billingRun);
-    }
-
-    /**
-     * Validate the Billing run.
-     * 
-     * @param billingRun billing run to validate
-     * @throws BusinessException business exception
-     */
-    public void validateBR(BillingRun billingRun) throws BusinessException {
-        billingRunService.forceValidate(billingRun.getId());
     }
 
     /**
@@ -531,7 +521,7 @@ public class InvoiceApi extends BaseApi {
         }
         if (!invoiceService.isInvoicePdfExist(invoice)) {
             if (generatePdfIfNoExist) {
-                invoiceService.produceInvoicePdf(invoice);
+                invoiceService.produceInvoicePdf(invoice, null);
             }
         }
         return invoiceService.getInvoicePdf(invoice);
@@ -779,7 +769,7 @@ public class InvoiceApi extends BaseApi {
         // Generate XML file if requested, but not available yet
         if (includeXml && !xmlExists) {
             try {
-                invoiceService.produceInvoiceXml(invoice);
+                invoiceService.produceInvoiceXml(invoice, null);
             } catch (BusinessException e) {
                 log.error("Failed to generate XML file for invoice " + invoice.getId());
             }

@@ -1,44 +1,46 @@
 /*
- * (C) Copyright 2015-2020 Opencell SAS (https://opencellsoft.com/) and contributors.
+ * (C) Copyright 2015-2016 Opencell SAS (http://opencellsoft.com/) and contributors.
+ * (C) Copyright 2009-2014 Manaty SARL (http://manaty.net/) and contributors.
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
- * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
- * OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS
- * IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO
- * THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE,
- * YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * This program is not suitable for any direct or indirect application in MILITARY industry
+ * See the GNU Affero General Public License for more details.
  *
- * For more information on the GNU Affero General Public License, please consult
- * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.meveo.service.job;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.cache.JobCacheContainerProvider;
+import org.meveo.cache.JobExecutionStatus;
 import org.meveo.cache.JobRunningStatusEnum;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BaseService;
 
 /**
  * The Class JobExecutionService.
@@ -49,22 +51,59 @@ import org.meveo.service.base.PersistenceService;
  * 
  */
 @Stateless
-public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
+public class JobExecutionService extends BaseService {
 
     /**
-     * Check if job is still running (or is stopped) every 25 records being processed (per thread). Value to be used in jobs that run slow.
+     * Number of times to repeat a job when it did not finish in a first/subsequent runs
      */
-    public static final int CHECK_IS_JOB_RUNNING_EVERY_NR_SLOW = 25;
+    private static final int MAX_TIMES_TO_RUN_INCOMPLETE_JOB = 50;
 
     /**
-     * Check if job is still running (or is stopped) every 50 records being processed (per thread). Value to be in jobs that run slower.
+     * Projected job execution speed. Used to determine the frequency of job status check and progress update
+     * 
+     * @author Andrius Karpavicius
+     *
      */
-    public static final int CHECK_IS_JOB_RUNNING_EVERY_NR = 50;
+    public enum JobSpeedEnum {
 
-    /**
-     * Check if job is still running (or is stopped) every 100 records being processed (per thread). Value to be used in jobs that run faster.
-     */
-    public static final int CHECK_IS_JOB_RUNNING_EVERY_NR_FAST = 100;
+        /**
+         * Slow. Job status check, progress update every 25 records.
+         */
+        SLOW(25, 25),
+        /**
+         * Normal. Job status check, progress update every 50 records.
+         */
+        NORMAL(50, 50),
+
+        /**
+         * Fast. Job status check, progress update every 100 records.
+         */
+        FAST(100, 100);
+
+        int checkNb;
+
+        int updateNb;
+
+        private JobSpeedEnum(int checkNb, int updateNb) {
+
+            this.checkNb = checkNb;
+            this.updateNb = updateNb;
+        }
+
+        /**
+         * @return Check job status every X number of records
+         */
+        public int getCheckNb() {
+            return checkNb;
+        }
+
+        /**
+         * @return Update job progress every X number of records
+         */
+        public int getUpdateNb() {
+            return updateNb;
+        }
+    }
 
     /**
      * job instance service.
@@ -79,240 +118,78 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     @Inject
     private CurrentUserProvider currentUserProvider;
 
-    /**
-     * Persist job execution results.
-     * 
-     * @param job Job implementation
-     * @param result Execution result
-     * @param jobInstance Job instance
-     * @return True if job is completely done. False if any data are left to process.
-     */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Boolean persistResult(Job job, JobExecutionResultImpl result, JobInstance jobInstance) {
-        try {
-            JobExecutionResultImpl resultToPersist = JobExecutionResultImpl.createFromInterface(jobInstance, result);
-            boolean isPersistResult = false;
+    @EJB
+    private JobExecutionService jobExecutionService;
 
-            if ((resultToPersist.getNbItemsCorrectlyProcessed() + resultToPersist.getNbItemsProcessedWithError() + resultToPersist.getNbItemsProcessedWithWarning()) > 0) {
-                log.info(job.getClass().getName() + " " + resultToPersist.toString());
-                isPersistResult = true;
-            } else {
-                log.info("{}/{}: No items were found to process", job.getClass().getName(), jobInstance.getCode());
-                isPersistResult = "true".equals(paramBeanFactory.getInstance().getProperty("meveo.job.persistResult", "true"));
-            }
-            if (isPersistResult) {
-                if (resultToPersist.isTransient()) {
-                    create(resultToPersist);
-                    result.setId(resultToPersist.getId());
-                } else {
-                    // search for job execution result
-                    JobExecutionResultImpl updateEntity = findById(result.getId());
-                    if (updateEntity != null) {
-                        JobExecutionResultImpl.updateFromInterface(result, updateEntity);
-                        update(updateEntity);
-                    }
-                }
-            }
-            return resultToPersist.isDone();
-
-        } catch (Exception e) { // FIXME:BusinessException e) {
-            log.error("Failed to persist job execution results", e);
-        }
-
-        return null;
-    }
+    @Inject
+    private JobExecutionResultService jobExecutionResultService;
 
     /**
-     * Execute next job or continue executing same job if more data is left to process (execution in batches). Executed asynchronously. Current user should be already available
-     * from earlier context.
-     * 
-     * @param job Job implementation
-     * @param jobInstance Job instance
-     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
-     *        expirations), current user might be lost, thus there is a need to reestablish.
-     */
-    @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void executeNextJob(Job job, JobInstance jobInstance, MeveoUser lastCurrentUser) {
-
-        currentUserProvider.reestablishAuthentication(lastCurrentUser);
-
-        try {
-            if (jobInstance.getFollowingJob() != null) {
-                JobInstance nextJob = jobInstanceService.retrieveIfNotManaged(jobInstance.getFollowingJob());
-                log.info("Executing next job {} for {}", nextJob.getCode(), jobInstance.getCode());
-                executeJobWithParameters(nextJob, null);
-            }
-        } catch (BusinessException e) {
-            log.error("Failed to execute next job", e);
-        }
-    }
-
-    /**
-     * Execute a given job instance.
-     * 
-     * @param jobInstance Job instance to execute
-     * @param params Parameters to pass to job execution
-     * @throws BusinessException business exception
-     */
-    private void executeJobWithParameters(JobInstance jobInstance, Map<Object, Object> params) throws BusinessException {
-        Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
-        job.execute(jobInstance, null);
-    }
-
-    /**
-     * Execute job from GUI. Execution is done asynchronously. Current user is already set by GUI.
-     * 
-     * @param jobInstance Job instance to execute
-     * @throws BusinessException Any exception
-     */
-    @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void manualExecute(JobInstance jobInstance) throws BusinessException {
-        log.info("Manual execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate());
-        try {
-            executeJobWithParameters(jobInstance, null);
-        } catch (Exception e) {
-            log.error("Failed to manually execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate(), e);
-            throw e;
-        }
-    }
-
-    /**
-     * Execute job and return job execution result ID to be able to query execution results later. Job execution result is persisted right away, while job is executed
+     * Execute a job and return job execution result ID to be able to query execution results later. Job execution result is persisted right away, while job is executed
      * asynchronously.
      * 
      * @param jobInstance Job instance to execute.
      * @param params Parameters (currently not used)
+     * @param jobLauncher How job was launched
      * @return Job execution result ID
      * @throws BusinessException Any exception
      */
-    public Long executeJobWithResultId(JobInstance jobInstance, Map<String, String> params) throws BusinessException {
-        log.info("Execute a job {}  of type {} with parameters {} ", jobInstance, jobInstance.getJobTemplate(), params);
-        try {
-            JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
-            jobExecutionResult.setJobInstance(jobInstance);
-            create(jobExecutionResult);
+    public Long executeJob(JobInstance jobInstance, Map<String, Object> params, JobLauncherEnum jobLauncher) throws BusinessException {
 
-            Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
-            job.executeInNewTrans(jobInstance, jobExecutionResult);
+        log.info("Execute a job {} of type {} with parameters {} from {}", jobInstance, jobInstance.getJobTemplate(), params, jobLauncher);
+
+        JobRunningStatusEnum isRunning = lockForRunning(jobInstance, jobInstance.isLimitToSingleNode());
+
+        if (isRunning == JobRunningStatusEnum.NOT_RUNNING || ((isRunning == JobRunningStatusEnum.LOCKED_OTHER || isRunning == JobRunningStatusEnum.RUNNING_OTHER) && !jobInstance.isLimitToSingleNode())) {
+
+            JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl(jobInstance, jobLauncher);
+            jobExecutionResultService.persistResult(jobExecutionResult);
+
+            jobExecutionService.executeJobAsync(jobInstance, params, jobExecutionResult, currentUser.unProxy());
 
             log.debug("Job execution result ID for job {} of type {} is {}", jobInstance, jobInstance.getJobTemplate(), jobExecutionResult.getId());
             return jobExecutionResult.getId();
 
-        } catch (Exception e) {
-            log.error("Failed to execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate(), e);
-            throw new BusinessException(e);
+        } else if (isRunning == JobRunningStatusEnum.REQUEST_TO_STOP) {
+            throw new ValidationException("Job is in the process of stopping. Please try again shortly.");
+
+        } else if (isRunning == JobRunningStatusEnum.RUNNING_THIS || isRunning == JobRunningStatusEnum.LOCKED_THIS) {
+            throw new ValidationException("Job is already running on this cluster node");
+
+        } else {
+            throw new ValidationException("Job is currently running on another cluster node and is limited to run one at a time");
         }
     }
 
     /**
-     * Execute job and return job execution result ID to be able to query execution results later. Job is executed asynchronously.
+     * Execute job asynchronously in a new (no transaction) transaction demarcation
      * 
      * @param jobInstance Job instance to execute.
      * @param params Parameters (currently not used)
+     * @param jobExecutionResult Job execution history/results. Optional. If not provided. One will be created automatically.
+     * @param lastCurrentUser Currently authenticated user
      * @throws BusinessException Any exception
      */
-    public void executeJob(JobInstance jobInstance, Map<Object, Object> params) throws BusinessException {
-        log.info("Execute a job {}  of type {} with parameters {} ", jobInstance, jobInstance.getJobTemplate(), params);
-        executeJobWithParameters(jobInstance, params);
-    }
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void executeJobAsync(JobInstance jobInstance, Map<String, Object> params, JobExecutionResultImpl jobExecutionResult, MeveoUser lastCurrentUser) throws BusinessException {
 
-    /**
-     * Gets the find query.
-     *
-     * @param jobName job name
-     * @param configuration configuration
-     * @return querry builder
-     */
-    private QueryBuilder getFindQuery(String jobName, PaginationConfiguration configuration) {
-        QueryBuilder qb = new QueryBuilder("select distinct t from JobExecutionResultImpl t"); // FIXME:.cacheable();
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        if (!StringUtils.isEmpty(jobName)) {
-            qb.addCriterion("t.jobInstance.code", "=", jobName, false);
-        }
-        qb.addPaginationConfiguration(configuration);
+        Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
+        JobExecutionResultStatusEnum jobResultStatus = job.execute(jobInstance, jobExecutionResult);
 
-        return qb;
-    }
-
-    /**
-     * Count job execution history records which end date is older then a given date and belong to a given job (optional)
-     * 
-     * @param jobName job name (optional)
-     * @param date Date to check
-     * @return A number of job execution history records which is older then a given date
-     */
-    public long countJobExecutionHistoryToDelete(String jobName, Date date) {
-        long result = 0;
-
-        if (jobName == null) {
-            result = getEntityManager().createNamedQuery("JobExecutionResult.countHistoryToPurgeByDate", Long.class).setParameter("date", date).getSingleResult();
-        } else {
-            JobInstance jobInstance = jobInstanceService.findByCode(jobName);
-            if (jobInstance == null) {
-                log.error("No Job instance by code {} was found. No Job execution history will be removed.", jobName);
-                return 0;
-            }
-            result = getEntityManager().createNamedQuery("JobExecutionResult.countHistoryToPurgeByDateAndJobInstance", Long.class).setParameter("date", date).setParameter("jobInstance", jobInstance).getSingleResult();
+        int i = 0;
+        while (jobResultStatus == JobExecutionResultStatusEnum.COMPLETED_MORE && i < MAX_TIMES_TO_RUN_INCOMPLETE_JOB) {
+            jobResultStatus = job.execute(jobInstance, null);
+            i++;
         }
 
-        return result;
-    }
-
-    /**
-     * Remove job execution history older than a given date and belong to a given job (optional)
-     * 
-     * @param jobName Job name to match (optional)
-     * @param date Date to check
-     * @return A number of records that were removed
-     */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public long deleteJobExecutionHistory(String jobName, Date date) {
-        log.debug("Removing Job execution history of job {} which date is older then a {} date", jobName == null ? "ALL" : jobName, date);
-
-        long itemsDeleted = 0;
-
-        if (jobName == null) {
-            itemsDeleted = getEntityManager().createNamedQuery("JobExecutionResult.purgeHistoryByDate").setParameter("date", date).executeUpdate();
-
-        } else {
-            JobInstance jobInstance = jobInstanceService.findByCode(jobName);
-            if (jobInstance == null) {
-                log.error("No Job instance by code {} was found. No Job execution history will be removed.", jobName);
-                return 0;
-            }
-            itemsDeleted = getEntityManager().createNamedQuery("JobExecutionResult.purgeHistoryByDateAndJobInstance").setParameter("date", date).setParameter("jobInstance", jobInstance).executeUpdate();
+        if (jobResultStatus == JobExecutionResultStatusEnum.COMPLETED && jobInstance.getFollowingJob() != null) {
+            JobInstance nextJob = jobInstanceService.retrieveIfNotManaged(jobInstance.getFollowingJob());
+            log.info("Executing next job {} for {}", nextJob.getCode(), jobInstance.getCode());
+            executeJob(nextJob, null, JobLauncherEnum.TRIGGER);
         }
-
-        log.info("Removed {} Job execution history of job {} which date is older then a {} date", itemsDeleted, jobName == null ? "ALL" : jobName, date);
-
-        return itemsDeleted;
-    }
-
-    /**
-     * Find JobExecutionResultImpl.
-     *
-     * @param jobName job's name
-     * @param configuration pagination configuration
-     * @return list of job's result.
-     */
-    @SuppressWarnings("unchecked")
-    public List<JobExecutionResultImpl> find(String jobName, PaginationConfiguration configuration) {
-        return getFindQuery(jobName, configuration).find(getEntityManager());
-    }
-
-    /**
-     * Count.
-     *
-     * @param jobName job name
-     * @param configuration configuration
-     * @return number of job
-     */
-    public long count(String jobName, PaginationConfiguration configuration) {
-        return getFindQuery(jobName, configuration).count(getEntityManager());
     }
 
     /**
@@ -325,35 +202,47 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     }
 
     /**
-     * Find by code like.
+     * Stop a running job.
      *
-     * @param code the code
-     * @return list of job's result
-     * @see org.meveo.service.base.PersistenceService#findByCodeLike(java.lang.String)
+     * @param jobInstance Job instance to stop
      */
-    @Override
-    public List<JobExecutionResultImpl> findByCodeLike(String code) {
-        throw new UnsupportedOperationException();
+    public void stopJob(JobInstance jobInstance) {
+
+        log.info("Requested to stop job {} of type {}  ", jobInstance, jobInstance.getJobTemplate());
+
+        jobCacheContainerProvider.markJobToStop(jobInstance);
     }
 
     /**
-     * Stop a running job.
+     * Stop a running job by force - cancel futures/kill threads
      *
-     * @param jobInstance job instance to stop
-     * @throws BusinessException the business exception
+     * @param jobInstance Job instance to stop
      */
-    public void stopJob(JobInstance jobInstance) throws BusinessException {
-        log.info("Stop job {}  of type {}  ", jobInstance, jobInstance.getJobTemplate());
-        if (!isJobRunningOnThis(jobInstance)) {
-            throw new BusinessException("Job " + jobInstance.getCode() + " currently are not running on this node.");
+    @SuppressWarnings("rawtypes")
+    public void stopJobByForce(JobInstance jobInstance) {
+
+        log.info("Requested to stop job {}  of type {} by force", jobInstance, jobInstance.getJobTemplate());
+
+        jobCacheContainerProvider.markJobToStop(jobInstance);
+        
+        List<Future> futures = jobCacheContainerProvider.getJobExecutionThreads(jobInstance.getId());
+        int i = 1;
+        for (Future future : futures) {
+            boolean canceled = future.cancel(true);
+            if (canceled) {
+                log.info("Job {} thread #{} was canceled by force", jobInstance, i);
+            } else {
+                log.error("Failed to cancel a job {} thread #{}", jobInstance, i);
+            }
+            i++;
         }
-        jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
+        // TODO AKK add publishing to other cluster nodes to cancel job execution
     }
 
     /**
      * Check if the job are running on this node.
      * 
-     * @param jobInstance job instance to ckeck
+     * @param jobInstance job instance to check
      * @return return true if job are running
      */
     public boolean isJobRunningOnThis(JobInstance jobInstance) {
@@ -363,7 +252,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     /**
      * Check if the job are running on this node.
      * 
-     * @param jobInstanceId job instance id to ckeck
+     * @param jobInstanceId job instance id to check
      * @return return true if job are running
      */
     public boolean isJobRunningOnThis(Long jobInstanceId) {
@@ -371,20 +260,72 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     }
 
     /**
-     * Finds the last job execution result by a given job instance.
+     * Determine if job, identified by a given job instance id, should be running on a current cluster node
      * 
-     * @param jobInstance JobInstance filter
-     * @return last job execution result
+     * @param jobInstanceId Job instance identifier
+     * @return Is Job currently running on this cluster node and was not requested to be stopped
      */
-    public JobExecutionResultImpl findLastExecutionByInstance(JobInstance jobInstance) {
-        QueryBuilder qb = new QueryBuilder(JobExecutionResultImpl.class, "j");
-        qb.addCriterionEntity("jobInstance", jobInstance);
-        qb.addOrderCriterionAsIs("startDate", false);
+    // @Lock(LockType.READ)
+    public boolean isShouldJobContinue(Long jobInstanceId) {
+        return jobCacheContainerProvider.isShouldJobContinue(jobInstanceId);
+    }
 
-        List resultList = qb.getQuery(getEntityManager()).setMaxResults(1).getResultList();
-        if(resultList!=null && !resultList.isEmpty()) {
-        	return (JobExecutionResultImpl) resultList.get(0);
+    /**
+     * Mark job, identified by a given job instance, as locked to be running on current cluster node.
+     * 
+     * @param jobInstance Job instance
+     * @param limitToSingleNode true if this job can be run on only one node.
+     * @return Previous job execution status - was Job locked or running before and if on this or another node
+     */
+    // @Lock(LockType.WRITE)
+    public JobRunningStatusEnum lockForRunning(JobInstance jobInstance, boolean limitToSingleNode) {
+        return jobCacheContainerProvider.lockForRunning(jobInstance, limitToSingleNode);
+    }
+
+    /**
+     * Mark job, identified by a given job instance id, as currently running on current cluster node.
+     * 
+     * @param jobInstanceId Job instance identifier
+     * @param limitToSingleNode true if this job can be run on only one node.
+     * @param jobExecutionResultId Job execution result/progress identifier
+     * @param threads Threads/futures that job is running on (optional)
+     * @return Previous job execution status - was Job locked or running before and if on this or another node
+     */
+    @SuppressWarnings("rawtypes")
+    public JobRunningStatusEnum markJobAsRunning(JobInstance jobInstance, boolean limitToSingleNode, Long jobExecutionResultId, List<Future> threads) {
+        return jobCacheContainerProvider.markJobAsRunning(jobInstance, limitToSingleNode, jobExecutionResultId, threads);
+    }
+
+    /**
+     * Mark job, identified by a given job instance id, as currently NOT running on CURRENT cluster node.
+     * 
+     * @param jobInstanceId Job instance identifier
+     */
+    public void markJobAsFinished(JobInstance jobInstance) {
+        jobCacheContainerProvider.markJobAsFinished(jobInstance);
+    }
+
+    /**
+     * Mark job, identified by a given job instance id, as requested to stop on CURRENT cluster node.
+     * 
+     * @param jobInstanceId Job instance identifier
+     */
+    public void markJobToStop(JobInstance jobInstance) {
+        jobCacheContainerProvider.markJobToStop(jobInstance);
+    }
+
+    /**
+     * Check if job execution was canceled
+     * 
+     * @param id Job instance identifier
+     * @return True if job was execution was canceled by a user
+     */
+    public boolean isJobCancelled(Long jobInstanceId) {
+
+        JobExecutionStatus jobStatus = jobCacheContainerProvider.getJobStatus(jobInstanceId);
+        if (jobStatus != null) {
+            return jobStatus.isRequestedToStop();
         }
-        return null;
+        return false;
     }
 }

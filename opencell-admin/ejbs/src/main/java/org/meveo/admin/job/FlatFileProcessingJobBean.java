@@ -32,6 +32,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.FlatFileProcessing;
+import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.FileParserFlatworm;
 import org.meveo.commons.parsers.IFileParser;
@@ -56,7 +57,9 @@ import org.slf4j.Logger;
  * @lastModifiedVersion 10.0.0
  */
 @Stateless
-public class FlatFileProcessingJobBean {
+public class FlatFileProcessingJobBean extends BaseJobBean {
+
+    private static final long serialVersionUID = -5861023940808597676L;
 
     /**
      * The log.
@@ -83,29 +86,27 @@ public class FlatFileProcessingJobBean {
     /**
      * Process a single file
      *
-     * @param result                 Job execution result
-     * @param inputDir               Input directory
-     * @param outputDir              Directory to store a successfully processed records
-     * @param archiveDir             Directory to store a copy of a processed file
-     * @param rejectDir              Directory to store a failed records
-     * @param file                   File to process
-     * @param mappingConf            File record mapping configuration
+     * @param jobExecutionResult Job execution result
+     * @param inputDir Input directory
+     * @param outputDir Directory to store a successfully processed records
+     * @param archiveDir Directory to store a copy of a processed file
+     * @param rejectDir Directory to store a failed records
+     * @param file File to process
+     * @param mappingConf File record mapping configuration
      * @param scriptInstanceFlowCode Script to invoke for each record
-     * @param recordVariableName     Variable name in script for record
-     * @param context                Processing parameters
-     * @param filenameVariableName   Filename variable name as it will appear in the script context
-     * @param formatTransfo          Format to transform to
-     * @param errorAction            action to do on error : continue, stop or rollback after an error
-     * @param nbRuns                 Number of parallel executions
-     * @param waitingMills           Number of milliseconds to wait between launching parallel processing threads
+     * @param recordVariableName Variable name in script for record
+     * @param context Processing parameters
+     * @param filenameVariableName Filename variable name as it will appear in the script context
+     * @param formatTransfo Format to transform to
+     * @param errorAction action to do on error : continue, stop or rollback after an error
+     * @param nbRuns Number of parallel executions
+     * @param waitingMills Number of milliseconds to wait between launching parallel processing threads
      */
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl result, String inputDir, String outputDir, String archiveDir, String rejectDir, File file, String mappingConf,
-                        String scriptInstanceFlowCode, String recordVariableName, Map<String, Object> context, String filenameVariableName, String formatTransfo,Long nbLinesToProcess, String errorAction,
-                        Long nbRuns, Long waitingMillis) {
+    public void execute(JobExecutionResultImpl jobExecutionResult, String inputDir, String outputDir, String archiveDir, String rejectDir, File file, String mappingConf, String scriptInstanceFlowCode,
+            String recordVariableName, Map<String, Object> context, String filenameVariableName, String formatTransfo, Long nbLinesToProcess, String errorAction, Long nbRuns, Long waitingMillis) {
 
-        log.debug("Processing FlatFile in inputDir={}, file={}, scriptInstanceFlowCode={},formatTransfo={}, errorAction={}", inputDir, file.getAbsolutePath(),
-                scriptInstanceFlowCode, formatTransfo, errorAction);
+        log.debug("Processing FlatFile in inputDir={}, file={}, scriptInstanceFlowCode={},formatTransfo={}, errorAction={}", inputDir, file.getAbsolutePath(), scriptInstanceFlowCode, formatTransfo, errorAction);
 
         String fileName = file.getName();
         ScriptInterface script = null;
@@ -161,15 +162,20 @@ public class FlatFileProcessingJobBean {
             outputFileWriter = new PrintWriter(outputFile);
 
             // Launch parallel processing of a file
-            List<Future<String>> futures = new ArrayList<Future<String>>();
+            List<Future> futures = new ArrayList<Future>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
+            IFileParser fileParserFinal = fileParser;
+            ScriptInterface scriptFinal = script;
+            PrintWriter rejectFileWriterFinal = rejectFileWriter;
+            PrintWriter outputFileWriterFinal = outputFileWriter;
+
             for (long i = 0; i < nbRuns; i++) {
                 if (FlatFileProcessingJob.ROLLBACK.equals(errorAction)) {
-                    futures.add(flatFileProcessing.processFileAsyncInOneTx(fileParser, result, script, recordVariableName, fileName, filenameVariableName, nbLinesToProcess, errorAction,
-                            rejectFileWriter, outputFileWriter, lastCurrentUser));
+                    futures.add(executor.submit(() -> flatFileProcessing.processFileInOneTx(fileParserFinal, jobExecutionResult, scriptFinal, recordVariableName, fileName, filenameVariableName, nbLinesToProcess,
+                        errorAction, rejectFileWriterFinal, outputFileWriterFinal, lastCurrentUser)));
                 } else {
-                    futures.add(flatFileProcessing.processFileAsync(fileParser, result, script, recordVariableName, fileName, filenameVariableName, nbLinesToProcess, errorAction, rejectFileWriter,
-                            outputFileWriter, lastCurrentUser));
+                    futures.add(executor.submit(() -> flatFileProcessing.processFileOneLinePerTx(fileParserFinal, jobExecutionResult, scriptFinal, recordVariableName, fileName, filenameVariableName, nbLinesToProcess,
+                        errorAction, rejectFileWriterFinal, outputFileWriterFinal, lastCurrentUser)));
                 }
                 if (waitingMillis > 0) {
                     try {
@@ -180,41 +186,55 @@ public class FlatFileProcessingJobBean {
                 }
             }
 
+            JobRunningStatusEnum jobStatus = jobExecutionService.markJobAsRunning(jobExecutionResult.getJobInstance(), false, jobExecutionResult.getId(), futures);
+
+            boolean wasCanceled = jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
+
             // Wait for all async methods to finish
-            for (Future<String> future : futures) {
+            for (Future future : futures) {
                 try {
                     future.get();
 
                 } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
+                    wasCanceled = true;
+                    log.error("Thread/future for job {} was canceled", jobExecutionResult.getJobInstance());
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
+                    jobExecutionResult.registerError(cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }
 
-            errors.addAll(result.getErrors());
+            jobStatus = jobExecutionService.markJobAsRunning(jobExecutionResult.getJobInstance(), false, jobExecutionResult.getId(), null);
 
-            if (result.getNbItemsProcessed() == 0) {
+            wasCanceled = wasCanceled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
+
+            errors.addAll(jobExecutionResult.getErrors());
+
+            if (jobExecutionResult.getNbItemsProcessed() == 0) {
                 String errorDescription = "\r\n file " + fileName + " is empty";
-                result.addReport(errorDescription);
+                jobExecutionResult.addReport(errorDescription);
                 errors.add(errorDescription);
             }
 
-            log.info("Finished processing FlatFile {}", fileName);
+            if (wasCanceled) {
+                log.info("Canceled processing FlatFile {}", fileName);
+            } else {
+                log.info("Finished processing FlatFile {}", fileName);
+            }
 
         } catch (Exception e) {
             log.error("Failed to process FlatFile file {}", fileName, e);
-            result.addReport(e.getMessage());
+            jobExecutionResult.addReport(e.getMessage());
             errors.add(e.getMessage());
             if (currentFile != null) {
                 fileCurrentName = FileUtils.moveFileDontOverwrite(rejectDir, currentFile, fileName);
             }
 
         } finally {
-            flatFileProcessing.updateFlatFile(fileName, fileCurrentName, rejectedfileName, processedfileName, rejectDir, outputDir, errors, result.getNbItemsCorrectlyProcessed(), result.getNbItemsProcessedWithError(), result.getJobInstance().getCode());
+            flatFileProcessing.updateFlatFile(fileName, fileCurrentName, rejectedfileName, processedfileName, rejectDir, outputDir, errors, jobExecutionResult.getNbItemsCorrectlyProcessed(),
+                jobExecutionResult.getNbItemsProcessedWithError(), jobExecutionResult.getJobInstance().getCode());
             try {
                 if (fileParser != null) {
                     fileParser.close();
@@ -227,7 +247,7 @@ public class FlatFileProcessingJobBean {
                     script.terminate(context);
                 }
             } catch (Exception e) {
-                result.addReport("\r\n error in script finalization : " + e.getMessage());
+                jobExecutionResult.addReport("\r\n error in script finalization : " + e.getMessage());
             }
             try {
                 if (currentFile != null) {
@@ -239,7 +259,7 @@ public class FlatFileProcessingJobBean {
                     }
                 }
             } catch (Exception e) {
-                result.addReport("\r\n cannot move file to archive directory " + fileName);
+                jobExecutionResult.addReport("\r\n cannot move file to archive directory " + fileName);
             }
 
             try {
@@ -252,7 +272,7 @@ public class FlatFileProcessingJobBean {
             }
 
             // Delete reject file if it is empty
-            if (errors.isEmpty() && rejectFile != null) {
+            if (jobExecutionResult.getNbItemsProcessedWithError() == 0 && rejectFile != null) {
                 try {
                     rejectFile.delete();
                 } catch (Exception e) {

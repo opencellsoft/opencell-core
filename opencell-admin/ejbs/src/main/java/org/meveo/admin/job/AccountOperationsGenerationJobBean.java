@@ -18,128 +18,123 @@
 
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.async.AccOpGenerationAsync;
-import org.meveo.admin.async.SubListCreator;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ImportInvoiceException;
+import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
+import org.meveo.service.payments.impl.RecordedInvoiceService;
+import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
-import org.slf4j.Logger;
 
 /**
- * @author anasseh
+ * Job implementation to generate account operations for all invoices that don't have it yet.
+ * 
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @author Abdellatif BARI
+ * @author Andrius Karpavicius
  * @lastModifiedVersion 10.0
  **/
 @Stateless
-public class AccountOperationsGenerationJobBean extends BaseJobBean {
+public class AccountOperationsGenerationJobBean extends IteratorBasedJobBean<Long> {
 
-    @Inject
-    private Logger log;
+    private static final long serialVersionUID = -1247529117246250636L;
 
     @Inject
     private InvoiceService invoiceService;
-
-    @Inject
-    private AccOpGenerationAsync accOpGenerationAsync;
-
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
 
     /** The script instance service. */
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+    @Inject
+    private RecordedInvoiceService recordedInvoiceService;
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbRuns == -1) {
-            nbRuns = (long) Runtime.getRuntime().availableProcessors();
-        }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
+    private ScriptInterface script;
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createAccountOperations, null, null, JobSpeedEnum.NORMAL);
+        script = null;
+    }
+
+    /**
+     * Initialize job settings and retrieve data to process
+     * 
+     * @param jobExecutionResult Job execution result
+     * @return An iterator over a list of Invoice Ids to create account operations for
+     */
+    @SuppressWarnings("unchecked")
+    private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
+
+        Boolean isExcludeInvoicesWithoutAmount = (Boolean) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_excludeInvoicesWithoutAmount", Boolean.FALSE);
+        List<Long> ids = invoiceService.queryInvoiceIdsWithNoAccountOperation(null, isExcludeInvoicesWithoutAmount, Boolean.TRUE);
 
         try {
-
-            Boolean isExcludeInvoicesWithoutAmount = (Boolean) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_excludeInvoicesWithoutAmount", Boolean.FALSE);
-            List<Long> ids = invoiceService.queryInvoiceIdsWithNoAccountOperation(null, isExcludeInvoicesWithoutAmount, Boolean.TRUE);
-
-            log.debug("invoices to traite:" + (ids == null ? null : ids.size()));
-
-            String scriptInstanceCode = null;
+            String scriptInstanceCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_script")).getCode();
             Map<String, Object> context = new HashMap<String, Object>();
-            try {
-                scriptInstanceCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_script")).getCode();
-                if (this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_variables") != null) {
-                    context = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_variables");
-                }
-            } catch (Exception e) {
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
+            if (this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_variables") != null) {
+                context = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_variables");
             }
-            List<Future<String>> futures = new ArrayList<Future<String>>();
-            SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
-            log.debug("block to run:" + subListCreator.getBlocToRun());
-            log.debug("nbThreads:" + nbRuns);
-            ScriptInterface script = null;
             if (!StringUtils.isBlank(scriptInstanceCode)) {
                 script = scriptInstanceService.getScriptInstance(scriptInstanceCode);
                 script.init(context);
             }
-
-            MeveoUser lastCurrentUser = currentUser.unProxy();
-            while (subListCreator.isHasNext()) {
-                futures.add(accOpGenerationAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser, script));
-                if (subListCreator.isHasNext()) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-            }
-            // Wait for all async methods to finish
-            for (Future<String> future : futures) {
-                try {
-                    future.get();
-                } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
-
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
-                    log.error("Failed to execute async method", cause);
-                }
-            }
         } catch (Exception e) {
-            log.error("Failed to run accountOperation generation  job", e);
-            result.registerError(e.getMessage());
+            log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
         }
+
+        return Optional.of(new SynchronizedIterator<Long>(ids));
     }
 
+    /**
+     * Create account operations
+     * 
+     * @param invoiceId Invoice id
+     * @param jobExecutionResult Job execution result
+     * @throws InvoiceExistException invoice exist exception
+     * @throws ImportInvoiceException import invoice exception
+     * @throws BusinessException General business exception
+     */
+    private void createAccountOperations(Long invoiceId, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
+
+        try {
+            Invoice invoice = invoiceService.findById(invoiceId);
+            recordedInvoiceService.generateRecordedInvoice(invoice);
+
+            invoice = invoiceService.update(invoice);
+
+            if (script != null) {
+                Map<String, Object> context = new HashMap<String, Object>();
+                context.put(Script.CONTEXT_ENTITY, invoice.getRecordedInvoice());
+                context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+                context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+                script.execute(context);
+            }
+        } catch (InvoiceExistException | ImportInvoiceException e) {
+            throw new BusinessException(e);
+        }
+    }
 }

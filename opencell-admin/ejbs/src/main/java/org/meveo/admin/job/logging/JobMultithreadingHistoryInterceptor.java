@@ -34,42 +34,42 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Amine BEN AICHA
  **/
-@Interceptor
+//@Interceptor
 public class JobMultithreadingHistoryInterceptor implements Serializable {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -7768369529533486722L;
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
-
-    @EJB
-    private JobExecutionService jobExecutionService;
-
-    @AroundInvoke
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Object jobExecutionResultUpdate(InvocationContext invocationContext) throws Exception {
-
-        try {
-            return invocationContext.proceed();
-        } finally {
-
-            Object[] parameters = invocationContext.getParameters();
-
-            for (Object parameter : parameters) {
-
-                if (parameter instanceof JobExecutionResultImpl) {
-                    JobExecutionResultImpl executionResult = (JobExecutionResultImpl) parameter;
-                    JobExecutionResultImpl updateEntity = jobExecutionService.findById(executionResult.getId());
-                    if (updateEntity != null) {
-                        JobExecutionResultImpl.updateFromInterface(executionResult, updateEntity);
-                        jobExecutionService.update(updateEntity);
-                        log.debug("Job execution result updated");
-                        break;
-                    }
-                }
-            }
-        }
-    }
+//    /**
+//     * 
+//     */
+//    private static final long serialVersionUID = -7768369529533486722L;
+//
+//    private Logger log = LoggerFactory.getLogger(this.getClass());
+//
+//    @EJB
+//    private JobExecutionService jobExecutionService;
+//
+//    @AroundInvoke
+//    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+//    public Object jobExecutionResultUpdate(InvocationContext invocationContext) throws Exception {
+//
+//        try {
+//            return invocationContext.proceed();
+//        } finally {
+//
+//            Object[] parameters = invocationContext.getParameters();
+//
+//            for (Object parameter : parameters) {
+//
+//                if (parameter instanceof JobExecutionResultImpl) {
+//                    JobExecutionResultImpl executionResult = (JobExecutionResultImpl) parameter;
+//                    JobExecutionResultImpl updateEntity = jobExecutionService.findById(executionResult.getId());
+//                    if (updateEntity != null) {
+//                        JobExecutionResultImpl.updateFromInterface(executionResult, updateEntity);
+//                        jobExecutionService.update(updateEntity);
+//                        log.debug("Job execution result updated");
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//    }
 }

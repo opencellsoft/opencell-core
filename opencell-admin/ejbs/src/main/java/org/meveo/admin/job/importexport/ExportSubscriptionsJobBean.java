@@ -47,6 +47,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -123,11 +124,11 @@ public class ExportSubscriptionsJobBean {
         if (subs != null) {
             int i = 0;
             for (org.meveo.model.billing.Subscription sub : subs) {
-                i++;
-                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobInstanceId)) {
                     break;
                 }
                 dto.getSubscription().add(subscriptionToDto(sub, dateFormat));
+                i++;
             }
         }
         return dto;

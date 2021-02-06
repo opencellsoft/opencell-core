@@ -33,7 +33,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.CounterInstanceService;
-import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobExecutionResultService;
 import org.meveo.service.notification.InboundRequestService;
 import org.meveo.service.notification.NotificationHistoryService;
 import org.slf4j.Logger;
@@ -47,7 +47,7 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
     private CounterInstanceService counterInstanceService;
 
     @Inject
-    private JobExecutionService jobExecutionService;
+    private JobExecutionResultService jobExecutionResultService;
     
     @Inject
     private InboundRequestService inboundRequestService;
@@ -68,10 +68,10 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
             Long nbDays = (Long) this.getParamOrCFValue(jobInstance, "PurgeJob_jobExecHistory_nbDays");
             if (jobname != null || nbDays != null) {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
-                long nbItemsToProcess = jobExecutionService.countJobExecutionHistoryToDelete(jobname, date);
+                long nbItemsToProcess = jobExecutionResultService.countJobExecutionHistoryToDelete(jobname, date);
                 if (nbItemsToProcess > 0) {
                     result.setNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
-                    long nbSuccess = jobExecutionService.deleteJobExecutionHistory(jobname, date);
+                    long nbSuccess = jobExecutionResultService.deleteJobExecutionHistory(jobname, date);
                     result.setNbItemsCorrectlyProcessed(nbSuccess);
                     result.setNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {

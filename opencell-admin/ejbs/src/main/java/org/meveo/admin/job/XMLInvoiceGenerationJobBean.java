@@ -18,111 +18,79 @@
 
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.async.InvoicingAsync;
-import org.meveo.admin.async.SubListCreator;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.job.Job;
-import org.meveo.service.job.JobExecutionErrorService;
-import org.slf4j.Logger;
+import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 
+/**
+ * Job implementation to generate invoice XML for all valid invoices that don't have it
+ * 
+ * @author Andrius Karpavicius
+ */
 @Stateless
-public class XMLInvoiceGenerationJobBean extends BaseJobBean {
+public class XMLInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
 
-    @Inject
-    private Logger log;
+    private static final long serialVersionUID = 7948947993905799076L;
 
     @Inject
     private InvoiceService invoiceService;
 
-    @Inject
-    private InvoicingAsync invoicingAsync;
-
-    @Inject
-    private JobExecutionErrorService jobExecutionErrorService;
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class, JobMultithreadingHistoryInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl result, String parameter, JobInstance jobInstance) {
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::generateXml, null, null, JobSpeedEnum.FAST);
+    }
 
-        jobExecutionErrorService.purgeJobErrors(jobInstance);
+    /**
+     * Initialize job settings and retrieve data to process
+     * 
+     * @param jobExecutionResult Job execution result
+     * @return An iterator over a list of Invoices to generate PDF files
+     */
+    private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbRuns == -1) {
-            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
+
+        InvoicesToProcessEnum invoicesToProcessEnum = InvoicesToProcessEnum.valueOf((String) this.getParamOrCFValue(jobInstance, "invoicesToProcess", "FinalOnly"));
+
+        String parameter = jobInstance.getParametres();
+
+        Long billingRunId = null;
+        if (parameter != null && parameter.trim().length() > 0) {
+            try {
+                billingRunId = Long.parseLong(parameter);
+            } catch (Exception e) {
+                log.error("Can not extract billing run ID from a parameter {}", parameter, e);
+                jobExecutionResult.addErrorReport(e.getMessage());
+            }
         }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
-        try {
+        List<Long> ids = this.fetchInvoiceIdsToProcess(invoicesToProcessEnum, billingRunId);
 
-            InvoicesToProcessEnum invoicesToProcessEnum = InvoicesToProcessEnum.valueOf((String) this.getParamOrCFValue(jobInstance, "invoicesToProcess", "FinalOnly"));
+        return Optional.of(new SynchronizedIterator<Long>(ids));
+    }
 
-            Long billingRunId = null;
-            if (parameter != null && parameter.trim().length() > 0) {
-                try {
-                    billingRunId = Long.parseLong(parameter);
-                } catch (Exception e) {
-                    log.error("error while getting billing run", e);
-                    result.registerError(e.getMessage());
-                }
-            }
+    /**
+     * Generate XML file
+     * 
+     * @param invoiceId Invoice id to create XML for
+     * @param jobExecutionResult Job execution result
+     */
+    private void generateXml(Long invoiceId, JobExecutionResultImpl jobExecutionResult) {
 
-            List<Long> invoiceIds = this.fetchInvoiceIdsToProcess(invoicesToProcessEnum, billingRunId);
-
-            log.info("invoices to process={}", invoiceIds == null ? null : invoiceIds.size());
-            List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
-            SubListCreator subListCreator = new SubListCreator(invoiceIds, nbRuns.intValue());
-            result.setNbItemsToProcess(subListCreator.getListSize());
-
-            MeveoUser lastCurrentUser = currentUser.unProxy();
-            while (subListCreator.isHasNext()) {
-                futures.add(invoicingAsync.generateXmlAsync((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
-
-                if (subListCreator.isHasNext()) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-            }
-
-            // Wait for all async methods to finish
-            for (Future<Boolean> future : futures) {
-                try {
-                    future.get();
-
-                } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
-                    log.error("Failed to execute async method", cause);
-                }
-            }
-
-        } catch (Exception e) {
-            log.error("Failed to generate XML invoices", e);
-            result.registerError(e.getMessage());
-            result.addReport(e.getMessage());
-        }
+        Invoice invoice = invoiceService.findById(invoiceId);
+        invoiceService.produceInvoiceXml(invoice, null);
     }
 
     private List<Long> fetchInvoiceIdsToProcess(InvoicesToProcessEnum invoicesToProcessEnum, Long billingRunId) {

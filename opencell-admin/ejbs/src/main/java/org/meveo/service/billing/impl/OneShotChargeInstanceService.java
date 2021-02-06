@@ -377,8 +377,6 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         update(oneShotChargeInstance);
     }
 
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void matchPrepaidWallet(WalletInstance wallet, String matchingChargeCode) throws BusinessException, RatingException {
 
         OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(matchingChargeCode);

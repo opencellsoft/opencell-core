@@ -89,7 +89,9 @@ public class PaginationConfiguration implements Serializable {
             sortValues.add(sortFieldsAndOrder[i + 1] == null ? SortOrder.ASCENDING : sortFieldsAndOrder[i + 1]);
         }
 
-        this.ordering = sortValues.toArray();
+        if (!sortValues.isEmpty()) {
+            this.ordering = sortValues.toArray();
+        }
     }
 
     /**
