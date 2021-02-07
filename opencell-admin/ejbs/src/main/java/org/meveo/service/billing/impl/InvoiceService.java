@@ -4773,7 +4773,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     setInvoiceDueDate(invoice, invoiceLinesGroup.getBillingCycle());
 
                     EntityManager em = getEntityManager();
-
+                    invoice.setNewInvoicingProcess(true);
                     if (invoice.getId() == null) {
                         this.create(invoice);
 
@@ -4982,4 +4982,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
             this.invoiceLinesGroups = invoiceLinesGroups;
         }
     }
+    
+	/**
+	 * get list of invoices without generated XML files matching billing run and status list
+	 * @param billingRunId
+	 * @param statusList
+	 * @return
+	 */
+	public List<Long> listInvoicesWithoutXml(Long billingRunId, List<InvoiceStatusEnum> statusList) {
+		return getEntityManager().createNamedQuery("Invoice.noXmlWithStatus", Long.class).setParameter("billingRunId", billingRunId).setParameter("statusList", statusList).getResultList();
+	}
 }
