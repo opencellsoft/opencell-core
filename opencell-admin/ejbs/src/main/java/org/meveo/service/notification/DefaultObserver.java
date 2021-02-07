@@ -166,7 +166,7 @@ public class DefaultObserver {
         checkEvent(NotificationEventTypeEnum.CREATED, e);
     }
 
-    public void entityUpdated(@Observes @Updated @AdvancementRateIncreased BaseEntity e) throws BusinessException {
+    public void entityUpdated(@Observes @Updated  BaseEntity e) throws BusinessException {
         log.debug("Defaut observer: Entity {} with id {} updated", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.UPDATED, e);
     }
