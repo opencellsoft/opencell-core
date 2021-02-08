@@ -114,8 +114,7 @@ public class CommercialRuleLine extends BaseEntity {
 	 * rule operator
 	 */
 	@Column(name = "operator", nullable = false)
-	@Enumerated(EnumType.STRING)
-	@NotNull
+	@Enumerated(EnumType.STRING) 
 	private RuleOperatorEnum operator;
 	 
 	/**

@@ -43,7 +43,7 @@ import org.meveo.model.cpq.tags.Tag;
  @Parameter(name = "sequence_name", value = "cpq_commercial_rule_header_seq")})
 @NamedQueries({ 
 	@NamedQuery(name = "CommercialRuleHeader.getTagRules", query = "select c from CommercialRuleHeader c where c.targetTag.code=:tagCode"),
-	@NamedQuery(name = "CommercialRuleHeader.getOfferAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetProduct is null and c.targetOfferTemplate=:offerTemplateCode"),
+	@NamedQuery(name = "CommercialRuleHeader.getOfferAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetProduct is null and c.targetOfferTemplate.code=:offerTemplateCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetProduct.code=:productCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getOfferRules", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getGroupedAttributeRules", query = "select c from CommercialRuleHeader c where c.targetGroupedAttributes.code=:groupedAttributeCode and c.targetProduct.code=:productCode"),
