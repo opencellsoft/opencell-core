@@ -89,6 +89,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -886,9 +887,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
             for (ServiceInstance serviceInstance : serviceInstances) {
                 ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
-                if (!serviceIds.contains(serviceTemplate.getId())) {
+                ProductVersion productVersion = serviceInstance.getProductVersion();
+                Long id = serviceTemplate == null ? productVersion.getId() : serviceTemplate.getId();
+                if (!serviceIds.contains(id)) {
                     addService(serviceInstance, doc, code, servicesTag);
-                    serviceIds.add(serviceTemplate.getId());
+                    serviceIds.add(id);
                 }
             }
         }
@@ -904,16 +907,18 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @param parentElement parent node of current building tag
      */
     private void addService(ServiceInstance serviceInstance, Document doc, String offerCode, Element parentElement) {
-        ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
+        BusinessEntity entity = serviceInstance.getServiceTemplate() == null ? serviceInstance.getProductVersion().getProduct() : serviceInstance.getServiceTemplate();
+        String description = entity.getDescription();
+        String code = entity.getCode();
         Element serviceTag = doc.createElement("service");
-        String code = serviceTemplate.getCode();
         serviceTag.setAttribute("code", code != null ? code : "");
         serviceTag.setAttribute("offerCode", offerCode != null ? offerCode : "");
-        serviceTag.setAttribute("description", serviceTemplate.getDescription() != null ? serviceTemplate.getDescription() : "");
+        serviceTag.setAttribute("description", description != null ? description : "");
 
         Element calendarTag = doc.createElement("calendar");
         Text calendarText = null;
-        if (serviceTemplate.getInvoicingCalendar() != null) {
+        ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
+        if (serviceTemplate != null && serviceTemplate.getInvoicingCalendar() != null) {
             calendarText = doc.createTextNode(serviceTemplate.getInvoicingCalendar().getCode());
         } else {
             calendarText = doc.createTextNode("");
