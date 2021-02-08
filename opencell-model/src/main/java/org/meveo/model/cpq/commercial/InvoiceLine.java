@@ -1,5 +1,8 @@
 package org.meveo.model.cpq.commercial;
 
+import static javax.persistence.FetchType.LAZY;
+import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.NumberUtils;
@@ -17,10 +20,6 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import static javax.persistence.FetchType.LAZY;
-import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
-
-
 /** 
  * @author Tarik F.
  * @version 11.0
@@ -37,9 +36,9 @@ import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
         @NamedQuery(name="InvoiceLine.findByCommercialOrder", query = "select il from InvoiceLine il where il.commercialOrder = :commercialOrder"),
 		@NamedQuery(name = "InvoiceLine.InvoiceLinesByBRID", query = "FROM InvoiceLine il WHERE il.billingRun.id = :billingRunId"),
 		@NamedQuery(name = "InvoiceLine.AddInvoice", query = "UPDATE InvoiceLine il SET il.invoice = :inv WHERE il.id in (:ids)"),
-		@NamedQuery(name = "InvoiceLine.listToInvoiceByOrderNumber", query = "FROM InvoiceLine il where il.orderNumber=:orderNumber AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate order by il.billingAccount.id "),
-		@NamedQuery(name = "InvoiceLine.listToInvoiceBySubscription", query = "FROM InvoiceLine il where il.subscription.id=:subscriptionId AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
-		@NamedQuery(name = "InvoiceLine.listToInvoiceByBillingAccount", query = "FROM InvoiceLine il where il.billingAccount.id=:billingAccountId AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate"),
+		@NamedQuery(name = "InvoiceLine.listToInvoiceByOrderNumber", query = "FROM InvoiceLine il where il.status='OPEN' AND il.orderNumber=:orderNumber AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate order by il.billingAccount.id "),
+		@NamedQuery(name = "InvoiceLine.listToInvoiceBySubscription", query = "FROM InvoiceLine il where il.subscription.id=:subscriptionId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
+		@NamedQuery(name = "InvoiceLine.listToInvoiceByBillingAccount", query = "FROM InvoiceLine il where il.billingAccount.id=:billingAccountId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate"),
 		@NamedQuery(name = "InvoiceLine.updateWithInvoice", query = "UPDATE InvoiceLine il set il.auditable.updated = :now , il.invoice=:invoice where il.id in :ids"),
 		@NamedQuery(name = "InvoiceLine.updateWithInvoiceInfo", query = "UPDATE InvoiceLine il set il.auditable.updated = :now, il.invoice=:invoice, il.amountWithoutTax=:amountWithoutTax, il.amountWithTax=:amountWithTax, il.amountTax=:amountTax, il.tax=:tax, il.taxRate=:taxPercent where il.id=:id")
 

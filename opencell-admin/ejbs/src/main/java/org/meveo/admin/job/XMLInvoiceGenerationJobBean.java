@@ -74,7 +74,7 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
 
         try {
 
-            List<String> statusNamesList = (List<String>) this.getParamOrCFValue(jobInstance, "invoicesToProcess", Arrays.asList("Validated"));
+            List<String> statusNamesList = (List<String>) this.getParamOrCFValue(jobInstance, "invoicesToProcess", Arrays.asList("VALIDATED"));
 			List<InvoiceStatusEnum> statusList = statusNamesList.stream().map(status->InvoiceStatusEnum.valueOf(status)).collect(Collectors.toList());
 
             Long billingRunId = null;

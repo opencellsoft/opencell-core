@@ -16,7 +16,13 @@ import java.util.Objects;
 @MappedSuperclass
 public class AttributeValue extends AuditableEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cpq_attribute_id", nullable = false)
     protected Attribute attribute;
 

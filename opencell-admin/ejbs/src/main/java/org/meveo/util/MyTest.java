@@ -79,7 +79,7 @@ public class MyTest {
 		customerAccount.setAddress(address);
 		customerAccount.setName(name);
 		customerAccount.setExternalRef1("cust1");
-		String rum="BPIAB0000000001951FD14";
+		String rum="BPIAB0000000001951FD";
 		createMandate(customerAccount, "FR7630001007941234567890185",rum);
 		checkMandat(rum, null);
 		doPayment(null, rum, 2000L, customerAccount, null, null, null,null,null, "FR", null);
