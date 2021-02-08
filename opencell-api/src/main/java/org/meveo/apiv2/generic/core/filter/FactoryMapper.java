@@ -21,7 +21,7 @@ public interface FactoryMapper {
         try {
             Field field = ReflectionUtils.getFieldThrowException(clazz, property);
             if(field != null){
-                if(List.class.isAssignableFrom(field.getType())){
+                if(Collection.class.isAssignableFrom(field.getType())){
                     Type type = field.getGenericType();
                     if (type instanceof ParameterizedType) {
                         Type[] pt = ((ParameterizedType) type).getActualTypeArguments();
