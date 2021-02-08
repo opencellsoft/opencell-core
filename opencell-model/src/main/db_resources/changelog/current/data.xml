@@ -2284,4 +2284,35 @@ public class ValidateBRScript extends Script {
             <column name="cf_protectable" value="0"/>
         </insert>
     </changeSet>
+
+    <changeSet id="#5890-2021-02-05_43" author="ZBARIKI">
+        <update tableName="crm_custom_field_tmpl">
+            <column name="field_type" value="LIST"/>
+            <where>code='AggregationOptions'</where>
+        </update>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id"
+                    valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'AggregationOptions')"/>
+            <column name="listvalues" value="NO_AGGREGATION"/>
+            <column name="listvalues_key" value="NO_AGGREGATION"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id"
+                    valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'AggregationOptions')"/>
+            <column name="listvalues" value="ARTICLE_LABEL"/>
+            <column name="listvalues_key" value="ARTICLE_LABEL"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id"
+                    valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'AggregationOptions')"/>
+            <column name="listvalues" value="UNIT_AMOUNT"/>
+            <column name="listvalues_key" value="UNIT_AMOUNT"/>
+        </insert>
+        <insert tableName="crm_custom_field_tmpl_val">
+            <column name="customfieldtemplate_id"
+                    valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'AggregationOptions')"/>
+            <column name="listvalues" value="DATE"/>
+            <column name="listvalues_key" value="DATE"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>
