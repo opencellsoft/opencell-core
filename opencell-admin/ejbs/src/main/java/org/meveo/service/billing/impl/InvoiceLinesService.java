@@ -87,4 +87,15 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
             return emptyList();
         }
     }
+    
+    public List<InvoiceLine> listInvoiceLinesByInvoice(long invoiceId) {
+        try {
+            return getEntityManager().createNamedQuery("InvoiceLine.InvoiceLinesByInvoiceID", InvoiceLine.class)
+                    .setParameter("invoiceId", invoiceId)
+                    .getResultList();
+        } catch (NoResultException e) {
+            log.warn("No invoice found for the provided Invoice : "+invoiceId);
+            return emptyList();
+        }
+    }
 }
