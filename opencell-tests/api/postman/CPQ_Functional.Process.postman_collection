@@ -359,7 +359,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"crmAccountType\": \"C_UA\",\n    \"code\": \"{{billableAccountCode}}\",\n    \"description\": \"description_entity\",\n    \"crmParentCode\": \"{{sellerCode}}\",\n    \"name\": {\n        \"title\": \"MR\",\n        \"lastName\": \"FIRST_NAME\"\n    },\n    \"vatNo\": \"FR89810129666\",\n    \"registrationNo\": \"810129666\",\n    \"address\": {\n        \"address1\": \"14 rue Crespin du Gast\",\n        \"zipCode\": \"75011\",\n        \"city\": \"PARIS\",\n        \"state\": \"Paris Area\",\n        \"country\": \"FR\"\n    },\n    \"email\": \"contact@opencell.com\",\n    \"contactInformation\": {\n        \"email\": \"contact@opencell.com}\"\n    },\n    \"language\": \"FRA\",\n    \"customerCategory\": \"CLIENT\",\n    \"customerBrand\": \"DEFAULT\",\n    \"currency\": \"EUR\",\n    \"billingCycle\": \"CYC_INV_MT_1\",\n    \"country\": \"FR\",\n    \"electronicBilling\": true,\n    \"externalRef1\": \"FR 89810129666\"\n}"
+									"raw": "{\n    \"crmAccountType\": \"C_UA\",\n    \"code\": \"{{billableAccountTwoCode}}\",\n    \"description\": \"description_entity\",\n    \"crmParentCode\": \"{{sellerCode}}\",\n    \"name\": {\n        \"title\": \"MR\",\n        \"lastName\": \"FIRST_NAME\"\n    },\n    \"vatNo\": \"FR89810129666\",\n    \"registrationNo\": \"810129666\",\n    \"address\": {\n        \"address1\": \"14 rue Crespin du Gast\",\n        \"zipCode\": \"75011\",\n        \"city\": \"PARIS\",\n        \"state\": \"Paris Area\",\n        \"country\": \"FR\"\n    },\n    \"email\": \"contact@opencell.com\",\n    \"contactInformation\": {\n        \"email\": \"contact@opencell.com}\"\n    },\n    \"language\": \"FRA\",\n    \"customerCategory\": \"CLIENT\",\n    \"customerBrand\": \"DEFAULT\",\n    \"currency\": \"EUR\",\n    \"billingCycle\": \"CYC_INV_MT_1\",\n    \"country\": \"FR\",\n    \"electronicBilling\": true,\n    \"externalRef1\": \"FR 89810129666\"\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
@@ -376,7 +376,7 @@
 							"response": []
 						},
 						{
-							"name": "Create Billing Account Two with Tags",
+							"name": "Create Billing Account 1 with Tax & Tags",
 							"event": [
 								{
 									"listen": "test",
@@ -393,7 +393,47 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{billableAccountTwoCode}}\",\r\n    \"description\": \"This is billing account test decription\",\r\n    \"customerAccount\": \"{{billableAccountCode}}\",\r\n    \"billingCycle\": \"{{billingCycleCode}}\",\r\n    \"language\": \"FRA\",\r\n    \"country\": \"FR\",\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagTwoCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"code\": \"{{billableAccountCode}}\",\r\n    \"description\": \"This is billing account test decription\",\r\n    \"customerAccount\": \"{{billableAccountCode}}\",\r\n    \"billingCycle\": \"{{billingCycleCode}}\",\r\n    \"taxCategoryCode\": \"Tax category\",\r\n    \"language\": \"FRA\",\r\n    \"country\": \"FR\",\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagTwoCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/account/billingAccount/createOrUpdate",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"account",
+										"billingAccount",
+										"createOrUpdate"
+									]
+								},
+								"description": "Creating a new tag type"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Billing Account 2 with Tax & Tags",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{billableAccountTwoCode}}\",\r\n    \"description\": \"This is billing account test decription\",\r\n    \"customerAccount\": \"{{billableAccountCode}}\",\r\n    \"billingCycle\": \"{{billingCycleCode}}\",\r\n    \"taxCategoryCode\": \"Tax category\",\r\n    \"language\": \"FRA\",\r\n    \"country\": \"FR\",\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagTwoCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -685,45 +725,6 @@
 											"key": "code",
 											"value": "{{engagementAttributeCode}}"
 										}
-									]
-								},
-								"description": "Creating a new tag type"
-							},
-							"response": []
-						},
-						{
-							"name": "Create Grouped Attribute",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{groupedAttributeCode}}\",\r\n    \"description\": \"This is grouped attribute test description\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"productVersion\": \"{{productOneVersion}}\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/cpq/groupedAttributes",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"cpq",
-										"groupedAttributes"
 									]
 								},
 								"description": "Creating a new tag type"
@@ -1292,6 +1293,45 @@
 										"createOrUpdate"
 									]
 								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Grouped Attribute",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"code\": \"{{groupedAttributeCode}}\",\r\n    \"description\": \"This is grouped attribute test description\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"productVersion\": \"{{productOneVersion}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{opencell.url}}/cpq/groupedAttributes",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"cpq",
+										"groupedAttributes"
+									]
+								},
+								"description": "Creating a new tag type"
 							},
 							"response": []
 						}
@@ -4001,7 +4041,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"filters\": {\r\n    \"status\": \"Approved\"\r\n  },\r\n  \"sortOrder\": \"ASCENDING\"\r\n}",
+							"raw": "{\r\n  \"filters\": {\r\n    \"status\": \"In_Progress\"\r\n  },\r\n  \"sortOrder\": \"ASCENDING\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4491,7 +4531,7 @@
 					"response": []
 				},
 				{
-					"name": "Read Quote Offer /!\\",
+					"name": "Read Quote Offer 1",
 					"event": [
 						{
 							"listen": "test",
@@ -4507,7 +4547,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/quote/quoteItem?quoteItemId=1",
+							"raw": "{{opencell.url}}/quote/quoteItem?quoteItemId={{quoteOfferId}}",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -4518,7 +4558,7 @@
 							"query": [
 								{
 									"key": "quoteItemId",
-									"value": "1"
+									"value": "{{quoteOfferId}}"
 								}
 							]
 						}
@@ -5139,6 +5179,24 @@
 					"response": []
 				},
 				{
+					"name": "Read The Invoice line 30",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/billing/invoices",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"billing",
+								"invoices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Update Commercial Order [Progress 70]",
 					"request": {
 						"auth": {
@@ -5174,6 +5232,24 @@
 							],
 							"path": [
 								"commercialOrder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read The Invoice line 70",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/billing/invoices",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"billing",
+								"invoices"
 							]
 						}
 					},
@@ -5221,113 +5297,107 @@
 					"response": []
 				},
 				{
-					"name": "update Commercial Order Status to Finalized",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "username",
-									"value": "opencell.admin",
-									"type": "string"
-								},
-								{
-									"key": "password",
-									"value": "opencell.admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/commercialOrder/{{commercialOrderId}}/status/update?statusTarget=Finalized",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"commercialOrder",
-								"{{commercialOrderId}}",
-								"status",
-								"update"
-							],
-							"query": [
-								{
-									"key": "statusTarget",
-									"value": "Finalized"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Commercial Order Status to Completed",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "username",
-									"value": "opencell.admin",
-									"type": "string"
-								},
-								{
-									"key": "password",
-									"value": "opencell.admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/commercialOrder/{{commercialOrderId}}/status/update?statusTarget=Completed",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"commercialOrder",
-								"{{commercialOrderId}}",
-								"status",
-								"update"
-							],
-							"query": [
-								{
-									"key": "statusTarget",
-									"value": "Completed"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Validate Commercial Order",
+					"name": "Execute Invoice XML Job",
 					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
 									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"XML_Job\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/execute",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"execute"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Execute Invoice PDF Job",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"PDF_Job\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/execute",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"execute"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate Commercial Order 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.globals.set(\"orderTwoNumber\", pm.response.json().commercialOrderDto.orderNumber);"
 								],
 								"type": "text/javascript"
 							}
@@ -5352,21 +5422,21 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/commercialOrder/validateOrder/{{commercialOrderId}}",
+							"raw": "{{opencell.url}}/commercialOrder/validateOrder/{{commercialOrderTwoId}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"commercialOrder",
 								"validateOrder",
-								"{{commercialOrderId}}"
+								"{{commercialOrderTwoId}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Find Commercial Order",
+					"name": "Find Commercial Order 2",
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -5386,13 +5456,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/commercialOrder/{{orderNumber}}",
+							"raw": "{{opencell.url}}/commercialOrder/{{orderTwoNumber}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"commercialOrder",
-								"{{orderNumber}}"
+								"{{orderTwoNumber}}"
 							]
 						}
 					},
@@ -5519,88 +5589,6 @@
 							]
 						},
 						"description": "List all offers that matching the customer and the seller contexts"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Invoice Management",
-			"item": [
-				{
-					"name": "Read The Invoice by Id",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/billing/invoices/{{invoiceId}}",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"billing",
-								"invoices",
-								"{{invoiceId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "List The Invoices",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/billing/invoices",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"billing",
-								"invoices"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Read The PDF Invoice",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/billing/invoices/{{invoiceId}}/pdf",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"billing",
-								"invoices",
-								"{{invoiceId}}",
-								"pdf"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Read The Invoice by Type",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/billing/invoices/{{invoiceType}}/{{invoiceNumber}}",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"billing",
-								"invoices",
-								"{{invoiceType}}",
-								"{{invoiceNumber}}"
-							]
-						}
 					},
 					"response": []
 				}
@@ -5823,23 +5811,23 @@
 		},
 		{
 			"key": "invoicePlanCode",
-			"value": ""
+			"value": "INVOICE_PLAN_CODE"
 		},
 		{
 			"key": "advancement30Code",
-			"value": ""
+			"value": "TEST_ADVANCEMENT_30"
 		},
 		{
 			"key": "advancement70Code",
-			"value": ""
+			"value": "XML_Job"
 		},
 		{
 			"key": "standardArticleCode",
-			"value": ""
+			"value": "ACT-STD"
 		},
 		{
 			"key": "articleMappingCode",
-			"value": ""
+			"value": "TEST_ACCOUNT_MAPPING"
 		}
 	]
 }
