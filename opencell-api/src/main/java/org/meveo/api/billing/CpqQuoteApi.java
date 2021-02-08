@@ -22,7 +22,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -50,6 +49,7 @@ import org.meveo.api.dto.cpq.QuoteProductDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
+import org.meveo.api.dto.response.cpq.GetPdfQuoteResponseDto;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteVersionDtoResponse;
 import org.meveo.api.exception.BusinessApiException;
@@ -77,7 +77,6 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
@@ -310,83 +309,89 @@ public class CpqQuoteApi extends BaseApi {
 			}
 		}
 	}
-	
-	private void newPopulateQuoteAttribute(List<QuoteAttributeDTO> quoteAttributes, QuoteProduct quoteProduct) {
-		if(quoteAttributes != null) {
-			quoteProduct.getQuoteAttributes().clear();
-			for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributes) {
-				if(Strings.isEmpty(quoteAttributeDTO.getQuoteAttributeCode()))
-					missingParameters.add("quoteAttributeCode");
-				handleMissingParameters();
-				Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
-				if(attribute == null)
-					throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
-				QuoteAttribute quoteAttribute = new QuoteAttribute();
-				quoteAttribute.setAttribute(attribute);
-				quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
-				quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
-				quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
-				quoteProduct.getQuoteAttributes().add(quoteAttribute);
-				quoteAttribute.setQuoteProduct(quoteProduct);
-				quoteAttributeService.create(quoteAttribute);
-				}
-					
-			}
-		}
 
-    public byte[] generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf) {
+    private void newPopulateQuoteAttribute(List<QuoteAttributeDTO> quoteAttributes, QuoteProduct quoteProduct) {
+        if (quoteAttributes != null) {
+            List<Attribute> productAttributes = quoteProduct.getProductVersion().getAttributes();
+            quoteProduct.getQuoteAttributes().clear();
+            for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributes) {
+                if (Strings.isEmpty(quoteAttributeDTO.getQuoteAttributeCode()))
+                    missingParameters.add("quoteAttributeCode");
+                handleMissingParameters();
+                Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
+                if (attribute == null)
+                    throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
+                if(!productAttributes.contains(attribute)){
+                    throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", quoteProduct.getProductVersion().getProduct().getCode() , quoteProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
+                }
+                QuoteAttribute quoteAttribute = new QuoteAttribute();
+                quoteAttribute.setAttribute(attribute);
+                quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
+                quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+                quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
+                quoteProduct.getQuoteAttributes().add(quoteAttribute);
+                quoteAttribute.setQuoteProduct(quoteProduct);
+                quoteAttributeService.create(quoteAttribute);
+            }
+
+        }
+    }
+
+    public GetPdfQuoteResponseDto generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf) {
+        GetPdfQuoteResponseDto result = new GetPdfQuoteResponseDto();
         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
         ParamBean paramBean = ParamBean.getInstance();
-        byte[] xmlContent=null;
+        byte[] xmlContent = null;
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 
         try {
-            CpqQuote cpqQuote=quoteVersion.getQuote(); 
-        	String sellerCode=quoteVersion.getQuote().getSeller()!=null?quoteVersion.getQuote().getSeller().getCode():null;
-        	
-        	String quoteScriptCode = paramBean.getProperty("seller."+sellerCode+".quoteScript","");
-        	if(!StringUtils.isBlank(quoteScriptCode)) {
-        		 ScriptInstance scriptInstance=scriptInstanceService.findByCode(quoteScriptCode);
-        		 if(scriptInstance!=null) {
-        			 String quoteXmlScript = scriptInstance.getCode();
-                     ScriptInterface script = scriptInstanceService.getScriptInstance(quoteXmlScript);
-                     Map<String, Object> methodContext = new HashMap<String, Object>();
-                     methodContext.put("cpqQuote", quoteVersion);
-                     methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
-                     methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
-                     methodContext.put("XMLQuoteCreator", this);
-                     if (script != null) {
-                         script.execute(methodContext);
-                     }
-                     xmlContent= (byte[]) methodContext.get(Script.RESULT_VALUE);
-        		 }
-        		 
-        	}else {
-        		  String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion));
-                  String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
-                  File quoteXmlDir = new File(meveoDir + "quotes" + File.separator + "xml");
-                  if (!quoteXmlDir.exists()) {
-                      quoteXmlDir.mkdirs();
-                  }
-                  xmlContent=quoteXml.getBytes();
-            String fileName = cpqQuoteService.generateFileName(cpqQuote);
-            cpqQuote.setXmlFilename(fileName);
-            String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
-                  Files.write(Paths.get(xmlFilename), quoteXml.getBytes(), StandardOpenOption.CREATE);
-        	}
-        	
-        	if(generatePdf) {
-        		return generateQuotePDF(quoteCode, currentVersion, true);
-        	}
-        	
-          
+            CpqQuote cpqQuote = quoteVersion.getQuote();
+            String sellerCode = quoteVersion.getQuote().getSeller() != null ? quoteVersion.getQuote().getSeller().getCode() : null;
+
+            String quoteScriptCode = paramBean.getProperty("seller." + sellerCode + ".quoteScript", "");
+            if (!StringUtils.isBlank(quoteScriptCode)) {
+                ScriptInstance scriptInstance = scriptInstanceService.findByCode(quoteScriptCode);
+                if (scriptInstance != null) {
+                    String quoteXmlScript = scriptInstance.getCode();
+                    ScriptInterface script = scriptInstanceService.getScriptInstance(quoteXmlScript);
+                    Map<String, Object> methodContext = new HashMap<String, Object>();
+                    methodContext.put("cpqQuote", quoteVersion);
+                    methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+                    methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+                    methodContext.put("XMLQuoteCreator", this);
+                    if (script != null) {
+                        script.execute(methodContext);
+                    }
+                    xmlContent = (byte[]) methodContext.get(Script.RESULT_VALUE);
+                }
+
+            } else {
+                String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion));
+                String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
+                File quoteXmlDir = new File(meveoDir + "quotes" + File.separator + "xml");
+                if (!quoteXmlDir.exists()) {
+                    quoteXmlDir.mkdirs();
+                }
+                xmlContent = quoteXml.getBytes();
+                String fileName = cpqQuoteService.generateFileName(cpqQuote);
+                cpqQuote.setXmlFilename(fileName);
+                String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
+                Files.write(Paths.get(xmlFilename), quoteXml.getBytes(), StandardOpenOption.CREATE);
+                result.setXmlContent(xmlContent);
+            }
+
+            if (generatePdf) {
+                result.setPdfContent(generateQuotePDF(quoteCode, currentVersion, true));
+            }
+
+
         } catch (Exception exp) {
             log.error("Technical error", exp);
             throw new BusinessException(exp.getMessage());
         }
-        
-        return xmlContent;
+
+        return result;
     }
  
 

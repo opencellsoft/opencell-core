@@ -121,6 +121,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 		List<OrderOffer> validOffers = order.getOffers().stream().filter(o -> !o.getProducts().isEmpty()).collect(Collectors.toList());
 
+		if(order.getOrderNumber() == null)
+			order = serviceSingleton.assignCommercialOrderNumber(order);
+
 		for(OrderOffer offer : validOffers){
 			Subscription subscription = new Subscription();
 			subscription.setCode(UUID.randomUUID().toString());

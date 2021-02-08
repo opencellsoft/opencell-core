@@ -37,6 +37,7 @@ import org.meveo.model.order.Order;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.cpq.ContractService;
@@ -70,6 +71,7 @@ public class CommercialOrderApi extends BaseApi {
     @Inject private UserAccountService userAccountService;
     @Inject private AccessService accessService;
     @Inject private SubscriptionService subscriptionService;
+    @Inject private ServiceSingleton serviceSingleton;
 	
 	public CommercialOrderDto create(CommercialOrderDto orderDto) {
 		checkParam(orderDto);
@@ -295,7 +297,7 @@ public class CommercialOrderApi extends BaseApi {
 			missingParameters.add("status");
 		}
 		handleMissingParameters();
-		final CommercialOrder order = commercialOrderService.findById(commercialOrderId);
+		CommercialOrder order = commercialOrderService.findById(commercialOrderId);
 		if(order == null)
 			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
 		if(order.getStatus().equalsIgnoreCase(CommercialOrderEnum.CANCELED.toString())) {
@@ -309,7 +311,9 @@ public class CommercialOrderApi extends BaseApi {
 			if(!order.getStatus().equalsIgnoreCase(CommercialOrderEnum.COMPLETED.toString()))
 				throw new MeveoApiException("The Order is not yet complete");
 			
-		}
+		}else if(statusTarget.equalsIgnoreCase(CommercialOrderEnum.FINALIZED.toString())){
+            order = serviceSingleton.assignCommercialOrderNumber(order);
+        }
 		List<String> status = allStatus();
 
 		if(!status.contains(statusTarget.toLowerCase())) {

@@ -252,7 +252,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	public GetPdfQuoteResponseDto generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf) {
 		GetPdfQuoteResponseDto result = new GetPdfQuoteResponseDto();
 		try {
-			result.setPdfContent(cpqQuoteApi.generateQuoteXml(quoteCode, currentVersion, generatePdf));
+			result = cpqQuoteApi.generateQuoteXml(quoteCode, currentVersion, generatePdf);
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
 		} catch (Exception e) {
