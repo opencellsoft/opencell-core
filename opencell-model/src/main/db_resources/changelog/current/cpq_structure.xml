@@ -2948,32 +2948,6 @@
   		<addForeignKeyConstraint baseTableName="cat_charge_template" baseColumnNames="attribute_id"
 							 constraintName="fk_cat_charge_template_attribute_id"
 							 referencedTableName="cpq_attribute" referencedColumnNames="id"/>
-							 
-    	<addColumn tableName="cpq_quote_version">
-            <column name="cpq_quote_lot_id" type="bigint"/>
-    	</addColumn>
-  		<addForeignKeyConstraint baseTableName="cpq_quote_version" baseColumnNames="cpq_quote_lot_id"
-							 constraintName="fk_cpq_quote_version_cpq_quote_lot_id"
-							 referencedTableName="cpq_quote_lot" referencedColumnNames="id"/>
-							 
-		<dropColumn tableName="cpq_quote_lot">
-			<column name="cpq_quote_version_id"></column>
-		</dropColumn>
-					 
-		<dropColumn tableName="cpq_order_lot">
-			<column name="order_id"></column>
-		</dropColumn>
-    	
-    	<addColumn tableName="cpq_commercial_order">
-            <column name="order_lot_id" type="bigint"/>
-    	</addColumn>
-  		<addForeignKeyConstraint baseTableName="cpq_commercial_order" baseColumnNames="order_lot_id"
-							 constraintName="fk_cpq_commercial_order_order_lot_id"
-							 referencedTableName="cpq_order_lot" referencedColumnNames="id"/>
-							 
-		<dropColumn tableName="cpq_quote_lot">
-			<column name="quote_version" />
-		</dropColumn>
     </changeSet>
 
 	<changeSet id="#214_20210203" author="NabilOUACHI">
@@ -3001,19 +2975,58 @@
 				<constraints nullable="false"/>
 			</column>
 		</addColumn>
+		<sql>
+			<![CDATA[
+				alter table cpq_invoice_line alter column invoice_id drop not null;
+				alter table cpq_quote_price alter column quote_article_line_id drop not null;
+				alter table cpq_order_item drop column code;
+				alter table cpq_order_item drop column description;
+				alter table cpq_order_item rename column attribute_id to cpq_attribute_id;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="20210204_540" author="TarikFA">
+		<addColumn tableName="cat_charge_template">
+			<column name="attribute_duration_id" type="bigint"/>
+			<column name="attribute_calendar_id" type="bigint"/>
+		</addColumn>
 		
+		<addForeignKeyConstraint baseTableName="cat_charge_template" baseColumnNames="attribute_duration_id"
+								 constraintName="fk_cat_charge_templat_attribute_duration_id"
+								 referencedTableName="cpq_attribute" referencedColumnNames="id"/>
+								 
+		<addForeignKeyConstraint baseTableName="cat_charge_template" baseColumnNames="attribute_calendar_id"
+								 constraintName="fk_cat_charge_template_attribute_calendar_id"
+								 referencedTableName="cpq_attribute" referencedColumnNames="id"/>
+
+	</changeSet>
+	<changeSet id="Invoice_lines_job_202001145" author="ZBariki">
+		<preConditions onFail="MARK_RAN">
+			<foreignKeyConstraintExists foreignKeyName="fk_cpq_invoice_line_invoice_id"/>
+		</preConditions>
+		<dropForeignKeyConstraint baseTableName="cpq_invoice_line" constraintName="fk_cpq_invoice_line_invoice_id"/>
+		<addForeignKeyConstraint baseColumnNames="invoice_id" baseTableName="cpq_invoice_line"
+								 constraintName="fk_cpq_invoice_line_invoice_id" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_invoice" />
+	</changeSet>
+	<changeSet id="Invoicing_job_20210205_45" author="ZBariki">
+		<addColumn tableName="cpq_invoice_line">
+			<column name="status" type="varchar(255)">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+		<addColumn tableName="billing_rated_transaction">
+			<column name="invoice_line_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="invoice_line_id" baseTableName="billing_rated_transaction"
+								 constraintName="fk_billing_rated_transaction_invoice_line_id" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="cpq_invoice_line" />
+	</changeSet>
+	<changeSet id="#20210205_540_223" author="TarikFA">
+		<modifyDataType tableName="cpq_media" columnName="media_path" newDataType="varchar(255)"/>
+		<modifyDataType tableName="cpq_media" columnName="media_name" newDataType="varchar(255)"/>
 	</changeSet>
 </databaseChangeLog>
-
-
-
-
-
-
-
-
-
-
-
-
-

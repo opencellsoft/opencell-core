@@ -1,26 +1,24 @@
 package org.meveo.model.cpq.commercial;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.*;
-import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.OfferServiceTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.*;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.util.Date;
+
 import static javax.persistence.FetchType.LAZY;
+import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 
 
 /** 
@@ -33,11 +31,23 @@ import static javax.persistence.FetchType.LAZY;
 @Table(name = "cpq_invoice_line", uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_invoice_line_seq")})
+@NamedQueries({
+		@NamedQuery(name = "InvoiceLine.InvoiceLinesByBRs", query = "FROM InvoiceLine il WHERE il.billingRun IN (:BillingRus)"),
+        @NamedQuery(name="InvoiceLine.findByCommercialOrder", query = "select il from InvoiceLine il where il.commercialOrder = :commercialOrder"),
+		@NamedQuery(name = "InvoiceLine.InvoiceLinesByBRID", query = "FROM InvoiceLine il WHERE il.billingRun.id = :billingRunId"),
+		@NamedQuery(name = "InvoiceLine.AddInvoice", query = "UPDATE InvoiceLine il SET il.invoice = :inv WHERE il.id in (:ids)"),
+		@NamedQuery(name = "InvoiceLine.listToInvoiceByOrderNumber", query = "FROM InvoiceLine il where il.orderNumber=:orderNumber AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate order by il.billingAccount.id "),
+		@NamedQuery(name = "InvoiceLine.listToInvoiceBySubscription", query = "FROM InvoiceLine il where il.subscription.id=:subscriptionId AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
+		@NamedQuery(name = "InvoiceLine.listToInvoiceByBillingAccount", query = "FROM InvoiceLine il where il.billingAccount.id=:billingAccountId AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate"),
+		@NamedQuery(name = "InvoiceLine.updateWithInvoice", query = "UPDATE InvoiceLine il set il.auditable.updated = :now , il.invoice=:invoice where il.id in :ids"),
+		@NamedQuery(name = "InvoiceLine.updateWithInvoiceInfo", query = "UPDATE InvoiceLine il set il.auditable.updated = :now, il.invoice=:invoice, il.amountWithoutTax=:amountWithoutTax, il.amountWithTax=:amountWithTax, il.amountTax=:amountTax, il.tax=:tax, il.taxRate=:taxPercent where il.id=:id")
+
+})
 public class InvoiceLine extends BusinessEntity {
 
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "invoice_id")
-	private OrderInvoice invoice;
+	private Invoice invoice;
 	
 	@Column(name = "prestation")
 	@Size(max = 255)
@@ -157,14 +167,22 @@ public class InvoiceLine extends BusinessEntity {
 	@JoinColumn(name = "order_lot_id")
 	private OrderLot orderLot;
 
+	@Transient
+	private boolean taxRecalculated;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false)
+	@NotNull
+	private InvoiceLineStatusEnum status = OPEN;
+
 	public InvoiceLine() {
 	}
 
-	public OrderInvoice getInvoice() {
+	public Invoice getInvoice() {
 		return invoice;
 	}
 
-	public void setInvoice(OrderInvoice invoice) {
+	public void setInvoice(Invoice invoice) {
 		this.invoice = invoice;
 	}
 
@@ -406,5 +424,32 @@ public class InvoiceLine extends BusinessEntity {
 
 	public void setOrderLot(OrderLot orderLot) {
 		this.orderLot = orderLot;
+	}
+
+	public boolean isTaxOverridden() {
+		return accountingArticle.getTaxClass() == null;
+	}
+
+	public boolean isTaxRecalculated() {
+		return taxRecalculated;
+	}
+
+	public void setTaxRecalculated(boolean taxRecalculated) {
+		this.taxRecalculated = taxRecalculated;
+	}
+
+	public void computeDerivedAmounts(boolean isEnterprise, int rounding, RoundingModeEnum roundingMode) {
+		BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(amountWithoutTax, amountWithTax, taxRate, isEnterprise, rounding, roundingMode.getRoundingMode());
+		amountWithoutTax = amounts[0];
+		amountWithTax = amounts[1];
+		amountTax = amounts[2];
+	}
+
+	public InvoiceLineStatusEnum getStatus() {
+		return status;
+	}
+
+	public void setStatus(InvoiceLineStatusEnum status) {
+		this.status = status;
 	}
 }

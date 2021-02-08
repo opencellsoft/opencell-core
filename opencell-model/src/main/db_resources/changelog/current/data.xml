@@ -2249,6 +2249,39 @@ public class ValidateBRScript extends Script {
        </insert>
 
       </changeSet>
-    
-    
+
+    <changeSet id="#5921-2021-02-02_43" author="ZBariki">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="1" />
+            <column name="created" valueDate="2015-03-19 00:04:19.913" />
+            <column name="job_category" value="INVOICING" />
+            <column name="job_template" value="InvoicingJobV2" />
+            <column name="code" value="Invoicing_Job_V2" />
+            <column name="description" value="Invoicing Job V2"/>
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="timerentity_id" valueNumeric="-1" />
+            <column name="uuid" value="Invoicing_Job_V2" />
+        </insert>
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="InvoicingJobV2_billingRun"/>
+            <column name="applies_to" value="JobInstance_InvoicingJobV2"/>
+            <column name="description" value="Billing Run"/>
+            <column name="field_type" value="ENTITY"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="versionable" value="0"/>
+            <column name="entity_clazz" value="org.meveo.model.billing.BillingRun"/>
+            <column name="storage_type" value="LIST"/>
+            <column name="allow_edit" value="1"/>
+            <column name="hide_on_new" value="0"/>
+            <column name="inh_as_def_value" value="0"/>
+            <column name="cf_protectable" value="0"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>

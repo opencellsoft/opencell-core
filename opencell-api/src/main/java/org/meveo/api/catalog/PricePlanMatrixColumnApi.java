@@ -83,29 +83,20 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
     }
 
     private void checkMissingParameters(PricePlanMatrixColumnDto dtoData) {
-        if (StringUtils.isBlank(dtoData.getPricePlanMatrixCode())) {
-            missingParameters.add("pricePlanMatrixCode");
-        }
+       
         if (StringUtils.isBlank(dtoData.getPricePlanMatrixVersion())) {
             missingParameters.add("pricePlanMatrixVersion");
         }
-        if (StringUtils.isBlank(dtoData.getElValue())) {
+        if (StringUtils.isBlank(dtoData.getAttributeCode()) && StringUtils.isBlank(dtoData.getElValue())) {
             missingParameters.add("elValue");
-        }
-        if (StringUtils.isBlank(dtoData.getAttributeCode())) {
             missingParameters.add("attributeCode");
         }
-        if (StringUtils.isBlank(dtoData.getOfferTemplateCode())) {
+        if (StringUtils.isBlank(dtoData.getOfferTemplateCode()) && StringUtils.isBlank(dtoData.getProductCode()) && StringUtils.isBlank(dtoData.getElValue())) {
             missingParameters.add("offerTemplateCode");
-        }
-        if (StringUtils.isBlank(dtoData.getPosition())) {
-            missingParameters.add("position");
+            missingParameters.add("productCode");
         }
         if (StringUtils.isBlank(dtoData.getCode())) {
             missingParameters.add("code");
-        }
-        if (StringUtils.isBlank(dtoData.getProductCode())) {
-            missingParameters.add("productCode");
         }
 
         handleMissingParametersAndValidate(dtoData);

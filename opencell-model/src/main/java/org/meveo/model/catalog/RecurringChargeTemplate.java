@@ -32,6 +32,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
+import org.meveo.model.cpq.Attribute;
 
 /**
  * Recurring charge template
@@ -148,6 +149,16 @@ public class RecurringChargeTemplate extends ChargeTemplate {
     @Column(name = "apply_terminated_charge_to_date_el", length = 2000)
     @Size(max = 2000)
     private String applyTerminatedChargeToDateEL;
+    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "attribute_duration_id")
+    private Attribute attributeDuration;
+    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "attribute_calendar_id")
+    private Attribute attributeCalendar;
 
     /**
      * Gets the calendar.
@@ -375,4 +386,32 @@ public class RecurringChargeTemplate extends ChargeTemplate {
     public void setApplyTerminatedChargeToDateEL(String applyTerminatedChargeToDateEL) {
         this.applyTerminatedChargeToDateEL = applyTerminatedChargeToDateEL;
     }
+
+	/**
+	 * @return the attributeDuration
+	 */
+	public Attribute getAttributeDuration() {
+		return attributeDuration;
+	}
+
+	/**
+	 * @param attributeDuration the attributeDuration to set
+	 */
+	public void setAttributeDuration(Attribute attributeDuration) {
+		this.attributeDuration = attributeDuration;
+	}
+
+	/**
+	 * @return the attributeCalendar
+	 */
+	public Attribute getAttributeCalendar() {
+		return attributeCalendar;
+	}
+
+	/**
+	 * @param attributeCalendar the attributeCalendar to set
+	 */
+	public void setAttributeCalendar(Attribute attributeCalendar) {
+		this.attributeCalendar = attributeCalendar;
+	}
 }

@@ -15621,7 +15621,7 @@ StringToStringMap headersForAdmin = new StringToStringMap();
 StringToStringMap headersForSuper = new StringToStringMap();
 
 String superUserPass = testCase.testSuite.project.getPropertyValue("superUsername")+":"+testCase.testSuite.project.getPropertyValue("superPassword");
-String adminUserPass = testCase.testSuite.project.getPropertyValue("adminUsername")+":"+testCase.testSuite.project.getPropertyValue("adminPassword"); 
+String adminUserPass = testCase.testSuite.project.getPropertyValue("adminUsername")+":"+testCase.testSuite.project.getPropertyValue("adminPassword");
 
 headersForAdmin.put("Authorization","Basic "+adminUserPass.getBytes().encodeBase64());
 headersForSuper.put("Authorization","Basic "+superUserPass.getBytes().encodeBase64());
@@ -15645,7 +15645,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
 		    	} else if(testCaseItem.getName().contains("AUTHORIZATION_SUPERADMIN") || testStep.getName().contains("AUTHORIZATION_SUPERADMIN")) {
 		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
-		    	} else {		       
+		    	} else {
 			     testStep.getTestRequest().setRequestHeaders(headersForAdmin);
 		    	}
 
@@ -18004,7 +18004,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Body>
       <ws:createOrUpdateUserHierarchyLevel>
          <userHierarchyLevel code="world" description="World">
-		  <orderLevel>1</orderLevel>		           
+		  <orderLevel>1</orderLevel>
          </userHierarchyLevel>
       </ws:createOrUpdateUserHierarchyLevel>
    </soapenv:Body>
@@ -18045,7 +18045,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateUserHierarchyLevel>
 	         <userHierarchyLevel code="europe" description="Europe">
 	         	  <parentLevel>world</parentLevel>
-			  <orderLevel>1</orderLevel>		           
+			  <orderLevel>1</orderLevel>
 	         </userHierarchyLevel>
       </ws:createOrUpdateUserHierarchyLevel>
    </soapenv:Body>
@@ -18086,7 +18086,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateUserHierarchyLevel>
 	         <userHierarchyLevel code="france" description="France">
 	         	  <parentLevel>europe</parentLevel>
-			  <orderLevel>2</orderLevel>		           
+			  <orderLevel>2</orderLevel>
 	         </userHierarchyLevel>
       </ws:createOrUpdateUserHierarchyLevel>
    </soapenv:Body>
@@ -18127,7 +18127,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateUserHierarchyLevel>
 	         <userHierarchyLevel code="asia" description="Asia">
 	         	  <parentLevel>world</parentLevel>
-			  <orderLevel>2</orderLevel>		           
+			  <orderLevel>2</orderLevel>
 	         </userHierarchyLevel>
       </ws:createOrUpdateUserHierarchyLevel>
    </soapenv:Body>
@@ -18168,7 +18168,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateUserHierarchyLevel>
          <userHierarchyLevel code="america" description="America">
          	  <parentLevel>world</parentLevel>
-		  <orderLevel>3</orderLevel>		           
+		  <orderLevel>3</orderLevel>
          </userHierarchyLevel>
       </ws:createOrUpdateUserHierarchyLevel>
    </soapenv:Body>
@@ -18209,7 +18209,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateUserHierarchyLevel>
 	         <userHierarchyLevel code="africa" description="Africa">
 	         	  <parentLevel>world</parentLevel>
-			  <orderLevel>4</orderLevel>		           
+			  <orderLevel>4</orderLevel>
 	         </userHierarchyLevel>
       </ws:createOrUpdateUserHierarchyLevel>
    </soapenv:Body>
@@ -18250,7 +18250,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:updateUserHierarchyLevel>
          <userHierarchyLevel code="america" description="America">
          	  <parentLevel>world</parentLevel>
-		  <orderLevel>3</orderLevel>		           
+		  <orderLevel>3</orderLevel>
          </userHierarchyLevel>
       </ws:updateUserHierarchyLevel>
    </soapenv:Body>
@@ -18687,7 +18687,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCustomerCategory>
-         
+
          <customerCategory code="CLIENT" description="Client">
             <exoneratedFromTaxes>false</exoneratedFromTaxes>
          </customerCategory>
@@ -18721,7 +18721,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCustomerCategory>
-         
+
          <customerCategory code="INDIVIDUAL" description="Individual">
             <exoneratedFromTaxes>false</exoneratedFromTaxes>
             <taxCategoryCode>Tax category</taxCategoryCode>
@@ -18756,7 +18756,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCustomerCategory>
-         
+
          <customerCategory code="GOVERNMENT" description="Governement">
             <exoneratedFromTaxes>true</exoneratedFromTaxes>
             <taxCategoryCode>Tax category</taxCategoryCode>
@@ -18791,7 +18791,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCustomerCategory>
-         
+
          <customerCategory code="COMPANY" description="Company">
             <exoneratedFromTaxes>false</exoneratedFromTaxes>
             <taxCategoryCode>Tax category</taxCategoryCode>
@@ -18826,7 +18826,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCustomerCategory>
-         
+
          <customerCategory code="SOHO" description="Small Office - Home Office">
             <exoneratedFromTaxes>false</exoneratedFromTaxes>
             <taxCategoryCode>Tax category</taxCategoryCode>
@@ -18997,7 +18997,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findCalendar>
-         
+
          <calendarCode>CAL_DEFAULT_YEARLY</calendarCode>
       </ws:findCalendar>
    </soapenv:Body>
@@ -19036,7 +19036,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateSeller>
-         
+
          <seller code="${#Project#provider}" description="Seller for ${#Project#provider}">
 <!--
              <invoiceTypeSequences>
@@ -19099,7 +19099,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateSeller>
-         
+
          <seller code="${#Project#templateCode}" description="Seller for ${#Project#templateLabel}">
 <!--
              <invoiceTypeSequences>
@@ -19162,7 +19162,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateSeller>
-         
+
          <seller code="${#Project#templateCode}_PARTNER" description="Partner Seller for ${#Project#templateLabel}">
              <customFields/>
          </seller>
@@ -19205,7 +19205,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCustomerBrand>
-         
+
          <customerBrand code="${#Project#templateCode}" description="${#Project#templateLabel}">
          </customerBrand>
       </ws:createOrUpdateCustomerBrand>
@@ -19245,9 +19245,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateLanguage>
-         
+
          <language code="FRA">
-            
+
             <description>Français</description>
          </language>
       </ws:createOrUpdateLanguage>
@@ -19287,9 +19287,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateLanguage>
-         
+
          <language code="ENG">
-            
+
             <description>English</description>
          </language>
       </ws:createOrUpdateLanguage>
@@ -19329,9 +19329,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCurrency>
-         
+
          <currency code="EUR">
-            
+
             <description>Euro</description>
          </currency>
       </ws:createOrUpdateCurrency>
@@ -19371,9 +19371,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCurrency>
-         
+
          <currency code="USD">
-            
+
             <description>USD</description>
          </currency>
       </ws:createOrUpdateCurrency>
@@ -19413,10 +19413,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCountry>
-         
+
          <country countryCode="FR" name="France">
             <currencyCode>EUR</currencyCode>
-            
+
             <languageCode>FRA</languageCode>
          </country>
       </ws:createOrUpdateCountry>
@@ -19456,10 +19456,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCountry>
-         
+
          <country countryCode="US" name="United States of America">
             <currencyCode>USD</currencyCode>
-            
+
             <languageCode>ENG</languageCode>
          </country>
       </ws:createOrUpdateCountry>
@@ -19499,7 +19499,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCalendar>
-         
+
          <calendar code="CAL_DEFAULT_MONTHLY_1ST" description="Monthly calendar 1st of the month (default)">
             <calendarType>YEARLY</calendarType>
             <!--Zero or more repetitions:-->
@@ -19682,7 +19682,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateCalendar>
-         
+
          <calendar code="CAL_${#Project#templateCode}_MONTHLY_1ST" description="Monthly calendar 1st of the month">
             <calendarType>YEARLY</calendarType>
             <!--Zero or more repetitions:-->
@@ -20124,7 +20124,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findBillingCycle>
-         
+
          <billingCycleCode>BC_${#Project#templateCode}_MONTHLY_1ST</billingCycleCode>
       </ws:findBillingCycle>
    </soapenv:Body>
@@ -20563,16 +20563,16 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateBillingCycle>
-         
+
          <billingCycle code="BILLCYCLE1" description="Billed the 1st of the month, every month (default)">
-            
+
             <billingTemplateName>${#Project#templateCode}</billingTemplateName>
             <invoiceDateDelay>2</invoiceDateDelay>
             <dueDateDelay>30</dueDateDelay>
              <referenceDate>TODAY</referenceDate>
-            
+
             <invoiceDateProductionDelay>2</invoiceDateProductionDelay>
-            
+
             <transactionDateDelay>2</transactionDateDelay>
             <calendar>CAL_DEFAULT_MONTHLY_1ST</calendar>
          </billingCycle>
@@ -20613,15 +20613,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateBillingCycle>
-         
+
          <billingCycle code="BC_${#Project#templateCode}_MONTHLY_1ST" description="${#Project#templateLabel}: Billed the 1st of the month, every month">
-            
+
             <billingTemplateName>${#Project#templateCode}</billingTemplateName>
             <invoiceDateDelay>2</invoiceDateDelay>
             <dueDateDelay>30</dueDateDelay>
             <referenceDate>TODAY</referenceDate>
             <invoiceDateProductionDelay>2</invoiceDateProductionDelay>
-            
+
             <transactionDateDelay>2</transactionDateDelay>
             <calendar>CAL_${#Project#templateCode}_MONTHLY_1ST</calendar>
             <invoiceTypeCode>${#Project#templateCode}_COM</invoiceTypeCode>
@@ -20663,15 +20663,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateBillingCycle>
-         
+
          <billingCycle code="BC_${#Project#templateCode}_PARTNER" description="${#Project#templateLabel} Partner Credit Note calculation">
-            
+
             <billingTemplateName>${#Project#templateCode}</billingTemplateName>
             <invoiceDateDelay>2</invoiceDateDelay>
             <dueDateDelay>30</dueDateDelay>
             <referenceDate>TODAY</referenceDate>
             <invoiceDateProductionDelay>2</invoiceDateProductionDelay>
-            
+
             <transactionDateDelay>2</transactionDateDelay>
             <calendar>CAL_${#Project#templateCode}_MONTHLY_1ST</calendar>
             <invoiceTypeCode>${#Project#templateCode}_CN</invoiceTypeCode>
@@ -20755,7 +20755,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceCategory>
-         
+
          <invoiceCategory code="${#Project#templateCode}_RECURRING" description="Recurring">
             <!--Zero or more repetitions:-->
 
@@ -20835,7 +20835,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceCategory>
-         
+
          <invoiceCategory code="${#Project#templateCode}_PRODUCTS" description="Products">
             <!--Zero or more repetitions:-->
 
@@ -20877,7 +20877,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
-         
+
          <invoiceSubCategory code="${#Project#templateCode}_USAGE" description="Usage">
             <invoiceCategory>${#Project#templateCode}_USAGE</invoiceCategory>
             <!--Zero or more repetitions:-->
@@ -20919,7 +20919,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
-         
+
          <invoiceSubCategory code="${#Project#templateCode}_USAGE_INCLUDED" description="Usage included">
             <invoiceCategory>${#Project#templateCode}_USAGE</invoiceCategory>
             <!--Zero or more repetitions:-->
@@ -20961,7 +20961,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
-         
+
          <invoiceSubCategory code="${#Project#templateCode}_USAGE_NOT_INCLUDED" description="Usage not Included">
             <invoiceCategory>${#Project#templateCode}_USAGE</invoiceCategory>
             <!--Zero or more repetitions:-->
@@ -21003,7 +21003,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
-         
+
          <invoiceSubCategory code="${#Project#templateCode}_USAGE_TIER" description="Tiered usage">
             <invoiceCategory>${#Project#templateCode}_USAGE</invoiceCategory>
             <!--Zero or more repetitions:-->
@@ -21045,7 +21045,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
-         
+
          <invoiceSubCategory code="${#Project#templateCode}_RECURRING_FORWARD" description="Recurring Forward Billing">
             <invoiceCategory>${#Project#templateCode}_RECURRING</invoiceCategory>
             <!--Zero or more repetitions:-->
@@ -21088,7 +21088,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
-         
+
          <invoiceSubCategory code="${#Project#templateCode}_RECURRING" description="Recurring">
             <invoiceCategory>${#Project#templateCode}_RECURRING</invoiceCategory>
             <!--Zero or more repetitions:-->
@@ -21131,7 +21131,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
-         
+
          <invoiceSubCategory code="${#Project#templateCode}_ONESHOT" description="One-shot charges">
             <invoiceCategory>${#Project#templateCode}_ONESHOT</invoiceCategory>
             <!--Zero or more repetitions:-->
@@ -21174,7 +21174,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
-         
+
          <invoiceSubCategory code="${#Project#templateCode}_ONESHOT_SUB" description="Subscription fee">
             <invoiceCategory>${#Project#templateCode}_ONESHOT</invoiceCategory>
             <!--Zero or more repetitions:-->
@@ -21217,7 +21217,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
-         
+
          <invoiceSubCategory code="${#Project#templateCode}_ONESHOT_TER" description="Termination fee">
             <invoiceCategory>${#Project#templateCode}_ONESHOT</invoiceCategory>
             <!--Zero or more repetitions:-->
@@ -21260,7 +21260,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
-         
+
          <invoiceSubCategory code="${#Project#templateCode}_PRODUCTS" description="Products">
             <invoiceCategory>${#Project#templateCode}_PRODUCTS</invoiceCategory>
             <!--Zero or more repetitions:-->
@@ -21303,12 +21303,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
         <ws:createOrUpdateInvoiceSubCategoryCountry>
-         
+
          <invoiceSubCategoryCountry>
             <invoiceSubCategory>${#Project#templateCode}_USAGE</invoiceSubCategory>
             <country>FR</country>
             <tax>TAX_${#Project#templateCode}_HIGH</tax>
-            
+
          </invoiceSubCategoryCountry>
       </ws:createOrUpdateInvoiceSubCategoryCountry>
    </soapenv:Body>
@@ -21347,12 +21347,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
         <ws:createOrUpdateInvoiceSubCategoryCountry>
-         
+
          <invoiceSubCategoryCountry>
             <invoiceSubCategory>${#Project#templateCode}_USAGE_NOT_INCLUDED</invoiceSubCategory>
             <country>FR</country>
             <tax>TAX_${#Project#templateCode}_HIGH</tax>
-            
+
          </invoiceSubCategoryCountry>
       </ws:createOrUpdateInvoiceSubCategoryCountry>
    </soapenv:Body>
@@ -21391,12 +21391,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
         <ws:createOrUpdateInvoiceSubCategoryCountry>
-         
+
          <invoiceSubCategoryCountry>
             <invoiceSubCategory>${#Project#templateCode}_USAGE_INCLUDED</invoiceSubCategory>
             <country>FR</country>
             <tax>TAX_${#Project#templateCode}_HIGH</tax>
-            
+
          </invoiceSubCategoryCountry>
       </ws:createOrUpdateInvoiceSubCategoryCountry>
    </soapenv:Body>
@@ -21435,12 +21435,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
         <ws:createOrUpdateInvoiceSubCategoryCountry>
-         
+
          <invoiceSubCategoryCountry>
             <invoiceSubCategory>${#Project#templateCode}_USAGE_TIER</invoiceSubCategory>
             <country>FR</country>
             <tax>TAX_${#Project#templateCode}_HIGH</tax>
-            
+
          </invoiceSubCategoryCountry>
       </ws:createOrUpdateInvoiceSubCategoryCountry>
    </soapenv:Body>
@@ -21479,12 +21479,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
         <ws:createOrUpdateInvoiceSubCategoryCountry>
-         
+
          <invoiceSubCategoryCountry>
             <invoiceSubCategory>${#Project#templateCode}_RECURRING</invoiceSubCategory>
             <country>FR</country>
             <tax>TAX_${#Project#templateCode}_HIGH</tax>
-            
+
          </invoiceSubCategoryCountry>
       </ws:createOrUpdateInvoiceSubCategoryCountry>
    </soapenv:Body>
@@ -21523,12 +21523,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
         <ws:createOrUpdateInvoiceSubCategoryCountry>
-         
+
          <invoiceSubCategoryCountry>
             <invoiceSubCategory>${#Project#templateCode}_RECURRING_FORWARD</invoiceSubCategory>
             <country>FR</country>
             <tax>TAX_${#Project#templateCode}_HIGH</tax>
-            
+
          </invoiceSubCategoryCountry>
       </ws:createOrUpdateInvoiceSubCategoryCountry>
    </soapenv:Body>
@@ -21567,12 +21567,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
         <ws:createOrUpdateInvoiceSubCategoryCountry>
-         
+
          <invoiceSubCategoryCountry>
             <invoiceSubCategory>${#Project#templateCode}_ONESHOT</invoiceSubCategory>
             <country>FR</country>
             <tax>TAX_${#Project#templateCode}_HIGH</tax>
-            
+
          </invoiceSubCategoryCountry>
       </ws:createOrUpdateInvoiceSubCategoryCountry>
    </soapenv:Body>
@@ -21611,12 +21611,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
         <ws:createOrUpdateInvoiceSubCategoryCountry>
-         
+
          <invoiceSubCategoryCountry>
             <invoiceSubCategory>${#Project#templateCode}_ONESHOT_SUB</invoiceSubCategory>
             <country>FR</country>
             <tax>TAX_${#Project#templateCode}_HIGH</tax>
-            
+
          </invoiceSubCategoryCountry>
       </ws:createOrUpdateInvoiceSubCategoryCountry>
    </soapenv:Body>
@@ -21655,12 +21655,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
         <ws:createOrUpdateInvoiceSubCategoryCountry>
-         
+
          <invoiceSubCategoryCountry>
             <invoiceSubCategory>${#Project#templateCode}_ONESHOT_TER</invoiceSubCategory>
             <country>FR</country>
             <tax>TAX_${#Project#templateCode}_HIGH</tax>
-            
+
          </invoiceSubCategoryCountry>
       </ws:createOrUpdateInvoiceSubCategoryCountry>
    </soapenv:Body>
@@ -21699,12 +21699,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
         <ws:createOrUpdateInvoiceSubCategoryCountry>
-         
+
          <invoiceSubCategoryCountry>
             <invoiceSubCategory>${#Project#templateCode}_PRODUCTS</invoiceSubCategory>
             <country>FR</country>
             <tax>TAX_${#Project#templateCode}_HIGH</tax>
-            
+
          </invoiceSubCategoryCountry>
       </ws:createOrUpdateInvoiceSubCategoryCountry>
    </soapenv:Body>
@@ -21743,7 +21743,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceCategory>
-         
+
          <invoiceCategory code="${#Project#templateCode}_GENERIC" description="Generic">
             <!--Zero or more repetitions:-->
 
@@ -21785,7 +21785,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
-         
+
          <invoiceSubCategory code="${#Project#templateCode}_GENERIC_VAT_ZERO" description="Generic VAT 0%">
             <invoiceCategory>${#Project#templateCode}_GENERIC</invoiceCategory>
             <!--Zero or more repetitions:-->
@@ -21828,7 +21828,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
-         
+
          <invoiceSubCategory code="${#Project#templateCode}_GENERIC_VAT_LOW" description="Generic VAT 10%">
             <invoiceCategory>${#Project#templateCode}_GENERIC</invoiceCategory>
             <!--Zero or more repetitions:-->
@@ -21871,7 +21871,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
-         
+
          <invoiceSubCategory code="${#Project#templateCode}_GENERIC_VAT_HIGH" description="Generic VAT 20%">
             <invoiceCategory>${#Project#templateCode}_GENERIC</invoiceCategory>
             <!--Zero or more repetitions:-->
@@ -22038,7 +22038,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateTerminationReason>
-         
+
          <terminationReason code="TR_NONE" description="Termination with no action (no fees, no reimbursment)">
             <applyAgreement>false</applyAgreement>
             <applyReimbursment>false</applyReimbursment>
@@ -22081,7 +22081,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateTerminationReason>
-         
+
          <terminationReason code="TR_REIMBURSE" description="Apply no additonal fee and reimburse">
             <applyAgreement>false</applyAgreement>
             <applyReimbursment>true</applyReimbursment>
@@ -22124,7 +22124,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateTerminationReason>
-         
+
          <terminationReason code="TR_TERMINATION" description="Don't reimburse, charge termination fees">
             <applyAgreement>false</applyAgreement>
             <applyReimbursment>false</applyReimbursment>
@@ -22167,7 +22167,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateTerminationReason>
-         
+
          <terminationReason code="TR_ENGAGEMENT" description="Don't reimburse, charge due periods">
             <applyAgreement>true</applyAgreement>
             <applyReimbursment>false</applyReimbursment>
@@ -22210,7 +22210,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateTerminationReason>
-         
+
          <terminationReason code="TR_ALL" description="Don't reimburse, charge termination and engagement fees">
             <applyAgreement>true</applyAgreement>
             <applyReimbursment>false</applyReimbursment>
@@ -22253,7 +22253,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateTerminationReason>
-         
+
          <terminationReason code="CC_TERMINATION" description="Termination by Customer Care">
             <applyAgreement>false</applyAgreement>
             <applyReimbursment>false</applyReimbursment>
@@ -22296,7 +22296,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateTerminationReason>
-         
+
          <terminationReason code="SELFCARE_TERMINATION" description="Termination by Self Care">
             <applyAgreement>false</applyAgreement>
             <applyReimbursment>false</applyReimbursment>
@@ -22674,24 +22674,24 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                      <stringValue>originBatch</stringValue>
                   </customField>
                   <customField code="FlatFileProcessingJob_mappingConf">
-                     <stringValue><![CDATA[<beanio xmlns="http://www.beanio.org/2012/03" 
+                     <stringValue><![CDATA[<beanio xmlns="http://www.beanio.org/2012/03"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd">
   <stream name="record" format="csv">
     <parser>
       <property name="delimiter" value=";" />
-    </parser>     
+    </parser>
     <record name="header" minOccurs="1" maxOccurs="1" class="map">
       <field name="IDTicketAFS" ignore="true" literal="IDTicketAFS" />
     </record>
-    <record name="cdr"  minOccurs="0" maxOccurs="unbounded" class="org.meveo.model.rating.CDR">  
+    <record name="cdr"  minOccurs="0" maxOccurs="unbounded" class="org.meveo.model.rating.CDR">
       <field position="1"  name="param3"  minOccurs="0"/>  <!-- IDClient -->
       <field position="2"  name="access_id"  minOccurs="0"/> <!-- CallingNumberNDI -->
       <field position="4"  name="param2"  minOccurs="0"/> <!-- CalledNumber -->
       <field position="8"  name="param1"  minOccurs="0"/>  <!-- Destination -->
       <field position="5" name="timestamp" type="date" format="yyyy-MM-dd HH:mm:ss" minOccurs="0" /> <!-- CallTime -->
       <field position="6" name="quantity" minOccurs="0" /> <!-- CallDurationSec -->
-    </record> 
+    </record>
   </stream>
 </beanio>]]]]>><![CDATA[</stringValue>
                   </customField>
@@ -22781,7 +22781,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:chargeCdr>
-         
+
          <cdr>2017-08-23T10:15:11.000Z;100;0171809456;GERMANY GSM VODAFONE;</cdr>
       </ws:chargeCdr>
    </soapenv:Body>
@@ -22824,7 +22824,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateChannel>
-         
+
 		<channel code="WEB" description="Web" />
       </ws:createOrUpdateChannel>
    </soapenv:Body>
@@ -22863,7 +22863,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateChannel>
-         
+
 		<channel code="PHONING" description="Phoning" />
       </ws:createOrUpdateChannel>
    </soapenv:Body>
@@ -22902,7 +22902,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateChannel>
-         
+
 		<channel code="MAILING" description="Mailing" />
       </ws:createOrUpdateChannel>
    </soapenv:Body>
@@ -22982,7 +22982,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBusinessAccountModel>
-         
+
         <businessAccountModelDto code="INDIV" license="GPL" description="Individual">
           <moduleItems />
           <hierarchyType>C_UA</hierarchyType>
@@ -23024,7 +23024,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBusinessAccountModel>
-         
+
         <businessAccountModelDto code="SOHO" license="GPL" description="Small office/Home office">
           <moduleItems />
           <hierarchyType>C_UA</hierarchyType>
@@ -23066,7 +23066,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBusinessAccountModel>
-         
+
         <businessAccountModelDto code="COMPANY" license="GPL" description="Company">
           <moduleItems />
           <hierarchyType>C_UA</hierarchyType>
@@ -23108,7 +23108,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installBusinessAccountModel>
-         <businessAccountModelDto code="DEFAULT"/> 
+         <businessAccountModelDto code="DEFAULT"/>
       </ws:installBusinessAccountModel>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -23139,7 +23139,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installBusinessAccountModel>
-         <businessAccountModelDto code="INDIV"/> 
+         <businessAccountModelDto code="INDIV"/>
       </ws:installBusinessAccountModel>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -23170,7 +23170,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installBusinessAccountModel>
-         <businessAccountModelDto code="SOHO"/> 
+         <businessAccountModelDto code="SOHO"/>
       </ws:installBusinessAccountModel>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -23201,7 +23201,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installBusinessAccountModel>
-         <businessAccountModelDto code="COMPANY"/> 
+         <businessAccountModelDto code="COMPANY"/>
       </ws:installBusinessAccountModel>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -23296,53 +23296,53 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class InvoiceCreateScript extends Script {
-	  
+
   	private static final Logger log = LoggerFactory.getLogger(InvoiceCreateScript.class);
   	private CustomFieldInstanceService cfService = (CustomFieldInstanceService)getServiceInterface("CustomFieldInstanceService");
 	public class CrmAuthenticationHeader{
 		String Header;
 		Date Expires;
-		
+
 		public CrmAuthenticationHeader(){
-			
+
 		}
 	}
-  
+
   	public void execute(Map<String,Object> context) throws BusinessException{
-      
+
       try{
         Provider appProvider = ((ProviderService)getServiceInterface("ProviderService")).getProvider();
-        
+
         log.debug("Executing Script MS Invoice Create");
      // CRM Online
 		String url = ""+cfService.getCFValue(appProvider, "MSD_URL");
 		String username = ""+cfService.getCFValue(appProvider, "MSD_USERNAME");
 		String password = ""+cfService.getCFValue(appProvider, "MSD_PASSWORD");
-        
- 
-        
+
+
+
         CrmAuthenticationHeader authHeader = GetHeaderOnline(username, password, url);
-        
+
         /*String id = CrmWhoAmI(authHeader, url);
 		if (id == null)
 			return;
 
 		String name = CrmGetUserName(authHeader, id, url);
 		log.debug(name);*/
-        
+
 		// End CRM Online
 
 		String invoiceTypeId = GetInvoiceTypeId(authHeader,context, url);
 		String createdInvoice = CreateInvoice(authHeader,context, url,invoiceTypeId);
 		log.debug("Created Invoice : " + createdInvoice);
-        
-		
+
+
       }catch(Exception e){
         log.debug("An error occured");
         log.debug(e.toString());
       }
 	}
-  
+
   	public String GetInvoiceTypeId(CrmAuthenticationHeader authHeader,Map<String,Object> context, String url) throws IOException, SAXException, ParserConfigurationException {
 
 		String requestMain = "";
@@ -23382,7 +23382,7 @@ public class InvoiceCreateScript extends Script {
 		NodeList nodes = xDoc.getElementsByTagName("d:OptionMetadata");
 		for (int i = 0; i < nodes.getLength(); i++) {
 			for(int j=0;j< nodes.item(i).getChildNodes().getLength();j++){
-				Node currentNode = nodes.item(i).getChildNodes().item(j); 
+				Node currentNode = nodes.item(i).getChildNodes().item(j);
 				String nodeName = currentNode.getNodeName();
 				if(nodeName == "d:Label"){
 					for(int k=0;k< currentNode.getChildNodes().getLength();k++){
@@ -23400,8 +23400,8 @@ public class InvoiceCreateScript extends Script {
 							}
 							break;
 						}
-						
-						
+
+
 					}
 					break;
 				}
@@ -23409,10 +23409,10 @@ public class InvoiceCreateScript extends Script {
 		}
 
 		return "";
-	}	
+	}
   	public String CreateInvoice(CrmAuthenticationHeader authHeader,Map<String,Object> context, String url, String invoiceTypeId)
 			throws IOException, SAXException, ParserConfigurationException {
-              
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
 		if(context !=null){
@@ -23478,20 +23478,20 @@ public class InvoiceCreateScript extends Script {
             requestMain += "        </request>";
             requestMain += "      </Execute>";
             requestMain += "    </s:Body>";
-                  
+
             //log.debug("Request Main : " + requestMain);
             Document xDoc = ExecuteSoapRequest(authHeader, requestMain, url);
             log.debug("xDoc : " + xDoc.toString());
             if (xDoc == null)
                 return "";
-    
+
             NodeList nodes = xDoc.getElementsByTagName("b:KeyValuePairOfstringanyType");
             for (int i = 0; i < nodes.getLength(); i++) {
                 if ((nodes.item(i).getFirstChild().getTextContent()).equals("UserId")) {
                     return nodes.item(i).getLastChild().getTextContent();
                 }
             }
-          	
+
 		}
               log.debug("context is null");
 		return "";
@@ -23578,7 +23578,7 @@ public class InvoiceCreateScript extends Script {
 
 		return firstname + " " + lastname;
 	}
-	
+
 	public CrmAuthenticationHeader GetHeaderOnline(String username,
 			String password, String url) throws IOException, SAXException,
 			ParserConfigurationException, XPathExpressionException {
@@ -23680,7 +23680,7 @@ public class InvoiceCreateScript extends Script {
 
 		return authHeader;
 	}
-	
+
 	public String CreateSoapHeaderOnline(String url, String keyIdentifer,
 			String token1, String token2) {
 		StringBuilder xml = new StringBuilder();
@@ -23737,7 +23737,7 @@ public class InvoiceCreateScript extends Script {
 
 		return "crmna:dynamics.com";
 	}
-  
+
 	public Document ExecuteSoapRequest(CrmAuthenticationHeader authHeader, String requestBody, String url)
 			throws IOException, SAXException, ParserConfigurationException {
 		if (!url.endsWith("/"))
@@ -23785,14 +23785,14 @@ public class InvoiceCreateScript extends Script {
 
 		return doc;
 	}
-	
+
 	private Date AddMinutes(int minutes, Date time) {
 		long ONE_MINUTE_IN_MILLIS = 60000;
 		long currentTime = time.getTime();
 		Date newDate = new Date(currentTime + (minutes * ONE_MINUTE_IN_MILLIS));
 		return newDate;
 	}
-  
+
   	public static BigDecimal getBigDecimal(Object value) {
 		BigDecimal ret = null;
 		if (value != null) {
@@ -23973,12 +23973,12 @@ public class InvoiceCreateScript extends Script {
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>
-   
+
 
       <ws:createOrUpdate>
-         
+
          <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.startsyscmd.PowershellExecutor" description="Executes a script to setup the provider">
-            
+
             <type>JAVA</type>
             <script><![CDATA[
 package org.meveo.service.script.startsyscmd;
@@ -24058,12 +24058,12 @@ public class PowershellExecutor extends org.meveo.service.script.Script {
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>
-   
+
 
       <ws:createOrUpdate>
-         
+
          <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.Mediation_CreateEdr" description="Mediation Create Edr">
-            
+
             <type>JAVA</type>
             <script><![CDATA[
 package org.meveo.service.script;
@@ -24171,11 +24171,11 @@ public class Mediation_CreateEdr extends org.meveo.service.script.Script {
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-   
+
       <ws:createOrUpdate>
-         
+
          <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.Mediation_DuplicatedCheck" description="Mediation DuplicatedCheck">
-            
+
             <type>JAVA</type>
             <script><![CDATA[
 package org.meveo.service.script;
@@ -24199,11 +24199,11 @@ public class Mediation_DuplicatedCheck extends Script {
 		try {
 			messageDigest = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
-			
+
 		}
 	}
 	EdrService edrService = (EdrService) getServiceInterface("EdrService");
-	
+
 	public void execute(Map<String, Object> initContext,User user)throws BusinessException{
 		log.info("Execute...");
 		String originBatch = (String) initContext.get("originBatch");
@@ -24212,7 +24212,7 @@ public class Mediation_DuplicatedCheck extends Script {
 		initContext.put("duplicateFound", Boolean.valueOf(result));
 		log.info("Execute result:"+result);
 	}
-	
+
 	public String getOriginRecord(Object object) {
 		String result = object.toString();
         if (messageDigest != null) {
@@ -24267,12 +24267,12 @@ public class Mediation_DuplicatedCheck extends Script {
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-   
+
       <ws:createOrUpdate>
-         
+
          <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.Mediation_RoutingSub" description="Mediation_RoutingSub">
 
-            
+
             <type>JAVA</type>
             <script><![CDATA[
 package org.meveo.service.script;
@@ -24340,13 +24340,13 @@ public class Mediation_RoutingSub extends Script {
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-   
+
       <ws:createOrUpdate>
-         
+
          <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.Mediation_Flow" description="Mediation_Flow">
 
 
-            
+
             <type>JAVA</type>
             <script><![CDATA[
 package org.meveo.service.script;
@@ -24364,7 +24364,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Mediation_Flow extends org.meveo.service.script.Script {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(Mediation_Flow.class);
 	ScriptInstanceService scriptInstanceService = (ScriptInstanceService)getServiceInterface("ScriptInstanceService");
 
@@ -24378,13 +24378,13 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 			mediation_RoutingSub = scriptInstanceService.getScriptInstance(user.getProvider(), "org.meveo.service.script.Mediation_RoutingSub");
 			mediation_CreateEdr = scriptInstanceService.getScriptInstance(user.getProvider(), "org.meveo.service.script.Mediation_CreateEdr");
 		} catch (ElementNotFoundException | InvalidScriptException e) {
-			throw new BusinessException(e);	
+			throw new BusinessException(e);
 		}
 	}
-		
+
 	public void execute(Map<String, Object> initContext, User user) throws BusinessException {
 		log.info("Execute...");
-	
+
 		Object obj = (Object) initContext.get("record");
 
 		if(! (obj instanceof CDR)){
@@ -24392,9 +24392,9 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 			return;
 		}
 		CDR cdr = (CDR)obj;
-		
+
 		mediation_DuplicatedCheck.execute(initContext, user);
-		
+
 		Boolean duplicateFound = (Boolean) initContext.get("duplicateFound");
 		log.info("duplicateFound:" + duplicateFound);
 
@@ -24403,7 +24403,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 		}
 		initContext.put("accessUserId", cdr.getAccessCode());
 		mediation_RoutingSub.execute(initContext, user);
-		
+
 
 		@SuppressWarnings("unchecked")
 		List<Access> accesses = (List<Access>) initContext.get("accesses");
@@ -24411,7 +24411,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 			throw new BusinessException("InvalidAccess");
 		}
 		mediation_CreateEdr.execute(initContext, user);
-		
+
 
 		log.info("Execute update entity OK");
 	}
@@ -24455,13 +24455,13 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-   
+
       <ws:createOrUpdate>
-         
+
          <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.sct.VoiceUsagePrice" description="VoiceUsagePrice (A*quantity)+B">
 
 
-            
+
             <type>JAVA</type>
             <script><![CDATA[
 package org.meveo.service.script.sct;
@@ -24513,7 +24513,7 @@ public class VoiceUsagePrice extends org.meveo.service.script.Script {
 			throw new BusinessException("Cant find serviceInstance for chargeInstance:"+wo.getChargeInstance().getCode());
 		}
 		try{
-		serviceInstance = serviceInstanceService.refreshOrRetrieve(serviceInstance);			
+		serviceInstance = serviceInstanceService.refreshOrRetrieve(serviceInstance);
 /*
           Map<String,String> zoningCF = (Map<String, String>) customFieldInstanceService.getCFValue(wo.getSeller(), "CF_ZONING_TARIF",user);
 		Map<String,Double> usCeaCF = (Map<String, Double>) customFieldInstanceService.getCFValue(serviceInstance,"CF_TARIFS_US_CEA",user);
@@ -24531,9 +24531,9 @@ public class VoiceUsagePrice extends org.meveo.service.script.Script {
 		if(usMinCF == null){
 			throw new BusinessException("CF_TARIFS_US_MIN is null");
 		}
-		log.debug("theParam1:"+wo.getParameter1());		
+		log.debug("theParam1:"+wo.getParameter1());
 		String theZonningKey = zoningCF.get(wo.getParameter1());
-		log.debug("theZonningKey:"+theZonningKey);	
+		log.debug("theZonningKey:"+theZonningKey);
 		Double thePriceA = usMinCF.get(theZonningKey);
 		Double thePriceB = usCeaCF.get(theZonningKey);
 		log.debug("thePriceA:"+thePriceA);
@@ -24548,7 +24548,7 @@ public class VoiceUsagePrice extends org.meveo.service.script.Script {
 		wo.setAmountWithoutTax(new BigDecimal(theFinalAmount));
 		wo.setAmountTax(wo.getAmountWithoutTax().multiply(wo.getTaxPercent()).divide(BigDecimal.valueOf(100)));
 		wo.setAmountWithTax(wo.getAmountWithoutTax().add(wo.getAmountTax()));
-		
+
         log.debug("wo.AmountWithoutTax:"+wo.getAmountWithoutTax());
 
         }catch(Exception e){
@@ -24594,13 +24594,13 @@ public class VoiceUsagePrice extends org.meveo.service.script.Script {
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-   
+
       <ws:createOrUpdate>
-         
+
          <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.sct.VoiceUsagePriceFairUse" description="VoiceUsagePrice with Fair Use (A*quantity)+B">
 
 
-            
+
             <type>JAVA</type>
             <script><![CDATA[
 package org.meveo.service.script.sct;
@@ -24652,11 +24652,11 @@ public class VoiceUsagePriceFairUse extends org.meveo.service.script.Script {
 			throw new BusinessException("Cant find serviceInstance for chargeInstance:"+wo.getChargeInstance().getCode());
 		}
 		try{
-            serviceInstance = serviceInstanceService.refreshOrRetrieve(serviceInstance);			
+            serviceInstance = serviceInstanceService.refreshOrRetrieve(serviceInstance);
 
             Long fairUse = (Long)customFieldInstanceService.getInheritedCFValue(serviceInstance,"CF_FAIR_USE_PAR_APPEL",user);
-          
-          
+
+
             if( quantity.doubleValue() > fairUse ) {
 	           log.debug("Applying Fair Use");
 
@@ -24672,10 +24672,10 @@ public class VoiceUsagePriceFairUse extends org.meveo.service.script.Script {
                 if(usMinCF == null){
                   throw new BusinessException("CF_TARIFS_US_MIN is null");
                 }
-                
-                log.debug("theParam1:"+wo.getParameter1());		
+
+                log.debug("theParam1:"+wo.getParameter1());
                 String theZonningKey = zoningCF.get(wo.getParameter1());
-                log.debug("theZonningKey:"+theZonningKey);	
+                log.debug("theZonningKey:"+theZonningKey);
                 Double thePriceA = usMinCF.get(theZonningKey);
                 Double thePriceB = usCeaCF.get(theZonningKey);
                 log.debug("thePriceA:"+thePriceA);
@@ -24691,7 +24691,7 @@ public class VoiceUsagePriceFairUse extends org.meveo.service.script.Script {
                 wo.setAmountTax(wo.getAmountWithoutTax().multiply(wo.getTaxPercent()).divide(BigDecimal.valueOf(100)));
                 wo.setAmountWithTax(wo.getAmountWithoutTax().add(wo.getAmountTax()));
             }
-              
+
             log.debug("wo.AmountWithoutTax:"+wo.getAmountWithoutTax());
 
         }catch(Exception e){
@@ -24738,13 +24738,13 @@ public class VoiceUsagePriceFairUse extends org.meveo.service.script.Script {
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-   
+
       <ws:createOrUpdate>
-         
+
          <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.selfcare.RegisterHierarchy" description="Register CRM Hierarchy">
 
 
-            
+
             <type>JAVA</type>
             <script><![CDATA[
 package org.meveo.service.script.selfcare;
@@ -24761,24 +24761,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class RegisterHierarchy extends org.meveo.service.script.Script {	
-	private static final Logger log = LoggerFactory.getLogger(RegisterHierarchy.class);			
-	public void execute(Map<String, Object> initContext, User user) throws BusinessException {		
+public class RegisterHierarchy extends org.meveo.service.script.Script {
+	private static final Logger log = LoggerFactory.getLogger(RegisterHierarchy.class);
+	public void execute(Map<String, Object> initContext, User user) throws BusinessException {
 		log.info("Execute...");
 		AccountHierarchyApi accountHierarchyApi = (AccountHierarchyApi) getServiceInterface("AccountHierarchyApi");
 		String body = (String) initContext.get("body");
 		log.info("body:"+body);
 		CRMAccountHierarchyDto crmAccountHierarchyDto = JsonUtils.toObject(body, CRMAccountHierarchyDto.class);
-        
+
         // override Customer Category with new default
         crmAccountHierarchyDto.setCustomerCategory("NOUVEAU");
 
-		log.info("crmAccountHierarchyDto"+crmAccountHierarchyDto);		
+		log.info("crmAccountHierarchyDto"+crmAccountHierarchyDto);
 		try {
 			accountHierarchyApi.createCRMAccountHierarchy(crmAccountHierarchyDto, user);
-		} catch (MeveoApiException e) {			
+		} catch (MeveoApiException e) {
 			e.printStackTrace();
-		}	
+		}
 	}
 }
 ]]]]>><![CDATA[</script>\r
@@ -24858,9 +24858,9 @@ public class RegisterHierarchy extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdate>
-         
+
          <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.engie.Mediation_Flow" description="Mediation flow">
-            
+
             <type>JAVA</type>
             <script><![CDATA[
 package org.meveo.service.script.engie;
@@ -24945,11 +24945,11 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 
 		  Double oldIdxCurrent = (Double) customFieldInstanceService.getCFValue(ua, codeCurrentIndex, user);
 		  Double newIndexCurrent = cdr.getQuantity().doubleValue();
-		  
+
 		  customFieldInstanceService.setCFValue(ua, codePreviousIndex, oldIdxCurrent, user);
 		  customFieldInstanceService.setCFValue(ua, codeCurrentIndex, newIndexCurrent.doubleValue(), user);
 		  cdr.setQuantity(new BigDecimal(newIndexCurrent.doubleValue() - oldIdxCurrent.doubleValue()));
-          
+
             log.debug("ua="+ua.getCode()+"; index="+cdr.getParameter1()+"; old="+oldIdxCurrent+"; new="+newIndexCurrent);
 		}
 
@@ -24958,7 +24958,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param subscription
 	 * @param codeService
 	 * @return
@@ -24974,7 +24974,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cdr
 	 * @param originRecord
 	 * @param user
@@ -24988,7 +24988,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param initContext
 	 * @param user
 	 * @return
@@ -25002,7 +25002,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cdr
 	 * @param originBatch
 	 * @param originRecord
@@ -25040,7 +25040,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cdr
 	 * @return
 	 */
@@ -25101,9 +25101,9 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdate>
-         
+
          <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.engie.Mediation_Flow" description="Mediation flow">
-            
+
             <type>JAVA</type>
             <script><![CDATA[
 package org.meveo.service.script.engie;
@@ -25190,7 +25190,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param subscription
 	 * @param codeService
 	 * @return
@@ -25206,7 +25206,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cdr
 	 * @param originRecord
 	 * @param user
@@ -25220,7 +25220,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param initContext
 	 * @param user
 	 * @return
@@ -25234,7 +25234,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cdr
 	 * @param originBatch
 	 * @param originRecord
@@ -25272,7 +25272,7 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cdr
 	 * @return
 	 */
@@ -25441,13 +25441,13 @@ public class Mediation_Flow extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdate>
-         
-         <module code="CustomInvoiceXmlModule" license="GPL" description="Custom Invoice Xml Module">          
-            
+
+         <module code="CustomInvoiceXmlModule" license="GPL" description="Custom Invoice Xml Module">
+
             <moduleItems>
 
                <script code="org.meveo.service.script.InvoiceXmlScript" description="Custom Invoice Xml Script">
-                  
+
                   <type>JAVA</type>
                   <script><![CDATA[package org.meveo.service.script;
 
@@ -25484,20 +25484,20 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * 
+ *
  * @author anasseh
  *
  *         Generate custom Xml Invoice
- * 
- *         Execute Context Variable : 
+ *
+ *         Execute Context Variable :
  *         <li>CONTEXT_ENTITY : the invoice
  *         <li>isVirtual : invoicing mode
  *         <li>XMLInvoiceCreator : XMLInvoiceCreator std service
- * 
+ *
  * Object: [SCN]
  *   + Add lines with offerCode
  *   TODO: Add subscription CF value (CF_OFFER_CODE) to line tag
- * 
+ *
  */
 public class InvoiceXmlScript extends org.meveo.service.script.Script {
 
@@ -25524,22 +25524,22 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
 			WalletOperation wo;
             ChargeInstance ci;
             Subscription su;
-                    
+
           	List<RatedTransaction> listRT = invoice.getRatedTransactions();
           	log.debug("CustomInvoiceXml: RTs.size() = {}", listRT.size());
 			for(RatedTransaction rt: listRT){
               	log.debug("RT = {}, {}", rt, rt.getCode());
-              	
+
               	wo = woService.findById(rt.getWalletOperationId());
               	log.debug("WO = {}", wo);
 
               	//ci = ciService.refreshOrRetrieve(wo.getChargeInstance());
 				ci = wo.getChargeInstance();
                 log.debug("CI = {}", ci);
-              
+
               	su = suService.refreshOrRetrieve(ci.getSubscription());
                 log.debug("SU = {}", su);
-              
+
 				Element line = document.createElement("line");
 				line.setAttribute("code", rt.getCode());
 				line.setAttribute("description", rt.getDescription());
@@ -25547,14 +25547,14 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
               	line.setAttribute("offerCode", su.getOffer().getCode());
 				lines.appendChild(line);
 			}
-			document.getElementsByTagName("invoice").item(0).appendChild(lines);			
+			document.getElementsByTagName("invoice").item(0).appendChild(lines);
 			File file = xmlInvoiceCreator.createFile(document,invoice);
 			methodContext.put(Script.RESULT_VALUE, file);
 		}catch(Exception e){
 			throw new BusinessException(e.getMessage());
 		}
 	}
-  
+
   	private String round(BigDecimal amount, Integer scale) {
 		if (amount == null) {
 			amount = BigDecimal.ZERO;
@@ -25564,19 +25564,19 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
 		}
 		amount = amount.setScale(scale, RoundingMode.HALF_UP);
 		return amount.toPlainString();
-	}	
+	}
 
 }
 ]]]]>><![CDATA[</script>
-                  <!--Zero or more repetitions:-->                
+                  <!--Zero or more repetitions:-->
                </script>
                 <customFieldTemplate code="PROV_CUSTOM_INV_XML_SCRIPT_CODE" description="Custom invoice XML Script code">
-                  <fieldType>STRING</fieldType>                  
+                  <fieldType>STRING</fieldType>
                   <appliesTo>Provider</appliesTo>
                   <storageType>SINGLE</storageType>
-                  <valueRequired>false</valueRequired>                             
-                  <cacheValue>true</cacheValue>                  
-               </customFieldTemplate>               
+                  <valueRequired>false</valueRequired>
+                  <cacheValue>true</cacheValue>
+               </customFieldTemplate>
             </moduleItems>
          </module>
       </ws:createOrUpdate>
@@ -25616,7 +25616,7 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installModule>
-         <module code="CustomInvoiceXmlModule">   
+         <module code="CustomInvoiceXmlModule">
          </module>
       </ws:installModule>
    </soapenv:Body>
@@ -25649,36 +25649,36 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
    <soapenv:Body>
       <sup:updateProvider>
          <provider code="DEMO">
-            
+
             <description>Description ${#Project#provider}</description>
             <enterprise>true</enterprise>
             <invoiceConfiguration>
-               
+
                <displaySubscriptions>true</displaySubscriptions>
-               
+
                <displayServices>true</displayServices>
-               
+
                <displayOffers>true</displayOffers>
-               
+
                <displayEdrs>true</displayEdrs>
-               
+
                <displayProvider>true</displayProvider>
-               
+
                <displayCfAsXML>true</displayCfAsXML>
-               
+
                <displayPricePlans>true</displayPricePlans>
-               
+
                <displayDetail>true</displayDetail>
-               
+
                <displayChargesPeriods>true</displayChargesPeriods>
-               
+
             </invoiceConfiguration>
-            
-         <customFields>	
+
+         <customFields>
             <customField code="PROV_CUSTOM_INV_XML_SCRIPT_CODE">
             <stringValue>org.meveo.service.script.InvoiceXmlScript</stringValue>
-            </customField>          
-           </customFields>            
+            </customField>
+           </customFields>
              </provider>
       </sup:updateProvider>
    </soapenv:Body>
@@ -25725,7 +25725,7 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
          	<customFields>
 	          <customField code="PROV_CUSTOM_INV_XML_SCRIPT_CODE">
 	              <stringValue>org.meveo.service.script.InvoiceXmlScript</stringValue>
-	          </customField>          
+	          </customField>
          	</customFields>
          </provider>
       </ws:updateProviderCF>
@@ -25773,13 +25773,13 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdate>
-         
-         <module code="CustomInvoiceXmlModule" license="GPL" description="Custom Invoice Xml Module">          
-            
+
+         <module code="CustomInvoiceXmlModule" license="GPL" description="Custom Invoice Xml Module">
+
             <moduleItems>
 
                <script code="org.meveo.service.script.InvoiceXmlScript" description="Custom Invoice Xml Script">
-                  
+
                   <type>JAVA</type>
                   <script><![CDATA[
 package org.meveo.service.script;
@@ -25809,16 +25809,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
 /**
- * 
+ *
  * @author anasseh
  *
  *         Generate custom Xml Invoice
- * 
- *         Execute Context Variable : 
+ *
+ *         Execute Context Variable :
  *         <li>CONTEXT_ENTITY : the invoice
  *         <li>isVirtual : invoicing mode
  *         <li>XMLInvoiceCreator : XMLInvoiceCreator std service
- * 
+ *
  * Object: [SCN]
  *   + Add Provider CF
  *   + Add Seller with CF
@@ -25835,7 +25835,7 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
 		try{
 			XMLInvoiceCreator xmlInvoiceCreator = (XMLInvoiceCreator) methodContext.get("XMLInvoiceCreator");
 			Invoice invoice = (Invoice) methodContext.get(Script.CONTEXT_ENTITY);
-          
+
             	Boolean isVirtual = (Boolean) methodContext.get("isVirtual");
 			int rounding = provider.getRounding() == null ? 2 : provider.getRounding();
 
@@ -25860,7 +25860,7 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
 			throw new BusinessException(e.getMessage());
 		}
 	}
-  
+
   	private String round(BigDecimal amount, Integer scale) {
 		if (amount == null) {
 			amount = BigDecimal.ZERO;
@@ -25870,7 +25870,7 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
 		}
 		amount = amount.setScale(scale, RoundingMode.HALF_UP);
 		return amount.toPlainString();
-	}	
+	}
 
 	private void addCustomFields(ICustomFieldEntity entity, Invoice invoice, Document doc, Element parent) {
 		if (provider.getInvoiceConfiguration() != null && provider.getInvoiceConfiguration().getDisplayCfAsXML() != null && provider.getInvoiceConfiguration().getDisplayCfAsXML()) {
@@ -25885,16 +25885,16 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
 	}
 }
 ]]]]>><![CDATA[</script>
-                  <!--Zero or more repetitions:-->                
+                  <!--Zero or more repetitions:-->
                </script>
                 <customFieldTemplate code="PROV_CUSTOM_INV_XML_SCRIPT_CODE" description="Custom invoice XML Script code">
-                  <fieldType>STRING</fieldType>                  
+                  <fieldType>STRING</fieldType>
                   <appliesTo>Provider</appliesTo>
                   <storageType>SINGLE</storageType>
-                  <valueRequired>false</valueRequired>                             
-                  <cacheValue>true</cacheValue>  
-                  <guiPosition>tab:Custom Invoice:0;field:0</guiPosition>                
-               </customFieldTemplate>               
+                  <valueRequired>false</valueRequired>
+                  <cacheValue>true</cacheValue>
+                  <guiPosition>tab:Custom Invoice:0;field:0</guiPosition>
+               </customFieldTemplate>
             </moduleItems>
          </module>
       </ws:createOrUpdate>
@@ -25934,7 +25934,7 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installModule>
-         <module code="CustomInvoiceXmlModule">   
+         <module code="CustomInvoiceXmlModule">
          </module>
       </ws:installModule>
    </soapenv:Body>
@@ -25967,36 +25967,36 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
    <soapenv:Body>
       <sup:updateProvider>
          <provider code="DEMO">
-            
+
             <description>Description ${#Project#provider}</description>
             <enterprise>true</enterprise>
             <invoiceConfiguration>
-               
+
                <displaySubscriptions>true</displaySubscriptions>
-               
+
                <displayServices>true</displayServices>
-               
+
                <displayOffers>true</displayOffers>
-               
+
                <displayEdrs>true</displayEdrs>
-               
+
                <displayProvider>true</displayProvider>
-               
+
                <displayCfAsXML>true</displayCfAsXML>
-               
+
                <displayPricePlans>true</displayPricePlans>
-               
+
                <displayDetail>true</displayDetail>
-               
+
                <displayChargesPeriods>true</displayChargesPeriods>
-               
+
             </invoiceConfiguration>
-            
-         <customFields>	
+
+         <customFields>
             <customField code="PROV_CUSTOM_INV_XML_SCRIPT_CODE">
             <stringValue>org.meveo.service.script.InvoiceXmlScript</stringValue>
-            </customField>          
-           </customFields>            
+            </customField>
+           </customFields>
              </provider>
       </sup:updateProvider>
    </soapenv:Body>
@@ -26043,7 +26043,7 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
          	<customFields>
 	          <customField code="PROV_CUSTOM_INV_XML_SCRIPT_CODE">
 	              <stringValue>org.meveo.service.script.InvoiceXmlScript</stringValue>
-	          </customField>          
+	          </customField>
          	</customFields>
          </provider>
       </ws:updateProviderCF>
@@ -26096,9 +26096,9 @@ public class InvoiceXmlScript extends org.meveo.service.script.Script {
    <soapenv:Header/>\r
    <soapenv:Body>
       <ws:createOrUpdate>
-         
+
          <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.SuspendSubscriptions" description="Suspends subscriptions at AO creation">
-            
+
             <type>JAVA</type>
             <script><![CDATA[
 package org.meveo.service.script;
@@ -26153,14 +26153,14 @@ public class SuspendSubscriptions extends org.meveo.service.script.Script {
                     {
                         suService.subscriptionSuspension(su, new Date());
                         log.debug("Suspending subscription " + su.getCode());
-                        
+
                         i++;
                     }
                 }
             }
 
             String result = "Suspended " + i
-                + " subscriptions for Customer Account " + ao.getCustomerAccount().getCode() 
+                + " subscriptions for Customer Account " + ao.getCustomerAccount().getCode()
                 + " (reason : " + ao.getCode() + " - " + ao.getDescription() + ")";
             log.info(result);
             initContext.put("result",result);
@@ -26446,7 +26446,7 @@ public class SuspendSubscriptions extends org.meveo.service.script.Script {
     </fieldNames>
     <ascending>false</ascending>
   </orderCondition>
-</filter>		  
+</filter>
 		  ]]]]>><![CDATA[</inputXml>
 		</filter>
 	</ws:createOrUpdateFilter>\r
@@ -26522,7 +26522,7 @@ public class SuspendSubscriptions extends org.meveo.service.script.Script {
     </fieldNames>
     <ascending>false</ascending>
   </orderCondition>
-</filter>		  
+</filter>
 		  ]]]]>><![CDATA[</inputXml>
 		</filter>
 	</ws:createOrUpdateFilter>\r
@@ -26598,7 +26598,7 @@ public class SuspendSubscriptions extends org.meveo.service.script.Script {
     </fieldNames>
     <ascending>false</ascending>
   </orderCondition>
-</filter>		  
+</filter>
 		  ]]]]>><![CDATA[</inputXml>
 		</filter>
 	</ws:createOrUpdateFilter>\r
@@ -26674,7 +26674,7 @@ public class SuspendSubscriptions extends org.meveo.service.script.Script {
     </fieldNames>
     <ascending>false</ascending>
   </orderCondition>
-</filter>		  
+</filter>
 		  ]]]]>><![CDATA[</inputXml>
 		</filter>
 	</ws:createOrUpdateFilter>\r
@@ -26745,7 +26745,7 @@ public class SuspendSubscriptions extends org.meveo.service.script.Script {
     </fieldNames>
     <ascending>false</ascending>
   </orderCondition>
-</filter>		  
+</filter>
 		  ]]]]>><![CDATA[</inputXml>
 		</filter>
 	</ws:createOrUpdateFilter>\r
@@ -26793,13 +26793,13 @@ public class SuspendSubscriptions extends org.meveo.service.script.Script {
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-   
+
       <ws:createOrUpdate>
-         
+
          <createOrUpdateScriptInstanceRequest code="org.meveo.workflow.CustomerWF" description="Customer creation workflow">
 
 
-            
+
             <type>JAVA</type>
             <script><![CDATA[
 package org.meveo.workflow;
@@ -26869,7 +26869,7 @@ public class CustomerWF extends WFTypeScript<Customer> {
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://wf.ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-   
+
      <ws:createOrUpdate>
             <workflow>
                <code>WF_CREATE_CUSTOMER</code>
@@ -26913,13 +26913,13 @@ public class CustomerWF extends WFTypeScript<Customer> {
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-   
+
       <ws:createOrUpdate>
-         
+
          <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.DunningWorkFlow" description="Dunning workflow">
 
 
-            
+
             <type>JAVA</type>
             <script><![CDATA[
 package org.meveo.service.script;
@@ -26936,14 +26936,14 @@ import org.meveo.service.script.wf.WFTypeScript;
 
 public class DunningWorkFlow extends WFTypeScript<CustomerAccount>{
 
- public DunningWorkFlow() {  
+ public DunningWorkFlow() {
  }
- 
+
  public DunningWorkFlow(CustomerAccount e) {
   super( e );
  }
  @Override
- public List<String> getStatusList() {  
+ public List<String> getStatusList() {
   List<String> values = new ArrayList<String>();
   for (DunningLevelEnum dunningLevelEnum : DunningLevelEnum.values()) {
    values.add(dunningLevelEnum.name());
@@ -26958,7 +26958,7 @@ public class DunningWorkFlow extends WFTypeScript<CustomerAccount>{
  }
 
  @Override
- public String getActualStatus() {  
+ public String getActualStatus() {
   return entity.getDunningLevel().name();
  }
 }
@@ -27000,7 +27000,7 @@ public class DunningWorkFlow extends WFTypeScript<CustomerAccount>{
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://wf.ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-   
+
      <ws:find>
      	<workflowCode>WF_CREATE_CUSTOMER</workflowCode>
  	</ws:find>
@@ -27043,9 +27043,9 @@ public class DunningWorkFlow extends WFTypeScript<CustomerAccount>{
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
-   
+
       <ws:createOrUpdate>
-         
+
             <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.CustWFAdvance" description="Avancement du WF Customer">
                <type>JAVA</type>
                <script><![CDATA[package org.meveo.service.script;
@@ -27068,43 +27068,43 @@ import org.meveo.service.crm.impl.CustomerCategoryService;
 
 
 public class CustWFAdvance extends org.meveo.service.script.Script {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(CustWFAdvance.class);
 	ScriptInstanceService scriptInstanceService = (ScriptInstanceService)getServiceInterface("ScriptInstanceService");
 	WorkflowService workflowService = (WorkflowService)getServiceInterface("WorkflowService");
 
 	public void init(Map<String,Object> methodContext,User user) throws BusinessException{
 	}
-		
+
 	public void execute(Map<String, Object> initContext, User user) throws BusinessException {
       log.debug("Execute CustWFAdvance Script...");
 	  Customer cust = (Customer) initContext.get(Script.CONTEXT_ENTITY);
       String custCat = cust.getCustomerCategory().getCode();
 	  String newCustCat = null;
-      
+
       switch(custCat) {
-      	case "NOUVEAU" : 
+      	case "NOUVEAU" :
         	newCustCat = "VALIDER_NIV2";
         	break;
-      	case "VALIDER_NIV2" : 
+      	case "VALIDER_NIV2" :
         	newCustCat = "VALIDER_NIV3";
         	break;
-      	case "VALIDER_NIV3" : 
+      	case "VALIDER_NIV3" :
         	newCustCat = "CLIENT";
         	break;
-        default: 
+        default:
         	break;
       }
-      
+
       if( newCustCat != null ){
             cust.setCustomerCategory(((CustomerCategoryService) getServiceInterface("CustomerCategoryService")).findByCode(newCustCat,user.getProvider()));
       }
-        
-        
-      
-/*      
+
+
+
+/*
       List<Workflow> workflows = (List<Workflow>) workflowService.getWorkflows(user.getProvider());
-      
+
       boolean found = false;
       CustomerWF custWf = null;
       for (Workflow wf : workflows) {
@@ -27114,7 +27114,7 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
           break;
         }
 	  }
-      
+
       if( custWF == null ) {
 	      log.warn("Workflow WF_CREATE_CUSTOMER not found");
       }
@@ -27161,7 +27161,7 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateAction>
-         
+
          <entityAction code="BTN_CUST_WF_ADVANCE" description="Avancement du worfflow client" appliesTo="CUST">
             <applicableOnEl>#{entity.customerCategory.code != "CLIENT"}</applicableOnEl>
             <label>Valider client</label>
@@ -27204,9 +27204,9 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findAction>
-         
+
          <actionCode>BTN_ADVANCE_WF</actionCode>
-         
+
          <appliesTo>Customer</appliesTo>
       </ws:findAction>
    </soapenv:Body>\r
@@ -27514,7 +27514,7 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceCategory>
-         
+
          <invoiceCategory code="REBATES" description="Rebates" />
       </ws:createOrUpdateInvoiceCategory>
    </soapenv:Body>
@@ -27553,7 +27553,7 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateInvoiceSubCategory>
-         
+
          <invoiceSubCategory code="REBATES" description="Rebates">
             <invoiceCategory>REBATES</invoiceCategory>
          </invoiceSubCategory>
@@ -28137,7 +28137,7 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdatePricePlan>
-         
+
          <pricePlan code="PP_CH_REC_FLAT_REBATE_3" description="PP Recurring flat rebate">
             <eventCode>CH_REC_FLAT_REBATE_3</eventCode>
             <amountWithoutTax>0</amountWithoutTax>
@@ -28244,7 +28244,7 @@ public class CustWFAdvance extends org.meveo.service.script.Script {
 		  <customFields>
               <customField code="CF_REBATE_PRICE_REC">
                 	<doubleValue>10</doubleValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -28413,7 +28413,7 @@ AAAASUVORK5CYII=
 		  <customFields>
               <customField code="CF_REBATE_PRICE_REC">
                 	<doubleValue>10</doubleValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -28582,7 +28582,7 @@ AAAASUVORK5CYII=
 		  <customFields>
               <customField code="CF_REBATE_PRICE_REC">
                 	<doubleValue>10</doubleValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -28751,7 +28751,7 @@ AAAASUVORK5CYII=
 		  <customFields>
               <customField code="CF_REBATE_PRICE_REC">
                 	<doubleValue>10</doubleValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -28920,7 +28920,7 @@ AAAASUVORK5CYII=
 		  <customFields>
               <customField code="CF_REBATE_PRICE_REC">
                 	<doubleValue>10</doubleValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -29089,7 +29089,7 @@ AAAASUVORK5CYII=
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateOfferTemplateCategory>
-         
+
 		<offerTemplateCategory code="${#Project#templateCode}_DEFAULT" description="${#Project#templateLabel} default offers">
 		  <name>${#Project#templateLabel} default offers</name>
 		  <active>true</active>
@@ -29463,7 +29463,7 @@ hBBCCCGEEEIIIYQQQgghhBBCCCFEBP4fbkhMVHsDzyYAAAAASUVORK5CYII=
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateOfferTemplateCategory>
-         
+
 		<offerTemplateCategory code="${#Project#templateCode}_LAUNCH" description="${#Project#templateLabel} launch offers">
 		  <name>${#Project#templateLabel} launch offers</name>
 		  <offerTemplateCategoryCode>${#Project#templateCode}_DEFAULT</offerTemplateCategoryCode>
@@ -29742,7 +29742,7 @@ IiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiKSa/8PwZn+YhcNJgcAAAAASUVORK5CYII=
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateOfferTemplateCategory>
-         
+
 		<offerTemplateCategory code="${#Project#templateCode}_PROMOTIONAL" description="${#Project#templateLabel} promotional offers">
 		  <name>${#Project#templateLabel} promotional offers</name>
 		  <offerTemplateCategoryCode>${#Project#templateCode}_DEFAULT</offerTemplateCategoryCode>
@@ -32013,7 +32013,7 @@ RU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdatePricePlan>
-         
+
          <pricePlan code="PP_${#Project#templateCode}_CH_PRD_DEFAULT" description="PP Default product">
             <eventCode>CH_${#Project#templateCode}_PRD_DEFAULT</eventCode>
             <amountWithoutTax>111</amountWithoutTax>
@@ -32058,7 +32058,7 @@ RU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdatePricePlan>
-         
+
          <pricePlan code="PP_${#Project#templateCode}_OSS_UNIT" description="PP OSS UNIT">
             <eventCode>CH_${#Project#templateCode}_OSS_UNIT</eventCode>
             <amountWithoutTax>0</amountWithoutTax>
@@ -32897,7 +32897,7 @@ RU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateDiscountPlan>
-         
+
       	<discountPlan code="DP_${#Project#templateCode}_100" description="Full invoice discount for ${#Project#templateLabel} (100%)">
          	</discountPlan>
       </ws:createOrUpdateDiscountPlan>
@@ -32937,7 +32937,7 @@ RU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateDiscountPlanItem>
-         
+
       	<discountPlanItem code="DI_DP_${#Project#templateCode}_100_USAGE">
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_USAGE</invoiceCategoryCode>
@@ -32983,7 +32983,7 @@ RU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateDiscountPlanItem>
-         
+
       	<discountPlanItem code="DI_DP_${#Project#templateCode}_100_RECURRING">
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_RECURRING</invoiceCategoryCode>
@@ -33029,7 +33029,7 @@ RU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateDiscountPlanItem>
-         
+
       	<discountPlanItem code="DI_DP_${#Project#templateCode}_100_ONESHOT">
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_ONESHOT</invoiceCategoryCode>
@@ -33075,7 +33075,7 @@ RU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateDiscountPlanItem>
-         
+
       	<discountPlanItem code="DI_DP_${#Project#templateCode}_100_PRODUCTS">
 			<discountPlanCode>DP_${#Project#templateCode}_100</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_PRODUCTS</invoiceCategoryCode>
@@ -33121,7 +33121,7 @@ RU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateDiscountPlan>
-         
+
       	<discountPlan code="DP_${#Project#templateCode}_10" description="Full invoice discount for ${#Project#templateLabel} (10%)">
          	</discountPlan>
       </ws:createOrUpdateDiscountPlan>
@@ -33161,7 +33161,7 @@ RU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateDiscountPlanItem>
-         
+
       	<discountPlanItem code="DI_DP_${#Project#templateCode}_10_USAGE">
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_USAGE</invoiceCategoryCode>
@@ -33207,7 +33207,7 @@ RU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateDiscountPlanItem>
-         
+
       	<discountPlanItem code="DI_DP_${#Project#templateCode}_10_RECURRING">
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_RECURRING</invoiceCategoryCode>
@@ -33253,7 +33253,7 @@ RU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateDiscountPlanItem>
-         
+
       	<discountPlanItem code="DI_DP_${#Project#templateCode}_10_ONESHOT">
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_ONESHOT</invoiceCategoryCode>
@@ -33299,7 +33299,7 @@ RU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateDiscountPlanItem>
-         
+
       	<discountPlanItem code="DI_DP_${#Project#templateCode}_10_PRODUCTS">
 			<discountPlanCode>DP_${#Project#templateCode}_10</discountPlanCode>
 			<invoiceCategoryCode>${#Project#templateCode}_PRODUCTS</invoiceCategoryCode>
@@ -33396,10 +33396,10 @@ RU5ErkJggg==
 		  <customFields>
               <customField code="CF_${#Project#templateCode}_PRICE_REC">
                 	<doubleValue>10</doubleValue>
-              </customField>   
+              </customField>
               <customField code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION">
                 	<stringValue>no</stringValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>a.png</imagePath>
            <imageBase64>
@@ -33612,10 +33612,10 @@ rkJggg==
 		  <customFields>
               <customField code="CF_${#Project#templateCode}_PRICE_REC">
                 	<doubleValue>10</doubleValue>
-              </customField>   
+              </customField>
               <customField code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION">
                 	<stringValue>no</stringValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>a.png</imagePath>
            <imageBase64>
@@ -33862,7 +33862,7 @@ rkJggg==
               </customField>
               <customField code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION">
                 	<stringValue>no</stringValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -34075,10 +34075,10 @@ rkJggg==
             <customFields>
               <customField code="CF_${#Project#templateCode}_PRICE_OS">
                 	<doubleValue>100</doubleValue>
-              </customField>   
+              </customField>
               <customField code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION">
                 	<stringValue>no</stringValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -34325,7 +34325,7 @@ rkJggg==
                   </customField>
               <customField code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION">
                 	<stringValue>no</stringValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -34538,10 +34538,10 @@ rkJggg==
             <customFields>
               <customField code="CF_${#Project#templateCode}_PRICE_OS">
                 	<doubleValue>50</doubleValue>
-              </customField>   
+              </customField>
               <customField code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION">
                 	<stringValue>no</stringValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -34754,10 +34754,10 @@ rkJggg==
             <customFields>
               <customField code="CF_${#Project#templateCode}_PRICE_USG">
                 	<doubleValue>0.01</doubleValue>
-              </customField>   
+              </customField>
               <customField code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION">
                 	<stringValue>no</stringValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -34998,7 +34998,7 @@ rkJggg==
                   </customField>
 	             <customField code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION">
 	                	<stringValue>no</stringValue>
-	             </customField>   
+	             </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -35216,13 +35216,13 @@ rkJggg==
             <customFields>
               <customField code="CF_${#Project#templateCode}_PRICE_USG">
                 	<doubleValue>0.03</doubleValue>
-              </customField>   
+              </customField>
               <customField code="CF_${#Project#templateCode}_PLAN_QUANTITY_USG">
                 	<doubleValue>100</doubleValue>
-              </customField>   
+              </customField>
               <customField code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION">
                 	<stringValue>no</stringValue>
-              </customField>   
+              </customField>
             </customFields>
             <imageBase64>
 iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQCAYAAACAvzbMAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
@@ -35592,7 +35592,7 @@ rkJggg==
 		    </customField>
               <customField code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION">
                 	<stringValue>no</stringValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -36968,7 +36968,7 @@ JEmSpMHxf5t4xl1dMCU7AAAAAElFTkSuQmCC
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateRecurringChargeTemplate>
-         
+
          <recurringChargeTemplate code="CH_${#Project#templateCode}_REC_FLAT_REBATE_1" description="Recurring flat rebate 1 month">
             <invoiceSubCategory>${#Project#templateCode}_RECURRING</invoiceSubCategory>
             <disabled>false</disabled>
@@ -37015,7 +37015,7 @@ JEmSpMHxf5t4xl1dMCU7AAAAAElFTkSuQmCC
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateRecurringChargeTemplate>
-         
+
          <recurringChargeTemplate code="CH_${#Project#templateCode}_REC_FLAT_REBATE_2" description="Recurring flat rebate 2 months">
             <invoiceSubCategory>${#Project#templateCode}_RECURRING</invoiceSubCategory>
             <disabled>false</disabled>
@@ -37062,7 +37062,7 @@ JEmSpMHxf5t4xl1dMCU7AAAAAElFTkSuQmCC
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateRecurringChargeTemplate>
-         
+
          <recurringChargeTemplate code="CH_${#Project#templateCode}_REC_FLAT_REBATE_3" description="Recurring flat rebate 3 months">
             <invoiceSubCategory>${#Project#templateCode}_RECURRING</invoiceSubCategory>
             <disabled>false</disabled>
@@ -37109,7 +37109,7 @@ JEmSpMHxf5t4xl1dMCU7AAAAAElFTkSuQmCC
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateRecurringChargeTemplate>
-         
+
          <recurringChargeTemplate code="CH_${#Project#templateCode}_REC_FLAT_REBATE_6" description="Recurring flat rebate 6 months">
             <invoiceSubCategory>${#Project#templateCode}_RECURRING</invoiceSubCategory>
             <disabled>false</disabled>
@@ -37156,7 +37156,7 @@ JEmSpMHxf5t4xl1dMCU7AAAAAElFTkSuQmCC
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdatePricePlan>
-         
+
          <pricePlan code="PP_${#Project#templateCode}_CH_OSO_REBATE" description="PP OS rebate 10€">
             <eventCode>CH_${#Project#templateCode}_OSO_REBATE</eventCode>
             <amountWithoutTax>-10</amountWithoutTax>
@@ -37199,7 +37199,7 @@ JEmSpMHxf5t4xl1dMCU7AAAAAElFTkSuQmCC
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdatePricePlan>
-         
+
          <pricePlan code="PP_${#Project#templateCode}_CH_REC_FLAT_REBATE_1" description="PP Recurring flat rebate">
             <eventCode>CH_${#Project#templateCode}_REC_FLAT_REBATE_1</eventCode>
             <amountWithoutTax>0</amountWithoutTax>
@@ -37243,7 +37243,7 @@ JEmSpMHxf5t4xl1dMCU7AAAAAElFTkSuQmCC
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdatePricePlan>
-         
+
          <pricePlan code="PP_${#Project#templateCode}_CH_REC_FLAT_REBATE_2" description="PP Recurring flat rebate">
             <eventCode>CH_${#Project#templateCode}_REC_FLAT_REBATE_2</eventCode>
             <amountWithoutTax>0</amountWithoutTax>
@@ -37287,7 +37287,7 @@ JEmSpMHxf5t4xl1dMCU7AAAAAElFTkSuQmCC
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdatePricePlan>
-         
+
          <pricePlan code="PP_${#Project#templateCode}_CH_REC_FLAT_REBATE_3" description="PP Recurring flat rebate">
             <eventCode>CH_${#Project#templateCode}_REC_FLAT_REBATE_3</eventCode>
             <amountWithoutTax>0</amountWithoutTax>
@@ -37331,7 +37331,7 @@ JEmSpMHxf5t4xl1dMCU7AAAAAElFTkSuQmCC
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdatePricePlan>
-         
+
          <pricePlan code="PP_${#Project#templateCode}_CH_REC_FLAT_REBATE_6" description="PP Recurring flat rebate">
             <eventCode>CH_${#Project#templateCode}_REC_FLAT_REBATE_6</eventCode>
             <amountWithoutTax>0</amountWithoutTax>
@@ -37384,7 +37384,7 @@ JEmSpMHxf5t4xl1dMCU7AAAAAElFTkSuQmCC
 		  <customFields>
               <customField code="CF_${#Project#templateCode}_PRICE_REC">
                 	<doubleValue>10</doubleValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -37553,7 +37553,7 @@ AAAASUVORK5CYII=
 		  <customFields>
               <customField code="CF_${#Project#templateCode}_PRICE_REC">
                 	<doubleValue>10</doubleValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -37722,7 +37722,7 @@ AAAASUVORK5CYII=
 		  <customFields>
               <customField code="CF_${#Project#templateCode}_PRICE_REC">
                 	<doubleValue>10</doubleValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -37891,7 +37891,7 @@ AAAASUVORK5CYII=
 		  <customFields>
               <customField code="CF_${#Project#templateCode}_PRICE_REC">
                 	<doubleValue>10</doubleValue>
-              </customField>   
+              </customField>
             </customFields>
             <imagePath>.png</imagePath>
             <imageBase64>
@@ -38055,7 +38055,7 @@ AAAASUVORK5CYII=
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateOfferTemplate>
-         
+
          <offerTemplate code="OF_${#Project#templateCode}_TEMPLATE" description="${#Project#templateLabel} with multiple basic services">
          	  <name>${#Project#templateLabel} offer</name>
             <disabled>false</disabled>
@@ -38063,7 +38063,7 @@ AAAASUVORK5CYII=
 		  <offerTemplateCategories>
 		    <offerTemplateCategory code="${#Project#templateCode}_DEFAULT"/>
 		  </offerTemplateCategories>
-            <offerServiceTemplates>                  
+            <offerServiceTemplates>
                <offerServiceTemplate>
                	<serviceTemplate code="SE_${#Project#templateCode}_OSS_UNIT" description="One-shot fee"/>
                     <mandatory>false</mandatory>
@@ -38413,14 +38413,14 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:updateOfferTemplate>
-         
+
          <offerTemplate code="OF_${#Project#templateCode}_CLASSIC" description="${#Project#templateLabel} with multiple basic services">
          	  <name>${#Project#templateLabel}</name>
             <disabled>true</disabled>
 		  <offerTemplateCategories>
 		    <offerTemplateCategory>${#Project#templateCode}_DEFAULT</offerTemplateCategory>
 		  </offerTemplateCategories>
-            <offerServiceTemplates>                  
+            <offerServiceTemplates>
                <offerServiceTemplate>
                	<serviceTemplate code="SE_${#Project#templateCode}_OSS_UNIT" description="One-shot fee"/>
                     <mandatory>false</mandatory>
@@ -38518,7 +38518,7 @@ MFBG0AAAAABJRU5ErkJggg==
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdateOfferTemplate>
-         
+
          <offerTemplate code="OF_${#Project#templateCode}_COMMISSION" description="Commissioning for ${#Project#templateLabel}">
          	  <name>Commissioning</name>
             <disabled>false</disabled>
@@ -38526,7 +38526,7 @@ MFBG0AAAAABJRU5ErkJggg==
 		  <offerTemplateCategories>
 		    <offerTemplateCategory code="${#Project#templateCode}_DEFAULT"/>
 		  </offerTemplateCategories>
-            <offerServiceTemplates>                  
+            <offerServiceTemplates>
                <offerServiceTemplate>
                	<serviceTemplate code="SE_${#Project#templateCode}_COMMISSION" description="Commission for ${#Project#templateLabel}"/>
                     <mandatory>true</mandatory>
@@ -39098,7 +39098,7 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installBusinessOfferModel>
-         <businessOfferModel code="BOM_${#Project#templateCode}_COMMISSION"/> 
+         <businessOfferModel code="BOM_${#Project#templateCode}_COMMISSION"/>
       </ws:installBusinessOfferModel>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -39137,12 +39137,12 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
    <soapenv:Header />
    <soapenv:Body>
       <ws:createOfferFromBOM>
-         
+
          <bomOffer bomCode="BOM_${#Project#templateCode}_COMMISSION" description="Super Commission for ${#Project#templateLabel}" name="Super Commission for ${#Project#templateLabel}" code="OF_${#Project#templateCode}_SUPER_COMMISSION">
             <servicesToActivate>
                <serviceToActivate code="SE_${#Project#templateCode}_COMMISSION" description="Commissioning service">
 			      <parameters/>
-			      <mandatory>true</mandatory>               	
+			      <mandatory>true</mandatory>
                </serviceToActivate>
             </servicesToActivate>
          </bomOffer>
@@ -39238,7 +39238,7 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installBusinessOfferModel>
-         <businessOfferModel code="BOM_${#Project#templateCode}_TEMPLATE"/> 
+         <businessOfferModel code="BOM_${#Project#templateCode}_TEMPLATE"/>
       </ws:installBusinessOfferModel>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
@@ -39277,7 +39277,7 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
    <soapenv:Header />
    <soapenv:Body>
       <ws:createOfferFromBOM>
-         
+
          <bomOffer bomCode="BOM_${#Project#templateCode}_TEMPLATE" description="Super ${#Project#templateLabel} (subscription fee, recurring, usage)" name="Super ${#Project#templateLabel}" code="OF_${#Project#templateCode}_MAIN">
             <servicesToActivate>
                <serviceToActivate code="SE_${#Project#templateCode}_REC_FLAT" description="Recurring fee">
@@ -39287,9 +39287,9 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
 			        </parameter>
 		             <parameter code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION">
 		                	<stringValue>yes</stringValue>
-		             </parameter>   
+		             </parameter>
 			      </parameters>
-			      <mandatory>true</mandatory>               	
+			      <mandatory>true</mandatory>
                </serviceToActivate>
                <serviceToActivate code="SE_${#Project#templateCode}_USG_UNIT" description="Usage service">
 			      <parameters>
@@ -39298,9 +39298,9 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
 			        </parameter>
 		             <parameter code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION">
 		                	<stringValue>no</stringValue>
-		             </parameter>   
+		             </parameter>
 			      </parameters>
-			      <mandatory>true</mandatory>               	
+			      <mandatory>true</mandatory>
                </serviceToActivate>
                <serviceToActivate code="SE_${#Project#templateCode}_OSS_UNIT" description="Subscription fee">
 			      <parameters>
@@ -39309,9 +39309,9 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
 			        </parameter>
 		             <parameter code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION">
 		                	<stringValue>yes</stringValue>
-		             </parameter>   
+		             </parameter>
 			      </parameters>
-			      <mandatory>true</mandatory>               	
+			      <mandatory>true</mandatory>
                </serviceToActivate>
                <serviceToActivate code="SE_REC_FLAT_REBATE" description="Recurring rebate">
 			      <parameters>
@@ -39319,7 +39319,7 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
 			          <doubleValue>10</doubleValue>
 			        </parameter>
 			      </parameters>
-			      <mandatory>false</mandatory>               	
+			      <mandatory>false</mandatory>
                </serviceToActivate>
 <!--
                <serviceToActivate code="SE_REC_FLAT_REBATE_1" description="Recurring rebate 1 month">
@@ -39328,7 +39328,7 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
 			          <doubleValue>10</doubleValue>
 			        </parameter>
 			      </parameters>
-			      <mandatory>false</mandatory>               	
+			      <mandatory>false</mandatory>
                </serviceToActivate>
                <serviceToActivate code="SE_REC_FLAT_REBATE_2" description="Recurring rebate 2 months">
 			      <parameters>
@@ -39336,7 +39336,7 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
 			          <doubleValue>10</doubleValue>
 			        </parameter>
 			      </parameters>
-			      <mandatory>false</mandatory>               	
+			      <mandatory>false</mandatory>
                </serviceToActivate>
                <serviceToActivate code="SE_REC_FLAT_REBATE_3" description="Recurring rebate 3 months">
 			      <parameters>
@@ -39344,7 +39344,7 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
 			          <doubleValue>10</doubleValue>
 			        </parameter>
 			      </parameters>
-			      <mandatory>false</mandatory>               	
+			      <mandatory>false</mandatory>
                </serviceToActivate>
                <serviceToActivate code="SE_REC_FLAT_REBATE_6" description="Recurring rebate 6 months">
 			      <parameters>
@@ -39352,7 +39352,7 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
 			          <doubleValue>10</doubleValue>
 			        </parameter>
 			      </parameters>
-			      <mandatory>false</mandatory>               	
+			      <mandatory>false</mandatory>
                </serviceToActivate>
 -->
             </servicesToActivate>
@@ -39419,18 +39419,18 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
 			        </parameter>
 		             <parameter code="CF_${#Project#templateCode}_SELECTOR_TRIGGER_COMMISSION">
 		                	<stringValue>no</stringValue>
-		             </parameter>   
+		             </parameter>
 			      </parameters>
-			      <mandatory>true</mandatory>               	
+			      <mandatory>true</mandatory>
                </serviceToActivate>
-<!--               
+<!--
                <serviceToActivate code="SE_REC_FLAT_REBATE_1" description="Recurring rebate 1 month">
 			      <parameters>
 			        <parameter code="CF_PRICE_REC">
 			          <doubleValue>10</doubleValue>
 			        </parameter>
 			      </parameters>
-			      <mandatory>false</mandatory>               	
+			      <mandatory>false</mandatory>
                </serviceToActivate>
                <serviceToActivate code="SE_REC_FLAT_REBATE_2" description="Recurring rebate 2 months">
 			      <parameters>
@@ -39438,7 +39438,7 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
 			          <doubleValue>10</doubleValue>
 			        </parameter>
 			      </parameters>
-			      <mandatory>false</mandatory>               	
+			      <mandatory>false</mandatory>
                </serviceToActivate>
                <serviceToActivate code="SE_REC_FLAT_REBATE_3" description="Recurring rebate 3 months">
 			      <parameters>
@@ -39446,7 +39446,7 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
 			          <doubleValue>10</doubleValue>
 			        </parameter>
 			      </parameters>
-			      <mandatory>false</mandatory>               	
+			      <mandatory>false</mandatory>
                </serviceToActivate>
                <serviceToActivate code="SE_REC_FLAT_REBATE_6" description="Recurring rebate 6 months">
 			      <parameters>
@@ -39454,9 +39454,9 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
 			          <doubleValue>10</doubleValue>
 			        </parameter>
 			      </parameters>
-			      <mandatory>false</mandatory>               	
+			      <mandatory>false</mandatory>
                </serviceToActivate>
--->               
+-->
             </servicesToActivate>
          </bomOffer>
       </ws:createOfferFromBOM>
@@ -39584,10 +39584,10 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
    <soapenv:Body>
       <ws:createOrUpdateRole>
          <role name="selfcareDefault" description="selfcareDefault">
-            
-            <permissions>     
-              <permission permission="apiAccess" name="API User" resource="user"/>       
-              <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>       
+
+            <permissions>
+              <permission permission="apiAccess" name="API User" resource="user"/>
+              <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>
             </permissions>
          </role>
       </ws:createOrUpdateRole>
@@ -39666,9 +39666,9 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdate>
-         <module code="ForgotPasswordModule" license="GPL" description="Rest password">           
+         <module code="ForgotPasswordModule" license="GPL" description="Rest password">
             <script code="org.meveo.service.script.selfcare.ForgotPassword" description="ForgotPassword">
-               
+
                <type>JAVA</type>
                <script><![CDATA[
 package org.meveo.service.script.selfcare;
@@ -39698,10 +39698,10 @@ public class ForgotPassword extends ModuleScript{
 			Object obj = parser.parse(emailRequest);
 			JSONObject jsonObject = (JSONObject)obj;
 			emailValue = (String) jsonObject.get("email");
-			
-		} catch (ParseException e) {			
+
+		} catch (ParseException e) {
 			throw new BusinessException("Cant parse request :"+e.getMessage());
-		}	   	      
+		}
 		log.debug("emailValue:" + emailValue);
 		User userThatManyForget = userService.findByEmail(emailValue);
 		if(userThatManyForget == null){
@@ -39716,9 +39716,9 @@ public class ForgotPassword extends ModuleScript{
                ]]]]>><![CDATA[</script>
                <!--Zero or more repetitions:-->
             </script>
-            
+
             <moduleItems>
-               <!--You have a CHOICE of the next 19 items at this level-->  
+               <!--You have a CHOICE of the next 19 items at this level-->
          <notification code="ForgotPasswordInReqNotif">
             <classNameFilter>org.meveo.model.notification.InboundRequest</classNameFilter>
             <eventTypeFilter>INBOUND_REQ</eventTypeFilter>
@@ -39730,7 +39730,7 @@ public class ForgotPassword extends ModuleScript{
                   <value>#{event.getBody()}</value>
                </entry>
             </scriptParams>
-         </notification>	
+         </notification>
             </moduleItems>
          </module>
       </ws:createOrUpdate>
@@ -39763,7 +39763,7 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installModule>
-         <module code="ForgotPasswordModule">   
+         <module code="ForgotPasswordModule">
          </module>
       </ws:installModule>
    </soapenv:Body>
@@ -39795,9 +39795,9 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdate>
-         <module code="AddAccessModule" license="GPL" description="AddAccessModule">           
+         <module code="AddAccessModule" license="GPL" description="AddAccessModule">
             <script code="org.meveo.service.script.selfcare.CreateAccess" description="AddAccess">
-               
+
                <type>JAVA</type>
                <script><![CDATA[
 package org.meveo.service.script.selfcare;
@@ -39813,9 +39813,9 @@ import org.meveo.service.script.module.ModuleScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CreateAccess extends ModuleScript {	
-	private static final Logger log = LoggerFactory.getLogger(CreateAccess.class);		
-	
+public class CreateAccess extends ModuleScript {
+	private static final Logger log = LoggerFactory.getLogger(CreateAccess.class);
+
 	@Override
     public void execute(Map<String, Object> methodContext) throws BusinessException {
 		AccessService accessService = (AccessService) getServiceInterface("AccessService");
@@ -39823,22 +39823,22 @@ public class CreateAccess extends ModuleScript {
 		if(subscription == null){
 			throw new BusinessException("subscription is null");
 		}
-		log.debug("subscription.getCode() : "+subscription.getCode());		
+		log.debug("subscription.getCode() : "+subscription.getCode());
 		org.meveo.model.mediation.Access access = new org.meveo.model.mediation.Access();
 		access.setSubscription(subscription);
 		access.setAccessUserId("ACC_"+subscription.getCode());
 		access.setStartDate(new Date());
 		access.setEndDate(null);
 		accessService.create(access);
-    }	
+    }
 }
                ]]]]>><![CDATA[</script>
                <!--Zero or more repetitions:-->
             </script>
-            
+
             <moduleItems>
-            
-               <!--You have a CHOICE of the next 19 items at this level-->  
+
+               <!--You have a CHOICE of the next 19 items at this level-->
          <notification code="AddAccessNotif">
             <classNameFilter>org.meveo.model.billing.Subscription</classNameFilter>
             <eventTypeFilter>CREATED</eventTypeFilter>
@@ -39850,7 +39850,7 @@ public class CreateAccess extends ModuleScript {
                   <value>#{event}</value>
                </entry>
             </scriptParams>
-         </notification>	       
+         </notification>
             </moduleItems>
          </module>
       </ws:createOrUpdate>
@@ -39883,7 +39883,7 @@ public class CreateAccess extends ModuleScript {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installModule>
-         <module code="AddAccessModule">   
+         <module code="AddAccessModule">
          </module>
       </ws:installModule>
    </soapenv:Body>
@@ -39957,10 +39957,10 @@ public class CreateAccess extends ModuleScript {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createOrUpdate>
-         
+
          <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.selfcare.RegisterHierarchy" description="Register crm hierarchy">
              <type>JAVA</type>
-            
+
             <script><![CDATA[
 package org.meveo.service.script.selfcare;
 
@@ -39975,21 +39975,21 @@ import org.meveo.model.admin.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RegisterHierarchy extends org.meveo.service.script.Script {	
-	private static final Logger log = LoggerFactory.getLogger(RegisterHierarchy.class);			
-	public void execute(Map<String, Object> initContext) throws BusinessException {		
+public class RegisterHierarchy extends org.meveo.service.script.Script {
+	private static final Logger log = LoggerFactory.getLogger(RegisterHierarchy.class);
+	public void execute(Map<String, Object> initContext) throws BusinessException {
 		log.info("Execute...");
 		AccountHierarchyApi accountHierarchyApi = (AccountHierarchyApi) getServiceInterface("AccountHierarchyApi");
 		String body = (String) initContext.get("body");
 		log.info("body:"+body);
 		CRMAccountHierarchyDto crmAccountHierarchyDto = JsonUtils.toObject(body, CRMAccountHierarchyDto.class);
-		log.info("crmAccountHierarchyDto"+crmAccountHierarchyDto);	
-			
+		log.info("crmAccountHierarchyDto"+crmAccountHierarchyDto);
+
 		try {
 			accountHierarchyApi.createCRMAccountHierarchy(crmAccountHierarchyDto);
-		} catch (MeveoApiException e) {			
+		} catch (MeveoApiException e) {
 			e.printStackTrace();
-		}	
+		}
 	}
 }
            ]]]]>><![CDATA[</script>
@@ -40031,7 +40031,7 @@ public class RegisterHierarchy extends org.meveo.service.script.Script {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBusinessAccountModel>
-         
+
          <businessAccountModelDto code="Client" license="GPL" description="Individual customer">
          	<hierarchyType>C_UA</hierarchyType>
           <moduleItems>
@@ -40046,10 +40046,10 @@ public class RegisterHierarchy extends org.meveo.service.script.Script {
                   <value>#{event.getBody()}</value>
                </entry>
             </scriptParams>
-         </notification>		
+         </notification>
          <script code="org.meveo.service.script.selfcare.RegisterHierarchy" description="Register crm hierarchy">
              <type>JAVA</type>
-            
+
             <script><![CDATA[
 package org.meveo.service.script.selfcare;
 
@@ -40064,24 +40064,24 @@ import org.meveo.model.admin.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RegisterHierarchy extends org.meveo.service.script.Script {	
-	private static final Logger log = LoggerFactory.getLogger(RegisterHierarchy.class);			
-	public void execute(Map<String, Object> initContext) throws BusinessException {		
+public class RegisterHierarchy extends org.meveo.service.script.Script {
+	private static final Logger log = LoggerFactory.getLogger(RegisterHierarchy.class);
+	public void execute(Map<String, Object> initContext) throws BusinessException {
 		log.info("Execute...");
 		AccountHierarchyApi accountHierarchyApi = (AccountHierarchyApi) getServiceInterface("AccountHierarchyApi");
 		String body = (String) initContext.get("body");
 		log.info("body:"+body);
 		CRMAccountHierarchyDto crmAccountHierarchyDto = JsonUtils.toObject(body, CRMAccountHierarchyDto.class);
-		log.info("crmAccountHierarchyDto"+crmAccountHierarchyDto);		
+		log.info("crmAccountHierarchyDto"+crmAccountHierarchyDto);
 		try {
 			accountHierarchyApi.createCRMAccountHierarchy(crmAccountHierarchyDto);
-		} catch (MeveoApiException e) {			
+		} catch (MeveoApiException e) {
 			e.printStackTrace();
-		}	
+		}
 	}
 }
            ]]]]>><![CDATA[</script>
-         </script>         	
+         </script>
 		</moduleItems>
            <script code="org.meveo.service.script.SelfcareAccountScript" description="Script BAM for selfcare accounts">
           <type>JAVA</type>
@@ -40091,16 +40091,16 @@ package org.meveo.service.script;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException; 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.account.CRMAccountHierarchyDto;   
-import org.meveo.api.dto.UserDto; 
+import org.meveo.api.dto.account.CRMAccountHierarchyDto;
+import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.admin.User;    
+import org.meveo.model.admin.User;
 import org.meveo.service.script.account.AccountScript;
 import org.meveo.model.AccountEntity;
 import org.slf4j.Logger;
@@ -40122,7 +40122,7 @@ public class SelfcareAccountScript extends AccountScript {
 	static {
 		try {
 			messageDigest = MessageDigest.getInstance("MD5");
-		} 
+		}
 		catch (NoSuchAlgorithmException e) {
 		}
 	}
@@ -40131,15 +40131,15 @@ public class SelfcareAccountScript extends AccountScript {
 	UserApi userApi = (UserApi) getServiceInterface("UserApi");
 
 	@Override
-	public void createAccount(Map<String, Object> methodContext) throws BusinessException { 
+	public void createAccount(Map<String, Object> methodContext) throws BusinessException {
 		AccountEntity account = (AccountEntity) methodContext.get(Script.CONTEXT_ENTITY);
 		UserDto user = new UserDto();
 		CRMAccountHierarchyDto accountDto = (CRMAccountHierarchyDto) methodContext.get(AccountScript.CONTEXT_ACCOUNT_HIERARCHY_DTO);
 		Customer customer = customerService.findByCode(accountDto.getCode());
 
 		log.debug("accountCode : "+accountDto.getCode(), " crmAccountType :"+accountDto.getCrmAccountType());
-		  
-		String email = accountDto.getContactInformation().getEmail(); 
+
+		String email = accountDto.getContactInformation().getEmail();
 		user.setEmail(email);
 		if(accountDto.getName()!=null){
 			user.setFirstName(accountDto.getName().getFirstName());
@@ -40158,7 +40158,7 @@ public class SelfcareAccountScript extends AccountScript {
 			log.warn("password CF is null, using username");
 			user.setPassword(user.getUsername());
 		}
-		*/    
+		*/
 
 		List<String> roles = new ArrayList<String>();
 		roles.add("selfcareDefault");
@@ -40168,14 +40168,14 @@ public class SelfcareAccountScript extends AccountScript {
 			userApi.createOrUpdate(user);
 		}
 		catch(MeveoApiException e){
-			log.error("failed to create user ",e); 
+			log.error("failed to create user ",e);
 			e.printStackTrace();
 		}
 	}
 }
 ]]]]>><![CDATA[
-			</script> 
-		</script> 
+			</script>
+		</script>
           <hierarchyType>C_UA</hierarchyType>
          </businessAccountModelDto>
       </ws:createBusinessAccountModel>
@@ -40215,7 +40215,7 @@ public class SelfcareAccountScript extends AccountScript {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installModule>
-         <module code="Client" description="Individual customer" license="GPL">   
+         <module code="Client" description="Individual customer" license="GPL">
          </module>
       </ws:installModule>
    </soapenv:Body>
@@ -40254,10 +40254,10 @@ public class SelfcareAccountScript extends AccountScript {
    <soapenv:Header/>
    <soapenv:Body>
       <ws:createBusinessOfferModel>
-         <businessOfferModel code="aBOM2"  license="GPL"  description="description aBOM">           
-            
+         <businessOfferModel code="aBOM2"  license="GPL"  description="description aBOM">
+
             <script code="org.meveo.service.script.selfcare.CreateAccess" description="add access">
-               
+
                <type>JAVA</type>
                <script>
                <![CDATA[
@@ -40273,14 +40273,14 @@ import org.meveo.service.script.offer.OfferScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CreateAccess extends OfferScript {	
-	private static final Logger log = LoggerFactory.getLogger(CreateAccess.class);		
-	
+public class CreateAccess extends OfferScript {
+	private static final Logger log = LoggerFactory.getLogger(CreateAccess.class);
+
 	@Override
     public void subscribe(Map<String, Object> methodContext) throws BusinessException {
 		Subscription subscription = (Subscription) methodContext.get(Script.CONTEXT_ENTITY);
-		log.debug("subscription.getCode() : "+subscription.getCode());		
-    }	
+		log.debug("subscription.getCode() : "+subscription.getCode());
+    }
 }
                ]]]]>><![CDATA[
                </script>
@@ -40333,7 +40333,7 @@ public class CreateAccess extends OfferScript {
       <ws:createOrUpdate>
          <module code="ForgotPasswordModule" license="GPL" description="Rest password">
             <script code="org.meveo.service.script.selfcare.ForgotPassword" description="ForgotPassword">
-               
+
                <type>JAVA</type>
                <script><![CDATA[
 package org.meveo.service.script.selfcare;
@@ -40381,7 +40381,7 @@ public class ForgotPassword extends ModuleScript{
                ]]]]>><![CDATA[</script>
                <!--Zero or more repetitions:-->
             </script>
-            
+
             <moduleItems>
                <!--You have a CHOICE of the next 19 items at this level-->
          <notification code="ForgotPasswordInReqNotif">
@@ -40435,7 +40435,7 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installModule>
-         <module code="ForgotPasswordModule">   
+         <module code="ForgotPasswordModule">
          </module>
       </ws:installModule>
    </soapenv:Body>
@@ -40889,7 +40889,7 @@ public class ForgotPassword extends ModuleScript{
       <ws:createOrUpdate>
          <module code="ForgotPasswordModule" license="GPL" description="Rest password">
             <script code="org.meveo.service.script.selfcare.ForgotPassword" description="ForgotPassword">
-               
+
                <type>JAVA</type>
                <script><![CDATA[
 package org.meveo.service.script.selfcare;
@@ -40937,7 +40937,7 @@ public class ForgotPassword extends ModuleScript{
                ]]]]>><![CDATA[</script>
                <!--Zero or more repetitions:-->
             </script>
-            
+
             <moduleItems>
                <!--You have a CHOICE of the next 19 items at this level-->
          <notification code="ForgotPasswordInReqNotif">
@@ -40991,7 +40991,7 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installModule>
-         <module code="ForgotPasswordModule">   
+         <module code="ForgotPasswordModule">
          </module>
       </ws:installModule>
    </soapenv:Body>
@@ -41189,7 +41189,7 @@ public class ForgotPassword extends ModuleScript{
             <userRoles>
                <userRole>CUSTOMER_CARE_USER</userRole>
                <userRole>PC_LEVEL_2</userRole>
-            </userRoles>             
+            </userRoles>
             <accessibleEntities>
             	<accessibleEntity code="Reseller1" entityClass="org.meveo.model.admin.Seller" />
             </accessibleEntities>
@@ -41242,7 +41242,7 @@ public class ForgotPassword extends ModuleScript{
       <ws:createOrUpdate>
          <module code="ForgotPasswordModule" license="GPL" description="Rest password">
             <script code="org.meveo.service.script.selfcare.ForgotPassword" description="ForgotPassword">
-               
+
                <type>JAVA</type>
                <script><![CDATA[
 package org.meveo.service.script.selfcare;
@@ -41290,7 +41290,7 @@ public class ForgotPassword extends ModuleScript{
                ]]]]>><![CDATA[</script>
                <!--Zero or more repetitions:-->
             </script>
-            
+
             <moduleItems>
                <!--You have a CHOICE of the next 19 items at this level-->
          <notification code="ForgotPasswordInReqNotif">
@@ -41344,7 +41344,7 @@ public class ForgotPassword extends ModuleScript{
    <soapenv:Header/>
    <soapenv:Body>
       <ws:installModule>
-         <module code="ForgotPasswordModule">   
+         <module code="ForgotPasswordModule">
          </module>
       </ws:installModule>
    </soapenv:Body>
@@ -41770,7 +41770,7 @@ public class ForgotPassword extends ModuleScript{
             <customFields>
               <customField code="password">
                 	<stringValue>${#TestSuite#CUST}</stringValue>
-              </customField>   
+              </customField>
             </customFields>
          </accountHierarchy>\r
       </ws:createOrUpdateAccountHierarchy>\r

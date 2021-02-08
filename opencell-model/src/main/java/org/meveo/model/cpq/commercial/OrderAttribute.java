@@ -16,6 +16,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeValue;
 
 /** 
  * @author Tarik F.
@@ -23,10 +24,10 @@ import org.meveo.model.cpq.Attribute;
  *
  */
 @Entity
-@Table(name = "cpq_order_item", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@Table(name = "cpq_order_item", uniqueConstraints = @UniqueConstraint(columnNames = { "id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_item_seq")})
-public class OrderAttribute extends BusinessEntity {
+public class OrderAttribute extends AttributeValue {
 
 	/**
 	 * 
@@ -51,21 +52,6 @@ public class OrderAttribute extends BusinessEntity {
 	@Column(name = "access_point", length = 20)
 	@Size(max = 20)
 	private String accessPoint;
-	
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "attribute_id")
-	private Attribute attribute;
-
-	@Column(name = "string_value", length = 255)
-	@Size(max = 255)
-	private String stringValue;
-	
-	@Column(name = "date_value")
-	private Date dateValue;
-	
-	@Column(name = "double_value")
-	private Double doubleValue;
 	
 	/**
 	 * @return the orderCode
@@ -109,63 +95,6 @@ public class OrderAttribute extends BusinessEntity {
 	 */
 	public void setAccessPoint(String accessPoint) {
 		this.accessPoint = accessPoint;
-	}
-
-
-	/**
-	 * @return the attribute
-	 */
-	public Attribute getAttribute() {
-		return attribute;
-	}
-
-	/**
-	 * @param attribute the attribute to set
-	 */
-	public void setAttribute(Attribute attribute) {
-		this.attribute = attribute;
-	}
-
-	/**
-	 * @return the stringValue
-	 */
-	public String getStringValue() {
-		return stringValue;
-	}
-
-	/**
-	 * @param stringValue the stringValue to set
-	 */
-	public void setStringValue(String stringValue) {
-		this.stringValue = stringValue;
-	}
-
-	/**
-	 * @return the dateValue
-	 */
-	public Date getDateValue() {
-		return dateValue;
-	}
-
-	/**
-	 * @param dateValue the dateValue to set
-	 */
-	public void setDateValue(Date dateValue) {
-		this.dateValue = dateValue;
-	}
-
-	/**
-	 * @return the doubleValue
-	 */
-	public Double getDoubleValue() {
-		return doubleValue;
-	}
-
-	/**
-	 * @param doubleValue the doubleValue to set
-	 */
-	public void setDoubleValue(Double doubleValue) {
-		this.doubleValue = doubleValue;
 	}
 
 	/**

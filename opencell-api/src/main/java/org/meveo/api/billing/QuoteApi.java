@@ -31,7 +31,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -71,7 +70,6 @@ import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteItem;
 import org.meveo.model.quote.QuoteItemProductOffering;
-import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.shared.DateUtils;
@@ -168,7 +166,7 @@ public class QuoteApi extends BaseApi {
     private OfferComponentService offerComponentService;
     
     @Inject
-    private QuoteLotService quoteLotService;
+    private QuoteLotService quoteCustomerServiceService;
     
     @Inject 
     private BillingAccountService billingAccountService;
@@ -1214,12 +1212,6 @@ public class QuoteApi extends BaseApi {
 		try {
 
 			QuoteVersion quoteVersion = new QuoteVersion();
-			if(!Strings.isEmpty(quoteVersionDto.getQuoteLotCode())) {
-				QuoteLot quoteLot = quoteLotService.findByCode(quoteVersionDto.getQuoteLotCode());
-				if(quoteLot == null)
-					throw new EntityDoesNotExistsException(QuoteLot.class, quoteVersionDto.getQuoteLotCode());
-				quoteVersion.setQuoteLot(quoteLot);
-			}
 			quoteVersion.setStatus(VersionStatusEnum.DRAFT);
 			quoteVersion.setStatusDate(Calendar.getInstance().getTime());
 			quoteVersion.setBillingPlanCode(quoteVersionDto.getBillingPlanCode());
@@ -1249,13 +1241,6 @@ public class QuoteApi extends BaseApi {
 		quoteVersion.setEndDate(quoteVersionDto.getEndDate());
 		quoteVersion.setBillingPlanCode(null); // TODO : add association with belling plan code
 		quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
-		
-		if(!Strings.isEmpty(quoteVersionDto.getQuoteLotCode())) {
-			QuoteLot quoteLot = quoteLotService.findByCode(quoteVersionDto.getQuoteLotCode());
-			if(quoteLot == null)
-				throw new EntityDoesNotExistsException(QuoteLot.class, quoteVersionDto.getQuoteLotCode());
-			quoteVersion.setQuoteLot(quoteLot);
-		}
 
 		try {
 			quoteVersionService.updateQuoteVersion(quoteVersion);
