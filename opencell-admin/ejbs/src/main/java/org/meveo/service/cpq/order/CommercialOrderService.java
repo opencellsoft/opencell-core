@@ -114,7 +114,14 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		if(order == null)
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderId);
 
+		if(order.getInvoicingPlan() != null)
+			throw new BusinessException("Order id: " + order.getId() + ", please go throw the validation plan in order to validate it");
 
+
+		return orderValidationProcess(order);
+	}
+
+	public CommercialOrder orderValidationProcess(CommercialOrder order) {
 		if (!CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus())) {
 			return order;
 		}

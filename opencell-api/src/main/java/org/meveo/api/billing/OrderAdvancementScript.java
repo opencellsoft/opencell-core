@@ -103,7 +103,8 @@ public class OrderAdvancementScript extends ModuleScript {
                 }
 
                 createInvoiceLine(commercialOrder, accountingArticle.get(), orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
-                commercialOrderService.orderValidationProcess(commercialOrder.getId());
+                commercialOrder.setOrderProgressTmp(orderProgress);
+                commercialOrderService.orderValidationProcess(commercialOrder);
             }else {
                 List<InvoicingPlanItem> itemsToBill = commercialOrder.getInvoicingPlan().getInvoicingPlanItems().stream()
                         .filter(item -> item.getAdvancement() == orderProgress)
