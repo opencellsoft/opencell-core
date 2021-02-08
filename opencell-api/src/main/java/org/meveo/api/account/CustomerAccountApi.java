@@ -32,7 +32,7 @@ import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
-import org.meveo.apiv2.generic.GenericResourceAPIv1Impl;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
@@ -449,7 +449,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         CustomerAccountsDto result = new CustomerAccountsDto();
-        List<CustomerAccount> customerAccounts = customerAccountService.listByCustomer(customer, GenericResourceAPIv1Impl.getPaginationConfiguration());
+        List<CustomerAccount> customerAccounts = customerAccountService.listByCustomer(customer, GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         if (customerAccounts != null) {
             for (CustomerAccount ca : customerAccounts) {
                 result.getCustomerAccount().add(accountHierarchyApi.customerAccountToDto(ca));

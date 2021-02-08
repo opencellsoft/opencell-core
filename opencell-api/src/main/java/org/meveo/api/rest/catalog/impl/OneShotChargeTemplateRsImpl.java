@@ -28,7 +28,7 @@ import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.OneShotChargeTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.apiv2.generic.GenericResourceAPIv1Impl;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -92,7 +92,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
         OneShotChargeTemplateResponseDto result = new OneShotChargeTemplateResponseDto();
 
         try {
-            result = new OneShotChargeTemplateResponseDto( oneShotChargeTemplateApi.search(GenericResourceAPIv1Impl.getPagingAndFiltering()) );
+            result = new OneShotChargeTemplateResponseDto( oneShotChargeTemplateApi.search(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering()) );
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

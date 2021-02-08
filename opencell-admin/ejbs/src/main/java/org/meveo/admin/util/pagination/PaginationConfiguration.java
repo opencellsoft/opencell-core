@@ -17,12 +17,12 @@
  */
 package org.meveo.admin.util.pagination;
 
+import org.primefaces.model.SortOrder;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.primefaces.model.SortOrder;
 
 /**
  * @author Andrius
@@ -81,13 +81,23 @@ public class PaginationConfiguration implements Serializable {
         this.fetchFields = fetchFields;
 
         List<Object> sortValues = new ArrayList<Object>();
-        for (int i = 0; i < sortFieldsAndOrder.length; i = i + 2) {
-            if (sortFieldsAndOrder[i] == null) {
-                continue;
+        if ( sortFieldsAndOrder[0] != null && sortFieldsAndOrder[1] != null ) {
+            String[] allSortFieldsSplit = sortFieldsAndOrder[0].toString().split(",");
+            String[] allSortOrdersSplit = sortFieldsAndOrder[1].toString().split(",");
+            for ( int i = 0; i < allSortFieldsSplit.length; i++ ) {
+                sortValues.add( allSortFieldsSplit[i] );
+
+                sortValues.add( allSortOrdersSplit[i] );
             }
-            sortValues.add(sortFieldsAndOrder[i]);
-            sortValues.add(sortFieldsAndOrder[i + 1] == null ? SortOrder.ASCENDING : sortFieldsAndOrder[i + 1]);
         }
+
+//        for (int i = 0; i < sortFieldsAndOrder.length; i = i + 2) {
+//            if (sortFieldsAndOrder[i] == null) {
+//                continue;
+//            }
+//            sortValues.add(sortFieldsAndOrder[i]);
+//            sortValues.add(sortFieldsAndOrder[i + 1] == null ? SortOrder.ASCENDING : sortFieldsAndOrder[i + 1]);
+//        }
 
         this.ordering = sortValues.toArray();
     }

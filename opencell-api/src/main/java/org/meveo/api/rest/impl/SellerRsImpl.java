@@ -27,7 +27,7 @@ import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.SellerRs;
-import org.meveo.apiv2.generic.GenericResourceAPIv1Impl;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -106,7 +106,7 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
     @Override
     public SellerResponseDto list() {
         SellerResponseDto result = new SellerResponseDto();
-        result.setPaging( GenericResourceAPIv1Impl.getPagingAndFiltering() );
+        result.setPaging( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
 
         try {
             result.setSellers(sellerApi.list());

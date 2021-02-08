@@ -27,7 +27,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.apiv2.generic.GenericResourceAPIv1Impl;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -208,7 +208,7 @@ public class AccessApi extends BaseApi {
         }
 
         AccessesDto result = new AccessesDto();
-        List<Access> accesses = accessService.listBySubscription(subscription, GenericResourceAPIv1Impl.getPaginationConfiguration());
+        List<Access> accesses = accessService.listBySubscription(subscription, GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         if (accesses != null) {
             for (Access ac : accesses) {
                 result.getAccess().add(new AccessDto(ac, entityToDtoConverter.getCustomFieldsDTO(ac, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));

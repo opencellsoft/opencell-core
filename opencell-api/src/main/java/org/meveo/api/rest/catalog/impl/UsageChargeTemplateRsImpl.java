@@ -28,7 +28,7 @@ import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.UsageChargeTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.apiv2.generic.GenericResourceAPIv1Impl;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -153,7 +153,7 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
         UsageChargeTemplateResponseDto result = new UsageChargeTemplateResponseDto();
 
         try {
-            result = new UsageChargeTemplateResponseDto( usageChargeTemplateApi.search(GenericResourceAPIv1Impl.getPagingAndFiltering()) );
+            result = new UsageChargeTemplateResponseDto( usageChargeTemplateApi.search(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering()) );
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

@@ -1323,7 +1323,8 @@ public class QueryBuilder {
         if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1) {
             Object[] orderings = paginationConfiguration.getOrderings();
             for (int i = 0; i < orderings.length; i = i + 2) {
-                addOrderCriterion(((alias != null) ? (alias + ".") : "") + orderings[i], orderings[i + 1] == SortOrder.ASCENDING);
+                addOrderCriterion(((alias != null) ? (alias + ".") : "") + orderings[i],
+                        SortOrder.valueOf((String) orderings[i + 1]) == SortOrder.ASCENDING);
             }
         }
     }

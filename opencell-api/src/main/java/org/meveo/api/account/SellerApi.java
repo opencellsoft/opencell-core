@@ -33,7 +33,7 @@ import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
-import org.meveo.apiv2.generic.GenericResourceAPIv1Impl;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
@@ -525,7 +525,7 @@ public class SellerApi extends AccountEntityApi {
     public SellersDto list() {
         SellersDto result = new SellersDto();
 
-        List<Seller> sellers = sellerService.list( GenericResourceAPIv1Impl.getPaginationConfiguration() );
+        List<Seller> sellers = sellerService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
         if (sellers != null) {
             for (Seller seller : sellers) {
                 result.getSeller().add(new SellerDto(seller, entityToDtoConverter.getCustomFieldsDTO(seller, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));

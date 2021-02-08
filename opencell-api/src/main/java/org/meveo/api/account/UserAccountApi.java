@@ -31,7 +31,7 @@ import org.meveo.api.exception.*;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
-import org.meveo.apiv2.generic.GenericResourceAPIv1Impl;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
@@ -259,7 +259,7 @@ public class UserAccountApi extends AccountEntityApi {
         }
 
         UserAccountsDto result = new UserAccountsDto();
-        List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount, GenericResourceAPIv1Impl.getPaginationConfiguration());
+        List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount, GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         if (userAccounts != null) {
             for (UserAccount ua : userAccounts) {
                 result.getUserAccount().add(accountHierarchyApi.userAccountToDto(ua));

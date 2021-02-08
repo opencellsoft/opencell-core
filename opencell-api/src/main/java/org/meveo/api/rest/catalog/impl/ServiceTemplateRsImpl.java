@@ -28,7 +28,7 @@ import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.ServiceTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.apiv2.generic.GenericResourceAPIv1Impl;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 import javax.enterprise.context.RequestScoped;
@@ -156,7 +156,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
         GetListServiceTemplateResponseDto result = new GetListServiceTemplateResponseDto();
 
         try {
-            return serviceTemplateApi.list( GenericResourceAPIv1Impl.getPagingAndFiltering() );
+            return serviceTemplateApi.list( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

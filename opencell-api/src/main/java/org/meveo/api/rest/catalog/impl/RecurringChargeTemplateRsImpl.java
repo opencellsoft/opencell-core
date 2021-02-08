@@ -27,7 +27,7 @@ import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.RecurringChargeTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.apiv2.generic.GenericResourceAPIv1Impl;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -75,7 +75,7 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements RecurringCh
         RecurringChargeTemplateResponseDto result = new RecurringChargeTemplateResponseDto();
 
         try {
-            result = new RecurringChargeTemplateResponseDto( recurringChargeTemplateApi.search(GenericResourceAPIv1Impl.getPagingAndFiltering()) );
+            result = new RecurringChargeTemplateResponseDto( recurringChargeTemplateApi.search(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering()) );
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

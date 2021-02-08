@@ -4,15 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
-import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
 import org.meveo.apiv2.generic.core.GenericHelper;
-import org.meveo.apiv2.generic.core.filter.FactoryFilterMapper;
 import org.meveo.util.Inflector;
 
 import javax.annotation.PreDestroy;
@@ -23,14 +20,10 @@ import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Thang Nguyen
@@ -69,8 +62,6 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private String pathIBaseRS;
     private String entityClassName;
     private StringBuilder queryParams;
-    private static PaginationConfiguration paginationConfig;
-    private static PagingAndFiltering pagingAndFiltering;
     private MultivaluedMap<String, String> queryParamsMap;
 
     @Context
@@ -80,45 +71,6 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         BasicAuthentication basicAuthentication = new BasicAuthentication("opencell.admin", "opencell.admin");
         httpClient = new ResteasyClientBuilder().build();
         httpClient.register(basicAuthentication);
-    }
-
-    public static PaginationConfiguration getPaginationConfiguration(){
-        return paginationConfig;
-    }
-
-    public static PagingAndFiltering getPagingAndFiltering(){
-        return pagingAndFiltering;
-    }
-
-    public void generatePagingConfig(PagingAndFiltering pagingAndFiltering){
-        Map<String, Object> filters = pagingAndFiltering.getFilters();
-
-        if ( filters == null )
-            paginationConfig = new PaginationConfiguration(pagingAndFiltering.getOffset(), pagingAndFiltering.getLimit(),
-                    null, pagingAndFiltering.getFullTextFilter(),
-                    Collections.emptyList(), pagingAndFiltering.getSortBy(),
-                    pagingAndFiltering.getSortOrder());
-        else
-            paginationConfig = new PaginationConfiguration(pagingAndFiltering.getOffset(), pagingAndFiltering.getLimit(),
-                evaluateFilters( filters, this.getClass() ), pagingAndFiltering.getFullTextFilter(),
-                Collections.emptyList(), pagingAndFiltering.getSortBy(),
-                pagingAndFiltering.getSortOrder());
-    }
-
-    public Map<String, Object> evaluateFilters(Map<String, Object> filters, Class clazz) {
-        return Stream.of(filters.keySet().toArray())
-                .map(key -> {
-                    String keyObject = (String) key;
-                    if(!"SQL".equalsIgnoreCase(keyObject) && !"$FILTER".equalsIgnoreCase(keyObject)){
-
-                        String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
-                        return Collections.singletonMap(keyObject,
-                                new FactoryFilterMapper().create(fieldName, filters.get(key), clazz, null).map());
-                    }
-                    return Collections.singletonMap(keyObject, filters.get(key));
-                })
-                .flatMap (map -> map.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /*
@@ -143,8 +95,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             queryParamsMap = uriInfo.getQueryParameters();
 //            GenericRequestMapper genericRequestMapper = new GenericRequestMapper( this.getClass(), PersistenceServiceHelper.getPersistenceService() );
 //            paginationConfig = genericRequestMapper.mapTo( GenericPagingAndFilteringUtils.constructImmutableGenericPagingAndFiltering(queryParamsMap) );
-            pagingAndFiltering = GenericPagingAndFilteringUtils.constructPagingAndFiltering(queryParamsMap);
-            generatePagingConfig( pagingAndFiltering );
+            GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
+            GenericPagingAndFilteringUtils.getInstance().generatePagingConfig();
 
             if ( ! queryParamsMap.isEmpty() ) {
                 queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
@@ -191,8 +143,8 @@ System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
             queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
 
             queryParamsMap = uriInfo.getQueryParameters();
-            pagingAndFiltering = GenericPagingAndFilteringUtils.constructPagingAndFiltering(queryParamsMap);
-            generatePagingConfig( pagingAndFiltering );
+            GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
+            GenericPagingAndFilteringUtils.getInstance().generatePagingConfig();
 
             String originalPattern = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.getPattern().toString();
             int indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX );

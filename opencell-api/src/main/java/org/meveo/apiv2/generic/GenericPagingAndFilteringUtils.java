@@ -1,9 +1,13 @@
 package org.meveo.apiv2.generic;
 import org.apache.commons.lang.StringUtils;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.apiv2.generic.core.filter.FactoryFilterMapper;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Utils class for working with GenericPagingAndFiltering.
@@ -33,6 +37,17 @@ public class GenericPagingAndFilteringUtils {
     private static final String FROM_RANGE = "fromRange";
     private static final String TO_RANGE = "toRange";
 
+    // pagination configuration
+    private PaginationConfiguration paginationConfig;
+    private PagingAndFiltering pagingAndFiltering;
+
+    private static GenericPagingAndFilteringUtils instance = new GenericPagingAndFilteringUtils();
+
+    private GenericPagingAndFilteringUtils(){}
+
+    public static GenericPagingAndFilteringUtils getInstance(){
+        return instance;
+    }
 
     /**
      * Is used to create an instance of immutable class ImmutableGenericPagingAndFiltering
@@ -168,8 +183,8 @@ public class GenericPagingAndFilteringUtils {
      * @param queryParams a multivaluedMap containing all query params (limit, offset, etc.)
      * @return an instance of PagingAndFiltering
      */
-    public static PagingAndFiltering constructPagingAndFiltering(MultivaluedMap<String, String> queryParams) {
-        PagingAndFiltering aPagingAndFiltering = new PagingAndFiltering();
+    public PagingAndFiltering constructPagingAndFiltering(MultivaluedMap<String, String> queryParams) {
+        pagingAndFiltering = new PagingAndFiltering();
         Iterator<String> itQueryParams = queryParams.keySet().iterator();
         Map<String, Object> genericFilters = new HashMap<>();
         List<String> aList;
@@ -177,32 +192,36 @@ public class GenericPagingAndFilteringUtils {
             String aKey = itQueryParams.next();
             aList = queryParams.get(aKey);
             if ( aKey.equals( LIMIT ) )
-                aPagingAndFiltering.setLimit( Integer.parseInt( aList.get(0) ) );
+                pagingAndFiltering.setLimit( Integer.parseInt( aList.get(0) ) );
             else if ( aKey.equals( OFFSET ) )
-                aPagingAndFiltering.setOffset( Integer.parseInt( aList.get(0) ) );
+                pagingAndFiltering.setOffset( Integer.parseInt( aList.get(0) ) );
             else if ( aKey.equals( SORT ) ) {
                 String allSortFieldsAndOrders = aList.get(0);
                 String[] allSortFieldsSplit = allSortFieldsAndOrders.split(MULTI_SORTING_DELIMITER);
-                PagingAndFiltering.SortOrder sortOrders = PagingAndFiltering.SortOrder.ASCENDING;
+                StringBuilder sortOrders = new StringBuilder();
                 StringBuilder sortFields = new StringBuilder();
                 for ( int i = 0; i < allSortFieldsSplit.length - 1; i++ ) {
                     if ( allSortFieldsSplit[i].charAt(0) == DESCENDING_SIGN ) {
+                        sortOrders.append( DESCENDING_ORDER + MULTI_SORTING_DELIMITER );
                         // Remove the sign '-' in case of DESCENDING
                         sortFields.append( allSortFieldsSplit[i].substring(1) + MULTI_SORTING_DELIMITER );
                     }
                     else {
+                        sortOrders.append( ASCENDING_ORDER + MULTI_SORTING_DELIMITER );
                         sortFields.append( allSortFieldsSplit[i] + MULTI_SORTING_DELIMITER );
                     }
                 }
                 if ( allSortFieldsSplit[allSortFieldsSplit.length - 1].charAt(0) == DESCENDING_SIGN ) {
+                    sortOrders.append( DESCENDING_ORDER );
                     // Remove the sign '-' in case of DESCENDING
                     sortFields.append( allSortFieldsSplit[allSortFieldsSplit.length - 1].substring(1) );
                 }
                 else {
+                    sortOrders.append( ASCENDING_ORDER );
                     sortFields.append( allSortFieldsSplit[allSortFieldsSplit.length - 1] );
                 }
-                aPagingAndFiltering.setSortOrder( sortOrders );
-                aPagingAndFiltering.setSortBy( sortFields.toString() );
+                pagingAndFiltering.setMultiSortOrder( sortOrders.toString() );
+                pagingAndFiltering.setSortBy( sortFields.toString() );
             }
             else if ( aKey.equals( INTERVAL ) ) {
                 String intervalString = aList.get(0);
@@ -279,8 +298,59 @@ public class GenericPagingAndFilteringUtils {
                     System.out.println("NOT A GOOD FORMAT OF SEARCH, SHOULD ADD AN EXCEPTION HERE");
                 }
             }
-            aPagingAndFiltering.setFilters( genericFilters );
+            pagingAndFiltering.setFilters( genericFilters );
         }
+        return pagingAndFiltering;
+    }
+
+    public PaginationConfiguration getPaginationConfiguration(){
+        PaginationConfiguration aPagingConfig = paginationConfig;
+        reinitializePaginationConfiguration();
+        return aPagingConfig;
+    }
+
+    public void reinitializePaginationConfiguration(){
+        paginationConfig = new PaginationConfiguration(null );
+    }
+
+    public PagingAndFiltering getPagingAndFiltering(){
+        PagingAndFiltering aPagingAndFiltering = pagingAndFiltering;
+        reinitializePagingAndFiltering();
         return aPagingAndFiltering;
+    }
+
+    public void reinitializePagingAndFiltering(){
+        pagingAndFiltering = new PagingAndFiltering();
+    }
+
+    public void generatePagingConfig(){
+        Map<String, Object> filters = pagingAndFiltering.getFilters();
+
+        if ( filters == null )
+            paginationConfig = new PaginationConfiguration(pagingAndFiltering.getOffset(), pagingAndFiltering.getLimit(),
+                    null, pagingAndFiltering.getFullTextFilter(),
+                    Collections.emptyList(), pagingAndFiltering.getSortBy(),
+                    pagingAndFiltering.getMultiSortOrder());
+        else
+            paginationConfig = new PaginationConfiguration(pagingAndFiltering.getOffset(), pagingAndFiltering.getLimit(),
+                    evaluateFilters( filters, GenericResourceAPIv1Impl.class ), pagingAndFiltering.getFullTextFilter(),
+                    Collections.emptyList(), pagingAndFiltering.getSortBy(),
+                    pagingAndFiltering.getMultiSortOrder());
+    }
+
+    public static Map<String, Object> evaluateFilters(Map<String, Object> filters, Class clazz) {
+        return Stream.of(filters.keySet().toArray())
+                .map(key -> {
+                    String keyObject = (String) key;
+                    if(!"SQL".equalsIgnoreCase(keyObject) && !"$FILTER".equalsIgnoreCase(keyObject)){
+
+                        String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
+                        return Collections.singletonMap(keyObject,
+                                new FactoryFilterMapper().create(fieldName, filters.get(key), clazz, null).map());
+                    }
+                    return Collections.singletonMap(keyObject, filters.get(key));
+                })
+                .flatMap (map -> map.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }
