@@ -55,7 +55,9 @@ public class OrderAdvancementScript extends ModuleScript {
 
         if (commercialOrder.getInvoicingPlan() != null) {
 
-
+            Date nextDay = java.sql.Date.valueOf(LocalDate.now().plusDays(1));
+            Date firstTransactionDate = java.sql.Date.valueOf(LocalDate.now().minusDays(1));
+            Date invoiceDate = new Date();
             List<OrderPrice> pricesToBill = orderPriceService.findByOrder(commercialOrder).stream()
                     .filter(this::isPriceRelatedToOneShotChargeTemplateOfTypeOther)
                     .collect(Collectors.toList());
@@ -86,9 +88,6 @@ public class OrderAdvancementScript extends ModuleScript {
             OrderProduct orderProduct = pricesToBill.get(0).getOrderArticleLine().getOrderProduct();
 
             if(orderProgress == 100){
-                Date nextDay = java.sql.Date.valueOf(LocalDate.now().plusDays(1));
-                Date firstTransactionDate = new Date();
-                Date invoiceDate = firstTransactionDate;
                 Map<String, Object> attributes = new HashMap<String, Object>();
                 List<OrderAttribute> orderAttributes = orderProduct.getOrderAttributes();
                 for (OrderAttribute attributeInstance : orderAttributes) {
@@ -111,8 +110,8 @@ public class OrderAdvancementScript extends ModuleScript {
                 createInvoiceLine(commercialOrder, accountingArticle.get(), orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
                 commercialOrder.setOrderProgressTmp(orderProgress);
                 commercialOrder.setRateInvoiced(100);
-                commercialOrderService.orderValidationProcess(commercialOrder);
-                invoiceService.createAggregatesAndInvoiceWithILInNewTransaction(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
+                commercialOrderService.validateOrder(commercialOrder);
+                invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
             }else {
                 List<InvoicingPlanItem> itemsToBill = commercialOrder.getInvoicingPlan().getInvoicingPlanItems().stream()
                         .filter(item -> item.getAdvancement() == orderProgress)
@@ -140,7 +139,7 @@ public class OrderAdvancementScript extends ModuleScript {
 
             commercialOrder.setOrderProgressTmp(orderProgress);
             commercialOrderService.update(commercialOrder);
-
+            invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
         }
 
 
@@ -156,25 +155,7 @@ public class OrderAdvancementScript extends ModuleScript {
     }
 
     private void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, OrderProduct orderProduct, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-        InvoiceLine invoiceLine = new InvoiceLine();
-        invoiceLine.setCode("COMMERCIAL-GEN");
-        invoiceLine.setCode(invoiceLinesService.findDuplicateCode(invoiceLine));
-        invoiceLine.setAccountingArticle(accountingArticle);
-        invoiceLine.setLabel(accountingArticle.getDescription());
-        invoiceLine.setProduct(orderProduct.getProductVersion().getProduct());
-        invoiceLine.setProductVersion(orderProduct.getProductVersion());
-        invoiceLine.setCommercialOrder(commercialOrder);
-        invoiceLine.setOrderLot(orderProduct.getOrderServiceCommercial());
-        invoiceLine.setQuantity(BigDecimal.valueOf(1));
-        invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
-        invoiceLine.setAmountWithoutTax(amountWithoutTaxToBeInvoiced);
-        invoiceLine.setAmountWithTax(amountWithTaxToBeInvoiced);
-        invoiceLine.setAmountTax(taxAmountToBeInvoiced);
-        invoiceLine.setTaxRate(totalTaxRate);
-        invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
-        invoiceLine.setBillingAccount(commercialOrder.getBillingAccount());
-        invoiceLine.setValueDate(new Date());
-        invoiceLinesService.create(invoiceLine);
+        invoiceLinesService.createInvoiceLine(commercialOrder, accountingArticle, orderProduct, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
     }
 
     private boolean isPriceRelatedToOneShotChargeTemplateOfTypeOther(OrderPrice price) {

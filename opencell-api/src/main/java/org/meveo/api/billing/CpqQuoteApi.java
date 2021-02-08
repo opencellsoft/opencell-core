@@ -364,6 +364,7 @@ public class CpqQuoteApi extends BaseApi {
                         script.execute(methodContext);
                     }
                     xmlContent = (byte[]) methodContext.get(Script.RESULT_VALUE);
+                    result.setXmlContent(xmlContent);
                 }
 
             } else {

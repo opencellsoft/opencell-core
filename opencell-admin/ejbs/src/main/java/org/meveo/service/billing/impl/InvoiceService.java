@@ -3736,7 +3736,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             Tax recalculatedTax = recalculatedTaxInfo.tax;
 
-            return new Object[] { recalculatedTax, !tax.getId().equals(recalculatedTax.getId()) };
+            return new Object[] { recalculatedTax, tax == null ? true : !tax.getId().equals(recalculatedTax.getId()) };
         }
     }
 
@@ -4920,7 +4920,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     taxChangeMap.put(taxChangeKey, changedToTax);
                     if ((boolean) changedToTax[1]) {
                         log.debug("Will update rated transactions of Billing account {} and tax class {} with new tax from {}/{}% to {}/{}%",
-                                billingAccount.getId(), taxClass.getId(), tax.getId(), tax.getPercent(),
+                                billingAccount.getId(), taxClass.getId(), tax == null ? null : tax.getId(), tax == null ? null : tax.getPercent(),
                                 ((Tax) changedToTax[0]).getId(), ((Tax) changedToTax[0]).getPercent());
                     }
                 }
@@ -4986,12 +4986,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
 	/**
-	 * get list of invoices without generated XML files matching billing run and status list
-	 * @param billingRunId
-	 * @param statusList
-	 * @return
-	 */
-	public List<Long> listInvoicesWithoutXml(Long billingRunId, List<InvoiceStatusEnum> statusList) {
-		return getEntityManager().createNamedQuery("Invoice.noXmlWithStatus", Long.class).setParameter("billingRunId", billingRunId).setParameter("statusList", statusList).getResultList();
-	}
+     * get list of invoices without generated XML files matching billing run and status list
+     * @param billingRunId
+     * @param statusList
+     * @return
+     */
+    public List<Long> listInvoicesWithoutXml(Long billingRunId, List<InvoiceStatusEnum> statusList) {
+        if(billingRunId == null){
+            return getEntityManager().createNamedQuery("Invoice.noXmlWithStatus", Long.class).setParameter("statusList", statusList).getResultList();
+        }else
+            return getEntityManager().createNamedQuery("Invoice.noXmlWithStatusAndBR", Long.class).setParameter("billingRunId", billingRunId).setParameter("statusList", statusList).getResultList();
+    }
 }

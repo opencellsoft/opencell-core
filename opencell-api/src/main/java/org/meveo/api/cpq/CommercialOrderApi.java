@@ -3,9 +3,7 @@ package org.meveo.api.cpq;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -14,8 +12,6 @@ import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.billing.OrderAdvancementScript;
-import org.meveo.api.billing.QuoteValidationTemp;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
@@ -336,20 +332,6 @@ public class CommercialOrderApi extends BaseApi {
 		return new CommercialOrderDto(commercialOrderService.duplicate(order));
 	}
 	
-	public CommercialOrderDto validate(Long commercialOrderId) {
-		if(commercialOrderId == null) {
-			missingParameters.add("commercialOrderId");
-		}
-		handleMissingParameters();
-		final CommercialOrder order = commercialOrderService.findById(commercialOrderId);
-		if(order == null)
-			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
-		if(!order.getStatus().equalsIgnoreCase(CommercialOrderEnum.COMPLETED.toString()))
-			throw new MeveoApiException("the status of order must be COMPLETED.");
-		return new CommercialOrderDto(commercialOrderService.validateOrder(order));
-	}
-	
-	
 	private List<String> allStatus(){
 		
 		final List<String> allStatus = new ArrayList<String>();
@@ -434,8 +416,8 @@ public class CommercialOrderApi extends BaseApi {
 		handleMissingParameters();
 	}
 
-	public CommercialOrderDto orderValidationProcess(Long orderId){
-		CommercialOrder commercialOrder = commercialOrderService.orderValidationProcess(orderId);
+	public CommercialOrderDto validateOrder(Long orderId){
+		CommercialOrder commercialOrder = commercialOrderService.validateOrder(orderId);
 		return new CommercialOrderDto(commercialOrder);
 	}
 }
