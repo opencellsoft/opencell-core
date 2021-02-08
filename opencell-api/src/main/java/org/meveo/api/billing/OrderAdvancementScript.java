@@ -16,6 +16,7 @@ import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderPrice;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.service.billing.impl.InvoiceLinesService;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderPriceService;
@@ -25,6 +26,8 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +41,7 @@ public class OrderAdvancementScript extends ModuleScript {
     private CommercialOrderService commercialOrderService = (CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
     private AccountingArticleService accountingArticleService = (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
     private InvoiceLinesService invoiceLinesService = (InvoiceLinesService) getServiceInterface(InvoiceLinesService.class.getSimpleName());
+    private InvoiceService invoiceService = (InvoiceService) getServiceInterface(InvoiceService.class.getSimpleName());
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
 
@@ -82,7 +86,9 @@ public class OrderAdvancementScript extends ModuleScript {
             OrderProduct orderProduct = pricesToBill.get(0).getOrderArticleLine().getOrderProduct();
 
             if(orderProgress == 100){
-
+                Date nextDay = java.sql.Date.valueOf(LocalDate.now().plusDays(1));
+                Date firstTransactionDate = new Date();
+                Date invoiceDate = firstTransactionDate;
                 Map<String, Object> attributes = new HashMap<String, Object>();
                 List<OrderAttribute> orderAttributes = orderProduct.getOrderAttributes();
                 for (OrderAttribute attributeInstance : orderAttributes) {
@@ -104,7 +110,9 @@ public class OrderAdvancementScript extends ModuleScript {
 
                 createInvoiceLine(commercialOrder, accountingArticle.get(), orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
                 commercialOrder.setOrderProgressTmp(orderProgress);
+                commercialOrder.setRateInvoiced(100);
                 commercialOrderService.orderValidationProcess(commercialOrder);
+                invoiceService.createAggregatesAndInvoiceWithILInNewTransaction(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
             }else {
                 List<InvoicingPlanItem> itemsToBill = commercialOrder.getInvoicingPlan().getInvoicingPlanItems().stream()
                         .filter(item -> item.getAdvancement() == orderProgress)
@@ -165,6 +173,8 @@ public class OrderAdvancementScript extends ModuleScript {
         invoiceLine.setTaxRate(totalTaxRate);
         invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
         invoiceLine.setBillingAccount(commercialOrder.getBillingAccount());
+        invoiceLine.setValueDate(new Date());
+        invoiceLine.setSubscription(commercialOrder.getS);
         invoiceLinesService.create(invoiceLine);
     }
 
