@@ -3029,4 +3029,12 @@
 		<modifyDataType tableName="cpq_media" columnName="media_path" newDataType="varchar(255)"/>
 		<modifyDataType tableName="cpq_media" columnName="media_name" newDataType="varchar(255)"/>
 	</changeSet>
+	
+	<changeSet id="#5938_20210205" author="MohammedELAZZOUZI">
+        <addColumn tableName="billing_invoice">
+            <column name="new_invoicing_process" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

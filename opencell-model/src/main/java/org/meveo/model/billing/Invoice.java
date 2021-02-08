@@ -88,6 +88,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.draftByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
         @NamedQuery(name = "Invoice.allByBRNoXml", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
 
+        @NamedQuery(name = "Invoice.noXmlWithStatus", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL and inv.billingRun.id=:billingRunId and inv.status in(:statusList)"),
         @NamedQuery(name = "Invoice.validatedNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL and inv.invoiceNumber IS NOT NULL"),
         @NamedQuery(name = "Invoice.draftNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL  and inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL"),
         @NamedQuery(name = "Invoice.allNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL"),
@@ -560,6 +561,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Transient
     private List<RatedTransaction> draftRatedTransactions = new ArrayList<>();
+    
+    /**
+     * Is invoice generated using new invoice process
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "new_invoicing_process")
+    private boolean newInvoicingProcess = false;
 
     /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
@@ -1373,6 +1381,20 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
 	public void setPreviousInvoiceNumber(String previousInvoiceNumber) {
 		this.previousInvoiceNumber = previousInvoiceNumber;
+	}
+
+	/**
+	 * @return the newInvoicingProcess
+	 */
+	public boolean isNewInvoicingProcess() {
+		return newInvoicingProcess;
+	}
+
+	/**
+	 * @param newInvoicingProcess the newInvoicingProcess to set
+	 */
+	public void setNewInvoicingProcess(boolean newInvoicingProcess) {
+		this.newInvoicingProcess = newInvoicingProcess;
 	}
     
 }

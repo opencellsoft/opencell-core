@@ -20,6 +20,8 @@ package org.meveo.admin.job;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -28,12 +30,15 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
+import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.job.Job;
 
 /**
@@ -95,20 +100,22 @@ public class XMLInvoiceGenerationJob extends Job {
 
         CustomFieldTemplate customFieldInvToProcess = new CustomFieldTemplate();
         final String cfInvToProcessCode = "invoicesToProcess";
-
-        Map<String, String> invoicesToProcessValues = new HashMap<String, String>();
-        invoicesToProcessValues.put(InvoicesToProcessEnum.FinalOnly.name(), InvoicesToProcessEnum.FinalOnly.name());
-        invoicesToProcessValues.put(InvoicesToProcessEnum.DraftOnly.name(), InvoicesToProcessEnum.DraftOnly.name());
-        invoicesToProcessValues.put(InvoicesToProcessEnum.All.name(), InvoicesToProcessEnum.All.name());
-
+        
         customFieldInvToProcess.setCode(cfInvToProcessCode);
         customFieldInvToProcess.setAppliesTo(APPLIES_TO);
         customFieldInvToProcess.setActive(true);
-        customFieldInvToProcess.setDefaultValue(InvoicesToProcessEnum.FinalOnly.name());
+        
         customFieldInvToProcess.setDescription(resourceMessages.getString("InvoicesToProcessEnum.label"));
-        customFieldInvToProcess.setFieldType(CustomFieldTypeEnum.LIST);
-        customFieldInvToProcess.setValueRequired(true);
-        customFieldInvToProcess.setListValues(invoicesToProcessValues);
+        customFieldInvToProcess.setFieldType(CustomFieldTypeEnum.CHECKBOX_LIST);
+        customFieldInvToProcess.setStorageType(CustomFieldStorageTypeEnum.LIST);
+        
+        Map<String, String> invoicesStatusToProcessValues = new HashMap<String, String>();
+        for (InvoiceStatusEnum e : InvoiceStatusEnum.values()) {
+        	invoicesStatusToProcessValues.put(e.name(), resourceMessages.getString(e.getLabel()));
+        }
+        customFieldInvToProcess.setListValues(invoicesStatusToProcessValues);
+        customFieldInvToProcess.setDefaultValue(InvoiceStatusEnum.VALIDATED.name());
+        
         customFieldInvToProcess.setGuiPosition("tab:Configuration:0;field:2");
         result.put(cfInvToProcessCode, customFieldInvToProcess);
 
