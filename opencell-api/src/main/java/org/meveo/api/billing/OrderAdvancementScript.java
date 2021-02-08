@@ -174,7 +174,6 @@ public class OrderAdvancementScript extends ModuleScript {
         invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
         invoiceLine.setBillingAccount(commercialOrder.getBillingAccount());
         invoiceLine.setValueDate(new Date());
-        invoiceLine.setSubscription(commercialOrder.getS);
         invoiceLinesService.create(invoiceLine);
     }
 
