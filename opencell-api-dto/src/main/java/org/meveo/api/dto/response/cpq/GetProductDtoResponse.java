@@ -35,7 +35,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class GetProductDtoResponse extends ProductDto{
 	
 	private Set<DiscountPlanDto> discountList = new HashSet<>();
-    private Set<ProductVersionDto> productVersions = new HashSet<>();
+    private Set<GetProductVersionResponse> productVersions = new HashSet<>();
     @XmlElementWrapper(name = "chargeTemplates")
     @XmlElement(name = "chargeTemplates")
     private Set<ChargeTemplateDto> chargeTemplates;
@@ -72,7 +72,7 @@ public class GetProductDtoResponse extends ProductDto{
     	
     	if(p.getProductVersions() != null && !p.getProductVersions().isEmpty()) {
     		productVersions = p.getProductVersions().stream().map(d -> {
-    			final ProductVersionDto service = new ProductVersionDto(d);
+    			final GetProductVersionResponse service = new GetProductVersionResponse(d);
     			return service;
     		}).collect(Collectors.toSet());
     	}
@@ -88,14 +88,14 @@ public class GetProductDtoResponse extends ProductDto{
 	/**
 	 * @return the productVersions
 	 */
-	public Set<ProductVersionDto> getProductVersions() {
+	public Set<GetProductVersionResponse> getProductVersions() {
 		return productVersions;
 	}
 
 	/**
 	 * @param productVersions the productVersions to set
 	 */
-	public void setProductVersions(Set<ProductVersionDto> productVersions) {
+	public void setProductVersions(Set<GetProductVersionResponse> productVersions) {
 		this.productVersions = productVersions;
 	}
 

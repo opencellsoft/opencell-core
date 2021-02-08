@@ -344,7 +344,7 @@ public class CommercialOrderApi extends BaseApi {
 		final CommercialOrder order = commercialOrderService.findById(commercialOrderId);
 		if(order == null)
 			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
-		if(!order.getStatus().equalsIgnoreCase(CommercialOrderEnum.COMPLETED.toString()))
+		if(!order.getStatus().equalsIgnoreCase(CommercialOrderEnum.COMPLETED.toString()) && !order.getStatus().equalsIgnoreCase(CommercialOrderEnum.DRAFT.toString()))
 			throw new MeveoApiException("the status of order must be COMPLETED.");
 		return new CommercialOrderDto(commercialOrderService.validateOrder(order));
 	}
