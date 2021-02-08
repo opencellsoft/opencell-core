@@ -91,8 +91,6 @@ public class ProductChargeTemplateMapping<T extends ChargeTemplate> extends Base
     @OrderColumn(name = "INDX")
     private List<CounterTemplate> accumulatorCounterTemplates;
 
-  
-
     public T getChargeTemplate() {
         return chargeTemplate;
     }
@@ -122,5 +120,33 @@ public class ProductChargeTemplateMapping<T extends ChargeTemplate> extends Base
 	 */
 	public void setProduct(Product product) {
 		this.product = product;
+	}
+
+	/**
+	 * @return the walletTemplates
+	 */
+	public List<WalletTemplate> getWalletTemplates() {
+		return walletTemplates;
+	}
+
+	/**
+	 * @param walletTemplates the walletTemplates to set
+	 */
+	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
+		this.walletTemplates = walletTemplates;
+	}
+
+	/**
+	 * @return the accumulatorCounterTemplates
+	 */
+	public List<CounterTemplate> getAccumulatorCounterTemplates() {
+		return accumulatorCounterTemplates;
+	}
+
+	/**
+	 * @param accumulatorCounterTemplates the accumulatorCounterTemplates to set
+	 */
+	public void setAccumulatorCounterTemplates(List<CounterTemplate> accumulatorCounterTemplates) {
+		this.accumulatorCounterTemplates = accumulatorCounterTemplates;
 	}
 }

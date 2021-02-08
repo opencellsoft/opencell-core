@@ -54,6 +54,7 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.catalog.ProductChargeTemplate;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
@@ -167,6 +168,8 @@ public class CatalogHierarchyBuilderService {
     
     @Inject
     private MediaService mediaService;
+    
+    @Inject ProductChargeTemplateMappingService productChargeTemplateMappingService;
 
     @Inject
     @CurrentUser
@@ -190,8 +193,10 @@ public class CatalogHierarchyBuilderService {
         }
     }
    
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void duplicateProduct(Product entity, ProductVersion productVersion, Set<DiscountPlan> discountPlans, 
-										Set<String> modelChildren, List<OfferComponent> offerComponents, List<Media> medias, String prefix) {
+										Set<String> modelChildren, List<OfferComponent> offerComponents, List<Media> medias, 
+										List<ProductChargeTemplateMapping> productCharge, String prefix) {
     	if(productVersion != null) {
     		ProductVersion tmpProductVersion = productVersionService.findById(productVersion.getId());
     		tmpProductVersion.getTags().size();
@@ -206,7 +211,7 @@ public class CatalogHierarchyBuilderService {
 			entity.getProductVersions().add(newProductVersion);
     	}
     	if(discountPlans != null) {
-    		entity.setDiscountList(new HashSet<>());
+    		entity.getDiscountList().clear();;
     		discountPlans.forEach(dp -> {
     			dp.getDiscountPlanItems().size();
     			DiscountPlan newDiscountPlan = new DiscountPlan(dp);
@@ -230,7 +235,7 @@ public class CatalogHierarchyBuilderService {
     	}
     	
     	if(offerComponents != null) {
-    		entity.setOfferComponents(new ArrayList<>());
+    		entity.getOfferComponents().clear();;
     		offerComponents.forEach(oc -> {
     	    	offerComponentService.detach(oc);
     			OfferComponent newOffer = new OfferComponent(oc);
@@ -248,16 +253,29 @@ public class CatalogHierarchyBuilderService {
     	}
     	
     	if(medias != null) {
-    		entity.setMedias(new ArrayList<>());
+    		entity.getMedias().clear();
     		medias.forEach(media -> {
-    			mediaService.detach(media);
     			Media newMedia = new Media(media); 
     			newMedia.setProduct(entity);
     			mediaService.create(newMedia);
     			entity.getMedias().add(newMedia);
     		});
     	}
+    	
+    	if(productCharge != null) {
+    		entity.getProductCharges().clear();;
+    		productCharge.forEach(pct -> {
+    			pct.getWalletTemplates().size();
+    			pct.getAccumulatorCounterTemplates().size();
+    			ProductChargeTemplateMapping duplicat = new ProductChargeTemplateMapping();
+    			duplicat.setCounterTemplate(pct.getCounterTemplate());
+    			duplicat.setChargeTemplate(pct.getChargeTemplate());
+    			duplicat.setProduct(entity);
+    			productChargeTemplateMappingService.create(duplicat);
+    		});
+    	}
     }
+	
 	
 	private void duplicateDiscount(DiscountPlan entity, List<DiscountPlanItem> discountPlanItem) {
 		if(entity.getDiscountPlanItems() != null && !entity.getDiscountPlanItems().isEmpty()) {
