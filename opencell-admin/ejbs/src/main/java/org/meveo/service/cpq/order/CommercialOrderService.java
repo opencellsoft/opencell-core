@@ -3,7 +3,9 @@ package org.meveo.service.cpq.order;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -16,7 +18,9 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -33,10 +37,14 @@ import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInterface;
 
 /**
  * @author Tarik FA.
@@ -56,6 +64,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     private ServiceInstanceService serviceInstanceService;
     @Inject
 	private SubscriptionService subscriptionService;
+	@Inject
+	private ScriptInstanceService scriptInstanceService;
     
 	public CommercialOrder duplicate(CommercialOrder entity) {
 		final CommercialOrder duplicate = new CommercialOrder(entity);
@@ -64,16 +74,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		duplicate.setStatusDate(Calendar.getInstance().getTime());
 		create(duplicate);
 		return duplicate;
-	}
-	
-	public CommercialOrder validateOrder(CommercialOrder commercialOrder) {
-		commercialOrder = serviceSingleton.assignCommercialOrderNumber(commercialOrder);
-		
-		commercialOrder.setStatus(CommercialOrderEnum.VALIDATED.toString());
-		commercialOrder.setStatusDate(Calendar.getInstance().getTime());
-		
-        update(commercialOrder);
-		return commercialOrder;
 	}
 	
 	public CommercialOrder findByOrderNumer(String orderNumber) throws  BusinessException{
@@ -109,7 +109,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		return entity;
 	}
 		
-	public CommercialOrder orderValidationProcess(Long orderId) {
+	public CommercialOrder validateOrder(Long orderId) {
 		CommercialOrder order = findById(orderId);
 		if(order == null)
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderId);
@@ -118,10 +118,31 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			throw new BusinessException("Order id: " + order.getId() + ", please go throw the validation plan in order to validate it");
 
 
-		return orderValidationProcess(order);
+		return validateOrder(order);
 	}
 
-	public CommercialOrder orderValidationProcess(CommercialOrder order) {
+	public CommercialOrder validateOrder(CommercialOrder order) {
+		ParamBean paramBean = ParamBean.getInstance();
+		String sellerCode = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller().getCode();
+		String quoteScriptCode = paramBean.getProperty("seller." + sellerCode + ".orderValidationScript", "");
+		if (!StringUtils.isBlank(quoteScriptCode)) {
+			ScriptInstance scriptInstance = scriptInstanceService.findByCode(quoteScriptCode);
+			if (scriptInstance != null) {
+				String orderValidationProcess = scriptInstance.getCode();
+				ScriptInterface script = scriptInstanceService.getScriptInstance(orderValidationProcess);
+				Map<String, Object> methodContext = new HashMap<String, Object>();
+				methodContext.put("commercialOrder", order);
+				methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+				methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+				if (script != null) {
+					script.execute(methodContext);
+					return (CommercialOrder) methodContext.get(Script.RESULT_VALUE);
+				} else
+					return order;
+			} else
+				return order;
+		}
+
 		if (!CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus())) {
 			return order;
 		}
