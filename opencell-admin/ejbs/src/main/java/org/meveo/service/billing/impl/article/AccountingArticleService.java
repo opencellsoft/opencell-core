@@ -25,39 +25,39 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	@Inject private ArticleMappingLineService articleMappingLineService;
 	
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) {
-		List<ArticleMappingLine> articles = articleMappingLineService.findByProductCode(product);
+		List<ArticleMappingLine> articleMappingLines = articleMappingLineService.findByProductCode(product);
 		var matchResult = new ArrayList<ArticleMappingLine>();
-		articles.forEach(aml -> {
+		articleMappingLines.forEach(aml -> {
 			aml.getAttributesMapping().size();
 			var finalResult = aml.getAttributesMapping().stream().filter(am -> {
 				final Attribute attribute = am.getAttribute();
 				if(attributes.get(attribute.getCode()) != null) {
 					Object value = attributes.get(am.getAttribute().getCode());
 					switch (attribute.getAttributeType()) {
-					case TEXT:
-					case LIST_TEXT :
-					case LIST_NUMERIC :
-						if(value.toString().contentEquals(am.getAttributeValue())) return true;
-					case NUMERIC:
-						if(Double.valueOf(value.toString()).doubleValue() == Double.valueOf(am.getAttributeValue()).doubleValue()) return true;
-					case LIST_MULTIPLE_TEXT :
-					case LIST_MULTIPLE_NUMERIC :
-						List<String> source = Arrays.asList(am.getAttributeValue().split(";"));
-						List<String> input = Arrays.asList(value.toString().split(";"));
-						Optional<String> valExist = input.stream().filter( val -> {
-							if(source.contains(val))
-								return true;
-							return false;
-						}).findFirst();
-						if(valExist.isPresent())	return true;
-					default:
-						if(value.toString().contentEquals(am.getAttributeValue())) return true;
+						case TEXT:
+						case LIST_TEXT :
+						case LIST_NUMERIC :
+							return value.toString().contentEquals(am.getAttributeValue());
+						case NUMERIC:
+							return Double.valueOf(value.toString()).doubleValue() == Double.valueOf(am.getAttributeValue()).doubleValue();
+						case LIST_MULTIPLE_TEXT :
+						case LIST_MULTIPLE_NUMERIC :
+							List<String> source = Arrays.asList(am.getAttributeValue().split(";"));
+							List<String> input = Arrays.asList(value.toString().split(";"));
+							Optional<String> valExist = input.stream().filter( val -> {
+								if(source.contains(val))
+									return true;
+								return false;
+							}).findFirst();
+							return valExist.isPresent();
+						default:
+							return value.toString().contentEquals(am.getAttributeValue());
 					}
 				}
 				return false;
 			}).collect(Collectors.toList());
-			
-			if(aml.getAttributesMapping().size() == finalResult.size()) {
+
+			if(aml.getAttributesMapping().size() >= finalResult.size() && (finalResult.size() == attributes.keySet().size())) {
 				matchResult.add(aml);
 			}
 			
