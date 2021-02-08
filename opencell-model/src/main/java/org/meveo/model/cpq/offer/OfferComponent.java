@@ -68,6 +68,7 @@ public class OfferComponent extends BaseEntity {
 	
 	public OfferComponent(OfferComponent copy) {
 		this.product = copy.getProduct();
+		this.offerTemplate = copy.offerTemplate;
 		this.tagsList = new HashSet<>(copy.getTagsList());
 	}
 
