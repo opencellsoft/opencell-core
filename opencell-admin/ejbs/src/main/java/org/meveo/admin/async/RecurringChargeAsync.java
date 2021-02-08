@@ -92,6 +92,8 @@ public class RecurringChargeAsync {
             } catch (Exception e) {
                 // Ignore error here - it was caught already
             }
+            
+            jobExecutionService.decCounterElementsRemaining(result);
         }
 
         return new AsyncResult<String>("OK");

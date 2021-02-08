@@ -32,6 +32,7 @@ import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.generic.wf.GenericWorkflowService;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -42,6 +43,9 @@ public class UnitGenericWorkflowJobBean {
 
     @Inject
     private GenericWorkflowService genericWorkflowService;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -49,10 +53,10 @@ public class UnitGenericWorkflowJobBean {
     public void execute(JobExecutionResultImpl result, BusinessEntity be, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
         try {
             genericWorkflowService.executeWorkflow(be, workflowInstance, genericWorkflow);
-            result.registerSucces();
+            jobExecutionService.registerSucces(result);
         } catch (Exception e) {
             log.error("Failed to unit generic workflow for {}", workflowInstance, e);
-            result.registerError(workflowInstance.getClass().getName() + workflowInstance.getId(), e.getMessage());
+            jobExecutionService.registerError(result, workflowInstance.getClass().getName() + workflowInstance.getId(), e.getMessage());
         }
     }
 }

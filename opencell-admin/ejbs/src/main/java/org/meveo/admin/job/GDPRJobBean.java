@@ -46,6 +46,7 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.util.ApplicationProvider;
@@ -88,6 +89,9 @@ public class GDPRJobBean extends BaseJobBean {
 	
 	@Inject
 	private CustomerService customerService;
+
+	@Inject
+    protected JobExecutionService jobExecutionService;
 
 	@JpaAmpNewTx
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -142,13 +146,13 @@ public class GDPRJobBean extends BaseJobBean {
 				bulkProspectDelete(oldCustomerProspects, result);
 			}
 			
-			result.registerSucces();
+			jobExecutionService.registerSucces(result);
 			result.setNbItemsToProcess(nbItemsToProcess);
 			
 		} catch (Exception e) {
 			log.error("Failed to run GDPR data erasure job", e);
 			result.addReport(e.getMessage());
-			result.registerError(e.getMessage());
+			jobExecutionService.registerError(result, e.getMessage());
 		}
 	}
 	
@@ -166,7 +170,7 @@ public class GDPRJobBean extends BaseJobBean {
             } catch(Exception e) {
                 result.setNbItemsProcessedWithError(result.getNbItemsProcessedWithError() + 1);
                 result.addReport(e.getMessage());
-                result.registerError(e.getMessage());
+                jobExecutionService.registerError(result, e.getMessage());
             }
         }
     }
@@ -185,7 +189,7 @@ public class GDPRJobBean extends BaseJobBean {
             } catch(Exception e) {
                 result.setNbItemsProcessedWithError(result.getNbItemsProcessedWithError() + 1);
                 result.addReport(e.getMessage());
-                result.registerError(e.getMessage());
+                jobExecutionService.registerError(result, e.getMessage());
             }
         }
     }
@@ -204,7 +208,7 @@ public class GDPRJobBean extends BaseJobBean {
             } catch(Exception e) {
                 result.setNbItemsProcessedWithError(result.getNbItemsProcessedWithError() + 1);
                 result.addReport(e.getMessage());
-                result.registerError(e.getMessage());
+                jobExecutionService.registerError(result, e.getMessage());
             }
         }
     }
@@ -223,7 +227,7 @@ public class GDPRJobBean extends BaseJobBean {
             } catch(Exception e) {
                 result.setNbItemsProcessedWithError(result.getNbItemsProcessedWithError() + 1);
                 result.addReport(e.getMessage());
-                result.registerError(e.getMessage());
+                jobExecutionService.registerError(result, e.getMessage());
             }
         }
     }
@@ -248,7 +252,7 @@ public class GDPRJobBean extends BaseJobBean {
             } catch(Exception e) {
                 result.setNbItemsProcessedWithError(result.getNbItemsProcessedWithError() + 1);
                 result.addReport(e.getMessage());
-                result.registerError(e.getMessage());
+                jobExecutionService.registerError(result, e.getMessage());
             }
         }
     }

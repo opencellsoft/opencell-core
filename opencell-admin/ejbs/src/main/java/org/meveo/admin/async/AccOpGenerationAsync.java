@@ -82,6 +82,7 @@ public class AccOpGenerationAsync {
                 break;
             }
             unitAccountOperationsGenerationJobBean.execute(result, id, script);
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<String>("OK");
     }

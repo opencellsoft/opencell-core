@@ -79,6 +79,7 @@ public class GenericWorkflowAsync {
             BusinessEntity be = (BusinessEntity)value.get(0);
             WorkflowInstance workflowInstance = (WorkflowInstance)value.get(1);
 			unitGenericWorkflowJobBean.execute(result, be, workflowInstance, genericWorkflow);
+			jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<String>("OK");
     }

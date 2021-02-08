@@ -30,6 +30,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.wf.Workflow;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.wf.WorkflowService;
 import org.slf4j.Logger;
 
@@ -46,6 +47,9 @@ public class UnitWorkflowJobBean {
 
     @Inject
     private WorkflowService workflowService;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -53,10 +57,10 @@ public class UnitWorkflowJobBean {
     public void execute(JobExecutionResultImpl result, BusinessEntity entity, Workflow workflow) {
         try {
             workflowService.executeWorkflow(entity, workflow);
-            result.registerSucces();
+            jobExecutionService.registerSucces(result);
         } catch (Exception e) {
             log.error("Failed to unit workflow for {}", entity, e);
-            result.registerError(entity.getClass().getName() + entity.getId(), e.getMessage());
+            jobExecutionService.registerError(result, entity.getClass().getName() + entity.getId(), e.getMessage());
         }
     }
 }

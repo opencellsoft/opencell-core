@@ -62,6 +62,7 @@ public class MediationReprocessingJob extends Job {
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
+        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
         
         String readerCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
@@ -75,7 +76,7 @@ public class MediationReprocessingJob extends Job {
             mediationReprocessingJobBean.execute(result, jobInstance.getParametres(), nbRuns, waitingMillis, readerCode, parserCode);           
         } catch (Exception e) {
             log.error("Failed to run mediation job", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
     }
 

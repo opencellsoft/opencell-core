@@ -86,7 +86,7 @@ public class ScriptingJob extends Job {
 
         } catch (Exception e) {
             log.error("Exception on init/execute script", e);
-            result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());
+            jobExecutionService.registerError(result, "Error in " + scriptCode + " execution :" + e.getMessage());
         }
     }
 

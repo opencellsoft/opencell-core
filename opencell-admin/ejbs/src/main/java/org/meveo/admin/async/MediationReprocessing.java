@@ -41,6 +41,7 @@ import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
@@ -69,6 +70,9 @@ public class MediationReprocessing {
 
 	@Inject 
 	private CDRService cdrService;
+	
+	@Inject
+    protected JobExecutionService jobExecutionService;
 	
 	/**
 	 * Read/parse mediation file and process one line at a time. NOTE: Executes in
@@ -102,9 +106,9 @@ public class MediationReprocessing {
                     log.debug("Processing cdr id:{}", cdr.getId());
 
                     cdrParserService.createEdrs(edrs, cdr);
-                    result.registerSucces();
+                    jobExecutionService.registerSucces(result);
                 } else {
-                    result.registerError("cdr =" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
+                    jobExecutionService.registerError(result, "cdr =" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
                     cdrService.updateReprocessedCdr(cdr);
                 }
             } catch (Exception e) {
@@ -115,7 +119,7 @@ public class MediationReprocessing {
                 } else {
                     log.error("Failed to process CDR id: {}  error {}", cdr != null ? cdr.getId() : null, errorReason, e);
                 }
-                result.registerError("cdr id=" + (cdr != null ? cdr.getId() : "") + ": " + errorReason);
+                jobExecutionService.registerError(result, "cdr id=" + (cdr != null ? cdr.getId() : "") + ": " + errorReason);
                 cdrService.updateReprocessedCdr(cdr);
             }
         }

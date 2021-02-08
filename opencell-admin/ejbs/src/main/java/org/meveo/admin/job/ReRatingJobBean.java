@@ -62,6 +62,7 @@ public class ReRatingJobBean extends BaseJobBean implements Serializable {
 
             log.info("rerate with useSamePricePlan={} ,#operations={}", useSamePricePlan, walletOperationIds.size());
             result.setNbItemsToProcess(walletOperationIds.size());
+            jobExecutionService.initCounterElementsRemaining(result, walletOperationIds.size());
             int i = 0;
             for (Long walletOperationId : walletOperationIds) {
                 i++;
@@ -70,12 +71,13 @@ public class ReRatingJobBean extends BaseJobBean implements Serializable {
                 }
                 try {
                     ratingService.reRateInNewTx(walletOperationId, useSamePricePlan);
-                    result.registerSucces();
+                    jobExecutionService.registerSucces(result);
                 } catch (Exception e) {
                     // rejectededOperationProducer.fire(walletOperationId);
                     log.error("Failed to rerate operation {}", walletOperationId, e.getMessage());
-                    result.registerError(e.getMessage());
+                    jobExecutionService.registerError(result, e.getMessage());
                 }
+                jobExecutionService.decCounterElementsRemaining(result);
             }
         } catch (Exception e) {
             log.error("Failed to rerate operations", e);

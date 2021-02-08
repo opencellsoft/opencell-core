@@ -48,6 +48,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionErrorService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
@@ -79,6 +80,9 @@ public class FilteringJobBean extends BaseJobBean {
     @Inject
     private JobExecutionErrorService jobExecutionErrorService;
 
+    @Inject
+    protected JobExecutionService jobExecutionService;
+
     /**
      * Execute the jobInstance.
      * 
@@ -99,6 +103,7 @@ public class FilteringJobBean extends BaseJobBean {
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
+        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
@@ -109,7 +114,7 @@ public class FilteringJobBean extends BaseJobBean {
 
             Filter filter = filterService.findByCode(filterCode);
             if (filter == null) {
-                result.registerError("Cant find filter : " + filterCode);
+                jobExecutionService.registerError(result, "Cant find filter : " + filterCode);
                 return;
             }
 
@@ -117,7 +122,7 @@ public class FilteringJobBean extends BaseJobBean {
                 scriptInterface = scriptInstanceService.getScriptInstance(scriptCode);
 
             } catch (EntityNotFoundException | InvalidScriptException e) {
-                result.registerError(e.getMessage());
+                jobExecutionService.registerError(result, e.getMessage());
                 return;
             }
 
@@ -164,6 +169,7 @@ public class FilteringJobBean extends BaseJobBean {
             List<Future<String>> futures = new ArrayList<Future<String>>();
             SubListCreator subListCreator = new SubListCreator(filtredEntities, nbRuns.intValue());
             log.debug("NbItemsToProcess:{}, block to run{}, nbThreads:{}.", nbItemsToProcess, subListCreator.getBlocToRun(), nbRuns);
+            jobExecutionService.initCounterElementsRemaining(result, nbItemsToProcess);
 
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
@@ -184,7 +190,7 @@ public class FilteringJobBean extends BaseJobBean {
                     // It was cancelled from outside - no interest
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
+                    jobExecutionService.registerError(result, cause.getMessage());
                     result.addReport(cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }

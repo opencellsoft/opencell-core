@@ -32,6 +32,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.AggregatedWalletOperation;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 /**
@@ -50,6 +51,9 @@ public class UnitRatedTransactionsJobBean {
 
     @Inject
     private WalletOperationService walletOperationService;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -59,11 +63,11 @@ public class UnitRatedTransactionsJobBean {
             WalletOperation walletOperation = walletOperationService.findById(walletOperationId);
             
             ratedTransactionService.createRatedTransaction(walletOperation, false);
-            result.registerSucces();
+            jobExecutionService.registerSucces(result);
 
         } catch (Exception e) {
             log.error("Failed to rate transaction for wallet operation {}", walletOperationId, e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
     }
 
@@ -73,11 +77,11 @@ public class UnitRatedTransactionsJobBean {
         log.debug("Running with aggregatedWo={}", aggregatedWo);
         try {
             ratedTransactionService.createRatedTransaction(aggregatedWo, aggregationSettings, invoicingDate);
-            result.registerSucces();
+            jobExecutionService.registerSucces(result);
 
         } catch (Exception e) {
             log.error("Failed to rate transaction for aggregatedWo {}", aggregatedWo, e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
     }
 }
