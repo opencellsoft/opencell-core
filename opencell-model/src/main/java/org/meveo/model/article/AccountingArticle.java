@@ -52,9 +52,6 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
 
-    @OneToOne(mappedBy = "accountingArticle")
-    private ArticleMappingLine articleMappingLine;
-
     @Column(name = "analytic_code_1")
     private String analyticCode1;
 
@@ -112,14 +109,6 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 
     public void setAccountingCode(AccountingCode accountingCode) {
         this.accountingCode = accountingCode;
-    }
-
-    public ArticleMappingLine getArticleMappingLine() {
-        return articleMappingLine;
-    }
-
-    public void setArticleMappingLine(ArticleMappingLine articleMappingLine) {
-        this.articleMappingLine = articleMappingLine;
     }
 
     public Map<String, String> getDescriptionI18n() {
