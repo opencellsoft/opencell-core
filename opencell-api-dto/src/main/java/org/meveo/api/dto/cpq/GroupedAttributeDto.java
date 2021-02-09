@@ -25,8 +25,8 @@ public class GroupedAttributeDto {
 	private boolean selectable=Boolean.TRUE;  
 	private boolean ruled=Boolean.FALSE;
 	
-	 @XmlElementWrapper(name = "commercialRuleCodes")
-	 @XmlElement(name = "commercialRuleCodes") 
+	 @XmlElementWrapper(name = "commercialRules")
+	 @XmlElement(name = "commercialRules") 
 	 private List<String> commercialRuleCodes=new ArrayList<String>();
 	
 	public GroupedAttributeDto() {
