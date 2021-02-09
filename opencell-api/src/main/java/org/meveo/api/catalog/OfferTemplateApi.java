@@ -494,12 +494,13 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             OfferComponent offerComponent = null;
             boolean hasOfferComponentDtos = offerProductDtos != null && !offerProductDtos.isEmpty();
             if(hasOfferComponentDtos) {
-            for (OfferProductsDto offerProductDto : offerProductDtos) {
-            	offerComponent = getOfferComponentFromDto(offerProductDto);
-            	offerComponent.setOfferTemplate(offerTemplate);
-            	newOfferProductDtos.add(offerComponent);
-            }
-            offerTemplate.getOfferComponents().addAll(newOfferProductDtos);
+            	offerTemplate.getOfferComponents().clear();
+	            for (OfferProductsDto offerProductDto : offerProductDtos) {
+	            	offerComponent = getOfferComponentFromDto(offerProductDto);
+	            	offerComponent.setOfferTemplate(offerTemplate);
+	            	newOfferProductDtos.add(offerComponent);
+	            }
+	            offerTemplate.getOfferComponents().addAll(newOfferProductDtos);
             }
     }
     
