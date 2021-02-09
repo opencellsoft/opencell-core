@@ -7,6 +7,10 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
+import org.meveo.api.dto.billing.ActivateSubscriptionRequestDto;
+import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
+import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
+import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
 import org.meveo.apiv2.generic.core.GenericHelper;
@@ -248,39 +252,53 @@ System.out.println( "POST redirectURI DISABLE A SERVICE : " + redirectURI.toStri
             if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(ACTIVATION_SERVICE) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS );
+                ActivateSubscriptionRequestDto aDto = new ActivateSubscriptionRequestDto();
+                aDto.setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
 
 System.out.println( "PUT redirectURI ACTIVATION : " + redirectURI.toString() );
-                return Response.temporaryRedirect( redirectURI )
-                        .entity( Entity.json(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) ).build();
-//                return httpClient.target( redirectURI ).request()
-//                        .put(Entity.json(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+//                return Response.temporaryRedirect( redirectURI )
+//                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
+                return httpClient.target( redirectURI ).request()
+                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
             }
             // Handle the special endpoint: suspension of a subscription
             else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(SUSPENSION_SERVICE) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS );
+                OperationSubscriptionRequestDto aDto = new OperationSubscriptionRequestDto();
+                aDto.setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
 
 System.out.println( "PUT redirectURI SUSPENSION : " + redirectURI.toString() );
-                return Response.temporaryRedirect( redirectURI )
-                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
+//                return Response.temporaryRedirect( redirectURI )
+//                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
+                return httpClient.target( redirectURI ).request()
+                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
             }
             // Handle the special endpoint: termination of a subscription
             else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(TERMINATION_SERVICE) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS );
+                Object aDto = new ObjectMapper().readValue( jsonDto, TerminateSubscriptionRequestDto.class );
+                ((TerminateSubscriptionRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
 
 System.out.println( "PUT redirectURI TERMINATION : " + redirectURI.toString() );
-                return Response.temporaryRedirect( redirectURI )
-                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
+//                return Response.temporaryRedirect( redirectURI )
+//                        .entity( Entity.entity(aDto, MediaType.APPLICATION_JSON) ).build();
+                return httpClient.target( redirectURI ).request()
+                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
             }
             // Handle the special endpoint: update existing services of a subscription
             else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(UPDATING_SERVICE) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS );
+                Object aDto = new ObjectMapper().readValue( jsonDto, UpdateServicesRequestDto.class );
+                ((UpdateServicesRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
 
 System.out.println( "PUT redirectURI UPDATING SERVICES : " + redirectURI.toString() );
-                return Response.temporaryRedirect( redirectURI )
-                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
+//                return Response.temporaryRedirect( redirectURI )
+//                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
+                return httpClient.target( redirectURI ).request()
+                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
             }
         }
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( pathUpdateAnEntity ) ) {
