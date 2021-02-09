@@ -45,6 +45,7 @@ import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.finance.AccountingWritingService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -77,6 +78,9 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 
     @Inject
     private RecordedInvoiceService recordedInvoiceService;
+
+    @Inject
+    private AccountingWritingService accountingWritingService;
 
     private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
 
@@ -252,6 +256,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
     */	
     public LazyDataModel<AccountOperation> getAccountOperations(AccountingWriting aw) {
         if (aw != null) {
+            aw = accountingWritingService.refreshOrRetrieve(aw);
             filters.put("list accountingWritings", aw);
             return getLazyDataModel();
         } else {
