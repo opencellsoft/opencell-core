@@ -410,11 +410,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public ActionStatus activate(String subscriptionCode) {
+    public ActionStatus activate(ActivateSubscriptionRequestDto putData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.activateSubscription(subscriptionCode);
+            subscriptionApi.activateSubscription(putData.getSubscriptionCode());
         } catch (Exception e) {
             processException(e, result);
         }

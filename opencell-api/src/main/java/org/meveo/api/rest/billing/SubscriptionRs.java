@@ -349,12 +349,12 @@ public interface SubscriptionRs extends IBaseRs {
     /**
      * Activate a given Subscription.
      * 
-     * @param subscriptionCode subscription code
+     * @param putData containing subscription code
      * @return Request processing status
      */
     @PUT
     @Path("/activate")
-    ActionStatus activate(String subscriptionCode);
+    ActionStatus activate(ActivateSubscriptionRequestDto putData);
     
     /**
      * Activate a given Subscription for a customer.

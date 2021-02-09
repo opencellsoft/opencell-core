@@ -252,6 +252,8 @@ System.out.println( "POST redirectURI DISABLE A SERVICE : " + redirectURI.toStri
 System.out.println( "PUT redirectURI ACTIVATION : " + redirectURI.toString() );
                 return Response.temporaryRedirect( redirectURI )
                         .entity( Entity.json(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) ).build();
+//                return httpClient.target( redirectURI ).request()
+//                        .put(Entity.json(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
             }
             // Handle the special endpoint: suspension of a subscription
             else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(SUSPENSION_SERVICE) ) {
