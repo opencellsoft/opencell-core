@@ -3,9 +3,7 @@ package org.meveo.api.cpq;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -14,8 +12,6 @@ import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.billing.OrderAdvancementScript;
-import org.meveo.api.billing.QuoteValidationTemp;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
@@ -31,20 +27,19 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
-import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderType;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.order.Order;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.InvoicingPlanService;
-import org.meveo.service.cpq.order.OrderLotService;
 import org.meveo.service.cpq.order.OrderTypeService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderService;
@@ -72,7 +67,7 @@ public class CommercialOrderApi extends BaseApi {
     @Inject private UserAccountService userAccountService;
     @Inject private AccessService accessService;
     @Inject private SubscriptionService subscriptionService;
-    @Inject private OrderLotService orderLotService;
+    @Inject private ServiceSingleton serviceSingleton;
 	
 	public CommercialOrderDto create(CommercialOrderDto orderDto) {
 		checkParam(orderDto);
@@ -145,10 +140,6 @@ public class CommercialOrderApi extends BaseApi {
 			if(orderParent == null)
 				throw new EntityDoesNotExistsException(Order.class, orderDto.getOrderParentCode());
 			order.setOrderParent(orderParent);
-		}
-		if(!Strings.isEmpty(orderDto.getOrderLotCode())) {
-			OrderLot orderLot = loadEntityByCode(orderLotService, orderDto.getOrderLotCode(), OrderLot.class);
-			order.setOrderLot(orderLot);
 		}
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		commercialOrderService.create(order);
@@ -279,11 +270,6 @@ public class CommercialOrderApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Order.class, orderDto.getOrderParentCode());
 			order.setOrderParent(orderParent);
 		}
-
-		if(!Strings.isEmpty(orderDto.getOrderLotCode())) {
-			OrderLot orderLot = loadEntityByCode(orderLotService, orderDto.getOrderLotCode(), OrderLot.class);
-			order.setOrderLot(orderLot);
-		}
 		commercialOrderService.update(order);
 		return new CommercialOrderDto(order);
 	}
@@ -307,7 +293,7 @@ public class CommercialOrderApi extends BaseApi {
 			missingParameters.add("status");
 		}
 		handleMissingParameters();
-		final CommercialOrder order = commercialOrderService.findById(commercialOrderId);
+		CommercialOrder order = commercialOrderService.findById(commercialOrderId);
 		if(order == null)
 			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
 		if(order.getStatus().equalsIgnoreCase(CommercialOrderEnum.CANCELED.toString())) {
@@ -321,7 +307,9 @@ public class CommercialOrderApi extends BaseApi {
 			if(!order.getStatus().equalsIgnoreCase(CommercialOrderEnum.COMPLETED.toString()))
 				throw new MeveoApiException("The Order is not yet complete");
 			
-		}
+		}else if(statusTarget.equalsIgnoreCase(CommercialOrderEnum.FINALIZED.toString())){
+            order = serviceSingleton.assignCommercialOrderNumber(order);
+        }
 		List<String> status = allStatus();
 
 		if(!status.contains(statusTarget.toLowerCase())) {
@@ -343,20 +331,6 @@ public class CommercialOrderApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
 		return new CommercialOrderDto(commercialOrderService.duplicate(order));
 	}
-	
-	public CommercialOrderDto validate(Long commercialOrderId) {
-		if(commercialOrderId == null) {
-			missingParameters.add("commercialOrderId");
-		}
-		handleMissingParameters();
-		final CommercialOrder order = commercialOrderService.findById(commercialOrderId);
-		if(order == null)
-			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
-		if(!order.getStatus().equalsIgnoreCase(CommercialOrderEnum.COMPLETED.toString()))
-			throw new MeveoApiException("the status of order must be COMPLETED.");
-		return new CommercialOrderDto(commercialOrderService.validateOrder(order));
-	}
-	
 	
 	private List<String> allStatus(){
 		
@@ -389,8 +363,7 @@ public class CommercialOrderApi extends BaseApi {
 					 .replace("billingAccountCode", "billingAccount.code")
 					 .replace("quoteCode", "quote.code")
 					 .replace("contractCode", "contract.code")
-					 .replace("orderTypeCode", "orderType.code")
-					 .replace("orderLotCode", "orderLot.code");
+					 .replace("orderTypeCode", "orderType.code");
 			 filters.put(key.replace(key, newKey), value);
 		 });
 		 pagingAndFiltering.getFilters().clear();
@@ -403,10 +376,10 @@ public class CommercialOrderApi extends BaseApi {
 		 result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 		 if(totalCount > 0) {
 			 commercialOrderService.list(paginationConfiguration).stream().forEach(co -> {
-			 	/*if(co.getId() == 3){
+			 	/*if(co.getId() == 1){
 					OrderAdvancementScript temp = new OrderAdvancementScript();
 					Map<String, Object> methodContext = new HashMap<String, Object>();
-					co.setOrderProgress(30);
+					co.setOrderProgress(100);
 					methodContext.put("commercialOrder", co);
 					temp.execute(methodContext );
 				}*/
@@ -443,8 +416,8 @@ public class CommercialOrderApi extends BaseApi {
 		handleMissingParameters();
 	}
 
-	public CommercialOrderDto orderValidationProcess(Long orderId){
-		CommercialOrder commercialOrder = commercialOrderService.orderValidationProcess(orderId);
+	public CommercialOrderDto validateOrder(Long orderId){
+		CommercialOrder commercialOrder = commercialOrderService.validateOrder(orderId);
 		return new CommercialOrderDto(commercialOrder);
 	}
 }

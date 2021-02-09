@@ -94,6 +94,14 @@ public class ProductVersionDto extends BaseEntityDto {
                  .stream()
                  .map(tag -> tag.getCode())
                  .collect(Collectors.toSet());
+         this.attributeCodes = productVersion.getAttributes()
+                 .stream()
+                 .map(tag -> tag.getCode())
+                 .collect(Collectors.toSet());
+         this.groupedAttributeCodes = productVersion.getGroupedAttributes()
+                 .stream()
+                 .map(tag -> tag.getCode())
+                 .collect(Collectors.toSet());
     }
    
     

@@ -3736,7 +3736,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             Tax recalculatedTax = recalculatedTaxInfo.tax;
 
-            return new Object[] { recalculatedTax, !tax.getId().equals(recalculatedTax.getId()) };
+            return new Object[] { recalculatedTax, tax == null ? true : !tax.getId().equals(recalculatedTax.getId()) };
         }
     }
 
@@ -4525,12 +4525,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             InvoiceType invoiceType = postPaidInvoiceType;
             paymentMethod = resolvePMethod(billingAccount, billingCycle, defaultPaymentMethod, invoiceLine);
-            String invoiceKey = billingAccount.getId() + "_" + invoiceLine.getSubscription().getSeller().getId()
+            Seller seller = invoiceLine.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+            String invoiceKey = billingAccount.getId() + "_" + seller.getId()
                     + "_" + invoiceType.getId() + "_" + paymentMethod.getId();
             InvoiceLinesGroup ilGroup = invoiceLinesGroup.get(invoiceKey);
             if (ilGroup == null) {
                 ilGroup = new InvoiceLinesGroup(billingAccount, billingCycle != null ? billingCycle : billingAccount.getBillingCycle(),
-                        invoiceLine.getSubscription().getSeller() ,invoiceType, false, invoiceKey, paymentMethod);
+                        seller ,invoiceType, false, invoiceKey, paymentMethod);
                 invoiceLinesGroup.put(invoiceKey, ilGroup);
             }
             ilGroup.getInvoiceLines().add(invoiceLine);
@@ -4773,7 +4774,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     setInvoiceDueDate(invoice, invoiceLinesGroup.getBillingCycle());
 
                     EntityManager em = getEntityManager();
-
+                    invoice.setNewInvoicingProcess(true);
                     if (invoice.getId() == null) {
                         this.create(invoice);
 
@@ -4897,11 +4898,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
             InvoiceSubCategory invoiceSubCategory = invoiceLine.getAccountingArticle().getInvoiceSubCategory();
 
             scaKey = invoiceSubCategory.getId().toString();
-            if (isAggregateByUA) {
+            if (isAggregateByUA && invoiceLine.getSubscription() != null) {
                 scaKey = (invoiceLine.getSubscription().getUserAccount() != null ? invoiceLine.getSubscription().getUserAccount().getId() : "") + "_" + scaKey;
             }
 
             Tax tax = invoiceLine.getTax();
+            UserAccount userAccount = invoiceLine.getSubscription() == null ? null : invoiceLine.getSubscription().getUserAccount();
 
             // Check if tax has to be recalculated. Does not apply to RatedTransactions that had tax explicitly set/overridden
             if (calculateTaxOnSubCategoryLevel && ! invoiceLine.isTaxOverridden()) {
@@ -4913,12 +4915,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (changedToTax == null) {
                     taxZero = isExonerated && taxZero == null ? taxService.getZeroTax() : taxZero;
                     Object[] applicableTax = getApplicableTax(tax, isExonerated, invoice, taxClass,
-                            invoiceLine.getSubscription().getUserAccount(), taxZero, calculateExternalTax);
+                            userAccount, taxZero, calculateExternalTax);
                     changedToTax = applicableTax;
                     taxChangeMap.put(taxChangeKey, changedToTax);
                     if ((boolean) changedToTax[1]) {
                         log.debug("Will update rated transactions of Billing account {} and tax class {} with new tax from {}/{}% to {}/{}%",
-                                billingAccount.getId(), taxClass.getId(), tax.getId(), tax.getPercent(),
+                                billingAccount.getId(), taxClass.getId(), tax == null ? null : tax.getId(), tax == null ? null : tax.getPercent(),
                                 ((Tax) changedToTax[0]).getId(), ((Tax) changedToTax[0]).getPercent());
                     }
                 }
@@ -4932,7 +4934,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             SubCategoryInvoiceAgregate scAggregate = subCategoryAggregates.get(scaKey);
             if (scAggregate == null) {
                 scAggregate = new SubCategoryInvoiceAgregate(invoiceSubCategory, billingAccount,
-                        isAggregateByUA ? invoiceLine.getSubscription().getUserAccount() : null,  null, invoice, invoiceSubCategory.getAccountingCode());
+                        isAggregateByUA ? userAccount : null,  null, invoice, invoiceSubCategory.getAccountingCode());
                 scAggregate.updateAudit(currentUser);
 
                 String translationSCKey = "SC_" + invoiceSubCategory.getId() + "_" + languageCode;
@@ -4981,5 +4983,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
             this.moreInvoiceLines = moreInvoiceLines;
             this.invoiceLinesGroups = invoiceLinesGroups;
         }
+    }
+    
+	/**
+     * get list of invoices without generated XML files matching billing run and status list
+     * @param billingRunId
+     * @param statusList
+     * @return
+     */
+    public List<Long> listInvoicesWithoutXml(Long billingRunId, List<InvoiceStatusEnum> statusList) {
+        if(billingRunId == null){
+            return getEntityManager().createNamedQuery("Invoice.noXmlWithStatus", Long.class).setParameter("statusList", statusList).getResultList();
+        }else
+            return getEntityManager().createNamedQuery("Invoice.noXmlWithStatusAndBR", Long.class).setParameter("billingRunId", billingRunId).setParameter("statusList", statusList).getResultList();
     }
 }

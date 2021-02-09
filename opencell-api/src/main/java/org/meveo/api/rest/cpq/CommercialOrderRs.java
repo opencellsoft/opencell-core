@@ -126,19 +126,6 @@ public interface CommercialOrderRs {
 	    })
 	public Response duplicate(@Parameter(required = true) @PathParam("orderId") Long orderId);
 	
-
-	@PATCH
-	@Path("/validate/{commercialOrderId}")
-	@Operation(summary = "validate an order",
-	    tags = { "Order management" },
-	    description ="valide a complete order, and create a new order number",
-	    responses = {
-	            @ApiResponse(responseCode="200", description = "The order is succeffully validated",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class))),
-	            @ApiResponse(responseCode = "412", description = "id of order is missing", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
-	            @ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
-	    })
-	public Response validate(@Parameter(required = true) @PathParam("commercialOrderId") Long orderId);
-	
 	@POST
     @Path("/list")
     @Operation(summary = "Get commercial orders matching the given criteria",

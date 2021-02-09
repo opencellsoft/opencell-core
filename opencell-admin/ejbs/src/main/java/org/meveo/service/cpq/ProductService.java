@@ -108,6 +108,7 @@ public class ProductService extends BusinessService<Product> {
 		product.getModelChildren().size();
 		product.getOfferComponents().size();
 		product.getMedias().size();
+		product.getProductCharges().size();
 
 		product.getOfferComponents().forEach(oc -> oc.getTagsList().size());
 		
@@ -116,6 +117,7 @@ public class ProductService extends BusinessService<Product> {
 		var modelChildren = new HashSet<>(product.getModelChildren());
 		var offerComponents = new ArrayList<>(product.getOfferComponents());
 		var medias = new ArrayList<>(product.getMedias());
+		var productCharge = new ArrayList<>(product.getProductCharges());
 		
 		detach(product);
 
@@ -181,6 +183,7 @@ public class ProductService extends BusinessService<Product> {
    		 duplicate.setOfferComponents(new ArrayList<>());
    		 duplicate.setMedias(new ArrayList<>());
    		 duplicate.setUuid(UUID.randomUUID().toString());
+   		 duplicate.setProductCharges(new ArrayList<>());
    		 
 	   	
 	   	 
@@ -196,7 +199,7 @@ public class ProductService extends BusinessService<Product> {
 	   	 }
 	   	 
 	   	 if(duplicateHierarchy) {
-	   		catalogHierarchyBuilderService.duplicateProduct(duplicate, productVersion, discountPlans, modelChildren, offerComponents, medias, duplicate.getId() + "_");
+	   		catalogHierarchyBuilderService.duplicateProduct(duplicate, productVersion, discountPlans, modelChildren, offerComponents, medias, productCharge, duplicate.getId() + "_");
 	   	 }
 	   	 return duplicate;
 	}

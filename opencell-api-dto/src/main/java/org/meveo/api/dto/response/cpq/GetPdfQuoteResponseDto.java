@@ -41,6 +41,9 @@ public class GetPdfQuoteResponseDto extends BaseResponse {
     /** The pdf content. */
     private byte[] pdfContent;
 
+    /** The xml content. */
+    private byte[] xmlContent;
+
     /**
      * Instantiates a new gets the pdf invoice response dto.
      */
@@ -66,9 +69,12 @@ public class GetPdfQuoteResponseDto extends BaseResponse {
         this.pdfContent = pdfContent;
     }
 
-    @Override
-    public String toString() {
-        return "GetPdfQuoteResponseDto [pdfContent=" + Arrays.toString(pdfContent) + "]";
+    public byte[] getXmlContent() {
+        return xmlContent;
+    }
+
+    public void setXmlContent(byte[] xmlContent) {
+        this.xmlContent = xmlContent;
     }
 
 }

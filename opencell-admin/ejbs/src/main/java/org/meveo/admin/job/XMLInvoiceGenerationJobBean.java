@@ -19,9 +19,11 @@
 package org.meveo.admin.job;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -33,9 +35,9 @@ import org.meveo.admin.async.InvoicingAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.job.Job;
@@ -72,7 +74,8 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
 
         try {
 
-            InvoicesToProcessEnum invoicesToProcessEnum = InvoicesToProcessEnum.valueOf((String) this.getParamOrCFValue(jobInstance, "invoicesToProcess", "FinalOnly"));
+            List<String> statusNamesList = (List<String>) this.getParamOrCFValue(jobInstance, "invoicesToProcess", Arrays.asList("VALIDATED"));
+			List<InvoiceStatusEnum> statusList = statusNamesList.stream().map(status->InvoiceStatusEnum.valueOf(status)).collect(Collectors.toList());
 
             Long billingRunId = null;
             if (parameter != null && parameter.trim().length() > 0) {
@@ -84,7 +87,7 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
                 }
             }
 
-            List<Long> invoiceIds = this.fetchInvoiceIdsToProcess(invoicesToProcessEnum, billingRunId);
+            List<Long> invoiceIds = this.fetchInvoiceIdsToProcess(statusList, billingRunId);
 
             log.info("invoices to process={}", invoiceIds == null ? null : invoiceIds.size());
             List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
@@ -125,24 +128,8 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
         }
     }
 
-    private List<Long> fetchInvoiceIdsToProcess(InvoicesToProcessEnum invoicesToProcessEnum, Long billingRunId) {
-
-        log.debug(" fetchInvoiceIdsToProcess for invoicesToProcessEnum = {} and billingRunId = {} ", invoicesToProcessEnum, billingRunId);
-        List<Long> invoiceIds = null;
-
-        switch (invoicesToProcessEnum) {
-        case FinalOnly:
-            invoiceIds = invoiceService.getInvoiceIdsByBRWithNoXml(billingRunId);
-            break;
-
-        case DraftOnly:
-            invoiceIds = invoiceService.getDraftInvoiceIdsByBRWithNoXml(billingRunId);
-            break;
-
-        case All:
-            invoiceIds = invoiceService.getInvoiceIdsIncludeDraftByBRWithNoXml(billingRunId);
-            break;
-        }
-        return invoiceIds;
+    private List<Long> fetchInvoiceIdsToProcess(List<InvoiceStatusEnum> statusList, Long billingRunId) {
+        log.debug(" fetchInvoiceIdsToProcess for InvoiceStatusEnums = {} and billingRunId = {} ", statusList, billingRunId);
+        return invoiceService.listInvoicesWithoutXml(billingRunId, statusList);
     }
 }

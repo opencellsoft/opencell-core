@@ -23,6 +23,7 @@ import java.util.Arrays;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -34,11 +35,13 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
+import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.finance.RevenueRecognitionRuleService;
 import org.meveo.service.tax.TaxClassService;
 
@@ -53,6 +56,9 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
 
     @Inject
     private CalendarService calendarService;
+    
+    @Inject
+    private AttributeService attributeService;
 
     @Override
     public RecurringChargeTemplate create(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
@@ -168,6 +174,13 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         }
         if (postData.getRecurrenceType() != null) {
             chargeTemplate.setRecurrenceType(postData.getRecurrenceType());
+        }
+        
+        if(!Strings.isEmpty(postData.getAttributeCalendarCode())) {
+        	chargeTemplate.setAttributeCalendar(loadEntityByCode(attributeService, postData.getAttributeCalendarCode(), Attribute.class));
+        }
+        if(!Strings.isEmpty(postData.getAttributeDurationCode())) {
+        	chargeTemplate.setAttributeDuration(loadEntityByCode(attributeService, postData.getAttributeDurationCode(), Attribute.class));
         }
 
         return chargeTemplate;

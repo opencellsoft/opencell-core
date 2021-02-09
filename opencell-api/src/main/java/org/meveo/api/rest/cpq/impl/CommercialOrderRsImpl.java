@@ -95,17 +95,6 @@ public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 	}
 
 	@Override
-	public Response validate(Long orderId) {
-		GetCommercialOrderDtoResponse result = new GetCommercialOrderDtoResponse();
-		try {
-			result.setCommercialOrderDto(commercialOrderApi.validate(orderId));
-			return Response.ok(result).build();
-		}catch(MeveoApiException e) {
-			return errorResponse(e, result.getActionStatus());
-		}
-	}
-
-	@Override
 	public Response listCommercialOrder(PagingAndFiltering pagingAndFiltering) {
 		GetListCommercialOrderDtoResponse result = new GetListCommercialOrderDtoResponse();
 
@@ -134,7 +123,7 @@ public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 	public Response orderValidationProcess(Long orderId) {
 		GetCommercialOrderDtoResponse result = new GetCommercialOrderDtoResponse();
 		try {
-			result.setCommercialOrderDto(commercialOrderApi.orderValidationProcess(orderId));
+			result.setCommercialOrderDto(commercialOrderApi.validateOrder(orderId));
 			return Response.ok(result).build();
 		} catch (MeveoApiException e) {
 			return errorResponse(e, result.getActionStatus());
