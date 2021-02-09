@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 
@@ -45,7 +46,7 @@ public class ProductDto extends BaseEntityDto{
 	protected boolean packageFlag=Boolean.FALSE;
     /** The custom fields. */
     protected CustomFieldsDto customFields;
-    protected ProductVersionDto currentProductVersion;
+    protected GetProductVersionResponse currentProductVersion;
     
     @XmlElementWrapper(name = "chargeTemplateCodes")
     @XmlElement(name = "chargeTemplateCodes") 
@@ -259,14 +260,14 @@ public class ProductDto extends BaseEntityDto{
 	/**
 	 * @return the currentProductVersion
 	 */
-	public ProductVersionDto getCurrentProductVersion() {
+	public GetProductVersionResponse getCurrentProductVersion() {
 		return currentProductVersion;
 	}
 
 	/**
 	 * @param currentProductVersion the currentProductVersion to set
 	 */
-	public void setCurrentProductVersion(ProductVersionDto currentProductVersion) {
+	public void setCurrentProductVersion(GetProductVersionResponse currentProductVersion) {
 		this.currentProductVersion = currentProductVersion;
 	}
 
