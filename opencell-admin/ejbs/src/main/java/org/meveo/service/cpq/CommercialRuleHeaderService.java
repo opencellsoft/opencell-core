@@ -89,7 +89,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 		if(attribute == null) { 
 			throw new EntityDoesNotExistsException(Attribute.class,attributeCode);
 		}
-		Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getProductAttributeRules")
+		Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getAttributeRules")
 				.setParameter("attributeCode", attributeCode).setParameter("productCode", productCode);
 		List<CommercialRuleHeader> commercialRules=(List<CommercialRuleHeader>)query.getResultList();
 		return commercialRules;
