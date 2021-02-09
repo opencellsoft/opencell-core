@@ -91,7 +91,9 @@ public class FieldAuditInterceptor extends EmptyInterceptor {
             auditableFieldService.registerChangedFields();
         } catch (BusinessException e) {
             log.error("exception in interceptor beforeTransactionCompletion()", e);
-            tx.rollback();
+            if (tx != null) {
+                tx.rollback();
+            }
         }
     }
 
