@@ -60,7 +60,7 @@ public class GetProductVersionResponse extends ProductVersionDto{
         this.longDescription =productVersion.getLongDescription();
         this.validity = productVersion.getValidity(); 
         this.attributes=productVersion.getAttributes().stream().map(AttributeDTO::new).collect(Collectors.toSet());
-        this.groupedAttributes=productVersion.getGroupedAttributes().stream().map(GroupedAttributeDto::new).collect(Collectors.toSet());
+       // this.groupedAttributes=productVersion.getGroupedAttributes().stream().map(GroupedAttributeDto::new).collect(Collectors.toSet());
         
 	}
 	

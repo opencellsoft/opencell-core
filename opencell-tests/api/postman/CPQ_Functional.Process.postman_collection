@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "8f9d0830-56c4-4c4b-9d86-f91f34a221b6",
+		"_postman_id": "2ffe858c-774e-40e6-9ca1-1dc0934b26f5",
 		"name": "CPQ Functional Process",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -895,13 +895,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{opencell.url}}/catalog/product",
+									"raw": "{{opencell.url}}/catalog/product/{{productOneCode}}",
 									"host": [
 										"{{opencell.url}}"
 									],
 									"path": [
 										"catalog",
-										"product"
+										"product",
+										"{{productOneCode}}"
 									]
 								},
 								"description": "Creation of the product"
@@ -2980,14 +2981,14 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/{{ppmCode}}/disable",
+							"raw": "{{opencell.url}}/catalog/pricePlan/{{ppmRcCode}}/disable",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
 								"pricePlan",
-								"{{ppmCode}}",
+								"{{ppmRcCode}}",
 								"disable"
 							]
 						}
@@ -3015,14 +3016,14 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan/{{ppmCode}}/enable",
+							"raw": "{{opencell.url}}/catalog/pricePlan/{{ppmRcCode}}/enable",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"catalog",
 								"pricePlan",
-								"{{ppmCode}}",
+								"{{ppmRcCode}}",
 								"enable"
 							]
 						}
