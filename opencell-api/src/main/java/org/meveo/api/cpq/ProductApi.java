@@ -145,7 +145,7 @@ public class ProductApi extends BaseApi {
 			if(currentProductVersion!=null) {
 
 				ProductVersion productVersion = createProductVersion(productDto.getCurrentProductVersion());
-				response.setCurrentProductVersion(new GetProductVersionResponse(productVersion));
+				response.setCurrentProductVersion(new ProductVersionDto(productVersion));
 			}else {
 				ProductVersion  productVersion= new ProductVersion();
 				productVersion.setProduct(product);
@@ -153,7 +153,7 @@ public class ProductApi extends BaseApi {
 				productVersion.setStatus(VersionStatusEnum.DRAFT);
 				productVersion.setStatusDate(Calendar.getInstance().getTime());
 				productVersionService.create(productVersion);
-				response.setCurrentProductVersion(new GetProductVersionResponse(productVersion));
+				response.setCurrentProductVersion(new ProductVersionDto(productVersion));
 			}
 			return response;
 		} catch (BusinessException e) {
