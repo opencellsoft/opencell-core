@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
@@ -58,6 +59,9 @@ public class GetProductVersionResponse extends ProductVersionDto{
         this.statusDate = productVersion.getStatusDate();
         this.longDescription =productVersion.getLongDescription();
         this.validity = productVersion.getValidity(); 
+        this.attributes=productVersion.getAttributes().stream().map(AttributeDTO::new).collect(Collectors.toSet());
+        this.groupedAttributes=productVersion.getGroupedAttributes().stream().map(GroupedAttributeDto::new).collect(Collectors.toSet());
+        
 	}
 	
 	

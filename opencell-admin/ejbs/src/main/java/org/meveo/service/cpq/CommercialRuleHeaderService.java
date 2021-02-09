@@ -10,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
+import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -18,6 +19,7 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.enums.OperatorEnum;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
@@ -144,7 +146,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 		boolean continueProcess = false;
 		for (CommercialRuleHeader commercialRule : commercialRules) {
 			if (RuleTypeEnum.REPLACEMENT.equals(commercialRule.getRuleType())) {
-				continue;
+				replacementProcess(commercialRule, selectedProducts);
 			}
 			boolean isPreRequisite = RuleTypeEnum.PRE_REQUISITE.equals(commercialRule.getRuleType());
 			items = commercialRule.getCommercialRuleItems();
@@ -237,6 +239,73 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
 		}
 		return true;
+	}
+	
+	public void replacementProcess(CommercialRuleHeader commercialRule,List<ProductContextDTO> selectedProducts) {
+		List<CommercialRuleItem> items = null;
+		List<CommercialRuleLine> lines = null;
+		CommercialRuleItem item = null;
+		CommercialRuleLine line =null; 
+		
+	
+			items = commercialRule.getCommercialRuleItems();
+			if(!items.isEmpty() ) {
+				if(items.size()>1) {
+					log.warn("the replacement commercial rule "+commercialRule.getCode()+" has more than one item");
+				}
+				item=items.get(0);
+				lines=item.getCommercialRuleLines();
+				if(!lines.isEmpty() ) {
+					if(lines.size()>1) {
+						log.warn("the replacement commercial rule "+commercialRule.getCode()+" has more than one source line");
+					}
+					line=lines.get(0);
+					if (line.getSourceProduct() != null) {
+						String sourceProductCode = line.getSourceProduct().getCode();
+						ProductContextDTO productContext = selectedProducts.stream()
+								.filter(pdtCtx -> sourceProductCode.equals(pdtCtx.getProductCode())).findAny()
+								.orElse(null);
+
+						if (productContext!=null && line.getSourceAttribute() != null) {
+							String productCode=productContext.getProductCode();
+							LinkedHashMap<String, Object> selectedAttributes = productContext.getSelectedAttributes();
+							for (Entry<String, Object> entry : selectedAttributes.entrySet()) {
+								String attributeCode = entry.getKey();
+								Object attributeValue = entry.getValue();
+								if (attributeCode.equals(line.getSourceAttribute().getCode())) {
+								
+									String fieldName=null;
+									switch (line.getSourceAttribute().getAttributeType()) {
+									case TOTAL :
+									case COUNT :
+									case NUMERIC :
+									case INTEGER:
+										fieldName="doubleValue";
+									case LIST_MULTIPLE_TEXT:
+									case LIST_TEXT:
+									case TEXT:
+										fieldName="stringValue";
+									default:
+										break; 
+									}
+									 Query attributeQuery = getEntityManager().createQuery("select a.id from " + QuoteAttribute.class.getName()+ " a where a.attribute.code=:attributeCode "
+										 		+ " and quoteProduct.productVersion.product.code=:productCode");
+									 attributeQuery.setParameter("attributeCode", attributeCode).setParameter("productCode", productCode);
+									Long id = (Long)attributeQuery.getSingleResult();
+									 
+									 Query quoteQuery = getEntityManager().createQuery("update " + QuoteAttribute.class.getName() + " SET "+ fieldName +"=:attributeValue where id=:id");
+										 quoteQuery.setParameter("attributeValue", attributeValue).setParameter("id", id);
+										 quoteQuery.executeUpdate();
+									
+								}
+							}
+						}
+
+					
+				}	
+				
+				}
+			}
 	}
 
 	private boolean checkOperator(OperatorEnum operator, boolean isLastLine, boolean isPreRequisite,Boolean isSelectable) {
