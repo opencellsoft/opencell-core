@@ -366,14 +366,8 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 	}
 	
 	public GetListCommercialRulesResponseDto findProductRules(String offerCode,String productCode,int currentVersion) { 
-		if(StringUtils.isBlank(offerCode)) {
-			missingParameters.add("offerCode");
-		}
 		if(StringUtils.isBlank(productCode)) {
 			missingParameters.add("productCode");
-		}
-		if(StringUtils.isBlank(currentVersion)) {
-			missingParameters.add("currentVersion");
 		}
 		List<CommercialRuleHeader> commercialRules=commercialRuleHeaderService.getProductRules(offerCode,productCode,currentVersion);
 		GetListCommercialRulesResponseDto result=getCommmercialRules(commercialRules);

@@ -115,7 +115,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		order.setExternalReference(null);
 		order.setInvoicingPlan(null); //TODO: how to map invoice plan
 		order.setOrderType(createOrderTypeTemp()); //TODO: how to map order type
-		order.setOrderProgress(1);
+		order.setOrderProgress(0);
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		order.setProgressDate(Calendar.getInstance().getTime());
 		order.setUserAccount(account.getUsersAccounts().size() > 0 ? account.getUsersAccounts().get(0) : null);
