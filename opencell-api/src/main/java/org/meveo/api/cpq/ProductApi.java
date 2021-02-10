@@ -3,7 +3,6 @@ package org.meveo.api.cpq;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +32,6 @@ import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
-import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
@@ -154,7 +152,7 @@ public class ProductApi extends BaseApi {
 				productVersion.setStatus(VersionStatusEnum.DRAFT);
 				productVersion.setStatusDate(Calendar.getInstance().getTime());
 				productVersionService.create(productVersion);
-				response.setCurrentProductVersion(new GetProductVersionResponse(productVersion));
+				response.setCurrentProductVersion(new ProductVersionDto(productVersion));
 			}
 			product.setCurrentVersion(productVersion);
 			return response;
