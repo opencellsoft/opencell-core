@@ -25,8 +25,6 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
-import java.util.Set;
-
 public class ProductRsImpl extends BaseRs implements ProductRs {
 
 	@Inject
