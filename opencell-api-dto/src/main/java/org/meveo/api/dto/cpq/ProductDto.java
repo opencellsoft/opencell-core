@@ -46,7 +46,7 @@ public class ProductDto extends BaseEntityDto{
 	protected boolean packageFlag=Boolean.FALSE;
     /** The custom fields. */
     protected CustomFieldsDto customFields;
-    protected GetProductVersionResponse currentProductVersion;
+    protected ProductVersionDto currentProductVersion;
     
     @XmlElementWrapper(name = "chargeTemplateCodes")
     @XmlElement(name = "chargeTemplateCodes") 
@@ -260,14 +260,14 @@ public class ProductDto extends BaseEntityDto{
 	/**
 	 * @return the currentProductVersion
 	 */
-	public GetProductVersionResponse getCurrentProductVersion() {
+	public ProductVersionDto getCurrentProductVersion() {
 		return currentProductVersion;
 	}
 
 	/**
 	 * @param currentProductVersion the currentProductVersion to set
 	 */
-	public void setCurrentProductVersion(GetProductVersionResponse currentProductVersion) {
+	public void setCurrentProductVersion(ProductVersionDto currentProductVersion) {
 		this.currentProductVersion = currentProductVersion;
 	}
 
