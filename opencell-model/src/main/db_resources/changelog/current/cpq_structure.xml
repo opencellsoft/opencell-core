@@ -3037,4 +3037,15 @@
             </column>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#20210209_540177" author="TarikFA">
+    	<addColumn tableName="cpq_product">
+    		<column name="product_version_id" type="bigint" />
+    	</addColumn>
+		<addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product"
+								 constraintName="fk_cpq_product_product_version_id" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="cpq_product_version" />
+    </changeSet>
+    
 </databaseChangeLog>

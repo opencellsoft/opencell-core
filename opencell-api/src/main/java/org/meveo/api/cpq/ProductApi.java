@@ -32,7 +32,6 @@ import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
-import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
@@ -142,12 +141,12 @@ public class ProductApi extends BaseApi {
 			productService.create(product);
 			ProductVersionDto currentProductVersion=productDto.getCurrentProductVersion();
 			ProductDto response = new ProductDto(product);
+			ProductVersion productVersion = null;
 			if(currentProductVersion!=null) {
-
-				ProductVersion productVersion = createProductVersion(productDto.getCurrentProductVersion());
-				response.setCurrentProductVersion(new ProductVersionDto(productVersion));
+				productVersion = createProductVersion(productDto.getCurrentProductVersion());
+				response.setCurrentProductVersion(new GetProductVersionResponse(productVersion));
 			}else {
-				ProductVersion  productVersion= new ProductVersion();
+				productVersion= new ProductVersion();
 				productVersion.setProduct(product);
 				productVersion.setShortDescription(productDto.getLabel());
 				productVersion.setStatus(VersionStatusEnum.DRAFT);
@@ -155,6 +154,7 @@ public class ProductApi extends BaseApi {
 				productVersionService.create(productVersion);
 				response.setCurrentProductVersion(new ProductVersionDto(productVersion));
 			}
+			product.setCurrentVersion(productVersion);
 			return response;
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
@@ -245,6 +245,20 @@ public class ProductApi extends BaseApi {
 			product.setDiscountFlag(productDto.isDiscountFlag());
 			product.setPackageFlag(productDto.isPackageFlag());
 			createProductChargeTemplateMappings(product, productDto.getChargeTemplateCodes());
+			
+			//set current product version 
+			var versions = productVersionService.findLastVersionByCode(productCode);
+			var publishedVersion = versions.stream()
+											.filter(pv -> pv.getStatus().equals(VersionStatusEnum.PUBLISHED))
+												.sorted( (pv1, pv2) -> pv2.getValidity().compareFieldTo(pv1.getValidity())).collect(Collectors.toList());
+			if(publishedVersion.size() >= 1 ) {
+				product.setCurrentVersion(publishedVersion.get(0));
+			}else {
+				var noPublishedVersion = versions.stream()
+						.filter(pv -> pv.getStatus().equals(VersionStatusEnum.DRAFT))
+							.sorted( (pv1, pv2) -> pv2.getAuditable().compareByUpdated(pv1.getAuditable())).collect(Collectors.toList());
+				product.setCurrentVersion(noPublishedVersion.get(0));
+			}
 			
 			productService.updateProduct(product);
 		} catch (BusinessException e) {
@@ -747,7 +761,7 @@ public class ProductApi extends BaseApi {
 		 });
 		 pagingAndFiltering.getFilters().clear();
 		 pagingAndFiltering.getFilters().putAll(filters);
-		 List<String> fields = Arrays.asList("productLine", "brand");
+		 List<String> fields = Arrays.asList("productLine", "brand", "currentVersion");
 		 PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, fields, pagingAndFiltering, Product.class);
 		 Long totalCount = productService.count(paginationConfiguration);
 		 GetListProductsResponseDto result = new GetListProductsResponseDto();
