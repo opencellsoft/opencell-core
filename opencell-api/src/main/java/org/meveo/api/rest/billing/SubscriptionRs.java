@@ -107,9 +107,19 @@ public interface SubscriptionRs extends IBaseRs {
      * @param postData Terminate subscription request's data
      * @return Request processing status
      */
-    @PUT
+    @POST
     @Path("/terminate")
     ActionStatus terminateSubscription(TerminateSubscriptionRequestDto postData);
+
+    /**
+     * Terminate a subscription. If subscription status is RESILIATED, an error is thrown
+     *
+     * @param postData Terminate subscription request's data
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/terminate")
+    ActionStatus terminateSubscriptionPut(TerminateSubscriptionRequestDto postData);
 
     /**
      * Terminate a list of services. If a service is already TERMINATED, an error is thrown.
@@ -345,6 +355,16 @@ public interface SubscriptionRs extends IBaseRs {
     @POST
     @Path("/rate")
     RateSubscriptionResponseDto rate(RateSubscriptionRequestDto postData);
+
+    /**
+     * Activate a given Subscription.
+     *
+     * @param subscriptionCode subscription code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/activate")
+    ActionStatus activate(String subscriptionCode);
     
     /**
      * Activate a given Subscription.

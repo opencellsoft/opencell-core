@@ -156,6 +156,19 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
+    public ActionStatus terminateSubscriptionPut(TerminateSubscriptionRequestDto putData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.terminateSubscription(putData, ChargeInstance.NO_ORDER_NUMBER);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
     public ActionStatus terminateServices(TerminateSubscriptionServicesRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -406,6 +419,19 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
+        return result;
+    }
+
+    @Override
+    public ActionStatus activate(String subscriptionCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.activateSubscription(subscriptionCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
         return result;
     }
 
