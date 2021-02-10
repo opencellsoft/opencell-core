@@ -82,7 +82,7 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      * @return list of one shot charge template
      */
     @GET
-    @Path("/listWithPrice")
+    @Path("/list")
     OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(@QueryParam("languageCode") String languageCode, @QueryParam("countryCode") String countryCode,
             @QueryParam("currencyCode") String currencyCode, @QueryParam("sellerCode") String sellerCode, @QueryParam("date") @RestDateParam Date date);
 
@@ -92,7 +92,7 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      * @return list of oneShotChargeTemplates
      */
     @GET
-    @Path("/list")
+    @Path("/listAll")
     OneShotChargeTemplateResponseDto list();
 
     /**

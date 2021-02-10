@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
 public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
     private static final String METHOD_GET_ALL = "/list";
+    private static final String METHOD_GET_ALL_BIS = "/listAll";
     private static final String METHOD_CREATE = "/";
     private static final String METHOD_UPDATE = "/";
     private static final String METHOD_DELETE = "/";
@@ -110,15 +111,24 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                             + PAIR_QUERY_PARAM_SEPARATOR );
                 }
 
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getPath )
-                        + METHOD_GET_ALL + queryParams.substring( 0, queryParams.length() - 1 ) );
+                if ( pathIBaseRS.contains( "oneShotChargeTemplate" ) )
+                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                            + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
+                            + queryParams.substring( 0, queryParams.length() - 1 ) );
+                else
+                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                            + API_REST + pathIBaseRS + METHOD_GET_ALL
+                            + queryParams.substring( 0, queryParams.length() - 1 ) );
 System.out.println( "GET ALL ENTITIES 1 : " + redirectURI.toString() );
             }
             else {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getPath )
-                        + METHOD_GET_ALL );
+                if ( pathIBaseRS.contains( "oneShotChargeTemplate" ) )
+                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                            + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
+                else
+                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                            + API_REST + pathIBaseRS + METHOD_GET_ALL );
+
 System.out.println( "GET ALL ENTITIES 2 : " + redirectURI.toString() );
             }
             return Response.temporaryRedirect( redirectURI ).build();
