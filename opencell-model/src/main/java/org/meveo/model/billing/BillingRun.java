@@ -328,6 +328,24 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @OneToOne
     @JoinColumn(name = "next_billing_run_id")
     private BillingRun nextBillingRun;
+    
+    /**
+     * To indicates that invoice minimum job has already been run on the BR.
+     */
+    @Column(name = "minimum_applied")
+    private Boolean minimumApplied;
+    
+    /**
+     * To indicates that invoicing threshold job has already been run on the BR.
+     */
+    @Column(name = "threshold_checked")
+    private Boolean thresholdChecked;
+    
+    /**
+     * To indicates that that invoice discounts job has already been run on the BR.
+     */
+    @Column(name = "discount_applied")
+    private Boolean discountApplied;
 
     public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -763,5 +781,47 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
 	public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
 		this.computeDatesAtValidation = computeDatesAtValidation;
+	}
+
+	/**
+	 * @return the minimumApplied
+	 */
+	public Boolean getMinimumApplied() {
+		return minimumApplied;
+	}
+
+	/**
+	 * @param minimumApplied the minimumApplied to set
+	 */
+	public void setMinimumApplied(Boolean minimumApplied) {
+		this.minimumApplied = minimumApplied;
+	}
+
+	/**
+	 * @return the thresholdChecked
+	 */
+	public Boolean getThresholdChecked() {
+		return thresholdChecked;
+	}
+
+	/**
+	 * @param thresholdChecked the thresholdChecked to set
+	 */
+	public void setThresholdChecked(Boolean thresholdChecked) {
+		this.thresholdChecked = thresholdChecked;
+	}
+
+	/**
+	 * @return the discountApplied
+	 */
+	public Boolean getDiscountApplied() {
+		return discountApplied;
+	}
+
+	/**
+	 * @param discountApplied the discountApplied to set
+	 */
+	public void setDiscountApplied(Boolean discountApplied) {
+		this.discountApplied = discountApplied;
 	}
 }

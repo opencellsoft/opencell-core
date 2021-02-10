@@ -58,7 +58,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 validateBRList(billingRuns, result);
                 for (BillingRun billingRun : billingRuns) {
                     billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
-                    updateBRStatus(billingRun);
+                    billingRunService.validateBillingRun(billingRun, INVOICES_GENERRATED);
                 }
                 result.setNbItemsCorrectlyProcessed(billingRuns.size());
             }
@@ -84,9 +84,4 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         billingRuns.removeAll(excludedBRs);
     }
 
-    private void updateBRStatus(BillingRun billingRun) {
-        billingRun = billingRunService.refreshOrRetrieve(billingRun);
-        billingRun.setStatus(INVOICES_GENERRATED);
-        billingRunService.update(billingRun);
-    }
 }

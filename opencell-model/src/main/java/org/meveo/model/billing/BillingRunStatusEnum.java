@@ -28,8 +28,15 @@ public enum BillingRunStatusEnum {
     POSTVALIDATED(7, "BillingRunStatusEnum.postvalidated"), // the postinvoicing report have been validated
     VALIDATED(8, "BillingRunStatusEnum.validated"),// the invoices are assigned an invoice number, end of the process
     CANCELLING(9, "BillingRunStatusEnum.cancelling"),
-    REJECTED(10, "BillingRunStatusEnum.Rejected");// the billing run or some invoices are rejected and need to be validated/cancelled.
-
+    REJECTED(10, "BillingRunStatusEnum.Rejected"),// the billing run or some invoices are rejected and need to be validated/cancelled.
+    //NEW STATUS USED ON V2 ONLY:
+    INVOICE_LINES_CREATED(21,"BillingRunStatusEnum.InvoiceLinesCreated"),//Pre-invoicing report is based on invoice lines
+    INVOICES_CREATED(22,"BillingRunStatusEnum.InvoicesCreated"),//Invoices have been created (but are incomplete)
+    MINIMUM_ADDED(23,"BillingRunStatusEnum.MinimumAdded"),//Invoice lines for invoicing minimum have been added
+    THRESHOLD_CHECKED(24,"BillingRunStatusEnum.thresholdChecked"),//Aggregates for invoice discounts have been added
+    DISCOUNT_ADDED(25,"BillingRunStatusEnum.DiscountAdded"),//Invoicing threshold have been checked
+    TAX_COMPUTED(26,"BillingRunStatusEnum.TaxComputed"),//Tax aggregates have been added
+    DRAFT_INVOICES(27,"BillingRunStatusEnum.DraftInvoices");//Draft invoices have been created. Postinvoicing report is available
     private Integer id;
     private String label;
 
