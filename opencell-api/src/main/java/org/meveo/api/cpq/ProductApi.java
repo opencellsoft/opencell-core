@@ -761,7 +761,7 @@ public class ProductApi extends BaseApi {
 		 });
 		 pagingAndFiltering.getFilters().clear();
 		 pagingAndFiltering.getFilters().putAll(filters);
-		 List<String> fields = Arrays.asList("productLine", "brand");
+		 List<String> fields = Arrays.asList("productLine", "brand", "currentVersion");
 		 PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, fields, pagingAndFiltering, Product.class);
 		 Long totalCount = productService.count(paginationConfiguration);
 		 GetListProductsResponseDto result = new GetListProductsResponseDto();
