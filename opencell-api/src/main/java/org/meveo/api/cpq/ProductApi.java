@@ -3,6 +3,7 @@ package org.meveo.api.cpq;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -142,12 +143,12 @@ public class ProductApi extends BaseApi {
 			productService.create(product);
 			ProductVersionDto currentProductVersion=productDto.getCurrentProductVersion();
 			ProductDto response = new ProductDto(product);
+			ProductVersion productVersion = null;
 			if(currentProductVersion!=null) {
-
-				ProductVersion productVersion = createProductVersion(productDto.getCurrentProductVersion());
+				productVersion = createProductVersion(productDto.getCurrentProductVersion());
 				response.setCurrentProductVersion(new GetProductVersionResponse(productVersion));
 			}else {
-				ProductVersion  productVersion= new ProductVersion();
+				productVersion= new ProductVersion();
 				productVersion.setProduct(product);
 				productVersion.setShortDescription(productDto.getLabel());
 				productVersion.setStatus(VersionStatusEnum.DRAFT);
@@ -155,6 +156,7 @@ public class ProductApi extends BaseApi {
 				productVersionService.create(productVersion);
 				response.setCurrentProductVersion(new GetProductVersionResponse(productVersion));
 			}
+			product.setCurrentVersion(productVersion);
 			return response;
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
@@ -245,6 +247,20 @@ public class ProductApi extends BaseApi {
 			product.setDiscountFlag(productDto.isDiscountFlag());
 			product.setPackageFlag(productDto.isPackageFlag());
 			createProductChargeTemplateMappings(product, productDto.getChargeTemplateCodes());
+			
+			//set current product version 
+			var versions = productVersionService.findLastVersionByCode(productCode);
+			var publishedVersion = versions.stream()
+											.filter(pv -> pv.getStatus().equals(VersionStatusEnum.PUBLISHED))
+												.sorted( (pv1, pv2) -> pv2.getValidity().compareFieldTo(pv1.getValidity())).collect(Collectors.toList());
+			if(publishedVersion.size() >= 1 ) {
+				product.setCurrentVersion(publishedVersion.get(0));
+			}else {
+				var noPublishedVersion = versions.stream()
+						.filter(pv -> pv.getStatus().equals(VersionStatusEnum.DRAFT))
+							.sorted( (pv1, pv2) -> pv2.getAuditable().compareByUpdated(pv1.getAuditable())).collect(Collectors.toList());
+				product.setCurrentVersion(noPublishedVersion.get(0));
+			}
 			
 			productService.updateProduct(product);
 		} catch (BusinessException e) {
