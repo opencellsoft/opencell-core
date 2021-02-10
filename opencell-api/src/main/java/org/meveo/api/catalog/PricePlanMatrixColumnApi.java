@@ -1,5 +1,6 @@
 package org.meveo.api.catalog;
 
+import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.CustomFieldsDto;
@@ -87,13 +88,8 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
         if (StringUtils.isBlank(dtoData.getPricePlanMatrixVersion())) {
             missingParameters.add("pricePlanMatrixVersion");
         }
-        if (StringUtils.isBlank(dtoData.getAttributeCode()) && StringUtils.isBlank(dtoData.getElValue())) {
-            missingParameters.add("elValue");
+        if (StringUtils.isBlank(dtoData.getAttributeCode())) {
             missingParameters.add("attributeCode");
-        }
-        if (StringUtils.isBlank(dtoData.getOfferTemplateCode()) && StringUtils.isBlank(dtoData.getProductCode()) && StringUtils.isBlank(dtoData.getElValue())) {
-            missingParameters.add("offerTemplateCode");
-            missingParameters.add("productCode");
         }
         if (StringUtils.isBlank(dtoData.getCode())) {
             missingParameters.add("code");
@@ -108,8 +104,10 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
             throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, dtoData.getPricePlanMatrixCode(), "pricePlanMatrixCode", ""+dtoData.getPricePlanMatrixVersion(), "pricePlanMatrixVersion");
         }
         pricePlanMatrixColumn.setPricePlanMatrixVersion(pricePlanMatrixVersion);
-        pricePlanMatrixColumn.setProduct(loadEntityByCode(productService, dtoData.getProductCode(), Product.class));
-        pricePlanMatrixColumn.setOfferTemplate(loadEntityByCode(offerTemplateService, dtoData.getOfferTemplateCode(), OfferTemplate.class));
+        if(!Strings.isEmpty(dtoData.getProductCode()))
+        	pricePlanMatrixColumn.setProduct(loadEntityByCode(productService, dtoData.getProductCode(), Product.class));
+        if(!Strings.isEmpty(dtoData.getOfferTemplateCode()))
+        	pricePlanMatrixColumn.setOfferTemplate(loadEntityByCode(offerTemplateService, dtoData.getOfferTemplateCode(), OfferTemplate.class));
         pricePlanMatrixColumn.setCode(dtoData.getCode());
         pricePlanMatrixColumn.setElValue(dtoData.getElValue());
         pricePlanMatrixColumn.setPosition(dtoData.getPosition());

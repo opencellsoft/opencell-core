@@ -47,8 +47,10 @@ public class PricePlanMatrixColumnDto extends BaseEntityDto {
         this.code = pricePlanMatrixColumn.getCode();
         this.pricePlanMatrixCode = pricePlanMatrixColumn.getPricePlanMatrixVersion().getPricePlanMatrix().getCode();
         this.pricePlanMatrixVersion = pricePlanMatrixColumn.getPricePlanMatrixVersion().getCurrentVersion();
-        this.productCode = pricePlanMatrixColumn.getProduct().getCode();
-        this.offerTemplateCode = pricePlanMatrixColumn.getOfferTemplate().getCode();
+        if(pricePlanMatrixColumn.getProduct() != null)
+        	this.productCode = pricePlanMatrixColumn.getProduct().getCode();
+        if(pricePlanMatrixColumn.getOfferTemplate() != null)
+        	this.offerTemplateCode = pricePlanMatrixColumn.getOfferTemplate().getCode();
         this.attributeCode = pricePlanMatrixColumn.getAttribute().getCode();
         this.position = pricePlanMatrixColumn.getPosition();
         this.type = pricePlanMatrixColumn.getType();
