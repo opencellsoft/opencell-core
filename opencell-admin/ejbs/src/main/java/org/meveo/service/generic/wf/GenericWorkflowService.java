@@ -178,6 +178,9 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 						String scriptCode = scriptInstance.getCode();
 						executeActionScript(iwfEntity, workflowInstance, genericWorkflow, gWFTransition, scriptCode);
 					}
+					if(gWFTransition.getActions() != null && !gWFTransition.getActions().isEmpty()) {
+                        executeActions(iwfEntity, workflowInstance, genericWorkflow, gWFTransition);
+                    }
 
 					WFStatus toStatus = wfStatusService.findByCodeAndGWF(gWFTransition.getToStatus(), genericWorkflow);
 					workflowInstance.setCurrentStatus(toStatus);
