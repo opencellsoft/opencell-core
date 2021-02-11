@@ -264,12 +264,10 @@ public class CatalogHierarchyBuilderService {
     	
     	if(productCharge != null) {
     		entity.getProductCharges().clear();;
-    		productCharge.forEach(pct -> {
-    			pct.getWalletTemplates().size();
-    			pct.getAccumulatorCounterTemplates().size();
+    		productCharge.forEach(pct -> { 
     			ProductChargeTemplateMapping duplicat = new ProductChargeTemplateMapping();
     			duplicat.setCounterTemplate(pct.getCounterTemplate());
-    			duplicat.setChargeTemplate(pct.getChargeTemplate());
+    			duplicat.setChargeTemplate(pct.getChargeTemplate()); 
     			duplicat.setProduct(entity);
     			productChargeTemplateMappingService.create(duplicat);
     		});
