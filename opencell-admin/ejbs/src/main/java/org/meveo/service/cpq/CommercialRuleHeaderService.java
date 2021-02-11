@@ -281,21 +281,27 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 									case NUMERIC :
 									case INTEGER:
 										fieldName="doubleValue";
+										break;
 									case LIST_MULTIPLE_TEXT:
 									case LIST_TEXT:
-									case TEXT:
+									case TEXT:	
 										fieldName="stringValue";
-									default:
-										break; 
+										break;
+									case DATE:
+										fieldName="dateValue"; 
+										break;
 									}
 									 Query attributeQuery = getEntityManager().createQuery("select a.id from " + QuoteAttribute.class.getName()+ " a where a.attribute.code=:attributeCode "
 										 		+ " and quoteProduct.productVersion.product.code=:productCode");
 									 attributeQuery.setParameter("attributeCode", attributeCode).setParameter("productCode", productCode);
-									Long id = (Long)attributeQuery.getSingleResult();
-									 
+									List<Long> resultList = (List<Long>)attributeQuery.getResultList(); 
+									if(!resultList.isEmpty()) {
+									 for(Long id :resultList) {
 									 Query quoteQuery = getEntityManager().createQuery("update " + QuoteAttribute.class.getName() + " SET "+ fieldName +"=:attributeValue where id=:id");
 										 quoteQuery.setParameter("attributeValue", attributeValue).setParameter("id", id);
 										 quoteQuery.executeUpdate();
+									 }
+									}
 									
 								}
 							}

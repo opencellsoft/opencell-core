@@ -3797,4 +3797,9 @@ END $$;]]>
 	        </addColumn>
     </changeSet>
     
+    <changeSet id="#5951_20210209_structure" author="AbdelmounaimAkadid">
+	    <dropNotNullConstraint columnName="tax_category_id" tableName="billing_tax_mapping"/>  
+	    <dropNotNullConstraint columnName="tax_class_id" tableName="billing_tax_mapping"/>  
+	</changeSet>
+    
 </databaseChangeLog>

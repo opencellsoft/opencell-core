@@ -2315,4 +2315,170 @@ public class ValidateBRScript extends Script {
             <column name="listvalues_key" value="DATE"/>
         </insert>
     </changeSet>
+    
+    <changeSet id="#5951_20210209_data" author="AbdelmounaimAkadid">
+        <insert tableName="billing_tax_class">
+        	<column name="id" value="-3"/>
+            <column name="code" value="NO_TAX"/>
+            <column name="description_i18n" value='{"FRA":"Pas de TVA","ENG":"No VAT"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_class_no_tax" />
+        </insert>
+        <insert tableName="billing_tax_class">
+        	<column name="id" value="-4"/>
+            <column name="code" value="REDUCED"/>
+            <column name="description_i18n" value='{"FRA":"TVA réduite","ENG":"Reduced VAT"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_class_reduced" />
+        </insert>
+        <insert tableName="billing_tax_class">
+        	<column name="id" value="-5"/>
+            <column name="code" value="NORMAL"/>
+            <column name="description_i18n" value='{"FRA":"TVA normale","ENG":"Normal VAT"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_class_normal" />
+        </insert>
+        
+        <insert tableName="billing_tax_category">
+        	<column name="id" value="-2"/>
+            <column name="code" value="EXEMPTED"/>
+            <column name="description_i18n" value='{"FRA":"Exempté","ENG":"Exempted"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_category_exempted" />
+        </insert>
+        <insert tableName="billing_tax_category">
+        	<column name="id" value="-3"/>
+            <column name="code" value="REGULAR"/>
+            <column name="description_i18n" value='{"FRA":"Standard","ENG":"Regular"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_category_regular" />
+        </insert>
+        
+        <update tableName="billing_tax">
+            <column name="tax_percentage" value="0"/>
+            <column name="accounting_code_id" value="-18"/>
+            <column name="description_i18n" value='{"FRA":"TVA 0%","ENG":"VAT 0%"}'/>
+            <where>code='TAX_00'</where>
+        </update>
+        <insert tableName="billing_tax">
+        	<column name="id" value="-4"/>
+            <column name="code" value="TAX_10"/>
+            <column name="tax_percentage" value="10"/>
+            <column name="accounting_code_id" value="-18"/>
+            <column name="description_i18n" value='{"FRA":"TVA 10%","ENG":"VAT 10%"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_tax_10" />
+        </insert>
+        <insert tableName="billing_tax">
+        	<column name="id" value="-5"/>
+            <column name="code" value="TAX_20"/>
+            <column name="tax_percentage" value="20"/>
+            <column name="accounting_code_id" value="-18"/>
+            <column name="description_i18n" value='{"FRA":"TVA 20%","ENG":"VAT 20%"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_tax_20" />
+        </insert>
+        
+        <insert tableName="billing_tax_mapping">
+            <column name="id" value='-1'/>
+            <column name="tax_category_id" value="-2"/>
+            <column name="tax_id" value='-1'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+        </insert>
+		<insert tableName="billing_tax_mapping">
+		    <column name="id" value='-2'/>
+            <column name="tax_class_id" value="-3"/>
+            <column name="tax_id" value='-1'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+        	<column name="id" value='-3'/>
+            <column name="tax_category_id" value="-3"/>
+            <column name="tax_class_id" value="-4"/>
+            <column name="tax_id" value='-4'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+        	<column name="id" value='-4'/>
+            <column name="tax_category_id" value="-3"/>
+            <column name="tax_class_id" value="-5"/>
+            <column name="tax_id" value='-5'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+        </insert>
+        
+        <insert tableName="billing_invoice_cat">
+        	<column name="id" value='-3'/>
+            <column name="code" value="ICAT_DEFAULT"/>
+            <column name="description_i18n" value='{"FRA":"Rubrique facture par défaut","ENG":"Default invoice category"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_invoice_cat_icat_default" />
+        </insert>
+        <insert tableName="billing_invoice_sub_cat">
+        	<column name="id" value='-3'/>
+            <column name="code" value="ISCAT_DEFAULT"/>
+            <column name="description_i18n" value='{"FRA":"Sous-rubrique facture par défaut","ENG":"Default invoice sub-category"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_invoice_cat_iscat_default" />
+        </insert>
+        
+        <insert tableName="billing_accounting_article">
+        	<column name="id" value='-1'/>
+        	<column name="code" value="ADV-STD"/>
+        	<column name="tax_class_id" value="-1"/>
+            <column name="invoice_sub_category_id" value="-3"/>
+            <column name="description_i18n" value='{"FRA":"Acompte","ENG":"Advance payment"}'/>
+            <column name="description" value='Advance payment'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_accounting_article-ADV-STD" />
+        </insert>
+        <insert tableName="billing_accounting_article">
+        	<column name="id" value='-2'/>
+        	<column name="code" value="DISC-STD"/>
+            <column name="tax_class_id" value="-5"/>
+            <column name="invoice_sub_category_id" value="-3"/>
+            <column name="description_i18n" value='{"FRA":"Remise de pied de facture","ENG":"Invoice discount"}'/>
+            <column name="description" value='Invoice discount'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_accounting_article-DISC-STD" />
+        </insert>
+        <insert tableName="billing_accounting_article">
+        	<column name="id" value='-3'/>
+        	<column name="code" value="ART-STD"/>
+            <column name="tax_class_id" value="-5"/>
+            <column name="invoice_sub_category_id" value="-3"/>
+            <column name="description_i18n" value='{"FRA":"Article standard","ENG":"Standard article"}'/>
+            <column name="description" value='Standard article'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_accounting_article-ART-STD" />
+        </insert>
+        <insert tableName="billing_accounting_article">
+        	<column name="id" value='-4'/>
+        	<column name="code" value="MIN-STD"/>
+            <column name="tax_class_id" value="-5"/>
+            <column name="invoice_sub_category_id" value="-3"/>
+            <column name="description_i18n" value='{"FRA":"Complément du minimum de facturation","ENG":"Invoice minimum complement"}'/>
+            <column name="description" value='Invoice minimum complement'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_accounting_article-MIN-STD" />
+        </insert>
+		      
+    </changeSet>
+    
 </databaseChangeLog>
