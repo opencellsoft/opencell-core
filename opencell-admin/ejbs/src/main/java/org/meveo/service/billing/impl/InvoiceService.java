@@ -3507,12 +3507,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setNetToPay(amountWithTax.add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
     }
 
-    private List<DiscountPlanInstance> fromBillingAccount(BillingAccount billingAccount) {
-        
-        
-        //  return billingAccount.getUsersAccounts().stream().map(userAccount -> userAccount.getSubscriptions()).map(this::addSubscriptionDiscountPlan).flatMap(Collection::stream).collect(toList());
-        // TODO commented out for performance kill
-        return new ArrayList<DiscountPlanInstance>();
+    private List<DiscountPlanInstance> fromBillingAccount(BillingAccount billingAccount) {                
+          return billingAccount.getUsersAccounts().stream().map(userAccount -> userAccount.getSubscriptions()).map(this::addSubscriptionDiscountPlan).flatMap(Collection::stream).collect(toList());
     }
 
     private List<DiscountPlanInstance> addSubscriptionDiscountPlan(List<Subscription> subscriptions) {
