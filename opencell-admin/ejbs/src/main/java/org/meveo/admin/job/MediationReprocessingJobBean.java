@@ -79,22 +79,18 @@ public class MediationReprocessingJobBean extends BaseJobBean {
     String report;
 
     /**
-     * Process a single file
+     * Reprocess rejected CDR records
      *
      * @param jobExecutionResult Job execution result
-     * @param nbRuns Number of parallel executions
-     * @param readerCode CDR Reader code
-     * @param parserCode CDR Parser code
-     * @param waitingMills Number of milliseconds to wait between launching parallel processing threads
+     * @param jobInstance Job instance
      */
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl jobExecutionResult, String parametres, Long nbRuns, Long waitingMillis, String readerCode, String parserCode) {
-        log.debug("Reprocessing CDR from database");
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+
+        String readerCode = (String) this.getParamOrCFValue(jobInstance, MediationReprocessingJob.MEDIATION_JOB_READER);
+        String parserCode = (String) this.getParamOrCFValue(jobInstance, MediationReprocessingJob.MEDIATION_JOB_PARSER);
 
         ICdrReader cdrReader = null;
-        ICdrParser cdrParser = null;
-
-        JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
         try {
             cdrReader = (ICdrReader) EjbUtils.getServiceInterface(readerCode);
@@ -102,18 +98,28 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                 cdrReader = meveoCdrReader;
             }
             cdrReader.init("DB");
+            Integer totalNummberOfRecords = cdrReader.getNumberOfRecords();
+            if (totalNummberOfRecords != null) {
+                jobExecutionResult.setNbItemsToProcess(totalNummberOfRecords);
+            }
 
-            cdrParser = (ICdrParser) EjbUtils.getServiceInterface(parserCode);
+            ICdrParser cdrParser = (ICdrParser) EjbUtils.getServiceInterface(parserCode);
             if (cdrParser == null) {
                 cdrParser = meveoCdrParser;
             }
+
+            Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+            if (nbRuns == -1) {
+                nbRuns = (long) Runtime.getRuntime().availableProcessors();
+            }
+            Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
 
             // Launch parallel processing of a file
             List<Future> futures = new ArrayList<>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
 
             int checkJobStatusEveryNr = JobSpeedEnum.FAST.getCheckNb();
-            int updateJobStatusEveryNr = JobSpeedEnum.FAST.getUpdateNb();
+            int updateJobStatusEveryNr = nbRuns.longValue() > 3 ? JobSpeedEnum.FAST.getUpdateNb() * nbRuns.intValue() / 2 : JobSpeedEnum.FAST.getUpdateNb();
 
             ICdrReader cdrReaderFinal = cdrReader;
             ICdrParser cdrParserFinal = cdrParser;
@@ -123,6 +129,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                 currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
                 int i = 0;
+                long globalI = 0;
                 CDR cdr = null;
 
                 while (true) {
@@ -131,20 +138,6 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                         break;
                     }
 
-                    try {
-                        // Record progress
-                        if (i>0 && i % updateJobStatusEveryNr == 0) {
-                            jobExecutionResultService.persistResult(jobExecutionResult);
-                        }
-                    } catch (EJBTransactionRolledbackException e) {
-                        // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
-                    } catch (Exception e) {
-                        log.error("Failed to update job progress", e);
-                    }
-
-                    // TODO this was original code - a loop.See if it still works with iterators
-//                    List<CDR> cdrs = cdrReader.getRecords(cdrParser, null);
-//                    for (CDR cdr : cdrs) {
                     try {
                         cdr = cdrReaderFinal.getNextRecord(cdrParserFinal);
                         if (cdr == null) {
@@ -158,9 +151,9 @@ public class MediationReprocessingJobBean extends BaseJobBean {
 
                             cdrParserService.createEdrs(edrs, cdr);
 
-                            jobExecutionResult.registerSucces();
+                            globalI = jobExecutionResult.registerSucces();
                         } else {
-                            jobExecutionResult.registerError("cdr =" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
+                            globalI = jobExecutionResult.registerError("cdr =" + (cdr != null ? cdr.getId() : "") + ": " + cdr.getRejectReason());
                             cdr.setStatus(CDRStatusEnum.ERROR);
                             cdrService.updateReprocessedCdr(cdr);
                         }
@@ -173,10 +166,21 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                         } else {
                             log.error("Failed to process CDR id: {}  error {}", cdr != null ? cdr.getId() : null, errorReason, e);
                         }
-                        jobExecutionResult.registerError("cdr id=" + (cdr != null ? cdr.getId() : "") + ": " + errorReason);
+                        globalI = jobExecutionResult.registerError("cdr id=" + (cdr != null ? cdr.getId() : "") + ": " + errorReason);
                         cdr.setStatus(CDRStatusEnum.ERROR);
                         cdr.setRejectReason(e.getMessage());
                         cdrService.updateReprocessedCdr(cdr);
+                    }
+
+                    try {
+                        // Record progress
+                        if (globalI > 0 && globalI % updateJobStatusEveryNr == 0) {
+                            jobExecutionResultService.persistResult(jobExecutionResult);
+                        }
+                    } catch (EJBTransactionRolledbackException e) {
+                        // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
+                    } catch (Exception e) {
+                        log.error("Failed to update job progress", e);
                     }
 
                     i++;
@@ -196,7 +200,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
             // Mark number of threads it will be running on
             JobRunningStatusEnum jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), futures);
 
-            boolean wasCanceled = jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
+            boolean wasKilled = false;
 
             // Wait for all async methods to finish
             for (Future future : futures) {
@@ -204,7 +208,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                     future.get();
 
                 } catch (InterruptedException e) {
-                    wasCanceled = true;
+                    wasKilled = true;
                     log.error("Thread/future for job {} was canceled", jobInstance);
 
                 } catch (ExecutionException e) {
@@ -214,10 +218,16 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                 }
             }
 
-            // Mark that all threads are finished
-            jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
+            // Mark job as stopped if task was killed
+            if (wasKilled) {
+                jobExecutionService.markJobToStop(jobInstance);
 
-            wasCanceled = wasCanceled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
+                // Mark that all threads are finished
+            } else {
+                jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
+            }
+
+            boolean wasCanceled = wasKilled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
 
             if (wasCanceled) {
                 log.info("Canceled reprocessing mediation data");
@@ -228,6 +238,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
         } catch (Exception e) {
             log.error("Failed to process mediation", e);
             jobExecutionResult.addReport(e.getMessage());
+
         } finally {
             try {
                 if (cdrReader != null) {

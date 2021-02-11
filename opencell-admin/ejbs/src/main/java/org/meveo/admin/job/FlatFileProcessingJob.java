@@ -116,122 +116,118 @@ public class FlatFileProcessingJob extends Job {
     @SuppressWarnings("unchecked")
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        try {
-            String outputDir = null;
-            String archiveDir = null;
-            String rejectDir = null;
-            String fileNameFilter = null;
-            String scriptInstanceFlowCode = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_SCRIPTS_FLOW);
-            String fileNameExtension = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_EXTENSION);
-            Long nbLinesToProcess = (Long) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_NB_LINES_TO_PROCESS);
-            String recordVariableName = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_RECORD_VARIABLE_NAME);
-            String filenameVariableName = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ORIGIN_FILENAME);
-            String formatTransfo = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FORMAT_TRANSFO);
-            String errorAction = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ERROR_ACTION);
-            Map<String, Object> initContext = new HashMap<String, Object>();
-            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES) != null) {
-                initContext = (Map<String, Object>) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES);
-            }
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 
-            Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, CF_NB_RUNS, 1L);
-            if (nbRuns == -1) {
-                nbRuns = (long) Runtime.getRuntime().availableProcessors();
-            }
-            Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
-
-            Boolean oneFilePerJob = (Boolean) this.getParamOrCFValue(jobInstance, "oneFilePerJob", Boolean.FALSE);
-
-            EntityReferenceWrapper fileFormatWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_FORMAT);
-            FileFormat fileFormat = null;
-            if (fileFormatWrapper != null && fileFormatWrapper.getCode() != null) {
-                fileFormat = fileFormatService.findByCode(fileFormatWrapper.getCode());
-            }
-
-            String mappingConf = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_MAPPING_CONF, fileFormat != null ? fileFormat.getConfigurationTemplate() : null);
-
-            String inputDir = paramBeanFactory.getChrootDir() + File.separator
-                    + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_INPUT_DIR, fileFormat != null ? fileFormat.getInputDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-
-            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR, fileFormat != null ? fileFormat.getOutputDirectory() : null) != null) {
-                outputDir = paramBeanFactory.getChrootDir() + File.separator
-                        + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR, fileFormat != null ? fileFormat.getOutputDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-            }
-            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR, fileFormat != null ? fileFormat.getRejectDirectory() : null) != null) {
-                rejectDir = paramBeanFactory.getChrootDir() + File.separator
-                        + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR, fileFormat != null ? fileFormat.getRejectDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-            }
-            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR, fileFormat != null ? fileFormat.getArchiveDirectory() : null) != null) {
-                archiveDir = paramBeanFactory.getChrootDir() + File.separator
-                        + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR, fileFormat != null ? fileFormat.getArchiveDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR,
-                            EMPTY_STRING);
-            }
-            if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER, fileFormat != null ? fileFormat.getFileNamePattern() : null) != null) {
-                fileNameFilter = ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER, fileFormat != null ? fileFormat.getFileNamePattern() : null));
-                fileNameFilter = fileNameFilter.replaceAll(Pattern.quote("*"), "");
-            }
-
-            ArrayList<String> fileExtensions = new ArrayList<String>();
-            fileExtensions.add(fileNameExtension);
-
-            File f = new File(inputDir);
-            if (!f.exists()) {
-                f.mkdirs();
-            }
-
-            String inputDirParent = f.getParent();
-            outputDir = outputDir != null ? outputDir : inputDirParent + File.separator + "output";
-            rejectDir = rejectDir != null ? rejectDir : inputDirParent + File.separator + "reject";
-            archiveDir = archiveDir != null ? archiveDir : inputDirParent + File.separator + "archive";
-
-            f = new File(outputDir);
-            if (!f.exists()) {
-                log.debug("outputDir {} not exist", outputDir);
-                f.mkdirs();
-                log.debug("outputDir {} creation ok", outputDir);
-            }
-            f = new File(rejectDir);
-            if (!f.exists()) {
-                log.debug("rejectDir {} not exist", rejectDir);
-                f.mkdirs();
-                log.debug("rejectDir {} creation ok", rejectDir);
-            }
-            f = new File(archiveDir);
-            if (!f.exists()) {
-                log.debug("archiveDir {} not exist", archiveDir);
-                f.mkdirs();
-                log.debug("archiveDir {} creation ok", archiveDir);
-            }
-
-            File[] files = FileUtils.listFilesByNameFilter(inputDir, fileExtensions, fileNameFilter);
-            if (files == null || files.length == 0) {
-                log.debug("There is no file in {} with extension {} to by processed by FlatFileProcessing {} job", inputDir, fileExtensions, result.getJobInstance().getCode());
-                return;
-            }
-            for (File file : files) {
-                if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
-                    break;
-                }
-
-                String fileName = file.getName();
-                flatFileProcessingJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext, filenameVariableName, formatTransfo,
-                    nbLinesToProcess, errorAction, nbRuns, waitingMillis);
-
-                result.addReport("Processed file: " + fileName);
-                if (oneFilePerJob) {
-                    break;
-                }
-            }
-
-            // Process one file at a time
-            if (oneFilePerJob && files.length > 1) {
-                result.setMoreToProcess(true);
-            }
-
-        } catch (Exception e) {
-            log.error("Failed to run flat file processing job", e);
-            result.registerError(e.getMessage());
+        String outputDir = null;
+        String archiveDir = null;
+        String rejectDir = null;
+        String fileNameFilter = null;
+        String scriptInstanceFlowCode = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_SCRIPTS_FLOW);
+        String fileNameExtension = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_EXTENSION);
+        Long nbLinesToProcess = (Long) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_NB_LINES_TO_PROCESS);
+        String recordVariableName = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_RECORD_VARIABLE_NAME);
+        String filenameVariableName = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ORIGIN_FILENAME);
+        String formatTransfo = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FORMAT_TRANSFO);
+        String errorAction = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ERROR_ACTION);
+        Map<String, Object> initContext = new HashMap<String, Object>();
+        if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES) != null) {
+            initContext = (Map<String, Object>) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_VARIABLES);
         }
+
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, CF_NB_RUNS, 1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
+
+        Boolean oneFilePerJob = (Boolean) this.getParamOrCFValue(jobInstance, "oneFilePerJob", Boolean.FALSE);
+
+        EntityReferenceWrapper fileFormatWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_FORMAT);
+        FileFormat fileFormat = null;
+        if (fileFormatWrapper != null && fileFormatWrapper.getCode() != null) {
+            fileFormat = fileFormatService.findByCode(fileFormatWrapper.getCode());
+        }
+
+        String mappingConf = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_MAPPING_CONF, fileFormat != null ? fileFormat.getConfigurationTemplate() : null);
+
+        String inputDir = paramBeanFactory.getChrootDir() + File.separator
+                + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_INPUT_DIR, fileFormat != null ? fileFormat.getInputDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+
+        if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR, fileFormat != null ? fileFormat.getOutputDirectory() : null) != null) {
+            outputDir = paramBeanFactory.getChrootDir() + File.separator
+                    + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_OUTPUT_DIR, fileFormat != null ? fileFormat.getOutputDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+        }
+        if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR, fileFormat != null ? fileFormat.getRejectDirectory() : null) != null) {
+            rejectDir = paramBeanFactory.getChrootDir() + File.separator
+                    + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_REJECT_DIR, fileFormat != null ? fileFormat.getRejectDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+        }
+        if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR, fileFormat != null ? fileFormat.getArchiveDirectory() : null) != null) {
+            archiveDir = paramBeanFactory.getChrootDir() + File.separator
+                    + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_ARCHIVE_DIR, fileFormat != null ? fileFormat.getArchiveDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+        }
+        if (this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER, fileFormat != null ? fileFormat.getFileNamePattern() : null) != null) {
+            fileNameFilter = ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_FILE_NAME_FILTER, fileFormat != null ? fileFormat.getFileNamePattern() : null));
+            fileNameFilter = fileNameFilter.replaceAll(Pattern.quote("*"), "");
+        }
+
+        ArrayList<String> fileExtensions = new ArrayList<String>();
+        fileExtensions.add(fileNameExtension);
+
+        File f = new File(inputDir);
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+
+        String inputDirParent = f.getParent();
+        outputDir = outputDir != null ? outputDir : inputDirParent + File.separator + "output";
+        rejectDir = rejectDir != null ? rejectDir : inputDirParent + File.separator + "reject";
+        archiveDir = archiveDir != null ? archiveDir : inputDirParent + File.separator + "archive";
+
+        f = new File(outputDir);
+        if (!f.exists()) {
+            log.debug("outputDir {} not exist", outputDir);
+            f.mkdirs();
+            log.debug("outputDir {} creation ok", outputDir);
+        }
+        f = new File(rejectDir);
+        if (!f.exists()) {
+            log.debug("rejectDir {} not exist", rejectDir);
+            f.mkdirs();
+            log.debug("rejectDir {} creation ok", rejectDir);
+        }
+        f = new File(archiveDir);
+        if (!f.exists()) {
+            log.debug("archiveDir {} not exist", archiveDir);
+            f.mkdirs();
+            log.debug("archiveDir {} creation ok", archiveDir);
+        }
+
+        File[] files = FileUtils.listFilesByNameFilter(inputDir, fileExtensions, fileNameFilter);
+        if (files == null || files.length == 0) {
+            log.debug("There is no file in {} with extension {} to by processed by FlatFileProcessing {} job", inputDir, fileExtensions, result.getJobInstance().getCode());
+            return result;
+        }
+        for (File file : files) {
+            if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
+                break;
+            }
+
+            String fileName = file.getName();
+            flatFileProcessingJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext, filenameVariableName, formatTransfo,
+                nbLinesToProcess, errorAction, nbRuns, waitingMillis);
+
+            result.addReport("Processed file: " + fileName);
+            if (oneFilePerJob) {
+                break;
+            }
+        }
+
+        // Process one file at a time
+        if (oneFilePerJob && files.length > 1) {
+            result.setMoreToProcess(true);
+        }
+
+        return result;
     }
 
     @Override

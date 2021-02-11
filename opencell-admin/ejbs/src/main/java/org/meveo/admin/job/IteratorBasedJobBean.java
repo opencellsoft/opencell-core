@@ -95,7 +95,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         MeveoUser lastCurrentUser = currentUser.unProxy();
 
         int checkJobStatusEveryNr = jobSpeed.getCheckNb();
-        int updateJobStatusEveryNr = jobSpeed.getUpdateNb();
+        int updateJobStatusEveryNr = nbRuns.longValue() > 3 ? jobSpeed.getUpdateNb() * nbRuns.intValue() / 2 : jobSpeed.getUpdateNb();
 
         boolean isNewTx = isProcessItemInNewTx();
 
@@ -103,22 +103,13 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
             currentUserProvider.reestablishAuthentication(lastCurrentUser);
             int i = 0;
+            long globalI = 0;
 
             T itemToProcess = iterator.next();
             while (itemToProcess != null) {
 
                 if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
                     break;
-                }
-                try {
-                    // Record progress
-                    if (i > 0 && i % updateJobStatusEveryNr == 0) {
-                        jobExecutionResultService.persistResult(jobExecutionResult);
-                    }
-                } catch (EJBTransactionRolledbackException e) {
-                    // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
-                } catch (Exception e) {
-                    log.error("Failed to update job progress", e);
                 }
 
                 // Process each item
@@ -130,7 +121,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                         processSingleItemFunction.accept(itemToProcessFinal, jobExecutionResult);
                     }
 
-                    jobExecutionResult.registerSucces();
+                    globalI = jobExecutionResult.registerSucces();
 
                     // Register errors
                 } catch (Exception e) {
@@ -144,10 +135,21 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                     if (itemId != null) {
                         jobExecutionErrorService.registerJobError(jobExecutionResult.getJobInstance(), itemId, e);
-                        jobExecutionResult.registerError(itemId, e.getMessage());
+                        globalI = jobExecutionResult.registerError(itemId, e.getMessage());
                     } else {
-                        jobExecutionResult.registerError(e.getMessage());
+                        globalI = jobExecutionResult.registerError(e.getMessage());
                     }
+                }
+
+                try {
+                    // Record progress
+                    if (globalI > 0 && globalI % updateJobStatusEveryNr == 0) {
+                        jobExecutionResultService.persistResult(jobExecutionResult);
+                    }
+                } catch (EJBTransactionRolledbackException e) {
+                    // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
+                } catch (Exception e) {
+                    log.error("Failed to update job progress", e);
                 }
 
                 itemToProcess = iterator.next();
@@ -170,32 +172,30 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             JobRunningStatusEnum jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), futures);
 
             boolean wasKilled = false;
-            if (jobStatus != JobRunningStatusEnum.REQUEST_TO_STOP) {
 
-                // Wait for all async methods to finish
-                for (Future future : futures) {
-                    try {
-                        future.get();
+            // Wait for all async methods to finish
+            for (Future future : futures) {
+                try {
+                    future.get();
 
-                    } catch (InterruptedException e) {
-                        wasKilled = true;
-                        log.error("Thread/future for job {} was canceled", jobInstance);
+                } catch (InterruptedException e) {
+                    wasKilled = true;
+                    log.error("Thread/future for job {} was canceled", jobInstance);
 
-                    } catch (ExecutionException e) {
-                        Throwable cause = e.getCause();
-                        jobExecutionResult.registerError(cause.getMessage());
-                        log.error("Failed to execute async method", cause);
-                    }
+                } catch (ExecutionException e) {
+                    Throwable cause = e.getCause();
+                    jobExecutionResult.registerError(cause.getMessage());
+                    log.error("Failed to execute async method", cause);
                 }
+            }
 
-                // Mark job as stopped if task was killed
-                if (wasKilled) {
-                    jobExecutionService.markJobToStop(jobInstance);
+            // Mark job as stopped if task was killed
+            if (wasKilled) {
+                jobExecutionService.markJobToStop(jobInstance);
 
-                    // Mark that all threads are finished
-                } else {
-                    jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
-                }
+                // Mark that all threads are finished
+            } else {
+                jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
             }
 
             boolean wasCanceled = wasKilled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;

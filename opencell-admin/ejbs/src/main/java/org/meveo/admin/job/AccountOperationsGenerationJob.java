@@ -54,8 +54,9 @@ public class AccountOperationsGenerationJob extends Job {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         accountOperationsGenerationJobBean.execute(result, jobInstance);
+        return result;
     }
 
     @Override

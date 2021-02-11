@@ -75,54 +75,51 @@ public class SepaRejectedTransactionsJob extends Job {
     @Inject
     private DDRequestBuilderFactory ddRequestBuilderFactory;
 
-
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        try {
-            DDRequestBuilder ddRequestBuilder = null;
-            String ddRequestBuilderCode = null;
-            if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "RejectSepaJob_ddRequestBuilder") != null) {
-                ddRequestBuilderCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "RejectSepaJob_ddRequestBuilder")).getCode();
-                ddRequestBuilder = ddRequestBuilderService.findByCode(ddRequestBuilderCode);
-            } else {
-                throw new BusinessException("Can't find ddRequestBuilder");
-            }
-            if (ddRequestBuilder == null) {
-                throw new BusinessException("Can't find ddRequestBuilder by code:" + ddRequestBuilderCode);
-            }
-            DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
-            String prefix = (String) this.getParamOrCFValue(jobInstance, "RejectSepaJob_fileNamePrefix");
-            String ext = (String) this.getParamOrCFValue(jobInstance, "RejectSepaJob_fileNameExtension");
-            String inputDir = paramBeanFactory.getChrootDir() + ((String) this.getParamOrCFValue(jobInstance, "RejectSepaJob_inputDir")).replaceAll("\\..", "");
-            log.info("inputDir=" + inputDir);
-            File dir = new File(inputDir);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            ArrayList<String> fileExtensions = new ArrayList<String>();
-            fileExtensions.add(ext);
+    public JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 
-            File[] files = FileUtils.listFiles(inputDir, fileExtensions, prefix);
-            if (files == null || files.length == 0) {
-                result.setReport("No files!");
-            } else {
-                int numberOfFiles = files.length;
-                log.info("InputFiles job " + numberOfFiles + " to import");
-                result.setNbItemsToProcess(numberOfFiles);
-                for (File file : files) {
-                    if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
-                        break;
-                    }
-                    sepaRejectedTransactionsJobBean.execute(result, jobInstance, file, ddRequestBuilderInterface, inputDir);
-                }
-            }
-        } catch (Exception e) {
-            log.error("Failed to sepa reject transaction", e);
+        DDRequestBuilder ddRequestBuilder = null;
+        String ddRequestBuilderCode = null;
+        if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "RejectSepaJob_ddRequestBuilder") != null) {
+            ddRequestBuilderCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "RejectSepaJob_ddRequestBuilder")).getCode();
+            ddRequestBuilder = ddRequestBuilderService.findByCode(ddRequestBuilderCode);
+        } else {
+            throw new BusinessException("Can't find ddRequestBuilder");
         }
-    }
+        if (ddRequestBuilder == null) {
+            throw new BusinessException("Can't find ddRequestBuilder by code:" + ddRequestBuilderCode);
+        }
+        DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
+        String prefix = (String) this.getParamOrCFValue(jobInstance, "RejectSepaJob_fileNamePrefix");
+        String ext = (String) this.getParamOrCFValue(jobInstance, "RejectSepaJob_fileNameExtension");
+        String inputDir = paramBeanFactory.getChrootDir() + ((String) this.getParamOrCFValue(jobInstance, "RejectSepaJob_inputDir")).replaceAll("\\..", "");
+        log.info("inputDir=" + inputDir);
+        File dir = new File(inputDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        ArrayList<String> fileExtensions = new ArrayList<String>();
+        fileExtensions.add(ext);
 
+        File[] files = FileUtils.listFiles(inputDir, fileExtensions, prefix);
+        if (files == null || files.length == 0) {
+            result.setReport("No files!");
+        } else {
+            int numberOfFiles = files.length;
+            log.info("InputFiles job " + numberOfFiles + " to import");
+            result.setNbItemsToProcess(numberOfFiles);
+            for (File file : files) {
+                if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
+                    break;
+                }
+                sepaRejectedTransactionsJobBean.execute(result, jobInstance, file, ddRequestBuilderInterface, inputDir);
+            }
+        }
+
+        return result;
+    }
 
     @Override
     public JobCategoryEnum getJobCategory() {
@@ -178,7 +175,7 @@ public class SepaRejectedTransactionsJob extends Job {
         payentGatewayCF.setValueRequired(true);
         payentGatewayCF.setGuiPosition("tab:Configuration:0;field:3");
         result.put("RejectSepaJob_ddRequestBuilder", payentGatewayCF);
-        
+
         Map<String, String> lisValuesCreditDebit = new HashMap<String, String>();
         lisValuesCreditDebit.put("Credit", "Payment");
         lisValuesCreditDebit.put("Debit", "Refund");

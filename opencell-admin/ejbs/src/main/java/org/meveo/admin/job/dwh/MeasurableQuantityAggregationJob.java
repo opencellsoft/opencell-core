@@ -55,7 +55,7 @@ public class MeasurableQuantityAggregationJob extends Job {
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 
         StringBuilder report = new StringBuilder();
         if (jobInstance.getParametres() != null && !jobInstance.getParametres().isEmpty()) {
@@ -68,6 +68,7 @@ public class MeasurableQuantityAggregationJob extends Job {
             aggregateMeasuredValues(result, report, mqService.list());
             result.setReport(report.toString());
         }
+        return result;
     }
 
     @JpaAmpNewTx

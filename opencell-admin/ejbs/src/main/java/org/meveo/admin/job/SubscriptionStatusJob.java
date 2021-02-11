@@ -31,6 +31,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
@@ -54,9 +55,20 @@ public class SubscriptionStatusJob extends Job {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+
         subscriptionStatusJobBean.execute(result, jobInstance);
+        result.close();
+
+        if (result.getStatus() == JobExecutionResultStatusEnum.RUNNING) {
+            result.setStatus(JobExecutionResultStatusEnum.COMPLETED);
+        }
+        jobExecutionResultService.persistResult(result);
+
+        result = new JobExecutionResultImpl(result.getJobInstance(), result.getJobLauncherEnum());
         serviceStatusJobBean.execute(result, jobInstance);
+        
+        return result;
     }
 
     @Override

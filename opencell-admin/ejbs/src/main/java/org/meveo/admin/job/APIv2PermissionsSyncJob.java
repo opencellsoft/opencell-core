@@ -50,8 +50,9 @@ public class APIv2PermissionsSyncJob  extends Job {
      * @throws BusinessException Business exception
      */
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         apIv2PermissionsSyncJobBean.execute(result,  jobInstance);
+        return result;
     }
 
     /**

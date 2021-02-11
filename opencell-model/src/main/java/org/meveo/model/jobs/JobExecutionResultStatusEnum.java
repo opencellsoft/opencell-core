@@ -25,7 +25,12 @@ public enum JobExecutionResultStatusEnum {
     /**
      * Job execution was cancelled
      */
-    CANCELLED;
+    CANCELLED,
+
+    /**
+     * Job execution had failed because of some errors
+     */
+    FAILED;
 
     /**
      * @return Label text for GUI

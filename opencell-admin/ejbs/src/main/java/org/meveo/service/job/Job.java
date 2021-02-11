@@ -166,18 +166,13 @@ public abstract class Job {
             }
 
             try {
-                execute(executionResult, jobInstance);
-                executionResult.close();
+                executionResult = execute(executionResult, jobInstance);
 
                 boolean jobCanceled = jobExecutionService.isJobCancelled(jobInstance.getId());
                 boolean moreToProcess = executionResult.isMoreToProcess();
 
-                jobExecutionService.markJobAsFinished(jobInstance);
-
                 executionResult.setStatus(jobCanceled ? JobExecutionResultStatusEnum.CANCELLED : moreToProcess ? JobExecutionResultStatusEnum.COMPLETED_MORE : JobExecutionResultStatusEnum.COMPLETED);
-
-                log.trace("Job {} of type {} executed. Persisting job execution results", jobInstance.getCode(), jobInstance.getJobTemplate());
-
+                executionResult.close();
                 jobExecutionResultService.persistResult(executionResult);
 
                 log.info("Job {} of type {} execution finished. Job {}", jobInstance.getCode(), jobInstance.getJobTemplate(),
@@ -191,7 +186,13 @@ public abstract class Job {
 
             } catch (Exception e) {
                 log.error("Failed to execute a job {} of type {}", jobInstance.getJobTemplate(), jobInstance.getJobTemplate(), e);
+                executionResult.setStatus(JobExecutionResultStatusEnum.FAILED);
+                executionResult.addReport(e.getMessage());
+                executionResult.close();
+                jobExecutionResultService.persistResult(executionResult);
+
                 throw new BusinessException(e);
+
             } finally {
                 // revert counter to return 0 at the end of the job
                 counter.inc(-1);
@@ -217,9 +218,11 @@ public abstract class Job {
      * 
      * @param result Job execution results
      * @param jobInstance Job instance to execute
+     * @return In case job consist of various stages and each stage tracks its own progress, the Job execution result of the last stage will be returned. In case of a single stage,
+     *         a Job execution results that was passed as argument to the method and method return value will be the same.
      * @throws BusinessException Any exception
      */
-    protected abstract void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException;
+    protected abstract JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException;
 
     /**
      * Canceling timers associated to this job implmenentation- solves and issue when server is restarted and wildlfy data directory contains previously active timers.

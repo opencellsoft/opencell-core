@@ -70,18 +70,24 @@ public class IteratorBasedJobProcessing implements Serializable {
     private JobExecutionResultService jobExecutionResultService;
 
     /**
-     * Execute a given function on a list of items (accessible with iterator)
+     * Execute a given function on a list of items (accessible with iterator) and return execution results
      * 
      * @param <T> Iterator's item class
      * @param <R> Result class
      * @param jobExecutionResult Job execution result
+     * @param iterator Iterator containing a list of items to apply a function on
      * @param processSingleItemFunction A function to process a single item. Will be executed in its own transaction when parameter processItemInOwnTx=true
+     * @param nbThreads Number of threads to launch
+     * @param waitingMillis Number of milliseconds to wait between launching new thread
+     * @param processItemInOwnTx Shall function be processed in a new transaction
      * @param jobSpeed Job execution speed to check if job is still running and update job progress in DB
+     * @param updateJobExecutionStatistics Shall job execution statistics be updated on each item processed (successfully or not)
+     * @return Function execution results
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public <T, R> List<R> processItemsAndAgregateResults(JobExecutionResultImpl jobExecutionResult, Iterator<T> iterator, Function<T, R> processSingleItemFunction, Long nbThreads, Long waitingMillis,
-            boolean processItemInOwnTx, JobSpeedEnum jobSpeed) {
+            boolean processItemInOwnTx, JobSpeedEnum jobSpeed, boolean updateJobExecutionStatistics) {
 
         List<Future> futures = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
@@ -89,7 +95,7 @@ public class IteratorBasedJobProcessing implements Serializable {
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
         int checkJobStatusEveryNr = jobSpeed.getCheckNb();
-        int updateJobStatusEveryNr = jobSpeed.getUpdateNb();
+        int updateJobStatusEveryNr = nbThreads.longValue() > 3 ? jobSpeed.getUpdateNb() * nbThreads.intValue() / 2 : jobSpeed.getUpdateNb();
 
         Callable<List<R>> task = () -> {
 
@@ -97,22 +103,13 @@ public class IteratorBasedJobProcessing implements Serializable {
 
             currentUserProvider.reestablishAuthentication(lastCurrentUser);
             int i = 0;
+            long globalI = 0;
 
             T itemToProcess = iterator.next();
             while (itemToProcess != null) {
 
                 if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
                     break;
-                }
-                try {
-                    // Record progress
-                    if (i > 0 && i % updateJobStatusEveryNr == 0) {
-                        jobExecutionResultService.persistResult(jobExecutionResult);
-                    }
-                } catch (EJBTransactionRolledbackException e) {
-                    // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
-                } catch (Exception e) {
-                    log.error("Failed to update job progress", e);
                 }
 
                 try {
@@ -129,13 +126,28 @@ public class IteratorBasedJobProcessing implements Serializable {
 
                     if (itemResult != null) {
                         taskResult.add(itemResult);
-                        jobExecutionResult.registerSucces();
+                        if (updateJobExecutionStatistics) {
+                            globalI = jobExecutionResult.registerSucces();
+                        }
                     }
 
                 } catch (Exception e) {
 
                     String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
-                    jobExecutionResult.registerError(itemToProcess + ": " + rejectReason);
+                    if (updateJobExecutionStatistics) {
+                        globalI = jobExecutionResult.registerError(itemToProcess + ": " + rejectReason);
+                    }
+                }
+
+                try {
+                    // Record progress
+                    if (updateJobExecutionStatistics && globalI > 0 && globalI % updateJobStatusEveryNr == 0) {
+                        jobExecutionResultService.persistResult(jobExecutionResult);
+                    }
+                } catch (EJBTransactionRolledbackException e) {
+                    // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
+                } catch (Exception e) {
+                    log.error("Failed to update job progress", e);
                 }
 
                 itemToProcess = iterator.next();
@@ -155,39 +167,37 @@ public class IteratorBasedJobProcessing implements Serializable {
             }
         }
 
+        @SuppressWarnings("unused")
         JobRunningStatusEnum jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), futures);
 
         boolean wasKilled = false;
 
         List<R> processingResult = new ArrayList<R>();
 
-        if (jobStatus != JobRunningStatusEnum.REQUEST_TO_STOP) {
+        // Wait for all async methods to finish
+        for (Future future : futures) {
+            try {
+                List<R> futureResult = (List<R>) future.get();
+                processingResult.addAll(futureResult);
 
-            // Wait for all async methods to finish
-            for (Future future : futures) {
-                try {
-                    List<R> futureResult = (List<R>) future.get();
-                    processingResult.addAll(futureResult);
+            } catch (InterruptedException e) {
+                wasKilled = true;
+                log.error("Thread/future for job {} was canceled", jobInstance);
 
-                } catch (InterruptedException e) {
-                    wasKilled = true;
-                    log.error("Thread/future for job {} was canceled", jobInstance);
-
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    jobExecutionResult.registerError(cause.getMessage());
-                    log.error("Failed to execute async method", cause);
-                }
+            } catch (ExecutionException e) {
+                Throwable cause = e.getCause();
+                jobExecutionResult.registerError(cause.getMessage());
+                log.error("Failed to execute async method", cause);
             }
+        }
 
-            // Mark job as stopped if task was killed
-            if (wasKilled) {
-                jobExecutionService.markJobToStop(jobInstance);
+        // Mark job as stopped if task was killed
+        if (wasKilled) {
+            jobExecutionService.markJobToStop(jobInstance);
 
-                // Mark that all threads are finished
-            } else {
-                jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
-            }
+            // Mark that all threads are finished
+        } else {
+            jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
         }
 
         return processingResult;
@@ -198,12 +208,17 @@ public class IteratorBasedJobProcessing implements Serializable {
      * 
      * @param <T> Iterator's item class
      * @param jobExecutionResult Job execution result
+     * @param iterator Iterator containing a list of items to apply a function on
      * @param processSingleItemFunction A function to process a single item. Will be executed in its own transaction when parameter processItemInOwnTx=true
+     * @param nbThreads Number of threads to launch
+     * @param waitingMillis Number of milliseconds to wait between launching new thread
+     * @param processItemInOwnTx Shall function be processed in a new transaction
      * @param jobSpeed Job execution speed to check if job is still running and update job progress in DB
+     * @param updateJobExecutionStatistics Shall job execution statistics be updated on each item processed (successfully or not)
      */
     @SuppressWarnings({ "rawtypes" })
     public <T> void processItems(JobExecutionResultImpl jobExecutionResult, Iterator<T> iterator, Consumer<T> processSingleItemFunction, Long nbThreads, Long waitingMillis, boolean processItemInOwnTx,
-            JobSpeedEnum jobSpeed) {
+            JobSpeedEnum jobSpeed, boolean updateJobExecutionStatistics) {
 
         List<Future> futures = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
@@ -211,28 +226,19 @@ public class IteratorBasedJobProcessing implements Serializable {
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
         int checkJobStatusEveryNr = jobSpeed.getCheckNb();
-        int updateJobStatusEveryNr = jobSpeed.getUpdateNb();
+        int updateJobStatusEveryNr = nbThreads.longValue() > 3 ? jobSpeed.getUpdateNb() * nbThreads.intValue() / 2 : jobSpeed.getUpdateNb();
 
         Runnable task = () -> {
 
             currentUserProvider.reestablishAuthentication(lastCurrentUser);
             int i = 0;
+            long globalI = 0;
 
             T itemToProcess = iterator.next();
             while (itemToProcess != null) {
 
                 if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
                     break;
-                }
-                try {
-                    // Record progress
-                    if (i > 0 && i % updateJobStatusEveryNr == 0) {
-                        jobExecutionResultService.persistResult(jobExecutionResult);
-                    }
-                } catch (EJBTransactionRolledbackException e) {
-                    // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
-                } catch (Exception e) {
-                    log.error("Failed to update job progress", e);
                 }
 
                 try {
@@ -244,12 +250,27 @@ public class IteratorBasedJobProcessing implements Serializable {
                         processSingleItemFunction.accept(itemToProcessFinal);
                     }
 
-                    jobExecutionResult.registerSucces();
+                    if (updateJobExecutionStatistics) {
+                        globalI = jobExecutionResult.registerSucces();
+                    }
 
                 } catch (Exception e) {
 
                     String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
-                    jobExecutionResult.registerError(itemToProcess + ": " + rejectReason);
+                    if (updateJobExecutionStatistics) {
+                        globalI = jobExecutionResult.registerError(itemToProcess + ": " + rejectReason);
+                    }
+                }
+
+                try {
+                    // Record progress
+                    if (updateJobExecutionStatistics && globalI > 0 && globalI % updateJobStatusEveryNr == 0) {
+                        jobExecutionResultService.persistResult(jobExecutionResult);
+                    }
+                } catch (EJBTransactionRolledbackException e) {
+                    // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
+                } catch (Exception e) {
+                    log.error("Failed to update job progress", e);
                 }
 
                 itemToProcess = iterator.next();
@@ -267,9 +288,10 @@ public class IteratorBasedJobProcessing implements Serializable {
             }
         }
 
+        @SuppressWarnings("unused")
         JobRunningStatusEnum jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), futures);
 
-        boolean wasCanceled = jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
+        boolean wasKilled = false;
 
         // Wait for all async methods to finish
         for (Future future : futures) {
@@ -277,7 +299,7 @@ public class IteratorBasedJobProcessing implements Serializable {
                 future.get();
 
             } catch (InterruptedException e) {
-                wasCanceled = true;
+                wasKilled = true;
                 log.error("Thread/future for job {} was canceled", jobInstance);
 
             } catch (ExecutionException e) {
@@ -287,8 +309,13 @@ public class IteratorBasedJobProcessing implements Serializable {
             }
         }
 
-        jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
+        // Mark job as stopped if task was killed
+        if (wasKilled) {
+            jobExecutionService.markJobToStop(jobInstance);
 
-        wasCanceled = wasCanceled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
+            // Mark that all threads are finished
+        } else {
+            jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
+        }
     }
 }

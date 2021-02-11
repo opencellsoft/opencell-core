@@ -82,7 +82,7 @@ public class CustomTableImportJob extends Job {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 
         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, CF_NB_RUNS, -1L);
         if (nbRuns == -1) {
@@ -90,60 +90,54 @@ public class CustomTableImportJob extends Job {
         }
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
-        try {
+        ParamBean parambean = paramBeanFactory.getInstance();
+        String customTableDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "customTables" + File.separator;
 
-            ParamBean parambean = paramBeanFactory.getInstance();
-            String customTableDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "customTables" + File.separator;
+        MeveoUser lastCurrentUser = currentUser.unProxy();
 
-            MeveoUser lastCurrentUser = currentUser.unProxy();
+        // Process files that should overrite data
 
-            // Process files that should overrite data
+        File inputDir = new File(customTableDir + "input");
 
-            File inputDir = new File(customTableDir + "input");
-
-            if (!inputDir.exists()) {
-                inputDir.mkdirs();
-            }
-            List<File> files = FileUtils.listFiles(inputDir, "csv", null);
-            if (files != null && !files.isEmpty()) {
-
-                result.setNbItemsToProcess(files.size());
-
-                List<Future<String>> futures = new ArrayList<>();
-                SubListCreator subListCreator = new SubListCreator(files, nbRuns.intValue());
-
-                while (subListCreator.isHasNext()) {
-                    futures.add(customTableImportJobAsync.launchAndForget(customTableDir, (List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(),
-                        lastCurrentUser));
-                    if (subListCreator.isHasNext()) {
-                        try {
-                            Thread.sleep(waitingMillis.longValue());
-                        } catch (InterruptedException e) {
-                            log.error("", e);
-                        }
-                    }
-                }
-
-                // Wait for all async methods to finish
-                for (Future<String> future : futures) {
-                    try {
-                        future.get();
-
-                    } catch (InterruptedException e) {
-                        // It was cancelled from outside - no interest
-
-                    } catch (ExecutionException e) {
-                        Throwable cause = e.getCause();
-                        result.registerError(cause.getMessage());
-                        log.error("Failed to execute async method", cause);
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            log.error("Failed to run custom table data import", e);
-            result.registerError(e.getMessage());
+        if (!inputDir.exists()) {
+            inputDir.mkdirs();
         }
+        List<File> files = FileUtils.listFiles(inputDir, "csv", null);
+        if (files != null && !files.isEmpty()) {
+
+            result.setNbItemsToProcess(files.size());
+
+            List<Future<String>> futures = new ArrayList<>();
+            SubListCreator subListCreator = new SubListCreator(files, nbRuns.intValue());
+
+            while (subListCreator.isHasNext()) {
+                futures.add(customTableImportJobAsync.launchAndForget(customTableDir, (List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), lastCurrentUser));
+                if (subListCreator.isHasNext()) {
+                    try {
+                        Thread.sleep(waitingMillis.longValue());
+                    } catch (InterruptedException e) {
+                        log.error("", e);
+                    }
+                }
+            }
+
+            // Wait for all async methods to finish
+            for (Future<String> future : futures) {
+                try {
+                    future.get();
+
+                } catch (InterruptedException e) {
+                    // It was cancelled from outside - no interest
+
+                } catch (ExecutionException e) {
+                    Throwable cause = e.getCause();
+                    result.registerError(cause.getMessage());
+                    log.error("Failed to execute async method", cause);
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -160,8 +154,7 @@ public class CustomTableImportJob extends Job {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
 //    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
-    public Future<String> launchAndForget(String customTableDir, List<File> files, JobExecutionResultImpl result, String parameter, MeveoUser lastCurrentUser)
-            throws BusinessException {
+    public Future<String> launchAndForget(String customTableDir, List<File> files, JobExecutionResultImpl result, String parameter, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 

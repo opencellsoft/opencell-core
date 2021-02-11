@@ -40,7 +40,6 @@ import javax.persistence.Transient;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.NotifiableEntity;
 
@@ -165,11 +164,14 @@ public class JobExecutionResultImpl extends BaseEntity {
 
     /**
      * Increment a count of successfully processed items
+     * 
+     * @return A total number of processed items, successful or failed
      */
-    public synchronized void registerSucces() {
+    public synchronized long registerSucces() {
         nbItemsCorrectlyProcessed++;
+        return nbItemsCorrectlyProcessed + nbItemsProcessedWithError + nbItemsProcessedWithWarning;
     }
-    
+
     /**
      * Decrement a count of successfully processed items
      */
@@ -182,23 +184,27 @@ public class JobExecutionResultImpl extends BaseEntity {
      * 
      * @param identifier Record identifier
      * @param warning Message to log
+     * @return A total number of processed items, successful or failed
      */
-    public synchronized void registerWarning(Serializable identifier, String warning) {
-        registerWarning(identifier + ": " + warning);
+    public synchronized long registerWarning(Serializable identifier, String warning) {
+        return registerWarning(identifier + ": " + warning);
     }
 
     /**
      * Increment a count of items processed with warning and log a warning
      * 
      * @param warning Message to log
+     * @return A total number of processed items, successful or failed
      */
-    public synchronized void registerWarning(String warning) {
+    public synchronized long registerWarning(String warning) {
         if (jobInstance.isVerboseReport() && !StringUtils.isBlank(warning)) {
             addReport(warning);
             warnings.add(warning);
         }
 
         nbItemsProcessedWithWarning++;
+
+        return nbItemsCorrectlyProcessed + nbItemsProcessedWithError + nbItemsProcessedWithWarning;
     }
 
     /**
@@ -206,29 +212,36 @@ public class JobExecutionResultImpl extends BaseEntity {
      * 
      * @param identifier Record identifier
      * @param error Message to log
+     * @return A total number of processed items, successful or failed
      */
-    public synchronized void registerError(Serializable identifier, String error) {
-        registerError(identifier + ": " + error);
+    public synchronized long registerError(Serializable identifier, String error) {
+        return registerError(identifier + ": " + error);
     }
 
     /**
      * Increment a count of items processed with error and log an error
      * 
      * @param error Message to log
+     * @return A total number of processed items, successful or failed
      */
-    public synchronized void registerError(String error) {
+    public synchronized long registerError(String error) {
         if (jobInstance.isVerboseReport() && !StringUtils.isBlank(error)) {
             addReport(error);
             errors.add(error);
         }
         nbItemsProcessedWithError++;
+
+        return nbItemsCorrectlyProcessed + nbItemsProcessedWithError + nbItemsProcessedWithWarning;
     }
 
     /**
      * Increment a count of items processed with error
+     * 
+     * @return A total number of processed items, successful or failed
      */
-    public synchronized void registerError() {
+    public synchronized long registerError() {
         nbItemsProcessedWithError++;
+        return nbItemsCorrectlyProcessed + nbItemsProcessedWithError + nbItemsProcessedWithWarning;
     }
 
     /**
