@@ -29,14 +29,19 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
@@ -113,14 +118,88 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "duration_unit", length = 50)
 	private DurationPeriodUnitEnum durationUnit = DurationPeriodUnitEnum.DAY;
-	
-	
+
 	/**
 	 * DP type
 	 */
 	@Enumerated(EnumType.STRING)
 	@Column(name = "discount_plan_type", length = 50)
 	private DiscountPlanTypeEnum discountPlanType;
+
+	/**
+	 * Status of the discount plan:
+	 * <p>
+	 * DRAFT “Draft”: The discount plan is being configured and is waiting for validation
+	 * ACTIVE “Active”: the discount plan is available and can be set used
+	 * IN_USE “In use”: the discount plan is currently in use / it has been applied at least once
+	 * EXPIRED “Expired”: the discount plan has expired. Either because the end of validity date has been reach, or the used quantity has is equal to initial quantity.
+	 * <p>
+	 * Initialized with DRAFT
+	 */
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false)
+	@NotNull
+	private DiscountPlanStatusEnum status = DiscountPlanStatusEnum.DRAFT;
+
+	/**
+	 * Datetime of last status update
+	 * Automatically filed at creation and status update
+	 */
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "status_date")
+	private Date statusDate;
+
+	/**
+	 * The initial available quantity for the discount plan.
+	 * Default value is 0 = infinite.
+	 * For types QUOTE, INVOICE, INVOICE_LINE, the value is forced to 0.
+	 */
+	@Column(name = "initial_quantity")
+	private Long initialQuantity = 0L;
+
+	/**
+	 * How many times the discount plan has been used.
+	 * Initialized to 0.
+	 * If intialQuantity is not 0, then reaching the initialQuantity expires the discount plan.
+	 * The value is incremented every time the discountPlan is instantiated on any Billing Account, Subscription, or ProductInstance
+	 */
+	@Column(name = "used_quantity")
+	private Long usedQuantity = 0L;
+
+	/**
+	 * How many times the discount can be applied on a given entity (BillingAccount, Subscription, Product Instance).
+	 * Default value is 0 = infinite.
+	 * Useful for one-time discounts.
+	 * See DiscountPlanInstance below for more details.
+	 * This has no real meaning for discounts applied to invoices or invoice lines.
+	 */
+	@Column(name = "application_limit")
+	private Long applicationLimit = 0L;
+
+	/**
+	 * A boolean EL that must evaluate to true to allow the discount plan to be applied.
+	 * It will have access to the variables:
+	 * entity: the entity on which we want to apply the discount
+	 * discountPlan: the discount plan itself
+	 */
+	@Column(name = "application_filter_el")
+	private String applicationFilterEL;
+
+	/**
+	 * A list of entities (CustomerCategory, Offer, Product, Article).
+	 * Only instances (Customer/BillingAccount, Subscription, ProductInstance, InvoiceLine) of these entities can have the discount applied to them.
+	 */
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@JoinTable(name = "cat_discout_plan_entities", joinColumns = { @JoinColumn(name = "discount_plan_id", referencedColumnName = "id") }, inverseJoinColumns = {
+			@JoinColumn(name = "entity_id", referencedColumnName = "id") })
+	private List<BusinessCFEntity> applicableEntities;
+
+	/**
+	 * A list of discounts plans that cannot be active at the same time on an entity instance.
+	 */
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@JoinColumn(name = "discount_plan_id")
+	private List<DiscountPlan> incompatibleDiscountPlans;
 
 	public enum DurationPeriodUnitEnum {
 		/**
@@ -256,4 +335,67 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.discountPlanType = discountPlanType;
 	}
 
+	public DiscountPlanStatusEnum getStatus() {
+		return status;
+	}
+
+	public void setStatus(DiscountPlanStatusEnum status) {
+		this.status = status;
+	}
+
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
+
+	public Long getInitialQuantity() {
+		return initialQuantity;
+	}
+
+	public void setInitialQuantity(Long initialQuantity) {
+		this.initialQuantity = initialQuantity;
+	}
+
+	public Long getUsedQuantity() {
+		return usedQuantity;
+	}
+
+	public void setUsedQuantity(Long usedQuantity) {
+		this.usedQuantity = usedQuantity;
+	}
+
+	public Long getApplicationLimit() {
+		return applicationLimit;
+	}
+
+	public void setApplicationLimit(Long applicationLimit) {
+		this.applicationLimit = applicationLimit;
+	}
+
+	public String getApplicationFilterEL() {
+		return applicationFilterEL;
+	}
+
+	public void setApplicationFilterEL(String applicationFilterEL) {
+		this.applicationFilterEL = applicationFilterEL;
+	}
+
+	public List<BusinessCFEntity> getApplicableEntities() {
+		return applicableEntities;
+	}
+
+	public void setApplicableEntities(List<BusinessCFEntity> applicableEntities) {
+		this.applicableEntities = applicableEntities;
+	}
+
+	public List<DiscountPlan> getIncompatibleDiscountPlans() {
+		return incompatibleDiscountPlans;
+	}
+
+	public void setIncompatibleDiscountPlans(List<DiscountPlan> incompatibleDiscountPlans) {
+		this.incompatibleDiscountPlans = incompatibleDiscountPlans;
+	}
 }

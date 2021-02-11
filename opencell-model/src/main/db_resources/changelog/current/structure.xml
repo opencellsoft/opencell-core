@@ -3730,7 +3730,7 @@ END $$;]]>
         <addColumn tableName="billing_invoice">
             <column name="reject_reason" type="varchar(255)"/>
         </addColumn>
-        
+
         <addColumn tableName="billing_cycle">
             <column name="billing_run_validation_script_id" type="bigint"/>
         </addColumn>
@@ -3738,63 +3738,101 @@ END $$;]]>
             <column name="invoice_validation_script_id" type="bigint"/>
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="next_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_next_billing_run"
-              referencedColumnNames="id" referencedTableName="billing_billing_run"/>
+                                 referencedColumnNames="id" referencedTableName="billing_billing_run"/>
         <addForeignKeyConstraint baseColumnNames="billing_run_validation_script_id" baseTableName="billing_cycle" constraintName="fk_billing_cycle_billing_run_validation_script"
-              referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
-        <addForeignKeyConstraint baseColumnNames="invoice_validation_script_id" baseTableName="billing_invoice_type" constraintName="fk_billing_invoice_type_invoice_validation_script"
-              referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
+                                 referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
+        <addForeignKeyConstraint baseColumnNames="invoice_validation_script_id" baseTableName="billing_invoice_type"
+                                 constraintName="fk_billing_invoice_type_invoice_validation_script"
+                                 referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
     </changeSet>
-    
+
     <changeSet id="#5627_20210112" author="MohammedELAZZOUZI">
         <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
         <sql>UPDATE ${db.schema.adapted}billing_billing_run SET skip_validation_script=0 WHERE skip_validation_script IS NULL</sql>
     </changeSet>
-    	<changeSet id="#5884_20210119" author="MohammedELAZZOUZI">
-    	    <addColumn tableName="billing_invoice">
-	            <column name="status_date" type="datetime"/>
-	        </addColumn>
-	        <addColumn tableName="billing_invoice">
-	            <column name="xml_date" type="datetime"/>
-	        </addColumn>
-	        <addColumn tableName="billing_invoice">
-	            <column name="pdf_date" type="datetime"/>
-	        </addColumn>
-	        <addColumn tableName="billing_invoice">
-	            <column name="email_sent_date" type="datetime"/>
-	        </addColumn>
-	        <addColumn tableName="billing_invoice">
-	            <column name="payment_status" type="varchar(255)" />
-	        </addColumn>
-	        <addColumn tableName="billing_invoice">
-	            <column name="payment_status_date" type="datetime"/>
-	        </addColumn>
-	        <addColumn tableName="billing_invoice">
-	            <column name="start_date" type="datetime"/>
-	        </addColumn>
-	        <addColumn tableName="billing_invoice">
-	            <column name="end_date" type="datetime"/>
-	        </addColumn>
-	        <addColumn tableName="billing_invoice">
-	            <column name="raw_amount" type="numeric(23, 12)">
-	            	<constraints nullable="false" />
-	            </column>
-	        </addColumn>
-	        <addColumn tableName="billing_invoice">
-	            <column name="discount_amount" type="numeric(23, 12)">
-	            	<constraints nullable="false" />
-	            </column>
-	        </addColumn>
-	        <addColumn tableName="billing_invoice">
-	            <column name="discount_rate" type="numeric(3, 3)">
-	            </column>
-	        </addColumn>
-	        
-	        <addColumn tableName="billing_invoice">
-	            <column name="is_already_applied_minimum" type="${type.boolean}"/>
-	        </addColumn>
-	        <addColumn tableName="billing_invoice">
-	            <column name="is_already_added_discount" type="${type.boolean}"/>
-	        </addColumn>
+    <changeSet id="#5884_20210119" author="MohammedELAZZOUZI">
+        <addColumn tableName="billing_invoice">
+            <column name="status_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="xml_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="pdf_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="email_sent_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="payment_status" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="payment_status_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="start_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="end_date" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="raw_amount" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="discount_amount" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="discount_rate" type="numeric(3, 3)">
+            </column>
+        </addColumn>
+
+        <addColumn tableName="billing_invoice">
+            <column name="is_already_applied_minimum" type="${type.boolean}"/>
+        </addColumn>
+        <addColumn tableName="billing_invoice">
+            <column name="is_already_added_discount" type="${type.boolean}"/>
+        </addColumn>
     </changeSet>
-    
+    <changeSet id="#5946_20210110" author="KhalidHORRI">
+        <addColumn tableName="cat_discount_plan">
+            <column name="status" type="varchar(50)"/>
+            <column name="status_date" type="datetime"/>
+            <column name="initial_quantity" type="bigint" defaultValue="0"/>
+            <column name="used_quantity" type="bigint" defaultValue="0"/>
+            <column name="application_limit" type="bigint" defaultValue="0"/>
+            <column name="application_filter_el" type="varchar(2000)"/>
+            <column name="discount_plan_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cat_discount_plan"
+                                 constraintName="fk_discount_plan_id"
+                                 referencedColumnNames="id" referencedTableName="cat_discount_plan"/>
+        <addColumn tableName="cat_discount_plan_item">
+            <column name="allow_to_negate" type="${type.boolean}"/>
+        </addColumn>
+        <addColumn tableName="billing_discount_plan_instance">
+            <column name="status" type="varchar(50)"/>
+            <column name="status_date" type="datetime"/>
+            <column name="application_count" type="bigint"/>
+        </addColumn>
+        <createTable tableName="cat_discount_plan_item_acc_articles">
+            <column name="discount_plan_item_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="accounting_article_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="discount_plan_item_id" baseTableName="cat_discount_plan_item_acc_articles"
+                                 constraintName="fk_discount_plan_item_id"
+                                 referencedColumnNames="id" referencedTableName="cat_discount_plan_item"/>
+        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cat_discount_plan_item_acc_articles"
+                                 constraintName="fk_accounting_article_id"
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_article"/>
+        <sql>UPDATE ${db.schema.adapted}cat_discount_plan set status='DRAFT', status_date= now() WHERE status IS NULL</sql>
+    </changeSet>
+
 </databaseChangeLog>

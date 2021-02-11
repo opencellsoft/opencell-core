@@ -19,6 +19,7 @@
 package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Cacheable;
@@ -28,7 +29,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -47,6 +50,8 @@ import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.crm.custom.CustomFieldValues;
+
+import static javax.persistence.CascadeType.ALL;
 
 /**
  * Discount plan item/details
@@ -147,36 +152,48 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	@Enumerated(EnumType.STRING)
 	@Column(name = "discount_plan_item_type", length = 50)
 	private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
-	
-	 /**
-     * Unique identifier UUID
-     */
-    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
-    @Size(max = 60)
-    @NotNull
-    protected String uuid;
 
-    /**
-     * Custom field values in JSON format
-     */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
-    protected CustomFieldValues cfValues;
+	/**
+	 * Unique identifier UUID
+	 */
+	@Column(name = "uuid", nullable = false, updatable = false, length = 60)
+	@Size(max = 60)
+	@NotNull
+	protected String uuid;
 
-    /**
-     * Accumulated custom field values in JSON format
-     */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values_accum", columnDefinition = "text")
-    protected CustomFieldValues cfAccumulatedValues;
-    
-    @Column(name = "priorty")
-    private Long priority;
-    
-    
+	/**
+	 * Custom field values in JSON format
+	 */
+	@Type(type = "cfjson")
+	@Column(name = "cf_values", columnDefinition = "text")
+	protected CustomFieldValues cfValues;
+
+	/**
+	 * Accumulated custom field values in JSON format
+	 */
+	@Type(type = "cfjson")
+	@Column(name = "cf_values_accum", columnDefinition = "text")
+	protected CustomFieldValues cfAccumulatedValues;
+
+	@Column(name = "priorty")
+	private Long priority;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "accounting_article_id")
-    private AccountingArticle accountingArticle;
+	private AccountingArticle accountingArticle;
+	/**
+	 * A list of reference to articles that will benefit from the discount.
+	 */
+	@JoinTable(name = "cat_discount_plan_item_acc_articles", joinColumns = @JoinColumn(name = "discount_plan_item_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "accounting_article_id", referencedColumnName = "id"))
+	@OneToMany(fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
+	private List<AccountingArticle> articlesToDiscount;
+	/**
+	 * If true, then allows to negate the amount of affected invoice lines.
+	 * If fase, then amount for the discount line produce by the discount plan item cannot exceed the amount of discounted lines.
+	 * Default: false
+	 */
+	@Column(name = "allow_to_negate")
+	private boolean allowToNegate;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -400,4 +417,19 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 		this.accountingArticle = accountingArticle;
 	}
 
+	public List<AccountingArticle> getArticlesToDiscount() {
+		return articlesToDiscount;
+	}
+
+	public void setArticlesToDiscount(List<AccountingArticle> articlesToDiscount) {
+		this.articlesToDiscount = articlesToDiscount;
+	}
+
+	public boolean isAllowToNegate() {
+		return allowToNegate;
+	}
+
+	public void setAllowToNegate(boolean allowToNegate) {
+		this.allowToNegate = allowToNegate;
+	}
 }

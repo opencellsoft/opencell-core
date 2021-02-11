@@ -28,7 +28,6 @@ public enum DiscountPlanTypeEnum {
     /**
      * @param id            the ID
      * @param label         the label
-     * @param isAccumulator true if is it an accumulator counter type
      */
     DiscountPlanTypeEnum(Integer id, String label) {
         this.id = id;

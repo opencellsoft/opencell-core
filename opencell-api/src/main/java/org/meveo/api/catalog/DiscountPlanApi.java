@@ -38,6 +38,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 
@@ -71,14 +72,20 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (postData.isDisabled() != null) {
             discountPlan.setDisabled(postData.isDisabled());
         }
-		discountPlan.setStartDate(postData.getStartDate());
-		discountPlan.setEndDate(postData.getEndDate());
-		discountPlan.setDefaultDuration(postData.getDefaultDuration());
-		if (postData.getDurationUnit() != null) {
-			discountPlan.setDurationUnit(postData.getDurationUnit());
-		}
-		
-		// populate customFields
+        discountPlan.setStartDate(postData.getStartDate());
+        discountPlan.setEndDate(postData.getEndDate());
+        discountPlan.setDefaultDuration(postData.getDefaultDuration());
+        if (postData.getDurationUnit() != null) {
+            discountPlan.setDurationUnit(postData.getDurationUnit());
+        }
+        discountPlan.setStatus(postData.getStatus());
+        discountPlan.setStatusDate(postData.getStatusDate());
+        discountPlan.setInitialQuantity(postData.getInitialQuantity());
+        discountPlan.setUsedQuantity(postData.getUsedQuantity());
+        discountPlan.setApplicationLimit(postData.getApplicationLimit());
+        discountPlan.setApplicationFilterEL(postData.getApplicationFilterEL());
+        discountPlan.setIncompatibleDiscountPlans(getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans()));
+        // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), discountPlan, true);
         } catch (MissingParameterException | InvalidParameterException e) {
@@ -88,9 +95,21 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-		
+
         discountPlanService.create(discountPlan);
         return discountPlan;
+    }
+
+    private List<DiscountPlan> getIncompatibleDiscountPlans(List<DiscountPlanDto> incompatibleDiscountPlansDto) {
+        List<DiscountPlan> incompatibleDiscountPlans = new ArrayList<>();
+        for (DiscountPlanDto discountPlanDto : incompatibleDiscountPlansDto) {
+            DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanDto.getCode());
+            if (discountPlan == null) {
+                throw new BusinessException("The discout plan with code " + discountPlanDto.getCode() + " not found");
+            }
+            incompatibleDiscountPlans.add(discountPlan);
+        }
+        return incompatibleDiscountPlans;
     }
 
     @Override
@@ -100,34 +119,38 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             missingParameters.add("code");
         }
         if (postData.getStartDate() != null && postData.getEndDate() == null && postData.getDefaultDuration() == null) {
-			missingParameters.add("defaultDuration");
-		}
+            missingParameters.add("defaultDuration");
+        }
         handleMissingParametersAndValidate(postData);
 
         DiscountPlan discountPlan = discountPlanService.findByCode(postData.getCode());
         if (discountPlan == null) {
             throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getCode());
         }
-        
+
+        if (discountPlan.getStatus() != DiscountPlanStatusEnum.DRAFT) {
+            throw new BusinessException("only DRAFT discount plans can be updated");
+        }
+
         final String description = postData.getDescription();
         if (description != null) {
-            discountPlan.setDescription(description); 
+            discountPlan.setDescription(description);
         }
-        
+
         discountPlan.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 
-		if (postData.getStartDate() != null) {
-			discountPlan.setStartDate(postData.getStartDate());
-		} 
-		if (postData.getEndDate() != null) {
-			discountPlan.setEndDate(postData.getEndDate());
-		} 
-		if (postData.getDefaultDuration() != null) {
-			discountPlan.setDefaultDuration(postData.getDefaultDuration());
-		} 
-		if (postData.getDurationUnit() != null) {
-		    if (StringUtils.isBlank(postData.getDurationUnit())) {
-		        discountPlan.setDurationUnit(DurationPeriodUnitEnum.DAY);  
+        if (postData.getStartDate() != null) {
+            discountPlan.setStartDate(postData.getStartDate());
+        }
+        if (postData.getEndDate() != null) {
+            discountPlan.setEndDate(postData.getEndDate());
+        }
+        if (postData.getDefaultDuration() != null) {
+            discountPlan.setDefaultDuration(postData.getDefaultDuration());
+        }
+        if (postData.getDurationUnit() != null) {
+            if (StringUtils.isBlank(postData.getDurationUnit())) {
+                discountPlan.setDurationUnit(DurationPeriodUnitEnum.DAY);
             } else {
                 discountPlan.setDurationUnit(postData.getDurationUnit());
             }

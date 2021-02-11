@@ -23,6 +23,8 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -37,6 +39,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.*;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
@@ -104,6 +107,30 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
     @Column(name = "cf_values_accum", columnDefinition = "text")
     protected CustomFieldValues cfAccumulatedValues;
 
+    /**
+     * Status of this specific discount plan instance
+     * APPLIED: the discount plan has be applied to entity but effective start date is not reached yet
+     * ACTIVE: the discount plan is active on the entity (start date has been reached)
+     * IN_USE: the discount plan has already been used once for the entity.
+     * EXPIRED: the discount plan is no longer active
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private DiscountPlanInstanceStatusEnum status;
+
+    /**
+     * Datetime of last status change.
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "status_date")
+    private Date statusDate;
+
+    /**
+     * How many times the discount has been used.
+     */
+    @Column(name = "application_count")
+    private Long applicationCount;
+
     public boolean isValid() {
         return (startDate == null || endDate == null || startDate.before(endDate));
     }
@@ -111,7 +138,7 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
     /**
      * Check if a date is within this Discount's effective date. Exclusive of the endDate. If startDate is null, it returns true. If startDate is not null and endDate is null,
      * endDate is computed from the given duration.
-     * 
+     *
      * @param date the given date
      * @return returns true if this DiscountItem is to be applied
      */
@@ -257,5 +284,29 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
         } else {
             this.setSubscription((Subscription) entity);
         }
+    }
+
+    public DiscountPlanInstanceStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(DiscountPlanInstanceStatusEnum status) {
+        this.status = status;
+    }
+
+    public Date getStatusDate() {
+        return statusDate;
+    }
+
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
+    }
+
+    public Long getApplicationCount() {
+        return applicationCount;
+    }
+
+    public void setApplicationCount(Long applicationCount) {
+        this.applicationCount = applicationCount;
     }
 }
