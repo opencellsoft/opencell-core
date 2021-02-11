@@ -3,13 +3,16 @@ package org.meveo.api.cpq;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.logging.log4j.util.Strings;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
@@ -30,6 +33,7 @@ import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.OrderType;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.order.Order;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -43,6 +47,9 @@ import org.meveo.service.cpq.order.InvoicingPlanService;
 import org.meveo.service.cpq.order.OrderTypeService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderService;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInterface;
 import org.primefaces.model.SortOrder;
 
 
@@ -68,6 +75,7 @@ public class CommercialOrderApi extends BaseApi {
     @Inject private AccessService accessService;
     @Inject private SubscriptionService subscriptionService;
     @Inject private ServiceSingleton serviceSingleton;
+	@Inject private ScriptInstanceService scriptInstanceService;
 	
 	public CommercialOrderDto create(CommercialOrderDto orderDto) {
 		checkParam(orderDto);
@@ -417,7 +425,38 @@ public class CommercialOrderApi extends BaseApi {
 	}
 
 	public CommercialOrderDto validateOrder(Long orderId){
-		CommercialOrder commercialOrder = commercialOrderService.validateOrder(orderId);
+		CommercialOrder order = commercialOrderService.findById(orderId);
+		if(order == null)
+			throw new EntityDoesNotExistsException(CommercialOrder.class, orderId);
+
+		if(order.getInvoicingPlan() != null)
+			throw new BusinessException("Order id: " + order.getId() + ", please go throw the validation plan in order to validate it");
+
+		return validateOrder(order);
+	}
+
+	public CommercialOrderDto validateOrder(CommercialOrder order) {
+		ParamBean paramBean = ParamBean.getInstance();
+		String sellerCode = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller().getCode();
+		String quoteScriptCode = paramBean.getProperty("seller." + sellerCode + ".orderValidationScript", "");
+		if (!StringUtils.isBlank(quoteScriptCode)) {
+			ScriptInstance scriptInstance = scriptInstanceService.findByCode(quoteScriptCode);
+			if (scriptInstance != null) {
+				String orderValidationProcess = scriptInstance.getCode();
+				ScriptInterface script = scriptInstanceService.getScriptInstance(orderValidationProcess);
+				Map<String, Object> methodContext = new HashMap<String, Object>();
+				methodContext.put("commercialOrder", order);
+				methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+				methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+				if (script != null) {
+					script.execute(methodContext);
+					return new CommercialOrderDto((CommercialOrder) methodContext.get(Script.RESULT_VALUE));
+				} else
+					return new CommercialOrderDto(order);
+			} else
+				return new CommercialOrderDto(order);
+		}
+		CommercialOrder commercialOrder = commercialOrderService.validateOrder(order);
 		return new CommercialOrderDto(commercialOrder);
 	}
 }

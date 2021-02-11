@@ -64,8 +64,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     private ServiceInstanceService serviceInstanceService;
     @Inject
 	private SubscriptionService subscriptionService;
-	@Inject
-	private ScriptInstanceService scriptInstanceService;
     
 	public CommercialOrder duplicate(CommercialOrder entity) {
 		final CommercialOrder duplicate = new CommercialOrder(entity);
@@ -108,41 +106,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		}
 		return entity;
 	}
-		
-	public CommercialOrder validateOrder(Long orderId) {
-		CommercialOrder order = findById(orderId);
-		if(order == null)
-			throw new EntityDoesNotExistsException(CommercialOrder.class, orderId);
-
-		if(order.getInvoicingPlan() != null)
-			throw new BusinessException("Order id: " + order.getId() + ", please go throw the validation plan in order to validate it");
-
-
-		return validateOrder(order);
-	}
 
 	public CommercialOrder validateOrder(CommercialOrder order) {
-		ParamBean paramBean = ParamBean.getInstance();
-		String sellerCode = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller().getCode();
-		String quoteScriptCode = paramBean.getProperty("seller." + sellerCode + ".orderValidationScript", "");
-		if (!StringUtils.isBlank(quoteScriptCode)) {
-			ScriptInstance scriptInstance = scriptInstanceService.findByCode(quoteScriptCode);
-			if (scriptInstance != null) {
-				String orderValidationProcess = scriptInstance.getCode();
-				ScriptInterface script = scriptInstanceService.getScriptInstance(orderValidationProcess);
-				Map<String, Object> methodContext = new HashMap<String, Object>();
-				methodContext.put("commercialOrder", order);
-				methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
-				methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
-				if (script != null) {
-					script.execute(methodContext);
-					return (CommercialOrder) methodContext.get(Script.RESULT_VALUE);
-				} else
-					return order;
-			} else
-				return order;
-		}
-
 		if (!CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus())) {
 			return order;
 		}
