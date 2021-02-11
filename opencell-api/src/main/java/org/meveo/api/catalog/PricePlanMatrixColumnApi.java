@@ -66,11 +66,10 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
     @Override
     public PricePlanMatrixColumn update(PricePlanMatrixColumnDto dtoData) throws MeveoApiException, BusinessException {
         checkMissingParameters(dtoData);
-
         PricePlanMatrixColumn pricePlanMatrixColumn = loadEntityByCode(pricePlanMatrixColumnService, dtoData.getCode(), PricePlanMatrixColumn.class);
-
         populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn);
-
+        Attribute attribute = loadEntityByCode(attributeService, dtoData.getAttributeCode(), Attribute.class);
+        pricePlanMatrixColumn.setAttribute(attribute);
         return pricePlanMatrixColumnService.update(pricePlanMatrixColumn);
     }
 
