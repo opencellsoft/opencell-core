@@ -1,26 +1,7 @@
 package org.meveo.service.cpq.order;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
-
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -37,14 +18,23 @@ import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
-import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.script.Script;
-import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInterface;
+
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Tarik FA.
@@ -109,7 +99,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 	public CommercialOrder validateOrder(CommercialOrder order) {
 		if (!CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus())) {
-			return order;
+			throw new BusinessException("Can not validate order with status different then DRAFT, order id: " + order.getId());
 		}
 
 		List<OrderOffer> validOffers = order.getOffers().stream().filter(o -> !o.getProducts().isEmpty()).collect(Collectors.toList());

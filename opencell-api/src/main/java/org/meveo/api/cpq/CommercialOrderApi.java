@@ -438,7 +438,7 @@ public class CommercialOrderApi extends BaseApi {
 	public CommercialOrderDto validateOrder(CommercialOrder order) {
 		ParamBean paramBean = ParamBean.getInstance();
 		String sellerCode = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller().getCode();
-		String quoteScriptCode = paramBean.getProperty("seller." + sellerCode + ".orderValidationScript", "");
+		String quoteScriptCode = paramBean.getProperty("seller." + sellerCode + ".orderValidationScript", "org.meveo.service.script.OrderValidationScript");
 		if (!StringUtils.isBlank(quoteScriptCode)) {
 			ScriptInstance scriptInstance = scriptInstanceService.findByCode(quoteScriptCode);
 			if (scriptInstance != null) {
@@ -452,9 +452,9 @@ public class CommercialOrderApi extends BaseApi {
 					script.execute(methodContext);
 					return new CommercialOrderDto((CommercialOrder) methodContext.get(Script.RESULT_VALUE));
 				} else
-					return new CommercialOrderDto(order);
+					throw new BusinessException("No script interface found with code: " + orderValidationProcess);
 			} else
-				return new CommercialOrderDto(order);
+				throw new EntityDoesNotExistsException(ScriptInstance.class, quoteScriptCode);
 		}
 		CommercialOrder commercialOrder = commercialOrderService.validateOrder(order);
 		return new CommercialOrderDto(commercialOrder);
