@@ -11,11 +11,13 @@ import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.InvoicingPlanItem;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderPrice;
 import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.model.order.OrderStatusEnum;
 import org.meveo.service.billing.impl.InvoiceLinesService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
@@ -94,6 +96,7 @@ public class OrderAdvancementScript extends ModuleScript {
                     generateGlobalInvoice(commercialOrder, orderProgress, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct);
                     commercialOrder.setOrderProgressTmp(orderProgress);
                     commercialOrder.setRateInvoiced(100);
+                    commercialOrder.setStatus(CommercialOrderEnum.COMPLETED.toString());
                 }
                 commercialOrderApi.validateOrder(commercialOrder);
             } else {
