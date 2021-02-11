@@ -22,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -175,7 +176,9 @@ public class Product extends EnableBusinessCFEntity {
 	@OrderBy("id")
 	private List<Media> medias = new ArrayList<>();
 		
-		
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_version_id")
+	private ProductVersion currentVersion;
 
 	/**
 	 * @return the status
@@ -422,6 +425,22 @@ public class Product extends EnableBusinessCFEntity {
 	 */
 	public void setMedias(List<Media> medias) {
 		this.medias = medias;
+	}
+
+
+	/**
+	 * @return the currentVersion
+	 */
+	public ProductVersion getCurrentVersion() {
+		return currentVersion;
+	}
+
+
+	/**
+	 * @param currentVersion the currentVersion to set
+	 */
+	public void setCurrentVersion(ProductVersion currentVersion) {
+		this.currentVersion = currentVersion;
 	}
 	
 	

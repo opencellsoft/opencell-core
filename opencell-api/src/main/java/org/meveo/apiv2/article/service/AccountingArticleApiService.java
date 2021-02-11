@@ -43,7 +43,7 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
 
     @PostConstruct
     public void initService(){
-        fetchFields = Arrays.asList("taxClass", "invoiceSubCategory", "articleFamily", "accountingCode", "articleMappingLine");
+        fetchFields = Arrays.asList("taxClass", "invoiceSubCategory", "articleFamily", "accountingCode");
     }
     
     @Override
