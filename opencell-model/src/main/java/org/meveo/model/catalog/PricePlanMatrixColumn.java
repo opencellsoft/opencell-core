@@ -33,7 +33,8 @@ import java.util.Set;
         @Parameter(name = "sequence_name", value = "cpq_price_plan_matrix_column_sq"), })
 @NamedQueries({
         @NamedQuery(name = "PricePlanMatrixColumn.findByAttributes", query = "select p from PricePlanMatrixColumn p where p.attribute in :attribute"),
-        @NamedQuery(name = "PricePlanMatrixColumn.findByProduct", query = "select p from PricePlanMatrixColumn p where p.product in :product")
+        @NamedQuery(name = "PricePlanMatrixColumn.findByProduct", query = "select p from PricePlanMatrixColumn p where p.product in :product"),
+        @NamedQuery(name = "PricePlanMatrixColumn.findByVersion", query = "select pv from PricePlanMatrixColumn pv LEFT JOIN   pv.pricePlanMatrixVersion pp where pv.code=:code and pp.currentVersion=:pricePlanMatrixVersionId"),
 })
 public class PricePlanMatrixColumn extends BusinessEntity {
 

@@ -3048,6 +3048,10 @@
 								 referencedColumnNames="id" referencedTableName="cpq_product_version" />
     </changeSet>
     
+    <changeSet id="#20210212_540238" author="TarikFA">
+    	<addUniqueConstraint columnNames="code,ppm_version_id" tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
+    </changeSet>
+    
     <changeSet id="#5950_20210210" author="MohammedELAZZOUZI">
         <addColumn tableName="billing_billing_run">
             <column name="minimum_applied" type="${type.boolean}" defaultValueNumeric="0"/>
