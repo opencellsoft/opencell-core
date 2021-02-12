@@ -3048,4 +3048,16 @@
 								 referencedColumnNames="id" referencedTableName="cpq_product_version" />
     </changeSet>
     
+    <changeSet id="#5950_20210210" author="MohammedELAZZOUZI">
+        <addColumn tableName="billing_billing_run">
+            <column name="minimum_applied" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="threshold_checked" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="minimum_applied" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
