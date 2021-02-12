@@ -3833,6 +3833,18 @@ END $$;]]>
                                  constraintName="fk_accounting_article_id"
                                  referencedColumnNames="id" referencedTableName="billing_accounting_article"/>
         <sql>UPDATE ${db.schema.adapted}cat_discount_plan set status='DRAFT', status_date= now() WHERE status IS NULL</sql>
+        <createTable tableName="cat_discount_applicable_entity">
+            <column name="disount_plan_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entity_class" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="disount_plan_id, code, entity_class" constraintName="cat_discount_applicable_entity_pkey" tableName="cat_discount_applicable_entity"/>
     </changeSet>
 
 </databaseChangeLog>

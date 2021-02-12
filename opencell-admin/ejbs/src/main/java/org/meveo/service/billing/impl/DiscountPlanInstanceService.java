@@ -18,7 +18,6 @@
 
 package org.meveo.service.billing.impl;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +32,7 @@ import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -99,6 +99,7 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 	 *            DiscountPlan
 	 */
 	public DiscountPlanInstance update(DiscountPlanInstance entity, DiscountPlan dp) throws BusinessException {
+
 		entity.setEndDate(computeEndDate(entity.getStartDate(), entity.getEndDate(), dp.getDefaultDuration(),
 				dp.getDurationUnit()));
 		return super.update(entity);
@@ -106,6 +107,9 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 
 
 	public IDiscountable instantiateDiscountPlan(IDiscountable entity, DiscountPlan dp, List<DiscountPlanInstance> toAdd) throws BusinessException {
+		if (!dp.getStatus().equals(DiscountPlanStatusEnum.IN_USE) || !dp.getStatus().equals(DiscountPlanStatusEnum.ACTIVE)) {
+			throw new BusinessException("only ACTIVE and IN_USE discount plans can be used instantiated");
+		}
 		if (entity.getAllDiscountPlanInstances() == null || entity.getAllDiscountPlanInstances().isEmpty()) {
 			// add
 			DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();

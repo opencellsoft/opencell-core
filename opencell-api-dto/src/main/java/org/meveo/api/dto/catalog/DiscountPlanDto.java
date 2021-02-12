@@ -18,6 +18,8 @@
 
 package org.meveo.api.dto.catalog;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -28,12 +30,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.ApplicableEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.catalog.ApplicableEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * The Class DiscountPlanDto.
@@ -136,6 +141,12 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	private List<DiscountPlanDto> incompatibleDiscountPlans;
 
 	/**
+	 * A list of entities (CustomerCategory, Offer, Product, Article).
+	 * Only instances (Customer/BillingAccount, Subscription, ProductInstance, InvoiceLine) of these entities can have the discount applied to them.
+	 */
+	private List<ApplicableEntityDto> applicableEntities;
+
+	/**
 	 * Instantiates a new DiscountPlanDto
 	 */
 	public DiscountPlanDto() {
@@ -162,6 +173,19 @@ public class DiscountPlanDto extends EnableBusinessDto {
 		usedQuantity = discountPlan.getUsedQuantity();
 		applicationLimit = discountPlan.getApplicationLimit();
 		applicationFilterEL = discountPlan.getApplicationFilterEL();
+		if (discountPlan.getApplicableEntities() != null && discountPlan.getApplicableEntities().isEmpty()) {
+			for (ApplicableEntity applicableEntity : discountPlan.getApplicableEntities()) {
+				ApplicableEntityDto applicableEntityDto = new ApplicableEntityDto(applicableEntity);
+				applicableEntities.add(applicableEntityDto);
+			}
+		}
+		if (discountPlan.getIncompatibleDiscountPlans() != null && discountPlan.getIncompatibleDiscountPlans().isEmpty()) {
+			List<DiscountPlanDto> discountPlansDto = new ArrayList<>();
+			for (DiscountPlan dp : discountPlan.getIncompatibleDiscountPlans()) {
+				discountPlansDto.add(new DiscountPlanDto(dp, null));
+			}
+			incompatibleDiscountPlans = discountPlansDto;
+		}
 	}
 
     @Override
@@ -289,5 +313,13 @@ public class DiscountPlanDto extends EnableBusinessDto {
 
 	public void setIncompatibleDiscountPlans(List<DiscountPlanDto> incompatibleDiscountPlans) {
 		this.incompatibleDiscountPlans = incompatibleDiscountPlans;
+	}
+
+	public List<ApplicableEntityDto> getApplicableEntities() {
+		return applicableEntities;
+	}
+
+	public void setApplicableEntities(List<ApplicableEntityDto> applicableEntities) {
+		this.applicableEntities = applicableEntities;
 	}
 }

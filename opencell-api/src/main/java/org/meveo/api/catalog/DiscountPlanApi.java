@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+import org.meveo.api.dto.ApplicableEntityDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.catalog.DiscountPlansDto;
@@ -35,11 +36,13 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.ApplicableEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 
 /**
@@ -85,6 +88,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         discountPlan.setApplicationLimit(postData.getApplicationLimit());
         discountPlan.setApplicationFilterEL(postData.getApplicationFilterEL());
         discountPlan.setIncompatibleDiscountPlans(getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans()));
+        discountPlan.setApplicableEntities(getApplicableEntities(postData.getApplicableEntities()));
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), discountPlan, true);
@@ -128,7 +132,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getCode());
         }
 
-        if (discountPlan.getStatus() != DiscountPlanStatusEnum.DRAFT) {
+        if (!discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
             throw new BusinessException("only DRAFT discount plans can be updated");
         }
 
@@ -154,9 +158,29 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             } else {
                 discountPlan.setDurationUnit(postData.getDurationUnit());
             }
-		} 
-		
-		// populate customFields
+        }
+        if (postData.getInitialQuantity() != null) {
+            discountPlan.setInitialQuantity(postData.getInitialQuantity());
+        }
+        if (postData.getUsedQuantity() != null) {
+            discountPlan.setUsedQuantity(postData.getUsedQuantity());
+        }
+        if (postData.getApplicationLimit() != null) {
+            discountPlan.setApplicationLimit(postData.getApplicationLimit());
+        }
+        if (postData.getApplicationFilterEL() != null) {
+            discountPlan.setApplicationFilterEL(postData.getApplicationFilterEL());
+        }
+        List<DiscountPlan> discountPlans = getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans());
+        if (discountPlans != null && !discountPlans.isEmpty()) {
+            discountPlan.setIncompatibleDiscountPlans(getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans()));
+        }
+        List<ApplicableEntity> applicableEntities = getApplicableEntities(postData.getApplicableEntities());
+        if (applicableEntities != null && !applicableEntities.isEmpty()) {
+            discountPlan.setApplicableEntities(applicableEntities);
+        }
+
+        // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), discountPlan, false);
         } catch (MissingParameterException | InvalidParameterException e) {
@@ -169,6 +193,17 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 
         discountPlan = discountPlanService.update(discountPlan);
         return discountPlan;
+    }
+
+    private List<ApplicableEntity> getApplicableEntities(List<ApplicableEntityDto> applicableEntitiesDto) {
+        List<ApplicableEntity> applicableEntities = new ArrayList<>();
+        for (ApplicableEntityDto dto : applicableEntitiesDto) {
+            ApplicableEntity applicableEntity = new ApplicableEntity();
+            applicableEntity.setCode(dto.getCode());
+            applicableEntity.setEntityClass(dto.getEntityClass());
+            applicableEntities.add(applicableEntity);
+        }
+        return applicableEntities;
     }
 
     @Override
@@ -185,16 +220,15 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         }
 
         DiscountPlanDto dpDto = new DiscountPlanDto(discountPlan, entityToDtoConverter.getCustomFieldsDTO(discountPlan, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
-        
-		if (discountPlan.getDiscountPlanItems() != null && !discountPlan.getDiscountPlanItems().isEmpty()) {
-			List<DiscountPlanItemDto> discountPlanItemsDto = new ArrayList<>();
-			for (DiscountPlanItem dpi : discountPlan.getDiscountPlanItems()) {
-				discountPlanItemsDto.add(new DiscountPlanItemDto(dpi,
-						entityToDtoConverter.getCustomFieldsDTO(dpi, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
-			}
-			dpDto.setDiscountPlanItems(discountPlanItemsDto);
-		}
-        
+
+        if (discountPlan.getDiscountPlanItems() != null && !discountPlan.getDiscountPlanItems().isEmpty()) {
+            List<DiscountPlanItemDto> discountPlanItemsDto = new ArrayList<>();
+            for (DiscountPlanItem dpi : discountPlan.getDiscountPlanItems()) {
+                discountPlanItemsDto.add(new DiscountPlanItemDto(dpi, entityToDtoConverter.getCustomFieldsDTO(dpi, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+            dpDto.setDiscountPlanItems(discountPlanItemsDto);
+        }
+
         return dpDto;
     }
 
@@ -213,23 +247,41 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 			discountPlansDto = new DiscountPlansDto();
 			List<DiscountPlanDto> discountPlanDtos = new ArrayList<>();
 			for (DiscountPlan discountPlan : discountPlans) {
-				DiscountPlanDto dpDto = new DiscountPlanDto(discountPlan, entityToDtoConverter
-						.getCustomFieldsDTO(discountPlan, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+                DiscountPlanDto dpDto = new DiscountPlanDto(discountPlan, entityToDtoConverter.getCustomFieldsDTO(discountPlan, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
-				if (discountPlan.getDiscountPlanItems() != null && !discountPlan.getDiscountPlanItems().isEmpty()) {
-					List<DiscountPlanItemDto> discountPlanItemsDto = new ArrayList<>();
-					for (DiscountPlanItem dpi : discountPlan.getDiscountPlanItems()) {
-						discountPlanItemsDto.add(new DiscountPlanItemDto(dpi, entityToDtoConverter.getCustomFieldsDTO(dpi,
-								CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
-					}
-					dpDto.setDiscountPlanItems(discountPlanItemsDto);
-				}
+                if (discountPlan.getDiscountPlanItems() != null && !discountPlan.getDiscountPlanItems().isEmpty()) {
+                    List<DiscountPlanItemDto> discountPlanItemsDto = new ArrayList<>();
+                    for (DiscountPlanItem dpi : discountPlan.getDiscountPlanItems()) {
+                        discountPlanItemsDto.add(new DiscountPlanItemDto(dpi, entityToDtoConverter.getCustomFieldsDTO(dpi, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+                    }
+                    dpDto.setDiscountPlanItems(discountPlanItemsDto);
+                }
 
-				discountPlanDtos.add(dpDto);
-			}
-			discountPlansDto.setDiscountPlan(discountPlanDtos);
-		}
+                discountPlanDtos.add(dpDto);
+            }
+            discountPlansDto.setDiscountPlan(discountPlanDtos);
+        }
 
         return discountPlansDto;
+    }
+
+    public void remove(String code) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+
+        if (org.apache.commons.lang3.StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        DiscountPlan entity = (DiscountPlan) discountPlanService.findByCode(code);
+
+        if (entity == null) {
+            throw new EntityDoesNotExistsException(DiscountPlan.class, code);
+        }
+        if (entity.getStatus().equals(DiscountPlanStatusEnum.DRAFT) || entity.getStatus().equals(DiscountPlanStatusEnum.ACTIVE)) {
+            discountPlanService.remove(entity);
+        } else {
+            new BusinessException("only DRAFT and ACTIVE discount plans can be removed");
+        }
     }
 }

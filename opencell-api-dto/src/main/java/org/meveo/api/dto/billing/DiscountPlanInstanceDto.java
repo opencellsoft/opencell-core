@@ -23,6 +23,7 @@ import java.util.Date;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.DiscountPlanInstanceStatusEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -55,17 +56,34 @@ public class DiscountPlanInstanceDto extends BaseEntityDto {
 	 * Effectivity end date
 	 */
 	private Date endDate;
-	
-	/** The custom fields. */
-    private CustomFieldsDto customFields;
+
+	/**
+	 * The custom fields.
+	 */
+	private CustomFieldsDto customFields;
+
+	/**
+	 * Status of this specific discount plan instance
+	 */
+	private DiscountPlanInstanceStatusEnum status;
+
+	/**
+	 * Datetime of last status change.
+	 */
+	private Date statusDate;
+
+	/**
+	 * How many times the discount has been used.
+	 */
+	private Long applicationCount;
 
 	/**
 	 * Default constructor.
 	 */
 	public DiscountPlanInstanceDto() {
-		
+
 	}
-	
+
 	/**
 	 * Initialized from {@link DiscountPlanInstance} entity.
 	 * @param e the discount plan instance entity
@@ -75,18 +93,24 @@ public class DiscountPlanInstanceDto extends BaseEntityDto {
 		billingAccount = e.getBillingAccount().getCode();
 		startDate = e.getStartDate();
 		endDate = e.getEndDate();
+		this.status = e.getStatus();
+		this.statusDate = e.getStatusDate();
+		this.applicationCount = e.getApplicationCount();
 	}
 
 	public DiscountPlanInstanceDto(DiscountPlanInstance e, CustomFieldsDto customFields) {
 		discountPlan = e.getDiscountPlan().getCode();
-		if(e.getBillingAccount()!=null){
+		if (e.getBillingAccount() != null) {
 			billingAccount = e.getBillingAccount().getCode();
-		}else{
+		} else {
 			subscription = e.getSubscription().getCode();
 		}
 		startDate = e.getStartDate();
 		endDate = e.getEndDate();
 		this.customFields = customFields;
+		this.status = e.getStatus();
+		this.statusDate = e.getStatusDate();
+		this.applicationCount = e.getApplicationCount();
 	}
 
 	/**
@@ -177,4 +201,27 @@ public class DiscountPlanInstanceDto extends BaseEntityDto {
 		this.customFields = customFields;
 	}
 
+	public DiscountPlanInstanceStatusEnum getStatus() {
+		return status;
+	}
+
+	public void setStatus(DiscountPlanInstanceStatusEnum status) {
+		this.status = status;
+	}
+
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
+
+	public Long getApplicationCount() {
+		return applicationCount;
+	}
+
+	public void setApplicationCount(Long applicationCount) {
+		this.applicationCount = applicationCount;
+	}
 }

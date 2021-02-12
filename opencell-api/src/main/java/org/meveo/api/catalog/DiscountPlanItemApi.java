@@ -279,16 +279,19 @@ public class DiscountPlanItemApi extends BaseApi {
         }
 		if (source.getDiscountValue() != null) {
 			discountPlanItem.setDiscountValue(source.getDiscountValue());
-		}
-		if (source.getDiscountValueEL() != null) {
-			discountPlanItem.setDiscountValueEL(source.getDiscountValueEL());
-		}
-		if (source.getDiscountValueElSpark() != null) {
-			discountPlanItem.setDiscountValueElSpark(source.getDiscountValueElSpark());
-		}
-		if (source.getDiscountPlanItemType() != null) {
-			discountPlanItem.setDiscountPlanItemType(source.getDiscountPlanItemType());
-		}
+        }
+        if (source.getDiscountValueEL() != null) {
+            discountPlanItem.setDiscountValueEL(source.getDiscountValueEL());
+        }
+        if (source.getDiscountValueElSpark() != null) {
+            discountPlanItem.setDiscountValueElSpark(source.getDiscountValueElSpark());
+        }
+        if (source.getDiscountPlanItemType() != null) {
+            discountPlanItem.setDiscountPlanItemType(source.getDiscountPlanItemType());
+        }
+        if (source.isAllowToNegate() != null) {
+            discountPlanItem.setAllowToNegate(source.isAllowToNegate());
+        }
 
         return discountPlanItem;
     }

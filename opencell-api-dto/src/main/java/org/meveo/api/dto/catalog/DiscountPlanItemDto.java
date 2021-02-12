@@ -19,6 +19,7 @@
 package org.meveo.api.dto.catalog;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEnableDto;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 
@@ -91,28 +93,39 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
      */
     private Boolean disabled;
-	
-	/** Type of discount, whether absolute or percentage. */
-	private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
-    
-	/**
+
+    /**
+     * Type of discount, whether absolute or percentage.
+     */
+    private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
+
+    /**
      * The absolute or percentage discount amount.
      */
-	private BigDecimal discountValue;
-	
-	/**
+    private BigDecimal discountValue;
+
+    /**
      * The absolute or percentage discount amount EL.
      */
-	private String discountValueEL;
-	
-	/**
+    private String discountValueEL;
+
+    /**
      * Expression to calculate discount percentage - for Spark
      */
-	private String discountValueElSpark;
-	
-	/** The custom fields. */
+    private String discountValueElSpark;
+
+    /**
+     * The custom fields.
+     */
     @XmlElement(required = false)
     private CustomFieldsDto customFields;
+
+    /**
+     * If true, then allows to negate the amount of affected invoice lines.
+     * If fase, then amount for the discount line produce by the discount plan item cannot exceed the amount of discounted lines.
+     * Default: false
+     */
+    private Boolean allowToNegate;
 
     /**
      * Instantiates a new discount plan item dto.
@@ -135,12 +148,12 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.expressionEl = discountPlanItem.getExpressionEl();
         this.expressionElSpark = discountPlanItem.getExpressionElSpark();
         this.disabled = discountPlanItem.isDisabled();
-		this.discountPlanItemType = discountPlanItem.getDiscountPlanItemType();
-		this.discountValue = discountPlanItem.getDiscountValue();
-		this.discountValueEL = discountPlanItem.getDiscountValueEL();
-		this.discountValueElSpark = discountPlanItem.getDiscountValueElSpark();
-		
-		customFields = customFieldInstances;
+        this.discountPlanItemType = discountPlanItem.getDiscountPlanItemType();
+        this.discountValue = discountPlanItem.getDiscountValue();
+        this.discountValueEL = discountPlanItem.getDiscountValueEL();
+        this.discountValueElSpark = discountPlanItem.getDiscountValueElSpark();
+        this.allowToNegate = discountPlanItem.isAllowToNegate();
+        customFields = customFieldInstances;
     }
 
     /**
@@ -315,55 +328,66 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 	 */
 	public String getDiscountValueElSpark() {
 		return discountValueElSpark;
-	}
+    }
 
-	/**
-	 * Sets the discount value el for spark.
-	 * @param discountValueElSpark the discount value
-	 */
-	public void setDiscountValueElSpark(String discountValueElSpark) {
-		this.discountValueElSpark = discountValueElSpark;
-	}
+    /**
+     * Sets the discount value el for spark.
+     *
+     * @param discountValueElSpark the discount value
+     */
+    public void setDiscountValueElSpark(String discountValueElSpark) {
+        this.discountValueElSpark = discountValueElSpark;
+    }
 
-	@Override
-	public String toString() {
-		return "DiscountPlanItemDto [code=" + code + ", discountPlanCode=" + discountPlanCode + ", invoiceCategoryCode="
-				+ invoiceCategoryCode + ", invoiceSubCategoryCode=" + invoiceSubCategoryCode + ", accountingCode="
-				+ accountingCode + ", expressionEl=" + expressionEl + ", expressionElSpark=" + expressionElSpark
-				+ ", disabled=" + disabled + ", discountPlanItemType=" + discountPlanItemType + ", discountValue="
-				+ discountValue + ", discountValueEL=" + discountValueEL + ", discountValueElSpark="
-				+ discountValueElSpark + "]";
-	}
+    @Override
+    public String toString() {
+        return "DiscountPlanItemDto [code=" + code + ", discountPlanCode=" + discountPlanCode + ", invoiceCategoryCode=" + invoiceCategoryCode + ", invoiceSubCategoryCode="
+                + invoiceSubCategoryCode + ", accountingCode=" + accountingCode + ", expressionEl=" + expressionEl + ", expressionElSpark=" + expressionElSpark + ", disabled="
+                + disabled + ", discountPlanItemType=" + discountPlanItemType + ", discountValue=" + discountValue + ", discountValueEL=" + discountValueEL
+                + ", discountValueElSpark=" + discountValueElSpark + "]";
+    }
 
-	/**
-	 * Sets the discount value el.
-	 * @param discountValueEL el expression
-	 */
-	public void setDiscountValueEL(String discountValueEL) {
-		this.discountValueEL = discountValueEL;
-	}
+    /**
+     * Sets the discount value el.
+     *
+     * @param discountValueEL el expression
+     */
+    public void setDiscountValueEL(String discountValueEL) {
+        this.discountValueEL = discountValueEL;
+    }
 
-	/**
-	 * Gets the discount value el.
-	 * @return el expression
-	 */
-	public String getDiscountValueEL() {
-		return discountValueEL;
-	}
+    /**
+     * Gets the discount value el.
+     *
+     * @return el expression
+     */
+    public String getDiscountValueEL() {
+        return discountValueEL;
+    }
 
-	/**
-	 * Gets the custom fields.
-	 * @return custom fields associated with this entity
-	 */
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    /**
+     * Gets the custom fields.
+     *
+     * @return custom fields associated with this entity
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
-	/**
-	 * Sets the custom fields.
-	 * @param customFields custom fields to be associated with this entity
-	 */
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields custom fields to be associated with this entity
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
+    public Boolean isAllowToNegate() {
+        return allowToNegate;
+    }
+
+    public void setAllowToNegate(Boolean allowToNegate) {
+        this.allowToNegate = allowToNegate;
+    }
 }

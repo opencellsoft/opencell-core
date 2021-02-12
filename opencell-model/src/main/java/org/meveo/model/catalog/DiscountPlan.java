@@ -23,9 +23,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -189,10 +193,12 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	 * A list of entities (CustomerCategory, Offer, Product, Article).
 	 * Only instances (Customer/BillingAccount, Subscription, ProductInstance, InvoiceLine) of these entities can have the discount applied to them.
 	 */
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-	@JoinTable(name = "cat_discout_plan_entities", joinColumns = { @JoinColumn(name = "discount_plan_id", referencedColumnName = "id") }, inverseJoinColumns = {
-			@JoinColumn(name = "entity_id", referencedColumnName = "id") })
-	private List<BusinessCFEntity> applicableEntities;
+
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(name = "cat_discount_applicable_entity", joinColumns = { @JoinColumn(name = "disount_plan_id") })
+	@AttributeOverrides(value = { @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
+			@AttributeOverride(name = "entityClass", column = @Column(name = "entity_class", nullable = false, length = 255)) })
+	private List<ApplicableEntity> applicableEntities;
 
 	/**
 	 * A list of discounts plans that cannot be active at the same time on an entity instance.
@@ -383,11 +389,11 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.applicationFilterEL = applicationFilterEL;
 	}
 
-	public List<BusinessCFEntity> getApplicableEntities() {
+	public List<ApplicableEntity> getApplicableEntities() {
 		return applicableEntities;
 	}
 
-	public void setApplicableEntities(List<BusinessCFEntity> applicableEntities) {
+	public void setApplicableEntities(List<ApplicableEntity> applicableEntities) {
 		this.applicableEntities = applicableEntities;
 	}
 

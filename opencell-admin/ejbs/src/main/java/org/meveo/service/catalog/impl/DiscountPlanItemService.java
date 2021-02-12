@@ -23,7 +23,9 @@ import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -47,25 +49,37 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
 	@Override
 	public void create(DiscountPlanItem dpi) throws BusinessException {
-		dpi.setDiscountPlan(discountPlanService.findById(dpi.getDiscountPlan().getId()));
-		super.create(dpi);
-		// Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it
-		// is cached
-		// refresh(dpi.getDiscountPlan());
-	}
+        DiscountPlan discountPlan = discountPlanService.findById(dpi.getDiscountPlan().getId());
+        if (!discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
+            throw new BusinessException("only discount plan items attached to DRAFT discount plans can be created");
+        }
+        dpi.setDiscountPlan(discountPlan);
+        super.create(dpi);
+        // Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it
+        // is cached
+        // refresh(dpi.getDiscountPlan());
+    }
 
 	@Override
 	public DiscountPlanItem update(DiscountPlanItem dpi) throws BusinessException {
-		dpi.setDiscountPlan(discountPlanService.findById(dpi.getDiscountPlan().getId()));
-		dpi = super.update(dpi);
-		// Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it
-		// is cached
-		// refresh(dpi.getDiscountPlan());
-		return dpi;
-	}
+        DiscountPlan discountPlan = discountPlanService.findById(dpi.getDiscountPlan().getId());
+        if (!discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
+            throw new BusinessException("only discount plan items attached to DRAFT discount plans can be updated");
+        }
+        dpi.setDiscountPlan(discountPlan);
+        dpi = super.update(dpi);
+        // Needed to refresh DiscountPlan as DiscountPlan.discountPlanItems field as it
+        // is cached
+        // refresh(dpi.getDiscountPlan());
+        return dpi;
+    }
 
     @Override
     public void remove(DiscountPlanItem dpi) throws BusinessException {
+        DiscountPlan discountPlan = discountPlanService.findById(dpi.getDiscountPlan().getId());
+        if (!discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
+            throw new BusinessException("only discount plan items attached to DRAFT discount plans can be removed");
+        }
         super.remove(dpi);
         // Needed to remove from DiscountPlan.discountPlanItems field as it is cached
         dpi.getDiscountPlan().getDiscountPlanItems().remove(dpi);
