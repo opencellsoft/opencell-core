@@ -76,9 +76,6 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         if (StringUtils.isBlank(isMatrix)) {
             missingParameters.add("isMatrix");
         }
-        if (StringUtils.isBlank(currentVersion)) {
-            missingParameters.add("currentVersion");
-        }
         if (StringUtils.isBlank(pricePlanMatrixCode)) {
             missingParameters.add("pricePlanMatrixCode");
         }
@@ -103,7 +100,8 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         if (pricePlanMatrix == null)
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanMatrixVersionDto.getPricePlanMatrixCode());
         pricePlanMatrixVersion.setPricePlanMatrix(pricePlanMatrix);
-        pricePlanMatrixVersion.setCurrentVersion(pricePlanMatrixVersionDto.getVersion());
+        if(pricePlanMatrixVersion.getId() == null) 
+            pricePlanMatrixVersion.setCurrentVersion(pricePlanMatrixVersionService.getLastVersion(pricePlanMatrixVersionDto.getPricePlanMatrixCode()) + 1);
         pricePlanMatrixVersion.setValidity(pricePlanMatrixVersionDto.getValidity());
         if (status != null)
             pricePlanMatrixVersion.setStatus(status);

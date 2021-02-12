@@ -332,18 +332,21 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * To indicates that invoice minimum job has already been run on the BR.
      */
+    @Type(type = "numeric_boolean")
     @Column(name = "minimum_applied")
     private Boolean minimumApplied;
     
     /**
      * To indicates that invoicing threshold job has already been run on the BR.
      */
+    @Type(type = "numeric_boolean")
     @Column(name = "threshold_checked")
     private Boolean thresholdChecked;
     
     /**
      * To indicates that that invoice discounts job has already been run on the BR.
      */
+    @Type(type = "numeric_boolean")
     @Column(name = "discount_applied")
     private Boolean discountApplied;
 
