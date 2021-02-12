@@ -77,6 +77,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
@@ -992,11 +993,12 @@ public class CpqQuoteApi extends BaseApi {
             ;
             // Add Service charges
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-                for (AttributeInstance attributeInstance : serviceInstance.getAttributeInstances()) {
-                    Attribute attribute = attributeInstance.getAttribute();
-                    Object value = attribute.getAttributeType().getValue(attributeInstance);
+                List<AttributeValue> attributeValues = serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue)ai).collect(Collectors.toList());
+                for (AttributeValue attributeValue : attributeValues) {
+                    Attribute attribute = attributeValue.getAttribute();
+                    Object value = attribute.getAttributeType().getValue(attributeValue, attributeValues);
                     if (value != null) {
-                        attributes.put(attributeInstance.getAttribute().getCode(), value);
+                        attributes.put(attributeValue.getAttribute().getCode(), value);
                     }
                 }
                 Optional<AccountingArticle> accountingArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), attributes);

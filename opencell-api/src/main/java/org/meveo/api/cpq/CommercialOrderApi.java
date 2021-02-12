@@ -432,10 +432,10 @@ public class CommercialOrderApi extends BaseApi {
 		if(order.getInvoicingPlan() != null)
 			throw new BusinessException("Order id: " + order.getId() + ", please go throw the validation plan in order to validate it");
 
-		return validateOrder(order);
+		return validateOrder(order, false);
 	}
 
-	public CommercialOrderDto validateOrder(CommercialOrder order) {
+	public CommercialOrderDto validateOrder(CommercialOrder order, boolean orderCompleted) {
 		ParamBean paramBean = ParamBean.getInstance();
 		String sellerCode = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller().getCode();
 		String quoteScriptCode = paramBean.getProperty("seller." + sellerCode + ".orderValidationScript", "org.meveo.service.script.OrderValidationScript");
@@ -456,7 +456,7 @@ public class CommercialOrderApi extends BaseApi {
 			} else
 				throw new EntityDoesNotExistsException(ScriptInstance.class, quoteScriptCode);
 		}
-		CommercialOrder commercialOrder = commercialOrderService.validateOrder(order);
+		CommercialOrder commercialOrder = commercialOrderService.validateOrder(order, orderCompleted);
 		return new CommercialOrderDto(commercialOrder);
 	}
 }

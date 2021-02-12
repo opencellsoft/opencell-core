@@ -97,7 +97,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		return entity;
 	}
 
-	public CommercialOrder validateOrder(CommercialOrder order) {
+	public CommercialOrder validateOrder(CommercialOrder order, boolean orderCompleted) {
 		if (!CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus())) {
 			throw new BusinessException("Can not validate order with status different then DRAFT, order id: " + order.getId());
 		}
@@ -130,7 +130,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			subscriptionService.activateInstantiatedService(subscription);
 		}
 
-		order.setStatus(CommercialOrderEnum.VALIDATED.toString());
+		order.setStatus(orderCompleted ? CommercialOrderEnum.COMPLETED.toString() : CommercialOrderEnum.VALIDATED.toString());
 		order.setStatusDate(new Date());
 
 		update(order);
