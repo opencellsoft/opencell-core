@@ -46,8 +46,8 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
         checkMissingParameters(dtoData);
 
 
-        if(pricePlanMatrixColumnService.findByCode(dtoData.getCode()) != null) {
-            throw new EntityAlreadyExistsException(PricePlanMatrixColumn.class, dtoData.getCode());
+        if(!pricePlanMatrixColumnService.findLastVersionByCode(dtoData.getCode(), dtoData.getPricePlanMatrixVersion()).isEmpty()) {
+            throw new EntityAlreadyExistsException(PricePlanMatrixColumn.class, "(" + dtoData.getCode() + ", " + dtoData.getPricePlanMatrixVersion() + ")");
         }
 
         PricePlanMatrixColumn pricePlanMatrixColumn = new PricePlanMatrixColumn();
