@@ -34,6 +34,7 @@ import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
@@ -92,6 +93,9 @@ public class ServiceSingleton {
 
     @Inject
     private ProviderService providerService;
+    
+    @Inject
+    private BillingAccountService billingAccountService;
 
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
@@ -377,7 +381,9 @@ public class ServiceSingleton {
         InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
 
         String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
-        Customer cust = invoice.getBillingAccount().getCustomerAccount().getCustomer();
+        BillingAccount billingAccount = invoice.getBillingAccount();
+        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+        Customer cust = billingAccount.getCustomerAccount().getCustomer();
 
         Seller seller = invoice.getSeller();
         if (seller == null && cust.getSeller() != null) {
