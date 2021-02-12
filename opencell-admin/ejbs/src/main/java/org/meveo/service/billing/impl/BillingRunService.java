@@ -1099,7 +1099,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             log.info("apply threshold rules for all invoices generated with {}", billingRun);
             billingRunService.applyThreshold(billingRun);
             rejectBAWithoutBillableTransactions(billingRun, nbRuns, waitingMillis, jobInstanceId, result);
-            BillingRunStatusEnum status = validateBillingRun(billingRun);
+            BillingRunStatusEnum status = validateBillingRun(billingRun, null);
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, status, null);
         }
 		if (isFullAutomaticBR) {
@@ -1119,9 +1119,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
 
-	public BillingRunStatusEnum validateBillingRun(BillingRun billingRun) {
-		if(BillingRunStatusEnum.INVOICES_GENERRATED.equals(billingRun.getStatus()) || BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus())) {
-			BillingRunStatusEnum status = BillingRunStatusEnum.POSTINVOICED;
+	public BillingRunStatusEnum validateBillingRun(BillingRun billingRun, BillingRunStatusEnum validationStatus) {
+		if(validationStatus == BillingRunStatusEnum.INVOICES_GENERRATED || BillingRunStatusEnum.INVOICES_GENERRATED.equals(billingRun.getStatus()) || BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus())) {
+			BillingRunStatusEnum status = validationStatus != null ? validationStatus : BillingRunStatusEnum.POSTINVOICED;
 			if(!isBillingRunValid(billingRun)) {
 				status = BillingRunStatusEnum.REJECTED;
 			}
@@ -1648,7 +1648,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
             asyncReturns.add(invoicingAsync.createAggregatesAndInvoiceAsyncWithIL(subListCreator.getNextWorkSet(),
-                    billingRun, jobInstanceId, null, lastCurrentUser, false));
+                    billingRun, jobInstanceId, null, lastCurrentUser, billingRun.isSkipValidationScript()));
             try {
                 Thread.sleep(waitingMillis);
             } catch (InterruptedException e) {

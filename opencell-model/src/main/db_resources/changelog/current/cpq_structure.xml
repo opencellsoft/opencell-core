@@ -3052,4 +3052,16 @@
     	<addUniqueConstraint columnNames="code,ppm_version_id" tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
     </changeSet>
     
+    <changeSet id="#5950_20210210" author="MohammedELAZZOUZI">
+        <addColumn tableName="billing_billing_run">
+            <column name="minimum_applied" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="threshold_checked" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="discount_applied" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
