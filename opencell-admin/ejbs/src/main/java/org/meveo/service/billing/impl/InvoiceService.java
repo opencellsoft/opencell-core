@@ -289,6 +289,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private UserAccountService userAccountService;
+    
+    @Inject
+    private BillingCycleService billingCycleService;
 
     @Inject
     @PDFGenerated
@@ -1427,6 +1430,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+            customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
             PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
             PaymentMethodEnum paymentMethodEnum = null;
 
@@ -2579,6 +2583,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public String getInvoiceTemplateName(Invoice invoice, BillingCycle billingCycle, InvoiceType invoiceType) {
 
         String billingTemplateName = null;
+        billingCycle = billingCycleService.refreshOrRetrieve(billingCycle);
         if (invoiceType != null && !StringUtils.isBlank(invoiceType.getBillingTemplateNameEL())) {
             billingTemplateName = evaluateBillingTemplateName(invoiceType.getBillingTemplateNameEL(), invoice);
 
