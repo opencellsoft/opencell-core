@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.meveo.model.shared.DateUtils;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tracks job execution status in cache
@@ -274,7 +275,7 @@ public class JobExecutionStatus implements Serializable {
     /**
      * Tracks job execution per node run (JobExecutionResult entity equivalent)
      */
-    private class JobExecutionInfo implements Serializable {
+    public class JobExecutionInfo implements Serializable {
 
         private static final long serialVersionUID = -7414918696509398557L;
 
@@ -311,6 +312,15 @@ public class JobExecutionStatus implements Serializable {
             super();
             this.jobExecutionId = jobExecutionId;
             this.threads = threads;
+        }
+
+        /**
+         * Get a number of threads
+         * 
+         * @return Number of threads
+         */
+        public Integer getNumberOfThreads() {
+            return threads != null ? threads.size() : 0;
         }
 
         @Override

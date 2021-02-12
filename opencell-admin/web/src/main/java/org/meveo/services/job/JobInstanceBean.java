@@ -35,6 +35,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.cache.JobCacheContainerProvider;
+import org.meveo.cache.JobExecutionStatus;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.EnumBuilder;
@@ -54,7 +55,6 @@ import org.meveo.service.job.JobExecutionErrorService;
 import org.meveo.service.job.JobExecutionResultService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
-import org.meveo.service.job.RecurringChargeJobExecutionErrorService;
 import org.meveo.util.view.ServiceBasedLazyDataModel;
 
 /**
@@ -217,13 +217,25 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     }
 
     /**
-     * Check if a job is running and where
+     * Check if a job is running on this node
      * 
      * @param jobInstance JobInstance entity
-     * @return Running status
+     * @return True if job is running on this node
      */
-    public JobRunningStatusEnum isTimerRunning(JobInstance jobInstance) {
-        return jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+    public boolean isJobRunningOnThisNode(JobInstance jobInstance) {
+        JobRunningStatusEnum status = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+        return status == JobRunningStatusEnum.LOCKED_THIS || status == JobRunningStatusEnum.REQUEST_TO_STOP || status == JobRunningStatusEnum.RUNNING_THIS;
+    }
+
+    /**
+     * Check if a job is running on another node
+     * 
+     * @param jobInstance JobInstance entity
+     * @return True if job is running on another node
+     */
+    public boolean isJobRunningOnAnotherNode(JobInstance jobInstance) {
+        JobRunningStatusEnum status = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+        return status == JobRunningStatusEnum.LOCKED_OTHER || status == JobRunningStatusEnum.REQUEST_TO_STOP || status == JobRunningStatusEnum.RUNNING_OTHER;
     }
 
     /**
@@ -240,13 +252,32 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
         JobRunningStatusEnum isRunning = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
         if (isRunning == JobRunningStatusEnum.NOT_RUNNING) {
             return true;
-        } else if (isRunning == JobRunningStatusEnum.RUNNING_THIS) {
+        } else if (isRunning == JobRunningStatusEnum.RUNNING_THIS || isRunning == JobRunningStatusEnum.LOCKED_THIS || isRunning == JobRunningStatusEnum.REQUEST_TO_STOP) {
             return false;
+
         } else {
 
             String nodeToCheck = EjbUtils.getCurrentClusterNode();
             return jobInstance.isRunnableOnNode(nodeToCheck);
         }
+    }
+
+    /**
+     * Return job execution status details from cache
+     * 
+     * @return Job execution status
+     */
+    public JobExecutionStatus getJobExecutionStatusDetails() {
+        return jobCacheContainerProvider.getJobStatus(entity.getId());
+    }
+
+    /**
+     * Return job execution status from cache
+     * 
+     * @return Job execution status
+     */
+    public JobRunningStatusEnum getJobExecutionStatus() {
+        return jobCacheContainerProvider.isJobRunning(entity.getId());
     }
 
     /**

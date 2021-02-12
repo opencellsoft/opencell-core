@@ -147,7 +147,6 @@ public class JobExecutionService extends BaseService {
 
             jobExecutionService.executeJobAsync(jobInstance, params, jobExecutionResult, currentUser.unProxy());
 
-            log.debug("Job execution result ID for job {} of type {} is {}", jobInstance, jobInstance.getJobTemplate(), jobExecutionResult.getId());
             return jobExecutionResult.getId();
 
         } else if (isRunning == JobRunningStatusEnum.REQUEST_TO_STOP) {

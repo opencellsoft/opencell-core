@@ -237,12 +237,7 @@ public class GDPRJobBean extends BaseJobBean {
     private void bulkSubscriptionDelete(List<Subscription> inactiveSubscriptions, JobExecutionResultImpl result) {
         for (Subscription inactiveSubscription : inactiveSubscriptions) {
             try {
-                for(ServiceInstance serviceInstance : inactiveSubscription.getServiceInstances()) {
-                    for(RatedTransaction rt : serviceInstance.getRatedTransactions()) {
-                        rt.setServiceInstance(null);
-                        ratedTransactionService.update(rt);
-                    }
-                }
+                ratedTransactionService.detachRTsFromSubscription(inactiveSubscription);
                 subscriptionService.remove(inactiveSubscription);
                 result.setNbItemsCorrectlyProcessed(result.getNbItemsCorrectlyProcessed() + 1);
             } catch(Exception e) {

@@ -101,6 +101,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
             Integer totalNummberOfRecords = cdrReader.getNumberOfRecords();
             if (totalNummberOfRecords != null) {
                 jobExecutionResult.setNbItemsToProcess(totalNummberOfRecords);
+                jobExecutionResultService.persistResult(jobExecutionResult);
             }
 
             ICdrParser cdrParser = (ICdrParser) EjbUtils.getServiceInterface(parserCode);

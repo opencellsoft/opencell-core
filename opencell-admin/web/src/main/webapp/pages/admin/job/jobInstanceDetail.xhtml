@@ -75,6 +75,29 @@
                             <hftl:formField label="#{messages['jobInstance.invoiceWithZeroAmount']}" field="excludeInvoicesWithoutAmount"
                                 rendered="#{jobInstanceBean.entity != null and (jobInstanceBean.entity.jobTemplate eq 'AccountOperationsGenerationJob')}" />
                         </h:panelGroup>
+
+                        <p:fieldset legend="#{messages['jobExecution.status']}" styleClass="clearLeft">
+                            <hftl:decorateFormField label="#{messages['jobExecution.status']}">
+                                <h:outputText value="#{messages['JobRunningStatusEnum.'.concat(jobInstanceBean.jobExecutionStatus)]}" styleClass="field-value" />
+                            </hftl:decorateFormField>
+                            <hftl:decorateFormField label="#{messages['jobExecution.runningOnNodes']}"
+                                rendered="#{!jobInstanceBean.jobExecutionStatusDetails.nodesAndThreads.isEmpty()}">
+                                <h:dataTable value="#{jobInstanceBean.jobExecutionStatusDetails.nodesAndThreads.entrySet()}" var="nodeInfo">
+                                    <h:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="#{messages['jobExecution.node']}" />
+                                        </f:facet>
+                                        <h:outputText value="#{nodeInfo.getKey()}" styleClass="field-value" />
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="#{messages['jobExecution.nbOfThreads']}" />
+                                        </f:facet>
+                                        <h:outputText value="#{nodeInfo.getValue().getNumberOfThreads()}" styleClass="field-value" />
+                                    </h:column>
+                                </h:dataTable>
+                            </hftl:decorateFormField>
+                        </p:fieldset>
                     </p:tab>
 
                     <hftl:customFields backingBean="#{jobInstanceBean}" messagesId=":formId:messages" />
@@ -82,9 +105,8 @@
                 </p:tabView>
 
                 <hf:formButtons execute="#{jobInstanceBean.isAllowedToExecute(jobInstanceBean.entity) and currentUser.hasRole('useJob')}"
-                    stop="#{jobInstanceBean.isTimerRunning(jobInstanceBean.entity)== JobRunningStatusEnum.RUNNING_THIS}"
-                    stopByForce="#{jobInstanceBean.isTimerRunning(jobInstanceBean.entity)== JobRunningStatusEnum.RUNNING_THIS}" executeLabel="#{messages['job.executeJobNow']}"
-                    stopLabel="#{messages['action.stop']}" stopConfirmationMessage="#{messages['jobInstance.job.stopConfirmation']}"
+                    stop="#{jobInstanceBean.isJobRunningOnThisNode(jobInstanceBean.entity)}" stopByForce="#{jobInstanceBean.isJobRunningOnThisNode(jobInstanceBean.entity)}"
+                    executeLabel="#{messages['job.executeJobNow']}" stopLabel="#{messages['action.stop']}" stopConfirmationMessage="#{messages['jobInstance.job.stopConfirmation']}"
                     stopByForceLabel="#{messages['action.stopNow']}" stopByForceConfirmationMessage="#{messages['jobInstance.job.stopNowConfirmation']}"
                     backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true" submitPartialProcess=":formId:tabView"
                     showEnableDisableButton="#{currentUser.hasRole('useJob')}" showDeleteButton="#{currentUser.hasRole('useJob')}" killConversationOnSave="false"
@@ -136,7 +158,7 @@
                                 <h:outputText value="#{entity.nbItemsProcessedWithError}" />
                             </p:column>
 
-                            <hftl:column label="#{messages['jobExecution.status']}" field="status.label" isMessage="true" width="10%"/>
+                            <hftl:column label="#{messages['jobExecution.status']}" field="status.label" isMessage="true" width="10%" />
                             <hftl:column label="#{messages['jobExecution.report']}" field="report" showTruncated="true" truncateToSize="10000" truncateToInListSize="160" />
 
                         </p:dataTable>

@@ -165,6 +165,7 @@ public class MediationJobBean extends BaseJobBean {
             boolean updateTotalCount = totalNummberOfRecords == null;
             if (totalNummberOfRecords != null) {
                 jobExecutionResult.setNbItemsToProcess(totalNummberOfRecords);
+                jobExecutionResultService.persistResult(jobExecutionResult);
             }
 
             if (MEVEOCdrFlatFileReader.class.isAssignableFrom(cdrReader.getClass())) {
