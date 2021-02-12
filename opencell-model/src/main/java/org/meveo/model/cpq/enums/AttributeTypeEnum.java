@@ -1,7 +1,11 @@
 package org.meveo.model.cpq.enums;
 
 import org.meveo.model.catalog.ColumnTypeEnum;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -41,7 +45,7 @@ public enum AttributeTypeEnum {
 		}
 
 		@Override
-		public Object getValue(AttributeValue attributeValue) {
+		public Object getValue(AttributeValue attributeValue, List<AttributeValue> otherValues) {
 			return attributeValue.getDoubleValue();
 		}
 	},
@@ -70,7 +74,7 @@ public enum AttributeTypeEnum {
 		}
 
 		@Override
-		public Object getValue(AttributeValue attributeValue) {
+		public Object getValue(AttributeValue attributeValue, List<AttributeValue> otherValues) {
 			return attributeValue.getDoubleValue();
 		}
 	},
@@ -91,7 +95,7 @@ public enum AttributeTypeEnum {
 		}
 
 		@Override
-		public Object getValue(AttributeValue attributeValue) {
+		public Object getValue(AttributeValue attributeValue, List<AttributeValue> otherValues) {
 			return attributeValue.getDateValue();
 		}
 	},
@@ -126,6 +130,32 @@ public enum AttributeTypeEnum {
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return isRange ? ColumnTypeEnum.Range_Numeric : ColumnTypeEnum.Double;
 		}
+
+		@Override
+		public Object getValue(AttributeValue attributeValue, List<AttributeValue> otherValues) {
+			return attributeValue.getAttribute()
+					.getAssignedAttributes()
+					.stream()
+					.map(a -> getLinkedAttributeValue(a, otherValues))
+					.reduce(0.0, Double::sum);
+		}
+
+		private Double getLinkedAttributeValue(Attribute attribute, List<AttributeValue> otherValues){
+			return otherValues.stream()
+					.filter(value -> value.getAttribute().equals(attribute))
+					.map(value -> {
+						try {
+							return (Double) value.getAttribute().getAttributeType().getValue(value, removeValueFromList(otherValues, value));
+						}catch (ClassCastException exp){
+							throw new IllegalArgumentException("attribute: " + attribute.getId() + " is LinkedAttribute to an attribute of type TOTAL, it should have a double value");
+						}
+					})
+					.reduce(0.0, Double::sum);
+		}
+
+		private List<AttributeValue> removeValueFromList(List<AttributeValue> values, AttributeValue value) {
+			return values.stream().filter(v -> !v.equals(value)).collect(Collectors.toList());
+		}
 	},
 
     COUNT {
@@ -137,7 +167,7 @@ public enum AttributeTypeEnum {
 
 	public abstract ColumnTypeEnum getColumnType(Boolean isRange);
 
-	public Object getValue(AttributeValue attributeValue) {
+	public Object getValue(AttributeValue attributeValue, List<AttributeValue> otherValues) {
 		return attributeValue.getStringValue();
 	}
 }
