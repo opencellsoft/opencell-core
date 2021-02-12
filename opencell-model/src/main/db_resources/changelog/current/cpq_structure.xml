@@ -3056,7 +3056,7 @@
             <column name="threshold_checked" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
         <addColumn tableName="billing_billing_run">
-            <column name="minimum_applied" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="discount_applied" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
     
