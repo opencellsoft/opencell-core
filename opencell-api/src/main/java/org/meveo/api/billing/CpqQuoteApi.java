@@ -342,8 +342,8 @@ public class CpqQuoteApi extends BaseApi {
 
 
 
-    private void newPopulateQuoteAttribute(List<QuoteAttributeDTO> quoteAttributes, QuoteProduct quoteProduct) {
-        if (quoteAttributes != null) {
+    private void newPopulateQuoteAttribute(List<QuoteAttributeDTO> quoteAttributeDTOS, QuoteProduct quoteProduct) {
+        if (quoteAttributeDTOS != null) {
             List<Attribute> productAttributes = quoteProduct.getProductVersion().getAttributes();
             quoteProduct.getQuoteAttributes().clear();
             quoteAttributeDTOS.stream()
@@ -384,6 +384,7 @@ public class CpqQuoteApi extends BaseApi {
                     .collect(Collectors.toList());
             quoteAttribute.setAssignedAttributeValue(linkedQuoteAttributes);
         }
+        return quoteAttribute;
     }
 
     public GetPdfQuoteResponseDto generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf) {
@@ -1080,7 +1081,7 @@ public class CpqQuoteApi extends BaseApi {
                 List<AttributeValue> attributeValues = serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue)ai).collect(Collectors.toList());
                 for (AttributeValue attributeValue : attributeValues) {
                     Attribute attribute = attributeValue.getAttribute();
-                    Object value = attribute.getAttributeType().getValue(attributeValue, attributeValues);
+                    Object value = attribute.getAttributeType().getValue(attributeValue);
                     if (value != null) {
                         attributes.put(attributeValue.getAttribute().getCode(), value);
                     }
