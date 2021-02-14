@@ -37,7 +37,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.sequence.Sequence;
 
@@ -63,12 +62,6 @@ public class InvoiceSequence extends Sequence {
     @OneToMany(mappedBy = "invoiceSequence", fetch = FetchType.LAZY)
     private List<InvoiceTypeSellerSequence> invoiceTypeSellerSequences;
 
-    @Column(name = "sequence_size")
-    private Integer sequenceSize = 9;
-
-    @Column(name = "current_invoice_nb")
-    private Long currentInvoiceNb = 0L;
-
     /**
      * A previously invoiceNb held by this sequence, usually less by one, unless numbers were reserved by more than one
      */
@@ -79,9 +72,7 @@ public class InvoiceSequence extends Sequence {
     }
 
     public InvoiceSequence(Integer sequenceSize, Long currentInvoiceNb) {
-        super();
-        this.sequenceSize = sequenceSize;
-        this.currentInvoiceNb = currentInvoiceNb;
+        super(sequenceSize, currentInvoiceNb);
     }
 
     public List<InvoiceType> getInvoiceTypes() {
@@ -103,22 +94,6 @@ public class InvoiceSequence extends Sequence {
         this.invoiceTypeSellerSequences = invoiceTypeSellerSequences;
     }
 
-    public Integer getSequenceSize() {
-        return sequenceSize;
-    }
-
-    public void setSequenceSize(Integer sequenceSize) {
-        this.sequenceSize = sequenceSize;
-    }
-
-    public Long getCurrentInvoiceNb() {
-        return currentInvoiceNb;
-    }
-
-    public void setCurrentInvoiceNb(Long currentInvoiceNb) {
-        this.currentInvoiceNb = currentInvoiceNb;
-    }
-
     public Long getPreviousInvoiceNb() {
         return previousInvoiceNb;
     }
@@ -126,5 +101,4 @@ public class InvoiceSequence extends Sequence {
     public void setPreviousInvoiceNb(Long previousInvoiceNb) {
         this.previousInvoiceNb = previousInvoiceNb;
     }
-
 }

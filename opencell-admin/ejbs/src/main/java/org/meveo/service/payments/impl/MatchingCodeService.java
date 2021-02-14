@@ -289,13 +289,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     operation.setMatchingStatus(MatchingStatusEnum.O);
                     if (operation instanceof RecordedInvoice) {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
-                        if(invoice.isAlreadySent()) {
-                            invoice.setStatus(InvoiceStatusEnum.SENT);
-                        } else if(StringUtils.isNotBlank(invoice.getXmlFilename())) {
-                            invoice.setStatus(InvoiceStatusEnum.GENERATED);
-                        } else {
-                            invoice.setStatus(InvoiceStatusEnum.CREATED);
-                        }
+                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
                         entityUpdatedEventProducer.fire(invoice);
                     }
                 } else {

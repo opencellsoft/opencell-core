@@ -424,7 +424,7 @@ public class ServiceSingleton {
             prefix = "";
         }
 
-        long nextInvoiceNb = sequence.getCurrentInvoiceNb();
+        long nextInvoiceNb = sequence.getCurrentNumber();
         String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
         cpqQuote.setQuoteNumber(prefix + invoiceNumber);
     	return cpqQuote;
@@ -471,7 +471,7 @@ public class ServiceSingleton {
             prefix = "";
         }
 
-        long nextInvoiceNb = sequence.getCurrentInvoiceNb();
+        long nextInvoiceNb = sequence.getCurrentNumber();
         String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
         order.setOrderNumber(prefix + invoiceNumber);
     	return order;

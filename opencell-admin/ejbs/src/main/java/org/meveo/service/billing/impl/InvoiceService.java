@@ -3107,7 +3107,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 String contentHtml = ValueExpressionWrapper.evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
                 String from = seller.getContactInformation().getEmail();
                 emailSender.send(from, Arrays.asList(from), to, cc, null, subject, content, contentHtml, files, null, false);
-                invoice.setStatus(InvoiceStatusEnum.SENT);
                 entityUpdatedEventProducer.fire(invoice);
                 invoice.setEmailSentDate(new Date());
                 invoice.setAlreadySent(true);

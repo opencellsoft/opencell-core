@@ -54,14 +54,8 @@ public enum InvoiceStatusEnum {
     /**
      * invoice is validated and cannot be edited anymore (this a final status)
      */
-    VALIDATED(6, "invoiceStatusEnum.validated", new InvoiceStatusEnum[] {null, NEW, DRAFT}),
+    VALIDATED(6, "invoiceStatusEnum.validated", new InvoiceStatusEnum[] {null, NEW, DRAFT});
 
-    SENT(7, "invoiceStatusEnum.sent", new InvoiceStatusEnum[] {null, NEW, VALIDATED}),
-    
-    /**
-     * when when invoice AO is disputed or into dunning active
-     */
-    DISPUTED(9, "invoiceStatusEnum.disputed", new InvoiceStatusEnum[] {null, NEW, DRAFT});
     
     private Integer id;
     private String label;

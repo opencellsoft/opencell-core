@@ -2683,6 +2683,8 @@ END $$;]]>
         <sql>update ${db.schema.adapted}cat_charge_template set tax_class_id = invoice_sub_category </sql>
         <sql>update ${db.schema.adapted}crm_customer_category set tax_category_id = -1 where exonerated_from_taxes=0 </sql> 
 
+        <addNotNullConstraint tableName="cat_charge_template" columnName="tax_class_id" columnDataType="bigint"/>
+
         <dropTable tableName="billing_inv_sub_cat_country"/>
 
     </changeSet>
