@@ -140,22 +140,6 @@ public enum AttributeTypeEnum {
 					.reduce(0.0, Double::sum);
 		}
 
-		private Double getLinkedAttributeValue(Attribute attribute, List<AttributeValue> otherValues){
-			return otherValues.stream()
-					.filter(value -> value.getAttribute().equals(attribute))
-					.map(value -> {
-						try {
-							return (Double) value.getAttribute().getAttributeType().getValue(value, removeValueFromList(otherValues, value));
-						}catch (ClassCastException exp){
-							throw new IllegalArgumentException("attribute: " + attribute.getId() + " is LinkedAttribute to an attribute of type TOTAL, it should have a double value");
-						}
-					})
-					.reduce(0.0, Double::sum);
-		}
-
-		private List<AttributeValue> removeValueFromList(List<AttributeValue> values, AttributeValue value) {
-			return values.stream().filter(v -> !v.equals(value)).collect(Collectors.toList());
-		}
 	},
 
     COUNT {
@@ -163,11 +147,38 @@ public enum AttributeTypeEnum {
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return isRange ? ColumnTypeEnum.Range_Numeric : ColumnTypeEnum.Double;
 		}
+
+		@Override
+		public Object getValue(AttributeValue attributeValue, List<AttributeValue> otherValues) {
+			return attributeValue.getAttribute()
+					.getAssignedAttributes()
+					.stream()
+					.map(attribute -> getLinkedAttributeValue(attribute, otherValues))
+					.collect(Collectors.toSet())
+					.size();
+		}
 	};
 
 	public abstract ColumnTypeEnum getColumnType(Boolean isRange);
 
 	public Object getValue(AttributeValue attributeValue, List<AttributeValue> otherValues) {
 		return attributeValue.getStringValue();
+	}
+
+	protected List<AttributeValue> removeValueFromList(List<AttributeValue> values, AttributeValue value) {
+		return values.stream().filter(v -> !v.equals(value)).collect(Collectors.toList());
+	}
+
+	protected Double getLinkedAttributeValue(Attribute attribute, List<AttributeValue> otherValues){
+		return otherValues.stream()
+				.filter(value -> value.getAttribute().equals(attribute))
+				.map(value -> {
+					try {
+						return (Double) value.getAttribute().getAttributeType().getValue(value, removeValueFromList(otherValues, value));
+					}catch (ClassCastException exp){
+						throw new IllegalArgumentException("attribute: " + attribute.getId() + " is LinkedAttribute to an attribute of type TOTAL, it should have a double value");
+					}
+				})
+				.reduce(0.0, Double::sum);
 	}
 }

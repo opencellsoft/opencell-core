@@ -95,7 +95,6 @@ public class OrderAdvancementScript extends ModuleScript {
                     generateGlobalInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct);
                     commercialOrder.setOrderProgressTmp(orderProgress);
                     commercialOrder.setRateInvoiced(100);
-                    commercialOrder.setStatus(CommercialOrderEnum.COMPLETED.toString());
                 }
                 commercialOrderApi.validateOrder(commercialOrder, true);
             } else {

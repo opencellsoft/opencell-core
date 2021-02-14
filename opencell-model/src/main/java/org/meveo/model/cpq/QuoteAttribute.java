@@ -65,27 +65,6 @@ public class QuoteAttribute extends AttributeValue {
 		this.quoteProduct = quoteProduct;
 	}
 
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(attribute, quoteProduct, stringValue);
-		return result;
-	}
-
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
-		QuoteAttribute other = (QuoteAttribute) obj;
-		return Objects.equals(attribute, other.attribute) && Objects.equals(quoteProduct, other.quoteProduct)
-				&& Objects.equals(stringValue, other.stringValue) && Objects.equals(dateValue, other.dateValue) && Objects.equals(doubleValue, other.doubleValue);
-	}
-
 	public void update(QuoteAttribute other) {
 		this.stringValue = other.stringValue;
 		this.doubleValue = other.doubleValue;
@@ -96,5 +75,19 @@ public class QuoteAttribute extends AttributeValue {
 		this.id = other.id;
 		this.version = other.version;
 		
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+		QuoteAttribute that = (QuoteAttribute) o;
+		return Objects.equals(quoteProduct, that.quoteProduct);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), quoteProduct);
 	}
 }

@@ -1,6 +1,7 @@
 package org.meveo.model.cpq.commercial;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -110,5 +111,21 @@ public class OrderAttribute extends AttributeValue {
 	public void setOrderLot(OrderLot orderLot) {
 		this.orderLot = orderLot;
 	}
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+		OrderAttribute that = (OrderAttribute) o;
+		return Objects.equals(orderCode, that.orderCode) &&
+				Objects.equals(orderLot, that.orderLot) &&
+				Objects.equals(orderProduct, that.orderProduct) &&
+				Objects.equals(accessPoint, that.accessPoint);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), orderCode, orderLot, orderProduct, accessPoint);
+	}
 }

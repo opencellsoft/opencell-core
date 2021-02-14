@@ -311,31 +311,50 @@ public class CpqQuoteApi extends BaseApi {
 		}
 	}
 
-    private void newPopulateQuoteAttribute(List<QuoteAttributeDTO> quoteAttributes, QuoteProduct quoteProduct) {
-        if (quoteAttributes != null) {
+    private void newPopulateQuoteAttribute(List<QuoteAttributeDTO> quoteAttributeDTOS, QuoteProduct quoteProduct) {
+        if (quoteAttributeDTOS != null) {
             List<Attribute> productAttributes = quoteProduct.getProductVersion().getAttributes();
             quoteProduct.getQuoteAttributes().clear();
-            for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributes) {
-                if (Strings.isEmpty(quoteAttributeDTO.getQuoteAttributeCode()))
-                    missingParameters.add("quoteAttributeCode");
-                handleMissingParameters();
-                Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
-                if (attribute == null)
-                    throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
-                if(!productAttributes.contains(attribute)){
-                    throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", quoteProduct.getProductVersion().getProduct().getCode() , quoteProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
-                }
-                QuoteAttribute quoteAttribute = new QuoteAttribute();
-                quoteAttribute.setAttribute(attribute);
-                quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
-                quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
-                quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
-                quoteProduct.getQuoteAttributes().add(quoteAttribute);
-                quoteAttribute.setQuoteProduct(quoteProduct);
-                quoteAttributeService.create(quoteAttribute);
-            }
+            quoteAttributeDTOS.stream()
+                    .map(quoteAttributeDTO -> {
+                        {
+                            return createQuoteAttribute(quoteAttributeDTO, quoteProduct, productAttributes);
+                        }
+                    })
+                    .collect(Collectors.toList())
+                    .forEach(quoteAttribute -> quoteAttributeService.create(quoteAttribute));
+        }
+    }
+
+    private QuoteAttribute createQuoteAttribute(QuoteAttributeDTO quoteAttributeDTO, QuoteProduct quoteProduct, List<Attribute> productAttributes) {
+        if (Strings.isEmpty(quoteAttributeDTO.getQuoteAttributeCode()))
+            missingParameters.add("quoteAttributeCode");
+        handleMissingParameters();
+        Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
+        if (attribute == null)
+            throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
+        if(!productAttributes.contains(attribute)){
+            throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", quoteProduct.getProductVersion().getProduct().getCode() , quoteProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
+        }
+        if(!quoteAttributeDTO.getLinkedQuoteAttribute().isEmpty()){
 
         }
+        List<QuoteAttribute> linkedQuoteAttributes = quoteAttributeDTO.getLinkedQuoteAttribute()
+                .stream()
+                .map(dto -> {
+                    QuoteAttribute quoteAttribute = new QuoteAttribute();
+
+                    return quoteAttribute;
+                }).collect(Collectors.toList());
+
+        QuoteAttribute quoteAttribute = new QuoteAttribute();
+        quoteAttribute.setAttribute(attribute);
+        quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
+        quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+        quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
+        quoteProduct.getQuoteAttributes().add(quoteAttribute);
+        quoteAttribute.setQuoteProduct(quoteProduct);
+        return quoteAttribute;
     }
 
     public GetPdfQuoteResponseDto generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf) {

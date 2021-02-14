@@ -2,6 +2,7 @@ package org.meveo.model.cpq;
 
 import org.meveo.model.AuditableEntity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,7 +11,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @MappedSuperclass
@@ -21,10 +25,17 @@ public class AttributeValue extends AuditableEntity {
 	 */
 	private static final long serialVersionUID = 1L;
 
-
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cpq_attribute_id", nullable = false)
     protected Attribute attribute;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+	protected AttributeValue parentAttributeValue;
+
+    @OneToMany(mappedBy = "parentAttributeValue", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy("id")
+	protected List<AttributeValue> assignedAttributeValue;
 
 
     @Column(name = "string_value")
@@ -68,6 +79,22 @@ public class AttributeValue extends AuditableEntity {
         this.doubleValue = doubleValue;
     }
 
+    public AttributeValue getParentAttributeValue() {
+        return parentAttributeValue;
+    }
+
+    public void setParentAttributeValue(AttributeValue parentAttributeValue) {
+        this.parentAttributeValue = parentAttributeValue;
+    }
+
+    public List<AttributeValue> getAssignedAttributeValue() {
+        return assignedAttributeValue;
+    }
+
+    public void setAssignedAttributeValue(List<AttributeValue> assignedAttributeValue) {
+        this.assignedAttributeValue = assignedAttributeValue;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -75,6 +102,8 @@ public class AttributeValue extends AuditableEntity {
         if (!super.equals(o)) return false;
         AttributeValue that = (AttributeValue) o;
         return Objects.equals(attribute, that.attribute) &&
+                Objects.equals(parentAttributeValue, that.parentAttributeValue) &&
+                Objects.equals(assignedAttributeValue, that.assignedAttributeValue) &&
                 Objects.equals(stringValue, that.stringValue) &&
                 Objects.equals(dateValue, that.dateValue) &&
                 Objects.equals(doubleValue, that.doubleValue);
@@ -82,6 +111,6 @@ public class AttributeValue extends AuditableEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), attribute, stringValue, dateValue, doubleValue);
+        return Objects.hash(super.hashCode(), attribute, parentAttributeValue, assignedAttributeValue, stringValue, dateValue, doubleValue);
     }
 }
