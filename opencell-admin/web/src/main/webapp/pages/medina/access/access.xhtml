@@ -1,67 +1,45 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:hftl="http://hftl.org"
-	xmlns:p="http://primefaces.org/ui"
-	 xmlns:h="http://xmlns.jcp.org/jsf/html"	
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:hftl="http://hftl.org"
+    xmlns:p="http://primefaces.org/ui" xmlns:h="http://xmlns.jcp.org/jsf/html" template="/layout/template.xhtml">
 
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:event type="preRenderView" listener="#{accessListBean.preRenderView}" />
-		</f:metadata>
-	</ui:define>
-    
-	<ui:define name="body">
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
-				<p:menuitem outcome="access" value="#{messages['menu.accessPoints']}" />
-			</p:breadCrumb>
-		</h:form> 	
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{accessListBean.preRenderView}" />
+            <f:viewParam name="parentObjectId" value="#{accessListBean.parentEntityId}" />
+        </f:metadata>
+    </ui:define>
 
-		<hftl:entityPopup id="searchSubscriptionPopup"
-			header="#{messages['access.subscription']}"
-			updateField=":searchForm:subscription"
-			selection="#{accessListBean.filters['subscription']}"
-			backingBean="#{subscriptionBean}"
-			searchField1Label="#{messages['subscription.code']}"
-			searchField1="code" column1Label="#{messages['subscription.code']}"
-			column1="code" column2Label="#{messages['subscription.description']}"
-			column2="description">
-		</hftl:entityPopup>
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+                <p:menuitem outcome="access" value="#{messages['menu.accessPoints']}" />
+            </p:breadCrumb>
+        </h:form>
 
-		<hftl:searchPanel columns="2"
-			label="#{messages['access.search']}" backingBean="#{accessListBean}">
+        <hftl:entityPopup id="searchSubscriptionPopup" header="#{messages['access.subscription']}" updateField=":searchForm:subscription"
+            selection="#{accessListBean.filters['subscription']}" backingBean="#{subscriptionBean}" searchField1Label="#{messages['subscription.code']}" searchField1="code"
+            column1Label="#{messages['subscription.code']}" column1="code" searchField2="description" column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
 
-			<hftl:searchField label="#{messages['access.accessUserId']}"
-				field="accessUserId" />
-			<hftl:searchField label="#{messages['access.startDate']}"
-				field="startDate" />
-			<hftl:searchField label="#{messages['access.endDate']}" field="endDate" />
-			<hftl:searchField id="subscription"
-				label="#{messages['access.subscription']}" field="subscription"
-				valueLabelField="code" popup="true" popupId="searchSubscriptionPopup" />
-		</hftl:searchPanel>
+        <hftl:searchPanel columns="2" label="#{messages['access.search']}" backingBean="#{accessListBean}">
 
-		<hftl:dataList label="#{messages['access.title']}"
-			backingBean="#{accessListBean}" sortBy="accessUserId">
-			<hftl:column label="#{messages['access.accessUserId']}"
-				valueIdField="id" propagateConversation="true" useCustomIdParam="true"
-				field="accessUserId" entityView="accessDetail"/>
-			<hftl:column label="#{messages['access.subscription']}" 
-				field="subscription.code" valueIdField="subscription.id" propagateConversation="false"
-				entityView="subscriptionDetail" objectIdParamName="subscriptionId"/>
-			<hftl:column label="#{messages['access.startDate']}"
-				field="startDate" isDate="true" />
-			<hftl:column label="#{messages['access.endDate']}" field="endDate"
-				isDate="true" />
-			<hftl:column label="#{messages['enableEntity.active']}"
-				field="disabled" isDisabledMessage="true" />
+            <hftl:searchField label="#{messages['access.accessUserId']}" field="accessUserId" />
+            <hftl:searchField label="#{messages['access.startDate']}" field="startDate" />
+            <hftl:searchField label="#{messages['access.endDate']}" field="endDate" />
+            <hftl:searchField id="subscription" label="#{messages['access.subscription']}" field="subscription" valueLabelField="code" popup="true"
+                popupId="searchSubscriptionPopup" />
+        </hftl:searchPanel>
 
-			<hftl:actionsColumn renderEnableLink="true"
-				permission="#{currentUser.hasRole('billingManagement')}" />
-		</hftl:dataList>
-	</ui:define>
+        <hftl:dataList label="#{messages['access.title']}" backingBean="#{accessListBean}" sortBy="accessUserId">
+            <hftl:column label="#{messages['access.accessUserId']}" valueIdField="id" propagateConversation="true" useCustomIdParam="true" field="accessUserId"
+                entityView="accessDetail" />
+            <hftl:column label="#{messages['access.subscription']}" field="subscription.code" valueIdField="subscription.id" propagateConversation="false"
+                entityView="subscriptionDetail" objectIdParamName="subscriptionId" />
+            <hftl:column label="#{messages['access.startDate']}" field="startDate" isDate="true" />
+            <hftl:column label="#{messages['access.endDate']}" field="endDate" isDate="true" />
+            <hftl:column label="#{messages['enableEntity.active']}" field="disabled" isDisabledMessage="true" />
+
+            <hftl:actionsColumn renderEnableLink="true" permission="#{currentUser.hasRole('billingManagement')}" />
+        </hftl:dataList>
+    </ui:define>
 </ui:composition>

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.faces.view.ViewScoped;
@@ -46,6 +47,7 @@ import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.InvoiceCategoryComparatorUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
@@ -58,7 +60,10 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.dunning.DunningDocument;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -136,7 +141,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     private List<InvoiceCategoryDTO> categoryDTOs;
 
-	private Set<Invoice> linkedInvoices;
+    private Set<Invoice> linkedInvoices;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -289,6 +294,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                     headerSubCat.setCode(invoiceSubCategory.getCode());
                     headerSubCat.setAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
                     headerSubCat.setAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
+                    headerSubCat.setAmountsByTax(subCatInvoiceAgregate.getAmountByTaxAsList());
+
                     headerSubCategories.put(invoiceSubCategory.getId().toString(), headerSubCat);
 
                     ServiceBasedLazyDataModel<RatedTransaction> rtDM = new ServiceBasedLazyDataModel<RatedTransaction>() {
@@ -880,9 +887,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     public boolean getShowBtnNewIADetailed() {
         return !entity.isPrepaid();
     }
-    
+
     public Set<Invoice> getLinkedInvoices() {
-		entity = invoiceService.refreshOrRetrieve(entity);
+        entity = invoiceService.refreshOrRetrieve(entity);
         return entity.getLinkedInvoices();
     }
 
@@ -890,18 +897,28 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         entity.setLinkedInvoices(linkedInvoices);
     }
 
+    public LazyDataModel<Invoice> getDueInvoices(DunningDocument dunningDocument){
+        if (!dunningDocument.isTransient()) {
+            filters.put("recordedInvoice.dunningDocument", dunningDocument);
+            return getLazyDataModel();
+        } else {
+            return null;
+        }
+    }
+
+
     public void cancelInvoice(Invoice invoice) throws BusinessException {
         invoiceService.cancelInvoiceWithoutDelete(invoice);
     }
-    
+
     public void validateInvoice(Invoice invoice) throws BusinessException {
         invoiceService.validateInvoice(invoice, true);
     }
-    
+
     public void rebuildInvoice(Invoice invoice) throws BusinessException {
         invoiceService.rebuildInvoice(invoice, true);
     }
-    
+
     public void cancelInvoices() {
         try {
             if (this.getSelectedEntities() != null && this.getSelectedEntities().size() > 0) {
@@ -918,7 +935,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             messages.error(new BundleKey("messages", "error.execution"));
         }
     }
-    
+
     public void validateInvoices() {
         try {
             if (this.getSelectedEntities() != null && this.getSelectedEntities().size() > 0) {
@@ -935,7 +952,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             messages.error(new BundleKey("messages", "error.execution"));
         }
     }
-    
+
     public void moveInvoices(BillingRun billingRun) {
         try {
             if (this.getSelectedEntities() != null && this.getSelectedEntities().size() > 0) {
@@ -949,7 +966,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             messages.error(new BundleKey("messages", "error.execution"));
         }
     }
-	
+
     public boolean canChangeInvoiceStatus(InvoiceStatusEnum newStatus) {
     	return canChangeInvoiceStatus(entity, newStatus);
     }
@@ -964,30 +981,30 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     	}
     	return true;
     }
-    
+
     /**
-	 * 
+	 *
 	 */
 	public boolean canCancelInvoice(Invoice invoice) {
 		return canChangeInvoiceStatus(invoice, InvoiceStatusEnum.CANCELED);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public boolean canValidateInvoice(Invoice invoice) {
 		return canChangeInvoiceStatus(invoice, InvoiceStatusEnum.DRAFT);
 	}
-	
+
     /**
-	 * 
+	 *
 	 */
 	public boolean canCancelInvoices() {
 		return canChangeInvoicesStatus(InvoiceStatusEnum.CANCELED);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public boolean canValidateInvoices() {
 		return canChangeInvoicesStatus(InvoiceStatusEnum.DRAFT);
@@ -1005,4 +1022,8 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 		final InvoiceStatusEnum status = invoice.getStatus();
 		return status!=null && newStatus.getPreviousStats().contains(status);
 	}
+
+    public boolean areSelectedInvoicesInvalidated() {
+        return !CollectionUtils.isEmpty(getSelectedEntities()) && getSelectedEntities().stream().filter(i->(InvoiceStatusEnum.REJECTED.equals(i.getStatus())||InvoiceStatusEnum.SUSPECT.equals(i.getStatus()))).count()==0;
+    }
 }

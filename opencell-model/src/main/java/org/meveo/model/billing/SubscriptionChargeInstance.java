@@ -19,6 +19,7 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -47,8 +48,42 @@ public class SubscriptionChargeInstance extends OneShotChargeInstance {
      * @param serviceInstance Service instance to associate with
      * @param status Status
      */
-    public SubscriptionChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, OneShotChargeTemplate chargeTemplate, ServiceInstance serviceInstance,
-            InstanceStatusEnum status) {
+    public SubscriptionChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, OneShotChargeTemplate chargeTemplate, ServiceInstance serviceInstance, InstanceStatusEnum status) {
         super(amountWithoutTax, amountWithTax, chargeTemplate, serviceInstance, status);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param description Charge description (to override a value from a charge template). Optional
+     * @param chargeDate Charge date
+     * @param amountWithoutTax Amount without tax
+     * @param amountWithTax Amount with tax
+     * @param quantity Quantity
+     * @param orderNumber Order number
+     * @param serviceInstance Service instance
+     * @param chargeTemplate Charge template
+     */
+    public SubscriptionChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumber, ServiceInstance serviceInstance,
+            OneShotChargeTemplate chargeTemplate) {
+        super(description, chargeDate, amountWithoutTax, amountWithTax, quantity, orderNumber, serviceInstance, chargeTemplate);
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param description Charge description (to override a value from a charge template). Optional
+     * @param chargeDate Charge date
+     * @param amountWithoutTax Amount without tax
+     * @param amountWithTax Amount with tax
+     * @param quantity Quantity
+     * @param orderNumber Order number
+     * @param subscription Subscription
+     * @param chargeTemplate Charge template
+     */
+    public SubscriptionChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumber, Subscription subscription,
+            OneShotChargeTemplate chargeTemplate) {
+        super(description,  chargeDate,  amountWithoutTax,  amountWithTax,  quantity,  orderNumber,  subscription,
+             chargeTemplate);
     }
 }

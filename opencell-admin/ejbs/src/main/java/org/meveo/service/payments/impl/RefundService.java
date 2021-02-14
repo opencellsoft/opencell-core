@@ -100,10 +100,12 @@ public class RefundService extends PersistenceService<Refund> {
         String orderNums = "";
         for (Long aoId : aoIdsToPay) {
             AccountOperation ao = accountOperationService.findById(aoId);
-            sumTax = sumTax.add(ao.getTaxAmount());
-            sumWithoutTax = sumWithoutTax.add(ao.getAmountWithoutTax());
-            if (!StringUtils.isBlank(ao.getOrderNumber())) {
-                orderNums = orderNums + ao.getOrderNumber() + "|";
+            if(ao != null) {
+	            sumTax = sumTax.add(ao.getTaxAmount());
+	            sumWithoutTax = sumWithoutTax.add(ao.getAmountWithoutTax());
+	            if (!StringUtils.isBlank(ao.getOrderNumber())) {
+	                orderNums = orderNums + ao.getOrderNumber() + "|";
+	            }
             }
         }
         refund.setTaxAmount(sumTax);

@@ -34,12 +34,12 @@ public enum InvoiceStatusEnum {
     /**
      * invoice has been marked as suspect by automatic controls (this status doesn’t block automatic generation)
      */
-    SUSPECT(2, "invoiceStatusEnum.suspect", new InvoiceStatusEnum[]{NEW}), 
+    SUSPECT(2, "invoiceStatusEnum.suspect", new InvoiceStatusEnum[]{NEW}),
 
     /**
      * invoice has been rejected by automatic controls (this status block automatic generation)
      */
-    REJECTED(3, "invoiceStatusEnum.rejected", new InvoiceStatusEnum[]{NEW, SUSPECT}), 
+    REJECTED(3, "invoiceStatusEnum.rejected", new InvoiceStatusEnum[]{NEW, SUSPECT}),
     
     /**
      * invoice is complete but not validated. It can be edited.
@@ -54,8 +54,14 @@ public enum InvoiceStatusEnum {
     /**
      * invoice is validated and cannot be edited anymore (this a final status)
      */
-    VALIDATED(6, "invoiceStatusEnum.validated", new InvoiceStatusEnum[] {null, NEW, DRAFT});
+    VALIDATED(6, "invoiceStatusEnum.validated", new InvoiceStatusEnum[] {null, NEW, DRAFT}),
 
+    SENT(7, "invoiceStatusEnum.sent", new InvoiceStatusEnum[] {null, NEW, VALIDATED}),
+    
+    /**
+     * when when invoice AO is disputed or into dunning active
+     */
+    DISPUTED(9, "invoiceStatusEnum.disputed", new InvoiceStatusEnum[] {null, NEW, DRAFT});
     
     private Integer id;
     private String label;

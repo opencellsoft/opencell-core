@@ -26,6 +26,7 @@ import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
@@ -116,5 +117,16 @@ public class AccessService extends PersistenceService<Access> {
             log.warn("failed to get list Access by subscription", e);
             return null;
         }
+    }
+
+    /**
+     * Get a count of access points by a parent subscription
+     * 
+     * @param parent Parent subscription
+     * @return A number of child access points
+     */
+    public long getCountByParent(Subscription parent) {
+
+        return getEntityManager().createNamedQuery("Access.getCountByParent", Long.class).setParameter("parent", parent).getSingleResult();
     }
 }

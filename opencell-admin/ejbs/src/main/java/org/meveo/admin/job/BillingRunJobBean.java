@@ -51,6 +51,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 /**
@@ -73,6 +74,9 @@ public class BillingRunJobBean extends BaseJobBean {
 
     @Inject
     protected ResourceBundle resourceMessages;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     @SuppressWarnings("unchecked")
     @JpaAmpNewTx
@@ -106,7 +110,7 @@ public class BillingRunJobBean extends BaseJobBean {
                 boolean alreadyLaunched = billruns != null && billruns.size() > 0;
                 if (alreadyLaunched && !isAllowed) {
                     log.warn("Not allowed to launch many invoicing for the billingCycle = {}", billingCycleCode);
-                    result.registerError(resourceMessages.getString("error.invoicing.alreadyLunched"));
+                    jobExecutionService.registerError(result, resourceMessages.getString("error.invoicing.alreadyLunched"));
                     result.setNbItemsProcessedWithError(++nbItemsProcessedWithError);
                     continue;
                 }
@@ -114,7 +118,7 @@ public class BillingRunJobBean extends BaseJobBean {
                 BillingCycle billingCycle = billingCycleService.findByCode(billingCycleCode);
 
                 if (billingCycle == null) {
-                    result.registerError("Cannot create a biling run with billing cycle '" + billingCycleCode);
+                    jobExecutionService.registerError(result, "Cannot create a biling run with billing cycle '" + billingCycleCode);
                     result.setNbItemsProcessedWithError(++nbItemsProcessedWithError);
                     continue;
                 }
@@ -144,12 +148,12 @@ public class BillingRunJobBean extends BaseJobBean {
                 }
                 billingRunService.create(billingRun);
                 // result.setNbItemsCorrectlyProcessed(++nbItemsToProcess);
-                result.registerSucces();
+                jobExecutionService.registerSucces(result);
 
             }
             result.setNbItemsToProcess(nbItemsToProcess + nbItemsProcessedWithError);
         } catch (Exception e) {
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
             log.error("Failed to run billing ", e);
         }
     }

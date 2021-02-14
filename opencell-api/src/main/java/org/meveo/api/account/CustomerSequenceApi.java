@@ -47,6 +47,7 @@ import org.meveo.service.catalog.impl.CustomerSequenceService;
  * @lastModifiedVersion 5.2
  */
 @Stateless
+@Deprecated
 public class CustomerSequenceApi extends BaseApi {
 
 	@Inject

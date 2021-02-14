@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
@@ -31,10 +32,14 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.Updated;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoicePaymentStatusEnum;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
@@ -65,6 +70,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     @Inject
     private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;
+
+    @Inject
+    @Updated
+    private Event<BaseEntity> entityUpdatedEventProducer;
 
     /**
      * Match account operations.
@@ -143,6 +152,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 } else if(!fullMatch) {
                     invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
                 }
+                entityUpdatedEventProducer.fire(invoice);
             }
             
             accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
@@ -279,7 +289,14 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     operation.setMatchingStatus(MatchingStatusEnum.O);
                     if (operation instanceof RecordedInvoice) {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
-                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
+                        if(invoice.isAlreadySent()) {
+                            invoice.setStatus(InvoiceStatusEnum.SENT);
+                        } else if(StringUtils.isNotBlank(invoice.getXmlFilename())) {
+                            invoice.setStatus(InvoiceStatusEnum.GENERATED);
+                        } else {
+                            invoice.setStatus(InvoiceStatusEnum.CREATED);
+                        }
+                        entityUpdatedEventProducer.fire(invoice);
                     }
                 } else {
                     operation.setMatchingStatus(MatchingStatusEnum.P);

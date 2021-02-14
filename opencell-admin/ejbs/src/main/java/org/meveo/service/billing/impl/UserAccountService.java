@@ -23,6 +23,7 @@ import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.Customer;
 import org.meveo.service.base.AccountService;
 
 import javax.ejb.Stateless;
@@ -112,5 +113,15 @@ public class UserAccountService extends AccountService<UserAccount> {
 	public List<UserAccount> listByBillingAccount(BillingAccount billingAccount) {
 		return billingAccount.getUsersAccounts();
 	}
-	
+
+    /**
+     * Get a count of user accounts by a parent billing account
+     * 
+     * @param parent Parent billing account
+     * @return A number of child user accounts
+     */
+    public long getCountByParent(BillingAccount parent) {
+
+        return getEntityManager().createNamedQuery("UserAccount.getCountByParent", Long.class).setParameter("parent", parent).getSingleResult();
+    }
 }

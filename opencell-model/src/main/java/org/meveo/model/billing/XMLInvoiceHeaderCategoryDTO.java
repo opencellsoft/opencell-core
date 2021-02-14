@@ -29,6 +29,7 @@ public class XMLInvoiceHeaderCategoryDTO {
     private String code;
     private BigDecimal amountWithoutTax = BigDecimal.ZERO;
     private BigDecimal amountWithTax = BigDecimal.ZERO;
+    private BigDecimal amountTax = BigDecimal.ZERO;
     private Integer sortIndex;
 
     private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>();
@@ -75,6 +76,14 @@ public class XMLInvoiceHeaderCategoryDTO {
         this.amountWithTax = amountWithTax;
     }
 
+    public BigDecimal getAmountTax() {
+        return amountTax;
+    }
+
+    public void setAmountTax(BigDecimal amountTax) {
+        this.amountTax = amountTax;
+    }
+
     public void addAmountWithTax(BigDecimal amountToAdd) {
         if (amountToAdd != null) {
             if (amountWithTax == null) {
@@ -89,6 +98,15 @@ public class XMLInvoiceHeaderCategoryDTO {
             amountWithoutTax = new BigDecimal("0");
         }
         amountWithoutTax = amountWithoutTax.add(amountToAdd);
+    }
+
+    public void addAmountTax(BigDecimal amountToAdd) {
+        if (amountToAdd != null) {
+            if (amountTax == null) {
+                amountTax = new BigDecimal("0");
+            }
+            amountTax = amountTax.add(amountToAdd);
+        }
     }
 
     public List<SubCategoryInvoiceAgregate> getSubCategoryInvoiceAgregates() {

@@ -34,6 +34,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.async.InvoicingAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -42,6 +43,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionErrorService;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -58,9 +60,12 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
 
     @Inject
     private JobExecutionErrorService jobExecutionErrorService;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class, JobMultithreadingHistoryInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, String parameter, JobInstance jobInstance) {
 
@@ -70,6 +75,7 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
+        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
@@ -83,7 +89,7 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
                     billingRunId = Long.parseLong(parameter);
                 } catch (Exception e) {
                     log.error("error while getting billing run", e);
-                    result.registerError(e.getMessage());
+                    jobExecutionService.registerError(result, e.getMessage());
                 }
             }
 
@@ -93,6 +99,7 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
             List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
             SubListCreator subListCreator = new SubListCreator(invoiceIds, nbRuns.intValue());
             result.setNbItemsToProcess(subListCreator.getListSize());
+            jobExecutionService.initCounterElementsRemaining(result, invoiceIds.size());
 
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
@@ -116,14 +123,14 @@ public class XMLInvoiceGenerationJobBean extends BaseJobBean {
                     // It was cancelled from outside - no interest
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
+                    jobExecutionService.registerError(result, cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }
 
         } catch (Exception e) {
             log.error("Failed to generate XML invoices", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
             result.addReport(e.getMessage());
         }
     }

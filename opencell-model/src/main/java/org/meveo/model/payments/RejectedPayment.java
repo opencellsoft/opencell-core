@@ -52,9 +52,24 @@ public class RejectedPayment extends AccountOperation {
     @Column(name = "rejected_code", length = 255)
     @Size(max = 255)
     private String rejectedCode;
-    
+
+    /**
+     * Bank LOT number
+     */
+    @Column(name = "bank_lot", columnDefinition = "text")
+    private String bankLot;
+
+    /**
+     * Bank reference
+     */
+    @Column(name = "bank_reference", length = 255)
+    @Size(max = 255)
+    private String bankReference;
+
     @OneToMany(mappedBy = "rejectedPayment")
     List<AccountOperation> listAaccountOperationSupposedPaid = new ArrayList<AccountOperation>();
+
+    private PaymentMethodEnum paymentMethod;
 
     public Date getRejectedDate() {
         return rejectedDate;
@@ -88,6 +103,22 @@ public class RejectedPayment extends AccountOperation {
         this.rejectedType = rejectedType;
     }
 
+    public String getBankLot() {
+        return bankLot;
+    }
+
+    public void setBankLot(String bankLot) {
+        this.bankLot = bankLot;
+    }
+
+    public String getBankReference() {
+        return bankReference;
+    }
+
+    public void setBankReference(String bankReference) {
+        this.bankReference = bankReference;
+    }
+
     /**
      * @return the listAaccountOperationSupposedPaid
      */
@@ -100,6 +131,22 @@ public class RejectedPayment extends AccountOperation {
      */
     public void setListAaccountOperationSupposedPaid(List<AccountOperation> listAaccountOperationSupposedPaid) {
         this.listAaccountOperationSupposedPaid = listAaccountOperationSupposedPaid;
+    }
+
+    /**
+     * get paymentMethod
+     * @return paymentMethod
+     */
+    public PaymentMethodEnum getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    /**
+     * set paymentMethod
+     * @param paymentMethod paymentMethod
+     */
+    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
 }

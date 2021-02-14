@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceItemService;
 import org.slf4j.Logger;
 
@@ -44,7 +45,8 @@ public class UnitPaymentScheduleJobBean {
     @Inject
     private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;
 
-   
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -52,10 +54,10 @@ public class UnitPaymentScheduleJobBean {
         log.debug("Running with paymentScheduleInstanceItem ID={}", paymentScheduleInstanceItem.getId());       
         try {
             paymentScheduleInstanceItemService.processItem(paymentScheduleInstanceItem);
-            result.registerSucces();
+            jobExecutionService.registerSucces(result);
         } catch (Exception e) {
             log.error("Failed to process paymentScheduleInstanceItem id:" + paymentScheduleInstanceItem.getId(), e);
-            result.registerError(paymentScheduleInstanceItem.getId(), e.getMessage());
+            jobExecutionService.registerError(result, paymentScheduleInstanceItem.getId(), e.getMessage());
             result.addReport("paymentScheduleInstanceItem id: " + paymentScheduleInstanceItem.getId() + " RejectReason : " + e.getMessage());
         }
 

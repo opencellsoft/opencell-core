@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -563,6 +564,32 @@ public class WalletOperationServiceTest {
         assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 1, 1, 0, 0, 0));
         assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
         assertThat(wos.get(0).getFullRatingPeriod()).isNull();
+
+        assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(100d);
+        assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(1).getStartDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(1).getEndDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(wos.get(1).getFullRatingPeriod()).isNull();
+    }
+
+    @Test
+    public void test_rerateReccuringCharge_cycleForward_to_terminatedOnPeriod_noProrata_noApplyAgreement_firstChargeWasNotFullPeriod() {
+
+        RecurringChargeInstance chargeInstance = getChargeInstance(DateUtils.newDate(2019, 1, 10, 0, 0, 0), DateUtils.newDate(2018, 5, 1, 0, 0, 0), true, false, false, DateUtils.newDate(2019, 3, 1, 0, 0, 0), null);
+
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.RERATING, false, chargeInstance.getTerminationDate(), null, false);
+
+        assertThat(chargeInstance.getChargeDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(chargeInstance.getChargedToDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+        assertThat(chargeInstance.getNextChargeDate()).isEqualTo(DateUtils.newDate(2019, 3, 1, 0, 0, 0));
+
+        assertThat(wos.size()).isEqualTo(2);
+
+        assertThat(wos.get(0).getQuantity().setScale(2, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(67.86d).setScale(2, RoundingMode.HALF_UP));// 19/28 days
+        assertThat(wos.get(0).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 1, 10, 0, 0, 0));
+        assertThat(wos.get(0).getStartDate()).isEqualTo(DateUtils.newDate(2019, 1, 10, 0, 0, 0));
+        assertThat(wos.get(0).getEndDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));
+        assertThat(wos.get(0).getFullRatingPeriod()).isEqualTo(new DatePeriod(DateUtils.newDate(2019, 1, 1, 0, 0, 0), DateUtils.newDate(2019, 2, 1, 0, 0, 0)));
 
         assertThat(wos.get(1).getQuantity().doubleValue()).isEqualTo(100d);
         assertThat(wos.get(1).getOperationDate()).isEqualTo(DateUtils.newDate(2019, 2, 1, 0, 0, 0));

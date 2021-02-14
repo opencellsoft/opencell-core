@@ -35,6 +35,7 @@ import org.meveo.model.finance.ReportExtractExecutionOrigin;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.finance.ReportExtractService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.finance.ReportExtractScript;
 import org.slf4j.Logger;
 
@@ -56,6 +57,9 @@ public class UnitReportExtractJobBean {
 
     @Inject
     private ReportExtractService reportExtractService;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -74,11 +78,11 @@ public class UnitReportExtractJobBean {
             
             reportExtractService.runReport(entity, null, ReportExtractExecutionOrigin.JOB);
 
-            result.registerSucces();
+            jobExecutionService.registerSucces(result);
 
         } catch (Exception e) {
             log.error("Failed to generate acount operations", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
     }
 

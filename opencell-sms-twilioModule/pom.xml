@@ -12,7 +12,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <opencell.version>9.2.0-SNAPSHOT</opencell.version>
+        <opencell.version>11.0.0-SNAPSHOT</opencell.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>

@@ -138,6 +138,7 @@ public class FlatFileProcessingJob extends Job {
             if (nbRuns == -1) {
                 nbRuns = (long) Runtime.getRuntime().availableProcessors();
             }
+            jobExecutionService.counterRunningThreads(result, nbRuns);
             Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
             Boolean oneFilePerJob = (Boolean) this.getParamOrCFValue(jobInstance, "oneFilePerJob", Boolean.FALSE);
@@ -230,7 +231,7 @@ public class FlatFileProcessingJob extends Job {
 
         } catch (Exception e) {
             log.error("Failed to run flat file processing job", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
     }
 

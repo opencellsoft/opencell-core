@@ -33,6 +33,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.UsersDto;
+import org.meveo.api.dto.response.GetCurrentUserResponse;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -89,6 +90,15 @@ public interface UserRs extends IBaseRs {
     GetUserResponse find(@QueryParam("username") String username);
 
     /**
+     * Get info of currently logged in user
+     * 
+     * @return user
+     */
+    @GET
+    @Path("/current")
+    GetCurrentUserResponse getCurrentUser();
+
+    /**
      * Create or update user based on the username.
      * 
      * @param postData user to be created or updated
@@ -97,9 +107,10 @@ public interface UserRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(UserDto postData);
-    
+
     /**
      * Creates a user in keycloak and core.
+     * 
      * @param postData user to be created externally
      * @return action status
      */
@@ -109,6 +120,7 @@ public interface UserRs extends IBaseRs {
 
     /**
      * Updates a user in keycloak and core given a username.
+     * 
      * @param postData user to be updated
      * @return action status
      */
@@ -118,6 +130,7 @@ public interface UserRs extends IBaseRs {
 
     /**
      * Deletes a user in keycloak and core given a username.
+     * 
      * @param username the username of the user to be deleted.
      * @return action status
      */

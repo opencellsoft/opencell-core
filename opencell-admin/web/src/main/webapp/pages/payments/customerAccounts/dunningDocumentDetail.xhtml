@@ -108,7 +108,7 @@
 						<p:fieldset legend="#{messages['dunning.document.due.invoices']}">
 							<hftl:dataList resultsId="dueinvoices"
 								backingBean="#{recordedInvoiceBean}"
-								dataModel="#{recordedInvoiceBean.getDueInvoices(dunningDocumentBean.entity)}"
+								dataModel="#{invoiceBean.getDueInvoices(dunningDocumentBean.entity)}"
 								label="#{messages['dunning.document.unpaid.invoices.title']}"
 								disabled="true" deleteManyButton="false" exportToXml="false"
 								formId="dueinvoices_form" checkMany="false" exportXlsxButton="false">

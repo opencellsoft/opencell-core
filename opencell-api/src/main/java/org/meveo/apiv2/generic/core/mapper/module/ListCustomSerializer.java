@@ -21,11 +21,13 @@ class ListCustomSerializer extends StdSerializer<Collection> implements GenericS
     private JsonSerializer<Object> serializer;
     private final Set<String> nestedEntities;
     private final Set<IEntity> sharedEntityToSerialize;
+    private final Long nestedDepth;
 
-    ListCustomSerializer(Set<String> nestedEntities, Set<IEntity> sharedEntityToSerialize) {
+    ListCustomSerializer(Set<String> nestedEntities, Set<IEntity> sharedEntityToSerialize, Long nestedDepth) {
         super(Collection.class);
         this.nestedEntities = nestedEntities;
         this.sharedEntityToSerialize = sharedEntityToSerialize;
+        this.nestedDepth = nestedDepth;
     }
 
     @Override
@@ -41,7 +43,17 @@ class ListCustomSerializer extends StdSerializer<Collection> implements GenericS
             Collection<? extends IEntity> collectionIEntity = (Collection<? extends IEntity>) collection;
             boolean nestedEntityCandidate = isNestedEntityCandidate(pathToRoot, currentName);
 
-            if (currentValue instanceof GenericPaginatedResource || nestedEntityCandidate) {
+            boolean isDepthToBig;
+            List<String> referencedNestedEntitiesOnPath = referencedNestedEntitiesOnPath(pathToRoot);
+
+            if(referencedNestedEntitiesOnPath.isEmpty()){
+                isDepthToBig = pathToRoot.split("\\.").length <= nestedDepth + 1;
+            } else {
+                String referencedNestedEntity = referencedNestedEntitiesOnPath.get(0);
+                isDepthToBig = pathToRoot.split("\\.").length - referencedNestedEntity.split("\\.").length <= nestedDepth;
+            }
+
+            if (currentValue instanceof GenericPaginatedResource || nestedEntityCandidate || isDepthToBig) {
                 gen.writeStartArray(collectionIEntity.size());
                 for (IEntity iEntity : collectionIEntity) {
                     sharedEntityToSerialize.add(iEntity);

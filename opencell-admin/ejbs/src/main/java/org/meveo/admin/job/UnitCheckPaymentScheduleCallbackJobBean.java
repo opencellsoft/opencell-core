@@ -27,10 +27,9 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceItemService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.slf4j.Logger;
@@ -50,6 +49,9 @@ public class UnitCheckPaymentScheduleCallbackJobBean {
     @Inject
     private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;
 
+    @Inject
+    protected JobExecutionService jobExecutionService;
+    
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -60,11 +62,11 @@ public class UnitCheckPaymentScheduleCallbackJobBean {
             paymentScheduleInstanceItemService.checkPaymentRecordInvoice(recordedInvoice);
            
 
-            result.registerSucces();
+            jobExecutionService.registerSucces(result);
 
         } catch (Exception e) {
             log.error("Failed to generate acount operations", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
     }
 }

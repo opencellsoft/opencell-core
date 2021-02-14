@@ -40,6 +40,7 @@ import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceItemService;
 import org.slf4j.Logger;
 
@@ -64,6 +65,9 @@ public class PaymentScheduleProcessingJobBean extends BaseJobBean {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -75,6 +79,7 @@ public class PaymentScheduleProcessingJobBean extends BaseJobBean {
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
+        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
@@ -82,6 +87,7 @@ public class PaymentScheduleProcessingJobBean extends BaseJobBean {
         	List<PaymentScheduleInstanceItem> itemsToProcess = paymentScheduleInstanceItemService.getItemsToProcess(new Date());
             log.debug("nb itemsToProcess:" + itemsToProcess.size());
             result.setNbItemsToProcess(itemsToProcess.size());
+            jobExecutionService.initCounterElementsRemaining(result, itemsToProcess.size());
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             SubListCreator subListCreator = new SubListCreator(itemsToProcess, nbRuns.intValue());
@@ -108,14 +114,14 @@ public class PaymentScheduleProcessingJobBean extends BaseJobBean {
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
+                    jobExecutionService.registerError(result, cause.getMessage());
                     result.addReport(cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }
         } catch (Exception e) {
             log.error("Failed to run PaymentScheduleProcessingJobBean", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
             result.addReport(e.getMessage());
         }
     }

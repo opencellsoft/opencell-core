@@ -25,6 +25,7 @@ import org.meveo.model.ISearchable;
  * 
  * @author Andrius Karpavicius
  */
+@Deprecated
 public class ElasticSearchClassInfo {
 
     /**

@@ -109,31 +109,19 @@ public class DDPaymentMethod extends PaymentMethod {
 	public void setMandateDate(Date mandateDate) {
 		this.mandateDate = mandateDate;
 	}
+	
+	public void anonymize(String code) {
+	    super.anonymize(code);
+	    setMandateIdentification(code);
+	    setMandateDate(null);
+	    if(bankCoordinates != null) {
+	        bankCoordinates.anonymize(code);
+	    }
+    }
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		} else if (obj == null) {
-			return false;
-		} else if (!(obj instanceof DDPaymentMethod)) {
-			return false;
-		}
-
-		DDPaymentMethod other = (DDPaymentMethod) obj;
-
-		if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-			return true;
-		}
-
-		if (getMandateIdentification() != null && getMandateIdentification().equals(other.getMandateIdentification())) {
-			return true;
-		}
-
-		if (bankCoordinates != null) {
-			return bankCoordinates.equals(other.getBankCoordinates());
-		}
-		return false;
+		return super.equals(obj);
 	}
 
 	@Override

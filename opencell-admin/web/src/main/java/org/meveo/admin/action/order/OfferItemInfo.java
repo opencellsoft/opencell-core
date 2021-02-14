@@ -31,6 +31,8 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldValues;
 
 public class OfferItemInfo implements Serializable {
 
@@ -46,19 +48,23 @@ public class OfferItemInfo implements Serializable {
 
     private BusinessCFEntity entityForCFValues;
 
+    public OfferItemInfo(BusinessEntity template, Map<OrderProductCharacteristicEnum, Object> characteristics, boolean main, boolean selected, boolean mandatory,
+                         BusinessCFEntity entityForCFValues){
+        this(template, characteristics,  main,  selected,  mandatory, entityForCFValues, null);
+    }
+
     /**
      * Offer ordering item information
-     * 
-     * @param template Offering template (offerTemplate or productTemplate) or its sub components (serviceTemplate or productTemplate)
+     *  @param template Offering template (offerTemplate or productTemplate) or its sub components (serviceTemplate or productTemplate)
      * @param characteristics A map of characteristics to apply to item being ordered
      * @param main Is it a main offering template - in case of OfferTemlate, it has subcomponents: serviceTemplates and productTemplates)
      * @param selected Is item ordered - when creating a new order, all subcomponents of offer are shown, but only those that are desired to be ordered should be shown as selected
      * @param mandatory Is item mandatory for order
      * @param entityForCFValues An entity corresponding to what offering template will translate to. OfferTemplate&gt;Subscription, serviceTemplate&gt;serviceInstance,
-     *        productTemplate&gt;productInstance
+     * @param customFieldValues
      */
     public OfferItemInfo(BusinessEntity template, Map<OrderProductCharacteristicEnum, Object> characteristics, boolean main, boolean selected, boolean mandatory,
-            BusinessCFEntity entityForCFValues) {
+                         BusinessCFEntity entityForCFValues, CustomFieldValues customFieldValues) {
         super();
         this.main = main;
         this.template = template;
@@ -74,17 +80,20 @@ public class OfferItemInfo implements Serializable {
             this.entityForCFValues = new Subscription();
             ((Subscription) this.entityForCFValues).setOffer((OfferTemplate) template);
             ((Subscription) this.entityForCFValues).setCode((String) characteristics.get(OrderProductCharacteristicEnum.SUBSCRIPTION_CODE));
+            ((Subscription) this.entityForCFValues).setCfValues(customFieldValues);
 
         } else if (template instanceof ProductTemplate) {
             this.entityForCFValues = new ProductInstance();
             ((ProductInstance) this.entityForCFValues).setProductTemplate((ProductTemplate) template);
             ((ProductInstance) this.entityForCFValues).setCode((String) characteristics.get(OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE));
+            ((ProductInstance) this.entityForCFValues).setCfValues(customFieldValues);
 
         } else if (template instanceof ServiceTemplate) {
             this.entityForCFValues = new ServiceInstance();
             ((ServiceInstance) this.entityForCFValues).setCode(template.getCode());
             ((ServiceInstance) this.entityForCFValues).setDescription(template.getDescription());
             ((ServiceInstance) this.entityForCFValues).setServiceTemplate((ServiceTemplate) template);
+            ((ServiceInstance) this.entityForCFValues).setCfValues(customFieldValues);
         }
     }
 

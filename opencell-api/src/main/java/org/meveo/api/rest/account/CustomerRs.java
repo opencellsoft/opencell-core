@@ -22,13 +22,14 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
+import org.meveo.api.dto.custom.GenericCodeDto;
+import org.meveo.api.dto.custom.GenericCodeResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
-import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -84,11 +85,13 @@ public interface CustomerRs extends IBaseRs {
      *
      * @param customerCode The customer's code
      * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @param includeCustomerAccounts True to include customer accounts
      * @return The customer's data
      */
     @GET
     @Path("/")
-    GetCustomerResponseDto find(@QueryParam("customerCode") String customerCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+    GetCustomerResponseDto find(@QueryParam("customerCode") String customerCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
+            @QueryParam("includeCustomerAccounts") boolean includeCustomerAccounts);
 
     /**
      * Remove customer with a given code
@@ -114,9 +117,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/list47")
-    public CustomersResponseDto list47(@Deprecated CustomerDto postData, @QueryParam("firstRow") @Deprecated Integer firstRow,
-            @QueryParam("numberOfRows") @Deprecated Integer numberOfRows, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
-            @DefaultValue("c.code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+    public CustomersResponseDto list47(@Deprecated CustomerDto postData, @QueryParam("firstRow") @Deprecated Integer firstRow, @QueryParam("numberOfRows") @Deprecated Integer numberOfRows,
+            @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("c.code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
      * List customers matching a given criteria
@@ -132,8 +134,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    public CustomersResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
-            @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
+    public CustomersResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+            @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
@@ -195,7 +197,7 @@ public interface CustomerRs extends IBaseRs {
     @PUT
     @Path("/updateCategory")
     ActionStatus updateCategory(CustomerCategoryDto postData);
-    
+
     /**
      * Search for a customer category with a given code
      * 
@@ -247,21 +249,21 @@ public interface CustomerRs extends IBaseRs {
     ActionStatus createOrUpdate(CustomerDto postData);
 
     /**
-	 * Exports an account hierarchy given a specific customer selected in the GUI.
-	 * It includes Subscription, AccountOperation and Invoice details. It packaged the json output
-	 * as a zipped file along with the pdf invoices.
-	 * 
-	 * @param customerCode The customer's code
+     * Exports an account hierarchy given a specific customer selected in the GUI. It includes Subscription, AccountOperation and Invoice details. It packaged the json output as a
+     * zipped file along with the pdf invoices.
+     * 
+     * @param customerCode The customer's code
      * @return Request processing status
-	 */
+     */
     @GET
     @Path("/exportCustomerHierarchy")
     ActionStatus exportCustomerHierarchy(@QueryParam("customerCode") String customerCode);
-    
+
     /**
-     * Right to be forgotten. This concerns listing of risky or grey/black listed customers and their data.
-	 * Upon request, they can require their data to be erased.
-	 * In such case, mandatory information (accounting, invoicing, payments) must be preserved but the data tables including the customer's data must be anonymize (firstname/name/emails/phones/addresses/etc) so if this person register back it will be treated as a new customer without history.
+     * Right to be forgotten. This concerns listing of risky or grey/black listed customers and their data. Upon request, they can require their data to be erased. In such case,
+     * mandatory information (accounting, invoicing, payments) must be preserved but the data tables including the customer's data must be anonymize
+     * (firstname/name/emails/phones/addresses/etc) so if this person register back it will be treated as a new customer without history.
+     * 
      * @param customerCode The code of the customer
      * @return Request processing status
      */
@@ -270,62 +272,63 @@ public interface CustomerRs extends IBaseRs {
     ActionStatus anonymizeGdpr(@QueryParam("customerCode") String customerCode);
 
     /**
-	 * Update the Provider's customer number sequence configuration.
-	 * 
-	 * @param postData
-	 *            DTO
-	 * @return status of the operation
-	 */
-	@PUT
-	@Path("/customerNumberSequence")
-	ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData);
-	
+     * Update the Provider's customer number sequence configuration.
+     * 
+     * @param postData DTO
+     * @return status of the operation
+     */
+    @PUT
+    @Path("/customerNumberSequence")
+    ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData);
+
     /**
-	 * Calculates and returns the next value of the mandate number.
-	 * 
-	 * @return next customer no value
-	 */
-	@POST
-	@Path("/customerNumberSequence")
-	GenericSequenceValueResponseDto getNextCustomerNumber();
-	
-	/**
-	 * Creates a new customer sequence.
-	 * @param postData customer sequence data
-	 * @return request status
-	 */
-	@POST
-	@Path("/sequence")
-	ActionStatus createCustomerSequence(CustomerSequenceDto postData);
-	
-	/**
-	 * Updates a new customer sequence with a given code.
-	 * @param postData customer sequence data
-	 * @return request status
-	 */
-	@PUT
-	@Path("/sequence")
-	ActionStatus updateCustomerSequence(CustomerSequenceDto postData);
-	
-	/**
-	 * Generates the next customer sequence number.
-	 * @param code code of the sequence
-	 * @return sequence value dto
-	 */
-	@POST
-	@Path("/sequence/{code}/next")
-	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@PathParam("code") String code);
+     * Calculates and returns the next value of the mandate number.
+     * 
+     * @return next customer no value
+     */
+    @POST
+    @Path("/customerNumberSequence")
+    GenericSequenceValueResponseDto getNextCustomerNumber();
+
+    /**
+     * Creates a new customer sequence.
+     * 
+     * @param postData customer sequence data
+     * @return request status
+     */
+    @POST
+    @Path("/sequence")
+    ActionStatus createCustomerSequence(GenericCodeDto postData);
+
+    /**
+     * Updates a new customer sequence with a given code.
+     * 
+     * @param postData customer sequence data
+     * @return request status
+     */
+    @PUT
+    @Path("/sequence")
+    ActionStatus updateCustomerSequence(GenericCodeDto postData);
+
+    /**
+     * Generates the next customer sequence number.
+     * 
+     * @param code code of the sequence
+     * @return sequence value dto
+     */
+    @POST
+    @Path("/sequence/next")
+    GenericCodeResponseDto getNextCustomerSequenceNumber(GenericCodeDto genericCodeDto);
 
     /**
      * Filter counters by period date.
      *
      * @param customerCode The customer's code
-     * @param date         The date corresponding to the period
+     * @param date The date corresponding to the period
      * @return counter instances.
      */
     @GET
     @Path("/filterCountersByPeriod")
     GetCountersInstancesResponseDto filterCustomerCountersByPeriod(@QueryParam("customerCode") String customerCode, @QueryParam("date") @RestDateParam Date date);
-
 
 }

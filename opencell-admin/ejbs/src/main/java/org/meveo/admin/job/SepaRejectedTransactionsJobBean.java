@@ -37,6 +37,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.DDRequestBuilderInterface;
 import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.slf4j.Logger;
@@ -58,6 +59,9 @@ public class SepaRejectedTransactionsJobBean {
     /** The ddRequestLotService service. */
     @Inject
     private DDRequestLOTService ddRequestLotService;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     /** The file name. */
     String fileName;
@@ -121,13 +125,13 @@ public class SepaRejectedTransactionsJobBean {
 
             FileUtils.moveFile(archiveDir, currentFile, fileName);
             log.info("Processing " + file.getName() + " done");
-            result.registerSucces();
+            jobExecutionService.registerSucces(result);
             result.setNbItemsCorrectlyProcessed(ddRejectFileInfos.getNbItemsOk());
             result.setNbItemsProcessedWithError(ddRejectFileInfos.getNbItemsKo());
             result.addReport(ddRejectFileInfos.formatErrorsReport());
             
         } catch (Exception e) {
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
             log.error("Processing " + file.getName() + " failed", e);
             FileUtils.moveFile(rejectDir, currentFile, fileName);
         } finally {

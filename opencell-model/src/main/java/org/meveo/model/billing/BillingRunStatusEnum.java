@@ -23,7 +23,7 @@ public enum BillingRunStatusEnum {
     PREINVOICED(2, "BillingRunStatusEnum.preinvoiced"), // the preinvoicing report have been generated
     PREVALIDATED(3, "BillingRunStatusEnum.prevalidated"), // the preinvoicing report have been validated
     CANCELED(4, "BillingRunStatusEnum.cancelled"), // the BR is cancelled, end of the process
-    INVOICES_GENERRATED(5, "BillingRunStatusEnum.invoicesGenerated"), // the invoices and postinvoicing report have been generated
+    INVOICES_GENERATED(5, "BillingRunStatusEnum.invoicesGenerated"), // the invoices and postinvoicing report have been generated
     POSTINVOICED(6, "BillingRunStatusEnum.postinvoiced"), // the invoices and postinvoicing report have been generated
     POSTVALIDATED(7, "BillingRunStatusEnum.postvalidated"), // the postinvoicing report have been validated
     VALIDATED(8, "BillingRunStatusEnum.validated"),// the invoices are assigned an invoice number, end of the process

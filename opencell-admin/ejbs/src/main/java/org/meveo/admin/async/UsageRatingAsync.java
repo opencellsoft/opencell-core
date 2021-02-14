@@ -30,8 +30,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -67,6 +69,7 @@ public class UsageRatingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> launchAndForget(List<Long> edrs, JobExecutionResultImpl result, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -78,15 +81,17 @@ public class UsageRatingAsync {
             }
             try {
                 usageRatingService.ratePostpaidUsage(edrId);
-                result.registerSucces();
+                jobExecutionService.registerSucces(result);
 
             } catch (Exception e) {
 
                 String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
 
                 StringBuilder aLine = new StringBuilder("Edr Id : ").append(edrId).append(" RejectReason : ").append(rejectReason);
-                result.registerError(aLine.toString());
+                jobExecutionService.registerError(result, aLine.toString());
             }
+            
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<String>("OK");
     }

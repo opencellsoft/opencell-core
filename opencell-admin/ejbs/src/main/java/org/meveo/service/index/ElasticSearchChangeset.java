@@ -25,6 +25,7 @@ import java.util.Map;
  * 
  * @author Andrius Karpavicius
  */
+@Deprecated
 public class ElasticSearchChangeset {
 
     public enum ElasticSearchAction {

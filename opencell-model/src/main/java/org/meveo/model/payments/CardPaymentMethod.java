@@ -179,25 +179,20 @@ public class CardPaymentMethod extends PaymentMethod {
     public void setHiddenCardNumber(String hiddenCardNumber) {
         this.hiddenCardNumber = hiddenCardNumber;
     }
+    
+    public void anonymize(String code) {
+        super.anonymize(code);
+        setOwner(code);
+        setMonthExpiration(null);
+        setYearExpiration(null);
+        setCardNumber(code);
+        setCardType(null);
+        setIssueNumber(code);
+     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (!(obj instanceof CardPaymentMethod)) {
-            return false;
-        }
-
-        CardPaymentMethod other = (CardPaymentMethod) obj;
-
-        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            return true;
-        }
-
-        return StringUtils.compare(hiddenCardNumber, other.getHiddenCardNumber()) == 0 && monthExpiration.equals(other.getMonthExpiration())
-                && yearExpiration.equals(other.getYearExpiration());
+        return super.equals(obj);
     }
 
     public String getExpirationMonthAndYear() {

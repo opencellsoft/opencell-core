@@ -71,7 +71,7 @@ public interface InvoiceRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    public GetInvoiceResponseDto findInvoiceByIdOrType(@QueryParam("id") Long id, @QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("invoiceType") String invoiceType,
+    GetInvoiceResponseDto findInvoiceByIdOrType(@QueryParam("id") Long id, @QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("invoiceType") String invoiceType,
             @QueryParam("includeTransactions") boolean includeTransactions, @QueryParam("includePdf") Boolean includePdf,  @QueryParam("includeXml") Boolean includeXml);
 
     /**
@@ -82,7 +82,7 @@ public interface InvoiceRs extends IBaseRs {
      */
     @POST
     @Path("/")
-    public CreateInvoiceResponseDto create(InvoiceDto invoiceDto);
+    CreateInvoiceResponseDto create(InvoiceDto invoiceDto);
 
     /**
      * Search for a list of invoices given a customer account code.

@@ -30,8 +30,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.UnitAccountOperationsGenerationJobBean;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -67,6 +69,7 @@ public class AccOpGenerationAsync {
      * @return Future String
      */
     @Asynchronous
+    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, MeveoUser lastCurrentUser, ScriptInterface script) {
 
@@ -79,6 +82,7 @@ public class AccOpGenerationAsync {
                 break;
             }
             unitAccountOperationsGenerationJobBean.execute(result, id, script);
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<String>("OK");
     }

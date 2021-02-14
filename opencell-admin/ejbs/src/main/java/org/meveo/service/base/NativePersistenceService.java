@@ -60,8 +60,11 @@ import java.math.BigInteger;
 import java.sql.*;
 import java.util.Date;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -732,8 +735,16 @@ public class NativePersistenceService extends BaseService {
     @SuppressWarnings({"rawtypes", "unchecked"})
     public QueryBuilder getQuery(String tableName, PaginationConfiguration config) {
         tableName = addCurrentSchema(tableName);
-        String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? config.getFetchFields().stream().map(x -> " a." + x).collect(Collectors.joining(",")) : "*";
-        QueryBuilder queryBuilder = new QueryBuilder("select " + fieldsToRetrieve + " from " + tableName + " a ", "a");
+        Predicate<String> predicate = field -> this.checkAggFunctions(field.toUpperCase().trim());
+        String aggFields = (config != null && config.getFetchFields() != null) ? aggregationFields(config.getFetchFields(), predicate) : "";
+        if(!aggFields.isEmpty()) {
+            config.getFetchFields().remove("id");
+        }
+        String fieldsToRetrieve = (config != null && config.getFetchFields() != null) ? retrieveFields(config.getFetchFields(), predicate.negate()) : "";
+        if(fieldsToRetrieve.isEmpty() && aggFields.isEmpty()) {
+            fieldsToRetrieve = "*";
+        }
+        QueryBuilder queryBuilder = new QueryBuilder("select " + buildFields(fieldsToRetrieve, aggFields) + " from " + tableName + " a ", "a");
         if (config == null) {
             return queryBuilder;
         }
@@ -747,13 +758,51 @@ public class NativePersistenceService extends BaseService {
 
         }
 
-        queryBuilder.addPaginationConfiguration(config, "a");
+        if(aggFields.isEmpty()) {
+            queryBuilder.addPaginationConfiguration(config, "a");
+        }
+        if (!aggFields.isEmpty() && !fieldsToRetrieve.isEmpty()) {
+            queryBuilder.addGroupCriterion(fieldsToRetrieve);
+        }
 
         // log.trace("Filters is {}", filters);
         // log.trace("Query is {}", queryBuilder.getSqlString());
         // log.trace("Query params are {}", queryBuilder.getParams());
         return queryBuilder;
 
+    }
+
+    private String buildFields(String fieldsToRetrieve, String aggFields) {
+        if (!fieldsToRetrieve.isEmpty() && !aggFields.isEmpty()) {
+            return String.join("," , fieldsToRetrieve, aggFields);
+        } else if(!fieldsToRetrieve.isEmpty()) {
+            return fieldsToRetrieve;
+        } else {
+            return aggFields;
+        }
+    }
+
+    private String retrieveFields(List<String> fields, Predicate<String> predicate) {
+        return fields
+                .stream()
+                .filter(predicate)
+                .map(x -> "a." + x)
+                .collect(joining(","));
+    }
+
+    private String aggregationFields(List<String> fields, Predicate<String> predicate) {
+        return fields.stream()
+                    .filter(predicate)
+                    .collect(joining(","));
+    }
+
+    private boolean checkAggFunctions(String field) {
+        if (field.startsWith("SUM(") || field.startsWith("COUNT(") || field.startsWith("AVG(")
+                || field.startsWith("MAX(") || field.startsWith("MIN(")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

@@ -108,6 +108,7 @@ public class ImportMediationEntityJobBean extends BaseJobBean {
                 return;
             }
             result.setNbItemsToProcess(dir.listFiles().length);
+            jobExecutionService.initCounterElementsRemaining(result, dir.listFiles().length);
 
             for (File file : dir.listFiles()) {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
@@ -121,13 +122,14 @@ public class ImportMediationEntityJobBean extends BaseJobBean {
                 log.info("InputFiles job " + file.getName() + " done");
 
                 nbItems++;
+                jobExecutionService.decCounterElementsRemaining(result);
             }
 
             result.setNbItemsCorrectlyProcessed(nbItems);
         } catch (Exception e) {
             nbItemsError++;
             log.error("Failed to run import EDR/WO/RT job", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
             result.addReport(e.getMessage());
             FileUtils.moveFile(dirKO, currentFile, fileName);
         } finally {
