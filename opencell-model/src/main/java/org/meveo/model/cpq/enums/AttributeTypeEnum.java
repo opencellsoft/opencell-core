@@ -1,7 +1,13 @@
 package org.meveo.model.cpq.enums;
 
+import org.apache.commons.lang3.math.Fraction;
 import org.meveo.model.catalog.ColumnTypeEnum;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -126,6 +132,16 @@ public enum AttributeTypeEnum {
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return isRange ? ColumnTypeEnum.Range_Numeric : ColumnTypeEnum.Double;
 		}
+
+		@Override
+		public Object getValue(AttributeValue attributeValue) {
+			List<Double> values = (List<Double>) attributeValue.getAssignedAttributeValue()
+					.stream()
+					.map(att -> ((AttributeValue) att).getAttribute().getAttributeType().getValue((AttributeValue) att))
+					.collect(Collectors.toList());
+			return values.stream().reduce(0.0, Double::sum);
+		}
+
 	},
 
     COUNT {
@@ -133,11 +149,20 @@ public enum AttributeTypeEnum {
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return isRange ? ColumnTypeEnum.Range_Numeric : ColumnTypeEnum.Double;
 		}
+
+		@Override
+		public Object getValue(AttributeValue attributeValue) {
+			Set<Double> values = (Set<Double>) attributeValue.getAssignedAttributeValue()
+					.stream()
+					.map(att -> ((AttributeValue) att).getAttribute().getAttributeType().getValue((AttributeValue) att))
+					.collect(Collectors.toSet());
+			return values.size();
+		}
 	};
 
 	public abstract ColumnTypeEnum getColumnType(Boolean isRange);
 
-	public Object getValue(AttributeValue attributeValue) {
+	public Object  getValue(AttributeValue attributeValue) {
 		return attributeValue.getStringValue();
 	}
 }
