@@ -18,6 +18,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.enums.MediaTypeEnum;
@@ -30,6 +31,7 @@ import org.meveo.model.cpq.enums.MediaTypeEnum;
  *
  */
 @Entity
+@CustomFieldEntity(cftCodePrefix = "Media")
 @Table(name = "cpq_media")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_media_seq")})

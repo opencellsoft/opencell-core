@@ -21,6 +21,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.meveo.model.AuditableCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
@@ -30,6 +31,7 @@ import org.meveo.model.quote.QuoteVersion;
 
 
 @Entity
+@CustomFieldEntity(cftCodePrefix = "QuoteOffer")
 @Table(name="quote_offer")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "quote_offer_seq"), })

@@ -19,9 +19,11 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 
 @SuppressWarnings("serial")
 @Entity
+@CustomFieldEntity(cftCodePrefix = "QuoteLot")
 @Table(name = "cpq_quote_lot", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "cpq_quote_version_id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_lot_seq")})
