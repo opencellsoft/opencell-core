@@ -337,8 +337,10 @@ public class CpqQuoteApi extends BaseApi {
         quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
         quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
         quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
-        quoteProduct.getQuoteAttributes().add(quoteAttribute);
-        quoteAttribute.setQuoteProduct(quoteProduct);
+        if(productAttributes != null) {
+            quoteProduct.getQuoteAttributes().add(quoteAttribute);
+            quoteAttribute.setQuoteProduct(quoteProduct);
+        }
         quoteAttribute.updateAudit(currentUser);
         if(!quoteAttributeDTO.getLinkedQuoteAttribute().isEmpty()){
             List<QuoteAttribute> linkedQuoteAttributes = quoteAttributeDTO.getLinkedQuoteAttribute()
