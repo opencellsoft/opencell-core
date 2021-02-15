@@ -13,6 +13,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 
 /** 
  * @author Tarik F.
@@ -20,6 +21,7 @@ import org.meveo.model.BusinessCFEntity;
  */
 @Entity
 @Table(name = "cpq_order_lot", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "order_id" }))
+@CustomFieldEntity(cftCodePrefix = "OrderLot")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_lot_seq")})
 public class OrderLot extends BusinessCFEntity{

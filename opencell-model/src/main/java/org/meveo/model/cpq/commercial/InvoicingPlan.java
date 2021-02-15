@@ -11,6 +11,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 
 
@@ -20,6 +21,7 @@ import org.meveo.model.EnableBusinessCFEntity;
  *
  */
 @Entity
+@CustomFieldEntity(cftCodePrefix = "InvoicingPlan")
 @Table(name = "cpq_invoicing_plan", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_invoicing_plan_seq")})
