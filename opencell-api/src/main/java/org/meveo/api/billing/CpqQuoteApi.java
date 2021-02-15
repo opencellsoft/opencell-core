@@ -77,6 +77,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
@@ -310,31 +311,49 @@ public class CpqQuoteApi extends BaseApi {
 		}
 	}
 
-    private void newPopulateQuoteAttribute(List<QuoteAttributeDTO> quoteAttributes, QuoteProduct quoteProduct) {
-        if (quoteAttributes != null) {
+    private void newPopulateQuoteAttribute(List<QuoteAttributeDTO> quoteAttributeDTOS, QuoteProduct quoteProduct) {
+        if (quoteAttributeDTOS != null) {
             List<Attribute> productAttributes = quoteProduct.getProductVersion().getAttributes();
             quoteProduct.getQuoteAttributes().clear();
-            for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributes) {
-                if (Strings.isEmpty(quoteAttributeDTO.getQuoteAttributeCode()))
-                    missingParameters.add("quoteAttributeCode");
-                handleMissingParameters();
-                Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
-                if (attribute == null)
-                    throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
-                if(!productAttributes.contains(attribute)){
-                    throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", quoteProduct.getProductVersion().getProduct().getCode() , quoteProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
-                }
-                QuoteAttribute quoteAttribute = new QuoteAttribute();
-                quoteAttribute.setAttribute(attribute);
-                quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
-                quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
-                quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
-                quoteProduct.getQuoteAttributes().add(quoteAttribute);
-                quoteAttribute.setQuoteProduct(quoteProduct);
-                quoteAttributeService.create(quoteAttribute);
-            }
-
+            quoteAttributeDTOS.stream()
+                    .map(quoteAttributeDTO -> createQuoteAttribute(quoteAttributeDTO, quoteProduct, productAttributes))
+                    .collect(Collectors.toList())
+                    .forEach(quoteAttribute -> quoteAttributeService.create(quoteAttribute));
         }
+    }
+
+    private QuoteAttribute createQuoteAttribute(QuoteAttributeDTO quoteAttributeDTO, QuoteProduct quoteProduct, List<Attribute> productAttributes) {
+        if (Strings.isEmpty(quoteAttributeDTO.getQuoteAttributeCode()))
+            missingParameters.add("quoteAttributeCode");
+        handleMissingParameters();
+        Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
+        if (attribute == null)
+            throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
+        if(productAttributes != null && !productAttributes.contains(attribute)){
+            throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", quoteProduct.getProductVersion().getProduct().getCode() , quoteProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
+        }
+        QuoteAttribute quoteAttribute = new QuoteAttribute();
+        quoteAttribute.setAttribute(attribute);
+        quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
+        quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+        quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
+        if(productAttributes != null) {
+            quoteProduct.getQuoteAttributes().add(quoteAttribute);
+            quoteAttribute.setQuoteProduct(quoteProduct);
+        }
+        quoteAttribute.updateAudit(currentUser);
+        if(!quoteAttributeDTO.getLinkedQuoteAttribute().isEmpty()){
+            List<QuoteAttribute> linkedQuoteAttributes = quoteAttributeDTO.getLinkedQuoteAttribute()
+                    .stream()
+                    .map(dto -> {
+                        QuoteAttribute linkedAttribute = createQuoteAttribute(dto, quoteProduct, null);
+                        linkedAttribute.setParentAttributeValue(quoteAttribute);
+                        return linkedAttribute;
+                    })
+                    .collect(Collectors.toList());
+            quoteAttribute.setAssignedAttributeValue(linkedQuoteAttributes);
+        }
+        return quoteAttribute;
     }
 
     public GetPdfQuoteResponseDto generateQuoteXml(String quoteCode, int currentVersion, boolean generatePdf) {
@@ -992,11 +1011,12 @@ public class CpqQuoteApi extends BaseApi {
             ;
             // Add Service charges
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-                for (AttributeInstance attributeInstance : serviceInstance.getAttributeInstances()) {
-                    Attribute attribute = attributeInstance.getAttribute();
-                    Object value = attribute.getAttributeType().getValue(attributeInstance);
+                List<AttributeValue> attributeValues = serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue)ai).collect(Collectors.toList());
+                for (AttributeValue attributeValue : attributeValues) {
+                    Attribute attribute = attributeValue.getAttribute();
+                    Object value = attribute.getAttributeType().getValue(attributeValue);
                     if (value != null) {
-                        attributes.put(attributeInstance.getAttribute().getCode(), value);
+                        attributes.put(attributeValue.getAttribute().getCode(), value);
                     }
                 }
                 Optional<AccountingArticle> accountingArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), attributes);

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "2ffe858c-774e-40e6-9ca1-1dc0934b26f5",
+		"_postman_id": "fca598d2-dab2-4bed-9316-e2a205f7f3e5",
 		"name": "CPQ Functional Process",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -5476,25 +5476,6 @@
 								"generic",
 								"all",
 								"invoice"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "List The Invoices Copy",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/v2/billing/invoices",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"v2",
-								"billing",
-								"invoices"
 							]
 						}
 					},
