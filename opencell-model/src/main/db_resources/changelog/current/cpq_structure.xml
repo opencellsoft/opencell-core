@@ -3071,10 +3071,6 @@
 		</addColumn>
 		
 		<addColumn tableName="cpq_commercial_order">
-		   <column name="code" type="varchar(255)" >
-				<constraints nullable="false" unique="true" />
-			</column>
-			<column name="description" type="varchar(255)" /> 
 		 <column name="uuid" type="varchar(60)">
             	<constraints nullable="false" unique="true"/>
             </column> 
@@ -3181,6 +3177,14 @@
 		
 		
 		<addColumn tableName="cpq_order_offer">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_quote">
 		 <column name="uuid" type="varchar(60)">
             	<constraints nullable="false" unique="true"/>
             </column> 
