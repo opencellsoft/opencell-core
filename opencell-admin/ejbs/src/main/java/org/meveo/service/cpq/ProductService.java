@@ -111,6 +111,10 @@ public class ProductService extends BusinessService<Product> {
 		product.getProductCharges().size();
 
 		product.getOfferComponents().forEach(oc -> oc.getTagsList().size());
+		product.getProductCharges().forEach(pct -> {
+			pct.getAccumulatorCounterTemplates().size();
+			pct.getWalletTemplates().size();
+		});
 		
 		var productVersions = product.getProductVersions();
 		var discountPlans = new HashSet<>(product.getDiscountList());
