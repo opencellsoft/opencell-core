@@ -3089,7 +3089,7 @@
         </addColumn>
     </changeSet>
     
-    
+
     <changeSet id="#246_20210212" author="Mbarek-Ay">
 		<addColumn tableName="cpq_invoicing_plan">
 		 <column name="uuid" type="varchar(60)">
@@ -3250,5 +3250,57 @@
 				]]>
 		</sql>
 	</changeSet>
-    
+
+	<changeSet id="#5952_20210210" author="ZBariki">
+		<addColumn tableName="crm_customer">
+			<column name="minimum_article_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="ar_customer_account">
+			<column name="minimum_article_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="billing_billing_account">
+			<column name="minimum_article_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="billing_user_account">
+			<column name="minimum_article_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="billing_subscription">
+			<column name="minimum_article_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="billing_service_instance">
+			<column name="minimum_article_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="cat_offer_template">
+			<column name="minimum_article_id" type="bigint" />
+		</addColumn>
+
+		<addForeignKeyConstraint baseColumnNames="minimum_article_id" baseTableName="crm_customer"
+								 constraintName="fk_crm_customer_iminimum_article_id" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+		<addForeignKeyConstraint baseColumnNames="minimum_article_id" baseTableName="ar_customer_account"
+								 constraintName="fk_ar_customer_account_minimum_article_id"
+								 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+		<addForeignKeyConstraint baseColumnNames="minimum_article_id" baseTableName="billing_billing_account"
+								 constraintName="fk_billing_billing_account_minimum_article_id"
+								 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+		<addForeignKeyConstraint baseColumnNames="minimum_article_id" baseTableName="billing_user_account"
+								 constraintName="fk_billing_user_account_minimum_article_id"
+								 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+		<addForeignKeyConstraint baseColumnNames="minimum_article_id" baseTableName="billing_subscription"
+								 constraintName="fk_billing_subscription_minimum_article_id"
+								 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+		<addForeignKeyConstraint baseColumnNames="minimum_article_id" baseTableName="billing_service_instance"
+								 constraintName="fk_billing_service_instance_minimum_article_id"
+								 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+		<addForeignKeyConstraint baseColumnNames="minimum_article_id" baseTableName="cat_offer_template"
+								 constraintName="fk_cat_offer_template_minimum_article_id" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+	</changeSet>
 </databaseChangeLog>

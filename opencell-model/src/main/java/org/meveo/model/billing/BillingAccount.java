@@ -17,6 +17,7 @@
  */
 package org.meveo.model.billing;
 
+import static javax.persistence.FetchType.LAZY;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.math.BigDecimal;
@@ -59,9 +60,11 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IDiscountable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
@@ -84,7 +87,7 @@ import org.meveo.model.tax.TaxCategory;
 @NamedQueries({ @NamedQuery(name = "BillingAccount.listIdsByBillingRunId", query = "SELECT b.id FROM BillingAccount b where b.billingRun.id=:billingRunId order by b.id"),
         @NamedQuery(name = "BillingAccount.listByBillingRun", query = "select b from BillingAccount b where b.billingRun.id=:billingRunId order by b.id"),
         @NamedQuery(name = "BillingAccount.PreInv", query = "SELECT b FROM BillingAccount b left join fetch b.customerAccount ca left join fetch ca.paymentMethods where b.billingRun.id=:billingRunId"),
-        @NamedQuery(name = "BillingAccount.getMimimumRTUsed", query = "select ba.minimumAmountEl from BillingAccount ba where ba.minimumAmountEl is not null"),
+        @NamedQuery(name = "BillingAccount.getMinimumAmountUsed", query = "select ba.minimumAmountEl from BillingAccount ba where ba.minimumAmountEl is not null"),
         @NamedQuery(name = "BillingAccount.getUnbilledByBC", query = "select ba.id from BillingAccount ba where ba.billingCycle=:billingCycle and (ba.nextInvoiceDate is null or ba.nextInvoiceDate<:maxNextInvoiceDate) and (ba.billingRun is null OR ba.billingRun<>:billingRun)"),
         @NamedQuery(name = "BillingAccount.getUnbilledByBCWithStartDate", query = "select ba.id from BillingAccount ba where ba.billingCycle=:billingCycle and (ba.nextInvoiceDate is null or ba.nextInvoiceDate>=:minNextInvoiceDate) and (ba.nextInvoiceDate is null or ba.nextInvoiceDate<:maxNextInvoiceDate) and (ba.billingRun is null OR ba.billingRun<>:billingRun)"),
         @NamedQuery(name = "BillingAccount.getBillingAccountsWithMinAmountELNotNullByBA", query = "select ba from BillingAccount ba where ba.minimumAmountEl is not null AND ba.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ba=:billingAccount") })
@@ -347,18 +350,24 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
     @Type(type = "numeric_boolean")
     @Column(name = "threshold_per_entity")
     private boolean thresholdPerEntity;
-
-    
     
     /**
      * list of tag attached
      */    
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_billing_account_tags", joinColumns = @JoinColumn(name = "billing_account_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
-    private List<Tag> tags = new ArrayList<Tag>();
-    
-    
-    
+    private List<Tag> tags = new ArrayList<>();
+
+    /**
+     * Corresponding to minimum invoice AccountingArticle
+     */
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "minimum_article_id")
+    private AccountingArticle minimumArticle;
+
+    @Transient
+    private List<InvoiceLine> minInvoiceLines;
+
     public boolean isThresholdPerEntity() {
     	return thresholdPerEntity;
 	}
@@ -805,11 +814,23 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
 		BillingAccount other = (BillingAccount) obj;
 		return Objects.equals(id, other.id);
 	}
- 
-    
 
-	
-    
-    
-    
+
+    public AccountingArticle getMinimumArticle() {
+        return minimumArticle;
+    }
+
+    public void setMinimumArticle(AccountingArticle minimumArticle) {
+        this.minimumArticle = minimumArticle;
+    }
+
+    @Override
+    public List<InvoiceLine> getMinInvoiceLines() {
+        return minInvoiceLines;
+    }
+
+    @Override
+    public void setMinInvoiceLines(List<InvoiceLine> invoiceLines) {
+        this.minInvoiceLines = invoiceLines;
+    }
 }

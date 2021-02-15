@@ -52,6 +52,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.ThresholdOptionsEnum;
@@ -74,7 +75,7 @@ import org.meveo.model.payments.CustomerAccount;
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "crm_customer")
 @NamedQueries({
-        @NamedQuery(name = "Customer.getMimimumRTUsed", query = "select c.minimumAmountEl from Customer c where c.minimumAmountEl is not null"),
+        @NamedQuery(name = "Customer.getMinimumAmountUsed", query = "select c.minimumAmountEl from Customer c where c.minimumAmountEl is not null"),
         @NamedQuery(name = "Customer.getCustomersWithMinAmountELNotNullByBA", query = "select c from Customer c where c.minimumAmountEl is not null  AND c=:customer")})
 public class Customer extends AccountEntity implements IWFEntity, ICounterEntity {
 
@@ -161,13 +162,20 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     @Enumerated(EnumType.STRING)
     @Column(name = "check_threshold")
     private ThresholdOptionsEnum checkThreshold;
-    
+
     /**
      * check threshold per entity?
      */
     @Type(type = "numeric_boolean")
     @Column(name = "threshold_per_entity")
     private boolean thresholdPerEntity;
+
+    /**
+     * Corresponding to minimum invoice AccountingArticle
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_article_id")
+    private AccountingArticle minimumArticle;
 
     public AddressBook getAddressbook() {
         return addressbook;
@@ -327,5 +335,13 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
      */
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
         this.checkThreshold = checkThreshold;
+    }
+
+    public AccountingArticle getMinimumArticle() {
+        return minimumArticle;
+    }
+
+    public void setMinimumArticle(AccountingArticle minimumArticle) {
+        this.minimumArticle = minimumArticle;
     }
 }
