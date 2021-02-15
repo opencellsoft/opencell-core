@@ -1014,7 +1014,7 @@ public class CpqQuoteApi extends BaseApi {
                 List<AttributeValue> attributeValues = serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue)ai).collect(Collectors.toList());
                 for (AttributeValue attributeValue : attributeValues) {
                     Attribute attribute = attributeValue.getAttribute();
-                    Object value = attribute.getAttributeType().getValue(attributeValue, attributeValues);
+                    Object value = attribute.getAttributeType().getValue(attributeValue);
                     if (value != null) {
                         attributes.put(attributeValue.getAttribute().getCode(), value);
                     }

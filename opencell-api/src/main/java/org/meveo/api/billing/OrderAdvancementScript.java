@@ -138,7 +138,7 @@ public class OrderAdvancementScript extends ModuleScript {
         List<AttributeValue> orderAttributes = orderProduct.getOrderAttributes().stream().map(oa -> (AttributeValue)oa).collect(Collectors.toList());
         for (AttributeValue orderAttribute : orderAttributes) {
             Attribute attribute = orderAttribute.getAttribute();
-            Object value = attribute.getAttributeType().getValue(orderAttribute, orderAttributes);
+            Object value = attribute.getAttributeType().getValue(orderAttribute);
             if (value != null) {
                 attributes.put(orderAttribute.getAttribute().getCode(), value);
             }

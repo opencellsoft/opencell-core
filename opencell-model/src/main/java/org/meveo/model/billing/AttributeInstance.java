@@ -41,7 +41,7 @@ public class AttributeInstance extends AttributeValue<AttributeInstance> {
         doubleValue=quoteAttribute.getDoubleValue();
         assignedAttributeValue = quoteAttribute.getAssignedAttributeValue()
                                         .stream()
-                                        .map(qa -> new AttributeInstance(new AttributeValue(qa)))
+                                        .map(AttributeInstance::new)
                                         .collect(Collectors.toList());
     }
 
@@ -52,15 +52,8 @@ public class AttributeInstance extends AttributeValue<AttributeInstance> {
         doubleValue=orderAttribute.getDoubleValue();
         assignedAttributeValue = orderAttribute.getAssignedAttributeValue()
                 .stream()
-                .map(qa -> new AttributeInstance(new AttributeValue(qa)))
+                .map(AttributeInstance::new)
                 .collect(Collectors.toList());
-    }
-
-    public AttributeInstance(AttributeValue attributeValue) {
-        attribute=attributeValue.getAttribute();
-        stringValue=attributeValue.getStringValue();
-        dateValue=attributeValue.getDateValue();
-        doubleValue=attributeValue.getDoubleValue();
     }
 
     public ServiceInstance getServiceInstance() {
