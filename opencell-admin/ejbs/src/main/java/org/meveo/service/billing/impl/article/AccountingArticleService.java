@@ -38,6 +38,8 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 						case LIST_TEXT :
 						case LIST_NUMERIC :
 							return value.toString().contentEquals(am.getAttributeValue());
+						case TOTAL:
+						case COUNT:
 						case NUMERIC:
 							return Double.valueOf(value.toString()).doubleValue() == Double.valueOf(am.getAttributeValue()).doubleValue();
 						case LIST_MULTIPLE_TEXT :

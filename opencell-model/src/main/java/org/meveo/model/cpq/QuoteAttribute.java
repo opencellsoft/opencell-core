@@ -23,7 +23,7 @@ import org.meveo.model.quote.QuoteProduct;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_attribute_seq")})
 @NamedQuery(name = "QuoteAttribute.findByAttributeAndQuoteProduct", query = "select q from QuoteAttribute q left join q.attribute qa left join q.quoteProduct qq where qq.id=:quoteProductId and qa.id=:attributeId")
-public class QuoteAttribute extends AttributeValue {
+public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 
 	
 	public QuoteAttribute() {
@@ -47,7 +47,7 @@ public class QuoteAttribute extends AttributeValue {
 
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "cpq_quote_product_id", nullable = false)
+	@JoinColumn(name = "cpq_quote_product_id")
 	private QuoteProduct quoteProduct;
 
 
@@ -65,27 +65,6 @@ public class QuoteAttribute extends AttributeValue {
 		this.quoteProduct = quoteProduct;
 	}
 
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(attribute, quoteProduct, stringValue);
-		return result;
-	}
-
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
-		QuoteAttribute other = (QuoteAttribute) obj;
-		return Objects.equals(attribute, other.attribute) && Objects.equals(quoteProduct, other.quoteProduct)
-				&& Objects.equals(stringValue, other.stringValue) && Objects.equals(dateValue, other.dateValue) && Objects.equals(doubleValue, other.doubleValue);
-	}
-
 	public void update(QuoteAttribute other) {
 		this.stringValue = other.stringValue;
 		this.doubleValue = other.doubleValue;
@@ -96,5 +75,19 @@ public class QuoteAttribute extends AttributeValue {
 		this.id = other.id;
 		this.version = other.version;
 		
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+		QuoteAttribute that = (QuoteAttribute) o;
+		return Objects.equals(quoteProduct, that.quoteProduct);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), quoteProduct);
 	}
 }
