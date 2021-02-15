@@ -22,6 +22,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
@@ -34,6 +35,7 @@ import org.meveo.model.payments.CustomerAccount;
  * @version 10.0
  */
 @Entity
+@CustomFieldEntity(cftCodePrefix = "Contract")
 @Table(name = "cpq_contract", uniqueConstraints = { @UniqueConstraint(columnNames = {"code"})})
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_contract_seq"), })

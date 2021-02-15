@@ -60,7 +60,7 @@ public enum ColumnTypeEnum {
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
             if(pricePlanMatrixValue.getDoubleValue() == null && pricePlanMatrixValue.getLongValue() == null && pricePlanMatrixValue.getStringValue() == null)
                 return true;
-            BigDecimal quote =  BigDecimal.valueOf(attributeValue.getDoubleValue());
+            Object quote =  attributeValue.getAttribute().getAttributeType().getValue(attributeValue);
             switch (attributeValue.getAttribute().getAttributeType()) {
                 case INTEGER:
                 case COUNT:
@@ -72,7 +72,7 @@ public enum ColumnTypeEnum {
                             return true;
                         }
                         BigDecimal value = pricePlanMatrixValue.getDoubleValue() != null ? BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue()) : BigDecimal.valueOf(pricePlanMatrixValue.getLongValue());
-                        return quote.doubleValue() == value.doubleValue();
+                        return (Double) quote == value.doubleValue();
                     }
                 }
                 case LIST_NUMERIC:
@@ -82,7 +82,7 @@ public enum ColumnTypeEnum {
                     }
                     return Stream.of(pricePlanMatrixValue.getStringValue().split(" ; "))
                             .map(number -> BigDecimal.valueOf(java.lang.Double.parseDouble(number)))
-                            .anyMatch(number -> number.doubleValue() == quote.doubleValue());
+                            .anyMatch(number -> number.doubleValue() == (Double) quote);
                 }
                 default:
                     return false;

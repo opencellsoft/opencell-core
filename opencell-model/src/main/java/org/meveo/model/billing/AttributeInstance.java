@@ -16,12 +16,13 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.Date;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "cpq_attribute_instance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_attribute_seq")})
-public class AttributeInstance extends AttributeValue {
+public class AttributeInstance extends AttributeValue<AttributeInstance> {
 
     @ManyToOne
     @JoinColumn(name = "service_instance_id")
@@ -30,11 +31,18 @@ public class AttributeInstance extends AttributeValue {
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
+    public AttributeInstance() {
+    }
+
     public AttributeInstance(QuoteAttribute quoteAttribute) {
         attribute=quoteAttribute.getAttribute();
         stringValue=quoteAttribute.getStringValue();
         dateValue=quoteAttribute.getDateValue();
         doubleValue=quoteAttribute.getDoubleValue();
+        assignedAttributeValue = quoteAttribute.getAssignedAttributeValue()
+                                        .stream()
+                                        .map(AttributeInstance::new)
+                                        .collect(Collectors.toList());
     }
 
     public AttributeInstance(OrderAttribute orderAttribute) {
@@ -42,6 +50,10 @@ public class AttributeInstance extends AttributeValue {
         stringValue=orderAttribute.getStringValue();
         dateValue=orderAttribute.getDateValue();
         doubleValue=orderAttribute.getDoubleValue();
+        assignedAttributeValue = orderAttribute.getAssignedAttributeValue()
+                .stream()
+                .map(AttributeInstance::new)
+                .collect(Collectors.toList());
     }
 
     public ServiceInstance getServiceInstance() {
@@ -63,7 +75,7 @@ public class AttributeInstance extends AttributeValue {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof AttributeInstance)) return false;
         if (!super.equals(o)) return false;
         AttributeInstance that = (AttributeInstance) o;
         return Objects.equals(serviceInstance, that.serviceInstance) &&
