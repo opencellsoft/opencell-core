@@ -2146,7 +2146,11 @@
 	            <column name="id" type="bigint" autoIncrement="${id.auto}">
 	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_product" />
 	            </column>
-			<!-- BusinessEntity Start --> 
+			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
             	<column name="version" type="int4" />
 				<!-- BusinessEntity End -->
 				<!-- Auditable Start -->
@@ -2215,6 +2219,10 @@
 	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_offer" />
 	            </column>
 			<!-- BusinessEntity Start -->
+				<column name="code" type="varchar(255)" >
+					<constraints nullable="false" unique="true" />
+				</column>
+				<column name="description" type="varchar(255)" />
             	<column name="version" type="int4" />
 				<!-- BusinessEntity End -->
 				<!-- Auditable Start -->
@@ -3231,5 +3239,16 @@
            	<column name="cf_values_accum" type="${type.json}" />
 		</addColumn>
 </changeSet>
+
+	<changeSet id="#248_20210215" author="NabilOuachi">
+		<sql>
+			<![CDATA[
+					alter table cpq_order_offer drop column code;
+					alter table cpq_order_offer drop column description;
+					alter table cpq_order_product drop column code;
+					alter table cpq_order_product drop column description;
+				]]>
+		</sql>
+	</changeSet>
     
 </databaseChangeLog>
