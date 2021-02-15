@@ -2148,11 +2148,7 @@
 	            <column name="id" type="bigint" autoIncrement="${id.auto}">
 	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_product" />
 	            </column>
-			<!-- BusinessEntity Start -->
-				<column name="code" type="varchar(255)" >
-					<constraints nullable="false" unique="true" />
-				</column>
-				<column name="description" type="varchar(255)" />
+			<!-- BusinessEntity Start --> 
             	<column name="version" type="int4" />
 				<!-- BusinessEntity End -->
 				<!-- Auditable Start -->
@@ -2221,10 +2217,6 @@
 	                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_order_offer" />
 	            </column>
 			<!-- BusinessEntity Start -->
-				<column name="code" type="varchar(255)" >
-					<constraints nullable="false" unique="true" />
-				</column>
-				<column name="description" type="varchar(255)" />
             	<column name="version" type="int4" />
 				<!-- BusinessEntity End -->
 				<!-- Auditable Start -->
@@ -3063,5 +3055,152 @@
             <column name="discount_applied" type="${type.boolean}" defaultValueNumeric="0"/>
         </addColumn>
     </changeSet>
+    
+    
+    <changeSet id="#246_20210212" author="Mbarek-Ay">
+		<addColumn tableName="cpq_invoicing_plan">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column>
+			<column name="disabled" type="${type.boolean}"
+				defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_commercial_order">
+		   <column name="code" type="varchar(255)" >
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="description" type="varchar(255)" /> 
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_product_line">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_quote_lot">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_order_lot">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+			<addColumn tableName="cpq_contract_item">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column>
+			<column name="disabled" type="${type.boolean}"
+				defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_contract">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column>
+			<column name="disabled" type="${type.boolean}"
+				defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_grouped_attributes">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column>
+			<column name="disabled" type="${type.boolean}"
+				defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_invoicing_plan_item">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column>
+			<column name="disabled" type="${type.boolean}"
+				defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="quote_offer">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_quote_product">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		
+		<addColumn tableName="cpq_order_product">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		
+		<addColumn tableName="cpq_order_offer">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_media">  
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />   
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+</changeSet>
     
 </databaseChangeLog>
