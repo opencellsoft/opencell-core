@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
 
 /** 
  * @author Tarik F.
@@ -22,7 +22,7 @@ import org.meveo.model.BusinessEntity;
 @Table(name = "cpq_order_lot", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "order_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_lot_seq")})
-public class OrderLot extends BusinessEntity {
+public class OrderLot extends BusinessCFEntity{
 
 
 	/**

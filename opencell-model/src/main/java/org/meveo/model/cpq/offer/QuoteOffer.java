@@ -20,8 +20,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.meveo.model.Auditable;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
@@ -35,7 +34,7 @@ import org.meveo.model.quote.QuoteVersion;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "quote_offer_seq"), })
 @NamedQuery(name = "QuoteOffer.findByTemplateAndQuoteVersion", query = "select q from QuoteOffer q left join q.offerTemplate qo left join q.quoteVersion qq where qo.code=:offerTemplateCode and qq.quote.code=:cpqQuoteCode and qq.quoteVersion=:quoteVersion")
-public class QuoteOffer extends AuditableEntity {
+public class QuoteOffer extends AuditableCFEntity {
 
 
 	public QuoteOffer() {

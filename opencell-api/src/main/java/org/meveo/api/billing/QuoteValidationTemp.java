@@ -138,9 +138,7 @@ public class QuoteValidationTemp extends ModuleScript {
 	private OrderOffer processOrderOffer(QuoteOffer quoteOffer, CommercialOrder order) {
 		OrderOffer offer = new OrderOffer();
 		offer.setOrder(order);
-		offer.setOfferTemplate(quoteOffer.getOfferTemplate());
-		offer.setCode(GENERIC_CODE);
-		offer.setCode(orderOfferService.findDuplicateCode(offer));
+		offer.setOfferTemplate(quoteOffer.getOfferTemplate()); 
 		orderOfferService.create(offer);
 		return offer;
 	}
@@ -151,9 +149,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		orderProduct.setOrderServiceCommercial(orderLot);
 		orderProduct.setProductVersion(product.getProductVersion());
 		orderProduct.setQuantity(product.getQuantity());
-		orderProduct.setOrderOffer(orderOffer);
-		orderProduct.setCode(GENERIC_CODE);
-		orderProduct.setCode(orderProductService.findDuplicateCode(orderProduct));
+		orderProduct.setOrderOffer(orderOffer);  
 		
 		orderProductService.create(orderProduct);
 		

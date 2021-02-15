@@ -18,8 +18,6 @@
 
 package org.meveo.model.quote;
 
-import static javax.persistence.FetchType.LAZY;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -57,7 +55,6 @@ import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 
