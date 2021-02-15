@@ -11,14 +11,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.enums.MediaTypeEnum;
@@ -35,7 +34,7 @@ import org.meveo.model.cpq.enums.MediaTypeEnum;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_media_seq")})
 @NamedQuery(name = "Media.findByProductAndMediaName", query = "select m from Media m left join  m.product mp where mp.code=:productCode and m.mediaName=:mediaName")
-public class Media extends BaseEntity{
+public class Media extends AuditableCFEntity{
 
 	public Media(Media copy) {
 		this.offer = copy.offer;

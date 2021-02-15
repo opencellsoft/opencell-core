@@ -3,7 +3,7 @@ package org.meveo.service.cpq.order;
 import javax.ejb.Stateless;
 
 import org.meveo.model.cpq.commercial.OrderOffer;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.PersistenceService;
 
 /**
  * @author Tarik FAKHOURI
@@ -12,6 +12,6 @@ import org.meveo.service.base.BusinessService;
  *
  */
 @Stateless
-public class OrderOfferService extends BusinessService<OrderOffer> {
+public class OrderOfferService extends PersistenceService<OrderOffer> {
 
 }

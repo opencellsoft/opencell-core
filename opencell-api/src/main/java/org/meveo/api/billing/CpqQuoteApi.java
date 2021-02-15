@@ -1183,7 +1183,7 @@ public class CpqQuoteApi extends BaseApi {
     	QuoteOffer offer = quoteOfferService.findById(quoteItemId);
     	if(offer == null)
     		throw new EntityDoesNotExistsException(QuoteOffer.class, quoteItemId);
-    	return new QuoteOfferDTO(offer);
+    	return new QuoteOfferDTO(offer, true, true);
     }
     
     public byte[] generateQuotePDF(String quoteCode, int currentVersion,boolean generatePdfIfNotExist)

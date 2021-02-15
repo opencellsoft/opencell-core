@@ -22,12 +22,12 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
      */
     private static final long serialVersionUID = 1105680934764861643L;
 
+    private Long id; 
+    
     @NotNull
     private String pricePlanMatrixCode;
 
     private VersionStatusEnum statusEnum;
-    @NotNull
-    /** The currentVersion. */
     protected int version;
     private Date statusDate;
     private String label;
@@ -48,6 +48,7 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
     }
 
     public PricePlanMatrixVersionDto(PricePlanMatrixVersion pricePlanMatrixVersion) {
+    	this.id = pricePlanMatrixVersion.getId();
         setLabel(pricePlanMatrixVersion.getLabel());
         setMatrix(pricePlanMatrixVersion.isMatrix());
         setPricePlanMatrixCode(pricePlanMatrixVersion.getPricePlanMatrix().getCode());
@@ -187,6 +188,20 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
 	 */
 	public void setPriority(int priority) {
 		this.priority = priority;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
     
     

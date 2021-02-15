@@ -18,7 +18,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
 
 @SuppressWarnings("serial")
 @Entity
@@ -27,7 +27,7 @@ import org.meveo.model.BusinessEntity;
         @Parameter(name = "sequence_name", value = "cpq_quote_lot_seq")})
 @NamedQuery(name = "QuoteLot.findByCodeAndVersion", query = "select q from QuoteLot q where q.code=:code and q.quoteVersion.id=:quoteVersionId")
 //@NamedQuery(name = "QuoteCustomerService.findLastVersionByCode", query = "select qcs from QuoteCustomerService qcs left join qcs.quote qq where qq.code=:codeQuote order by qcs.quoteVersion desc")
-public class QuoteLot extends BusinessEntity {
+public class QuoteLot extends BusinessCFEntity  {
 
 
 
