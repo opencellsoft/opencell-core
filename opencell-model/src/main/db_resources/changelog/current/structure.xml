@@ -4084,5 +4084,14 @@ END $$;]]>
     			defaultValueNumeric="0" />
 		</addColumn>
     </changeSet>
+    
+    <changeSet id="#5960_20210212" author="AndriusKarpavicius">
+        <sql>CREATE INDEX flat_file_orig_name_index on ${db.schema.adapted}flat_file (lower(file_original_name))</sql>
+        <sql>CREATE INDEX job_execution_job_id_index on ${db.schema.adapted}job_execution (job_instance_id)</sql>
+        <sql>CREATE INDEX medina_access_lower_uid_index on ${db.schema.adapted}medina_access (lower(acces_user_id))</sql>
+        <sql>CREATE INDEX ord_order_status_index on ${db.schema.adapted}ord_order (status)</sql>
+        <sql>CREATE INDEX billing_service_instance_st_index on ${db.schema.adapted}billing_service_instance (service_template_id)</sql>
+        <sql>CREATE INDEX billing_wallet_operation_sub_index on ${db.schema.adapted}billing_wallet_operation (subscription_id)</sql>
+    </changeSet>
 
 </databaseChangeLog>
