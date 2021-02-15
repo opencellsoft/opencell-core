@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.catalog.OfferTemplate;
 
 /** 
@@ -22,6 +23,7 @@ import org.meveo.model.catalog.OfferTemplate;
  *
  */
 @Entity
+@CustomFieldEntity(cftCodePrefix = "OrderOffer")
 @Table(name = "cpq_order_offer")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_offer_seq")})
