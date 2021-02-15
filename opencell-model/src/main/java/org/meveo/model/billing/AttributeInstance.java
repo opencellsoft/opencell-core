@@ -16,6 +16,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.Date;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "cpq_attribute_instance")
@@ -30,11 +31,18 @@ public class AttributeInstance extends AttributeValue {
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
+    public AttributeInstance() {
+    }
+
     public AttributeInstance(QuoteAttribute quoteAttribute) {
         attribute=quoteAttribute.getAttribute();
         stringValue=quoteAttribute.getStringValue();
         dateValue=quoteAttribute.getDateValue();
         doubleValue=quoteAttribute.getDoubleValue();
+        assignedAttributeValue = quoteAttribute.getAssignedAttributeValue()
+                                        .stream()
+                                        .map(qa -> new AttributeInstance(new AttributeValue(qa)))
+                                        .collect(Collectors.toList());
     }
 
     public AttributeInstance(OrderAttribute orderAttribute) {
@@ -42,6 +50,17 @@ public class AttributeInstance extends AttributeValue {
         stringValue=orderAttribute.getStringValue();
         dateValue=orderAttribute.getDateValue();
         doubleValue=orderAttribute.getDoubleValue();
+        assignedAttributeValue = orderAttribute.getAssignedAttributeValue()
+                .stream()
+                .map(qa -> new AttributeInstance(new AttributeValue(qa)))
+                .collect(Collectors.toList());
+    }
+
+    public AttributeInstance(AttributeValue attributeValue) {
+        attribute=attributeValue.getAttribute();
+        stringValue=attributeValue.getStringValue();
+        dateValue=attributeValue.getDateValue();
+        doubleValue=attributeValue.getDoubleValue();
     }
 
     public ServiceInstance getServiceInstance() {

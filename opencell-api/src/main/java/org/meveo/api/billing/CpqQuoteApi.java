@@ -376,7 +376,11 @@ public class CpqQuoteApi extends BaseApi {
         if(!quoteAttributeDTO.getLinkedQuoteAttribute().isEmpty()){
             List<QuoteAttribute> linkedQuoteAttributes = quoteAttributeDTO.getLinkedQuoteAttribute()
                     .stream()
-                    .map(dto -> createQuoteAttribute(dto, quoteProduct, null))
+                    .map(dto -> {
+                        QuoteAttribute linkedAttribute = createQuoteAttribute(dto, quoteProduct, null);
+                        linkedAttribute.setParentAttributeValue(quoteAttribute);
+                        return linkedAttribute;
+                    })
                     .collect(Collectors.toList());
             quoteAttribute.setAssignedAttributeValue(linkedQuoteAttributes);
         }

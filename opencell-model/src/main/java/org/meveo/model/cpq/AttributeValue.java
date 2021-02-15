@@ -36,6 +36,17 @@ public class AttributeValue extends AuditableEntity {
     @Column(name = "double_value")
     protected Double doubleValue;
 
+    public AttributeValue(){
+
+    }
+
+    public AttributeValue(T qa) {
+        this.assignedAttributeValue = qa.assignedAttributeValue;
+        this.stringValue = qa.stringValue;
+        this.dateValue = qa.dateValue;
+        this.doubleValue = qa.doubleValue;
+    }
+
     public Attribute getAttribute() {
         return attribute;
     }
