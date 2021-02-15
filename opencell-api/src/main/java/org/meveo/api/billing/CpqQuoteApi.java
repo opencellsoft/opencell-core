@@ -310,10 +310,10 @@ public class CpqQuoteApi extends BaseApi {
 			}
 		}
 	}
-	
+
 	private void newPopulateOfferAttribute(List<QuoteAttributeDTO> quoteAttributeDtos, QuoteOffer quoteOffer) {
-		if(quoteAttributeDtos != null) {  
-			for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributeDtos) { 
+		if(quoteAttributeDtos != null) {
+			for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributeDtos) {
 				 Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
 			        if (attribute == null)
 			            throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
@@ -335,37 +335,50 @@ public class CpqQuoteApi extends BaseApi {
 		                    .collect(Collectors.toList());
 		            quoteAttribute.setAssignedAttributeValue(linkedQuoteAttributes);
 		        }
-				quoteOffer.getQuoteAttributes().add(quoteAttribute); 
+				quoteOffer.getQuoteAttributes().add(quoteAttribute);
 			}
 		}
 	}
-	
-	 
+
+
 
     private void newPopulateQuoteAttribute(List<QuoteAttributeDTO> quoteAttributes, QuoteProduct quoteProduct) {
         if (quoteAttributes != null) {
             List<Attribute> productAttributes = quoteProduct.getProductVersion().getAttributes();
             quoteProduct.getQuoteAttributes().clear();
-            for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributes) {
-                if (Strings.isEmpty(quoteAttributeDTO.getQuoteAttributeCode()))
-                    missingParameters.add("quoteAttributeCode");
-                handleMissingParameters();
-                Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
-                if (attribute == null)
-                    throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
-                if(!productAttributes.contains(attribute)){
-                    throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", quoteProduct.getProductVersion().getProduct().getCode() , quoteProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
-                }
-                QuoteAttribute quoteAttribute = new QuoteAttribute();
-                quoteAttribute.setAttribute(attribute);
-                quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
-                quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
-                quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
-                quoteProduct.getQuoteAttributes().add(quoteAttribute);
-                quoteAttribute.setQuoteProduct(quoteProduct);
-                quoteAttributeService.create(quoteAttribute);
-            }
+            quoteAttributeDTOS.stream()
+                    .map(quoteAttributeDTO -> createQuoteAttribute(quoteAttributeDTO, quoteProduct, productAttributes))
+                    .collect(Collectors.toList())
+                    .forEach(quoteAttribute -> quoteAttributeService.create(quoteAttribute));
+        }
+    }
 
+    private QuoteAttribute createQuoteAttribute(QuoteAttributeDTO quoteAttributeDTO, QuoteProduct quoteProduct, List<Attribute> productAttributes) {
+        if (Strings.isEmpty(quoteAttributeDTO.getQuoteAttributeCode()))
+            missingParameters.add("quoteAttributeCode");
+        handleMissingParameters();
+        Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
+        if (attribute == null)
+            throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
+        if(productAttributes != null && !productAttributes.contains(attribute)){
+            throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", quoteProduct.getProductVersion().getProduct().getCode() , quoteProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
+        }
+        QuoteAttribute quoteAttribute = new QuoteAttribute();
+        quoteAttribute.setAttribute(attribute);
+        quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
+        quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+        quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
+        if(productAttributes != null) {
+            quoteProduct.getQuoteAttributes().add(quoteAttribute);
+            quoteAttribute.setQuoteProduct(quoteProduct);
+        }
+        quoteAttribute.updateAudit(currentUser);
+        if(!quoteAttributeDTO.getLinkedQuoteAttribute().isEmpty()){
+            List<QuoteAttribute> linkedQuoteAttributes = quoteAttributeDTO.getLinkedQuoteAttribute()
+                    .stream()
+                    .map(dto -> createQuoteAttribute(dto, quoteProduct, null))
+                    .collect(Collectors.toList());
+            quoteAttribute.setAssignedAttributeValue(linkedQuoteAttributes);
         }
     }
 
@@ -718,8 +731,8 @@ public class CpqQuoteApi extends BaseApi {
             quoteOffer.getQuoteProduct().removeAll(existencQuoteProducts);
         }
     }
-    
-    private void processQuoteAttribute(QuoteOfferDTO quoteOfferDTO, QuoteOffer quoteOffer) { 
+
+    private void processQuoteAttribute(QuoteOfferDTO quoteOfferDTO, QuoteOffer quoteOffer) {
         var quoteAttributeDtos = quoteOfferDTO.getOfferAttributes();
         var hasQuoteAttributeDtos = quoteAttributeDtos != null && !quoteAttributeDtos.isEmpty();
 
