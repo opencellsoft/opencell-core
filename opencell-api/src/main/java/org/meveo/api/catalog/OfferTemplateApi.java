@@ -888,16 +888,16 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         return result;
     }
     
-    public OfferTemplateDto duplicate(String offerTemplateCode, boolean duplicateHierarchy, boolean preserveCode) {
-    	OfferTemplate offerTemplate = offerTemplateService.findByCode(offerTemplateCode);
+    public OfferTemplateDto duplicate(String offerTemplateCode, boolean duplicateHierarchy, boolean preserveCode, Date validFrom, Date validTo) {
+    	OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(offerTemplateCode, validFrom, validTo);
     	if(offerTemplate == null)
     		throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
     	OfferTemplate duplicated = offerTemplateService.duplicate(offerTemplate, duplicateHierarchy, true, preserveCode);
     	return new GetOfferTemplateResponseDto(duplicated, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false,true);
     }
     
-    public void updateStatus(String offerTemplateCode, LifeCycleStatusEnum status) {
-    	OfferTemplate offerTemplate = offerTemplateService.findByCode(offerTemplateCode);
+    public void updateStatus(String offerTemplateCode, LifeCycleStatusEnum status, Date validFrom, Date validTo) {
+    	OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(offerTemplateCode, validFrom, validTo);
     	if(offerTemplate == null)
     		throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
     	offerTemplate.setLifeCycleStatus(status);
