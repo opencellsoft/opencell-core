@@ -21,7 +21,7 @@ import java.util.Objects;
 @Table(name = "cpq_attribute_instance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_attribute_seq")})
-public class AttributeInstance extends AttributeValue {
+public class AttributeInstance extends AttributeValue<AttributeInstance> {
 
     @ManyToOne
     @JoinColumn(name = "service_instance_id")
@@ -63,7 +63,7 @@ public class AttributeInstance extends AttributeValue {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof AttributeInstance)) return false;
         if (!super.equals(o)) return false;
         AttributeInstance that = (AttributeInstance) o;
         return Objects.equals(serviceInstance, that.serviceInstance) &&

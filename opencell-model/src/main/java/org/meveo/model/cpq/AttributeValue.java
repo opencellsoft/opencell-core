@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 @MappedSuperclass
-public class AttributeValue extends AuditableEntity {
+public class AttributeValue<T extends AttributeValue> extends AuditableEntity {
 
     /**
 	 * 
@@ -31,11 +31,11 @@ public class AttributeValue extends AuditableEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-	protected AttributeValue parentAttributeValue;
+	protected T parentAttributeValue;
 
     @OneToMany(mappedBy = "parentAttributeValue", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("id")
-	protected List<AttributeValue> assignedAttributeValue;
+	protected List<T> assignedAttributeValue;
 
 
     @Column(name = "string_value")
@@ -79,19 +79,19 @@ public class AttributeValue extends AuditableEntity {
         this.doubleValue = doubleValue;
     }
 
-    public AttributeValue getParentAttributeValue() {
+    public T getParentAttributeValue() {
         return parentAttributeValue;
     }
 
-    public void setParentAttributeValue(AttributeValue parentAttributeValue) {
+    public void setParentAttributeValue(T parentAttributeValue) {
         this.parentAttributeValue = parentAttributeValue;
     }
 
-    public List<AttributeValue> getAssignedAttributeValue() {
+    public List<T> getAssignedAttributeValue() {
         return assignedAttributeValue;
     }
 
-    public void setAssignedAttributeValue(List<AttributeValue> assignedAttributeValue) {
+    public void setAssignedAttributeValue(List<T> assignedAttributeValue) {
         this.assignedAttributeValue = assignedAttributeValue;
     }
 
@@ -99,10 +99,10 @@ public class AttributeValue extends AuditableEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         AttributeValue that = (AttributeValue) o;
         return Objects.equals(attribute, that.attribute) &&
                 Objects.equals(parentAttributeValue, that.parentAttributeValue) &&
+                Objects.equals(id, that.id) &&
                 Objects.equals(assignedAttributeValue, that.assignedAttributeValue) &&
                 Objects.equals(stringValue, that.stringValue) &&
                 Objects.equals(dateValue, that.dateValue) &&

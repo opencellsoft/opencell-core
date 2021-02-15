@@ -28,7 +28,7 @@ import org.meveo.model.cpq.AttributeValue;
 @Table(name = "cpq_order_item", uniqueConstraints = @UniqueConstraint(columnNames = { "id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_item_seq")})
-public class OrderAttribute extends AttributeValue {
+public class OrderAttribute extends AttributeValue<OrderAttribute> {
 
 	/**
 	 * 

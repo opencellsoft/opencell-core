@@ -23,7 +23,7 @@ import org.meveo.model.quote.QuoteProduct;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_attribute_seq")})
 @NamedQuery(name = "QuoteAttribute.findByAttributeAndQuoteProduct", query = "select q from QuoteAttribute q left join q.attribute qa left join q.quoteProduct qq where qq.id=:quoteProductId and qa.id=:attributeId")
-public class QuoteAttribute extends AttributeValue {
+public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 
 	
 	public QuoteAttribute() {
@@ -47,7 +47,7 @@ public class QuoteAttribute extends AttributeValue {
 
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "cpq_quote_product_id", nullable = false)
+	@JoinColumn(name = "cpq_quote_product_id")
 	private QuoteProduct quoteProduct;
 
 

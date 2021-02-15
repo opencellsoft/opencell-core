@@ -316,11 +316,7 @@ public class CpqQuoteApi extends BaseApi {
             List<Attribute> productAttributes = quoteProduct.getProductVersion().getAttributes();
             quoteProduct.getQuoteAttributes().clear();
             quoteAttributeDTOS.stream()
-                    .map(quoteAttributeDTO -> {
-                        {
-                            return createQuoteAttribute(quoteAttributeDTO, quoteProduct, productAttributes);
-                        }
-                    })
+                    .map(quoteAttributeDTO -> createQuoteAttribute(quoteAttributeDTO, quoteProduct, productAttributes))
                     .collect(Collectors.toList())
                     .forEach(quoteAttribute -> quoteAttributeService.create(quoteAttribute));
         }
@@ -333,20 +329,9 @@ public class CpqQuoteApi extends BaseApi {
         Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
         if (attribute == null)
             throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
-        if(!productAttributes.contains(attribute)){
+        if(productAttributes != null && !productAttributes.contains(attribute)){
             throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", quoteProduct.getProductVersion().getProduct().getCode() , quoteProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
         }
-        if(!quoteAttributeDTO.getLinkedQuoteAttribute().isEmpty()){
-
-        }
-        List<QuoteAttribute> linkedQuoteAttributes = quoteAttributeDTO.getLinkedQuoteAttribute()
-                .stream()
-                .map(dto -> {
-                    QuoteAttribute quoteAttribute = new QuoteAttribute();
-
-                    return quoteAttribute;
-                }).collect(Collectors.toList());
-
         QuoteAttribute quoteAttribute = new QuoteAttribute();
         quoteAttribute.setAttribute(attribute);
         quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
@@ -354,6 +339,14 @@ public class CpqQuoteApi extends BaseApi {
         quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
         quoteProduct.getQuoteAttributes().add(quoteAttribute);
         quoteAttribute.setQuoteProduct(quoteProduct);
+        quoteAttribute.updateAudit(currentUser);
+        if(!quoteAttributeDTO.getLinkedQuoteAttribute().isEmpty()){
+            List<QuoteAttribute> linkedQuoteAttributes = quoteAttributeDTO.getLinkedQuoteAttribute()
+                    .stream()
+                    .map(dto -> createQuoteAttribute(dto, quoteProduct, null))
+                    .collect(Collectors.toList());
+            quoteAttribute.setAssignedAttributeValue(linkedQuoteAttributes);
+        }
         return quoteAttribute;
     }
 
