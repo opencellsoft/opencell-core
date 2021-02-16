@@ -3202,5 +3202,13 @@
            	<column name="cf_values_accum" type="${type.json}" />
 		</addColumn>
 </changeSet>
-    
+
+	<changeSet id="#20200215-247" author="Mbarek-Ay">
+			<addColumn tableName="cpq_quote_attribute">
+				<column name="cpq_quote_offer_id" type="bigint"/>
+			</addColumn>
+			<addForeignKeyConstraint baseColumnNames="cpq_quote_offer_id" baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_cpq_quote_offer_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
+			
+	    </changeSet>
 </databaseChangeLog>
