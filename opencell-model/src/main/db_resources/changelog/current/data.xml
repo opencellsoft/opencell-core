@@ -2256,5 +2256,10 @@ public class ValidateBRScript extends Script {
             <where>id = -24</where>
         </update>
     </changeSet>
+    
+    <changeSet id="5678_20210214" author="anasseh">
+	      <sql><![CDATA[UPDATE ${db.schema.adapted}ar_payment_history set operation_category ='CREDIT' where payment_id is not null ]]> </sql>
+	      <sql><![CDATA[UPDATE ${db.schema.adapted}ar_payment_history set operation_category ='DEBIT' where refund_id is not null ]]> </sql>
+   </changeSet>    
 
 </databaseChangeLog>

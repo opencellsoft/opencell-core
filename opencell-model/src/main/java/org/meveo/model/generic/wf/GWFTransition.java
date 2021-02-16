@@ -106,7 +106,7 @@ public class GWFTransition extends BaseEntity implements Comparable<GWFTransitio
     @Size(max = 2000)
     private String conditionEl;
 
-    @OneToMany(mappedBy = "transition", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "transition", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("priority ASC")
     private List<Action> actions = new ArrayList<>();
 
