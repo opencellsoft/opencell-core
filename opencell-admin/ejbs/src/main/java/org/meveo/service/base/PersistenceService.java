@@ -17,7 +17,11 @@
  */
 package org.meveo.service.base;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -55,7 +59,6 @@ import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
@@ -1184,4 +1187,26 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             return "varchar";
         }
     }
+    
+    public Object deepCopyObject(Class<E> old) throws Exception {
+   	 	ObjectOutputStream oos = null;
+        ObjectInputStream ois = null;
+        try {
+           ByteArrayOutputStream bos = new ByteArrayOutputStream();
+           oos = new ObjectOutputStream(bos);
+           oos.writeObject(old);
+           oos.flush();               
+           ByteArrayInputStream bin = new ByteArrayInputStream(bos.toByteArray()); 
+           ois = new ObjectInputStream(bin);                  
+           return ois.readObject(); 
+        }
+        catch(Exception e) {
+           System.out.println("Exception in ObjectCloner = " + e);
+           throw(e);
+        }
+        finally {
+           oos.close();
+           ois.close();
+        }
+   }
 }

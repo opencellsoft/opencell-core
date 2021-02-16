@@ -487,11 +487,15 @@ public interface OfferTemplateRs extends IBaseRs {
     @Path("/duplicate/{offerTemplateCode}")
     Response duplicateOffer(@Parameter(description = "code of the offer that will be duplicate", required = true) @PathParam("offerTemplateCode") String offerTemplateCode,
             @Parameter(description = "copy the hierarchy of the offer") @QueryParam("duplicateHierarchy") boolean duplicateHierarchy,
-            @Parameter(description = "preserve code of offer") @QueryParam("preserveCode") boolean preserveCode);
+            @Parameter(description = "preserve code of offer") @QueryParam("preserveCode") boolean preserveCode, 
+			@Parameter(name = "date valid from") @QueryParam("validFrom") @RestDateParam Date validFrom, 
+			@Parameter(name = "date valid to") @QueryParam("validTo") @RestDateParam Date validTo);
     
     @POST
     @Path("/{offerTemplateCode}/update/status")
     Response updateStatus(@Parameter(name = "offer template for updating status", required = true) @PathParam("offerTemplateCode") String offerTemplateCode,
-    					  @Parameter(name = "new status", required = true) @QueryParam("status") LifeCycleStatusEnum status);
+    					  @Parameter(name = "new status", required = true) @QueryParam("status") LifeCycleStatusEnum status, 
+    					  @Parameter(name = "date valid from") @QueryParam("validFrom") @RestDateParam Date validFrom, 
+    					  @Parameter(name = "date valid to") @QueryParam("validTo") @RestDateParam Date validTo);
 
 }
