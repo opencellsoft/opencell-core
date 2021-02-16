@@ -110,5 +110,7 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
         pricePlanMatrixColumn.setCode(dtoData.getCode());
         pricePlanMatrixColumn.setElValue(dtoData.getElValue());
         pricePlanMatrixColumn.setPosition(dtoData.getPosition());
+        if(dtoData.getRange() != null)
+        	pricePlanMatrixColumn.setRange(dtoData.getRange());
     }
 }

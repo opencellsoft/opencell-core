@@ -72,6 +72,7 @@ public class CpqQuote extends BusinessCFEntity  {
 		this.validity = copy.validity;
 		this.pdfFilename=copy.pdfFilename;
 		this.xmlFilename=copy.xmlFilename;
+		this.orderInvoiceType = copy.orderInvoiceType;
 	}
 	/**
 	 * seller
