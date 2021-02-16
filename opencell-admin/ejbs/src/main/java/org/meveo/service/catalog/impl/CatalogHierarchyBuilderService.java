@@ -79,6 +79,8 @@ import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.quote.QuoteArticleLine;
+import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.security.CurrentUser;
@@ -87,9 +89,11 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.cpq.QuoteArticleLineService;
 import org.meveo.service.cpq.QuoteAttributeService;
 import org.meveo.service.cpq.QuoteProductService;
 import org.meveo.service.cpq.QuoteVersionService;
+import org.meveo.service.cpq.order.QuotePriceService;
 import org.meveo.service.quote.QuoteOfferService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -174,6 +178,14 @@ public class CatalogHierarchyBuilderService {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+
+    @Inject private QuoteVersionService quoteVersionService;
+    @Inject private QuoteOfferService quoteOfferService;
+    @Inject private QuoteProductService quoteProductService;
+    @Inject private QuoteAttributeService quoteAttributeService;
+    @Inject private QuoteArticleLineService articleLineService;
+    @Inject private QuotePriceService quotePriceService;
 
 
     public void duplicateProductVersion(ProductVersion entity, List<Attribute> attributes, List<Tag> tags, String prefix) throws BusinessException {
@@ -1166,14 +1178,14 @@ public class CatalogHierarchyBuilderService {
     		qo.getQuoteProduct().size();
     		qo.getQuoteProduct().forEach(qp -> {
     			qp.getQuoteAttributes().size();
+    			qp.getQuoteArticleLines().size();
+    			qp.getQuoteArticleLines().forEach(qal -> {
+    				qal.getQuotePrices().size();
+    			});
     		});
     	});
     }
     
-    @Inject private QuoteVersionService quoteVersionService;
-    @Inject private QuoteOfferService quoteOfferService;
-    @Inject private QuoteProductService quoteProductService;
-    @Inject private QuoteAttributeService quoteAttributeService;
     
     public void duplicateQuoteVersion(CpqQuote entity, QuoteVersion quoteVersion) {
     	final QuoteVersion duplicate = new QuoteVersion();
@@ -1213,6 +1225,7 @@ public class CatalogHierarchyBuilderService {
 			final var duplicate = new QuoteProduct(quoteProduct);
 			quoteProductService.detach(quoteProduct);
 			var quoteAttributes = quoteProduct.getQuoteAttributes();
+			var quoteArticleLines = quoteProduct.getQuoteArticleLines(); 
 			duplicate.setQuoteOffre(offer);
 			duplicate.setQuote(offer.getQuoteVersion().getQuote());
 			duplicate.setQuoteVersion(offer.getQuoteVersion());
@@ -1220,6 +1233,28 @@ public class CatalogHierarchyBuilderService {
 			quoteProductService.create(duplicate);
 			
 			duplicateQuoteAttribute(quoteAttributes, duplicate);
+			duplicateArticleLine(quoteArticleLines, duplicate);
+			
+		}
+    }
+    
+    
+    private void duplicateArticleLine(List<QuoteArticleLine> quoteArticleLines, QuoteProduct quoteProduct) {
+    	for (QuoteArticleLine quoteArticleLine : quoteArticleLines) {
+			var quotePrices = quoteArticleLine.getQuotePrices();
+			final var duplicate = new QuoteArticleLine(quoteArticleLine);
+			duplicate.setQuoteProduct(quoteProduct);
+			articleLineService.create(duplicate);
+			duplicateQuotePrice(quotePrices, duplicate);
+		}
+    }
+    
+    private void duplicateQuotePrice(List<QuotePrice> quotePrices, QuoteArticleLine articleLine) {
+    	for (QuotePrice quotePrice : quotePrices) {
+			final var duplicate = new QuotePrice(quotePrice);
+			duplicate.setQuoteArticleLine(articleLine);
+			duplicate.setQuoteVersion(articleLine.getQuoteProduct().getQuoteVersion());
+			quotePriceService.create(duplicate);
 		}
     }
     
