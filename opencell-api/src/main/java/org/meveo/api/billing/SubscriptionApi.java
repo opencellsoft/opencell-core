@@ -72,6 +72,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
+import org.meveo.model.billing.SubscriptionRenewal.RenewalTermTypeEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UsageChargeInstance;
@@ -410,6 +411,9 @@ public class SubscriptionApi extends BaseApi {
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
+        if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
+        	subscription.setSubscribedTillDate(postData.getSubscribedTillDate());
+        }
         // subscription.setTerminationDate(postData.getTerminationDate());
 
         SubscriptionRenewal subscriptionRenewal = subscriptionRenewalFromDto(subscription.getSubscriptionRenewal(), postData.getRenewalRule(), subscription.isRenewed());
@@ -2045,11 +2049,19 @@ public class SubscriptionApi extends BaseApi {
             renewalInfo.setRenewFor(renewalInfoDto.getRenewFor());
             renewalInfo.setRenewForUnit(renewalInfoDto.getRenewForUnit());
         }
-
+        if (!StringUtils.isBlank(renewalInfoDto.getInitialTermType())) {
+        	renewalInfo.setInitialTermType(renewalInfoDto.getInitialTermType());
+    	}
         renewalInfo.setAutoRenew(renewalInfoDto.isAutoRenew());
         renewalInfo.setDaysNotifyRenewal(renewalInfoDto.getDaysNotifyRenewal());
         renewalInfo.setEndOfTermAction(renewalInfoDto.getEndOfTermAction());
         renewalInfo.setExtendAgreementPeriodToSubscribedTillDate(renewalInfoDto.isExtendAgreementPeriodToSubscribedTillDate());
+        if (!StringUtils.isBlank(renewalInfoDto.getRenewalTermType()) && RenewalTermTypeEnum.RECURRING == renewalInfoDto.getRenewalTermType()) {
+        	renewalInfo.setRenewalTermType(RenewalTermTypeEnum.RECURRING);
+		}
+        if (!StringUtils.isBlank(renewalInfoDto.getRenewalTermType()) && RenewalTermTypeEnum.CALENDAR == renewalInfoDto.getRenewalTermType()) {
+        	renewalInfo.setRenewalTermType(RenewalTermTypeEnum.CALENDAR);
+		}
         if (renewalInfoDto.getTerminationReasonCode() != null) {
             SubscriptionTerminationReason terminationReason = terminationReasonService.findByCode(renewalInfoDto.getTerminationReasonCode());
             if (terminationReason == null) {
@@ -2390,6 +2402,9 @@ public class SubscriptionApi extends BaseApi {
         subscription.setSeller(seller);
         subscription.setOffer(offerTemplate);
         subscription.setFromValidity(postData.getValidityDate());
+        if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
+        	subscription.setSubscribedTillDate(postData.getSubscribedTillDate());
+        }
         if (!StringUtils.isBlank(postData.getBillingCycle())) {
             BillingCycle billingCycle = billingCycleService.findByCode(postData.getBillingCycle());
             if (billingCycle == null) {
