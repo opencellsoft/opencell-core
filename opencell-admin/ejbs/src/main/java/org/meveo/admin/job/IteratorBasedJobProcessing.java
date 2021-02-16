@@ -97,68 +97,78 @@ public class IteratorBasedJobProcessing implements Serializable {
         int checkJobStatusEveryNr = jobSpeed.getCheckNb();
         int updateJobStatusEveryNr = nbThreads.longValue() > 3 ? jobSpeed.getUpdateNb() * nbThreads.intValue() / 2 : jobSpeed.getUpdateNb();
 
-        Callable<List<R>> task = () -> {
+        List<Callable<List<R>>> tasks = new ArrayList<Callable<List<R>>>(nbThreads.intValue());
 
-            List<R> taskResult = new ArrayList<R>();
+        for (int k = 0; k < nbThreads; k++) {
 
-            currentUserProvider.reestablishAuthentication(lastCurrentUser);
-            int i = 0;
-            long globalI = 0;
+            int finalK = k;
+            tasks.add(() -> {
 
-            T itemToProcess = iterator.next();
-            while (itemToProcess != null) {
+                List<R> taskResult = new ArrayList<R>();
 
-                if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
-                    break;
-                }
+                Thread.currentThread().setName(jobInstance.getCode() + "-" + finalK);
 
-                try {
-                    T itemToProcessFinal = itemToProcess;
-                    R itemResult = null;
-                    if (processItemInOwnTx) {
+                currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-                        Callable<R> function = () -> processSingleItemFunction.apply(itemToProcessFinal);
-                        itemResult = methodCallingUtils.callCallableInNewTx(function);
+                int i = 0;
+                long globalI = 0;
 
-                    } else {
-                        itemResult = processSingleItemFunction.apply(itemToProcessFinal);
+                T itemToProcess = iterator.next();
+                while (itemToProcess != null) {
+
+                    if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
+                        break;
                     }
 
-                    if (itemResult != null) {
-                        taskResult.add(itemResult);
+                    try {
+                        T itemToProcessFinal = itemToProcess;
+                        R itemResult = null;
+                        if (processItemInOwnTx) {
+
+                            Callable<R> function = () -> processSingleItemFunction.apply(itemToProcessFinal);
+                            itemResult = methodCallingUtils.callCallableInNewTx(function);
+
+                        } else {
+                            itemResult = processSingleItemFunction.apply(itemToProcessFinal);
+                        }
+
+                        if (itemResult != null) {
+                            taskResult.add(itemResult);
+                            if (updateJobExecutionStatistics) {
+                                globalI = jobExecutionResult.registerSucces();
+                            }
+                        }
+
+                    } catch (Exception e) {
+
+                        String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
                         if (updateJobExecutionStatistics) {
-                            globalI = jobExecutionResult.registerSucces();
+                            globalI = jobExecutionResult.registerError(itemToProcess + ": " + rejectReason);
                         }
                     }
 
-                } catch (Exception e) {
-
-                    String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
-                    if (updateJobExecutionStatistics) {
-                        globalI = jobExecutionResult.registerError(itemToProcess + ": " + rejectReason);
+                    try {
+                        // Record progress
+                        if (updateJobExecutionStatistics && globalI > 0 && globalI % updateJobStatusEveryNr == 0) {
+                            jobExecutionResultService.persistResult(jobExecutionResult);
+                        }
+                    } catch (EJBTransactionRolledbackException e) {
+                        // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
+                    } catch (Exception e) {
+                        log.error("Failed to update job progress", e);
                     }
+
+                    itemToProcess = iterator.next();
+                    i++;
                 }
 
-                try {
-                    // Record progress
-                    if (updateJobExecutionStatistics && globalI > 0 && globalI % updateJobStatusEveryNr == 0) {
-                        jobExecutionResultService.persistResult(jobExecutionResult);
-                    }
-                } catch (EJBTransactionRolledbackException e) {
-                    // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
-                } catch (Exception e) {
-                    log.error("Failed to update job progress", e);
-                }
+                return taskResult;
+            });
+        }
 
-                itemToProcess = iterator.next();
-                i++;
-            }
-
-            return taskResult;
-        };
-
-        for (int i = 0; i < nbThreads; i++) {
-            log.info("{}/{} Will submit task to run", jobExecutionResult.getJobInstance().getJobTemplate(), jobExecutionResult.getJobInstance().getCode());
+        int i = 0;
+        for (Callable task : tasks) {
+            log.info("{}/{} Will submit task #{} to run", jobInstance.getJobTemplate(), jobInstance.getCode(), i++);
             futures.add(executor.submit(task));
             try {
                 Thread.sleep(waitingMillis.longValue());
@@ -217,6 +227,7 @@ public class IteratorBasedJobProcessing implements Serializable {
      * @param updateJobExecutionStatistics Shall job execution statistics be updated on each item processed (successfully or not)
      */
     @SuppressWarnings({ "rawtypes" })
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public <T> void processItems(JobExecutionResultImpl jobExecutionResult, Iterator<T> iterator, Consumer<T> processSingleItemFunction, Long nbThreads, Long waitingMillis, boolean processItemInOwnTx,
             JobSpeedEnum jobSpeed, boolean updateJobExecutionStatistics) {
 
@@ -228,58 +239,70 @@ public class IteratorBasedJobProcessing implements Serializable {
         int checkJobStatusEveryNr = jobSpeed.getCheckNb();
         int updateJobStatusEveryNr = nbThreads.longValue() > 3 ? jobSpeed.getUpdateNb() * nbThreads.intValue() / 2 : jobSpeed.getUpdateNb();
 
-        Runnable task = () -> {
+        List<Runnable> tasks = new ArrayList<Runnable>(nbThreads.intValue());
 
-            currentUserProvider.reestablishAuthentication(lastCurrentUser);
-            int i = 0;
-            long globalI = 0;
+        for (int k = 0; k < nbThreads; k++) {
 
-            T itemToProcess = iterator.next();
-            while (itemToProcess != null) {
+            int finalK = k;
+            tasks.add(() -> {
 
-                if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
-                    break;
+                Thread.currentThread().setName(jobInstance.getCode() + "-" + finalK);
+
+                currentUserProvider.reestablishAuthentication(lastCurrentUser);
+                int i = 0;
+                long globalI = 0;
+
+                T itemToProcess = iterator.next();
+                while (itemToProcess != null) {
+
+                    if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
+                        break;
+                    }
+
+                    try {
+                        T itemToProcessFinal = itemToProcess;
+                        if (processItemInOwnTx) {
+                            methodCallingUtils.callMethodInNewTx(() -> processSingleItemFunction.accept(itemToProcessFinal));
+
+                        } else {
+                            processSingleItemFunction.accept(itemToProcessFinal);
+                        }
+
+                        if (updateJobExecutionStatistics) {
+                            globalI = jobExecutionResult.registerSucces();
+                        }
+
+                    } catch (Exception e) {
+
+                        String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
+                        if (updateJobExecutionStatistics) {
+                            globalI = jobExecutionResult.registerError(itemToProcess + ": " + rejectReason);
+                        }
+                    }
+
+                    // Thread.currentThread().interrupt();
+
+                    try {
+                        // Record progress
+                        if (updateJobExecutionStatistics && globalI > 0 && globalI % updateJobStatusEveryNr == 0) {
+                            jobExecutionResultService.persistResult(jobExecutionResult);
+                        }
+                    } catch (EJBTransactionRolledbackException e) {
+                        // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
+                    } catch (Exception e) {
+                        log.error("Failed to update job progress", e);
+                    }
+
+                    itemToProcess = iterator.next();
+
+                    i++;
                 }
+            });
+        }
 
-                try {
-                    T itemToProcessFinal = itemToProcess;
-                    if (processItemInOwnTx) {
-                        methodCallingUtils.callMethodInNewTx(() -> processSingleItemFunction.accept(itemToProcessFinal));
-
-                    } else {
-                        processSingleItemFunction.accept(itemToProcessFinal);
-                    }
-
-                    if (updateJobExecutionStatistics) {
-                        globalI = jobExecutionResult.registerSucces();
-                    }
-
-                } catch (Exception e) {
-
-                    String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
-                    if (updateJobExecutionStatistics) {
-                        globalI = jobExecutionResult.registerError(itemToProcess + ": " + rejectReason);
-                    }
-                }
-
-                try {
-                    // Record progress
-                    if (updateJobExecutionStatistics && globalI > 0 && globalI % updateJobStatusEveryNr == 0) {
-                        jobExecutionResultService.persistResult(jobExecutionResult);
-                    }
-                } catch (EJBTransactionRolledbackException e) {
-                    // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
-                } catch (Exception e) {
-                    log.error("Failed to update job progress", e);
-                }
-
-                itemToProcess = iterator.next();
-                i++;
-            }
-        };
-
-        for (int i = 0; i < nbThreads; i++) {
-            log.info("{}/{} Will submit task to run", jobExecutionResult.getJobInstance().getJobTemplate(), jobExecutionResult.getJobInstance().getCode());
+        int i = 0;
+        for (Runnable task : tasks) {
+            log.info("{}/{} Will submit task #{} to run", jobInstance.getJobTemplate(), jobInstance.getCode(), i++);
             futures.add(executor.submit(task));
             try {
                 Thread.sleep(waitingMillis.longValue());

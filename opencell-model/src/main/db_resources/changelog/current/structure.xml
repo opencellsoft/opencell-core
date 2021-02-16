@@ -4095,7 +4095,7 @@ END $$;]]>
     </changeSet>
 
     <changeSet id="4756_20191104" author="Andrius">
-        <dropColumn tableName="job_execution" columnName="job_done"/>
+        <!-- <dropColumn tableName="job_execution" columnName="job_done"/>  -->
         <addColumn tableName="job_execution">
             <column name="job_status" type="varchar(14)"/>
         </addColumn>
