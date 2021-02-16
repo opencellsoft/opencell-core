@@ -2325,8 +2325,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public void rejectInvoices(Long billingRunId, List<Long> invoiceIds) {
 		List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.SUSPECT ,InvoiceStatusEnum.DRAFT));
 		for(Invoice invoice :invoices) {
-			invoice.setStatus(InvoiceStatusEnum.REJECTED);
+			rejectInvoice(invoice);
 		}
+	}
+
+	public void rejectInvoice(Invoice invoice) {
+		invoice.setStatus(InvoiceStatusEnum.REJECTED);
 	}
 
 	
