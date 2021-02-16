@@ -89,7 +89,7 @@ public class PaginationConfiguration implements Serializable {
             sortValues.add(sortFieldsAndOrder[i + 1] == null ? SortOrder.ASCENDING : sortFieldsAndOrder[i + 1]);
         }
 
-        this.ordering = sortValues.size() > 0 ? sortValues.toArray() : null;
+        this.ordering = sortValues.toArray();
     }
 
     /**
@@ -192,7 +192,7 @@ public class PaginationConfiguration implements Serializable {
      * @return Should any sorting be applied to search results
      */
     public boolean isSorted() {
-        return ordering != null && ordering.length > 0;
+        return ordering != null;
     }
 
     @Override
