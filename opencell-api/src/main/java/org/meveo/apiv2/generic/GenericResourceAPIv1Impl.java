@@ -1,5 +1,6 @@
 package org.meveo.apiv2.generic;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
@@ -82,7 +83,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
      * This request is used to retrieve all entities, or also a particular entity
      */
     @Override
-    public Response getAllEntitiesOrGetAnEntity() throws URISyntaxException {
+    public Response getAllEntitiesOrGetAnEntity() throws URISyntaxException, JsonProcessingException {
         String getPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
 
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
@@ -98,10 +99,10 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
             queryParamsMap = uriInfo.getQueryParameters();
-//            GenericRequestMapper genericRequestMapper = new GenericRequestMapper( this.getClass(), PersistenceServiceHelper.getPersistenceService() );
-//            paginationConfig = genericRequestMapper.mapTo( GenericPagingAndFilteringUtils.constructImmutableGenericPagingAndFiltering(queryParamsMap) );
             GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
-            GenericPagingAndFilteringUtils.getInstance().generatePagingConfig();
+            String entityName = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
+            Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize(entityName) );
+            GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
 
             if ( ! queryParamsMap.isEmpty() ) {
                 queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
@@ -114,11 +115,15 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 if ( pathIBaseRS.contains( "oneShotChargeTemplate" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
-                            + queryParams.substring( 0, queryParams.length() - 1 ) );
+                            + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
+                else if ( pathIBaseRS.contains( "account/customer" ) )
+                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                            + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
+                            + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
                 else
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL
-                            + queryParams.substring( 0, queryParams.length() - 1 ) );
+                            + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
 System.out.println( "GET ALL ENTITIES 1 : " + redirectURI.toString() );
             }
             else {
@@ -158,7 +163,9 @@ System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
 
             queryParamsMap = uriInfo.getQueryParameters();
             GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
-            GenericPagingAndFilteringUtils.getInstance().generatePagingConfig();
+            String entityName = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
+            Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize(entityName) );
+            GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
 
             String originalPattern = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.getPattern().toString();
             int indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX );
