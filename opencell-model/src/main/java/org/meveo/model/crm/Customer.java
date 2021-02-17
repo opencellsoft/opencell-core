@@ -33,6 +33,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
@@ -55,6 +57,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
@@ -168,6 +171,12 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     @Type(type = "numeric_boolean")
     @Column(name = "threshold_per_entity")
     private boolean thresholdPerEntity;
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "customers", cascade = CascadeType.REMOVE)
+    private List<Contact> contacts;
+
+    @Column(name = "role")
+    private String role;
 
     public AddressBook getAddressbook() {
         return addressbook;
@@ -327,5 +336,21 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
      */
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
         this.checkThreshold = checkThreshold;
+    }
+
+    public List<Contact> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(List<Contact> contacts) {
+        this.contacts = contacts;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

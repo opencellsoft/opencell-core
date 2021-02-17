@@ -21,7 +21,6 @@ package org.meveo.api.dto.account;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -64,6 +63,8 @@ public class CustomerDto extends AccountDto {
     
     /** The mandate date. */
     private Date mandateDate;
+
+    private List<String> contactCodes;
 
     /**
      * Use for GET / LIST only.
@@ -326,6 +327,14 @@ public class CustomerDto extends AccountDto {
 	public void setInfoGdpr(List<GDPRInfoDto> infoGdpr) {
 		this.infoGdpr = infoGdpr;
 	}
+
+    public List<String> getContactCodes() {
+        return contactCodes;
+    }
+
+    public void setContactCodes(List<String> contactCodes) {
+        this.contactCodes = contactCodes;
+    }
 
     @Override
     public String toString() {

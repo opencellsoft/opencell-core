@@ -21,11 +21,13 @@ package org.meveo.api.crm;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.elasticsearch.cluster.ClusterState;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.account.AccountEntityApi;
@@ -212,6 +214,18 @@ public class ContactApi extends AccountEntityApi {
             contact.setTags(postData.getTags());
         }
 
+        if(postData.getCustomerCodes() != null){
+            List<Customer> customers = postData.getCustomerCodes()
+                    .stream()
+                    .map(code -> {
+                        Customer customer = customerService.findByCode(code);
+                        if (customer == null)
+                            throw new EntityDoesNotExistsException(Customer.class, code);
+                        return customer;
+                    }).collect(Collectors.toList());
+            contact.setCustomers(customers);
+        }
+
         if (isNew || (contact.getCompany() != null && contact.getCompany().equals(postData.getCompany()))) {
             contact.setCompany(postData.getCompany());
             Customer customer = null;
@@ -396,6 +410,22 @@ public class ContactApi extends AccountEntityApi {
                 throw new BusinessException("Contact code: " + code + " do not contain tag: " + tag);
         } else
             throw new EntityDoesNotExistsException(Contact.class, code, "code");
+    }
+
+    public ContactDto addCustomers(String contactCode, List<String> customersCode){
+        Contact contact = contactService.findByCode(contactCode);
+        if(contact == null)
+            throw new EntityDoesNotExistsException(Contact.class, contactCode);
+        List<Customer> customers = customersCode.stream()
+                .map(code -> {
+                    Customer customer = customerService.findByCode(code);
+                    if (customer == null)
+                        throw new EntityDoesNotExistsException(Customer.class, code);
+                    return customer;
+                }).collect(Collectors.toList());
+        contact.getCustomers().addAll(customers);
+        contact = contactService.update(contact);
+        return new ContactDto(contact);
     }
 
 }

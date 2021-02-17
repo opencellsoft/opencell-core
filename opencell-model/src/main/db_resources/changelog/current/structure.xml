@@ -3709,4 +3709,28 @@ END $$;]]>
         </sql>
     </changeSet>
 
+    <changeSet author="NabilOUACHI" id="#20211702">
+        <createTable tableName="bi_contacts_customers">
+            <column name="contact_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="customer_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="customer_id, contact_id" constraintName="bi_contacts_customers_pkey" tableName="bi_contacts_customers" />
+
+        <addForeignKeyConstraint baseTableName="bi_contacts_customers" baseColumnNames="customer_id"
+                                 constraintName="bi_contacts_customers_customers_fk" referencedTableName="crm_customer"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="bi_contacts_customers" baseColumnNames="contact_id"
+                                 constraintName="bi_contacts_customers_contacts_fk" referencedTableName="com_contact"
+                                 referencedColumnNames="id"/>
+
+        <addColumn tableName="crm_customer">
+            <column name="role" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

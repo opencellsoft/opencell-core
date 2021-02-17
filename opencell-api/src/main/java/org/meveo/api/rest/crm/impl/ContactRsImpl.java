@@ -36,6 +36,8 @@ import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
+import java.util.List;
+
 /**
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -107,7 +109,7 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public ActionStatus remove(@PathParam("code") String code) {
 		ActionStatus result = new ActionStatus();
@@ -156,6 +158,17 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 	}
 
 	@Override
+	public GetContactResponseDto addCustomers(String contactCode, List<String> customerCodes){
+		GetContactResponseDto result = new GetContactResponseDto();
+		try {
+			result.setContact(contactApi.addCustomers(contactCode, customerCodes));
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+		return result;
+	}
+
+	@Override
 	public ContactsResponseDto importCSVText(String context) {
 		ContactsResponseDto result = new ContactsResponseDto();
 		try {
@@ -164,7 +177,7 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 			if(result.getContacts() != null && !result.getContacts().getContact().isEmpty())
 				result.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, "The following contacts have failed to persist"));
 			return result;
-			
+
 		} catch (Exception e) {
 			processException(e, result.getActionStatus());
 			return result;
