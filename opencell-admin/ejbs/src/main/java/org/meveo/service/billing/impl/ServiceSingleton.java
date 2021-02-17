@@ -426,7 +426,7 @@ public class ServiceSingleton {
         String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
         // request to store invoiceNo in alias field
         invoice.setAlias(invoiceNumber);
-        invoice.setInvoiceNumber(prefix + invoiceNumber);
+        invoice.setInvoiceNumber((prefix == null ? "" : prefix) + invoiceNumber);
         if (isVirtual) {
 
             invoiceNumberAssignedEventProducer.fire(invoice);
