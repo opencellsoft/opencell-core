@@ -1,15 +1,64 @@
 package org.meveo.service.billing.impl;
 
+import static java.util.Collections.emptyList;
+import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
+import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_BA;
+import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_CA;
+import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_CUST;
+import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_SE;
+import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_SU;
+import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_UA;
+import static org.meveo.model.shared.DateUtils.addDaysToDate;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotFoundException;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.Amounts;
+import org.meveo.model.billing.ApplyMinimumModeEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.ExtraMinAmount;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.MinAmountData;
+import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.MinAmountsResult;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.OfferServiceTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
@@ -19,19 +68,6 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.*;
-
-import static java.util.Collections.emptyList;
-import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
-import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.*;
-import static org.meveo.model.shared.DateUtils.addDaysToDate;
-
 @Stateless
 public class InvoiceLinesService extends BusinessService<InvoiceLine> {
 
@@ -273,4 +309,142 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
     public MinAmountForAccounts isMinAmountForAccountsActivated(IBillableEntity entity, ApplyMinimumModeEnum applyMinimumModeEnum) {
         return new MinAmountForAccounts(minAmountService.isMinUsed(), entity, applyMinimumModeEnum);
     }
+    
+    
+	/**
+	 * @param invoice 
+	 * @param invoiceLineRessource
+	 * @return 
+	 */
+	public void create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource) {
+		InvoiceLine invoiceLine = invoiceLineRessourceToEntity(invoiceLineRessource, null);
+		invoiceLine.setCode(invoice.getCode());
+		invoiceLine.setInvoice(invoice);
+		create(invoiceLine);
+	}
+	
+	protected InvoiceLine invoiceLineRessourceToEntity(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
+		if(invoiceLine==null) {
+			invoiceLine = new InvoiceLine();
+		}
+		Optional.ofNullable(resource.getPrestation()).ifPresent(invoiceLine::setPrestation);
+		Optional.ofNullable(resource.getQuantity()).ifPresent(invoiceLine::setQuantity);
+		Optional.ofNullable(resource.getUnitPrice()).ifPresent(invoiceLine::setUnitPrice);
+		Optional.ofNullable(resource.getDiscountRate()).ifPresent(invoiceLine::setDiscountRate);
+		Optional.ofNullable(resource.getAmountWithoutTax()).ifPresent(invoiceLine::setAmountWithoutTax);
+		Optional.ofNullable(resource.getTaxRate()).ifPresent(invoiceLine::setTaxRate);
+		Optional.ofNullable(resource.getAmountWithTax()).ifPresent(invoiceLine::setAmountWithTax);
+		Optional.ofNullable(resource.getAmountTax()).ifPresent(invoiceLine::setAmountTax);
+		Optional.ofNullable(resource.getOrderRef()).ifPresent(invoiceLine::setOrderRef);
+		Optional.ofNullable(resource.getAccessPoint()).ifPresent(invoiceLine::setAccessPoint);
+		Optional.ofNullable(resource.getValueDate()).ifPresent(invoiceLine::setValueDate);
+		Optional.ofNullable(resource.getOrderNumber()).ifPresent(invoiceLine::setOrderNumber);
+		Optional.ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
+		Optional.ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
+		Optional.ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
+		
+		if(resource.getServiceInstanceCode()!=null) {
+			invoiceLine.setServiceInstance((ServiceInstance)tryToFindByEntityClassAndCode(ServiceInstance.class, resource.getServiceInstanceCode()));
+		}
+		if(resource.getSubscriptionCode()!=null) {
+			invoiceLine.setSubscription((Subscription)tryToFindByEntityClassAndCode(Subscription.class, resource.getSubscriptionCode()));
+		}
+		if(resource.getProductCode()!=null) {
+			invoiceLine.setProduct((Product)tryToFindByEntityClassAndCode(Product.class, resource.getProductCode()));
+		}
+		if(resource.getAccountingArticleCode()!=null) {
+			invoiceLine.setAccountingArticle((AccountingArticle)tryToFindByEntityClassAndCode(AccountingArticle.class, resource.getAccountingArticleCode()));
+		}
+		if(resource.getServiceTemplateCode()!=null) {
+			invoiceLine.setServiceTemplate((ServiceTemplate)tryToFindByEntityClassAndCode(ServiceTemplate.class, resource.getServiceTemplateCode()));
+		}
+		if(resource.getDiscountPlanCode()!=null) {
+			invoiceLine.setDiscountPlan((DiscountPlan)tryToFindByEntityClassAndCode(DiscountPlan.class, resource.getDiscountPlanCode()));
+		}
+		if(resource.getTaxCode()!=null) {
+			invoiceLine.setTax((Tax)tryToFindByEntityClassAndCode(Tax.class, resource.getTaxCode()));
+		}
+		if(resource.getOrderLotCode()!=null) {
+			invoiceLine.setOrderLot((OrderLot)tryToFindByEntityClassAndCode(OrderLot.class, resource.getOrderLotCode()));
+		}
+		if(resource.getBillingAccountCode()!=null) {
+			invoiceLine.setBillingAccount((BillingAccount)tryToFindByEntityClassAndCode(BillingAccount.class, resource.getBillingAccountCode()));
+		}
+		if(resource.getOfferTemplateCode()!=null) {
+			invoiceLine.setOfferTemplate((OfferTemplate)tryToFindByEntityClassAndCode(OfferTemplate.class, resource.getOfferTemplateCode()));
+		}
+		
+		if(resource.isTaxRecalculated()!=null){
+			invoiceLine.setTaxRecalculated( resource.isTaxRecalculated());
+		}
+		invoiceLine.setProductVersion((ProductVersion)tryToFindByEntityClassAndId(ProductVersion.class, resource.getProductVersionId()));
+		invoiceLine.setOfferServiceTemplate((OfferServiceTemplate) tryToFindByEntityClassAndId(OfferServiceTemplate.class, resource.getOfferServiceTemplateId()));
+		invoiceLine.setCommercialOrder((CommercialOrder)tryToFindByEntityClassAndId(CommercialOrder.class, resource.getCommercialOrderId()));
+		invoiceLine.setBillingRun((BillingRun)tryToFindByEntityClassAndId(BillingRun.class, resource.getBillingRunId()));
+		
+		return invoiceLine;
+	}
+	
+    /**
+	 * @param entity
+	 * @param id
+	 * @return
+	 */
+	private IEntity tryToFindByEntityClassAndId(Class<? extends IEntity> entity, Long id) {
+    	if(id==null) {
+    		return null;
+    	}
+        QueryBuilder qb = new QueryBuilder(entity, "entity", null);
+        qb.addCriterion("entity.id", "=", id, true);
+        try {
+			return (IEntity) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with id '"+id+"' found");
+        } catch (NonUniqueResultException e) {
+        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+" with id '"+id+"' found");
+        }
+	}
+
+	public BusinessEntity tryToFindByEntityClassAndCode(Class<? extends BusinessEntity> entity, String code) {
+    	if(code==null) {
+    		return null;
+    	}
+        QueryBuilder qb = new QueryBuilder(entity, "entity", null);
+        qb.addCriterion("entity.code", "=", code, true);
+        try {
+			return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with code '"+code+"' found");
+        } catch (NonUniqueResultException e) {
+        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+" with code '"+code+"' found");
+        }
+    }
+
+	/**
+	 * @param invoice
+	 * @param invoiceLine
+	 */
+	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource, Long invoiceLineId) {
+		InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
+		invoiceLine = invoiceLineRessourceToEntity(invoiceLineRessource, invoiceLine);
+		update(invoiceLine);
+	}
+
+	private InvoiceLine findInvoiceLine(Invoice invoice, Long invoiceLineId) {
+		InvoiceLine invoiceLine = findById(invoiceLineId);
+		if(!invoice.equals(invoiceLine.getInvoice())) {
+			throw new BusinessException("invoice line with ID "+invoiceLineId+" is not related to invoice with id:"+invoice.getId());
+		}
+		return invoiceLine;
+	}
+
+	/**
+	 * @param invoice
+	 * @param lineId
+	 */
+	public void remove(Invoice invoice, Long lineId) {
+		InvoiceLine invoiceLine = findInvoiceLine(invoice, lineId);
+		invoiceLine.setStatus(InvoiceLineStatusEnum.CANCELED);
+		invoiceLine.setInvoice(null);
+	}
 }
