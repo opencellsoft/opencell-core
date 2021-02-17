@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "fca598d2-dab2-4bed-9316-e2a205f7f3e5",
+		"_postman_id": "bd8e2256-094c-47c3-b4ab-2c4dfdce5caa",
 		"name": "CPQ Functional Process",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1924,7 +1924,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"productCode\": \"{{tvDecoderCode}}\",\r\n  \"shortDescription\": \"Product version TV_DECODER description\",\r\n  \"currentVersion\": {{televisionVersion}},\r\n  \"status\": \"DRAFT\",\r\n  \"statusDate\": \"2020-11-24\",\r\n   \"validity\":{\r\n   \"from\": \"2020-11-24\",\r\n   \"to\": \"2022-12-25\"\r\n    }\r\n}",
+									"raw": "{\r\n  \"productCode\": \"{{tvDecoderCode}}\",\r\n  \"shortDescription\": \"Product version TV_DECODER description\",\r\n  \"currentVersion\": {{tvDecoderVersion}},\r\n  \"status\": \"DRAFT\",\r\n  \"statusDate\": \"2020-11-24\",\r\n   \"validity\":{\r\n   \"from\": \"2020-11-24\",\r\n   \"to\": \"2022-12-25\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1947,7 +1947,7 @@
 							"response": []
 						},
 						{
-							"name": "Publish TV_DECODER Product Version",
+							"name": "Publish TV_DECODER Version",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -2224,7 +2224,7 @@
 							"response": []
 						},
 						{
-							"name": "Create Product Version of TELEVISION",
+							"name": "Create TELEVISION Version",
 							"event": [
 								{
 									"listen": "test",
@@ -2264,7 +2264,7 @@
 							"response": []
 						},
 						{
-							"name": "Publish TELEVISION Product Version",
+							"name": "Publish TELEVISION Version",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -2444,7 +2444,7 @@
 							"response": []
 						},
 						{
-							"name": "Create Commercial Rule Header",
+							"name": "Create Commercial Rule Pre Requisite Header",
 							"event": [
 								{
 									"listen": "test",
@@ -2494,7 +2494,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  {\r\n  \"code\": \"{{tvCommercialRuleCode}}\",\r\n  \"description\": \"This is TV commerciale rule desc\", \r\n  \"offerCode\": \"{{tvDecoderOffer}}\",\r\n  \"ruleType\": \"PRE_REQUISITE\", \r\n  \"productCode\": \"{{televisionCode}}\",\r\n  \"productVersion\": {{televisionVersion}},\r\n  \"commercialRuleItems\": [\r\n    {\r\n      \"operator\": \"AND\",\r\n      \"commercialRuleLines\": [\r\n        {\r\n          \"productCode\": \"{{tvDecoderCode}}\",  \r\n          \"attributeCode\": \"{{brandAttribute}}\",  \r\n          \"attributeValue\": \"SONY\",\r\n          \"operator\": \"EQUAL\"\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}\r\n  "
+									"raw": "  {\r\n  \"code\": \"{{tvCommercialRuleCode}}\",\r\n  \"description\": \"This is TV commerciale rule desc\", \r\n  \"offerCode\": \"{{tvDecoderOffer}}\",\r\n  \"ruleType\": \"PRE_REQUISITE\", \r\n  \"productCode\": \"{{televisionCode}}\",\r\n  \"productVersion\": {{televisionVersion}},\r\n  \"commercialRuleItems\": [\r\n    {\r\n      \"operator\": \"AND\",\r\n      \"commercialRuleLines\": [\r\n        {\r\n          \"productCode\": \"{{tvDecoderCode}}\",  \r\n          \"attributeCode\": \"{{brandAttribute}}\",  \r\n          \"attributeValue\": \"SONY\",\r\n          \"operator\": \"EQUAL\"\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/commercialRule/",
@@ -2510,7 +2510,73 @@
 							"response": []
 						},
 						{
-							"name": "Read TV Commercial Rule",
+							"name": "Create Replacement Commercial Rule Header",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "  {\r\n  \"code\": \"{{repCommercialRuleCode}}\",\r\n  \"description\": \"This is replacement commerciale rule desc\", \r\n  \"offerCode\": \"{{tvDecoderOffer}}\",\r\n  \"ruleType\": \"REPLACEMENT\",\r\n  \"attributeCode\":\"{{brandAttribute}}\",\r\n  \"productCode\": \"{{tvDecoderCode}}\",\r\n  \"productVersion\": {{tvDecoderVersion}},\r\n  \"commercialRuleItems\": [\r\n    {\r\n      \"operator\": \"AND\",\r\n      \"commercialRuleLines\": [\r\n        {\r\n          \"productCode\": \"{{tvDecoderCode}}\",\r\n          \"attributeCode\": \"{{brandAttribute}}\"\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule/",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read TELEVISION Commercial Rule",
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -2526,6 +2592,30 @@
 										{
 											"key": "code",
 											"value": "{{tvCommercialRuleCode}}"
+										}
+									]
+								},
+								"description": "Retrieving a product with its code"
+							},
+							"response": []
+						},
+						{
+							"name": "Read REPLACEMENT Commercial Rule",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule?code={{repCommercialRuleCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "{{repCommercialRuleCode}}"
 										}
 									]
 								},
@@ -4759,6 +4849,67 @@
 					"response": []
 				},
 				{
+					"name": "Read Products w/ Commercial Rule Replacement & Quote Offer Context",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"offerCode\":\"{{offerTemplateCode}}\", \r\n    \r\n    \"selectedProducts\": [\r\n        \r\n        {\r\n        \"productCode\":\"{{tvDecoderCode}}\",\r\n        \"selectedAttributes\": {\r\n        \"brand\":\"SONY\"\r\n      }\r\n        }\r\n        \r\n        ] ,\r\n    \"customerContextDTO\": {\r\n    \"requestedTagTypes\":[]\r\n    }\r\n\r\n} \r\n\r\n"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/cpq/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"cpq",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Quote Quotation",
 					"request": {
 						"auth": {
@@ -5866,6 +6017,10 @@
 		{
 			"key": "tvCommercialRuleCode",
 			"value": "TV_COMMERCIAL_RULE"
+		},
+		{
+			"key": "repCommercialRuleCode",
+			"value": "REPLACEMENT_COMMERCIAL_RULE"
 		},
 		{
 			"key": "orderTypeCode",
