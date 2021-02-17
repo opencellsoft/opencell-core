@@ -10,16 +10,20 @@ import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
-import org.meveo.apiv2.article.resource.AccountingArticleResource;
+import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.ImmutableFile;
 import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.billing.ImmutableInvoices;
+import org.meveo.apiv2.billing.InvoiceLineInput;
+import org.meveo.apiv2.billing.InvoiceLinesToRemove;
+import org.meveo.apiv2.billing.InvoiceLinesInput;
 import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceStatusEnum;
 
 public class InvoiceResourceImpl implements InvoiceResource {
 
@@ -28,7 +32,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	
 
 	private static final InvoiceMapper invoiceMapper = new InvoiceMapper();
-
+	
 	@Override
 	public Response getInvoice(Long id, Request request) {
 		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
@@ -88,7 +92,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	@Override
 	public Response fetchPdfInvoice(@NotNull Long id, Boolean generateIfMissing, Request request) {
 		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
-		generateIfMissing = generateIfMissing ==null? false: generateIfMissing;
+		generateIfMissing = generateIfMissing == null? false : generateIfMissing;
 		byte[] content = invoiceApiService.fetchPdfInvoice(invoice, generateIfMissing)
 				.orElseThrow(NotFoundException::new);
 		ImmutableFile file = ImmutableFile.builder().id(invoice.getId()).fileName(invoice.getPdfFilename())
@@ -108,7 +112,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	public Response createAdvancedPaymentInvoices(BasicInvoice basicInvoice) {
         Invoice invoice = invoiceApiService.create(basicInvoice);
         return Response
-                .created(LinkGenerator.getUriBuilderFromResource(AccountingArticleResource.class, invoice.getId()).build())
+                .created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, invoice.getId()).build())
                 .entity(toResourceInvoiceWithLink(invoiceMapper.toResource(invoice)))
                 .build();
 	}
@@ -130,5 +134,89 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		return buildInvoiceResponse(request, invoice);
 	}
 
+	@Override
+	public Response addInvoiceLines(Long id, InvoiceLinesInput invoiceLinesInput) {
+		Invoice invoice = findInvoiceEligibleToUpdate(id);
+		invoiceApiService.createLines(invoice, invoiceLinesInput);
+		if(invoiceLinesInput.getSkipValidation()==null || !invoiceLinesInput.getSkipValidation()) {
+			invoiceApiService.rebuildInvoice(invoice);
+		}
+		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
+                .build();
+	}
+	
+	@Override
+	public Response updateInvoiceLine(Long id, Long lineId, InvoiceLineInput invoiceLineInput) {
+		Invoice invoice = findInvoiceEligibleToUpdate(id);
+		invoiceApiService.updateLine(invoice, invoiceLineInput, lineId);
+		if(invoiceLineInput.getSkipValidation()==null || !invoiceLineInput.getSkipValidation()) {
+			invoiceApiService.rebuildInvoice(invoice);
+		}
+		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
+                .build();
+	}
 
+	private Invoice findInvoiceEligibleToUpdate(Long id) {
+		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+		final InvoiceStatusEnum status = invoice.getStatus();
+		if(!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status))) {
+			throw new ActionForbiddenException("Can only update invoices in statuses DRAFT/SUSPECT/REJECTED. current invoice status is :"+status.name()) ;
+		}
+		return invoice;
+	}
+
+	@Override
+	public Response removeInvoiceLine(Long id, Long lineId, InvoiceLinesToRemove invoiceLineToRemove) {
+		Invoice invoice = findInvoiceEligibleToUpdate(id);
+		invoiceApiService.removeLine(invoice,lineId);
+		if(invoiceLineToRemove==null || invoiceLineToRemove.getSkipValidation()==null || !invoiceLineToRemove.getSkipValidation()) {
+			invoiceApiService.rebuildInvoice(invoice);
+		}
+		return null;
+	}
+
+	@Override
+	public Response removeInvoiceLines(Long id, InvoiceLinesToRemove invoiceLineToRemove) {
+		Invoice invoice = findInvoiceEligibleToUpdate(id);
+		for(Long lineId : invoiceLineToRemove.getIds()) {
+			invoiceApiService.removeLine(invoice,lineId);
+		}
+		
+		if(invoiceLineToRemove==null || invoiceLineToRemove.getSkipValidation()==null || !invoiceLineToRemove.getSkipValidation()) {
+			invoiceApiService.rebuildInvoice(invoice);
+		}
+		return null;
+	}
+
+	@Override
+	public Response rebuildInvoiceLine(Long id) {
+		Invoice invoice = findInvoiceEligibleToUpdate(id);
+		invoiceApiService.rebuildInvoice(invoice);
+		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
+                .build();
+	}
+
+	@Override
+	public Response rejectInvoiceLine(Long id) {
+		Invoice invoice = findInvoiceEligibleToUpdate(id);
+		invoiceApiService.rejectInvoice(invoice);
+		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
+                .build();
+	}
+
+	@Override
+	public Response validateInvoiceLine(Long id) {
+		Invoice invoice = findInvoiceEligibleToUpdate(id);
+		invoiceApiService.validateInvoice(invoice);
+		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
+                .build();
+	}
+
+	@Override
+	public Response cancelInvoiceLine(Long id) {
+		Invoice invoice = findInvoiceEligibleToUpdate(id);
+		invoiceApiService.cancelInvoice(invoice);
+		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
+                .build();
+	}
 }
