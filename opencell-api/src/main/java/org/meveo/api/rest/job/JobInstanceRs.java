@@ -33,6 +33,8 @@ import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 /**
  * 
  * @author Manu Liwanag
@@ -52,6 +54,8 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @POST
     @Path("/create")
+    @Operation(summary = "Create a new job",
+    tags = { "Jobs management" })
     ActionStatus create(JobInstanceDto postData);
 
     /**
@@ -62,6 +66,8 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @POST
     @Path("/update")
+    @Operation(summary = "Update an existing job",
+    tags = { "Jobs management" })
     ActionStatus update(JobInstanceDto postData);
 
     /**
@@ -72,6 +78,8 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+    @Operation(summary = " Create new or update an existing job with a given code",
+    tags = { "Jobs management" })
     ActionStatus createOrUpdate(JobInstanceDto postData);
 
     /**
@@ -82,6 +90,8 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @GET
     @Path("/")
+    @Operation(summary = "Find a job with a given code",
+    tags = { "Jobs management" })
     JobInstanceResponseDto find(@QueryParam("jobInstanceCode") String jobInstanceCode);
 
     /**
@@ -92,6 +102,8 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @DELETE
     @Path("/{jobInstanceCode}")
+    @Operation(summary = "Remove an existing job with a given code",
+    tags = { "Jobs management" })
     ActionStatus remove(@PathParam("jobInstanceCode") String jobInstanceCode);
 
     /**
@@ -102,6 +114,8 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+    @Operation(summary = "Enable a Job with a given code",
+    tags = { "Jobs management" })
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -112,6 +126,8 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+    @Operation(summary = "Disable a Job with a given code",
+    tags = { "Jobs management" })
     ActionStatus disable(@PathParam("code") String code);
 
 }
