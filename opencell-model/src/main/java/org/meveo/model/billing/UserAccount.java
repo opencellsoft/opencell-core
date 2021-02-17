@@ -17,6 +17,8 @@
  */
 package org.meveo.model.billing;
 
+import static javax.persistence.FetchType.LAZY;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,6 +52,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.article.AccountingArticle;
 
 /**
  * User account
@@ -67,7 +70,7 @@ import org.meveo.model.WorkflowedEntity;
 @NamedQueries({ @NamedQuery(name = "UserAccount.findByCode", query = "select u from  UserAccount u where u.code = :code and lower(u.accountType) = 'acct_ua'"),
         @NamedQuery(name = "UserAccount.getUserAccountsWithMinAmountELNotNullByBA", query = "select u from UserAccount u where u.minimumAmountEl is not null AND u.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND u.billingAccount=:billingAccount"),
         @NamedQuery(name = "UserAccount.getUserAccountsWithMinAmountELNotNullByUA", query = "select u from UserAccount u where u.minimumAmountEl is not null AND u.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND u=:userAccount"),
-        @NamedQuery(name = "UserAccount.getMimimumRTUsed", query = "select u.minimumAmountEl from UserAccount u where u.minimumAmountEl is not null"),
+        @NamedQuery(name = "UserAccount.getMinimumAmountUsed", query = "select u.minimumAmountEl from UserAccount u where u.minimumAmountEl is not null"),
 
 })
 public class UserAccount extends AccountEntity implements IWFEntity, ICounterEntity, ISearchable {
@@ -152,6 +155,13 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "termin_reason_id")
     private SubscriptionTerminationReason terminationReason;
+
+    /**
+     * Corresponding to minimum invoice AccountingArticle
+     */
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "minimum_article_id")
+    private AccountingArticle minimumArticle;
 
     public UserAccount() {
         accountType = ACCOUNT_TYPE;
@@ -264,5 +274,13 @@ public class UserAccount extends AccountEntity implements IWFEntity, ICounterEnt
     @Override
     public Class<? extends BusinessEntity> getParentEntityType() {
         return BillingAccount.class;
+    }
+
+    public AccountingArticle getMinimumArticle() {
+        return minimumArticle;
+    }
+
+    public void setMinimumArticle(AccountingArticle minimumArticle) {
+        this.minimumArticle = minimumArticle;
     }
 }
