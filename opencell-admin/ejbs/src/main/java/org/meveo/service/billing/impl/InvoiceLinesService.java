@@ -32,11 +32,13 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
+import org.meveo.model.IEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.ApplyMinimumModeEnum;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ExtraMinAmount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceLineStatusEnum;
@@ -49,9 +51,11 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
@@ -373,17 +377,35 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
 		if(resource.isTaxRecalculated()!=null){
 			invoiceLine.setTaxRecalculated( resource.isTaxRecalculated());
 		}
-		/*
-		invoiceLine.setProductVersion((ProductVersion)tryToFindByEntityClassAndCode(ProductVersion.class, resource.getProductVersionCode()));
-		invoiceLine.setOfferServiceTemplate((OfferServiceTemplate)tryToFindByEntityClassAndCode(OfferServiceTemplate.class, resource.getOfferServiceTemplateCode()));
-		invoiceLine.setCommercialOrder((CommercialOrder)tryToFindByEntityClassAndCode(CommercialOrder.class, resource.getCommercialOrderCode()));
-		invoiceLine.setBillingRun((BillingRun)tryToFindByEntityClassAndCode(BillingRun.class, resource.getBillingRunCode()));
-		 */
+		invoiceLine.setProductVersion((ProductVersion)tryToFindByEntityClassAndId(ProductVersion.class, resource.getProductVersionId()));
+		invoiceLine.setOfferServiceTemplate((OfferServiceTemplate) tryToFindByEntityClassAndId(OfferServiceTemplate.class, resource.getOfferServiceTemplateId()));
+		invoiceLine.setCommercialOrder((CommercialOrder)tryToFindByEntityClassAndId(CommercialOrder.class, resource.getCommercialOrderId()));
+		invoiceLine.setBillingRun((BillingRun)tryToFindByEntityClassAndId(BillingRun.class, resource.getBillingRunId()));
 		
 		return invoiceLine;
 	}
 	
-    public BusinessEntity tryToFindByEntityClassAndCode(Class<? extends BusinessEntity> entity, String code) {
+    /**
+	 * @param entity
+	 * @param id
+	 * @return
+	 */
+	private IEntity tryToFindByEntityClassAndId(Class<? extends IEntity> entity, Long id) {
+    	if(id==null) {
+    		return null;
+    	}
+        QueryBuilder qb = new QueryBuilder(entity, "entity", null);
+        qb.addCriterion("entity.id", "=", id, true);
+        try {
+			return (IEntity) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with id '"+id+"' found");
+        } catch (NonUniqueResultException e) {
+        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+" with id '"+id+"' found");
+        }
+	}
+
+	public BusinessEntity tryToFindByEntityClassAndCode(Class<? extends BusinessEntity> entity, String code) {
     	if(code==null) {
     		return null;
     	}

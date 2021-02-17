@@ -38,10 +38,10 @@ public interface InvoiceLine extends Resource {
 	String getAccountingArticleCode();
 
 	/**
-	 * @return the offerServiceTemplate code
+	 * @return the offerServiceTemplate id
 	 */
 	@Nullable
-	String getOfferServiceTemplateCode();
+	Long getOfferServiceTemplateId();
 
 	/**
 	 * @return the product
@@ -122,16 +122,16 @@ public interface InvoiceLine extends Resource {
 	String getAccessPoint();
 
 	/**
-	 * @return the commercialOrder code
+	 * @return the commercialOrder id
 	 */
 	@Nullable
-	String getCommercialOrderCode();
+	Long getCommercialOrderId();
 
 	/**
-	 * @return the billingRun code
+	 * @return the billingRun id
 	 */
 	@Nullable
-	String getBillingRunCode();
+	Long getBillingRunId();
 
 	/**
 	 * @return the billingAccount code
@@ -188,10 +188,10 @@ public interface InvoiceLine extends Resource {
 	String getOfferTemplateCode();
 
 	/**
-	 * @return the productVersion code
+	 * @return the productVersion id
 	 */
 	@Nullable
-	String getProductVersionCode();
+	Long getProductVersionId();
 
 	/**
 	 * @return the orderLot code
