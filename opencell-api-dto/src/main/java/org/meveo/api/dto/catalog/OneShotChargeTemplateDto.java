@@ -45,7 +45,7 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
     private OneShotChargeTemplateTypeEnum oneShotChargeTemplateType;
 
     /** The immediate invoicing. */
-    private Boolean immediateInvoicing = true;
+    private Boolean immediateInvoicing;
 
     /**
      * Instantiates a new one shot charge template dto.

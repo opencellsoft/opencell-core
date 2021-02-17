@@ -66,6 +66,7 @@ public class InvoicingJobBean extends BaseJobBean {
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
+        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
@@ -73,6 +74,7 @@ public class InvoicingJobBean extends BaseJobBean {
 
             log.info("BillingRuns to process={}", billingRuns.size());
             result.setNbItemsToProcess(billingRuns.size());
+            jobExecutionService.initCounterElementsRemaining(result, billingRuns.size());
 
             for (BillingRun billingRun : billingRuns) {
                 if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
@@ -81,11 +83,12 @@ public class InvoicingJobBean extends BaseJobBean {
                 try {
                     billingRunService.detach(billingRun);
                     billingRunService.validate(billingRun, nbRuns.longValue(), waitingMillis.longValue(), result.getJobInstance().getId(), result);
-                    result.registerSucces();
+                    jobExecutionService.registerSucces(result);
                 } catch (Exception e) {
                     log.error("Failed to run invoicing", e);
-                    result.registerError(e.getMessage());
+                    jobExecutionService.registerError(result, e.getMessage());
                 }
+                jobExecutionService.decCounterElementsRemaining(result);
             }
         } catch (Exception e) {
             log.error("Failed to run invoicing", e);

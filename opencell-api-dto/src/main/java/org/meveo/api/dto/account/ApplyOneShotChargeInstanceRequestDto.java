@@ -51,6 +51,9 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
     @XmlElement(required = true)
     private String subscription;
 
+
+    private Date subscriptionValidityDate;
+
     /**
      * The wallet.
      */
@@ -340,6 +343,14 @@ public class ApplyOneShotChargeInstanceRequestDto extends BaseEntityDto {
      */
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
+    }
+
+    public Date getSubscriptionValidityDate() {
+        return this.subscriptionValidityDate;
+    }
+
+    public void setSubscriptionValidityDate(Date subscriptionValidityDate) {
+        this.subscriptionValidityDate = subscriptionValidityDate;
     }
 
     @Override

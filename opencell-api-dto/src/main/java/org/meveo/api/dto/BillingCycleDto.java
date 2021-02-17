@@ -176,14 +176,25 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     @XmlElement
     private ThresholdOptionsEnum checkThreshold;
-    
+
     /**
-     * 
+     * EL to compute invoice.initialCollectionDate delay.
+     */
+    @XmlElement
+    private String collectionDateDelayEl;
+
+    /**
+     * To decide whether or not dates should be recomputed at invoice validation.
+     */
+    private boolean computeDatesAtValidation;
+
+    /**
+     *
      * check the threshold per entity/invoice.
      */
     @XmlElement
     private Boolean thresholdPerEntity;
-    
+
     @XmlElement
     private String billingRunValidationScriptCode;
 
@@ -268,6 +279,8 @@ public class BillingCycleDto extends BusinessEntityDto {
             	thresholdPerEntity=billingCycleEntity.isThresholdPerEntity();
             }
             languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(billingCycleEntity.getDescriptionI18n());
+            collectionDateDelayEl = billingCycleEntity.getCollectionDateDelayEl();
+            computeDatesAtValidation = billingCycleEntity.getComputeDatesAtValidation() == null ? null : billingCycleEntity.getComputeDatesAtValidation();
             billingRunValidationScriptCode=billingCycleEntity.getBillingRunValidationScript()!=null?billingCycleEntity.getBillingRunValidationScript().getCode():null;
         }
     }
@@ -656,5 +669,41 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
         this.languageDescriptions = languageDescriptions;
+    }
+
+    /**
+     * EL to compute invoice.initialCollectionDate delay.
+     *
+     * @return
+     */
+    public String getCollectionDateDelayEl() {
+        return collectionDateDelayEl;
+    }
+
+    /**
+     * EL to compute invoice.initialCollectionDate delay.
+     *
+     * @param collectionDateDelayEl
+     */
+    public void setCollectionDateDelayEl(String collectionDateDelayEl) {
+        this.collectionDateDelayEl = collectionDateDelayEl;
+    }
+
+    /**
+     * Check if invoice dates can be recalcukated
+     *
+     * @return
+     */
+    public Boolean isComputeDatesAtValidation() {
+        return computeDatesAtValidation;
+    }
+
+    /**
+     * Sets computeDatesAtValidation
+     *
+     * @param computeDatesAtValidation
+     */
+    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
+        this.computeDatesAtValidation = computeDatesAtValidation;
     }
 }

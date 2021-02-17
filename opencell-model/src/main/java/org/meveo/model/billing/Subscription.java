@@ -24,16 +24,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Email;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.IBillableEntity;
-import org.meveo.model.ICounterEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IDiscountable;
-import org.meveo.model.IWFEntity;
-import org.meveo.model.ObservableEntity;
-import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.*;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.audit.AuditChangeTypeEnum;
@@ -76,23 +67,23 @@ import java.util.Map;
 @Entity
 @WorkflowedEntity
 @ObservableEntity
-@Cacheable
 @CustomFieldEntity(cftCodePrefix = "Subscription", inheritCFValuesFrom = { "offer", "userAccount" })
 @ExportIdentifier({ "code" })
-@Table(name = "billing_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@Table(name = "billing_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "valid_from", "valid_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_subscription_seq"), })
 @NamedQueries({
         @NamedQuery(name = "Subscription.getExpired", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
         @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
+        @NamedQuery(name = "Subscription.findByValidity", query = "select s from Subscription s where lower(s.code)=:code and (s.validity is null or ((s.validity.from is null or s.validity.from <= :validityDate) and  (s.validity.to is null or :validityDate < s.validity.to)))") ,
         @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate"),
         @NamedQuery(name = "Subscription.listByBillingRun", query = "select s from Subscription s where s.billingRun.id=:billingRunId order by s.id"),
         @NamedQuery(name = "Subscription.getMinimumAmountUsed", query = "select s.minimumAmountEl from Subscription s where s.minimumAmountEl is not null"),
         @NamedQuery(name = "Subscription.getSubscriptionsWithMinAmountBySubscription", query = "select s from Subscription s where s.minimumAmountEl is not null  AND s.status = org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE AND s=:subscription"),
         @NamedQuery(name = "Subscription.getSubscriptionsWithMinAmountByBA", query = "select s from Subscription s where s.minimumAmountEl is not null AND s.status = org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE AND s.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "Subscription.getSellersByBA", query = "select distinct s.seller from Subscription s where s.userAccount.billingAccount=:billingAccount"),
-        @NamedQuery(name = "Subscription.listByCustomer", query = "select s from Subscription s inner join s.userAccount ua inner join ua.billingAccount ba inner join ba.customerAccount ca inner join ca.customer c where c=:customer order by s.code asc")
-})
+        @NamedQuery(name = "Subscription.listByCustomer", query = "select s from Subscription s inner join s.userAccount ua inner join ua.billingAccount ba inner join ba.customerAccount ca inner join ca.customer c where c=:customer order by s.code asc"),
+        @NamedQuery(name = "Subscription.getCountByParent", query = "select count(*) from Subscription s where s.userAccount=:parent")})
 public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
     private static final long serialVersionUID = 1L;
@@ -383,13 +374,20 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commercial_order_id")
     private CommercialOrder order;
-    
+
     @Column(name = "prestation")
     private String prestation;
+
+    /**
+     * Subscription validity
+     */
+    @Embedded
+    @AttributeOverrides(value = { @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
+    private DatePeriod validity;
 
     /**
      * Corresponding to minimum invoice AccountingArticle
@@ -1059,12 +1057,43 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
         this.paymentMethod = paymentMethod;
     }
 
+    public DatePeriod getValidity() {
+        return validity;
+    }
+
+    public void setValidity(DatePeriod validity) {
+        this.validity = validity;
+    }
+
+    public void setToValidity(Date validToDate) {
+        if(getValidity() == null){
+            DatePeriod datePeriod = new DatePeriod();
+            datePeriod.setTo(validToDate);
+            setValidity(datePeriod);
+        }else{
+            if(getValidity().getFrom() != null && validToDate != null && validToDate.before(getValidity().getFrom()))
+                getValidity().setTo(getValidity().getFrom());
+            else
+                getValidity().setTo(validToDate);
+        }
+    }
+
+    public void setFromValidity(Date validFromDate) {
+        if(getValidity() == null){
+            DatePeriod datePeriod = new DatePeriod();
+            datePeriod.setFrom(validFromDate);
+            setValidity(datePeriod);
+        }else{
+            getValidity().setFrom(validFromDate);
+        }
+    }
+
     public void addServiceInstance(ServiceInstance serviceInstance) {
 		serviceInstances=serviceInstances!=null?serviceInstances:new ArrayList<ServiceInstance>();
 		if(serviceInstance!=null) {
 			serviceInstances.add(serviceInstance);
 		}
-		
+
 	}
 
     public CommercialOrder getOrder() {

@@ -20,6 +20,7 @@ package org.meveo.api.dto.invoice;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
@@ -35,6 +36,9 @@ public class GetXmlInvoiceRequestDto extends BaseEntityDto {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
+
+    @XmlElement(name = "id")
+    private Long invoiceId;
     
     /** The invoice number. */
     private String invoiceNumber;
@@ -46,7 +50,6 @@ public class GetXmlInvoiceRequestDto extends BaseEntityDto {
      * Instantiates a new gets the xml invoice request dto.
      */
     public GetXmlInvoiceRequestDto() {
-
     }
 
     /**
@@ -83,6 +86,14 @@ public class GetXmlInvoiceRequestDto extends BaseEntityDto {
      */
     public void setInvoiceType(String invoiceType) {
         this.invoiceType = invoiceType;
+    }
+
+    public Long getInvoiceId() {
+        return invoiceId;
+    }
+
+    public void setInvoiceId(Long invoiceId) {
+        this.invoiceId = invoiceId;
     }
 
     @Override

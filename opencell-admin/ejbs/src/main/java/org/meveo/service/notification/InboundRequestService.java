@@ -56,7 +56,7 @@ public class InboundRequestService extends BusinessService<InboundRequest> {
         // Can not delete with a single bulk query as need to remove associated NotificationHistory records and header, cookies records
         long itemsDeleted = 0;
         EntityManager em = getEntityManager();
-        List<InboundRequest> requests = em.createNamedQuery("InboundRequest.getRequestsToPurgeByDate", InboundRequest.class).getResultList();
+        List<InboundRequest> requests = em.createNamedQuery("InboundRequest.getRequestsToPurgeByDate", InboundRequest.class).setParameter("date", date).getResultList();
         for (InboundRequest request : requests) {
             em.remove(request);
             itemsDeleted++;

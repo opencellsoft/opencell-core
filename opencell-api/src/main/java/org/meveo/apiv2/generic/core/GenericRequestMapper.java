@@ -11,6 +11,7 @@ import org.meveo.service.base.PersistenceService;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,13 +48,14 @@ public class GenericRequestMapper {
                     	String[] fields=fieldName.split(" ");
                     	FilterMapper filterMapper=null;
                     	for(String field:fields) {
-                    		filterMapper=new FactoryFilterMapper().create(field, filters.get(key), entity, serviceFunction);
+                    		filterMapper=new FactoryFilterMapper().create(field, filters.get(key), (String) filters.get("cetCode"), serviceFunction, entity);
                     	}
                     	return Collections.singletonMap(keyObject, filterMapper.map());
                     }
                     return Collections.singletonMap(keyObject, filters.get(key));
                 })
                 .flatMap (map -> map.entrySet().stream())
+                .filter(stringObjectEntry -> Objects.nonNull(stringObjectEntry.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }

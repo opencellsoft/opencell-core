@@ -43,6 +43,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -71,8 +73,7 @@ import org.meveo.model.article.AccountingArticle;
         @NamedQuery(name = "UserAccount.getUserAccountsWithMinAmountELNotNullByBA", query = "select u from UserAccount u where u.minimumAmountEl is not null AND u.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND u.billingAccount=:billingAccount"),
         @NamedQuery(name = "UserAccount.getUserAccountsWithMinAmountELNotNullByUA", query = "select u from UserAccount u where u.minimumAmountEl is not null AND u.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND u=:userAccount"),
         @NamedQuery(name = "UserAccount.getMinimumAmountUsed", query = "select u.minimumAmountEl from UserAccount u where u.minimumAmountEl is not null"),
-
-})
+        @NamedQuery(name = "UserAccount.getCountByParent", query = "select count(*) from UserAccount ua where ua.billingAccount=:parent") })
 public class UserAccount extends AccountEntity implements IWFEntity, ICounterEntity, ISearchable {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) UserAccount.class.getAnnotation(DiscriminatorValue.class)).value();

@@ -356,20 +356,20 @@
                                         popup="true" popupId="userAccountPopup" allowEdit="false" componentWidth="30" />
                                     <hftl:formField id="offerSelectId" label="#{messages['subscription.offer']}" field="offer" valueLabelField="code" componentWidth="30"
                                         allowEdit="#{subscriptionBean.isServiceInstancesEmpty()}" required="true" popup="true" popupId="offerPopup" />
-                                    <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" validateUnique="true" />
+                                    <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" />
 
                                     <hftl:formField label="#{messages['offerTemplate.minimumLabelEl']}" field="minimumLabelEl" id="minimumLabelEl" textArea="true" rows="1"
-                                        maxlength="2000" componentWidth="50" newLine="true" />
+                                        maxlength="2000" componentWidth="50" newLine="true" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                     <hftl:formField label="#{messages[appProvider.entreprise?'offerTemplate.minimumAmountWithoutTaxEl':'offerTemplate.minimumAmountWithTaxEl']}"
-                                        field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                                        field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                     <hftl:formField label="#{messages['offerTemplate.minimumLabelElSpark']}" field="minimumLabelElSpark" id="minimumLabelElSpark" textArea="true"
-                                        rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.sparkEnabled}" />
+                                        rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.sparkEnabled and paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                     <hftl:formField
                                         label="#{messages[appProvider.entreprise?'offerTemplate.minimumAmountWithoutTaxElSpark':'offerTemplate.minimumAmountWithTaxElSpark']}"
                                         field="minimumAmountElSpark" id="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50"
-                                        rendered="#{paramBean.sparkEnabled}" />
+                                        rendered="#{paramBean.sparkEnabled and paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                     <hftl:formField label="#{messages['account.minimumChargeTemplate']}" id="chargeTemplateId" field="minimumChargeTemplate" valueLabelField="code"
-                                        listBean="#{oneShotChargeTemplateBean}" listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}" />
+                                        listBean="#{oneShotChargeTemplateBean}" listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
 
                                     <hftl:decorateFormField fieldId="balance_text" label="#{messages['subscription.balanceDue']}">
                                         <h:outputText id="balance_text" rendered="#{true or !subscriptionBean.edit}" value="#{subscriptionBean.getBalanceDue()}"
@@ -410,6 +410,8 @@
                                     <hftl:formField label="#{messages['businessEntity.description']}" field="description" size="80" />
 
                                     <hftl:formField label="#{messages['subscription.ratingGroup']}" field="ratingGroup" size="50" />
+                                    
+                                    <hftl:formField label="#{messages['commons.valid']}" field="validity"  time="true"/>
 
                                     <h:panelGroup id="subscriptionAndRenewalDates">
                                         <hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" required="true" newLine="true"
@@ -516,6 +518,10 @@
                                             </p:dataTable>
                                         </p:outputPanel>
                                     </p:fieldset>
+                                    <o:validateMultiple
+			                                            components=":subscriptionTab:subscriptionFormId:informationTab:code_txt :subscriptionTab:subscriptionFormId:informationTab:validity_date :subscriptionTab:subscriptionFormId:informationTab:validity_date_toRange"
+			                                            validator="#{subscriptionBean.validateUniqueVersion}"
+			                                            message="#{messages['subscription.version.exists']}"/>
                                 </p:tab>
                                 <p:tab title="#{messages['invoice.electronicBilling']}">
 
@@ -637,6 +643,8 @@
                                     <h:outputText value="#{entity.amountWithTax}" converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
                                 </p:column>
                                 <hftl:column label="#{messages['counterTemplate.title']}" field="counter.description" />
+                                <hftl:column label="#{messages['usageChargeTemplate.priority']}"
+                                             field="priority" />
                                 <p:column styleClass="actions-column" width="55">
                                     <f:facet name="header">
                                         <h:outputText value="#{messages['commons.actions']}" />

@@ -157,17 +157,6 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
     }
 
     @Override
-    public ActionStatus updatePaymentMethod(String customerAccountCode, Long aoId, PaymentMethodEnum paymentMethod) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        try {
-            accountOperationApi.updatePaymentMethod(customerAccountCode, aoId, paymentMethod);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-        return result;
-    }
-
-    @Override
     public MatchedOperationsResponseDto listMatchedOperations(Long accountOperationId) {
         MatchedOperationsResponseDto result = new MatchedOperationsResponseDto();
         try {
@@ -188,6 +177,19 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
             accountOperationApi.transferAccountOperation(transferAccountOperationDto);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public AccountOperationsResponseDto findByCustomerAccount(String customerAccountCode, Integer offset, Integer limit) {
+        AccountOperationsResponseDto result = new AccountOperationsResponseDto();
+        
+        try {
+            result = accountOperationApi.listByCustomerAccountCode(customerAccountCode, offset, limit);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;

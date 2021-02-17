@@ -75,12 +75,13 @@ public interface BillingAccountRs extends IBaseRs {
      * 
      * @param billingAccountCode Billing account code
      * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @param includeUserAccounts True to include user accounts
      * @return Billing account
      */
     @GET
     @Path("/")
-    GetBillingAccountResponseDto find(@QueryParam("billingAccountCode") String billingAccountCode,
-            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+    GetBillingAccountResponseDto find(@QueryParam("billingAccountCode") String billingAccountCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
+            @QueryParam("includeUserAccounts") boolean includeUserAccounts);
 
     /**
      * Remove a billing account with a Billing Account Code.
@@ -96,7 +97,7 @@ public interface BillingAccountRs extends IBaseRs {
      * List BillingAccount filter by customerAccountCode.
      * 
      * @param customerAccountCode Customer account code
-     * @return  list of billing account
+     * @return list of billing account
      */
     @GET
     @Path("/list")
@@ -111,7 +112,7 @@ public interface BillingAccountRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(BillingAccountDto postData);
-    
+
     /**
      * filter counters by period date.
      *

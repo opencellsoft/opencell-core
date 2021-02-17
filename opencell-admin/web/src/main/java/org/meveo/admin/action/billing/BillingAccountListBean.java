@@ -28,46 +28,64 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
- * Standard backing bean for {@link BillingAccount} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link BillingAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ConversationScoped
 public class BillingAccountListBean extends BaseBean<BillingAccount> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Inject
-	private BillingAccountService billingAccountService;
+    @Inject
+    private BillingAccountService billingAccountService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public BillingAccountListBean() {
-		super(BillingAccount.class);
-	}
+    @Inject
+    private CustomerAccountService customerAccountService;
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<BillingAccount> getPersistenceService() {
-		return billingAccountService;
-	}
+    private Long parentEntityId;
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public BillingAccountListBean() {
+        super(BillingAccount.class);
+    }
 
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("name");
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<BillingAccount> getPersistenceService() {
+        return billingAccountService;
+    }
 
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
+
+    @Override
+    protected List<String> getListFieldsToFetch() {
+        return Arrays.asList("name");
+    }
+
+    public void setParentEntityId(Long parentEntityId) {
+        this.parentEntityId = parentEntityId;
+    }
+
+    public Long getParentEntityId() {
+        return parentEntityId;
+    }
+
+    @Override
+    public void preRenderView() {
+        super.preRenderView();
+        if (parentEntityId != null) {
+            filters.put("customerAccount", customerAccountService.findById(parentEntityId));
+        }
+    }
 }

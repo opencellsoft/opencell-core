@@ -25,6 +25,7 @@ import java.io.Serializable;
  * 
  * @author Andrius Karpavicius
  */
+@Deprecated
 public class ReindexRecordsProcessed implements Serializable {
 
     private static final long serialVersionUID = 5047323028071238082L;

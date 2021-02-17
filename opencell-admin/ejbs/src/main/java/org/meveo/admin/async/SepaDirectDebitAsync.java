@@ -30,10 +30,12 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.jfree.util.Log;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.UnitSepaDirectDebitJobBean;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -89,6 +91,7 @@ public class SepaDirectDebitAsync {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
+	@Interceptors({ JobMultithreadingHistoryInterceptor.class })
 	public Future<String> launchAndForgetPaymentCreation(List<DDRequestItem> ddRequestItems, JobExecutionResultImpl result) throws BusinessException {
 		for (DDRequestItem ddRequestItem : ddRequestItems) {
 
@@ -100,7 +103,7 @@ public class SepaDirectDebitAsync {
 			} catch (Exception e) {
 				Log.warn("Error on launchAndForgetPaymentCreation", e);
 				if(result != null) {
-					result.registerError(e.getMessage());
+					jobExecutionService.registerError(result, e.getMessage());
 				}
 			}
 		}
@@ -117,6 +120,7 @@ public class SepaDirectDebitAsync {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@Interceptors({ JobMultithreadingHistoryInterceptor.class })
 	public Future<Map<String,Object>> launchAndForgetDDRequesltLotCreation(DDRequestLOT ddRequestLOT, List<AccountOperation> listAoToPay,
 			Provider appProvider) throws BusinessException {
 				

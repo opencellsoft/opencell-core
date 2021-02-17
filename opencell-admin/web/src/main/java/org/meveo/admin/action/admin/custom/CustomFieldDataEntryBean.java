@@ -2393,5 +2393,18 @@ public class CustomFieldDataEntryBean implements Serializable {
         customTableBasedDataModel = null;
         messages.info(new BundleKey("messages", "delete.entitities.successful"));
     }
+    
+    /**
+	 * Check if field is still encrypted
+	 * @param field
+	 * @return boolean 
+	 */
+    public Boolean isEncrypted(ICustomFieldEntity entity, CustomFieldTemplate cft) {
+    	
+    	if(entity != null && entity.getCfValues() != null && entity.getCfValues().getValuesByCode() != null && entity.getCfValues().getValuesByCode().get("AES") != null) {
+    		return true;
+    	}
+    	return false;
+    }
 
 }

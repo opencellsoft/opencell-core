@@ -96,7 +96,7 @@ public class InvoiceDto extends AuditableEntityDto {
 
     /** The category invoice aggregates. */
     @XmlElementWrapper
-    @XmlElement(name = "categoryInvoiceAgregate", required = true)
+    @XmlElement(name = "categoryInvoiceAgregate")
     protected List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregateDto>();
 
     /** The tax aggregates */
@@ -157,7 +157,7 @@ public class InvoiceDto extends AuditableEntityDto {
     /**
      * A request-only parameter. True if PDF should be delivered by email. Defaults to True.
      */
-    private boolean sendByEmail = true;
+    private Boolean sendByEmail;
 
     /**
      * A request-only parameter. True if currently due balance should be returned
@@ -205,25 +205,25 @@ public class InvoiceDto extends AuditableEntityDto {
 
     /**
      * list of related payment schedule instances
-     * 
+     *
      */
     protected PaymentScheduleInstancesDto paymentScheduleInstancesDto;
 
     /**
      * associated dunning creation date
-     * 
+     *
      */
     protected Date dunningEntryDate;
 
     /**
      * associated dunning last update date
-     * 
+     *
      */
     protected Date dunningLastModification;
 
     /**
      * associated dunning current status
-     * 
+     *
      */
     protected String dunningStatus;
 
@@ -234,21 +234,25 @@ public class InvoiceDto extends AuditableEntityDto {
 
     /**
      * list of existing RTs to include, identified by id This option is allowed only if invoiceMode=="DETAILLED"
-     * 
+     *
      */
     protected List<Long> ratedTransactionsToLink;
     /**
      * paymentIncident
-     * 
+     *
      */
     protected List<String> paymentIncidents;
 
     /**
      * sendPaymentDate
-     * 
+     *
      */
     protected Date sendPaymentDate;
 
+    /**
+     * Invoice payment collection date.
+     */
+    private Date initialCollectionDate;
     /**
      * sum off writeOff accountOperations amounts
      */
@@ -258,50 +262,50 @@ public class InvoiceDto extends AuditableEntityDto {
      * last payment Date
      */
     protected Date paymentDate;
-    
-    
+
+
     /**
      * Invoice status change date
      */
     protected Date statusDate;
-    
+
     /**
      * Date when the XML has been produced on a validated invoice.
      */
     protected Date xmlDate;
-    
+
     /**
      * Date when the PDf has been produced on a validated invoice.
      */
     protected Date pdfDate;
-    
+
     /**
      * Date when the invoice has been sent for a validated invoice
      */
     protected Date emailSentDate;
-    
+
     /**
-     * 
+     *
      */
 	protected InvoicePaymentStatusEnum paymentStatus;
-	
+
     /**
      * Payment status change date
      */
 	protected Date paymentStatusDate;
-    
+
     /**
      * Beginning of the billed period (based on billing cycle period whenever possible or min(invoiceLine.valueDate))
      */
     protected Date startDate;
 
-    
+
     /**
      * End of the billed period (based on billing cycle period whenever possible or applied lastTransactionDate or max(invoiceLine.valueDate))
      */
     protected Date endDate;
-    
-     
+
+
     /**
      * Total raw amount from invoice lines.
      *      -Does not include discount.
@@ -309,13 +313,13 @@ public class InvoiceDto extends AuditableEntityDto {
      */
     @XmlElement(required = true)
     protected BigDecimal rawAmount;
-    
+
     /**
      * Discount rate to apply (in %).
      * Initialize with discount rate from linked invoice discount plan.
      */
     protected BigDecimal discountRate;
-    
+
 	/**
      * Total discount amount with or without tax depending on provider settings.
 	 * Can be inconsistent with discountRate.
@@ -323,7 +327,7 @@ public class InvoiceDto extends AuditableEntityDto {
      */
     @XmlElement(required = true)
     protected BigDecimal discountAmount=BigDecimal.ZERO;
-    
+
     /**
      * Indicates if the invoicing minimum has already been applied
      */
@@ -656,7 +660,7 @@ public class InvoiceDto extends AuditableEntityDto {
      * @return the categoryInvoiceAgregates
      */
     public List<CategoryInvoiceAgregateDto> getCategoryInvoiceAgregates() {
-        return categoryInvoiceAgregates;
+        return categoryInvoiceAgregates == null ? new ArrayList<>() : categoryInvoiceAgregates;
     }
 
     /**
@@ -725,14 +729,14 @@ public class InvoiceDto extends AuditableEntityDto {
     /**
      * @return A request-only parameter. True if PDF should be delivered by email. Defaults to True.
      */
-    public boolean isSendByEmail() {
+    public Boolean getSendByEmail() {
         return sendByEmail;
     }
 
     /**
      * @param sendByEmail A request-only parameter. True if PDF should be delivered by email. Defaults to True.
      */
-    public void setSendByEmail(boolean sendByEmail) {
+    public void setSendByEmail(Boolean sendByEmail) {
         this.sendByEmail = sendByEmail;
     }
 
@@ -1152,4 +1156,12 @@ public class InvoiceDto extends AuditableEntityDto {
 	public Boolean getIncludeBalance() {
 		return includeBalance;
 	}
+
+    public Date getInitialCollectionDate() {
+        return initialCollectionDate;
+    }
+
+    public void setInitialCollectionDate(Date intialCollectionDate) {
+        this.initialCollectionDate = intialCollectionDate;
+    }
 }

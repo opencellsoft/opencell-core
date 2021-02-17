@@ -436,11 +436,11 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setLanguage(postData.getLanguageCode());
         billingAccountDto.setBillingCycle(billingCycleCode);
         billingAccountDto.setAddress(address);
-        if(postData.getInvoicingThreshold()!=null) {
-	        billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
+        if (postData.getInvoicingThreshold() != null) {
+            billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
         }
         if (postData.isThresholdPerEntity() != null) {
-        	billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
+            billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
         }
         billingAccountDto.setJobTitle(postData.getJobTitle());
         billingAccountDto.setDiscountPlansForInstantiation(postData.getDiscountPlansForInstantiation());
@@ -473,7 +473,7 @@ public class AccountHierarchyApi extends BaseApi {
         if (postData.isThresholdPerEntity() != null) {
             billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
         }
-        
+
         AccountEntity accountEntity = billingAccountApi.create(billingAccountDto);
         setMinimumTargetAccountForCustomerAndCA(accountEntity, postData);
 
@@ -580,10 +580,10 @@ public class AccountHierarchyApi extends BaseApi {
         if (postData.getCustomerCheckThreshold() != null) {
             customerDto.setCheckThreshold(postData.getCustomerCheckThreshold());
         }
-        if(postData.isCustomerThresholdPerEntity()!=null) {
-        	customerDto.setThresholdPerEntity(postData.isCustomerThresholdPerEntity());
+        if (postData.isCustomerThresholdPerEntity() != null) {
+            customerDto.setThresholdPerEntity(postData.isCustomerThresholdPerEntity());
         }
-        
+
         String customerBrandCode = StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode());
         if (!StringUtils.isBlank(customerBrandCode)) {
             findOrCreateCustomerBrand(customerBrandCode);
@@ -651,7 +651,7 @@ public class AccountHierarchyApi extends BaseApi {
             customerAccountDto.setCheckThreshold(postData.getCustomerAccountCheckThreshold());
         }
         if (postData.isCustomerAccountThresholdPerEntity() != null) {
-        	customerAccountDto.setThresholdPerEntity(postData.isCustomerAccountThresholdPerEntity());
+            customerAccountDto.setThresholdPerEntity(postData.isCustomerAccountThresholdPerEntity());
         }
 
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
@@ -718,11 +718,11 @@ public class AccountHierarchyApi extends BaseApi {
         if (postData.getCheckThreshold() != null) {
             billingAccountDto.setCheckThreshold(postData.getCheckThreshold());
         }
-        
+
         if (postData.isThresholdPerEntity() != null) {
             billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
         }
-        
+
         billingAccountApi.createOrUpdate(billingAccountDto);
 
         String userAccountCode = USER_ACCOUNT_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
@@ -757,7 +757,7 @@ public class AccountHierarchyApi extends BaseApi {
      */
     // @SecuredBusinessEntityMethod(resultFilter=ListFilter.class)
     // @FilterResults(propertyToFilter = "customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
-    public CustomersDto find(AccountHierarchyDto postData, Boolean calculateBalances) throws MeveoApiException {
+    public CustomersDto find(AccountHierarchyDto postData, boolean calculateBalances) throws MeveoApiException {
 
         CustomersDto result = new CustomersDto();
 
@@ -836,14 +836,14 @@ public class AccountHierarchyApi extends BaseApi {
         if (customers != null) {
             for (Customer cust : customers) {
                 if (postData.getCustomFields() == null || postData.getCustomFields().isEmpty()) {
-                    result.getCustomer().add(customerToDto(cust, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, calculateBalances));
+                    result.getCustomer().add(customerToDto(cust, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, calculateBalances, true));
                 } else {
                     for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
 
                         if (!cfDto.isEmpty()) {
                             Object cfValue = customFieldInstanceService.getCFValue(cust, cfDto.getCode());
                             if (getValueConverted(cfDto).equals(cfValue)) {
-                                result.getCustomer().add(customerToDto(cust, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, calculateBalances));
+                                result.getCustomer().add(customerToDto(cust, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, calculateBalances, true));
                             }
                         }
                     }
@@ -1003,7 +1003,7 @@ public class AccountHierarchyApi extends BaseApi {
             List<Customer> customers = customerService.findByNameAndAddress(name, address);
             if (customers != null) {
                 for (Customer customer : customers) {
-                    result.getCustomers().getCustomer().add(customerToDto(customer));
+                    result.getCustomers().getCustomer().add(customerToDto(customer, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, true));
                 }
             }
         }
@@ -1291,10 +1291,10 @@ public class AccountHierarchyApi extends BaseApi {
         } else {
             billingAccountDto.setCheckThreshold(postData.getCheckThreshold());
         }
-        
-		if(postData.isThresholdPerEntity() != null) {
-			billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
-		}
+
+        if (postData.isThresholdPerEntity() != null) {
+            billingAccountDto.setThresholdPerEntity(postData.isThresholdPerEntity());
+        }
         if (postData.getMinimumAmountEl() != null) {
             if (postData.getMinimumAmountEl().getBillingAccountMinimumAmountEl() != null) {
                 billingAccountDto.setMinimumAmountEl(postData.getMinimumAmountEl().getBillingAccountMinimumAmountEl());
@@ -1351,11 +1351,11 @@ public class AccountHierarchyApi extends BaseApi {
         } else {
             customerAccountDto.setCheckThreshold(postData.getCustomerAccountCheckThreshold());
         }
-        
-        if(postData.isCustomerAccountThresholdPerEntity()!=null) {
-        	customerAccountDto.setThresholdPerEntity(postData.isCustomerAccountThresholdPerEntity());
+
+        if (postData.isCustomerAccountThresholdPerEntity() != null) {
+            customerAccountDto.setThresholdPerEntity(postData.isCustomerAccountThresholdPerEntity());
         }
-        
+
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
             // Start compatibility with pre-4.6 versions
@@ -1439,11 +1439,11 @@ public class AccountHierarchyApi extends BaseApi {
         } else {
             customerDto.setCheckThreshold(postData.getCustomerCheckThreshold());
         }
-        
-        if(postData.isCustomerThresholdPerEntity() != null) {
-        	customerDto.setThresholdPerEntity(postData.isCustomerThresholdPerEntity());
+
+        if (postData.isCustomerThresholdPerEntity() != null) {
+            customerDto.setThresholdPerEntity(postData.isCustomerThresholdPerEntity());
         }
-        
+
         CustomFieldsDto cfsDto = new CustomFieldsDto();
         if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
             Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Customer.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
@@ -1770,12 +1770,12 @@ public class AccountHierarchyApi extends BaseApi {
                     for (BillingAccountDto billingAccountDto : customerAccountDto.getBillingAccounts().getBillingAccount()) {
                         if (billingAccountDto.getCode().equals(billingAccount.getCode())) {
                             if (billingAccountDto.getUserAccounts() != null && billingAccountDto.getUserAccounts().getUserAccount().size() > 0) {
-                                UserAccountDto userAccountDto = userAccountToDto(userAccount);
+                                UserAccountDto userAccountDto = userAccountToDto(userAccount, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false);
                                 if (!billingAccountDto.getUserAccounts().getUserAccount().contains(userAccountDto)) {
                                     billingAccountDto.getUserAccounts().getUserAccount().add(userAccountDto);
                                 }
                             } else {
-                                billingAccountDto.getUserAccounts().getUserAccount().add(userAccountToDto(userAccount));
+                                billingAccountDto.getUserAccounts().getUserAccount().add(userAccountToDto(userAccount, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false));
                             }
                         }
                     }
@@ -1799,12 +1799,12 @@ public class AccountHierarchyApi extends BaseApi {
             for (CustomerAccountDto customerAccountDto : customerDto.getCustomerAccounts().getCustomerAccount()) {
                 if (customerAccountDto.getCode().equals(customerAccount.getCode())) {
                     if (customerAccountDto.getBillingAccounts() != null && customerAccountDto.getBillingAccounts().getBillingAccount().size() > 0) {
-                        BillingAccountDto billingAccountDto = billingAccountToDto(billingAccount);
+                        BillingAccountDto billingAccountDto = billingAccountToDto(billingAccount, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true);
                         if (!customerAccountDto.getBillingAccounts().getBillingAccount().contains(billingAccountDto)) {
                             customerAccountDto.getBillingAccounts().getBillingAccount().add(billingAccountDto);
                         }
                     } else {
-                        customerAccountDto.getBillingAccounts().getBillingAccount().add(billingAccountToDto(billingAccount));
+                        customerAccountDto.getBillingAccounts().getBillingAccount().add(billingAccountToDto(billingAccount, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true));
                     }
                 }
             }
@@ -1813,12 +1813,13 @@ public class AccountHierarchyApi extends BaseApi {
 
     private void addCustomerAccount(GetAccountHierarchyResponseDto result, CustomerAccount customerAccount) {
         Customer customer = customerAccount.getCustomer();
-        CustomerAccountDto customerAccountDto = customerAccountToDto(customerAccount);
+        CustomerAccountDto customerAccountDto = customerAccountToDto(customerAccount, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, true);
 
         if (result.getCustomers() == null || result.getCustomers().getCustomer().size() == 0) {
-            CustomerDto customerDto = customerToDto(customer);
+            CustomerDto customerDto = customerToDto(customer, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, true);
             customerDto.getCustomerAccounts().getCustomerAccount().add(customerAccountDto);
             result.getCustomers().getCustomer().add(customerDto);
+
         } else {
             for (CustomerDto customerDtoLoop : result.getCustomers().getCustomer()) {
                 if (customerDtoLoop.getCode().equals(customer.getCode())) {
@@ -1832,7 +1833,7 @@ public class AccountHierarchyApi extends BaseApi {
 
     private void addCustomer(GetAccountHierarchyResponseDto result, Customer customer) {
         if (result.getCustomers() == null || result.getCustomers().getCustomer().size() == 0) {
-            result.getCustomers().getCustomer().add(customerToDto(customer));
+            result.getCustomers().getCustomer().add(customerToDto(customer, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, true));
         } else {
             boolean found = false;
             for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
@@ -1846,7 +1847,7 @@ public class AccountHierarchyApi extends BaseApi {
             }
 
             if (!found) {
-                result.getCustomers().getCustomer().add(customerToDto(customer));
+                result.getCustomers().getCustomer().add(customerToDto(customer, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, true));
             }
         }
     }
@@ -1873,21 +1874,17 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public CustomerDto customerToDto(Customer customer) {
-        return customerToDto(customer, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+        return customerToDto(customer, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false, false);
     }
 
-    public CustomerDto customerToDto(Customer customer, CustomFieldInheritanceEnum inheritCF) {
-        return customerToDto(customer, inheritCF, false);
-    }
-
-    public CustomerDto customerToDto(Customer customer, CustomFieldInheritanceEnum inheritCF, Boolean calculateBalances) {
+    public CustomerDto customerToDto(Customer customer, CustomFieldInheritanceEnum inheritCF, boolean calculateBalances, boolean includeCustomerAccounts) {
         CustomerDto dto = new CustomerDto(customer);
         accountEntityToDto(dto, customer, inheritCF);
 
-        if (!dto.isLoaded() && customer.getCustomerAccounts() != null) {
+        if (!dto.isLoaded() && includeCustomerAccounts && customer.getCustomerAccounts() != null) {
             dto.setCustomerAccounts(new CustomerAccountsDto());
             for (CustomerAccount ca : customer.getCustomerAccounts()) {
-                CustomerAccountDto customerAccountDto = customerAccountToDto(ca, inheritCF, calculateBalances == null || calculateBalances);
+                CustomerAccountDto customerAccountDto = customerAccountToDto(ca, inheritCF, calculateBalances, true);
                 dto.getCustomerAccounts().getCustomerAccount().add(customerAccountDto);
             }
         }
@@ -1897,18 +1894,18 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public CustomerAccountDto customerAccountToDto(CustomerAccount ca) {
-        return customerAccountToDto(ca, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false);
+        return customerAccountToDto(ca, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false, false);
     }
 
-    public CustomerAccountDto customerAccountToDto(CustomerAccount ca, CustomFieldInheritanceEnum inheritCF, boolean calculateBalances) {
+    public CustomerAccountDto customerAccountToDto(CustomerAccount ca, CustomFieldInheritanceEnum inheritCF, boolean calculateBalances, boolean includeBillingAccounts) {
         CustomerAccountDto dto = new CustomerAccountDto(ca);
         accountEntityToDto(dto, ca, inheritCF);
 
-        if (!dto.isLoaded() && ca.getBillingAccounts() != null) {
+        if (!dto.isLoaded() && includeBillingAccounts && ca.getBillingAccounts() != null) {
             dto.setBillingAccounts(new BillingAccountsDto());
 
             for (BillingAccount ba : ca.getBillingAccounts()) {
-                dto.getBillingAccounts().getBillingAccount().add(billingAccountToDto(ba, inheritCF));
+                dto.getBillingAccounts().getBillingAccount().add(billingAccountToDto(ba, inheritCF, true));
             }
         }
 
@@ -1944,14 +1941,14 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public BillingAccountDto billingAccountToDto(BillingAccount ba) {
-        return billingAccountToDto(ba, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+        return billingAccountToDto(ba, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false);
     }
 
-    public BillingAccountDto billingAccountToDto(BillingAccount ba, CustomFieldInheritanceEnum inheritCF) {
+    public BillingAccountDto billingAccountToDto(BillingAccount ba, CustomFieldInheritanceEnum inheritCF, boolean includeUserAccounts) {
         GetBillingAccountResponseDto dto = new GetBillingAccountResponseDto(ba);
         accountEntityToDto(dto, ba, inheritCF);
 
-        if (!dto.isLoaded() && ba.getUsersAccounts() != null) {
+        if (!dto.isLoaded() && includeUserAccounts && ba.getUsersAccounts() != null) {
             for (UserAccount userAccount : ba.getUsersAccounts()) {
                 dto.getUserAccounts().getUserAccount().add(userAccountToDto(userAccount, inheritCF));
             }
@@ -1973,6 +1970,7 @@ public class AccountHierarchyApi extends BaseApi {
         dto.setLoaded(true);
         return dto;
     }
+
     public UserAccountDto userAccountToDto(UserAccount ua, CustomFieldInheritanceEnum inheritCF, boolean includeSubscription) {
         UserAccountDto dto = new UserAccountDto(ua, includeSubscription);
         accountEntityToDto(dto, ua, inheritCF);

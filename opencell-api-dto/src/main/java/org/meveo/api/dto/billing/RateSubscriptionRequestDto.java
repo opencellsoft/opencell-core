@@ -35,7 +35,8 @@ public class RateSubscriptionRequestDto extends BaseEntityDto {
     
     /** The subscription code. */
     private String subscriptionCode;
-    
+
+    private Date subscriptionValidityDate;
     /** The rate until date. */
     private Date rateUntilDate;
 
@@ -67,4 +68,11 @@ public class RateSubscriptionRequestDto extends BaseEntityDto {
         this.rateUntilDate = rateUntilDate;
     }
 
+    public Date getSubscriptionValidityDate() {
+        return this.subscriptionValidityDate;
+    }
+
+    public void setSubscriptionValidityDate(Date subscriptionValidityDate) {
+        this.subscriptionValidityDate = subscriptionValidityDate;
+    }
 }

@@ -17,17 +17,17 @@
  */
 package org.meveo.service.finance;
 
-import org.meveo.model.finance.AccountingWriting;
+import org.meveo.model.finance.AccountingEntry;
 import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
 
 /**
- * Service implementation to manage {@link AccountingWriting} entity.
+ * Service implementation to manage {@link AccountingEntry} entity.
  * It extends {@link PersistenceService} class
  *
  * @author mboukayoua
  */
 @Stateless
-public class AccountingWritingService extends PersistenceService<AccountingWriting> {
+public class AccountingWritingService extends PersistenceService<AccountingEntry> {
 }

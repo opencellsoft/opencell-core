@@ -30,15 +30,18 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
@@ -68,6 +71,9 @@ public class MediationReprocessing {
 	@Inject 
 	private CDRService cdrService;
 	
+	@Inject
+    protected JobExecutionService jobExecutionService;
+	
 	/**
 	 * Read/parse mediation file and process one line at a time. NOTE: Executes in
 	 * NO transaction - each line will be processed in a separate transaction, one
@@ -86,6 +92,7 @@ public class MediationReprocessing {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
+	@Interceptors({ JobMultithreadingHistoryInterceptor.class })
 	public Future<String> processAsync(ICdrReader cdrReader, ICdrParser cdrParser, JobExecutionResultImpl result, 
             MeveoUser lastCurrentUser) throws BusinessException {
 
@@ -99,9 +106,9 @@ public class MediationReprocessing {
                     log.debug("Processing cdr id:{}", cdr.getId());
 
                     cdrParserService.createEdrs(edrs, cdr);
-                    result.registerSucces();
+                    jobExecutionService.registerSucces(result);
                 } else {
-                    result.registerError("cdr =" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
+                    jobExecutionService.registerError(result, "cdr =" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
                     cdrService.updateReprocessedCdr(cdr);
                 }
             } catch (Exception e) {
@@ -112,7 +119,7 @@ public class MediationReprocessing {
                 } else {
                     log.error("Failed to process CDR id: {}  error {}", cdr != null ? cdr.getId() : null, errorReason, e);
                 }
-                result.registerError("cdr id=" + (cdr != null ? cdr.getId() : "") + ": " + errorReason);
+                jobExecutionService.registerError(result, "cdr id=" + (cdr != null ? cdr.getId() : "") + ": " + errorReason);
                 cdrService.updateReprocessedCdr(cdr);
             }
         }

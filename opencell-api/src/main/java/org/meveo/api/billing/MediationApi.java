@@ -231,7 +231,7 @@ public class MediationApi extends BaseApi {
             if(!ReservationStatus.CONFIRMED.equals(reservation.getStatus())) {
             	reservationService.cancelPrepaidReservationInNewTransaction(reservation);
             }
-            
+
         } catch (BusinessException e) {
             log.error("Failed to cancel Prepaid Reservation In New Transaction", e);
         }

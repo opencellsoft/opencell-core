@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -39,6 +40,8 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.Updated;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -80,6 +83,10 @@ public class DunningDocumentApi extends BaseApi {
     @Inject
     private AccountOperationService accountOperationService;
 
+    @Inject
+    @Updated
+    private Event<BaseEntity> entityUpdatedEventProducer;
+
     public DunningDocument create(DunningDocumentDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
@@ -106,6 +113,7 @@ public class DunningDocumentApi extends BaseApi {
                     throw new EntityDoesNotExistsException(RecordedInvoice.class, invoiceDto.getInvoiceNumber(), "invoiceNumber");
                 }
                 invoice.setPaymentStatus(InvoicePaymentStatusEnum.DISPUTED);
+                entityUpdatedEventProducer.fire(invoice);
                 RecordedInvoice ri = invoice.getRecordedInvoice();
                 ri.setDunningDocument(dunningDocument);
                 ris.add(invoice.getRecordedInvoice());
