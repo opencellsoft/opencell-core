@@ -925,7 +925,8 @@ public class CustomerApi extends AccountEntityApi {
         GenericSequence genericSequence = providerService.getNextCustomerNumber();      
         String sequenceNumber = StringUtils.getLongAsNChar(genericSequence.getCurrentSequenceNb(), genericSequence.getSequenceSize());
         result.setSequence(GenericSequenceApi.fromGenericSequence(genericSequence));
-        result.setValue(genericSequence.getPrefix() + sequenceNumber);       
+        String prefix = genericSequence.getPrefix();
+        result.setValue((prefix == null ? "" : prefix) + sequenceNumber);
         return result;
     }
 
