@@ -36,6 +36,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInterface;
@@ -67,6 +68,9 @@ public class UnitAccountOperationsGenerationJobBean {
     @ApplicationProvider
     protected Provider appProvider;
 
+    @Inject
+    protected JobExecutionService jobExecutionService;
+    
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -86,11 +90,11 @@ public class UnitAccountOperationsGenerationJobBean {
                 script.execute(context);
             }
             
-            result.registerSucces();
+            jobExecutionService.registerSucces(result);
 
         } catch (Exception e) {
             log.error("Failed to generate acount operations", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
     }
 }

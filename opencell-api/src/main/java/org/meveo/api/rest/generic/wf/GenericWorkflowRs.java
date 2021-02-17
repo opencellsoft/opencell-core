@@ -158,4 +158,9 @@ public interface GenericWorkflowRs extends IBaseRs {
     WorkflowInsHistoryResponseDto findHistory(@QueryParam("entityInstanceCode") String entityInstanceCode, @QueryParam("workflowCode") String workflowCode,
             @QueryParam("fromStatus") String fromStatus, @QueryParam("toStatus") String toStatus);
 
+    @POST
+    @Path("/executeTransition")
+    ActionStatus executeTransition(@QueryParam("baseEntityName") String baseEntityName,
+                                   @QueryParam("entityInstanceCode") String entityInstanceCode, @QueryParam("workflowCode") String workflowCode,
+                                   @QueryParam("transition") String transitionUUID, @QueryParam("force") boolean ignoreConditionEL);
 }

@@ -66,7 +66,6 @@ import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
-import org.meveo.service.document.DocumentService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -112,9 +111,6 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
-
-    @Inject
-    private DocumentService documentService;
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
@@ -385,20 +381,16 @@ public class CustomerAccountApi extends AccountEntityApi {
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
-    public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances) throws Exception {
-        return find(customerAccountCode, calculateBalances, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false);
+    public CustomerAccountDto find(String customerAccountCode, boolean calculateBalances) throws Exception {
+        return find(customerAccountCode, calculateBalances, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false, false);
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
-    public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances, CustomFieldInheritanceEnum inheritCF, Boolean withAccountOperations) {
+    public CustomerAccountDto find(String customerAccountCode, boolean calculateBalances, CustomFieldInheritanceEnum inheritCF, boolean withAccountOperations, boolean includeBillingAccounts) {
 
         if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
             handleMissingParameters();
-        }
-
-        if (calculateBalances == null) {
-            calculateBalances = Boolean.TRUE;
         }
 
         CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
@@ -406,9 +398,9 @@ public class CustomerAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
         }
 
-        CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount, inheritCF, calculateBalances);
+        CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount, inheritCF, calculateBalances, includeBillingAccounts);
 
-        if (withAccountOperations != null && withAccountOperations) {
+        if (withAccountOperations) {
             List<AccountOperation> accountOperations = customerAccount.getAccountOperations();
             if (accountOperations != null && !accountOperations.isEmpty()) {
                 List<AccountOperationDto> accountOperationsDto = new ArrayList<>();
@@ -652,7 +644,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         if (ca.getBillingAccounts() != null && !ca.getBillingAccounts().isEmpty()) {
             for (BillingAccount ba : ca.getBillingAccounts()) {
-            	List<GDPRInfoDto> billingAccountGDPR = customFieldTemplateService.findCFMarkAsAnonymize(ba);
+                List<GDPRInfoDto> billingAccountGDPR = customFieldTemplateService.findCFMarkAsAnonymize(ba);
                 result.getBillingAccounts().getBillingAccount().add(billingAccountApi.exportBillingAccountHierarchy(ba, billingAccountGDPR));
             }
         }

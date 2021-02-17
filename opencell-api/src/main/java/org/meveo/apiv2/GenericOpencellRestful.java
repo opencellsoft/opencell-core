@@ -12,6 +12,8 @@ import org.meveo.apiv2.billing.impl.InvoiceResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
+import org.meveo.apiv2.generic.VersionImpl;
+import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.apiv2.generic.exception.*;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
@@ -33,9 +35,12 @@ import java.util.stream.Stream;
 @ApplicationPath("/api/rest/v2")
 public class GenericOpencellRestful extends Application {
     private static final String GENERIC_API_REQUEST_LOGGING_CONFIG_KEY = "generic.api.request.logging";
+    private static final String GENERIC_API_REQUEST_EXTRACT_LIST_CONFIG_KEY = "generic.api.extract.list";
     private static final String API_LIST_DEFAULT_LIMIT_KEY = "api.list.defaultLimit";
     private static String GENERIC_API_REQUEST_LOGGING_CONFIG;
+    private static boolean GENERIC_API_REQUEST_EXTRACT_LIST;
     public static List<Map<String,String>> VERSION_INFO = new ArrayList<Map<String, String>>();
+    public static Map<String,List<String>> ENTITIES_MAP = new HashMap();
     public static long API_LIST_DEFAULT_LIMIT;
 
     @Inject
@@ -47,13 +52,15 @@ public class GenericOpencellRestful extends Application {
     public void init() {
         API_LIST_DEFAULT_LIMIT = paramBeanFactory.getInstance().getPropertyAsInteger(API_LIST_DEFAULT_LIMIT_KEY, 100);
         GENERIC_API_REQUEST_LOGGING_CONFIG = paramBeanFactory.getInstance().getProperty(GENERIC_API_REQUEST_LOGGING_CONFIG_KEY, "false");
+        GENERIC_API_REQUEST_EXTRACT_LIST = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty(GENERIC_API_REQUEST_EXTRACT_LIST_CONFIG_KEY, "true"));
         loadVersionInformation();
+        loadEntitiesList();
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public Set<Class<?>> getClasses() {
-        Set<Class<?>> resources = Stream.of(GenericResourceImpl.class, NotYetImplementedResource.class,
+        Set<Class<?>> resources = Stream.of(VersionImpl.class, GenericResourceImpl.class, NotYetImplementedResource.class,
                 NotFoundExceptionMapper.class, BadRequestExceptionMapper.class,
                 MeveoExceptionMapper.class, IllegalArgumentExceptionMapper.class,
                 EJBTransactionRolledbackExceptionMapper.class, OpenApiResource.class,
@@ -93,5 +100,17 @@ public class GenericOpencellRestful extends Application {
             log.warn("There was a problem loading version information");
             e.printStackTrace();
         }
+    }
+
+    private void loadEntitiesList() {
+        List<String> listEntities = new ArrayList<>();
+        for ( Map.Entry<String, Class> entry : GenericHelper.entitiesByName.entrySet() ) {
+            listEntities.add( entry.getValue().getSimpleName() );
+        }
+        ENTITIES_MAP.put( "entities", listEntities );
+    }
+
+    public boolean shouldExtractList(){
+        return GENERIC_API_REQUEST_EXTRACT_LIST;
     }
 }

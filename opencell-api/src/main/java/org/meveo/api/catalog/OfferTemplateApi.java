@@ -238,11 +238,11 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                     + DateUtils.formatDateWithPattern(postData.getValidTo(), datePattern));
         }
 
-        List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(), offerTemplate.getId(),
+        List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(postData.getCode(), postData.getNewValidFrom(), postData.getNewValidTo(), offerTemplate.getId(),
             true);
         if (!matchedVersions.isEmpty()) {
             throw new InvalidParameterException(
-                "An offer, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBeanFactory.getInstance().getDateFormat())
+                "An offer, valid on " + new DatePeriod(postData.getNewValidFrom(), postData.getNewValidTo()).toString(paramBeanFactory.getInstance().getDateFormat())
                         + ", already exists. Please change the validity dates of an existing offer first.");
         }
 
@@ -267,12 +267,26 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     private OfferTemplate populateFromDto(OfferTemplateDto postData, OfferTemplate offerTemplateToUpdate) throws MeveoApiException, BusinessException {
 
         OfferTemplate offerTemplate = offerTemplateToUpdate;
-        
+
         if (offerTemplate == null) {
             offerTemplate = new OfferTemplate();
             if (postData.isDisabled() != null) {
                 offerTemplate.setDisabled(postData.isDisabled());
             }
+        }
+
+        offerTemplate.setOfferChangeRestricted(postData.isOfferChangeRestricted());
+
+        if(postData.getAllowedOfferChange() != null && !postData.getAllowedOfferChange().isEmpty()){
+            List<OfferTemplate> allowedOffers = new ArrayList<>();
+            for (String offerTemplateCode : postData.getAllowedOfferChange()){
+                OfferTemplate allowedOffer = offerTemplateService.findByCode(offerTemplateCode);
+                if(allowedOffer == null){
+                    throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
+                }
+                allowedOffers.add(allowedOffer);
+            }
+            offerTemplate.setAllowedOffersChange(allowedOffers);
         }
         
         Boolean autoEndOfEngagement = postData.getAutoEndOfEngagement();
@@ -347,7 +361,11 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setDescription(postData.getDescription());
         offerTemplate.setName(postData.getName());
         offerTemplate.setLongDescription(postData.getLongDescription());
-        offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
+        if(postData.getNewValidFrom() != null && postData.getNewValidTo() != null) {
+            offerTemplate.setValidity(new DatePeriod(postData.getNewValidFrom(), postData.getNewValidTo()));
+        } else {
+            offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
+        }
         offerTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
         offerTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         offerTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());

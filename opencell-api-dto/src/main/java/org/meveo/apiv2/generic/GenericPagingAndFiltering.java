@@ -18,6 +18,8 @@ public interface GenericPagingAndFiltering {
     @Nullable
     @Value.Default default Set<String> getNestedEntities(){ return Collections.emptySet();}
     @Nullable
+    @Value.Default default Long getNestedDepth(){ return 0L;}
+    @Nullable
     String getFullTextFilter();
     @Nullable
     @Value.Default default Map<String, Object> getFilters(){ return Collections.emptyMap();}

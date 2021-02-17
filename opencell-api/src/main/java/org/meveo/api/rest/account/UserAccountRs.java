@@ -75,13 +75,13 @@ public interface UserAccountRs extends IBaseRs {
      * Search for a user account with a given code.
      * 
      * @param userAccountCode user account code
+     * @param includeSubscriptions True to include subscriptions
      * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
      * @return found user account if exist
      */
     @GET
     @Path("/")
-    GetUserAccountResponseDto find(@QueryParam("userAccountCode") String userAccountCode,
-    		@DefaultValue("false") @QueryParam("includeSubscriptions") boolean includeSubscriptions,
+    GetUserAccountResponseDto find(@QueryParam("userAccountCode") String userAccountCode, @DefaultValue("false") @QueryParam("includeSubscriptions") boolean includeSubscriptions,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
@@ -113,7 +113,7 @@ public interface UserAccountRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(UserAccountDto postData);
-    
+
     /**
      * Filter counters by period date.
      *

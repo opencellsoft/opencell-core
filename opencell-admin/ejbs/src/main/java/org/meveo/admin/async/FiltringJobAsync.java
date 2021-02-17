@@ -30,8 +30,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.UnitFilteringJobBean;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.model.IEntity;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
@@ -78,6 +80,7 @@ public class FiltringJobAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> launchAndForget(List<? extends IEntity> filtredEntities, JobExecutionResultImpl result, ScriptInterface scriptInterface, String recordVariableName, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -92,15 +95,16 @@ public class FiltringJobAsync {
             try {
 
                 unitFilteringJobBean.execute(result, filtredEntity, scriptInterface, recordVariableName);
-                result.registerSucces();
+                jobExecutionService.registerSucces(result);
 
             } catch (Exception e) {
 
                 jobExecutionErrorService.registerJobError(result.getJobInstance(), (Long) filtredEntity.getId(), e);
 
-                result.registerError(filtredEntity.getId(), e.getMessage());
+                jobExecutionService.registerError(result, filtredEntity.getId(), e.getMessage());
                 log.error("Failed to run script on filtered entity {}", filtredEntity.getId(), e);
             }
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<String>("OK");
     }

@@ -108,12 +108,13 @@ public class DWHQueryBean {
         } else {
             MeasurableQuantity mq = mqService.findByCode(measurableQuantityCode);
             if (mq == null) {
-                result.registerError("Cannot find measurable quantity with code " + measurableQuantityCode);
+                jobExecutionService.registerError(result, "Cannot find measurable quantity with code " + measurableQuantityCode);
                 return;
             }
             mqList.add(mq);
         }
         result.setNbItemsToProcess(mqList.size());
+        jobExecutionService.initCounterElementsRemaining(result, mqList.size());
         
         
         EntityManager em = emWrapper.getEntityManager();
@@ -125,7 +126,7 @@ public class DWHQueryBean {
                 break;
             }
             if (StringUtils.isBlank(mq.getSqlQuery())) {
-                result.registerError("Measurable quantity with code " + measurableQuantityCode + " has no SQL query set.");
+                jobExecutionService.registerError(result, "Measurable quantity with code " + measurableQuantityCode + " has no SQL query set.");
                 log.info("Measurable quantity with code {} has no SQL query set.", measurableQuantityCode);
                 continue;
             }
@@ -200,12 +201,14 @@ public class DWHQueryBean {
                         }
                     }
                     mq.increaseMeasureDate();
-                    result.registerSucces();
+                    jobExecutionService.registerSucces(result);
                 }
             } catch (Exception e) {
-                result.registerError("Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query: " + e.getMessage());
+                jobExecutionService.registerError(result, "Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query: " + e.getMessage());
                 log.error("Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query", e);
             }
+
+            jobExecutionService.decCounterElementsRemaining(result);
         }
     }
 }

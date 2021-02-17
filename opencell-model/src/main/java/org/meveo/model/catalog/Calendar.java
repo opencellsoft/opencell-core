@@ -195,7 +195,7 @@ public abstract class Calendar extends BusinessEntity {
 
     /**
      * Is calendar initialization with a starting date required to determine calendar dates
-     * 
+     *
      * @return True it setInitDate() method should be called before nextCalendarDate(), previousCalendarDate(), nextPeriodStarDate(), previousPeriodEndDate()
      */
     public boolean isInitializationRequired() {
@@ -208,5 +208,10 @@ public abstract class Calendar extends BusinessEntity {
         } else {
             return this.description;
         }
+    }
+
+    protected Date nextCalendarDate(Date date, Date initDate) {
+        setInitDate(initDate);
+        return nextCalendarDate(date);
     }
 }

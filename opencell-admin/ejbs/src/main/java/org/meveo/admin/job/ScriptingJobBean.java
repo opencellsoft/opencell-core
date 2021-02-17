@@ -74,7 +74,7 @@ public class ScriptingJobBean extends BaseJobBean {
 			script.init(context);
 		} catch (Exception e) {
 			log.error("Exception on init script", e);
-			result.registerError("Error in " + scriptCode + " init :" + e.getMessage());
+			jobExecutionService.registerError(result, "Error in " + scriptCode + " init :" + e.getMessage());
 		}
 	}
 
@@ -84,7 +84,7 @@ public class ScriptingJobBean extends BaseJobBean {
 			throws BusinessException {
 		ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
 		MeveoUser lastCurrentUser = currentUser.unProxy();
-		Callable<String> task = () -> scriptingAsync.runScript(result, scriptCode, context,lastCurrentUser,script);
+		Callable<String> task = () -> scriptingAsync.runScript(result, scriptCode, context, lastCurrentUser,script);
 		Future<String> futureResult = executor.submit(task);
 		while (!futureResult.isDone()) {
 			try {
@@ -99,6 +99,25 @@ public class ScriptingJobBean extends BaseJobBean {
 
 	}
 
+	@TransactionAttribute(TransactionAttributeType.NEVER)
+	public void executeWithoutTx(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context)
+			throws BusinessException {
+	    ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
+        MeveoUser lastCurrentUser = currentUser.unProxy();
+		Callable<String> task = () -> scriptingAsync.runScriptWithoutTx(result, scriptCode, context, lastCurrentUser,script);
+		Future<String> futureResult = executor.submit(task);
+		while (!futureResult.isDone()) {
+			try {
+				Thread.sleep((long) 2000);
+				if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+					futureResult.cancel(true);
+				}
+			} catch (InterruptedException e) {
+				log.error("Failed to complete script execution : ", e);
+			}
+		}
+	}
+
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void complete(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context)
@@ -110,13 +129,12 @@ public class ScriptingJobBean extends BaseJobBean {
 
 		} catch (Exception e) {
 			log.error("Exception on finalize script", e);
-			result.registerError("Error in " + scriptCode + " finalize :" + e.getMessage());
+			jobExecutionService.registerError(result, "Error in " + scriptCode + " finalize :" + e.getMessage());
 		}
 	}
 
 	long convert(Object s) {
 		long result = (long) ((StringUtils.isBlank(s)) ? 0l : ConvertUtils.convert(s + "", Long.class));
-		return result;
-	}
-
+        return result;
+    }
 }

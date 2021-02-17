@@ -48,6 +48,8 @@ public class TerminateSubscriptionRequestDto extends BaseEntityDto {
     @XmlElement(required = true)
     private String subscriptionCode;
 
+    private Date subscriptionValidityDate;
+
     /** The termination reason. */
     @XmlElement(required = true)
     private String terminationReason;
@@ -150,6 +152,14 @@ public class TerminateSubscriptionRequestDto extends BaseEntityDto {
      */
     public void setOrderItemAction(OrderItemActionEnum action) {
         this.orderItemAction = action;
+    }
+
+    public Date getSubscriptionValidityDate() {
+        return this.subscriptionValidityDate;
+    }
+
+    public void setSubscriptionValidityDate(Date subscriptionValidityDate) {
+        this.subscriptionValidityDate = subscriptionValidityDate;
     }
 
     @Override

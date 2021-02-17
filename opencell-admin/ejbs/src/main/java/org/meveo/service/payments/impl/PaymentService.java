@@ -253,7 +253,10 @@ public class PaymentService extends PersistenceService<Payment> {
         OperationCategoryEnum operationCat = isPayment ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT;
         try {
             boolean isNewCard = !StringUtils.isBlank(cardNumber);
-            preferredMethod = customerAccount.getPreferredPaymentMethod();
+            AccountOperation aoToPayRefund = accountOperationService.findById(aoIdsToPay.get(0));
+            preferredMethod = customerAccountService.getPreferredPaymentMethod(aoToPayRefund, paymentMethodType);
+            
+            
             if (!isNewCard) {
                 if (preferredMethod == null) {
                     throw new PaymentException(PaymentErrorEnum.NO_PAY_METHOD_FOR_CA, "There no payment method for customerAccount:" + customerAccount.getCode());

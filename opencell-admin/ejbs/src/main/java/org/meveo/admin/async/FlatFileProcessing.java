@@ -34,10 +34,12 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.FlatFileProcessingJob;
 import org.meveo.admin.job.UnitFlatFileProcessingJobBean;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.admin.util.FlatFileValidator;
 import org.meveo.commons.parsers.IFileParser;
 import org.meveo.commons.parsers.RecordContext;
@@ -116,6 +118,7 @@ public class FlatFileProcessing {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> processFileAsync(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName, String fileName, String filenameVariableName, Long nbLinesToProcess,
             String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter, MeveoUser lastCurrentUser) throws BusinessException {
 
@@ -146,6 +149,7 @@ public class FlatFileProcessing {
     @Asynchronous
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> processFileAsyncInOneTx(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName, String fileName, String filenameVariableName,
             Long nbLinesToProcess, String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter, MeveoUser lastCurrentUser) throws BusinessException {
 
@@ -195,8 +199,10 @@ public class FlatFileProcessing {
                 for (int nbLine = 0; nbLine < nbLinesToProcess; nbLine++) {
 
                     recordContext = fileParser.getNextRecord();
-                    if (recordContext == null) {
+                    if (recordContext == null && nbLinesToProcess > 1) {
                         scannedAllRecords = true;
+                        break;
+                    } else if(recordContext == null && nbLinesToProcess == 1) {
                         break mainLoop;
                     }
 
@@ -207,6 +213,10 @@ public class FlatFileProcessing {
                     }
                     recordContexts.add(recordContext);
                     records.add(recordContext.getRecord());
+                }
+
+                if(records.isEmpty()) {
+                    break mainLoop;
                 }
 
                 if (nbLinesToProcess == 1) {
@@ -224,11 +234,11 @@ public class FlatFileProcessing {
                 synchronized (outputFileWriter) {
                     if(nbLinesToProcess == 1) {
                         outputFileWriter.println(recordContext.getLineContent());
-                        result.registerSucces();
+                        jobExecutionService.registerSucces(result);
                     } else {
                         for(RecordContext rContext : recordContexts) {
                             outputFileWriter.println(rContext.getLineContent());
-                            result.registerSucces();
+                            jobExecutionService.registerSucces(result);
                         }                   
                     }
                 }
@@ -244,22 +254,15 @@ public class FlatFileProcessing {
                     synchronized (rejectFileWriter) {
                         rejectFileWriter.println(recordContext.getLineContent() + "=>" + errorReason);
                     }
-                    result.registerError("file=" + fileName + ", line=" + recordContext.getLineNumber() + ": " + errorReason);
+                    jobExecutionService.registerError(result, "file=" + fileName + ", line=" + recordContext.getLineNumber() + ": " + errorReason);
                 } else if(nbLinesToProcess > 1) {
-                    String[] errorReason = e.getMessage().split("\n");
-                    for(String reason : errorReason) {
-                        result.registerError(reason);
-                        synchronized (rejectFileWriter) {
-                            rejectFileWriter.println(reason);
+                    synchronized (rejectFileWriter) {
+                        for(RecordContext rContext : recordContexts) {
+                            rejectFileWriter.println(rContext.getLineContent());
+                            jobExecutionService.registerError(result);
                         }
-                    } 
-                    long nbLinesSuccess = nbLinesToProcess - errorReason.length;
-                    if(nbLinesToProcess > recordContexts.size()){
-                        nbLinesSuccess = recordContexts.size() - errorReason.length;
                     }
-                    for(i = 0; i < nbLinesSuccess; i++) {
-                        result.registerSucces();                                         
-                    }                     
+                    result.getErrors().add("--> " + e.getMessage());
                 }
 
                 if (FlatFileProcessingJob.STOP.equals(actionOnError)) {

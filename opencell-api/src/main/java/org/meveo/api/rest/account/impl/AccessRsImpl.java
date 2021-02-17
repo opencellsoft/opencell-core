@@ -71,11 +71,11 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
     }
 
     @Override
-    public GetAccessResponseDto find(String accessCode, String subscriptionCode, Date startDate, Date endDate, Date usageDate) {
+    public GetAccessResponseDto find(String accessCode, String subscriptionCode, Date subscriptionValidityDate, Date startDate, Date endDate, Date usageDate) {
         GetAccessResponseDto result = new GetAccessResponseDto();
 
         try {
-            result.setAccess(accessApi.find(accessCode, subscriptionCode, startDate, endDate, usageDate));
+            result.setAccess(accessApi.find(accessCode, subscriptionCode, subscriptionValidityDate, startDate, endDate, usageDate));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

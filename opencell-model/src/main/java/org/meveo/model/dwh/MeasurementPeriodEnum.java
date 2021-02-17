@@ -18,6 +18,7 @@
 
 package org.meveo.model.dwh;
 
+@Deprecated
 public enum MeasurementPeriodEnum {
     DAILY, WEEKLY, MONTHLY, YEARLY;
 

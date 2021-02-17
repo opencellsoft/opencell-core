@@ -18,8 +18,11 @@
 
 package org.meveo.api.dto.invoice;
 
+import static java.lang.Boolean.FALSE;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
@@ -35,6 +38,9 @@ public class GetPdfInvoiceRequestDto extends BaseEntityDto {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
+
+    @XmlElement(name = "id")
+    private Long invoiceId;
     
     /** The invoice number. */
     private String invoiceNumber;
@@ -43,13 +49,12 @@ public class GetPdfInvoiceRequestDto extends BaseEntityDto {
     private String invoiceType;
     
     /** The generate pdf. */
-    private Boolean generatePdf = Boolean.FALSE;
+    private Boolean generatePdf = FALSE;
 
     /**
      * Instantiates a new gets the pdf invoice request dto.
      */
     public GetPdfInvoiceRequestDto() {
-
     }
 
     /**
@@ -106,6 +111,13 @@ public class GetPdfInvoiceRequestDto extends BaseEntityDto {
         this.generatePdf = generatePdf;
     }
 
+    public Long getInvoiceId() {
+        return invoiceId;
+    }
+
+    public void setInvoiceId(Long invoiceId) {
+        this.invoiceId = invoiceId;
+    }
 
     @Override
     public String toString() {

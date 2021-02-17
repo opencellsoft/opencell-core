@@ -17,13 +17,25 @@
  */
 package org.meveo.admin.action;
 
-import com.lapis.jsfexporter.csv.CSVExportOptions;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.Map.Entry;
+
+import javax.enterprise.context.Conversation;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIInput;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
-import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -34,6 +46,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.ModuleItem;
+import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.EntityCustomAction;
@@ -41,9 +54,11 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.index.ElasticClient;
@@ -62,24 +77,7 @@ import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.Conversation;
-import javax.faces.component.UIInput;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
+import com.lapis.jsfexporter.csv.CSVExportOptions;
 
 /**
  * Base GUI bean class. Used as a backing bean foundation for both detail and searchable list pages. Provides a brigde between xhtml pages and service level classes.
@@ -98,7 +96,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     /** Logger. */
     protected Logger log = LoggerFactory.getLogger(this.getClass());
-
+    
     @Inject
     protected Messages messages;
 
@@ -130,6 +128,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     protected FacesContext facesContext;
+
+    @Inject
+    private ServiceSingleton serviceSingleton;
+
+    @Inject
+    private CustomGenericEntityCodeService customGenericEntityCodeService;
 
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<>();
@@ -220,6 +224,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private UploadedFile uploadedFile;
 
     private static final String SUPER_ADMIN_MANAGEMENT = "superAdminManagement";
+    
+    public static final String DEPRECATED_FEATURE = "DEPRECATED: This feature is deprecated and will be removed or replaced in a future release";
 
     /**
      * Constructor
@@ -312,10 +318,23 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 throw new IllegalStateException("could not instantiate a class, constructor not accessible");
             }
         }
-
+        if(entity instanceof BusinessEntity) {
+            if(((BusinessEntity) entity).getCode() == null) {
+                String entityClass = entity.getClass().getSimpleName();
+                Optional.ofNullable(generateCode(entityClass))
+                        .ifPresent(code -> ((BusinessEntity) entity).setCode(code));
+            }
+        }
         return entity;
     }
 
+    private String generateCode(String entityClass) {
+        CustomGenericEntityCode customGenericEntityCode = customGenericEntityCodeService.findByClass(entityClass);
+        if(customGenericEntityCode != null) {
+            return serviceSingleton.getGenericCode(customGenericEntityCode);
+        }
+        return null;
+    }
     /**
      * Force to initialize entity with a given ID.
      * 
@@ -1632,6 +1651,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
         // Check that two dates are one after another
         return !(from != null && to != null && from.compareTo(to) > 0);
+    }
+    
+    public static void showDeprecatedWarning() {
+    	List<FacesMessage> messageList = FacesContext.getCurrentInstance().getMessageList();
+		if(messageList!=null && messageList.stream().anyMatch(x->FacesMessage.SEVERITY_WARN.equals(x.getSeverity())&& DEPRECATED_FEATURE.equals(x.getSummary()))) {
+			return;
+    	}
+    	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, DEPRECATED_FEATURE, DEPRECATED_FEATURE));
     }
 
 }
