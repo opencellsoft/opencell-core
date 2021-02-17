@@ -70,7 +70,7 @@ public class QuoteOfferDTO extends BaseEntityDto{
     
     private List<QuoteProductDTO> products = new ArrayList<QuoteProductDTO>();
     
-  
+    List<QuoteAttributeDTO> offerAttributes =new ArrayList<QuoteAttributeDTO>();
     
     
 
@@ -89,14 +89,21 @@ public class QuoteOfferDTO extends BaseEntityDto{
 		billableAccountCode=quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount().getCode():null;
 		contractCode=quoteOffer.getContractCode();
 	}
-	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes) {
+	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
 		init(quoteOffer);
 		if(loadQuoteProduct) {
-			    products=new ArrayList<QuoteProductDTO>();
+			products=new ArrayList<QuoteProductDTO>();
 				for(QuoteProduct quoteProduct:quoteOffer.getQuoteProduct()) {
 					products.add(new QuoteProductDTO(quoteProduct,loadQuoteAttributes));
 				}
 		}
+		
+		if(loadOfferAttributes) {
+			offerAttributes=new ArrayList<QuoteAttributeDTO>();
+			for(QuoteAttribute offerAttribute:quoteOffer.getQuoteAttributes()) {
+				offerAttributes.add(new QuoteAttributeDTO(offerAttribute));
+			}
+	}
 	}
 	/**
 	 * @return the quoteCode
@@ -168,20 +175,20 @@ public class QuoteOfferDTO extends BaseEntityDto{
 		this.billableAccountCode = billableAccountCode;
 	}
 
+ 
+
 	/**
 	 * @return the products
 	 */
 	public List<QuoteProductDTO> getProducts() {
 		return products;
 	}
-
 	/**
 	 * @param products the products to set
 	 */
 	public void setProducts(List<QuoteProductDTO> products) {
 		this.products = products;
 	}
-
 	/**
 	 * @return the quoteOfferId
 	 */
@@ -211,6 +218,20 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	public void setContractCode(String contractCode) {
 		this.contractCode = contractCode;
 	}
+	/**
+	 * @return the offerAttributes
+	 */
+	public List<QuoteAttributeDTO> getOfferAttributes() {
+		return offerAttributes;
+	}
+	/**
+	 * @param offerAttributes the offerAttributes to set
+	 */
+	public void setOfferAttributes(List<QuoteAttributeDTO> offerAttributes) {
+		this.offerAttributes = offerAttributes;
+	}
+	
+	
     
     
     

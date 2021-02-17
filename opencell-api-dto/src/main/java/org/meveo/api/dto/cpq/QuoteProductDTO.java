@@ -63,7 +63,7 @@ public class QuoteProductDTO extends BaseEntityDto{
     @NotNull
     private BigDecimal quantity;
     
-    private List<QuoteAttributeDTO> quoteAttributes=new ArrayList<QuoteAttributeDTO>();
+    private List<QuoteAttributeDTO> productAttributes=new ArrayList<QuoteAttributeDTO>();
     
     private List<AccountingArticlePricesDTO> accountingArticlePrices = new ArrayList<AccountingArticlePricesDTO>();
     
@@ -89,9 +89,9 @@ public class QuoteProductDTO extends BaseEntityDto{
 		super();
 		init(quoteProduct);
 		if(loadAttributes) {
-			quoteAttributes=new ArrayList<QuoteAttributeDTO>();
+			productAttributes=new ArrayList<QuoteAttributeDTO>();
 			for(QuoteAttribute quoteAttribute:quoteProduct.getQuoteAttributes()) {
-				quoteAttributes.add(new QuoteAttributeDTO(quoteAttribute));
+				productAttributes.add(new QuoteAttributeDTO(quoteAttribute));
 			}
 		}
 		accountingArticlePrices=new ArrayList<AccountingArticlePricesDTO>();
@@ -147,19 +147,23 @@ public class QuoteProductDTO extends BaseEntityDto{
 		this.quantity = quantity;
 	}
 
-	/**
-	 * @return the quoteAttributes
-	 */
-	public List<QuoteAttributeDTO> getQuoteAttributes() {
-		return quoteAttributes;
-	}
+	
 
 	/**
-	 * @param quoteAttributes the quoteAttributes to set
+	 * @return the productAttributes
 	 */
-	public void setQuoteAttributes(List<QuoteAttributeDTO> quoteAttributes) {
-		this.quoteAttributes = quoteAttributes;
+	public List<QuoteAttributeDTO> getProductAttributes() {
+		return productAttributes;
 	}
+
+
+	/**
+	 * @param productAttributes the productAttributes to set
+	 */
+	public void setProductAttributes(List<QuoteAttributeDTO> productAttributes) {
+		this.productAttributes = productAttributes;
+	}
+
 
 	/**
 	 * @return the cpqQuoteCode

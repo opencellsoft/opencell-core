@@ -1,21 +1,18 @@
 package org.meveo.model.cpq;
 
-import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteProduct;
 
 @Entity
@@ -48,7 +45,12 @@ public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "cpq_quote_product_id")
-	private QuoteProduct quoteProduct;
+	private QuoteProduct  quoteProduct ;
+	
+
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "cpq_quote_offer_id")
+	private QuoteOffer  quoteOffer;
 
 
 	/**
@@ -64,6 +66,26 @@ public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 	public void setQuoteProduct(QuoteProduct quoteProduct) {
 		this.quoteProduct = quoteProduct;
 	}
+	
+	
+
+	/**
+	 * @return the quoteOffer
+	 */
+	public QuoteOffer getQuoteOffer() {
+		return quoteOffer;
+	}
+
+	
+	
+
+	/**
+	 * @param quoteOffer the quoteOffer to set
+	 */
+	public void setQuoteOffer(QuoteOffer quoteOffer) {
+		this.quoteOffer = quoteOffer;
+	}
+
 
 	public void update(QuoteAttribute other) {
 		this.stringValue = other.stringValue;
@@ -83,11 +105,13 @@ public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 		if (o == null || getClass() != o.getClass()) return false;
 		if (!super.equals(o)) return false;
 		QuoteAttribute that = (QuoteAttribute) o;
-		return Objects.equals(quoteProduct, that.quoteProduct);
+		return Objects.equals(quoteProduct, that.quoteProduct) && Objects.equals(quoteOffer, that.quoteOffer);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), quoteProduct);
 	}
+	
+	
 }

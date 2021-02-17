@@ -39,12 +39,11 @@ public class GetQuoteVersionDtoResponse extends QuoteVersionDto{
 	
 	private ActionStatus actionStatus = new ActionStatus();
   
-	public GetQuoteVersionDtoResponse(QuoteVersion q, boolean loadQuoteOffers, boolean loadQuoteProduct,
-			boolean loadQuoteAttributes) {
+	public GetQuoteVersionDtoResponse(QuoteVersion q, boolean loadQuoteOffers, boolean loadQuoteProduct,boolean loadQuoteAttributes,boolean loadOfferAttributes) {
 		super(q);
 		if (loadQuoteOffers) {
 			for (QuoteOffer quoteOffer : q.getQuoteOffers()) {
-				quoteItems.add(new QuoteOfferDTO(quoteOffer, loadQuoteProduct, loadQuoteAttributes));
+				quoteItems.add(new QuoteOfferDTO(quoteOffer, loadQuoteProduct, loadQuoteAttributes,loadOfferAttributes));
 			}
 		}
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
