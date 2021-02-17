@@ -101,10 +101,9 @@ public class CpqQuote extends BusinessCFEntity {
     /**
      * Order processing status as defined by the workflow.
      */
-    @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20, nullable = false)
     @NotNull
-    private QuoteStatusEnum status = QuoteStatusEnum.IN_PROGRESS;
+    private String status = QuoteStatusEnum.IN_PROGRESS.toString();
 	/**
 	 * statusDate
 	 */
@@ -402,13 +401,13 @@ public class CpqQuote extends BusinessCFEntity {
 	/**
 	 * @return the status
 	 */
-	public QuoteStatusEnum getStatus() {
+	public String getStatus() {
 		return status;
 	}
 	/**
 	 * @param status the status to set
 	 */
-	public void setStatus(QuoteStatusEnum status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 	/**
