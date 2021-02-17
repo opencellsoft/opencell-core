@@ -17,6 +17,41 @@
  */
 package org.meveo.service.base;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.metamodel.Attribute;
+
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
@@ -26,7 +61,6 @@ import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
@@ -35,7 +69,16 @@ import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
-import org.meveo.model.*;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.BusinessEntity;
+import org.meveo.model.IAuditable;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEnable;
+import org.meveo.model.IEntity;
+import org.meveo.model.ISearchable;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -49,22 +92,6 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.index.ElasticClient;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.*;
-import javax.persistence.metamodel.Attribute;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.function.Predicate;
-import java.util.stream.IntStream;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -1200,4 +1227,26 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             return "varchar";
         }
     }
+    
+    public Object deepCopyObject(Class<E> old) throws Exception {
+   	 	ObjectOutputStream oos = null;
+        ObjectInputStream ois = null;
+        try {
+           ByteArrayOutputStream bos = new ByteArrayOutputStream();
+           oos = new ObjectOutputStream(bos);
+           oos.writeObject(old);
+           oos.flush();               
+           ByteArrayInputStream bin = new ByteArrayInputStream(bos.toByteArray()); 
+           ois = new ObjectInputStream(bin);                  
+           return ois.readObject(); 
+        }
+        catch(Exception e) {
+           System.out.println("Exception in ObjectCloner = " + e);
+           throw(e);
+        }
+        finally {
+           oos.close();
+           ois.close();
+        }
+   }
 }
