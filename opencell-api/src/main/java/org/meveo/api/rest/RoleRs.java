@@ -37,6 +37,8 @@ import org.meveo.api.dto.response.GetRoleResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 /**
  * REST API for managing {@link Role}.
  * @author Edward P. Legaspi
@@ -55,6 +57,8 @@ public interface RoleRs extends IBaseRs {
      */
     @POST
     @Path("/") 
+    @Operation(summary = "Create role",
+    tags = { "Roles management" })
     ActionStatus create(RoleDto postData);
 
     /**
@@ -65,6 +69,8 @@ public interface RoleRs extends IBaseRs {
      */
     @PUT
     @Path("/") 
+    @Operation(summary = "Update role",
+    tags = { "Roles management" })
     ActionStatus update(RoleDto postData);
 
     /**
@@ -75,6 +81,8 @@ public interface RoleRs extends IBaseRs {
      */
     @DELETE
     @Path("/{roleName}")
+    @Operation(summary = "Remove role.",
+    tags = { "Roles management" })
     ActionStatus remove(@PathParam("roleName") String roleName);
 
     /**
@@ -86,6 +94,8 @@ public interface RoleRs extends IBaseRs {
      */
     @GET
     @Path("/") 
+    @Operation(summary = "Search role.",
+    tags = { "Roles management" })
     GetRoleResponse find(@QueryParam("roleName") String roleName, @QueryParam("includeSecuredEntities") boolean includeSecuredEntities);
 
     /**
@@ -96,6 +106,8 @@ public interface RoleRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate") 
+    @Operation(summary = "Create or update role.",
+    tags = { "Roles management" })
     ActionStatus createOrUpdate(RoleDto postData);
 
     /**
@@ -111,6 +123,8 @@ public interface RoleRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+    @Operation(summary = "List roles matching a given criteria.",
+    tags = { "Roles management" })
     RolesDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("name") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -122,6 +136,8 @@ public interface RoleRs extends IBaseRs {
      */
     @POST
     @Path("/list") 
+    @Operation(summary = "List roles matching a given criteria.",
+    tags = { "Roles management" })
     RolesDto listPost(PagingAndFiltering pagingAndFiltering);
     
     /**
@@ -130,6 +146,8 @@ public interface RoleRs extends IBaseRs {
      */
     @GET
     @Path("/external") 
+    @Operation(summary = "List external roles.",
+    tags = { "Roles management" })
     RolesDto listExternalRoles();
 
 }

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
@@ -134,7 +135,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		}
 		return orderType;
 	}
-	private static final String GENERIC_CODE = "COMMERCIAL_GEN";
+	
 	private OrderOffer processOrderOffer(QuoteOffer quoteOffer, CommercialOrder order) {
 		OrderOffer offer = new OrderOffer();
 		offer.setOrder(order);
@@ -181,7 +182,7 @@ public class QuoteValidationTemp extends ModuleScript {
 	
 	private OrderLot processOrderCustomerService(QuoteLot quoteLot, CommercialOrder commercialOrder) {
 		OrderLot orderCustomer = new OrderLot();
-		orderCustomer.setCode(GENERIC_CODE);
+		orderCustomer.setCode(UUID.randomUUID().toString());
 		orderCustomer.setCode(orderCustomerServiceService.findDuplicateCode(orderCustomer));
 		orderCustomer.setOrder(commercialOrder);
 		orderCustomerServiceService.create(orderCustomer);
@@ -205,7 +206,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(quoteArticleLineId, quoteVersion.getId());
 		quotePrices.forEach( price -> {
 			OrderPrice orderPrice = new OrderPrice();
-			orderPrice.setCode(GENERIC_CODE);
+			orderPrice.setCode(UUID.randomUUID().toString());
 			orderPrice.setCode(orderPriceService.findDuplicateCode(orderPrice));
 			orderPrice.setOrderArticleLine(orderArticleLine);
 			orderPrice.setOrder(commercialOrder);

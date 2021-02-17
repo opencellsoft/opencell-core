@@ -22,8 +22,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableCFEntity;
-import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
@@ -50,7 +48,7 @@ import org.meveo.model.order.Order;
 @CustomFieldEntity(cftCodePrefix = "CommercialOrder")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_commercial_order_seq")})
-public class CommercialOrder extends AuditableCFEntity {
+public class CommercialOrder extends AuditableCFEntity  {
 
 
 	@Transient

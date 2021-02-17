@@ -2269,8 +2269,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 //        ratedTransactionService.createRatedTransaction(entity, lastTransactionDate);
         List<Invoice> invoices;
         if(useV11Process) {
+            MinAmountForAccounts minAmountForAccounts = invoiceLinesService.isMinAmountForAccountsActivated(entity, applyMinimumModeEnum);
             invoices = createAggregatesAndInvoiceWithIL(entity, null, filter, invoiceDate,
-                    firstTransactionDate, lastTransactionDate, null, isDraft, !generateInvoiceRequestDto.getSkipValidation());
+                    firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft, !generateInvoiceRequestDto.getSkipValidation());
         } else {
             MinAmountForAccounts minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated(entity, applyMinimumModeEnum);
             invoices = createAgregatesAndInvoice(entity, null, filter, invoiceDate,
@@ -2388,8 +2389,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	public void rejectInvoices(Long billingRunId, List<Long> invoiceIds) {
 		List<Invoice> invoices = extractInvalidInvoiceList(billingRunId, invoiceIds, Arrays.asList(InvoiceStatusEnum.SUSPECT ,InvoiceStatusEnum.DRAFT));
 		for(Invoice invoice :invoices) {
-			invoice.setStatus(InvoiceStatusEnum.REJECTED);
+			rejectInvoice(invoice);
 		}
+	}
+
+	public void rejectInvoice(Invoice invoice) {
+		invoice.setStatus(InvoiceStatusEnum.REJECTED);
 	}
 
 
@@ -4784,6 +4789,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 throw new BusinessException("lastTransactionDate or ratedTransactionFilter must be set if billingRun is null");
             }
         }
+
+        List<InvoiceLine> minAmountInvoiceLines = entityToInvoice.getMinInvoiceLines();
+
         try {
             BillingAccount ba = null;
 
@@ -4816,13 +4824,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 lastTransactionDate = DateUtils.setDateToStartOfDay(lastTransactionDate);
             }
 
+            if (minAmountForAccounts.isMinAmountCalculationActivated()) {
+                invoiceLinesService.calculateAmountsAndCreateMinAmountLines(entityToInvoice, lastTransactionDate, false, minAmountForAccounts);
+                invoiceLinesService.calculateAmountsAndCreateMinAmountLines(entityToInvoice, lastTransactionDate, false, minAmountForAccounts);
+                minAmountInvoiceLines = entityToInvoice.getMinInvoiceLines();
+            }
+
             BillingCycle billingCycle = billingRun != null ? billingRun.getBillingCycle() : entityToInvoice.getBillingCycle();
             if (billingCycle == null && !(entityToInvoice instanceof Order)) {
                 billingCycle = ba.getBillingCycle();
             }
-
             PaymentMethod paymentMethod = null;
-
             BigDecimal balance = null;
             InvoiceType invoiceType = null;
 
@@ -4839,6 +4851,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
 
                 invoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, ba);
+            }
+
+            if (minAmountInvoiceLines != null && !minAmountInvoiceLines.isEmpty()) {
+                for (InvoiceLine minInvoiceLine : minAmountInvoiceLines) {
+                    minInvoiceLine.setBillingAccount(billingAccountService.retrieveIfNotManaged(minInvoiceLine.getBillingAccount()));
+                    minInvoiceLine.setAccountingArticle(accountingArticleService.retrieveIfNotManaged(minInvoiceLine.getAccountingArticle()));
+                    invoiceLinesService.create(minInvoiceLine);
+                }
+                commit();
             }
 
             return createAggregatesAndInvoiceFromIls(entityToInvoice, billingRun, filter, invoiceDate, firstTransactionDate,

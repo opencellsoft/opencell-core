@@ -43,6 +43,7 @@ import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
+import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -352,11 +353,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public ActionStatus createCustomerSequence(GenericCodeDto postData) {
+    public ActionStatus createCustomerSequence(CustomerSequenceDto postData) {
         ActionStatus result = new ActionStatus();
 
         try {
-            genericCodeApi.create(postData);
+            customerSequenceApi.createCustomerSequence(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -365,11 +366,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public ActionStatus updateCustomerSequence(GenericCodeDto postData) {
+    public ActionStatus updateCustomerSequence(CustomerSequenceDto postData) {
         ActionStatus result = new ActionStatus();
 
         try {
-            genericCodeApi.update(postData);
+            customerSequenceApi.updateCustomerSequence(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -378,11 +379,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public GenericCodeResponseDto getNextCustomerSequenceNumber(GenericCodeDto genericCodeDto) {
-        GenericCodeResponseDto result = new GenericCodeResponseDto();
+    public GenericSequenceValueResponseDto getNextCustomerSequenceNumber(String code) {
+        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
 
         try {
-            result.setGeneratedCode(genericCodeApi.getGenericCode(genericCodeDto));
+            result = customerSequenceApi.getNextNumber(code);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

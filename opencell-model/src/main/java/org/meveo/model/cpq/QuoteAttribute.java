@@ -46,7 +46,7 @@ public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "cpq_quote_product_id")
 	private QuoteProduct  quoteProduct ;
-
+	
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "cpq_quote_offer_id")
@@ -66,8 +66,8 @@ public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 	public void setQuoteProduct(QuoteProduct quoteProduct) {
 		this.quoteProduct = quoteProduct;
 	}
-
-
+	
+	
 
 	/**
 	 * @return the quoteOffer
@@ -76,8 +76,8 @@ public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 		return quoteOffer;
 	}
 
-
-
+	
+	
 
 	/**
 	 * @param quoteOffer the quoteOffer to set
@@ -112,6 +112,6 @@ public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), quoteProduct);
 	}
-
-
+	
+	
 }

@@ -598,7 +598,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         queryBuilder.addCriterion("code", "like", "%" + wildcode + "%", true);
         return queryBuilder.getQuery(getEntityManager()).getResultList();
     }
-
+    
+    /**
+     * Find entities by code
+     *
+     * @param code to match
+     * @return entity matching code
+     */
+    public BusinessEntity findBusinessEntityByCode(String code) {
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "entity", null);
+        queryBuilder.addCriterion("entity.code", "=", code, true);
+        return (BusinessEntity) queryBuilder.getQuery(getEntityManager()).getSingleResult();
+    }
     /**
      * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)
      */

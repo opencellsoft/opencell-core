@@ -310,10 +310,10 @@ public class CpqQuoteApi extends BaseApi {
 			}
 		}
 	}
-
+	
 	private void newPopulateOfferAttribute(List<QuoteAttributeDTO> quoteAttributeDtos, QuoteOffer quoteOffer) {
-		if(quoteAttributeDtos != null) {
-			for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributeDtos) {
+		if(quoteAttributeDtos != null) {  
+			for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributeDtos) { 
 				 Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
 			        if (attribute == null)
 			            throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
@@ -335,12 +335,12 @@ public class CpqQuoteApi extends BaseApi {
 		                    .collect(Collectors.toList());
 		            quoteAttribute.setAssignedAttributeValue(linkedQuoteAttributes);
 		        }
-				quoteOffer.getQuoteAttributes().add(quoteAttribute);
+				quoteOffer.getQuoteAttributes().add(quoteAttribute); 
 			}
 		}
 	}
-
-
+	
+	 
 
     private void newPopulateQuoteAttribute(List<QuoteAttributeDTO> quoteAttributeDTOS, QuoteProduct quoteProduct) {
         if (quoteAttributeDTOS != null) {
@@ -740,8 +740,8 @@ public class CpqQuoteApi extends BaseApi {
             quoteOffer.getQuoteProduct().removeAll(existencQuoteProducts);
         }
     }
-
-    private void processQuoteAttribute(QuoteOfferDTO quoteOfferDTO, QuoteOffer quoteOffer) {
+    
+    private void processQuoteAttribute(QuoteOfferDTO quoteOfferDTO, QuoteOffer quoteOffer) { 
         var quoteAttributeDtos = quoteOfferDTO.getOfferAttributes();
         var hasQuoteAttributeDtos = quoteAttributeDtos != null && !quoteAttributeDtos.isEmpty();
 

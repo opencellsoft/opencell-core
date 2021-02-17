@@ -97,9 +97,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		return entity;
 	}
 
-	public CommercialOrder updateWithoutProgressCheck(CommercialOrder entity) throws BusinessException {
-		return super.update(entity);
-	}
+    public CommercialOrder updateWithoutProgressCheck(CommercialOrder entity) throws BusinessException {
+        return super.update(entity);
+    }
 
 	public CommercialOrder validateOrder(CommercialOrder order, boolean orderCompleted) {
 		if (!(CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.FINALIZED.toString().equalsIgnoreCase(order.getStatus()))) {

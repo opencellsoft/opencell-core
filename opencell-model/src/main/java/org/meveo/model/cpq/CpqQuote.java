@@ -24,8 +24,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.ObservableEntity;
@@ -45,7 +43,7 @@ import org.meveo.model.quote.QuoteStatusEnum;
 @Table(name = "cpq_quote", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_seq")})
-public class CpqQuote extends BusinessCFEntity {
+public class CpqQuote extends BusinessCFEntity  {
 
 	/**
 	 * 
@@ -74,6 +72,7 @@ public class CpqQuote extends BusinessCFEntity {
 		this.validity = copy.validity;
 		this.pdfFilename=copy.pdfFilename;
 		this.xmlFilename=copy.xmlFilename;
+		this.orderInvoiceType = copy.orderInvoiceType;
 	}
 	/**
 	 * seller
