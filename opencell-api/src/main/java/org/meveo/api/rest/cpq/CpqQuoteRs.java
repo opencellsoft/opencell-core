@@ -292,7 +292,7 @@ public interface CpqQuoteRs {
             @ApiResponse(responseCode = "400", description = "the status can not be update, because of its current status", content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
     public Response updateQuoteStatus( @PathParam("quoteCode") String quoteCode,
-    							@QueryParam("status") QuoteStatusEnum status
+    							@QueryParam("status") String status
     		);
     
 

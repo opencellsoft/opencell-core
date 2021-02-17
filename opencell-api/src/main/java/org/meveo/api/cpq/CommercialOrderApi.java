@@ -318,7 +318,7 @@ public class CommercialOrderApi extends BaseApi {
 		}else if(statusTarget.equalsIgnoreCase(CommercialOrderEnum.FINALIZED.toString())){
             order = serviceSingleton.assignCommercialOrderNumber(order);
         }
-		List<String> status = allStatus();
+		List<String> status = allStatus(CommercialOrderEnum.class, "commercialOrder.status", "");
 
 		if(!status.contains(statusTarget.toLowerCase())) {
 			throw new MeveoApiException("Status is invalid, here is the list of available status : " + status);
@@ -340,21 +340,6 @@ public class CommercialOrderApi extends BaseApi {
 		return new CommercialOrderDto(commercialOrderService.duplicate(order));
 	}
 	
-	private List<String> allStatus(){
-		
-		final List<String> allStatus = new ArrayList<String>();
-		for(CommercialOrderEnum status:CommercialOrderEnum.values()) {
-			allStatus.add(status.toString().toLowerCase());
-		}
-		String statusProperties = ParamBean.getInstance().getProperty("commercialOrder.status", "");
-		
-		if(!Strings.isEmpty(statusProperties)) {
-			for (String currentStatus : statusProperties.split(",")) {
-				allStatus.add(currentStatus.toLowerCase());
-			}
-		}
-		return allStatus;
-	}
 
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 	public GetListCommercialOrderDtoResponse listCommercialOrder(PagingAndFiltering pagingAndFiltering) {

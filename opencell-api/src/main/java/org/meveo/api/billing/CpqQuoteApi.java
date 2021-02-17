@@ -489,6 +489,10 @@ public class CpqQuoteApi extends BaseApi {
         quote.setOpportunityRef(quoteDto.getOpportunityRef());
         quote.setCustomerRef(quoteDto.getExternalId());
         quote.setValidity(quoteDto.getValidity());
+        var allStatus = allStatus(QuoteStatusEnum.class, "cpqQuote.status", "");
+        if(!allStatus.contains(quoteDto.getStatus().toLowerCase())) {
+			throw new MeveoApiException("Status is invalid, here is the list of available status : " + allStatus);
+		}
         quote.setStatus(quoteDto.getStatus());
         quote.setDescription(quoteDto.getDescription());
         quote.setQuoteDate(quote.getQuoteDate());
@@ -888,13 +892,14 @@ public class CpqQuoteApi extends BaseApi {
         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, version);
         if(quoteVersion == null)
             throw new EntityDoesNotExistsException("No quote version found for quote: " + quoteCode + ", and version : " + version);
-        if(cpqQuote.getStatus().equals(QuoteStatusEnum.CANCELLED) || cpqQuote.getStatus().equals(QuoteStatusEnum.REJECTED))
-            throw new MeveoApiException("quote status can not be publish because of its current status : " + cpqQuote.getStatus().getApiState());
+        if(cpqQuote.getStatus().equalsIgnoreCase(QuoteStatusEnum.CANCELLED.toString()) 
+        			|| cpqQuote.getStatus().equalsIgnoreCase(QuoteStatusEnum.REJECTED.toString()))
+            throw new MeveoApiException("quote status can not be publish because of its current status : " + cpqQuote.getStatus());
         if(quoteVersion.getStatus().equals(VersionStatusEnum.CLOSED))
             throw new MeveoApiException("Version of quote must not be CLOSED");
 
         Date now = Calendar.getInstance().getTime();
-        cpqQuote.setStatus(QuoteStatusEnum.ACCEPTED);
+        cpqQuote.setStatus(QuoteStatusEnum.ACCEPTED.toString());
         cpqQuote.setStatusDate(now);
         quoteVersion.setStatus(VersionStatusEnum.PUBLISHED);
         quoteVersion.setStatusDate(now);
@@ -923,18 +928,22 @@ public class CpqQuoteApi extends BaseApi {
         return cpqQuoteService.duplicate(quote, quoteVersion, false, true);
     }
 
-    public void updateQuoteStatus(String quoteCode, QuoteStatusEnum status) {
+    public void updateQuoteStatus(String quoteCode, String status) {
         CpqQuote cpqQuote = cpqQuoteService.findByCode(quoteCode);
         if (cpqQuote == null)
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
 
-        if (cpqQuote.getStatus().equals(QuoteStatusEnum.REJECTED) ||
-                cpqQuote.getStatus().equals(QuoteStatusEnum.CANCELLED)) {
-            throw new MeveoApiException("you can not update the quote with status = " + cpqQuote.getStatus().getApiState());
+        if (cpqQuote.getStatus().equals(QuoteStatusEnum.REJECTED.toString()) ||
+                cpqQuote.getStatus().equals(QuoteStatusEnum.CANCELLED.toString())) {
+            throw new MeveoApiException("you can not update the quote with status = " + cpqQuote.getStatus());
         }
+        var allStatus = allStatus(QuoteStatusEnum.class, "cpqQuote.status", "");
+		if(!allStatus.contains(status)) {
+				throw new MeveoApiException("Status is invalid, here is the list of available status : " + allStatus);
+		}
         cpqQuote.setStatus(status);
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
-        if (QuoteStatusEnum.APPROVED.equals(status)) {
+        if (QuoteStatusEnum.APPROVED.toString().equalsIgnoreCase(status)) {
             cpqQuote = serviceSingleton.assignCpqQuoteNumber(cpqQuote);
         }
         try {
