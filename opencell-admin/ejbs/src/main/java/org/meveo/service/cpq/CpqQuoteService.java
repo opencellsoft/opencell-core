@@ -76,7 +76,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	public CpqQuote duplicate(CpqQuote quote, QuoteVersion quoteVersion, boolean preserveCode, boolean duplicateHierarchy) {
 		
 		final CpqQuote duplicate = new CpqQuote(quote);
-		duplicate.setStatus(QuoteStatusEnum.IN_PROGRESS);
+		duplicate.setStatus(QuoteStatusEnum.IN_PROGRESS.toString());
 		duplicate.setStatusDate(Calendar.getInstance().getTime());
 		detach(quote);
 	   	 if(!preserveCode) {

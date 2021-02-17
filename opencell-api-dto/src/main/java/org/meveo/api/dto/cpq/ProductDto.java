@@ -88,6 +88,7 @@ public class ProductDto extends BaseEntityDto{
     	this.discountList = p.getDiscountList().stream()
 				.map(dl -> new DiscountPlanDto(dl, null))
 				.collect(Collectors.toSet());
+    	this.medias = p.getMedias().stream().map(m -> new MediaDto(m)).collect(Collectors.toList());
     }
 	/**
 	 * @return the status
