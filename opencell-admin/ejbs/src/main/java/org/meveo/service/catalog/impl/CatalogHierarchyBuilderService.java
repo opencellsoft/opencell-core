@@ -181,6 +181,12 @@ public class CatalogHierarchyBuilderService {
         if(attributes != null) {
         	entity.setAttributes(new ArrayList<Attribute>());
         	for (Attribute attribute : attributes) {
+        		for(Media media : attribute.getMedias()) {
+        			Media newMedia = new Media(media); 
+        			newMedia.setAttribute(attribute);
+        			mediaService.create(newMedia);
+        			attribute.getMedias().add(newMedia);
+        		}
 				entity.getAttributes().add(attribute);
 			}
         }
@@ -201,6 +207,10 @@ public class CatalogHierarchyBuilderService {
     		ProductVersion tmpProductVersion = productVersionService.findById(productVersion.getId());
     		tmpProductVersion.getTags().size();
     		tmpProductVersion.getAttributes().size();
+    		tmpProductVersion.getAttributes().forEach(att -> {
+    			att.getMedias().size();
+    			att.getAssignedAttributes().size();
+    		});
     		
     		var tagList = new ArrayList<>(tmpProductVersion.getTags());
     		var serviceList = new ArrayList<>(tmpProductVersion.getAttributes());
@@ -253,7 +263,6 @@ public class CatalogHierarchyBuilderService {
     	}
     	
     	if(medias != null) {
-    		entity.getMedias().clear();
     		medias.forEach(media -> {
     			Media newMedia = new Media(media); 
     			newMedia.setProduct(entity);
@@ -263,16 +272,34 @@ public class CatalogHierarchyBuilderService {
     	}
     	
     	if(productCharge != null) {
-    		entity.getProductCharges().clear();;
     		productCharge.forEach(pct -> { 
     			ProductChargeTemplateMapping duplicat = new ProductChargeTemplateMapping();
     			duplicat.setCounterTemplate(pct.getCounterTemplate());
     			duplicat.setChargeTemplate(pct.getChargeTemplate()); 
     			duplicat.setProduct(entity);
+    			duplicat.setAccumulatorCounterTemplates(new ArrayList<>());
+    			duplicat.setWalletTemplates(new ArrayList<>());
     			productChargeTemplateMappingService.create(duplicat);
+    			entity.getProductCharges().add(duplicat);
     		});
     	}
     }
+	
+	/*@SuppressWarnings("unchecked")
+	private void duplicateCounterTemplate(Product entity, ProductChargeTemplateMapping productChargetTemplate, List<CounterTemplate> coutnerTemplates) {
+		if(productChargetTemplate.getAccumulatorCounterTemplates() != null) {
+			productChargetTemplate.getAccumulatorCounterTemplates().forEach(ct -> {
+				if(ct instanceof CounterTemplate) {
+					CounterTemplate counter = (CounterTemplate) ct;
+					CounterTemplate duplicate = new CounterTemplate();
+					duplicate.setAccumulator(counter.getAccumulator());
+					duplicate.setAccumulatorType(counter.getAccumulatorType());
+					duplicate.setActive(counter.isActive());
+					duplicate.setCode(counterTemplateService.);
+				}
+			});
+		}
+	}*/
 	
 	
 	private void duplicateDiscount(DiscountPlan entity, List<DiscountPlanItem> discountPlanItem) {
