@@ -49,12 +49,14 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
+import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -70,6 +72,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.persistence.CustomFieldJsonTypeDescriptor;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.custom.CustomEntityTemplateService;
@@ -802,6 +805,26 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @return
      */
     public List getReferencedEntities(CustomFieldTemplate customField, String code, Class entityClass) {
+    	
+    	// Case of encrypted customfields in DB
+		if (CustomFieldJsonTypeDescriptor.TRUE_STR.equalsIgnoreCase(
+						ParamBean.getInstance().getProperty(CustomFieldJsonTypeDescriptor.ENCRYPT_CUSTOM_FIELDS_PROPERTY,
+								CustomFieldJsonTypeDescriptor.FALSE_STR)) && !StringUtils.isBlank(ParamBean.getInstance().getProperty(CustomFieldJsonTypeDescriptor.OPENCELL_SHA_KEY_PROPERTY, null))) {
+				QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a");
+				Query query = queryBuilder.getQuery(getEntityManager());
+				List<BusinessCFEntity> resultList = (List<BusinessCFEntity>) query.getResultList();
+
+			for (BusinessCFEntity entity : resultList) {
+				if (entity.getCfValues() != null && entity.getCfValues().getValues() != null 
+						&& entity.getCfValues().getValues().get(customField.getCode()) != null
+						&& code.equalsIgnoreCase(((EntityReferenceWrapper)entity.getCfValues().getValues().get(customField.getCode())).getCode())) {
+					
+					return resultList;
+				}
+			}
+
+			return null;
+		}
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a");
         queryBuilder.addCriterion("entityFromJson(cf_values," + customField.getCode() + ",entity)", "=", code, true);
         Query query = queryBuilder.getQuery(getEntityManager());
