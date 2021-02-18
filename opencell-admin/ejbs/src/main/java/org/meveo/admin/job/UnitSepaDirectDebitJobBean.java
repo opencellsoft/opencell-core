@@ -52,6 +52,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentErrorTypeEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.Refund;
 import org.meveo.model.shared.DateUtils;
@@ -115,13 +116,12 @@ public class UnitSepaDirectDebitJobBean {
 	 */
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, DDRequestItem ddrequestItem, boolean isToMatching) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+	public void execute(JobExecutionResultImpl result, DDRequestItem ddrequestItem, boolean isToMatching, PaymentStatusEnum paymentStatusEnum) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 		ddrequestItem = dDRequestItemService.refreshOrRetrieve(ddrequestItem);
 		DDRequestLOT ddRequestLOT = ddrequestItem.getDdRequestLOT();
 		log.debug("processing DD requestItem id  : " + ddrequestItem.getId());
 		AccountOperation automatedPayment = null;
 		PaymentErrorTypeEnum paymentErrorTypeEnum = null;
-		PaymentStatusEnum paymentStatusEnum = PaymentStatusEnum.ACCEPTED;
 		String errorMsg = null;
 		if (!ddrequestItem.hasError()) {
 			if (BigDecimal.ZERO.compareTo(ddrequestItem.getAmount()) == 0) {
@@ -153,7 +153,7 @@ public class UnitSepaDirectDebitJobBean {
 		paymentHistoryService.addHistoryAOs(ddrequestItem.getAccountOperations().get(0).getCustomerAccount(),
 				(automatedPayment instanceof AutomatedPayment ? (Payment) automatedPayment : null),
 				(automatedPayment instanceof Refund ? (Refund) automatedPayment : null), (ddrequestItem.getAmount().multiply(new BigDecimal(100))).longValue(),
-				paymentStatusEnum, errorMsg, errorMsg, paymentErrorTypeEnum, ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum().getOperationCategoryToProcess(),
+				paymentStatusEnum, errorMsg, errorMsg, paymentErrorTypeEnum, ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum() == PaymentOrRefundEnum.PAYMENT ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT,
 				ddRequestLOT.getDdRequestBuilder().getCode(), ddrequestItem.getAccountOperations().get(0).getCustomerAccount().getPreferredPaymentMethod(),ddrequestItem.getAccountOperations());
 
 	}

@@ -120,11 +120,12 @@ public class DDRequestLotOp extends AuditableEntity {
     @Column(name = "generate_payment_lines")
     private Boolean generatePaymentLines = Boolean.TRUE;
     
-    /** Flag to activate matching of payment lines (by default true). */
-    @Type(type = "numeric_boolean")
-    @Column(name = "match_payment_lines")
-    private Boolean matchPaymentLines = Boolean.TRUE;
+    /** Default payment status. */
+    @Column(name = "payment_status")
+    @Enumerated(EnumType.STRING)
+    private PaymentStatusEnum paymentStatus;
 
+    
     /**
      * Gets the from due date.
      *
@@ -349,18 +350,18 @@ public class DDRequestLotOp extends AuditableEntity {
 		this.generatePaymentLines = generatePaymentLines;
 	}
 
-	/**
-	 * @return the matchPaymentLines
-	 */
-	public Boolean isMatchPaymentLines() {
-		return matchPaymentLines;
-	}
+    /**
+     * @return the paymentStatus
+     */
+    public PaymentStatusEnum getPaymentStatus() {
+        return paymentStatus;
+    }
 
-	/**
-	 * @param matchPaymentLines the matchPaymentLines to set
-	 */
-	public void setMatchPaymentLines(Boolean matchPaymentLines) {
-		this.matchPaymentLines = matchPaymentLines;
-	}
-
+    /**
+     * @param paymentStatus the paymentStatus to set
+     */
+    public void setPaymentStatus(PaymentStatusEnum paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+	
 }

@@ -25,8 +25,9 @@ public class GenericPagingAndFilteringUtils {
     private static final char OPEN_HOOK = '[';
     private static final char CLOSE_HOOK = ']';
     private static final char OPEN_ACCOLADE = '{';
-    private static final String ASCENDING_ORDER = "ASCENDING";
-    private static final String DESCENDING_ORDER = "DESCENDING";
+    private static final String BLANK_SPACE = " ";
+    private static final String ASCENDING_ORDER = "ASC";
+    private static final String DESCENDING_ORDER = "DESC";
     private static final String MULTI_SORTING_DELIMITER = ",";
 
     // pagination configuration
@@ -68,21 +69,25 @@ public class GenericPagingAndFilteringUtils {
                     if ( allSortFieldsSplit[i].charAt(0) == DESCENDING_SIGN ) {
                         sortOrders.append( DESCENDING_ORDER + MULTI_SORTING_DELIMITER );
                         // Remove the sign '-' in case of DESCENDING
-                        sortFields.append( allSortFieldsSplit[i].substring(1) + MULTI_SORTING_DELIMITER );
+                        sortFields.append( allSortFieldsSplit[i].substring(1) + BLANK_SPACE
+                                            + DESCENDING_ORDER + MULTI_SORTING_DELIMITER + BLANK_SPACE );
                     }
                     else {
                         sortOrders.append( ASCENDING_ORDER + MULTI_SORTING_DELIMITER );
-                        sortFields.append( allSortFieldsSplit[i] + MULTI_SORTING_DELIMITER );
+                        sortFields.append( allSortFieldsSplit[i] + BLANK_SPACE
+                                            + ASCENDING_ORDER + MULTI_SORTING_DELIMITER + BLANK_SPACE );
                     }
                 }
                 if ( allSortFieldsSplit[allSortFieldsSplit.length - 1].charAt(0) == DESCENDING_SIGN ) {
                     sortOrders.append( DESCENDING_ORDER );
                     // Remove the sign '-' in case of DESCENDING
-                    sortFields.append( allSortFieldsSplit[allSortFieldsSplit.length - 1].substring(1) );
+                    sortFields.append( allSortFieldsSplit[allSortFieldsSplit.length - 1].substring(1) + BLANK_SPACE
+                                        + DESCENDING_ORDER );
                 }
                 else {
                     sortOrders.append( ASCENDING_ORDER );
-                    sortFields.append( allSortFieldsSplit[allSortFieldsSplit.length - 1] );
+                    sortFields.append( allSortFieldsSplit[allSortFieldsSplit.length - 1] + BLANK_SPACE
+                            + ASCENDING_ORDER );
                 }
                 pagingAndFiltering.setMultiSortOrder( sortOrders.toString() );
                 pagingAndFiltering.setSortBy( sortFields.toString() );

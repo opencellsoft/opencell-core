@@ -141,6 +141,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject
     private WalletOperationService walletOperationService;
     
+    @Inject
+    private TradingLanguageService tradingLanguageService;
+    
+    @Inject
+    private UserAccountService userAccountService;
+    
     /** transformer factory. */
     private TransformerFactory transfac = TransformerFactory.newInstance();
 
@@ -670,11 +676,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             parent.appendChild(userAccountsTag);
         }
         BillingAccount billingAccount = invoice.getBillingAccount();
+        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
         TradingLanguage tradingLanguage = billingAccount.getTradingLanguage();
+        tradingLanguage = tradingLanguageService.refreshOrRetrieve(tradingLanguage);
         Language language = tradingLanguage.getLanguage();
         String billingAccountLanguage = language.getLanguageCode();
         List<UserAccount> usersAccounts = billingAccount.getUsersAccounts();
         for (UserAccount userAccount : usersAccounts) {
+        	userAccount = userAccountService.refreshOrRetrieve(userAccount);
             List<Subscription> subscriptions = userAccount.getSubscriptions();
             Element userAccountTag = doc.createElement("userAccount");
 
@@ -709,7 +718,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 	        // generate invoice line for min amount RT
 	        Element userAccountTag = doc.createElement("userAccount");
 	        userAccountTag.setAttribute("description", "-");
-	        userAccountTag.appendChild(getMinAmountRTCategories(doc, ratedTransactions, enterprise, billingAccountLanguage));
+	        userAccountTag.appendChild(getUnregularRTCategories(doc, ratedTransactions, enterprise, billingAccountLanguage));
 	        userAccountsTag.appendChild(userAccountTag);
         }
         
@@ -1299,7 +1308,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     }
     
     /**
-     * Provide categories elements for min amount transactions
+     * Provide categories elements for min RTs and RTs without type and wallet
      * 
      * @param doc dom document
      * @param ratedTransactions rated transactions
@@ -1307,15 +1316,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @return category element
      * @throws BusinessException business exception
      */
-    private Element getMinAmountRTCategories(Document doc, final List<RatedTransaction> ratedTransactions, final boolean enterprise, String languageCode) throws BusinessException {
+    private Element getUnregularRTCategories(Document doc, final List<RatedTransaction> ratedTransactions, final boolean enterprise, String languageCode) throws BusinessException {
 
         ParamBean paramBean = paramBeanFactory.getInstance();
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
-        String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
         LinkedHashMap<InvoiceSubCategory, Element> subCategoriesMap = new LinkedHashMap<>();
         if(ratedTransactions != null) {
             for (RatedTransaction ratedTransaction : ratedTransactions) {
-                if (ratedTransaction.getType() == RatedTransactionTypeEnum.MINIMUM) {
+                if (ratedTransaction.getType() == RatedTransactionTypeEnum.MINIMUM || (ratedTransaction.getType() == null && ratedTransaction.getWallet() == null)) {
 
                     Element subCategory = null;
                     InvoiceSubCategory invoiceSubCategory = ratedTransaction.getInvoiceSubCategory();
@@ -1459,8 +1467,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
         String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
-
-        String languageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+        
+        BillingAccount billingAccount = invoice.getBillingAccount();
+        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+        String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
 
         
         List<Element> categoriesList = new ArrayList<>();
@@ -1985,6 +1995,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                         BillingAccount billingAccount = invoice.getBillingAccount();
                         if (billingAccount != null) {
                             TradingLanguage tradingLanguage = billingAccount.getTradingLanguage();
+                            tradingLanguage = tradingLanguageService.refreshOrRetrieve(tradingLanguage);
                             if (tradingLanguage != null
                                     && tradingLanguage.getLanguageCode() != null) {
                                 String languageCode = tradingLanguage.getLanguageCode();

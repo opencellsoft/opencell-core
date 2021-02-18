@@ -1901,6 +1901,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return getEntityManager().createNamedQuery("RatedTransaction.deleteBetweenTwoDatesByStatus").setParameter("status", targetStatusList).setParameter("firstTransactionDate", firstTransactionDate)
             .setParameter("lastTransactionDate", lastTransactionDate).executeUpdate();
     }
+    
+    /**
+     * Detach RTs From subscription.
+     *
+     * @param subscription subscription
+     */
+    public void detachRTsFromSubscription(Subscription subscription) {
+        getEntityManager().createNamedQuery("RatedTransaction.detachRTsFromSubscription").setParameter("subscription", subscription).executeUpdate();
+    }
 
     /**
      * Retrun the total of positive rated transaction grouped by billing account for a billing run.

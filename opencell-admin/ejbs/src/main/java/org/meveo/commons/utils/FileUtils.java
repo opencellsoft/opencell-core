@@ -694,22 +694,31 @@ public final class FileUtils {
         File[] files = sourceDir.listFiles(new FilenameFilter() {
 
             public boolean accept(File dir, String name) {
+                
+                boolean emptyExtensions = true;
+                if (extensions != null) {
+                    for (String extension : extensions) {
+                        if (extension != null) {
+                            emptyExtensions = false;
+                        }
+                    }
+                }
 
-                String nameUpper = name.toUpperCase();
-                if (extensions == null && fileNameFilterUpper == null) {
+                if (emptyExtensions && fileNameFilterUpper == null) {
                     return true;
                 }
 
-                if (extensions == null && nameUpper.contains(fileNameFilterUpper)) {
+                String nameUpper = name.toUpperCase();
+                if (emptyExtensions && nameUpper.contains(fileNameFilterUpper)) {
                     return true;
                 }
 
                 for (String extension : extensions) {
-                    if ((name.endsWith(extension) || "*".equals(extension)) && (fileNameFilterUpper == null || nameUpper.contains(fileNameFilterUpper))) {
+                    if (extension != null && (name.endsWith(extension) || "*".equals(extension)) && (fileNameFilterUpper == null || nameUpper.contains(fileNameFilterUpper))) {
                         return true;
                     }
                 }
-
+                
                 return false;
             }
 

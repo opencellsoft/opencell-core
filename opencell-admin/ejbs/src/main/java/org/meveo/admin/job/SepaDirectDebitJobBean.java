@@ -50,6 +50,7 @@ import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentOrRefundEnum;
+import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
@@ -179,9 +180,12 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 				if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
 					break;
 				}
-				boolean isToMatching = true;
-				if(ddrequestLotOp.isMatchPaymentLines() == Boolean.FALSE) {
-					isToMatching = false;
+				boolean isToMatching = false;
+				if(ddrequestLotOp.getPaymentStatus() == null) {
+				    ddrequestLotOp.setPaymentStatus(PaymentStatusEnum.ACCEPTED);
+				}
+				if(ddrequestLotOp.getPaymentStatus() == PaymentStatusEnum.ACCEPTED) {
+					isToMatching = true;
 				}
 				try {
 					DateRangeScript dateRangeScript = this.getDueDateRangeScript(ddrequestLotOp);
@@ -201,7 +205,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 							result.addReport(ddRequestLOT.getRejectedCause());
 							
 							if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
-								dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, isToMatching, nbRuns, waitingMillis, result);
+								dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);
 								log.info("end createPaymentsOrRefundsForDDRequestLot");
 								if (isEmpty(ddRequestLOT.getRejectedCause())) {
 									result.registerSucces();
@@ -211,7 +215,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {
 						if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
-							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddrequestLotOp.getDdrequestLOT(), isToMatching, nbRuns, waitingMillis, result);
+							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddrequestLotOp.getDdrequestLOT(), isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);
 							result.registerSucces();
 						}
 					}

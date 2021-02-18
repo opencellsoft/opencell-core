@@ -3712,7 +3712,7 @@ END $$;]]>
     <changeSet id="#5863_22122020" author="AbdelmounaimAkadid">
 		<addColumn tableName="ar_ddrequest_lot_op">
             <column name="generate_payment_lines" type="${type.boolean}" defaultValueNumeric="1" />
-            <column name="match_payment_lines" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="payment_status" type="varchar(25)" />
         </addColumn>
 	</changeSet>
 	
@@ -3758,7 +3758,12 @@ END $$;]]>
               referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
     </changeSet>
     
-    <changeSet id="#5872_20200104" author="AmineBENAICHA" dbms="postgresql">
+    <changeSet id="#5627_20210112" author="MohammedELAZZOUZI">
+        <addDefaultValue columnName="skip_validation_script" tableName="billing_billing_run" defaultValueNumeric="0"/>
+        <sql>UPDATE ${db.schema.adapted}billing_billing_run SET skip_validation_script=0 WHERE skip_validation_script IS NULL</sql>
+    </changeSet>
+    
+    <changeSet id="#5872_20210104" author="AmineBENAICHA" dbms="postgresql">
     	<sql>
 			CREATE TABLE ${db.schema.adapted}rating_edr_other_tmp AS
 			SELECT
@@ -3835,4 +3840,23 @@ END $$;]]>
 		<dropTable tableName="rating_edr_other_tmp"/>
     </changeSet>
     
+    <changeSet id="#5700_20210118" author="AmineBENAICHA" dbms="postgresql">
+    	<sql>
+    		update ${db.schema.adapted}meveo_job_instance
+			set cf_values=
+				case
+					when cf_values is not null then (cf_values::jsonb || ('{"AccountOperationsGenerationJob_excludeInvoicesWithoutAmount": [{"boolean": ' || exclude_inv_without_amount::boolean || '}]}')::jsonb)::text
+					else '{"AccountOperationsGenerationJob_excludeInvoicesWithoutAmount": [{"boolean": ' || exclude_inv_without_amount::boolean || '}]}'
+				end
+			where (id=-14 or code='AO_Job')
+    	</sql>
+    </changeSet>
+    
+    <changeSet id="#5904_20210129" author="AmineBENAICHA">
+    	<addColumn tableName="meveo_job_instance">
+    		<column name="stop_on_error" type="${type.boolean}" 
+    			defaultValueNumeric="0" />
+		</addColumn>
+    </changeSet>
+
 </databaseChangeLog>

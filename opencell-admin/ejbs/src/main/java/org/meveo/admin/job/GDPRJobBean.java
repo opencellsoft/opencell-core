@@ -30,6 +30,8 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
@@ -40,6 +42,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -70,6 +73,9 @@ public class GDPRJobBean extends BaseJobBean {
 
 	@Inject
 	private SubscriptionService subscriptionService;
+	
+	@Inject
+    private RatedTransactionService ratedTransactionService;
 
 	@Inject
 	private OrderService orderService;
@@ -231,6 +237,7 @@ public class GDPRJobBean extends BaseJobBean {
     private void bulkSubscriptionDelete(List<Subscription> inactiveSubscriptions, JobExecutionResultImpl result) {
         for (Subscription inactiveSubscription : inactiveSubscriptions) {
             try {
+                ratedTransactionService.detachRTsFromSubscription(inactiveSubscription);
                 subscriptionService.remove(inactiveSubscription);
                 result.setNbItemsCorrectlyProcessed(result.getNbItemsCorrectlyProcessed() + 1);
             } catch(Exception e) {

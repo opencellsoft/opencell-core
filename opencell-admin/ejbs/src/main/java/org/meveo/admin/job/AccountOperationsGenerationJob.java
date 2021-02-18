@@ -38,9 +38,9 @@ import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.job.Job;
 
-
 /**
  * The Class AccountOperationsGenerationJob generate the invoice account operation for all invoices that dont have it yet.
+ * 
  * @author anasseh
  * @author Abdellatif BARI
  * @lastModifiedVersion 10.0
@@ -51,51 +51,56 @@ public class AccountOperationsGenerationJob extends Job {
     /** The account operations generation job bean. */
     @Inject
     private AccountOperationsGenerationJobBean accountOperationsGenerationJobBean;
-            
-    
+
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        accountOperationsGenerationJobBean.execute(result, jobInstance );
+        accountOperationsGenerationJobBean.execute(result, jobInstance);
     }
 
-    
     @Override
     public JobCategoryEnum getJobCategory() {
         return MeveoJobCategoryEnum.ACCOUNT_RECEIVABLES;
     }
-    
-    
+
     @Override
-   	public Map<String, CustomFieldTemplate> getCustomFields() {
-           Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
+    public Map<String, CustomFieldTemplate> getCustomFields() {
+        Map<String, CustomFieldTemplate> result = new HashMap<>();
 
-   		CustomFieldTemplate nbRuns = new CustomFieldTemplate();
-   		nbRuns.setCode(CF_NB_RUNS);
-   		nbRuns.setAppliesTo("JobInstance_AccountOperationsGenerationJob");
-   		nbRuns.setActive(true);
-   		nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
-   		nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
-   		nbRuns.setValueRequired(false);
-   		nbRuns.setDefaultValue("-1");
+        CustomFieldTemplate nbRuns = new CustomFieldTemplate();
+        nbRuns.setCode(CF_NB_RUNS);
+        nbRuns.setAppliesTo("JobInstance_AccountOperationsGenerationJob");
+        nbRuns.setActive(true);
+        nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
+        nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+        nbRuns.setValueRequired(false);
+        nbRuns.setDefaultValue("-1");
         nbRuns.setGuiPosition("tab:Configuration:0;field:0");
-   		result.put(CF_NB_RUNS, nbRuns);
+        result.put(CF_NB_RUNS, nbRuns);
 
-   		CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
-   		waitingMillis.setCode(Job.CF_WAITING_MILLIS);
-   		waitingMillis.setAppliesTo("JobInstance_AccountOperationsGenerationJob");
-   		waitingMillis.setActive(true);
-   		waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
-   		waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
-   		waitingMillis.setValueRequired(false);
-   		waitingMillis.setDefaultValue("0");
+        CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
+        waitingMillis.setCode(Job.CF_WAITING_MILLIS);
+        waitingMillis.setAppliesTo("JobInstance_AccountOperationsGenerationJob");
+        waitingMillis.setActive(true);
+        waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
+        waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
+        waitingMillis.setValueRequired(false);
+        waitingMillis.setDefaultValue("0");
 
         waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
-   		result.put(Job.CF_WAITING_MILLIS, waitingMillis);
+        result.put(Job.CF_WAITING_MILLIS, waitingMillis);
 
-   		result.put("waitingMillis", waitingMillis);
-   		
-   		
+        result.put("waitingMillis", waitingMillis);
+
+        CustomFieldTemplate excludeInvoicesWithoutAmountCF = new CustomFieldTemplate();
+        excludeInvoicesWithoutAmountCF.setCode("AccountOperationsGenerationJob_excludeInvoicesWithoutAmount");
+        excludeInvoicesWithoutAmountCF.setAppliesTo("JobInstance_AccountOperationsGenerationJob");
+        excludeInvoicesWithoutAmountCF.setActive(true);
+        excludeInvoicesWithoutAmountCF.setDescription(resourceMessages.getString("jobExecution.excludeInvoicesWithoutAmount"));
+        excludeInvoicesWithoutAmountCF.setFieldType(CustomFieldTypeEnum.BOOLEAN);
+        excludeInvoicesWithoutAmountCF.setValueRequired(false);
+        result.put("AccountOperationsGenerationJob_excludeInvoicesWithoutAmount", excludeInvoicesWithoutAmountCF);
+
         CustomFieldTemplate scriptCF = new CustomFieldTemplate();
         scriptCF.setCode("AccountOperationsGenerationJob_script");
         scriptCF.setAppliesTo("JobInstance_AccountOperationsGenerationJob");
@@ -118,7 +123,6 @@ public class AccountOperationsGenerationJob extends Job {
         variablesCF.setMapKeyType(CustomFieldMapKeyEnum.STRING);
         result.put("AccountOperationsGenerationJob_variables", variablesCF);
 
-
-   		return result;
-   	}
+        return result;
+    }
 }

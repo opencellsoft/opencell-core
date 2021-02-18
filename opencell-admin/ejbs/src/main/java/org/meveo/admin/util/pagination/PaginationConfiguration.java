@@ -81,25 +81,15 @@ public class PaginationConfiguration implements Serializable {
         this.fetchFields = fetchFields;
 
         List<Object> sortValues = new ArrayList<Object>();
-        if ( sortFieldsAndOrder[0] != null && sortFieldsAndOrder[1] != null ) {
-            String[] allSortFieldsSplit = sortFieldsAndOrder[0].toString().split(",");
-            String[] allSortOrdersSplit = sortFieldsAndOrder[1].toString().split(",");
-            for ( int i = 0; i < allSortFieldsSplit.length; i++ ) {
-                sortValues.add( allSortFieldsSplit[i] );
-
-                sortValues.add( allSortOrdersSplit[i] );
+        for (int i = 0; i < sortFieldsAndOrder.length; i = i + 2) {
+            if (sortFieldsAndOrder[i] == null) {
+                continue;
             }
+            sortValues.add(sortFieldsAndOrder[i]);
+            sortValues.add(sortFieldsAndOrder[i + 1] == null ? SortOrder.ASCENDING : sortFieldsAndOrder[i + 1]);
         }
 
-//        for (int i = 0; i < sortFieldsAndOrder.length; i = i + 2) {
-//            if (sortFieldsAndOrder[i] == null) {
-//                continue;
-//            }
-//            sortValues.add(sortFieldsAndOrder[i]);
-//            sortValues.add(sortFieldsAndOrder[i + 1] == null ? SortOrder.ASCENDING : sortFieldsAndOrder[i + 1]);
-//        }
-
-        this.ordering = sortValues.toArray();
+        this.ordering = sortValues.size() > 0 ? sortValues.toArray() : null;
     }
 
     /**
@@ -202,7 +192,7 @@ public class PaginationConfiguration implements Serializable {
      * @return Should any sorting be applied to search results
      */
     public boolean isSorted() {
-        return ordering != null;
+        return ordering != null && ordering.length > 0;
     }
 
     @Override
