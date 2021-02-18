@@ -642,7 +642,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
     @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
-    public OfferTemplateDto find(String code, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate,
+    public GetOfferTemplateResponseDto find(String code, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate,
             boolean loadOfferProductTemplate, boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan) throws MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
@@ -683,7 +683,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         dto.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
         dto.setMinimumAmountElSpark(offerTemplate.getMinimumAmountElSpark());
         dto.setMinimumLabelElSpark(offerTemplate.getMinimumLabelElSpark());
-        dto.setOfferTemplate(new OfferTemplateDto(offerTemplate,entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false));
+        //dto.setOfferTemplate(new OfferTemplateDto(offerTemplate,entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false));
         
         if (loadOfferServiceTemplate && offerTemplate.getOfferServiceTemplates() != null && !offerTemplate.getOfferServiceTemplates().isEmpty()) {
             List<OfferServiceTemplateDto> offerTemplateServiceDtos = new ArrayList<>();

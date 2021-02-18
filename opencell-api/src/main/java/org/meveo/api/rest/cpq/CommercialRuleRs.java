@@ -154,5 +154,16 @@ public interface CommercialRuleRs extends IBaseRs {
  })
  public Response findOfferRules ( @Parameter(description = "offer code", required = true) @QueryParam("offerCode") String offerCode);
 	
+ 
+ @GET
+ @Path("/groupedAttributeRules")
+ @Operation(summary = "Get grouped attribute commercial rules",
+ tags = { "CommercialRules" },
+ description ="Get grouped attribute commercial rules",
+ responses = {
+         @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetListCommercialRulesResponseDto.class)))
+ })
+ public Response findGroupedAttributeRules (@Parameter(description = "grouped attribute code", required = false) @QueryParam("groupedAttributeCode") String grouppedAttributeCode,
+		 @Parameter(description = "product code", required = true) @QueryParam("productCode") String productCode);
 	 
 }
