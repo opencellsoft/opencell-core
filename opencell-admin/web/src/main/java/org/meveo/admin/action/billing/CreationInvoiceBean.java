@@ -668,8 +668,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	            entity.setSeller(customer.getSeller());
 	        }
 	        invoiceService.postCreate(entity);
-	        entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
 	        
+    	}
+    	if(entity.getInvoiceNumber() == null) {
+    		entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
     	}
     	try {
             entity = invoiceService.generateXmlAndPdfInvoice(entity, true);

@@ -18,7 +18,6 @@
 package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -53,6 +52,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * The Class BillingAccountService.
@@ -77,6 +77,11 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
+    
+    @Inject
+    private CustomerAccountService customerAccountService;
+    
+    
 
     /**
      * Inits the billing account.
@@ -419,7 +424,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         if (ba == null) {
             return false;
         }
-        CustomerCategory customerCategory = ba.getCustomerAccount().getCustomer().getCustomerCategory();
+        CustomerAccount customerAccount = customerAccountService.refreshOrRetrieve(ba.getCustomerAccount());
+        CustomerCategory customerCategory = customerAccount.getCustomer().getCustomerCategory();
         if (customerCategory == null) {
             return false;
         }
