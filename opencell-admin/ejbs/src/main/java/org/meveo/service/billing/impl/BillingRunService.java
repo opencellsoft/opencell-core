@@ -177,6 +177,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
+    @Inject
+    private InvoiceLinesService invoiceLinesService;
+
     private static int rtPaginationSize = 30000;
 
     /**
@@ -1199,22 +1202,27 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Set<Long> invoicesToRemove = new HashSet<>();
         Map<Class, Map<Long, Map<Long, Amounts>>> discountAmounts = getAmountsMap(invoiceAgregateService.getTotalDiscountAmountByBR(billingRun));
         Map<Class, Map<Long, Map<Long, Amounts>>> positiveRTAmounts = getAmountsMap(ratedTransactionService.getTotalPositiveRTAmountsByBR(billingRun));
+        Map<Class, Map<Long, Map<Long, Amounts>>> positiveILAmounts = getAmountsMap(invoiceLinesService.getTotalPositiveILAmountsByBR(billingRun));
         Map<Class, Map<Long, Map<Long, Amounts>>> invoiceableAmounts = getAmountsMap(invoiceService.getTotalInvoiceableAmountByBR(billingRun));
 
         Set<Long> billableEntitieIds = invoiceableAmounts.get(BillingAccount.class).keySet();
         Set<Long> rejectedBillingAccounts = new HashSet<>();
-        invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(BillingAccount.class), positiveRTAmounts.get(BillingAccount.class), invoiceableAmounts.get(BillingAccount.class),
-            BillingAccount.class, rejectedBillingAccounts));
+        invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(BillingAccount.class),
+                positiveRTAmounts.get(BillingAccount.class), invoiceableAmounts.get(BillingAccount.class),
+            BillingAccount.class, rejectedBillingAccounts, positiveILAmounts.get(BillingAccount.class)));
         invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(CustomerAccount.class), positiveRTAmounts.get(CustomerAccount.class), invoiceableAmounts.get(CustomerAccount.class),
-            CustomerAccount.class, rejectedBillingAccounts));
+            CustomerAccount.class, rejectedBillingAccounts, positiveILAmounts.get(CustomerAccount.class)));
         invoicesToRemove.addAll(
-            getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(Customer.class), positiveRTAmounts.get(Customer.class), invoiceableAmounts.get(Customer.class), Customer.class, rejectedBillingAccounts));
+            getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(Customer.class), positiveRTAmounts.get(Customer.class),
+                    invoiceableAmounts.get(Customer.class), Customer.class, rejectedBillingAccounts, positiveILAmounts.get(Customer.class)));
         if (invoicesToRemove != null && !invoicesToRemove.isEmpty()) {
             // Exclude prepaid invoice from applying threshold rules.
             List<Long> excludedPrepaidInvoices = invoiceService.excludePrepaidInvoices(invoicesToRemove);
             log.info("Remove all postpaid invoices that not reach to the invoicing threshold {}", excludedPrepaidInvoices);
             ratedTransactionService.deleteSupplementalRTs(excludedPrepaidInvoices);
             ratedTransactionService.uninvoiceRTs(excludedPrepaidInvoices);
+            invoiceLinesService.deleteSupplementalILs(excludedPrepaidInvoices);
+            invoiceLinesService.uninvoiceILs(excludedPrepaidInvoices);
             invoiceService.deleteInvoices(excludedPrepaidInvoices);
             invoiceAgregateService.deleteInvoiceAgregates(excludedPrepaidInvoices);
             rejectedBillingAccounts.forEach(rejectedBillingAccountId -> {
@@ -1277,7 +1285,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     @SuppressWarnings("rawtypes")
     private List<Long> getInvoicesToRemoveByAccount(Collection<Long> billableEntities, Map<Long, Map<Long, Amounts>> discountThresholdAmounts, Map<Long, Map<Long, Amounts>> positiveRTThresholdAmounts,
-            Map<Long, Map<Long, Amounts>> invoiceableThresholdAmounts, Class clazz, Set<Long> rejectedBillingAccounts) {
+            Map<Long, Map<Long, Amounts>> invoiceableThresholdAmounts, Class clazz, Set<Long> rejectedBillingAccounts, Map<Long, Map<Long, Amounts>> positiveILThresholdAmounts) {
         List<Long> invoicesToRemove = new ArrayList<>();
         List<Long> alreadyProcessedEntities = new ArrayList<>();
         for(Long billableEntityId:billableEntities)
@@ -1345,6 +1353,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     }
                     checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold,
 							isThresholdPerEntity, thresholdAmounts);
+                }
+                break;
+            case POSITIVE_IL :
+                thresholdAmounts = positiveILThresholdAmounts.get(entityId);
+                if (thresholdAmounts != null) {
+                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts);
                 }
                 break;
             default:
