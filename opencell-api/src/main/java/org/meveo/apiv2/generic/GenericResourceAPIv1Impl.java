@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
     private static final String METHOD_GET_ALL = "/list";
-    private static final String METHOD_GET_ALL_BIS = "/listAll";
+    private static final String METHOD_GET_ALL_BIS = "/listGetAll";
     private static final String METHOD_CREATE = "/";
     private static final String METHOD_UPDATE = "/";
     private static final String METHOD_DELETE = "/";
@@ -96,12 +96,14 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
         if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( getPath ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getPath );
-            entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
+            if ( pathIBaseRS.equals( "/billing/wallet/operation" ) )
+                entityClassName = "walletOperation";
+            else
+                entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
             queryParamsMap = uriInfo.getQueryParameters();
             GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
-            String entityName = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
-            Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize(entityName) );
+            Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize(entityClassName) );
             GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
 
             if ( ! queryParamsMap.isEmpty() ) {
@@ -112,11 +114,9 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                             + PAIR_QUERY_PARAM_SEPARATOR );
                 }
 
-                if ( pathIBaseRS.contains( "oneShotChargeTemplate" ) )
-                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                            + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
-                            + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
-                else if ( pathIBaseRS.contains( "account/customer" ) )
+                if ( pathIBaseRS.contains( "oneShotChargeTemplate" ) || pathIBaseRS.contains( "/account/customer" )
+                    || pathIBaseRS.contains( "/billing/subscription" ) || pathIBaseRS.contains( "/billing/ratedTransaction" )
+                    || pathIBaseRS.contains( "/billing/wallet" ) || pathIBaseRS.contains( "/catalog/offerTemplate" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
@@ -127,7 +127,9 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 System.out.println( "GET ALL ENTITIES 1 : " + redirectURI.toString() );
             }
             else {
-                if ( pathIBaseRS.contains( "oneShotChargeTemplate" ) )
+                if ( pathIBaseRS.contains( "oneShotChargeTemplate" ) || pathIBaseRS.contains( "/account/customer" )
+                    || pathIBaseRS.contains( "/billing/subscription" ) || pathIBaseRS.contains( "/billing/ratedTransaction" )
+                    || pathIBaseRS.contains( "/billing/wallet" ) || pathIBaseRS.contains( "/catalog/offerTemplate" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
@@ -157,19 +159,13 @@ System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
             return Response.temporaryRedirect( redirectURI ).build();
         }
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( getPath ) ) {
-            // Handle the special endpoints: get an access point based on a subscriptionCode and an accessCode
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( getPath );
             queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
-
-            queryParamsMap = uriInfo.getQueryParameters();
-            GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
-            String entityName = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
-            Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize(entityName) );
-            GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
 
             String originalPattern = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.getPattern().toString();
             int indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX );
             String aSmallPattern;
+            String smallString = null;
             while ( indexCodeRegex >= 0 ) {
                 aSmallPattern = originalPattern.substring( 0,
                         indexCodeRegex + GenericOpencellRestfulAPIv1.CODE_REGEX.length() );
@@ -177,7 +173,7 @@ System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
                 Matcher matcher = Pattern.compile( aSmallPattern ).matcher( getPath );
                 // get the first occurrence matching smallStringPattern
                 if ( matcher.find() ) {
-                    String smallString = matcher.group(0);
+                    smallString = matcher.group(0);
 
                     String[] matches = Pattern.compile( GenericOpencellRestfulAPIv1.CODE_REGEX )
                             .matcher( smallString )
@@ -190,6 +186,17 @@ System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
                 }
 
                 indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX, indexCodeRegex + 1 );
+            }
+
+            // If smallString differs from the string getPath, the request is to retrieve all entities, so we add paging and filtering
+            // Otherwise, if smallString is exactly the string getPath, the request is to retrieve a particular entity
+            if ( ! smallString.equals( getPath ) ) {
+                queryParamsMap = uriInfo.getQueryParameters();
+                GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
+                entityClassName = getPath.split( FORWARD_SLASH )[ getPath.split( FORWARD_SLASH ).length - 1 ];
+System.out.println( "entityClassName : " + entityClassName );
+                Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize( entityClassName ) );
+                GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
             }
 
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )

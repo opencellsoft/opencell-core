@@ -142,7 +142,7 @@ public interface CustomerRs extends IBaseRs {
      * @return List of customers
      */
     @GET
-    @Path("/listAll")
+    @Path("/listGetAll")
     CustomersResponseDto list();
 
     /**

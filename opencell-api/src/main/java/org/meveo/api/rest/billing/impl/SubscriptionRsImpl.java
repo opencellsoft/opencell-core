@@ -37,6 +37,7 @@ import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Subscription;
@@ -201,6 +202,17 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         }
 
         return result;
+    }
+
+    @Override
+    public SubscriptionsListResponseDto list() {
+        try {
+            return subscriptionApi.listGetAll( null, GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
+        } catch (Exception e) {
+            SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
+        }
     }
     
     @Override

@@ -146,7 +146,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     @Override
     public CustomersResponseDto list() {
         try {
-            return customerApi.list(null, GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
+            return customerApi.listGetAll(null, GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
         } catch (Exception e) {
             CustomersResponseDto result = new CustomersResponseDto();
             processException(e, result.getActionStatus());

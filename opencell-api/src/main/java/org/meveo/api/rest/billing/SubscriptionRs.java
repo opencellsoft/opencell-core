@@ -151,6 +151,15 @@ public interface SubscriptionRs extends IBaseRs {
             @QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+
+    /**
+     * List subscriptions matching a given criteria
+     *
+     * @return List of subscriptions
+     */
+    @GET
+    @Path("/listGetAll")
+    SubscriptionsListResponseDto list();
     
     /**
      * List subscriptions matching a given criteria

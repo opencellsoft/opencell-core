@@ -92,7 +92,7 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      * @return list of oneShotChargeTemplates
      */
     @GET
-    @Path("/listAll")
+    @Path("/listGetAll")
     OneShotChargeTemplateResponseDto list();
 
     /**
