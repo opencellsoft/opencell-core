@@ -97,7 +97,9 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( getPath ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getPath );
             if ( pathIBaseRS.equals( "/billing/wallet/operation" ) )
-                entityClassName = "walletOperation";
+                entityClassName = "WalletOperation";
+            else if ( pathIBaseRS.equals( "/catalog/pricePlan" ) )
+                entityClassName = "PricePlanMatrix";
             else
                 entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
