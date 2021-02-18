@@ -98,13 +98,13 @@ public class InternalNotificationJobBean {
     public void execute(String filterCode, String notificationCode, JobExecutionResultImpl result) {
         log.debug("Running with filterCode={}", filterCode);
         if (StringUtils.isBlank(filterCode)) {
-            result.registerError("filterCode has no SQL query set.");
+            jobExecutionService.registerError(result, "filterCode has no SQL query set.");
             return;
         }
 
         Notification notification = notificationService.findByCode(notificationCode);
         if (notification == null) {
-            result.registerError("no notification found for " + notificationCode);
+            jobExecutionService.registerError(result, "no notification found for " + notificationCode);
             return;
         }
         try {
@@ -116,6 +116,7 @@ public class InternalNotificationJobBean {
             @SuppressWarnings("unchecked")
             List<Object> results = query.getResultList();
             result.setNbItemsToProcess(results.size());
+            jobExecutionService.initCounterElementsRemaining(result, results.size());
             int i = 0;
             for (Object res : results) {
                 i++;
@@ -130,7 +131,7 @@ public class InternalNotificationJobBean {
                     Object o = ValueExpressionWrapper.evaluateExpression(notification.getElFilter(), userMap, Boolean.class);
                     try {
                         if (!(Boolean) o) {
-                            result.registerSucces();
+                            jobExecutionService.registerSucces(result);
                             continue;
                         }
                     } catch (Exception e) {
@@ -144,18 +145,19 @@ public class InternalNotificationJobBean {
                             paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), userMap, String.class));
                         }
                         scriptInstanceService.execute(notification.getScriptInstance().getCode(), paramsEvaluated);
-                        result.registerSucces();
+                        jobExecutionService.registerSucces(result);
                     } else {
                         log.debug("No script instance on this Notification");
                     }
                 } catch (Exception e) {
-                    result.registerError("Error execution " + notification.getScriptInstance() + " on " + res);
+                    jobExecutionService.registerError(result, "Error execution " + notification.getScriptInstance() + " on " + res);
                     throw new BusinessException("Expression " + notification.getElFilter() + " do not evaluate to boolean but " + res);
                 }
+                jobExecutionService.decCounterElementsRemaining(result);
             }
 
         } catch (Exception e) {
-            result.registerError("filterCode contain invalid SQL query: " + e.getMessage());
+            jobExecutionService.registerError(result, "filterCode contain invalid SQL query: " + e.getMessage());
         }
     }
 }

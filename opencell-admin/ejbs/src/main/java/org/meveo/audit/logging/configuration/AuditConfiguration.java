@@ -21,6 +21,7 @@ package org.meveo.audit.logging.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.meveo.audit.logging.dto.ClassAndMethods;
 import org.meveo.audit.logging.handler.ConsoleAuditHandler;
 import org.meveo.audit.logging.handler.Handler;
@@ -66,7 +67,8 @@ public class AuditConfiguration {
 
 		if (cm.getMethods() != null) {
 			for (String m : cm.getMethods()) {
-				if (m.equals(methodName)) {
+				m = StringUtils.substringBetween(m, "methodName=", "]");
+				if (m != null && m.equals(methodName)) {
 					return true;
 				}
 			}

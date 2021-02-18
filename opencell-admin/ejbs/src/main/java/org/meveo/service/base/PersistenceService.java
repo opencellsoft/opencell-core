@@ -29,6 +29,7 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +50,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.metamodel.Attribute;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -596,7 +598,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         queryBuilder.addCriterion("code", "like", "%" + wildcode + "%", true);
         return queryBuilder.getQuery(getEntityManager()).getResultList();
     }
-
+    
+    /**
+     * Find entities by code
+     *
+     * @param code to match
+     * @return entity matching code
+     */
+    public BusinessEntity findBusinessEntityByCode(String code) {
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "entity", null);
+        queryBuilder.addCriterion("entity.code", "=", code, true);
+        return (BusinessEntity) queryBuilder.getQuery(getEntityManager()).getSingleResult();
+    }
     /**
      * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)
      */
@@ -616,6 +629,44 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             Query query = queryBuilder.getQuery(getEntityManager());
             return query.getResultList();
         }
+    }
+
+    /**
+     * Used to retrieve related fields of an entity
+     */
+    @SuppressWarnings({ "unchecked" })
+    public Map<String, Object> mapRelatedFields() {
+        final Class<? extends E> productClass = getEntityClass();
+        StringBuilder queryString = new StringBuilder( "from CustomFieldTemplate" );
+        Query query = getEntityManager().createQuery(queryString.toString());
+        List<CustomFieldTemplate> resultsCFTmpl = query.getResultList();
+        Map<String, Object> mapAttributeAndType = new HashMap<>();
+        Set<Attribute<? super E, ?>> setAttributes = ((Session) getEntityManager().getDelegate()).getSessionFactory()
+                .getMetamodel().managedType( getEntityClass() ).getAttributes();
+        for ( Attribute<? super E, ?> att : setAttributes ) {
+            if ( att.getJavaType() != CustomFieldValues.class ) {
+                Map<String,String> mapStringAndType = new HashMap();
+                mapStringAndType.put( "fullQualifiedTypeName", att.getJavaType().toString() );
+                mapStringAndType.put( "shortTypeName", att.getJavaType().getSimpleName() );
+                mapAttributeAndType.put( att.getName(), mapStringAndType);
+            }
+            else {
+                if ( !resultsCFTmpl.isEmpty() ) {
+                    Map<String, Map<String, String>> mapCFValues = new HashMap();
+                    for ( CustomFieldTemplate aCFTmpl : resultsCFTmpl ) {
+                        if ( aCFTmpl.getAppliesTo().equals( productClass.getSimpleName() ) ) {
+                            Map<String,String> mapStringAndType = new HashMap();
+                            mapStringAndType.put( "fullQualifiedTypeName", aCFTmpl.getFieldType().getDataClass().toString() );
+                            mapStringAndType.put( "shortTypeName", aCFTmpl.getFieldType().getDataClass().getSimpleName() );
+                            mapCFValues.put( aCFTmpl.getCode(), mapStringAndType );
+                        }
+                    }
+                    if ( ! mapCFValues.isEmpty() )
+                        mapAttributeAndType.put( att.getName(), mapCFValues );
+                }
+            }
+        }
+        return mapAttributeAndType;
     }
 
     /**

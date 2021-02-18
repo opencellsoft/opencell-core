@@ -57,6 +57,7 @@ public class ImportAccountsJob extends Job {
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
+        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
@@ -83,14 +84,14 @@ public class ImportAccountsJob extends Job {
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
+                    jobExecutionService.registerError(result, cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }
 
         } catch (Exception e) {
             log.error("Failed to import accounts", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
     }
 

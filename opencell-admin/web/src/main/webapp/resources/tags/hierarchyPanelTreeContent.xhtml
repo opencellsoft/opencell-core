@@ -1,14 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-    xmlns:p="http://primefaces.org/ui"
-    xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui" xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
 <cc:interface>
     <cc:attribute name="treeValue" required="true" />
@@ -16,13 +10,10 @@
 
 <cc:implementation>
 
-    <p:tree id="#{cc.attrs.id}_tree" value="#{cc.attrs.treeValue}"
-        var="node" selectionMode="single" dynamic="true" style="width: 100%">
+    <p:tree id="#{cc.attrs.id}_tree" value="#{cc.attrs.treeValue}" var="node" selectionMode="single" dynamic="true" style="width: 100%">
 
         <p:treeNode type="ACCT_CUST" icon="fa fa-street-view">
-            <h:link id="customer_tree_value" value="#{node.code}"
-                outcome="#{node.view}"
-                styleClass="#{node.selected?'selectedTreeNode':''}">
+            <h:link id="customer_tree_value" value="#{node.code}" outcome="#{node.view}" styleClass="#{node.selected?'selectedTreeNode':''}">
                 <f:param name="customerId" value="#{node.id}" />
                 <!--                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" /> -->
                 <f:param name="edit" value="false" />
@@ -30,9 +21,7 @@
         </p:treeNode>
 
         <p:treeNode type="ACCT_CA" icon="#{node.currencyIconClass}">
-            <h:link id="customerAccount_tree_value" value="#{node.code}"
-                outcome="#{node.view}"
-                styleClass="#{node.selected?'selectedTreeNode':''}">
+            <h:link id="customerAccount_tree_value" value="#{node.code}" outcome="#{node.view}" styleClass="#{node.selected?'selectedTreeNode':''}">
                 <f:param name="customerAccountId" value="#{node.id}" />
                 <!--                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" /> -->
                 <f:param name="edit" value="false" />
@@ -40,9 +29,7 @@
         </p:treeNode>
 
         <p:treeNode type="ACCT_BA" icon="fa fa-file-text-o">
-            <h:link id="billingAccount_tree_value" value="#{node.code}"
-                outcome="#{node.view}"
-                styleClass="#{node.selected?'selectedTreeNode':''}">
+            <h:link id="billingAccount_tree_value" value="#{node.code}" outcome="#{node.view}" styleClass="#{node.selected?'selectedTreeNode':''}">
                 <f:param name="billingAccountId" value="#{node.id}" />
                 <!--                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" /> -->
                 <f:param name="edit" value="false" />
@@ -50,9 +37,7 @@
         </p:treeNode>
 
         <p:treeNode type="ACCT_UA" icon="fa fa-user">
-            <h:link id="userAccount_tree_value" value="#{node.code}"
-                outcome="#{node.view}"
-                styleClass="#{node.selected?'selectedTreeNode':''}">
+            <h:link id="userAccount_tree_value" value="#{node.code}" outcome="#{node.view}" styleClass="#{node.selected?'selectedTreeNode':''}">
                 <f:param name="userAccountId" value="#{node.id}" />
                 <!--                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" /> -->
                 <f:param name="edit" value="false" />
@@ -60,8 +45,7 @@
         </p:treeNode>
 
         <p:treeNode type="subscription" icon="fa fa-shopping-cart">
-            <h:link id="subscription_tree_value" value="#{node.code}"
-                outcome="#{node.view}">
+            <h:link id="subscription_tree_value" value="#{node.code}" outcome="#{node.view}">
                 <f:param name="subscriptionId" value="#{node.id}" />
                 <!--                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />       -->
                 <f:param name="edit" value="false" />
@@ -69,13 +53,43 @@
         </p:treeNode>
 
         <p:treeNode type="access" icon="fa fa-sign-in">
-            <h:link id="access_tree_value" value="#{node.code}"
-                outcome="#{node.view}">
+            <h:link id="access_tree_value" value="#{node.code}" outcome="#{node.view}">
                 <f:param name="accessId" value="#{node.id}" />
                 <!--                            <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />       -->
                 <f:param name="edit" value="true" />
                 <f:param name="backView" value="accessDetail" />
                 <f:param name="backViewSave" value="accessDetail" />
+            </h:link>
+        </p:treeNode>
+
+        <p:treeNode type="CA_LIST" icon="#{node.currencyIconClass}">
+            <h:link id="ca_list_tree_value" value="#{messages['customerAccount.moreCustomerAccounts']} (#{node.code})" outcome="#{node.view}">
+                <f:param name="parentObjectId" value="#{node.id}" />
+            </h:link>
+        </p:treeNode>
+
+        <p:treeNode type="BA_LIST" icon="fa fa-file-text-o">
+            <h:link id="ba_list_tree_value" value="#{messages['billingAccount.moreBillingAccounts']} (#{node.code})" outcome="#{node.view}">
+                <f:param name="parentObjectId" value="#{node.id}" />
+            </h:link>
+        </p:treeNode>
+
+        <p:treeNode type="UA_LIST" icon="fa fa-user">
+            <h:link id="ua_list_tree_value" value="#{messages['userAccount.moreUserAccounts']} (#{node.code})" outcome="#{node.view}">
+                <f:param name="parentObjectId" value="#{node.id}" />
+            </h:link>
+        </p:treeNode>
+
+
+        <p:treeNode type="SUB_LIST" icon="fa fa-shopping-cart">
+            <h:link id="sub_list_tree_value" value="#{messages['subscription.moreSubscriptions']} (#{node.code})" outcome="#{node.view}">
+                <f:param name="parentObjectId" value="#{node.id}" />
+            </h:link>
+        </p:treeNode>
+
+        <p:treeNode type="AP_LIST" icon="fa fa-sign-in">
+            <h:link id="ap_list_tree_value" value="#{messages['access.moreAccess']} (#{node.code})" outcome="#{node.view}">
+                <f:param name="parentObjectId" value="#{node.id}" />
             </h:link>
         </p:treeNode>
 

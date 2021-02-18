@@ -15,8 +15,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.UnitPaymentJobBean;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.OperationCategoryEnum;
@@ -79,6 +81,7 @@ public class PaymentAsync {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
+	@Interceptors({ JobMultithreadingHistoryInterceptor.class })
 	public Future<String> launchAndForget(List<AccountOperation> aos, JobExecutionResultImpl result, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,
 			OperationCategoryEnum operationCategory, PaymentMethodEnum paymentMethodType, MeveoUser lastCurrentUser, Date fromDueDate, Date toDueDate,
 			AccountOperationFilterScript aoFilterScript) {
@@ -96,6 +99,7 @@ public class PaymentAsync {
 			unitPaymentJobBean.execute(result, ao.getCustomerAccount().getId(), aoIds, ao.getUnMatchingAmount().multiply(oneHundred).longValue(), createAO, matchingAO,
 					operationCategory, paymentGateway, paymentMethodType, aoFilterScript);
 
+			jobExecutionService.decCounterElementsRemaining(result);
 		}
 		return new AsyncResult<String>("OK");
 	}

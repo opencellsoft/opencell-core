@@ -24,6 +24,10 @@ import javax.xml.bind.annotation.XmlElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.generic.wf.GWFTransition;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * The Class GWFTransitionDto
  */
@@ -34,7 +38,7 @@ public class GWFTransitionDto extends BaseEntityDto {
     private static final long serialVersionUID = 8309866046667741458L;
 
     /** The uuid. */
-    @XmlElement(required = false)
+    @XmlElement
     private String uuid;
 
     /** The from status. */
@@ -50,7 +54,7 @@ public class GWFTransitionDto extends BaseEntityDto {
     private String conditionEl;
 
     /** The priority. */
-    @XmlElement(required = false)
+    @XmlElement
     private Integer priority;
 
     /** The description. */
@@ -59,8 +63,10 @@ public class GWFTransitionDto extends BaseEntityDto {
 
     /** The ScriptInstanceDto. */
     /** The description. */
-    @XmlElement(required = false)
+    @XmlElement
     private String actionScriptCode;
+
+    private List<GWFActionDto> actions = new ArrayList<>();
 
     /**
      * Instantiates a new WF transition dto.
@@ -84,6 +90,7 @@ public class GWFTransitionDto extends BaseEntityDto {
         if (gwfTransition.getActionScript() != null) {
             this.actionScriptCode = gwfTransition.getActionScript().getCode();
         }
+        this.getActions().addAll(gwfTransition.getActions().stream().map(GWFActionDto::new).collect(Collectors.toList()));
     }
 
     /**
@@ -206,5 +213,13 @@ public class GWFTransitionDto extends BaseEntityDto {
     public String toString() {
         return "GWFTransitionDto [uuid=" + uuid + ", fromStatus=" + fromStatus + ", toStatus=" + toStatus + ", conditionEl=" + conditionEl + ", priority=" + priority
                 + ", description=" + description + ", actionScriptCode=" + actionScriptCode + "]";
+    }
+
+    public List<GWFActionDto> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<GWFActionDto> actions) {
+        this.actions = actions;
     }
 }

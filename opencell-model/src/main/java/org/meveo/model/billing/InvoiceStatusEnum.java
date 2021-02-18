@@ -34,12 +34,12 @@ public enum InvoiceStatusEnum {
     /**
      * invoice has been marked as suspect by automatic controls (this status doesn’t block automatic generation)
      */
-    SUSPECT(2, "invoiceStatusEnum.suspect", new InvoiceStatusEnum[]{NEW}), 
+    SUSPECT(2, "invoiceStatusEnum.suspect", new InvoiceStatusEnum[]{NEW}),
 
     /**
      * invoice has been rejected by automatic controls (this status block automatic generation)
      */
-    REJECTED(3, "invoiceStatusEnum.rejected", new InvoiceStatusEnum[]{NEW, SUSPECT}), 
+    REJECTED(3, "invoiceStatusEnum.rejected", new InvoiceStatusEnum[]{NEW, SUSPECT}),
     
     /**
      * invoice is complete but not validated. It can be edited.

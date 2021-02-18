@@ -66,13 +66,26 @@ public abstract class MeveoUser implements Serializable {
      * Roles/permissions held by a user. Contains both role, composite role child role and permission names
      */
     protected Set<String> roles = new HashSet<>();
-    
+
     /**
      * user email address
      */
     protected String email;
 
+    /**
+     * User locale
+     */
     protected String locale;
+
+    /**
+     * Timestamp when user has authenticated or token was issued
+     */
+    protected int authenticatedAt;
+
+    /**
+     * Authentication/session token hash/id
+     */
+    protected String authenticationTokenId;
 
     protected int authTime;
 
@@ -164,13 +177,31 @@ public abstract class MeveoUser implements Serializable {
     }
 
     public String toStringLong() {
-        return "MeveoUser [" + " auth=" + authenticated + ", forced=" + forcedAuthentication + ", sub=" + subject + ", userName=" + userName + ", fullName=" + fullName
-                + ", provider=" + providerCode + ", roles " + roles + "]";
+        return "MeveoUser [" + " auth=" + authenticated + ", forced=" + forcedAuthentication + ", sub=" + subject + ", userName=" + userName + ", fullName=" + fullName + ", provider=" + providerCode + ", roles " + roles
+                + "]";
     }
 
     @Override
     public String toString() {
         return "MeveoUser [forced=" + forcedAuthentication + ", sub=" + subject + ", userName=" + userName + ", provider=" + providerCode + "]";
+    }
+
+    /**
+     * @return Timestamp when user has authenticated or token was issued
+     */
+    public int getAuthenticatedAt() {
+        return authenticatedAt;
+    }
+
+    /**
+     * @param authenticatedAt Timestamp when user has authenticated or token was issued
+     */
+    public void setAuthenticatedAt(int authenticatedAt) {
+        this.authenticatedAt = authenticatedAt;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public int getAuthTime() {
@@ -179,10 +210,6 @@ public abstract class MeveoUser implements Serializable {
 
     public void setAuthTime(int authTime) {
         this.authTime = authTime;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 
     /**
@@ -209,17 +236,31 @@ public abstract class MeveoUser implements Serializable {
         };
     }
 
-	/**
-	 * @return the email
-	 */
-	public String getEmail() {
-		return email;
-	}
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
 
-	/**
-	 * @param email the email to set
-	 */
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @return Authentication/session token hash/id
+     */
+    public String getAuthenticationTokenId() {
+        return authenticationTokenId;
+    }
+
+    /**
+     * @param authenticationTokenId Authentication/session token hash/id
+     */
+    public void setAuthenticationTokenId(String authenticationTokenId) {
+        this.authenticationTokenId = authenticationTokenId;
+    }
 }

@@ -92,18 +92,18 @@ public class InvoiceConfigurationDto implements Serializable {
      * @param invoiceConfiguration the invoice configuration
      */
     public InvoiceConfigurationDto(InvoiceConfiguration invoiceConfiguration) {
-        displaySubscriptions = invoiceConfiguration.getDisplaySubscriptions();
-        displayServices = invoiceConfiguration.getDisplayServices();
-        displayOffers = invoiceConfiguration.getDisplayOffers();
-        displayEdrs = invoiceConfiguration.getDisplayEdrs();
-        displayProvider = invoiceConfiguration.getDisplayProvider();
-        displayCfAsXML = invoiceConfiguration.getDisplayCfAsXML();
-        displayPricePlans = invoiceConfiguration.getDisplayPricePlans();
-        displayDetail = invoiceConfiguration.getDisplayDetail();
-        displayBillingCycle = invoiceConfiguration.getDisplayBillingCycle();
-        displayOrders = invoiceConfiguration.getDisplayOrders();
+        displaySubscriptions = invoiceConfiguration.isDisplaySubscriptions();
+        displayServices = invoiceConfiguration.isDisplayServices();
+        displayOffers = invoiceConfiguration.isDisplayOffers();
+        displayEdrs = invoiceConfiguration.isDisplayEdrs();
+        displayProvider = invoiceConfiguration.isDisplayProvider();
+        displayCfAsXML = invoiceConfiguration.isDisplayCfAsXML();
+        displayPricePlans = invoiceConfiguration.isDisplayPricePlans();
+        displayDetail = invoiceConfiguration.isDisplayDetail();
+        displayBillingCycle = invoiceConfiguration.isDisplayBillingCycle();
+        displayOrders = invoiceConfiguration.isDisplayOrders();
         currentInvoiceNb = invoiceConfiguration.getCurrentInvoiceNb();
-        displayWalletOperations=invoiceConfiguration.getDisplayWalletOperations();
+        displayWalletOperations=invoiceConfiguration.isDisplayWalletOperations();
     }
 
     /**

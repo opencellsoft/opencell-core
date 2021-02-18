@@ -131,7 +131,6 @@ public class BillingCycle extends BusinessCFEntity {
      */
     @Column(name = "due_date_delay_el", length = 2000, nullable = false)
     @Size(max = 2000)
-    @NotNull
     private String dueDateDelayEL;
 
     /**
@@ -182,7 +181,7 @@ public class BillingCycle extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "check_threshold")
     private ThresholdOptionsEnum checkThreshold;
-    
+
     /**
      * check threshold per entity?
      */
@@ -204,7 +203,7 @@ public class BillingCycle extends BusinessCFEntity {
 	public void setThresholdPerEntity(boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
-	
+
     /**
      * if true then subscriptions are grouped by paymentMethod and billed separately.
      */
@@ -213,12 +212,26 @@ public class BillingCycle extends BusinessCFEntity {
     private boolean splitPerPaymentMethod;
 
     /**
+     * EL to compute invoice.initialCollectionDate delay.
+     */
+    @Column(name = "collection_date_delay_el", length = 2000)
+    @Size(max = 2000)
+    private String collectionDateDelayEl;
+
+    /**
+     * To decide whether or not dates should be recomputed at invoice validation.
+     */
+    @Column(name = "compute_dates_validation")
+    @Type(type = "numeric_boolean")
+    private Boolean computeDatesAtValidation = false;
+
+    /**
      * executed for each invoice, Will raise an exception if the invoice is invalid. Context will contain billingRun and invoice.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run_validation_script_id")
     private ScriptInstance billingRunValidationScript;
-    
+
     /**
      * @return Invoicing calendar
      */
@@ -435,7 +448,7 @@ public class BillingCycle extends BusinessCFEntity {
 
     /**
      * Gets the threshold option.
-     * 
+     *
      * @return the threshold option
      */
     public ThresholdOptionsEnum getCheckThreshold() {
@@ -444,7 +457,7 @@ public class BillingCycle extends BusinessCFEntity {
 
     /**
      * Sets the threshold option.
-     * 
+     *
      * @param checkThreshold the threshold option
      */
     public void setCheckThreshold(ThresholdOptionsEnum checkThreshold) {
@@ -484,7 +497,33 @@ public class BillingCycle extends BusinessCFEntity {
             return this.description;
         }
     }
-    
+
+    /**
+     * Gets CollectionDate delay EL.
+     *
+     * @return ollectionDate delay EL.
+     */
+    public String getCollectionDateDelayEl() {
+        return collectionDateDelayEl;
+    }
+
+    /**
+     * Sets CollectionDate delay EL.
+     *
+     * @param collectionDateDelayEl
+     */
+    public void setCollectionDateDelayEl(String collectionDateDelayEl) {
+        this.collectionDateDelayEl = collectionDateDelayEl;
+    }
+
+    public Boolean getComputeDatesAtValidation() {
+        return computeDatesAtValidation;
+    }
+
+    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
+        this.computeDatesAtValidation = computeDatesAtValidation;
+    }
+
 	public ScriptInstance getBillingRunValidationScript() {
 		return billingRunValidationScript;
 	}

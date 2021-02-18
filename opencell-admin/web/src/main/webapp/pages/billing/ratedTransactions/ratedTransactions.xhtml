@@ -29,16 +29,17 @@
             selection="#{ratedTransactionListBean.filters['billingAccount']}" updateField=":searchForm">
         </hftl:entityPopup>
 
-        <hftl:entityPopup id="userAccountPopup" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}"
-            searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}" searchField2="description"
-            column1Label="#{messages['BusinessEntity.code']}" column1="code" column2Label="#{messages['BusinessEntity.description']}" column2="description"
-            selection="#{ratedTransactionBean.filters['userAccount']}" updateField=":searchForm:userAccountId">
-        </hftl:entityPopup>
-
         <hftl:entityPopup id="subscriptionPopup" header="#{messages['subscription.popup.header']}" backingBean="#{subscriptionBean}"
             searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}" searchField2="description"
             column1Label="#{messages['BusinessEntity.code']}" column1="code" column2Label="#{messages['BusinessEntity.description']}" column2="description"
             selection="#{ratedTransactionListBean.filters['subscription']}" updateField=":searchForm:subscriptionId">
+        </hftl:entityPopup>
+
+        <hftl:entityPopup id="userAccountPopup" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}"
+                          searchField1Label="#{messages['BusinessEntity.code']}" searchField1="code" searchField2Label="#{messages['BusinessEntity.description']}" searchField2="description"
+                          column1Label="#{messages['BusinessEntity.code']}" column1="code" column2Label="#{messages['BusinessEntity.description']}" column2="description"
+                          selection="#{ratedTransactionListBean.filters['userAccount']}"
+                           updateField=":searchForm:userAccountId">
         </hftl:entityPopup>
 
         <hftl:entityPopup id="searchChargeInstancePopup" header="#{messages['walletOperation.chargeInstance']}" updateField=":searchForm:chargeInstance"
@@ -78,8 +79,10 @@
                 renderNewButton="false" />
             <hftl:searchField label="#{messages['billingAccount.billingAccountPanel']}" id="billingAccountId" field="billingAccount" valueLabelField="code" popup="true"
                 popupId="billingAccountPopup" />
+
             <hftl:searchField label="#{messages['walletOperation.userAccount']}" id="userAccountId" field="userAccount" valueLabelField="code" popup="true"
-                popupId="userAccountPopup" />
+                              popupId="userAccountPopup" />
+
             <hftl:searchField label="#{messages['walletOperation.subscription']}" id="subscriptionId" field="subscription" valueLabelField="code" popup="true"
                 popupId="subscriptionPopup" />
             <hftl:searchField label="#{messages['walletOperation.offer']}" id="offerCodeId" field="priceplan.offerTemplate" valueLabelField="code" popup="true"

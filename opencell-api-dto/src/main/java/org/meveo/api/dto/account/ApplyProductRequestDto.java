@@ -52,6 +52,8 @@ public class ApplyProductRequestDto extends BaseEntityDto {
     @XmlElement
     private String subscription;
 
+    private Date subscriptionValidityDate;
+
     /** The operation date. */
     @XmlElement(required = true)
     private Date operationDate;
@@ -343,7 +345,15 @@ public class ApplyProductRequestDto extends BaseEntityDto {
 		this.seller = seller;
 	}
 
-	@Override
+    public Date getSubscriptionValidityDate() {
+        return subscriptionValidityDate;
+    }
+
+    public void setSubscriptionValidityDate(Date subscriptionValidityDate) {
+        this.subscriptionValidityDate = subscriptionValidityDate;
+    }
+
+    @Override
     public String toString() {
         return "ApplyProductRequestDto [product=" + product + ", userAccount=" + userAccount + ", subscription=" + subscription + ", operationDate=" + operationDate
                 + ", description=" + description + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax + ", criteria1=" + criteria1 + ", criteria2="

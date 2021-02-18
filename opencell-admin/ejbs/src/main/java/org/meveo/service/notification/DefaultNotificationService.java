@@ -274,15 +274,6 @@ public class DefaultNotificationService {
                     // script context overwrite
                     context.putAll(executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context));
                 }
-                String emailFrom = (String)context.get("EMAIL_FROM");
-                String emailToEl  = (String)context.get("EMAIL_TO_LIST");
-                if(emailFrom != null) {
-                    emailNotification.setEmailFrom(emailFrom);
-                }
-                if(emailToEl != null) {
-                    emailNotification.setEmailToEl(emailToEl);
-                }
-
                 emailNotifier.sendEmail(emailNotification, entityOrEvent, context, lastCurrentUser);
 
             } else if (notif instanceof WebHook) {

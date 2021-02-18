@@ -18,6 +18,17 @@
 
 package org.meveo.api.rest.payment;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.TransferAccountOperationDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
@@ -31,17 +42,6 @@ import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.payments.PaymentMethodEnum;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 
 /**
  * @author Edward P. Legaspi
@@ -143,19 +143,6 @@ public interface AccountOperationRs extends IBaseRs {
     AccountOperationResponseDto find(@QueryParam("id") Long id);
 
     /**
-     * Update payment method for all customerAccount AO's if customerAccountCode is set.Or single AO if aoId is set.
-     * 
-     * @param customerAccountCode Customer account code
-     * @param aoId Account operation Id
-     * @param paymentMethod Payment method
-     * @return Request processing status
-     */
-    @PUT
-    @Path("/updatePaymentMethod")
-    ActionStatus updatePaymentMethod(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("aoId") Long aoId,
-            @QueryParam("paymentMethod") PaymentMethodEnum paymentMethod);
-
-    /**
      * List matched operations for a given account operation
      * 
      * @param accountOperationId Account operation identifier
@@ -174,4 +161,16 @@ public interface AccountOperationRs extends IBaseRs {
     @POST
     @Path("/transferAccountOperation")
     ActionStatus transferAccountOperation(TransferAccountOperationDto transferAccountOperationDto);
+    
+    /**
+     * List accountOperations matching customer account
+     * 
+     * @param customerAccountCode The customer account's code.
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @return List of accountOperations
+     */
+    @GET
+    @Path("/findByCustomerAccount")
+    public AccountOperationsResponseDto findByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit);
 }

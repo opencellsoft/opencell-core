@@ -484,4 +484,14 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         discountPlanInstanceService.terminateDiscountPlan(entity, dpi);
     }
 
+    /**
+     * Get a count of billing accounts by a parent customer account
+     * 
+     * @param parent Parent customer account
+     * @return A number of child billing accounts
+     */
+    public long getCountByParent(CustomerAccount parent) {
+
+        return getEntityManager().createNamedQuery("BillingAccount.getCountByParent", Long.class).setParameter("parent", parent).getSingleResult();
+    }
 }

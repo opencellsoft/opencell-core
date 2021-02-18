@@ -35,6 +35,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.script.payment.AccountOperationFilterScript;
@@ -57,6 +58,9 @@ public class UnitPaymentJobBean {
 
     @Inject
     private PaymentService paymentService;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -85,16 +89,16 @@ public class UnitPaymentJobBean {
                 }
             }
             if (PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.REJECTED == doPaymentResponseDto.getPaymentStatus()) {
-                result.registerError(customerAccountId, doPaymentResponseDto.getErrorMessage());
+                jobExecutionService.registerError(result, customerAccountId, doPaymentResponseDto.getErrorMessage());
                 result.addReport("AccountOperation id  : " + listAOids + " RejectReason : " + doPaymentResponseDto.getErrorMessage());
                 this.checkPaymentRetry(doPaymentResponseDto.getErrorCode(), listAOids, aoFilterScript);
             } else if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.PENDING == doPaymentResponseDto.getPaymentStatus()){
-                result.registerSucces();               
+                jobExecutionService.registerSucces(result);               
             }            
 
         } catch (Exception e) {
             log.error("Failed to pay recorded AccountOperation id:{} customerAccountId:{}, " + listAOids,customerAccountId, e);
-            result.registerError(listAOids.toString(), e.getMessage());
+            jobExecutionService.registerError(result, listAOids.toString(), e.getMessage());
             result.addReport("AccountOperation id  : " + listAOids + " RejectReason : " + e.getMessage());
         }
 

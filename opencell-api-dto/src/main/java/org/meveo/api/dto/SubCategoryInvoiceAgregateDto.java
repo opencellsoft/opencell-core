@@ -70,6 +70,13 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
     /** The user account code */
     private String userAccountCode;
 
+    /**
+     * Amounts broken down by tax
+     */
+    @XmlElementWrapper
+    @XmlElement(name = "amountByTax", required = true)
+    private List<SubcategoryInvoiceAgregateAmountDto> amountsByTax;
+
     /** The rated transactions. */
     @XmlElementWrapper
     @XmlElement(name = "ratedTransaction")
@@ -255,5 +262,19 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
      */
     public void setUserAccountCode(String userAccountCode) {
         this.userAccountCode = userAccountCode;
+    }
+
+    /**
+     * @return Amounts broken down by tax
+     */
+    public List<SubcategoryInvoiceAgregateAmountDto> getAmountsByTax() {
+        return amountsByTax;
+    }
+
+    /**
+     * @param amountsByTax Amounts broken down by tax
+     */
+    public void setAmountsByTax(List<SubcategoryInvoiceAgregateAmountDto> amountsByTax) {
+        this.amountsByTax = amountsByTax;
     }
 }

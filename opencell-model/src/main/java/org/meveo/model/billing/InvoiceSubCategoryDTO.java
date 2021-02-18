@@ -28,8 +28,10 @@ public class InvoiceSubCategoryDTO {
     private String description;
     private String code;
     private BigDecimal amountWithoutTax = BigDecimal.ZERO;
+    private BigDecimal amountTax = BigDecimal.ZERO;
     private BigDecimal amountWithTax = BigDecimal.ZERO;
     private List<RatedTransaction> ratedTransactions = new ArrayList<RatedTransaction>();
+    private List<Amounts> amountsByTax;
 
     public Long getId() {
         return id;
@@ -98,4 +100,19 @@ public class InvoiceSubCategoryDTO {
         this.ratedTransactions = ratedTransactions;
     }
 
+    public List<Amounts> getAmountsByTax() {
+        return amountsByTax;
+    }
+
+    public void setAmountsByTax(List<Amounts> amountsByTax) {
+        this.amountsByTax = amountsByTax;
+    }
+
+    public BigDecimal getAmountTax() {
+        return amountTax;
+    }
+
+    public void setAmountTax(BigDecimal amountTax) {
+        this.amountTax = amountTax;
+    }
 }

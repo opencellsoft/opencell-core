@@ -48,6 +48,7 @@ import javax.validation.Validator;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
@@ -82,6 +83,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -93,10 +95,12 @@ import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.audit.AuditableFieldService;
@@ -179,6 +183,9 @@ public abstract class BaseApi {
     @Inject
     private AuditableFieldService auditableFieldService;
 
+    @Inject
+    private CustomGenericEntityCodeService customGenericEntityCodeService;
+
     private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
     protected void handleMissingParameters() throws MissingParameterException {
@@ -196,10 +203,21 @@ public abstract class BaseApi {
             if (!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT)) {
                 throw new org.meveo.api.exception.AccessDeniedException("Super administrator permission is required to update entity code");
             }
+            handleMissingCode(bdto);
         }
         handleMissingParameters();
     }
 
+    private void handleMissingCode(BusinessEntityDto dto) throws MeveoApiException {
+        if(dto.getCode() == null) {
+            String dtoClassName = dto.getClass().getSimpleName();
+            String entityClass = dtoClassName.substring(0, dtoClassName.length() - 3);
+            CustomGenericEntityCode customGenericEntityCode = customGenericEntityCodeService.findByClass(entityClass);
+            if(customGenericEntityCode == null) {
+                throw new MeveoApiException("missing mandatory field code");
+            }
+        }
+    }
     /**
      * Check if any parameters are missing and throw and exception.
      * 
@@ -1739,4 +1757,20 @@ public abstract class BaseApi {
             throw new EntityDoesNotExistsException(typeParameterClass, code);
         return baseEntity;
     }
+    
+    protected <T extends Enum<T>> List<String> allStatus(Class<T> enums, String paramBeanName, String defaultValueForParamBean){
+    	
+		final List<String> allStatus = new ArrayList<String>();
+		for(T status:enums.getEnumConstants()) {
+			allStatus.add(status.toString().toLowerCase());
+		}
+		String statusProperties = ParamBean.getInstance().getProperty(paramBeanName, defaultValueForParamBean);
+		
+		if(!Strings.isEmpty(statusProperties)) {
+			for (String currentStatus : statusProperties.split(",")) {
+				allStatus.add(currentStatus.toLowerCase());
+			}
+		}
+		return allStatus;
+}
 }

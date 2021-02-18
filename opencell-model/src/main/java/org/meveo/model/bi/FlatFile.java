@@ -29,6 +29,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
@@ -41,8 +43,8 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "flat_file", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "flat_file_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "flat_file_seq"), })
+@NamedQueries({ @NamedQuery(name = "FlatFile.findByOriginalName", query = "SELECT ff from FlatFile ff where lower(ff.fileOriginalName)=:fileOriginalName") })
 public class FlatFile extends BusinessEntity {
 
     private static final long serialVersionUID = -4989724064567423956L;

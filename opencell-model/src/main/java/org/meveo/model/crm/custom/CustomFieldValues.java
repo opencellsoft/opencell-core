@@ -91,7 +91,7 @@ public class CustomFieldValues implements Serializable {
      * indicates if customFieldValues will be encrypted
      */
     @Transient
-	private boolean encrypted;
+	private Boolean encrypted;
 
     /**
      * Constructor
@@ -963,11 +963,11 @@ public class CustomFieldValues implements Serializable {
         return asJson();
     }
 
-	public void setEncrypted(boolean encrypted) {
+	public void setEncrypted(Boolean encrypted) {
 		this.encrypted = encrypted;
 	}
 
-	public boolean isEncrypted() {
+	public Boolean isEncrypted() {
 		return encrypted;
 	}
 

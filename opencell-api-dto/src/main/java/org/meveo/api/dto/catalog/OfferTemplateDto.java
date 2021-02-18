@@ -69,7 +69,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElementWrapper(name = "offerProductTemplates")
     @XmlElement(name = "offerProductTemplate")
     protected List<OfferProductTemplateDto> offerProductTemplates;
-    
+
     /** The offer component. */
     @XmlElementWrapper(name = "offerProducts")
     @XmlElement(name = "offerProducts")
@@ -79,22 +79,26 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElementWrapper(name = "allowedDiscountPlans")
     @XmlElement(name = "allowedDiscountPlans")
     protected List<DiscountPlanDto> allowedDiscountPlans;
-    
-    
+
+
     /** The  attribute */
     @XmlElementWrapper(name = "attributes")
     @XmlElement(name = "attributes")
     protected List<AttributeDTO> attributes=new ArrayList<AttributeDTO>();
-    
+
     /** The medias */
     @XmlElementWrapper(name = "medias")
     @XmlElement(name = "medias")
     protected List<MediaDto> medias;
-    
+
     @XmlElementWrapper(name = "commercialRuleCodes")
-    @XmlElement(name = "commercialRuleCodes") 
+    @XmlElement(name = "commercialRuleCodes")
     protected List<String> commercialRuleCodes=new ArrayList<String>();
-    
+
+
+    private boolean isOfferChangeRestricted;
+
+    private List<String> allowedOfferChange;
 
     /** The renewal rule. */
     protected SubscriptionRenewalDto renewalRule;
@@ -131,12 +135,12 @@ public class OfferTemplateDto extends ProductOfferingDto {
      * Corresponding to minimum one shot charge template code.
      */
     protected String minimumChargeTemplate;
-    
-    /** The tags. */ 
+
+    /** The tags. */
     @XmlElementWrapper(name = "tagCodes")
     @XmlElement(name = "tagCodes")
     protected Set<String> tagCodes = new HashSet<String>();
-    
+
     protected Date statusDate;
 
     /**
@@ -398,7 +402,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
 
 
- 
+
 	/**
 	 * @return the tagCodes
 	 */
@@ -483,14 +487,19 @@ public class OfferTemplateDto extends ProductOfferingDto {
 		this.commercialRuleCodes = commercialRuleCodes;
 	}
 
+    public boolean isOfferChangeRestricted() {
+        return isOfferChangeRestricted;
+    }
 
-   
+    public void setOfferChangeRestricted(boolean offerChangeRestricted) {
+        isOfferChangeRestricted = offerChangeRestricted;
+    }
 
+    public List<String> getAllowedOfferChange() {
+        return allowedOfferChange;
+    }
 
- 
-    
-	
-	
-	
-    
+    public void setAllowedOfferChange(List<String> allowedOfferChange) {
+        this.allowedOfferChange = allowedOfferChange;
+    }
 }

@@ -28,6 +28,8 @@ import org.meveo.model.order.OrderItemActionEnum;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.Date;
+
 /**
  * The Class ActivateServicesRequestDto.
  *
@@ -45,6 +47,9 @@ public class ActivateServicesRequestDto extends BaseEntityDto {
     /** The subscription. */
     @XmlElement(required = true)
     private String subscription;
+
+    /** The subscription validity date. */
+    private Date subscriptionValidityDate;
 
     /** The services to activate. */
     @XmlElement
@@ -147,6 +152,14 @@ public class ActivateServicesRequestDto extends BaseEntityDto {
      */
     public void setOrderItemAction(OrderItemActionEnum action) {
         this.orderItemAction = action;
+    }
+
+    public Date getSubscriptionValidityDate() {
+        return subscriptionValidityDate;
+    }
+
+    public void setSubscriptionValidityDate(Date subscriptionValidityDate) {
+        this.subscriptionValidityDate = subscriptionValidityDate;
     }
 
     @Override

@@ -193,12 +193,6 @@ public class OrderService extends BusinessService<Order> {
         return (List<Order>) qb.getQuery(getEntityManager()).getResultList();
     }
 
-    public void bulkDelete(List<Order> inactiveOrders) throws BusinessException {
-        for (Order e : inactiveOrders) {
-            remove(e);
-        }
-    }
-
     public Quote getReference(Class<Quote> clazz, Long quoteId) {
         return getEntityManager().getReference(clazz, quoteId);
     }

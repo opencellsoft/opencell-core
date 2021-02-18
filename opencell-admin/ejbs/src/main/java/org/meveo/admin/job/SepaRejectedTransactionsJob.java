@@ -111,11 +111,13 @@ public class SepaRejectedTransactionsJob extends Job {
                 int numberOfFiles = files.length;
                 log.info("InputFiles job " + numberOfFiles + " to import");
                 result.setNbItemsToProcess(numberOfFiles);
+                jobExecutionService.initCounterElementsRemaining(result, numberOfFiles);
                 for (File file : files) {
                     if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                         break;
                     }
                     sepaRejectedTransactionsJobBean.execute(result, jobInstance, file, ddRequestBuilderInterface, inputDir);
+                    jobExecutionService.decCounterElementsRemaining(result);
                 }
             }
         } catch (Exception e) {

@@ -143,17 +143,7 @@ public abstract class Script implements Serializable, ScriptInterface {
     protected RunTimeLogger logTest = new RunTimeLogger(this.getClass());
 
     @Override
-    public void init(Map<String, Object> methodContext) throws BusinessException {
-
-    }
-
-    @Override
     public void execute(Map<String, Object> methodContext) throws BusinessException {
-
-    }
-
-    @Override
-    public void terminate(Map<String, Object> methodContext) throws BusinessException {
 
     }
 
