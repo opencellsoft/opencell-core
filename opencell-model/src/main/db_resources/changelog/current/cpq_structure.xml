@@ -3247,6 +3247,7 @@
 					alter table cpq_order_offer drop column description;
 					alter table cpq_order_product drop column code;
 					alter table cpq_order_product drop column description;
+					alter table cpq_order_item alter column order_id drop not null;
 				]]>
 		</sql>
 	</changeSet>

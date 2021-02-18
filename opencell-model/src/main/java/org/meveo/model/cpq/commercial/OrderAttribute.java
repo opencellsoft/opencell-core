@@ -2,6 +2,7 @@ package org.meveo.model.cpq.commercial;
 
 import java.util.Date;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,8 +17,11 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.security.MeveoUser;
 
 /** 
  * @author Tarik F.
@@ -36,8 +40,7 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_id", nullable = false)
-	@NotNull
+	@JoinColumn(name = "order_id")
 	private CommercialOrder orderCode;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -53,7 +56,22 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 	@Column(name = "access_point", length = 20)
 	@Size(max = 20)
 	private String accessPoint;
-	
+
+	public OrderAttribute() {
+	}
+
+	public OrderAttribute(QuoteAttribute quoteAttribute, MeveoUser currentUser) {
+		attribute=quoteAttribute.getAttribute();
+		stringValue=quoteAttribute.getStringValue();
+		dateValue=quoteAttribute.getDateValue();
+		doubleValue=quoteAttribute.getDoubleValue();
+		updateAudit(currentUser);
+		assignedAttributeValue = quoteAttribute.getAssignedAttributeValue()
+				.stream()
+				.map(nestedQuoteAttribute -> new OrderAttribute(nestedQuoteAttribute, currentUser))
+				.collect(Collectors.toList());
+	}
+
 	/**
 	 * @return the orderCode
 	 */
