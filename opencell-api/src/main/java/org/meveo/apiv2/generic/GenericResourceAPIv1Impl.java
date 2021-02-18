@@ -126,7 +126,6 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL
                             + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
-System.out.println( "GET ALL ENTITIES 1 : " + redirectURI.toString() );
             }
             else {
                 if ( pathIBaseRS.contains( "oneShotChargeTemplate" ) || pathIBaseRS.contains( "/account/customer" )
@@ -137,8 +136,6 @@ System.out.println( "GET ALL ENTITIES 1 : " + redirectURI.toString() );
                 else
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL );
-
-System.out.println( "GET ALL ENTITIES 2 : " + redirectURI.toString() );
             }
             return Response.temporaryRedirect( redirectURI ).build();
         }
@@ -150,13 +147,11 @@ System.out.println( "GET ALL ENTITIES 2 : " + redirectURI.toString() );
             if ( pathIBaseRS.equals("/account/customer/category") ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + FORWARD_SLASH + entityCode);
-System.out.println( "GET A CUSTOMER CATEGORY : " + redirectURI.toString() );
             }
             else {
                 entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + entityClassName + "Code=" + entityCode);
-System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
             }
             return Response.temporaryRedirect( redirectURI ).build();
         }
@@ -196,7 +191,6 @@ System.out.println( "GET AN ENTITY : " + redirectURI.toString() );
                 queryParamsMap = uriInfo.getQueryParameters();
                 GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
                 entityClassName = getPath.split( FORWARD_SLASH )[ getPath.split( FORWARD_SLASH ).length - 1 ];
-System.out.println( "entityClassName : " + entityClassName );
                 Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize( entityClassName ) );
                 GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
             }
@@ -204,7 +198,6 @@ System.out.println( "entityClassName : " + entityClassName );
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + queryParams.substring( 0, queryParams.length() - 1 ) );
 
-System.out.println( "GET redirectURI IN MAP_REGEX : " + redirectURI.toString() );
             return Response.temporaryRedirect( redirectURI ).build();
         }
 
@@ -229,7 +222,6 @@ System.out.println( "GET redirectURI IN MAP_REGEX : " + redirectURI.toString() )
 
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_CREATE );
-System.out.println( "POST redirectURI CREATE AN ENTITY : " + redirectURI.toString() );
 
             return Response.temporaryRedirect( redirectURI )
                     .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
@@ -243,7 +235,6 @@ System.out.println( "POST redirectURI CREATE AN ENTITY : " + redirectURI.toStrin
                         + API_REST + pathIBaseRS
                         + FORWARD_SLASH + segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).getPath()
                         + FORWARD_SLASH + ENABLE_SERVICE + queryParams.substring( 0, queryParams.length() - 1 ) );
-System.out.println( "POST redirectURI ENABLE A SERVICE : " + redirectURI.toString() );
             }
             // Handle the generic special endpoint: disable a service
             else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(DISABLE_SERVICE) ) {
@@ -251,7 +242,6 @@ System.out.println( "POST redirectURI ENABLE A SERVICE : " + redirectURI.toStrin
                         + API_REST + pathIBaseRS
                         + FORWARD_SLASH + segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).getPath()
                         + FORWARD_SLASH + DISABLE_SERVICE + queryParams.substring( 0, queryParams.length() - 1 ) );
-System.out.println( "POST redirectURI DISABLE A SERVICE : " + redirectURI.toString() );
             }
 
             return Response.temporaryRedirect( redirectURI )
@@ -281,7 +271,6 @@ System.out.println( "POST redirectURI DISABLE A SERVICE : " + redirectURI.toStri
                 ActivateSubscriptionRequestDto aDto = new ActivateSubscriptionRequestDto();
                 aDto.setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
 
-System.out.println( "PUT redirectURI ACTIVATION : " + redirectURI.toString() );
 //                return Response.temporaryRedirect( redirectURI )
 //                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
                 return httpClient.target( redirectURI ).request()
@@ -294,7 +283,6 @@ System.out.println( "PUT redirectURI ACTIVATION : " + redirectURI.toString() );
                 OperationSubscriptionRequestDto aDto = new OperationSubscriptionRequestDto();
                 aDto.setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
 
-System.out.println( "PUT redirectURI SUSPENSION : " + redirectURI.toString() );
 //                return Response.temporaryRedirect( redirectURI )
 //                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
                 return httpClient.target( redirectURI ).request()
@@ -307,7 +295,6 @@ System.out.println( "PUT redirectURI SUSPENSION : " + redirectURI.toString() );
                 Object aDto = new ObjectMapper().readValue( jsonDto, TerminateSubscriptionRequestDto.class );
                 ((TerminateSubscriptionRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
 
-System.out.println( "PUT redirectURI TERMINATION : " + redirectURI.toString() );
 //                return Response.temporaryRedirect( redirectURI )
 //                        .entity( Entity.entity(aDto, MediaType.APPLICATION_JSON) ).build();
                 return httpClient.target( redirectURI ).request()
@@ -320,7 +307,6 @@ System.out.println( "PUT redirectURI TERMINATION : " + redirectURI.toString() );
                 Object aDto = new ObjectMapper().readValue( jsonDto, UpdateServicesRequestDto.class );
                 ((UpdateServicesRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
 
-System.out.println( "PUT redirectURI UPDATING SERVICES : " + redirectURI.toString() );
 //                return Response.temporaryRedirect( redirectURI )
 //                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
                 return httpClient.target( redirectURI ).request()
@@ -347,7 +333,6 @@ System.out.println( "PUT redirectURI UPDATING SERVICES : " + redirectURI.toStrin
 
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_UPDATE );
-System.out.println( "PUT redirectURI UPDATE AN ENTITY : " + redirectURI.toString() );
 
             String updatedEntity = httpClient.target( redirectURI ).request().put( Entity.entity( aDto, MediaType.APPLICATION_JSON ), String.class );
 
@@ -371,7 +356,6 @@ System.out.println( "PUT redirectURI UPDATE AN ENTITY : " + redirectURI.toString
             URI redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_DELETE
                     + entityCode);
-System.out.println( "DELETE redirectURI : " + redirectURI.toString() );
             return Response.temporaryRedirect( redirectURI ).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
