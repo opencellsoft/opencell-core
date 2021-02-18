@@ -30,14 +30,42 @@ import org.slf4j.Logger;
 @Stateless
 public class OfferPoolInitializerAsync {
 
-    private static final String OFFER_AGENCIES_COUNTERS_QUERY = "select ua.code, count(sub.id) \n"
-            + "from billing_subscription sub \n"
-            + "join account_entity ua on sub.user_account_id = ua.id \n"
-            + "where sub.offer_id=:offerId \n"
-            + "and sub.status='ACTIVE' \n"
-            + "and sub.subscription_date <= :counterEndDate \n"
-            + "and (sub.termination_date is null or (sub.termination_date - INTERVAL ':termination_delay DAYS') >= :counterEndDate ) \n"
-            + "group by ua.code";
+//    // Old version
+//    private static final String OFFER_AGENCIES_COUNTERS_QUERY = "select ua.code, count(sub.id) \n"
+//            + "from billing_subscription sub \n"
+//            + "join account_entity ua on sub.user_account_id = ua.id \n"
+//            + "where sub.offer_id=:offerId \n"
+//            + "and sub.status='ACTIVE' \n"
+//            + "and sub.subscription_date <= :counterEndDate \n"
+//            + "and (sub.termination_date is null or (sub.termination_date - INTERVAL ':termination_delay DAYS') >= :counterEndDate ) \n"
+//            + "group by ua.code";
+    
+    private static final String OFFER_AGENCIES_COUNTERS_QUERY = "select t.agency_code, count(*)\n"
+            + "from\n"
+            + "(   select ua.code as agency_code,\n"
+            + "    case\n"
+            + "        when sub.cardWithExemption is not null and sub.cardWithExemption=true then sub.exemptionEndDate\n"
+            + "        else sub.subscription_date\n"
+            + "    end as activated_at\n"
+            + "    from billing_service_instance si\n"
+            + "    join (select id,\n"
+            + "            (cast(cf_values as json)#>>'{cardWithExemption, 0, boolean}')\\:\\:boolean as cardWithExemption,\n"
+            + "            (cast(cf_values as json)#>>'{exemptionEndDate, 0, date}')\\:\\:timestamp as exemptionEndDate,\n"
+            + "            subscription_date,\n"
+            + "            user_account_id,\n"
+            + "            offer_id\n"
+            + "          from billing_subscription\n"
+            + "          where offer_id=:offerId \n"
+            + "         ) sub\n"
+            + "      on si.subscription_id=sub.id\n"
+            + "    join account_entity ua on sub.user_account_id = ua.id\n"
+            + "    where si.code like '%_SUBSCRIPTION'\n"
+            + "    and si.status='ACTIVE'\n"
+            + "    and sub.offer_id=:offerId \n"
+            + ") t\n"
+            + "where t.activated_at <= :counterEndDate \n"
+            + "group by t.agency_code";
+
     @Inject
     private Logger log;
 
@@ -56,7 +84,7 @@ public class OfferPoolInitializerAsync {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<BigInteger> offerIds, Date counterStartDate, Date counterEndDate, int terminationDelay, JobExecutionResultImpl result,
+    public Future<String> launchAndForget(List<BigInteger> offerIds, Date counterStartDate, Date counterEndDate, JobExecutionResultImpl result,
             MeveoUser lastCurrentUser) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -66,7 +94,7 @@ public class OfferPoolInitializerAsync {
         for (BigInteger offerId : offerIds) {
             i++;
             @SuppressWarnings("unchecked")
-            List<Object[]> items = emWrapper.getEntityManager().createNativeQuery(OFFER_AGENCIES_COUNTERS_QUERY.replaceAll(":termination_delay", String.valueOf(terminationDelay)))
+            List<Object[]> items = emWrapper.getEntityManager().createNativeQuery(OFFER_AGENCIES_COUNTERS_QUERY)
                 .setParameter("offerId", offerId.longValue()).setParameter("counterEndDate", counterEndDate).getResultList();
 
             for (Object[] item : items) {

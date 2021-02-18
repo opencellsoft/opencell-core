@@ -36,20 +36,45 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
 
     private static final String DATE_PATTERN = "MM/yyyy";
 
-    private static final int TERMINATION_DELAY = 90; // 3 months
+//    private static final int TERMINATION_DELAY = 90; // 3 months
 
-    private static final String FROM_CLAUSE = "from billing_subscription sub \n"
-            + "inner join cat_offer_template offer on sub.offer_id = offer.id \n"
-            + "where cast(offer.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF' \n"
-            + "and sub.status='ACTIVE' \n"
-            + "and sub.subscription_date <= :counterEndDate \n"
-            + "and (sub.termination_date is null or (sub.termination_date - INTERVAL ':termination_delay DAYS') >= :counterEndDate ) \n"
-            + "group by sub.user_account_id, offerId \n"
-            + "having count(sub.id) > 0";
+//    //Old version
+//    private static final String FROM_CLAUSE = "from billing_subscription sub \n"
+//            + "inner join cat_offer_template offer on sub.offer_id = offer.id \n"
+//            + "where cast(offer.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF' \n"
+//            + "and sub.status='ACTIVE' \n"
+//            + "and sub.subscription_date <= :counterEndDate \n"
+//            + "and (sub.termination_date is null or (sub.termination_date - INTERVAL ':termination_delay DAYS') >= :counterEndDate ) \n"
+//            + "group by sub.user_account_id, offerId \n"
+//            + "having count(sub.id) > 0";
 
-    private static final String OFFER_INIT_COUNT_QUERY = "select count(t.*) from " + "(select sub.user_account_id, offer.id offerId, count(sub.id) \n" + FROM_CLAUSE + ") t";
+    private static final String FROM_CLAUSE = "from\n"
+            + "( select sub.user_account_id,\n"
+            + "    sub.offer_id,\n"
+            + "    case\n"
+            + "        when sub.cardWithExemption is not null and sub.cardWithExemption=true then sub.exemptionEndDate\n"
+            + "        else sub.subscription_date\n"
+            + "    end as activated_at\n"
+            + "    from billing_service_instance si\n"
+            + "    join (select id,\n"
+            + "            (cast(cf_values as json)#>>'{cardWithExemption, 0, boolean}')\\:\\:boolean as cardWithExemption,\n"
+            + "            (cast(cf_values as json)#>>'{exemptionEndDate, 0, date}')\\:\\:timestamp as exemptionEndDate,\n"
+            + "            subscription_date,\n"
+            + "            user_account_id,\n"
+            + "            offer_id\n"
+            + "          from billing_subscription\n"
+            + "         ) sub  \n"
+            + "      on si.subscription_id=sub.id\n"
+            + "    where si.code like '%_SUBSCRIPTION'\n"
+            + "    and si.status = 'ACTIVE'\n"
+            + ") t\n"
+            + "where t.activated_at <= :counterEndDate \n"
+            + "group by t.user_account_id, t.offer_id";
 
-    private static final String OFFERS_TO_INITILIZE = "select distinct offer.id offerId \n" + FROM_CLAUSE;
+    private static final String OFFER_INIT_COUNT_QUERY = "select count(1) from " + "(select t.user_account_id, t.offer_id, count(*) \n" + FROM_CLAUSE + ") c";
+
+    private static final String OFFERS_TO_INITILIZE = "select distinct t.offer_id \n" + FROM_CLAUSE;
+
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
@@ -76,14 +101,14 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
 
         try {
             BigInteger offerCountersNbr = (BigInteger) emWrapper.getEntityManager()
-                .createNativeQuery(OFFER_INIT_COUNT_QUERY.replaceAll(":termination_delay", String.valueOf(TERMINATION_DELAY))).setParameter("counterEndDate", counterEndDate)
+                .createNativeQuery(OFFER_INIT_COUNT_QUERY).setParameter("counterEndDate", counterEndDate)
                 .getSingleResult();
 
-            log.info("Total of offers/agencies counters to be initialized: {}", offerCountersNbr.longValue());
+            log.info("Total of agencies/offers counters to be initialized: {}", offerCountersNbr.longValue());
             result.setNbItemsToProcess(offerCountersNbr.longValue());
 
             @SuppressWarnings("unchecked")
-            List<BigInteger> offerIds = emWrapper.getEntityManager().createNativeQuery(OFFERS_TO_INITILIZE.replaceAll(":termination_delay", String.valueOf(TERMINATION_DELAY)))
+            List<BigInteger> offerIds = emWrapper.getEntityManager().createNativeQuery(OFFERS_TO_INITILIZE)
                 .setParameter("counterEndDate", counterEndDate).getResultList();
 
             log.info("Total of sahred offers that pools should be initialized: {}", offerIds.size());
@@ -94,7 +119,7 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
 
             while (subListCreator.isHasNext()) {
                 futures
-                    .add(offerPoolInitializerAsync.launchAndForget(subListCreator.getNextWorkSet(), counterStartDate, counterEndDate, TERMINATION_DELAY, result, lastCurrentUser));
+                    .add(offerPoolInitializerAsync.launchAndForget(subListCreator.getNextWorkSet(), counterStartDate, counterEndDate, result, lastCurrentUser));
                 try {
                     Thread.sleep(waitingMillis.longValue());
 
@@ -114,16 +139,18 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
                     result.registerError(cause.getMessage());
-                    result.addReport(cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }
 
-            result.addReport("OfferPoolInitializer has been executed for the month: " + DateUtils.formatDateWithPattern(counterEndDate, DATE_PATTERN));
+            if (result.getNbItemsProcessedWithError() == 0) {
+                result.addReport("OfferPoolInitializer has been executed for the month: " + DateUtils.formatDateWithPattern(counterEndDate, DATE_PATTERN));
+            }
             result.setDone(true);
 
         } catch (Exception e) {
             log.error("Failed to initialize offers shared pools ", e);
+            result.registerError(e.getClass().getSimpleName() + " : " + e.getMessage());
         }
     }
 

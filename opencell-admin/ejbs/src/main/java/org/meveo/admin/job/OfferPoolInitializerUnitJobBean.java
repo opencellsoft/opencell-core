@@ -77,6 +77,7 @@ public class OfferPoolInitializerUnitJobBean {
                     BigDecimal volumePerCard = getVolumePerCard(serviceTemplate);
                     BigDecimal totalPool = volumePerCard.multiply(new BigDecimal(subCount));
 
+                    poolPerOfferMap.put(userAccountCode + "_number_of_cards", subCount.doubleValue());
                     poolPerOfferMap.put(userAccountCode + "_initial", totalPool.doubleValue());
                     poolPerOfferMap.put(userAccountCode + "_value", totalPool.doubleValue());
                     cfiService.setCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, poolPerOfferMap, counterStartDate);
