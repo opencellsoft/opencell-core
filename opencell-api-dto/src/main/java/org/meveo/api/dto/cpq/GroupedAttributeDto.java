@@ -12,6 +12,8 @@ import org.meveo.model.cpq.GroupedAttributes;
 
 public class GroupedAttributeDto {
 
+	private Long id;
+	
     @NotNull
 	private String productCode;
     @NotNull
@@ -40,6 +42,7 @@ public class GroupedAttributeDto {
 				this.productCode = groupedService.getProductVersion().getProduct().getCode();
 				this.productVersion = groupedService.getProductVersion().getCurrentVersion();
 			}
+			this.id = groupedService.getId();
 		}
 	}
 	
@@ -194,6 +197,20 @@ public class GroupedAttributeDto {
 	 */
 	public void setRuled(boolean ruled) {
 		this.ruled = ruled;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	

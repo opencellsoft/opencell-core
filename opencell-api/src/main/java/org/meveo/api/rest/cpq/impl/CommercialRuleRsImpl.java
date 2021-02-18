@@ -122,6 +122,17 @@ public class CommercialRuleRsImpl extends BaseRs implements CommercialRuleRs {
 			return errorResponse(e, result.getActionStatus());
 		} 
 	}
+	
+	@Override
+	public Response findGroupedAttributeRules(String groupedAttributeCode,String productCode) {
+		GetListCommercialRulesResponseDto result = new GetListCommercialRulesResponseDto();
+		try { 
+			result=commercialRuleApi.findGroupedAttributeRules(groupedAttributeCode, productCode);
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		} 
+	}
 
 	 
 }
