@@ -488,7 +488,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String invoiceNumber = invoicesToNumberInfo.nextInvoiceNumber();
         // request to store invoiceNo in alias field
         invoice.setAlias(invoiceNumber);
-        invoice.setInvoiceNumber(prefix + invoiceNumber);
+        invoice.setInvoiceNumber((prefix == null ? "" : prefix) + invoiceNumber);
 
         invoiceNumberAssignedEventProducer.fire(invoice);
     }
