@@ -4824,7 +4824,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 lastTransactionDate = DateUtils.setDateToStartOfDay(lastTransactionDate);
             }
 
-            if (minAmountForAccounts!= null && minAmountForAccounts.isMinAmountCalculationActivated()) {
+            if (minAmountForAccounts != null && minAmountForAccounts.isMinAmountCalculationActivated()) {
                 invoiceLinesService.calculateAmountsAndCreateMinAmountLines(entityToInvoice, lastTransactionDate, false, minAmountForAccounts);
                 invoiceLinesService.calculateAmountsAndCreateMinAmountLines(entityToInvoice, lastTransactionDate, false, minAmountForAccounts);
                 minAmountInvoiceLines = entityToInvoice.getMinInvoiceLines();
