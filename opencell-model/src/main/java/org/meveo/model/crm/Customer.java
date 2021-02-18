@@ -172,8 +172,8 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     @Column(name = "threshold_per_entity")
     private boolean thresholdPerEntity;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "customers", cascade = CascadeType.REMOVE)
-    private List<Contact> contacts;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.REMOVE)
+    private List<ContactCustomer> contacts;
 
     @Column(name = "role")
     private String role;

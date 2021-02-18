@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -46,6 +47,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
+import org.meveo.model.crm.ContactCustomer;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.intcrm.AddressBook;
 
@@ -191,9 +193,8 @@ public class Contact extends AccountEntity implements ISearchable {
     @Column(name = "tag")
     private Set<String> tags = new HashSet<String>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinTable(name = "bi_contacts_customers", joinColumns = @JoinColumn(name = "contact_id"), inverseJoinColumns = @JoinColumn(name = "customer_id"))
-    private List<Customer> customers = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contact",cascade = CascadeType.REMOVE)
+    private List<ContactCustomer> customers = new ArrayList<>();
 
     public Contact() {
         accountType = ACCOUNT_TYPE;
@@ -348,7 +349,7 @@ public class Contact extends AccountEntity implements ISearchable {
     }
 
     public List<Customer> getCustomers() {
-        return customers;
+        return customers.stream().map(c -> c.getCustomer()).collect(Collectors.toList());
     }
 
     public void setCustomers(List<Customer> customers) {
