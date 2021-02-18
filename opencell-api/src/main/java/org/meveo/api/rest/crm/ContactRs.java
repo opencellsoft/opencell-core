@@ -18,6 +18,7 @@
 
 package org.meveo.api.rest.crm;
 
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -38,6 +39,8 @@ import org.meveo.api.dto.response.crm.ContactsResponseDto;
 import org.meveo.api.dto.response.crm.GetContactResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import java.util.List;
 
 @Path("/contact")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -133,6 +136,10 @@ public interface ContactRs extends IBaseRs {
     public ContactsResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+
+    @POST
+    @Path("/addCustomers")
+    GetContactResponseDto addCustomers(@NotNull @QueryParam("code") String code,@NotNull @QueryParam("customerCode") List<String> customerCode);
     
     /**
      * Retrieve a list by using paging and filter option

@@ -19,11 +19,14 @@
 package org.meveo.api.dto.crm;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.contact.Contact;
+import org.meveo.model.crm.Customer;
 
 public class ContactDto extends AccountDto {
 
@@ -62,6 +65,8 @@ public class ContactDto extends AccountDto {
 //	private List<Message> messages;
 	
 	private Set<String> tags = new HashSet<String>();
+
+	private List<String> customerCodes;
 	
 	public ContactDto () {
 		
@@ -84,6 +89,9 @@ public class ContactDto extends AccountDto {
 		isProspect = contact.isProspect();
 		agreedToUA = contact.isAgreedToUA();
 		tags = contact.getTags();
+		customerCodes = contact.getCustomers().stream()
+								.map(Customer::getCode)
+								.collect(Collectors.toList());
 //		messages = contact.getMessages();
 		
 //		addressBook = new AddressBookDto(contact.getAddressBook());
@@ -225,5 +233,13 @@ public class ContactDto extends AccountDto {
 
 	public void setTags(Set<String> tags) {
 		this.tags = tags;
+	}
+
+	public List<String> getCustomerCodes() {
+		return customerCodes;
+	}
+
+	public void setCustomerCodes(List<String> customerCodes) {
+		this.customerCodes = customerCodes;
 	}
 }

@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -76,6 +77,7 @@ import org.meveo.export.CustomBigDecimalConverter;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
@@ -98,6 +100,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.dwh.GdprService;
 import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
+import org.meveo.service.intcrm.impl.ContactService;
 import org.meveo.service.tax.TaxCategoryService;
 import org.primefaces.model.SortOrder;
 
@@ -164,6 +167,9 @@ public class CustomerApi extends AccountEntityApi {
     
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+    private ContactService contactService;
 
     public Customer create(CustomerDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -276,6 +282,18 @@ public class CustomerApi extends AccountEntityApi {
                 throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
             }
             customer.setSeller(seller);
+        }
+
+        if(postData.getContactCodes() != null) {
+            List<Contact> contacts = postData.getContactCodes()
+                    .stream()
+                    .map(code -> {
+                        Contact contact = contactService.findByCode(code);
+                        if (code == null)
+                            throw new EntityDoesNotExistsException(Contact.class, code);
+                        return contact;
+                    }).collect(Collectors.toList());
+            customer.setContacts(contacts);
         }
 
         updateAccount(customer, postData, checkCustomFields);
