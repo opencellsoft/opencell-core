@@ -326,6 +326,14 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
      * @return the accountOperation list to process
      */
 	private List<AccountOperation> filterAoToPayOrRefund(DDRequestBuilderInterface ddRequestBuilderInterface, JobInstance jobInstance, DDRequestLotOp ddRequestLotOp) {
+		
+		log.info("ddRequestBuilderInterface : {}",ddRequestBuilderInterface);
+		if(ddRequestBuilderInterface != null) {
+			log.info("ddRequestBuilderInterface.getClass().getName() : {}", ddRequestBuilderInterface.getClass().getName());
+		}
+		log.info("jobInstance : {}",jobInstance);
+		log.info("ddRequestLotOp : {}",ddRequestLotOp);
+		
 		AccountOperationFilterScript aoFilterScript = this.getAOScriptInstance(jobInstance);
 		if (aoFilterScript != null) {
 			Map<String, Object> methodContext = new HashMap<>();
@@ -334,9 +342,10 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 			 methodContext.put(AccountOperationFilterScript.TO_DUE_DATE, ddRequestLotOp.getToDueDate());
 			 methodContext.put(AccountOperationFilterScript.PAYMENT_METHOD, PaymentMethodEnum.DIRECTDEBIT);
 			 methodContext.put(AccountOperationFilterScript.CAT_TO_PROCESS, ddRequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess());
-
+			 log.info("aoFilterScript.filterAoToPay(methodContext) : {}",methodContext);
 			return aoFilterScript.filterAoToPay(methodContext);
 		}
+		log.info("ddRequestBuilderInterface.findListAoToPay(ddRequestLotOp): {}",ddRequestLotOp);
 		return ddRequestBuilderInterface.findListAoToPay(ddRequestLotOp);
 	}
 
