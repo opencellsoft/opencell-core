@@ -11,13 +11,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-@Embeddable
+
 public class ContactCustomerId {
 
-    @Column(name = "contact_id")
+    //@Column(name = "contact_id")
     private Long contactId;
 
-    @Column(name = "customer_id")
+    //@Column(name = "customer_id")
     private Long customerId;
 
     public ContactCustomerId() {

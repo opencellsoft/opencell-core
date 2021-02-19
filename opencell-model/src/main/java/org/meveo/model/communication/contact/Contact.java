@@ -191,8 +191,8 @@ public class Contact extends AccountEntity implements ISearchable {
     @Column(name = "tag")
     private Set<String> tags = new HashSet<String>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contact",cascade = CascadeType.REMOVE)
-    private List<ContactCustomer> contactCustomer = new ArrayList<>();
+    @OneToMany( mappedBy = "contact",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ContactCustomer> customers = new ArrayList<>();
 
     public Contact() {
         accountType = ACCOUNT_TYPE;
@@ -346,16 +346,16 @@ public class Contact extends AccountEntity implements ISearchable {
         return this.getName().toString() + " code:" + this.getCode();
     }
 
-    public List<ContactCustomer> getContactCustomer() {
-        return contactCustomer;
+    public List<ContactCustomer> getCustomers() {
+        return customers;
     }
 
-    public void setContactCustomer(List<ContactCustomer> contactCustomer) {
-        this.contactCustomer = contactCustomer;
+    public void setCustomers(List<ContactCustomer> customers) {
+        this.customers = customers;
     }
 
     public List<Customer> loadCustomers() {
-        return contactCustomer.stream().map(c -> c.getCustomer()).collect(Collectors.toList());
+        return customers.stream().map(c -> c.getCustomer()).collect(Collectors.toList());
     }
 
     public void addCustomers(List<Customer> customers) {
@@ -364,7 +364,7 @@ public class Contact extends AccountEntity implements ISearchable {
 
     public void addCustomer(Customer customer){
         ContactCustomer contactCustomer = new ContactCustomer(this, customer);
-        this.contactCustomer.add(contactCustomer);
+        this.customers.add(contactCustomer);
         customer.getContacts().add(contactCustomer);
     }
 }
