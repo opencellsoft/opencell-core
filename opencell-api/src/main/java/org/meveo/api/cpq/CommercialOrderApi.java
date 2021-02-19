@@ -438,7 +438,7 @@ public class CommercialOrderApi extends BaseApi {
 	public CommercialOrderDto validateOrder(CommercialOrder order, boolean orderCompleted) {
 		ParamBean paramBean = ParamBean.getInstance();
 		String sellerCode = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller().getCode();
-		String quoteScriptCode = paramBean.getProperty("seller." + sellerCode + ".orderValidationScript", "org.meveo.service.script.OrderValidationScript");
+		String quoteScriptCode = paramBean.getProperty("seller." + sellerCode + ".orderValidationScript", "");
 		if (!StringUtils.isBlank(quoteScriptCode)) {
 			ScriptInstance scriptInstance = scriptInstanceService.findByCode(quoteScriptCode);
 			if (scriptInstance != null) {
