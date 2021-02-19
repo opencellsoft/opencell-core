@@ -57,6 +57,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -315,7 +316,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if(!isVirtual)
             serviceTemplateService.create(serviceTemplate);
         serviceInstance.setServiceTemplate(serviceTemplate);
+
+
         serviceInstanciation(serviceInstance, null, subscriptionAmount, terminationAmount, isVirtual);
+
+
+
         serviceInstance.setServiceTemplate(null);
         if(!isVirtual) {
             serviceTemplateService.remove(serviceTemplate);
@@ -430,8 +436,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         if (!isVirtual) {
             // execute instantiation script
-            if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
-                serviceModelScriptService.instantiateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode());
+            if (serviceTemplate.getBusinessServiceModel() != null && serviceTemplate.getBusinessServiceModel().getScript() != null) {
+                serviceModelScriptService.instantiateServiceInstance(serviceInstance, serviceTemplate.getBusinessServiceModel().getScript().getCode());
             }
         }
 

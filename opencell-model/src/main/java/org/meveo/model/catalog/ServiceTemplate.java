@@ -88,37 +88,9 @@ import org.meveo.model.cpq.tags.Tag;
         // @NamedQuery(name = "serviceTemplate.getServicesWithUsagesByChargeTemplate",
         // query = "from ServiceTemplate s left join s.serviceUsageCharges c where c.chargeTemplate=:chargeTemplate")
 })
-public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpload {
+public class ServiceTemplate extends ServiceCharge implements IImageUpload {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Mapping between service and recurring charges
-     */
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<>();
-
-    /**
-     * Mapping between service and subscription charges
-     */
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<>();
-
-    /**
-     * Mapping between service and termination charges
-     */
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<>();
-
-    /**
-     * Mapping between service and usage charges
-     */
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<>();
 
     /**
      * Calendar to use when creating Wallet operations. Service subscription start date is taken as calendar's initiation date. Invoicing calendar to calculate if operation should
@@ -250,87 +222,11 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
 			)
     private List<Attribute> attributes = new ArrayList<>();
-	
-    
-    public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
-        ServiceChargeTemplateRecurring result = null;
-        for (ServiceChargeTemplateRecurring sctr : serviceRecurringCharges) {
-            if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
-                result = sctr;
-                break;
-            }
-        }
-        return result;
-    }
-    
+
+
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<Media> medias = new ArrayList<>();
-
-    public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
-        return serviceRecurringCharges;
-    }
-
-    public void setServiceRecurringCharges(List<ServiceChargeTemplateRecurring> serviceRecurringCharges) {
-        this.serviceRecurringCharges = serviceRecurringCharges;
-    }
-
-    public ServiceChargeTemplateSubscription getServiceChargeTemplateSubscriptionByChargeCode(String chargeCode) {
-        ServiceChargeTemplateSubscription result = null;
-        for (ServiceChargeTemplateSubscription sctr : serviceSubscriptionCharges) {
-            if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
-                result = sctr;
-                break;
-            }
-        }
-        return result;
-    }
-
-    public List<ServiceChargeTemplateSubscription> getServiceSubscriptionCharges() {
-        return serviceSubscriptionCharges;
-    }
-
-    public void setServiceSubscriptionCharges(List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges) {
-        this.serviceSubscriptionCharges = serviceSubscriptionCharges;
-    }
-
-    public ServiceChargeTemplateTermination getServiceChargeTemplateTerminationByChargeCode(String chargeCode) {
-        ServiceChargeTemplateTermination result = null;
-        for (ServiceChargeTemplateTermination sctr : serviceTerminationCharges) {
-            if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
-                result = sctr;
-                break;
-            }
-        }
-        return result;
-    }
-
-    public List<ServiceChargeTemplateTermination> getServiceTerminationCharges() {
-        return serviceTerminationCharges;
-    }
-
-    public void setServiceTerminationCharges(List<ServiceChargeTemplateTermination> serviceTerminationCharges) {
-        this.serviceTerminationCharges = serviceTerminationCharges;
-    }
-
-    public ServiceChargeTemplateUsage getServiceChargeTemplateUsageByChargeCode(String chargeCode) {
-        ServiceChargeTemplateUsage result = null;
-        for (ServiceChargeTemplateUsage sctr : serviceUsageCharges) {
-            if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
-                result = sctr;
-                break;
-            }
-        }
-        return result;
-    }
-
-    public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {
-        return serviceUsageCharges;
-    }
-
-    public void setServiceUsageCharges(List<ServiceChargeTemplateUsage> serviceUsageCharges) {
-        this.serviceUsageCharges = serviceUsageCharges;
-    }
 
     @Override
     public boolean equals(Object obj) {

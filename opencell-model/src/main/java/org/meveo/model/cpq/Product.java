@@ -39,6 +39,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
+import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.crm.CustomerBrand;
@@ -58,7 +59,7 @@ import org.meveo.model.crm.CustomerBrand;
 		@NamedQuery(name = "Product.getProductLine", query = "select p from Product p where p.productLine.id=:id"),
 		@NamedQuery(name = "Product.findByCode", query = "select p from Product p where p.code=:code")
 })
-public class Product extends EnableBusinessCFEntity {
+public class Product extends ServiceCharge {
 
 	public Product() {
 	}
