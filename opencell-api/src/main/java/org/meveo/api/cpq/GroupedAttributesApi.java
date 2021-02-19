@@ -17,6 +17,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -74,8 +75,14 @@ public class GroupedAttributesApi extends BaseApi{
 		groupedAttribute.setCode(groupedAttributeDto.getCode());
 		groupedAttribute.setDescription(groupedAttributeDto.getDescription());
 		try {
-			if(!Strings.isEmpty(groupedAttributeDto.getProductCode()))
+			if(!Strings.isEmpty(groupedAttributeDto.getProductCode())) {
+				ProductVersion version=productVersionService.findByProductAndVersion(groupedAttributeDto.getProductCode(), groupedAttributeDto.getProductVersion());
+				if(version==null) {
+					throw new MeveoApiException("The product version "+groupedAttributeDto.getProductVersion()+" does not exist for this product");
+				}
 				groupedAttribute.setProductVersion(productVersionService.findByProductAndVersion(groupedAttributeDto.getProductCode(), groupedAttributeDto.getProductVersion()));
+			}
+				
 		}catch(MeveoApiException e) {
 			if(e instanceof EntityDoesNotExistsException == false)
 				throw new 	MeveoApiException(e);
@@ -84,6 +91,7 @@ public class GroupedAttributesApi extends BaseApi{
 		}
 		groupedAttribute.setDisplay(groupedAttributeDto.isDisplay());
 		groupedAttribute.setMandatory(groupedAttributeDto.isMandatory());
+		groupedAttribute.setDisabled(groupedAttributeDto.isDisabled());
 		List<Attribute> attributes = new ArrayList<Attribute>();
 		groupedAttributeService.create(groupedAttribute);
 		if(groupedAttributeDto.getAttributes() != null && !groupedAttributeDto.getAttributes().isEmpty()) {
@@ -118,6 +126,7 @@ public class GroupedAttributesApi extends BaseApi{
 		}
 		groupedAttribute.setDisplay(groupedAttributeDto.isDisplay());
 		groupedAttribute.setMandatory(groupedAttributeDto.isMandatory());
+		groupedAttribute.setDisabled(groupedAttributeDto.isDisabled());
 		groupedAttributeService.update(groupedAttribute);
 	}
 	

@@ -23,6 +23,7 @@ public class GroupedAttributeDto {
 	private String description;
 	private List<AttributeDTO> attributes = new ArrayList<AttributeDTO>();
 	private boolean display;
+	private boolean disabled;
 	private boolean mandatory;
 	private boolean selectable=Boolean.TRUE;  
 	private boolean ruled=Boolean.FALSE;
@@ -37,6 +38,7 @@ public class GroupedAttributeDto {
 			this.code = groupedService.getCode();
 			this.description = groupedService.getDescription();
 			this.display = groupedService.getDisplay();
+			this.disabled=groupedService.isDisabled();
 			
 			if(groupedService.getProductVersion() != null && groupedService.getProductVersion().getProduct() != null) {
 				this.productCode = groupedService.getProductVersion().getProduct().getCode();
@@ -211,6 +213,20 @@ public class GroupedAttributeDto {
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the disabled
+	 */
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	/**
+	 * @param disabled the disabled to set
+	 */
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 	}
 
 	
