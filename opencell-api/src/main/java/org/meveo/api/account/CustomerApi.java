@@ -240,7 +240,7 @@ public class CustomerApi extends AccountEntityApi {
 
     /**
      * Populate entity with fields from DTO entity
-     * 
+     *
      * @param billingAccount Entity to populate
      * @param postData DTO entity object to populate from
      * @param checkCustomField Should a check be made if CF field is required
@@ -854,7 +854,8 @@ public class CustomerApi extends AccountEntityApi {
         GenericSequence genericSequence = providerService.getNextCustomerNumber();
         String sequenceNumber = StringUtils.getLongAsNChar(genericSequence.getCurrentSequenceNb(), genericSequence.getSequenceSize());
         result.setSequence(GenericSequenceApi.fromGenericSequence(genericSequence));
-        result.setValue(genericSequence.getPrefix() + sequenceNumber);
+        String prefix = genericSequence.getPrefix();
+        result.setValue((prefix == null ? "" : prefix) + sequenceNumber);
         return result;
     }
 
