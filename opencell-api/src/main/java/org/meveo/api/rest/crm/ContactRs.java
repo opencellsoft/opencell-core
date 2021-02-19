@@ -33,6 +33,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.crm.ContactDto;
+import org.meveo.api.dto.crm.CustomerContactDto;
+import org.meveo.api.dto.crm.CustomerContactDtos;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.crm.ContactsResponseDto;
@@ -138,8 +140,8 @@ public interface ContactRs extends IBaseRs {
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     @POST
-    @Path("/addCustomers")
-    GetContactResponseDto addCustomers(@NotNull @QueryParam("code") String code,@NotNull @QueryParam("customerCode") List<String> customerCode);
+    @Path("/{code}/addCustomers")
+    GetContactResponseDto addCustomers(@NotNull @PathParam("code") String code,@NotNull CustomerContactDtos customerContactDtos);
     
     /**
      * Retrieve a list by using paging and filter option

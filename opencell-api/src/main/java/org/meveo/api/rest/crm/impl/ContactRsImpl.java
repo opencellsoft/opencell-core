@@ -27,6 +27,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.crm.ContactDto;
 import org.meveo.api.dto.crm.ContactsDto;
+import org.meveo.api.dto.crm.CustomerContactDtos;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.crm.ContactsResponseDto;
@@ -35,8 +36,6 @@ import org.meveo.api.rest.crm.ContactRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-
-import java.util.List;
 
 /**
  * @author Abdellatif BARI
@@ -158,10 +157,10 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 	}
 
 	@Override
-	public GetContactResponseDto addCustomers(String contactCode, List<String> customerCodes){
+	public GetContactResponseDto addCustomers(String contactCode, CustomerContactDtos customerContactDtos){
 		GetContactResponseDto result = new GetContactResponseDto();
 		try {
-			result.setContact(contactApi.addCustomers(contactCode, customerCodes));
+			result.setContact(contactApi.addCustomers(contactCode, customerContactDtos.getCustomersContact()));
 		} catch (Exception e) {
 			processException(e, result.getActionStatus());
 		}
