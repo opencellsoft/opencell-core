@@ -1346,7 +1346,7 @@ public class QueryBuilder {
             return;
         }
 
-        if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1) {
+        if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1 && paginationConfiguration.getOrderings().length != 0) {
             Object[] orderings = paginationConfiguration.getOrderings();
             Object defaultOrder = orderings[1];
             String[] fields = orderings[0].toString().split(", ");
