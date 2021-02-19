@@ -3318,5 +3318,9 @@
 								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
 	</changeSet>
+	
+	  <changeSet id="#268_20210219_cpq_structure" author="Mbarek-Ay"> 
+	    <dropNotNullConstraint columnName="tax_class_id" tableName="cat_charge_template"/>  
+	</changeSet>
 
 </databaseChangeLog>
