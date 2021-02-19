@@ -3717,6 +3717,7 @@ END $$;]]>
             <column name="customer_id" type="bigint">
                 <constraints nullable="false" />
             </column>
+            <column name="role" type="varchar(2000)"/>
         </createTable>
         <addPrimaryKey columnNames="customer_id, contact_id" constraintName="bi_contacts_customers_pkey" tableName="bi_contacts_customers" />
 
@@ -3727,10 +3728,6 @@ END $$;]]>
         <addForeignKeyConstraint baseTableName="bi_contacts_customers" baseColumnNames="contact_id"
                                  constraintName="bi_contacts_customers_contacts_fk" referencedTableName="com_contact"
                                  referencedColumnNames="id"/>
-
-        <addColumn tableName="crm_customer">
-            <column name="role" type="varchar(2000)"/>
-        </addColumn>
     </changeSet>
 
 </databaseChangeLog>

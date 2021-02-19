@@ -223,7 +223,7 @@ public class ContactApi extends AccountEntityApi {
                             throw new EntityDoesNotExistsException(Customer.class, code);
                         return customer;
                     }).collect(Collectors.toList());
-            contact.setCustomers(customers);
+            contact.addCustomers(customers);
         }
 
         if (isNew || (contact.getCompany() != null && contact.getCompany().equals(postData.getCompany()))) {
@@ -423,7 +423,7 @@ public class ContactApi extends AccountEntityApi {
                         throw new EntityDoesNotExistsException(Customer.class, code);
                     return customer;
                 }).collect(Collectors.toList());
-        contact.getCustomers().addAll(customers);
+        contact.addCustomers(customers);
         contact = contactService.update(contact);
         return new ContactDto(contact);
     }

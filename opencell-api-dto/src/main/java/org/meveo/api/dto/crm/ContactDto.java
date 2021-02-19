@@ -89,7 +89,7 @@ public class ContactDto extends AccountDto {
 		isProspect = contact.isProspect();
 		agreedToUA = contact.isAgreedToUA();
 		tags = contact.getTags();
-		customerCodes = contact.getCustomers().stream()
+		customerCodes = contact.loadCustomers().stream()
 								.map(Customer::getCode)
 								.collect(Collectors.toList());
 //		messages = contact.getMessages();

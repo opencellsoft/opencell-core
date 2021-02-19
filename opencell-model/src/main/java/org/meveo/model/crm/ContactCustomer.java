@@ -4,26 +4,38 @@ package org.meveo.model.crm;
 import org.meveo.model.communication.contact.Contact;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "bi_contacts_customers")
 public class ContactCustomer {
 
-    @Id
+
+    @EmbeddedId
+    private ContactCustomerId contactCustomerId;
+
     @ManyToOne
-    @JoinColumn(name = "contact_id", referencedColumnName = "id")
+    @MapsId("contactId")
     private Contact contact;
-    @Id
+
     @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @MapsId("customerId")
     private Customer customer;
+
     @Column(name = "role")
     private String role;
+
+    public ContactCustomer(Contact contact, Customer customer) {
+        this.contact = contact;
+        this.customer = customer;
+        this.contactCustomerId = new ContactCustomerId(contact.getId(), customer.getId());
+    }
 
     public Contact getContact() {
         return contact;

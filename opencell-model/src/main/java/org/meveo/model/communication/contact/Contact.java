@@ -32,8 +32,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -194,7 +192,7 @@ public class Contact extends AccountEntity implements ISearchable {
     private Set<String> tags = new HashSet<String>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "contact",cascade = CascadeType.REMOVE)
-    private List<ContactCustomer> customers = new ArrayList<>();
+    private List<ContactCustomer> contactCustomer = new ArrayList<>();
 
     public Contact() {
         accountType = ACCOUNT_TYPE;
@@ -348,11 +346,25 @@ public class Contact extends AccountEntity implements ISearchable {
         return this.getName().toString() + " code:" + this.getCode();
     }
 
-    public List<Customer> getCustomers() {
-        return customers.stream().map(c -> c.getCustomer()).collect(Collectors.toList());
+    public List<ContactCustomer> getContactCustomer() {
+        return contactCustomer;
     }
 
-    public void setCustomers(List<Customer> customers) {
-        this.customers = customers;
+    public void setContactCustomer(List<ContactCustomer> contactCustomer) {
+        this.contactCustomer = contactCustomer;
+    }
+
+    public List<Customer> loadCustomers() {
+        return contactCustomer.stream().map(c -> c.getCustomer()).collect(Collectors.toList());
+    }
+
+    public void addCustomers(List<Customer> customers) {
+        customers.forEach(this::addCustomer);
+    }
+
+    public void addCustomer(Customer customer){
+        ContactCustomer contactCustomer = new ContactCustomer(this, customer);
+        this.contactCustomer.add(contactCustomer);
+        customer.getContacts().add(contactCustomer);
     }
 }

@@ -4,48 +4,43 @@ package org.meveo.model.crm;
 import org.meveo.model.communication.contact.Contact;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "bi_contacts_customers")
+@Embeddable
 public class ContactCustomerId {
 
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "contact_id", referencedColumnName = "id")
-    private Contact contact;
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    private Customer customer;
-    @Column(name = "role")
-    private String role;
+    @Column(name = "contact_id")
+    private Long contactId;
 
-    public Contact getContact() {
-        return contact;
+    @Column(name = "customer_id")
+    private Long customerId;
+
+    public ContactCustomerId() {
     }
 
-    public void setContact(Contact contact) {
-        this.contact = contact;
+    public ContactCustomerId(Long contactId, Long customerId) {
+        this.contactId = contactId;
+        this.customerId = customerId;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public Long getContactId() {
+        return contactId;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setContactId(Long contactId) {
+        this.contactId = contactId;
     }
 
-    public String getRole() {
-        return role;
+    public Long getCustomerId() {
+        return customerId;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 }
