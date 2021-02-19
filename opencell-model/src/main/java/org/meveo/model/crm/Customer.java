@@ -33,8 +33,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.NamedQueries;
@@ -57,7 +55,6 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.ThresholdOptionsEnum;
-import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
@@ -173,7 +170,7 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     private boolean thresholdPerEntity;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ContactCustomer> contacts;
+    private List<CustomerContact> contacts;
 
     public AddressBook getAddressbook() {
         return addressbook;
@@ -335,11 +332,11 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
         this.checkThreshold = checkThreshold;
     }
 
-    public List<ContactCustomer> getContacts() {
+    public List<CustomerContact> getContacts() {
         return contacts;
     }
 
-    public void setContacts(List<ContactCustomer> contacts) {
+    public void setContacts(List<CustomerContact> contacts) {
         this.contacts = contacts;
     }
 }

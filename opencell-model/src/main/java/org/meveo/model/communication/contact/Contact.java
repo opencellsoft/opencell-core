@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -45,7 +44,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
-import org.meveo.model.crm.ContactCustomer;
+import org.meveo.model.crm.CustomerContact;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.intcrm.AddressBook;
 
@@ -192,7 +191,7 @@ public class Contact extends AccountEntity implements ISearchable {
     private Set<String> tags = new HashSet<String>();
 
     @OneToMany( mappedBy = "contact",cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ContactCustomer> customers = new ArrayList<>();
+    private List<CustomerContact> customers = new ArrayList<>();
 
     public Contact() {
         accountType = ACCOUNT_TYPE;
@@ -346,25 +345,17 @@ public class Contact extends AccountEntity implements ISearchable {
         return this.getName().toString() + " code:" + this.getCode();
     }
 
-    public List<ContactCustomer> getCustomers() {
+    public List<CustomerContact> getCustomers() {
         return customers;
     }
 
-    public void setCustomers(List<ContactCustomer> customers) {
+    public void setCustomers(List<CustomerContact> customers) {
         this.customers = customers;
     }
 
-    public List<Customer> loadCustomers() {
-        return customers.stream().map(c -> c.getCustomer()).collect(Collectors.toList());
-    }
-
-    public void addCustomers(List<Customer> customers) {
-        customers.forEach(this::addCustomer);
-    }
-
-    public void addCustomer(Customer customer){
-        ContactCustomer contactCustomer = new ContactCustomer(this, customer);
-        this.customers.add(contactCustomer);
-        customer.getContacts().add(contactCustomer);
+    public void addCustomer(Customer customer, String role){
+        CustomerContact customerContact = new CustomerContact(this, customer, role);
+        this.customers.add(customerContact);
+        customer.getContacts().add(customerContact);
     }
 }

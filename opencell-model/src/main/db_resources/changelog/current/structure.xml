@@ -3710,11 +3710,7 @@ END $$;]]>
     </changeSet>
 
     <changeSet author="NabilOUACHI" id="#20211702">
-        <createSequence sequenceName="bi_contacts_customers_seq" startValue="1" />
-        <createTable tableName="bi_contacts_customers">
-            <column name="id" type="bigint">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="bi_contacts_customers_pk"/>
-            </column>
+        <createTable tableName="bi_customers_contacts">
             <column name="contact_id" type="bigint">
                 <constraints nullable="false" />
             </column>
@@ -3724,12 +3720,12 @@ END $$;]]>
             <column name="role" type="varchar(2000)"/>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="bi_contacts_customers" baseColumnNames="customer_id"
-                                 constraintName="bi_contacts_customers_customers_fk" referencedTableName="crm_customer"
+        <addForeignKeyConstraint baseTableName="bi_customers_contacts" baseColumnNames="customer_id"
+                                 constraintName="bi_customers_contacts_customers_fk" referencedTableName="crm_customer"
                                  referencedColumnNames="id"/>
 
-        <addForeignKeyConstraint baseTableName="bi_contacts_customers" baseColumnNames="contact_id"
-                                 constraintName="bi_contacts_customers_contacts_fk" referencedTableName="com_contact"
+        <addForeignKeyConstraint baseTableName="bi_customers_contacts" baseColumnNames="contact_id"
+                                 constraintName="bi_customers_contacts_contacts_fk" referencedTableName="com_contact"
                                  referencedColumnNames="id"/>
     </changeSet>
 

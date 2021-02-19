@@ -26,190 +26,195 @@ import java.util.stream.Collectors;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.contact.Contact;
-import org.meveo.model.crm.Customer;
 
 public class ContactDto extends AccountDto {
 
-	private static final long serialVersionUID = -7359294810585172609L;
+    private static final long serialVersionUID = -7359294810585172609L;
 
-	private String email;
+    private String email;
 
-	private String assistantName;
+    private String assistantName;
 
-	private String assistantPhone;
+    private String assistantPhone;
 
-	private String position;
+    private String position;
 
-	private String company;
-	
-	private String mobile;
-	
-	private String phone;
-	
-	private String websiteUrl;
-	
-	private String importedFrom;
+    private String company;
 
-	private String importedBy;
-	
-	private String socialIdentifier;
+    private String mobile;
 
-	private Boolean isVip;
+    private String phone;
 
-	private Boolean isProspect;
+    private String websiteUrl;
 
-	private Boolean agreedToUA;
+    private String importedFrom;
 
-	private CommunicationPolicy contactPolicy;
+    private String importedBy;
+
+    private String socialIdentifier;
+
+    private Boolean isVip;
+
+    private Boolean isProspect;
+
+    private Boolean agreedToUA;
+
+    private CommunicationPolicy contactPolicy;
 
 //	private List<Message> messages;
-	
-	private Set<String> tags = new HashSet<String>();
 
-	private List<String> customerCodes;
-	
-	public ContactDto () {
-		
-	}
-	
-	public ContactDto(Contact contact) {
-		super(contact, null);
-		email = contact.getEmail();
-		assistantName = contact.getAssistantName();
-		assistantPhone = contact.getAssistantPhone();
-		position = contact.getPosition();
-		company = contact.getCompany();
-		phone = contact.getPhone();
-		mobile = contact.getMobile();
-		websiteUrl = contact.getWebsiteUrl();
-		importedBy = contact.getImportedBy();
-		importedFrom = contact.getImportedFrom();
-		socialIdentifier = contact.getSocialIdentifier();
-		isVip = contact.isVip();
-		isProspect = contact.isProspect();
-		agreedToUA = contact.isAgreedToUA();
-		tags = contact.getTags();
-		customerCodes = contact.loadCustomers().stream()
-								.map(Customer::getCode)
-								.collect(Collectors.toList());
+    private Set<String> tags = new HashSet<String>();
+
+    private List<CustomerContactDto> customersContact;
+
+    public ContactDto() {
+
+    }
+
+    public ContactDto(Contact contact) {
+        super(contact, null);
+        email = contact.getEmail();
+        assistantName = contact.getAssistantName();
+        assistantPhone = contact.getAssistantPhone();
+        position = contact.getPosition();
+        company = contact.getCompany();
+        phone = contact.getPhone();
+        mobile = contact.getMobile();
+        websiteUrl = contact.getWebsiteUrl();
+        importedBy = contact.getImportedBy();
+        importedFrom = contact.getImportedFrom();
+        socialIdentifier = contact.getSocialIdentifier();
+        isVip = contact.isVip();
+        isProspect = contact.isProspect();
+        agreedToUA = contact.isAgreedToUA();
+        tags = contact.getTags();
+        customersContact = contact.getCustomers().stream()
+                .map(customer -> {
+                    CustomerContactDto customerContactDto = new CustomerContactDto();
+                    customerContactDto.setContactCode(contact.getCode());
+                    customerContactDto.setCustomerCode(customer.getCustomer().getCode());
+                    customerContactDto.setRole(customer.getRole());
+                    return customerContactDto;
+                })
+                .collect(Collectors.toList());
 //		messages = contact.getMessages();
-		
+
 //		addressBook = new AddressBookDto(contact.getAddressBook());
-			
-	}
 
-	public String getEmail() {
-		return email;
-	}
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getAssistantName() {
-		return assistantName;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setAssistantName(String assistantName) {
-		this.assistantName = assistantName;
-	}
+    public String getAssistantName() {
+        return assistantName;
+    }
 
-	public String getAssistantPhone() {
-		return assistantPhone;
-	}
+    public void setAssistantName(String assistantName) {
+        this.assistantName = assistantName;
+    }
 
-	public void setAssistantPhone(String assistantPhone) {
-		this.assistantPhone = assistantPhone;
-	}
+    public String getAssistantPhone() {
+        return assistantPhone;
+    }
 
-	public String getPosition() {
-		return position;
-	}
+    public void setAssistantPhone(String assistantPhone) {
+        this.assistantPhone = assistantPhone;
+    }
 
-	public void setPosition(String position) {
-		this.position = position;
-	}
+    public String getPosition() {
+        return position;
+    }
 
-	
-	public String getCompany() {
-		return company;
-	}
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
-	public void setCompany(String company) {
-		this.company = company;
-	}
 
-	public String getMobile() {
-		return mobile;
-	}
+    public String getCompany() {
+        return company;
+    }
 
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
+    public void setCompany(String company) {
+        this.company = company;
+    }
 
-	public String getPhone() {
-		return phone;
-	}
+    public String getMobile() {
+        return mobile;
+    }
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
-	public String getWebsiteUrl() {
-		return websiteUrl;
-	}
+    public String getPhone() {
+        return phone;
+    }
 
-	public void setWebsiteUrl(String websiteUrl) {
-		this.websiteUrl = websiteUrl;
-	}
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-	public String getImportedFrom() {
-		return importedFrom;
-	}
+    public String getWebsiteUrl() {
+        return websiteUrl;
+    }
 
-	public void setImportedFrom(String importedFrom) {
-		this.importedFrom = importedFrom;
-	}
+    public void setWebsiteUrl(String websiteUrl) {
+        this.websiteUrl = websiteUrl;
+    }
 
-	public String getImportedBy() {
-		return importedBy;
-	}
+    public String getImportedFrom() {
+        return importedFrom;
+    }
 
-	public void setImportedBy(String importedBy) {
-		this.importedBy = importedBy;
-	}
+    public void setImportedFrom(String importedFrom) {
+        this.importedFrom = importedFrom;
+    }
 
-	public Boolean isVip() {
-		return isVip;
-	}
+    public String getImportedBy() {
+        return importedBy;
+    }
 
-	public void setVip(Boolean isVip) {
-		this.isVip = isVip;
-	}
+    public void setImportedBy(String importedBy) {
+        this.importedBy = importedBy;
+    }
 
-	public Boolean isProspect() {
-		return isProspect;
-	}
+    public Boolean isVip() {
+        return isVip;
+    }
 
-	public void setProspect(Boolean isProspect) {
-		this.isProspect = isProspect;
-	}
+    public void setVip(Boolean isVip) {
+        this.isVip = isVip;
+    }
 
-	public Boolean isAgreedToUA() {
-		return agreedToUA;
-	}
+    public Boolean isProspect() {
+        return isProspect;
+    }
 
-	public void setAgreedToUA(Boolean agreedToUA) {
-		this.agreedToUA = agreedToUA;
-	}
+    public void setProspect(Boolean isProspect) {
+        this.isProspect = isProspect;
+    }
 
-	public CommunicationPolicy getContactPolicy() {
-		return contactPolicy;
-	}
+    public Boolean isAgreedToUA() {
+        return agreedToUA;
+    }
 
-	public void setContactPolicy(CommunicationPolicy contactPolicy) {
-		this.contactPolicy = contactPolicy;
-	}
+    public void setAgreedToUA(Boolean agreedToUA) {
+        this.agreedToUA = agreedToUA;
+    }
+
+    public CommunicationPolicy getContactPolicy() {
+        return contactPolicy;
+    }
+
+    public void setContactPolicy(CommunicationPolicy contactPolicy) {
+        this.contactPolicy = contactPolicy;
+    }
 
 //	public List<Message> getMessages() {
 //		return messages;
@@ -219,27 +224,27 @@ public class ContactDto extends AccountDto {
 //		this.messages = messages;
 //	}
 
-	public String getSocialIdentifier() {
-		return socialIdentifier;
-	}
+    public String getSocialIdentifier() {
+        return socialIdentifier;
+    }
 
-	public void setSocialIdentifier(String socialIdentifier) {
-		this.socialIdentifier = socialIdentifier;
-	}
+    public void setSocialIdentifier(String socialIdentifier) {
+        this.socialIdentifier = socialIdentifier;
+    }
 
-	public Set<String> getTags() {
-		return tags;
-	}
+    public Set<String> getTags() {
+        return tags;
+    }
 
-	public void setTags(Set<String> tags) {
-		this.tags = tags;
-	}
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
+    }
 
-	public List<String> getCustomerCodes() {
-		return customerCodes;
-	}
+    public List<CustomerContactDto> getCustomersContact() {
+        return customersContact;
+    }
 
-	public void setCustomerCodes(List<String> customerCodes) {
-		this.customerCodes = customerCodes;
-	}
+    public void setCustomersContact(List<CustomerContactDto> customersContact) {
+        this.customersContact = customersContact;
+    }
 }

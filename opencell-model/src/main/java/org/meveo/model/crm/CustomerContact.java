@@ -1,56 +1,45 @@
 package org.meveo.model.crm;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.communication.contact.Contact;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "bi_contacts_customers", uniqueConstraints = @UniqueConstraint(columnNames = { "id" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "bi_contacts_customers_seq"), })
-public class ContactCustomer {
-
+@Table(name = "bi_customers_contacts")
+@IdClass(CustomerContactId.class)
+public class CustomerContact {
 
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    @Access(AccessType.PROPERTY) // Access is set to property so a call to getId() wont trigger hibernate proxy loading
-    @JsonProperty
-    private Long id;
-
     @ManyToOne
-    @JoinColumn(name ="contact_id")
+    @JoinColumn(name ="contact_id", referencedColumnName = "id")
     private Contact contact;
 
+    @Id
     @ManyToOne
-    @JoinColumn(name ="customer_id")
+    @JoinColumn(name ="customer_id",referencedColumnName = "id")
     private Customer customer;
 
     @Column(name = "role")
     private String role;
 
-    public ContactCustomer() {
+    public CustomerContact() {
     }
 
-    public ContactCustomer(Contact contact, Customer customer) {
+    public CustomerContact(Contact contact, Customer customer, String role) {
         this.contact = contact;
         this.customer = customer;
+        this.role = role;
     }
 
     public Contact getContact() {
@@ -75,13 +64,5 @@ public class ContactCustomer {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 }

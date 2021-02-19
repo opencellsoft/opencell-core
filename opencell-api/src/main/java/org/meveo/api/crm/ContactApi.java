@@ -21,18 +21,18 @@ package org.meveo.api.crm;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.elasticsearch.cluster.ClusterState;
+import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.account.AccountEntityApi;
 import org.meveo.api.dto.crm.ContactDto;
 import org.meveo.api.dto.crm.ContactsDto;
+import org.meveo.api.dto.crm.CustomerContactDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.crm.ContactsResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -135,20 +135,26 @@ public class ContactApi extends AccountEntityApi {
 
         contactService.create(contact);
 
-        if(postData.getCustomerCodes() != null){
-            List<Customer> customers = postData.getCustomerCodes()
-                    .stream()
-                    .map(customerCode -> {
-                        Customer customer = customerService.findByCode(customerCode);
-                        if (customer == null)
-                            throw new EntityDoesNotExistsException(Customer.class, customerCode);
-                        return customer;
-                    }).collect(Collectors.toList());
-            contact.addCustomers(customers);
+        if(postData.getCustomersContact() != null){
+            addCustomers(contact, postData.getCustomersContact());
             contactService.update(contact);
         }
 
         return contact;
+    }
+
+    private void addCustomers(Contact contact, List<CustomerContactDto> customerContacts) {
+        for (CustomerContactDto customerContactCDto: customerContacts) {
+            if(Strings.isEmpty(customerContactCDto.getCustomerCode()))
+                missingParameters.add("customerCode");
+            handleMissingParameters();
+
+            Customer customer = customerService.findByCode(customerContactCDto.getCustomerCode());
+            if (customer == null)
+                throw new EntityDoesNotExistsException(Customer.class, customerContactCDto.getCustomerCode());
+            contact.addCustomer(customer, customerContactCDto.getRole());
+
+        }
     }
 
     public Contact update(ContactDto postData) throws MeveoApiException, BusinessException {
@@ -172,16 +178,8 @@ public class ContactApi extends AccountEntityApi {
         }
 
         dtoToEntity(contact, postData);
-        if(postData.getCustomerCodes() != null){
-            List<Customer> customers = postData.getCustomerCodes()
-                    .stream()
-                    .map(customerCode -> {
-                        Customer customer = customerService.findByCode(customerCode);
-                        if (customer == null)
-                            throw new EntityDoesNotExistsException(Customer.class, customerCode);
-                        return customer;
-                    }).collect(Collectors.toList());
-            contact.addCustomers(customers);
+        if(postData.getCustomersContact() != null){
+            addCustomers(contact, postData.getCustomersContact());
         }
 
         contact = contactService.update(contact);
@@ -424,18 +422,11 @@ public class ContactApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(Contact.class, code, "code");
     }
 
-    public ContactDto addCustomers(String contactCode, List<String> customersCode){
+    public ContactDto addCustomers(String contactCode, List<CustomerContactDto> customerContactDtos){
         Contact contact = contactService.findByCode(contactCode);
         if(contact == null)
             throw new EntityDoesNotExistsException(Contact.class, contactCode);
-        List<Customer> customers = customersCode.stream()
-                .map(code -> {
-                    Customer customer = customerService.findByCode(code);
-                    if (customer == null)
-                        throw new EntityDoesNotExistsException(Customer.class, code);
-                    return customer;
-                }).collect(Collectors.toList());
-        contact.addCustomers(customers);
+        addCustomers(contact, customerContactDtos);
         contact = contactService.update(contact);
         return new ContactDto(contact);
     }
