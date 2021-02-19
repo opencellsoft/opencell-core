@@ -3720,6 +3720,8 @@ END $$;]]>
             <column name="role" type="varchar(2000)"/>
         </createTable>
 
+        <addPrimaryKey columnNames="customer_id, contact_id" constraintName="bi_customers_contacts_pkey" tableName="bi_customers_contacts" />
+
         <addForeignKeyConstraint baseTableName="bi_customers_contacts" baseColumnNames="customer_id"
                                  constraintName="bi_customers_contacts_customers_fk" referencedTableName="crm_customer"
                                  referencedColumnNames="id"/>
