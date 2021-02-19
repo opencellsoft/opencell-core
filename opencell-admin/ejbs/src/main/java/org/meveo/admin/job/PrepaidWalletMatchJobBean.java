@@ -63,6 +63,7 @@ public class PrepaidWalletMatchJobBean {
 
             log.debug("wallets to match {}", wallets.size());
             result.setNbItemsToProcess(wallets.size());
+            jobExecutionService.initCounterElementsRemaining(result, wallets.size());
             int i = 0;
             for (WalletInstance wallet : wallets) {
                 i++;
@@ -72,11 +73,12 @@ public class PrepaidWalletMatchJobBean {
                 log.debug("match wallet={}", wallet.getId());
                 try {
                     oneShotChargeInstanceService.matchPrepaidWallet(wallet, matchingChargeCode);
-                    result.registerSucces();
+                    jobExecutionService.registerSucces(result);
                 } catch (Exception e) {
                     log.error("Failed to match prepaid wallet {}", wallet.getId(), e);
-                    result.registerError(e.getMessage());
+                    jobExecutionService.registerError(result, e.getMessage());
                 }
+                jobExecutionService.decCounterElementsRemaining(result);
             }
         } catch (Exception e) {
             log.error("Failed to match prepaid wallet ", e);

@@ -88,8 +88,8 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
                 if (nbItemsToProcess > 0) {
                     result.addNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
                     long nbSuccess = counterInstanceService.deleteCounterPeriods(date);
-                    result.addNbItemsCorrectlyProcessed(nbSuccess);
-                    result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
+                    jobExecutionService.addNbItemsCorrectlyProcessed(result, nbSuccess);
+                    jobExecutionService.addNbItemsProcessedWithError(result, nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {
                         result.addReport("Purged " + nbSuccess + " counter periods");
                     }
@@ -105,8 +105,8 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
                 if (nbItemsToProcess > 0) {
                     result.addNbItemsToProcess(nbItemsToProcess);
                     long nbSuccess = notificationHistoryService.deleteHistory(notificationCode, date);
-                    result.addNbItemsCorrectlyProcessed(nbSuccess);
-                    result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
+                    jobExecutionService.addNbItemsCorrectlyProcessed(result, nbSuccess);
+                    jobExecutionService.addNbItemsProcessedWithError(result, nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {
                         result.addReport("Purged " + nbSuccess + (notificationCode != null ? " " + notificationCode : "") + " notification history records");
                     }
@@ -121,8 +121,8 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
                 if (nbItemsToProcess > 0) {
                     result.addNbItemsToProcess(nbItemsToProcess);
                     long nbSuccess = inboundRequestService.deleteRequests(date);
-                    result.addNbItemsCorrectlyProcessed(nbSuccess);
-                    result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
+                    jobExecutionService.addNbItemsCorrectlyProcessed(result, nbSuccess);
+                    jobExecutionService.addNbItemsProcessedWithError(result, nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {
                         result.addReport("Purged " + nbSuccess + " inbound request records");
                     }
@@ -131,7 +131,7 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
 
         } catch (Exception e) {
             log.error("Failed to purge database", e);
-            result.registerError(e.getClass().getName() + " " + e.getMessage());
+            jobExecutionService.registerError(result, e.getClass().getName() + " " + e.getMessage());
         }
     }
 }

@@ -21,7 +21,9 @@ public class GroupedAttributeRsImpl  extends BaseRs implements GroupedAttributes
 	public Response create(GroupedAttributeDto groupedAttributeDto) { 
 		  GetGroupedAttributesResponse result = new GetGroupedAttributesResponse();
 	        try {
-	        	result.setGroupedAttributeDto(groupedServiceApi.createGroupedAttribute(groupedAttributeDto));
+	        	var groupeAttribute = groupedServiceApi.createGroupedAttribute(groupedAttributeDto);
+	        	result.setGroupedAttributeDto(groupeAttribute);
+	        	result.getActionStatus().setEntityId(groupeAttribute.getId());
 	        	return Response.ok(result).build();
 	        } catch (Exception e) {
 	        	return errorResponse(new MeveoApiException(e), result.getActionStatus());

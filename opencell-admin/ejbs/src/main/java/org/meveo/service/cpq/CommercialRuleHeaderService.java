@@ -102,7 +102,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 			throw new EntityDoesNotExistsException(GroupedAttributes.class,groupedAttributeCode);
 		}
 		Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getGroupedAttributeRules")
-				.setParameter("groupedAttributeCode", groupedAttributeCode).setParameter("offerTemplateCode", productCode);
+				.setParameter("groupedAttributeCode", groupedAttributeCode).setParameter("productCode", productCode);
 		List<CommercialRuleHeader> commercialRules=(List<CommercialRuleHeader>)query.getResultList();
 		return commercialRules;
 	}

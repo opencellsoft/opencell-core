@@ -71,7 +71,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_billing_run_seq") })
 @NamedQueries({
-        @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'INVOICES_GENERRATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC') order by br.id asc"),
+        @NamedQuery(name = "BillingRun.getForInvoicing", query = "SELECT br FROM BillingRun br where br.status in ('NEW', 'PREVALIDATED', 'INVOICES_GENERATED', 'POSTVALIDATED') or (br.status='POSTINVOICED' and br.processType='FULL_AUTOMATIC') order by br.id asc"),
         @NamedQuery(name = "BillingRun.findByIdAndBCCode", query = "from BillingRun br join fetch br.billingCycle bc where lower(concat(br.id,'/',bc.code)) like :code ") })
 
 public class BillingRun extends AuditableEntity implements ICustomFieldEntity, IReferenceEntity {
@@ -305,7 +305,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Enumerated(EnumType.STRING)
     @Column(name = "reference_date")
     private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "skip_validation_script")
     private boolean skipValidationScript = false;
@@ -321,34 +321,43 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      */
     @Column(name = "compute_dates_validation")
     private Boolean computeDatesAtValidation;
-    
+
     /**
      * The next BillingRun where rejected/suspect invoices may be moved.
      */
     @OneToOne
     @JoinColumn(name = "next_billing_run_id")
     private BillingRun nextBillingRun;
-    
+
     /**
      * To indicates that invoice minimum job has already been run on the BR.
      */
     @Type(type = "numeric_boolean")
     @Column(name = "minimum_applied")
     private Boolean minimumApplied;
-    
+
     /**
      * To indicates that invoicing threshold job has already been run on the BR.
      */
     @Type(type = "numeric_boolean")
     @Column(name = "threshold_checked")
     private Boolean thresholdChecked;
-    
+
     /**
      * To indicates that that invoice discounts job has already been run on the BR.
      */
     @Type(type = "numeric_boolean")
     @Column(name = "discount_applied")
     private Boolean discountApplied;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "reject_auto_action")
+    private BillingRunAutomaticActionEnum rejectAutoAction = BillingRunAutomaticActionEnum.MOVE;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "suspect_auto_action")
+    private BillingRunAutomaticActionEnum suspectAutoAction = BillingRunAutomaticActionEnum.MOVE;
+
 
     public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -738,14 +747,6 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
         this.referenceDate = referenceDate;
     }
 
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "reject_auto_action")
-    private BillingRunAutomaticActionEnum rejectAutoAction;
-    
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "suspect_auto_action")
-    private BillingRunAutomaticActionEnum suspectAutoAction;
-    
     public BillingRunAutomaticActionEnum getRejectAutoAction() {
 		return rejectAutoAction;
 	}

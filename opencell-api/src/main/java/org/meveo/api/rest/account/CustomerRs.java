@@ -90,13 +90,15 @@ public interface CustomerRs extends IBaseRs {
      *
      * @param customerCode The customer's code
      * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @param includeCustomerAccounts True to include customer accounts
      * @return The customer's data
      */
     @GET
     @Path("/")
     @Operation(summary = "Search for a customer with a given code",
     tags = { "Customer management" })
-    GetCustomerResponseDto find(@QueryParam("customerCode") String customerCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+    GetCustomerResponseDto find(@QueryParam("customerCode") String customerCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
+                                @QueryParam("includeCustomerAccounts") boolean includeCustomerAccounts);
 
     /**
      * Remove customer with a given code

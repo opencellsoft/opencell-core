@@ -66,7 +66,7 @@ public class SequenceDto extends BaseEntityDto {
     public SequenceDto(InvoiceSequence sequence, String prefixEl) {
         if (sequence != null) {
             this.sequenceSize = sequence.getSequenceSize();
-            this.currentInvoiceNb = sequence.getCurrentInvoiceNb();
+            this.currentInvoiceNb = sequence.getCurrentNumber();
             this.prefixEL = prefixEl;
         }
     }
@@ -80,7 +80,7 @@ public class SequenceDto extends BaseEntityDto {
     public InvoiceSequence fromDto() {
     	InvoiceSequence sequence = new InvoiceSequence();
         sequence.setSequenceSize(getSequenceSize());
-        sequence.setCurrentInvoiceNb(getCurrentInvoiceNb());
+        sequence.setCurrentNumber(getCurrentInvoiceNb());
         return sequence;
     }
 
@@ -96,7 +96,7 @@ public class SequenceDto extends BaseEntityDto {
             sequence.setSequenceSize(getSequenceSize());
         }
         if (getCurrentInvoiceNb() != null) {
-            sequence.setCurrentInvoiceNb(getCurrentInvoiceNb());
+            sequence.setCurrentNumber(getCurrentInvoiceNb());
         }
         return sequence;
     }

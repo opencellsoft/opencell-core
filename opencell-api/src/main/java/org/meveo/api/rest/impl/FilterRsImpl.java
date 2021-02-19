@@ -32,10 +32,9 @@ import org.meveo.api.rest.FilterRs;
 
 /**
  * @author Tyshan Shi
- * 
  **/
 @RequestScoped
-@Interceptors({ WsRestApiInterceptor.class })
+@Interceptors({WsRestApiInterceptor.class})
 public class FilterRsImpl extends BaseRs implements FilterRs {
     @Inject
     private FilterApi filterApi;
@@ -91,4 +90,32 @@ public class FilterRsImpl extends BaseRs implements FilterRs {
 
         return result;
     }
+
+    @Override
+    public ActionStatus update(FilterDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            filterApi.update(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus create(FilterDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            filterApi.create(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+
 }

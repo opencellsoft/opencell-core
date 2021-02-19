@@ -57,6 +57,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.job.JobExecutionService;
 
 /**
  * The Class DDRequestLOTService.
@@ -87,6 +88,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	
 	@Inject
 	private PaymentGatewayService paymentGatewayService;
+
+	@Inject
+    protected JobExecutionService jobExecutionService;
 
 	/**
 	 * Creates the DDRequest lot.
@@ -124,7 +128,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
 			ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
-			result.registerError(ddrequestLotOp.getId(), e.getMessage());
+			jobExecutionService.registerError(result, ddrequestLotOp.getId(), e.getMessage());
 			result.addReport("ddrequestLotOp id : " + ddrequestLotOp.getId() + " RejectReason : " + e.getMessage());
 			return null;
 		}
@@ -161,7 +165,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 
 					} catch (ExecutionException e) {
 						Throwable cause = e.getCause();
-						result.registerError(cause.getMessage());
+						jobExecutionService.registerError(result, cause.getMessage());
 						result.addReport(cause.getMessage());
 						log.error("Failed to execute async method", cause);
 					}
@@ -216,7 +220,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
 			ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
-			result.registerError(ddrequestLotOp.getId(), e.getMessage());
+			jobExecutionService.registerError(result, ddrequestLotOp.getId(), e.getMessage());
 			result.addReport("ddrequestLotOp id : " + ddrequestLotOp.getId() + " RejectReason : " + e.getMessage());
 
 		}
@@ -265,7 +269,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			} catch (ExecutionException e) {
 				Throwable cause = e.getCause();
 				if (result != null) {
-					result.registerError(cause.getMessage());
+					jobExecutionService.registerError(result, cause.getMessage());
 					result.addReport(cause.getMessage());
 				}
 				log.error("Failed to execute async method", cause);

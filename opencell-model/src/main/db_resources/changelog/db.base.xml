@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+
+    <property name="type.blob" value="blob" dbms="postgresql" />
+    <property name="type.blob" value="longblob" dbms="mysql" />
+    <property name="type.boolean" value="INT4" dbms="postgresql" />
+    <property name="type.boolean" value="integer" dbms="mysql" />
+    <property name="type.byte" value="smallint" dbms="postgresql" />
+    <property name="type.byte" value="tinyint(1)" dbms="mysql" />
+    <property name="type.longText" value="text" dbms="postgresql" />
+    <property name="type.longText" value="longtext" dbms="mysql" />
+    <property name="type.text" value="text" dbms="postgresql" />
+    <property name="type.text" value="text" dbms="mysql" />
+    <property name="type.json" value="text" dbms="postgresql" /> <!-- could also be json, but mysql allows text only and as columnDefinition has to be the same, need to use text instead see #2751 -->
+    <property name="type.json" value="text" dbms="mysql" />
+    <property name="cast.long" value="bigint" dbms="postgresql" />
+    <property name="cast.long" value="UNSIGNED " dbms="mysql" />
+    <property name="id.auto" value="false" dbms="postgresql" />
+    <property name="id.auto" value="true" dbms="mysql" />
+    
+    <property name="db.schema.adapted" value="${db.schema}." dbms="postgresql"/>
+    <property name="db.schema.adapted" value="" dbms="mysql"/>
+    
+    <include file="rebuild/structure.xml" relativeToChangelogFile="true" />
+    <include file="rebuild/data.xml" relativeToChangelogFile="true" />
+    <include file="current/structure.xml" relativeToChangelogFile="true" />
+    <include file="current/data.xml" relativeToChangelogFile="true" />
+
+</databaseChangeLog>

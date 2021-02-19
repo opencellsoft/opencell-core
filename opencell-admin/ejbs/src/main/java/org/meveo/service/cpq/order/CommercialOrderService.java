@@ -157,8 +157,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 		AttributeInstance attributeInstance = null;
 		for (OrderAttribute orderAttribute : orderProduct.getOrderAttributes()) {
-				attributeInstance = new AttributeInstance(orderAttribute);
-				attributeInstance.updateAudit(currentUser);
+				attributeInstance = new AttributeInstance(orderAttribute, currentUser);
 				attributeInstance.setServiceInstance(serviceInstance);
 				attributeInstance.setSubscription(subscription);
 				serviceInstance.addAttributeInstance(attributeInstance);

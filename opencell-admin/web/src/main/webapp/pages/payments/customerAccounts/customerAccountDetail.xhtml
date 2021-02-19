@@ -130,20 +130,20 @@
                                     <p:fieldset legend="#{messages['customerAccount.minimumToInvoice']}" styleClass="clearLeft">
 
                                         <hftl:formField label="#{messages['account.minimumLabelEl']}" field="minimumLabelEl" id="minimumLabelEl" textArea="true" rows="1"
-                                            maxlength="2000" componentWidth="50" newLine="true" />
+                                            maxlength="2000" componentWidth="50" newLine="true" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                         <hftl:formField label="#{messages[appProvider.entreprise?'account.minimumAmountWithoutTaxEl':'account.minimumAmountWithTaxEl']}"
-                                            field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                                            field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                         <hftl:formField label="#{messages['account.minimumLabelElSpark']}" field="minimumLabelElSpark" id="minimumLabelElSpark" textArea="true"
-                                            rows="1" maxlength="2000" componentWidth="50" newLine="true" rendered="#{paramBean.sparkEnabled}" />
+                                            rows="1" maxlength="2000" componentWidth="50" newLine="true" rendered="#{paramBean.sparkEnabled and paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                         <hftl:formField
                                             label="#{messages[appProvider.entreprise?'account.minimumAmountWithoutTaxElSpark':'account.minimumAmountWithTaxElSpark']}"
                                             field="minimumAmountElSpark" id="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50"
-                                            rendered="#{paramBean.sparkEnabled}" />
+                                            rendered="#{paramBean.sparkEnabled and paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                         <hftl:formField id="minimumTargetAccount" label="#{messages['customerAccount.minimumTargetAccount']}" field="minimumTargetAccount"
-                                            valueLabelField="code" popup="true" popupId="billingAccountPopup" allowEdit="true" componentWidth="20" />
+                                            valueLabelField="code" popup="true" popupId="billingAccountPopup" allowEdit="true" componentWidth="20" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                         <hftl:formField label="#{messages['account.minimumChargeTemplate']}" id="chargeTemplateId" field="minimumChargeTemplate"
                                             valueLabelField="code" listBean="#{oneShotChargeTemplateBean}" listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}"
-                                            componentWidth="20" />
+                                            componentWidth="20" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                     </p:fieldset>
                                     
                                     

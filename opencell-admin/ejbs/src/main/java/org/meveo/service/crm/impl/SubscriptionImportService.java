@@ -20,6 +20,7 @@ package org.meveo.service.crm.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -145,10 +146,10 @@ public class SubscriptionImportService extends ImportService {
                     seller = sellerService.findByCode(jaxbSubscription.getSellerCode());
                     sellerMap.put(new CacheKeyStr(currentUser.getProviderCode(), jaxbSubscription.getSellerCode()), seller);
                 } catch (Exception e) {
-                    log.error("failed to find userAccount", e);
+                    log.error("failed to find seller", e);
                 }
             }
-            checkSubscription.setUserAccount(userAccount);
+            checkSubscription.setSeller(seller);
         }        
         
         

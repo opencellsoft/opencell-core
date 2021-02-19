@@ -111,7 +111,7 @@ public class JobExecutionResultDto extends BaseEntityDto implements IEntityDto {
         this.nbItemsProcessedWithError = jobExecutionResult.getNbItemsProcessedWithError();
         this.done = jobExecutionResult.isDone();
         this.report = jobExecutionResult.getReport();
-        jobInstanceCode = jobExecutionResult.getJobInstance().getCode();
+        this.jobInstanceCode = jobExecutionResult.getJobInstance().getCode();
     }
 
     /**

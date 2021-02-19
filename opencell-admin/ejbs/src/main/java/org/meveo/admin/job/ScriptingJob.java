@@ -29,6 +29,7 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -75,12 +76,17 @@ public class ScriptingJob extends Job {
             context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
             scriptingJobBean.init(result, scriptCode, context);
-            scriptingJobBean.execute(result, scriptCode, context);
+            String txType = (String) this.getParamOrCFValue(jobInstance, "ScriptingJob_TransactionType", "REQUIRES_NEW");
+            if (StringUtils.isBlank(txType) || "REQUIRES_NEW".equals(txType)) {
+                scriptingJobBean.execute(result, scriptCode, context);
+            } else {
+                scriptingJobBean.executeWithoutTx(result, scriptCode, context);
+            }
             scriptingJobBean.complete(result, scriptCode, context);
 
         } catch (Exception e) {
             log.error("Exception on init/execute script", e);
-            result.registerError("Error in " + scriptCode + " execution :" + e.getMessage());
+            jobExecutionService.registerError(result, "Error in " + scriptCode + " execution :" + e.getMessage());
         }
     }
 
@@ -116,6 +122,21 @@ public class ScriptingJob extends Job {
         variablesCF.setMapKeyType(CustomFieldMapKeyEnum.STRING);
         variablesCF.setGuiPosition("tab:Configuration:0;field:1");
         result.put("ScriptingJob_variables", variablesCF);
+
+        CustomFieldTemplate transactionTypeCF = new CustomFieldTemplate();
+        transactionTypeCF.setCode("ScriptingJob_TransactionType");
+        transactionTypeCF.setAppliesTo("JobInstance_ScriptingJob");
+        transactionTypeCF.setActive(true);
+        transactionTypeCF.setAllowEdit(true);
+        transactionTypeCF.setDescription("Transaction type");
+        transactionTypeCF.setFieldType(CustomFieldTypeEnum.LIST);
+        Map<String, String> listValues = new HashMap<>();
+        listValues.put("REQUIRES_NEW", "REQUIRES_NEW");
+        listValues.put("NEVER", "NEVER");
+        transactionTypeCF.setListValues(listValues);
+        transactionTypeCF.setDefaultValue("REQUIRES_NEW");
+        transactionTypeCF.setValueRequired(false);
+        result.put("ScriptingJob_TransactionType", transactionTypeCF);
 
         return result;
     }

@@ -30,6 +30,7 @@ import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
+@Deprecated
 public class MeasurableQuantityService extends BusinessService<MeasurableQuantity> {
 
     public Object[] executeMeasurableQuantitySQL(MeasurableQuantity mq) {

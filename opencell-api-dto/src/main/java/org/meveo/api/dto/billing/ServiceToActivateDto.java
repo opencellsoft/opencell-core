@@ -106,6 +106,16 @@ public class ServiceToActivateDto implements Serializable {
      * Corresponding to minimum one shot charge template code.
      */
     private String minimumChargeTemplate;
+    
+    /**
+     *  The subscribed till date. 
+     */
+    private Date subscribedTillDate;
+    
+    /**
+     * The renewal service.
+     */
+    private SubscriptionRenewalDto serviceRenewal;
 
     /**
      * Gets the code.
@@ -380,6 +390,42 @@ public class ServiceToActivateDto implements Serializable {
 
     public void setMinimumChargeTemplate(String minimumChargeTemplate) {
         this.minimumChargeTemplate = minimumChargeTemplate;
+    }
+    
+    /**
+     * Gets the subscribed till date.
+     *
+     * @return the subscribedTillDate
+     */
+    public Date getSubscribedTillDate() {
+        return subscribedTillDate;
+    }
+
+    /**
+     * Sets the subscribed till date.
+     *
+     * @param subscribedTillDate the new subscribedTillDate
+     */
+    public void setSubscribedTillDate(Date subscribedTillDate) {
+        this.subscribedTillDate = subscribedTillDate;
+    }
+    
+    /**
+     * Gets the service renewal
+     *
+     * @return the service renewal
+     */
+    public SubscriptionRenewalDto getServiceRenewal() {
+        return serviceRenewal;
+    }
+
+    /**
+     * Sets the service renewal.
+     *
+     * @param serviceRenewal the new service renewal
+     */
+    public void setServiceRenewal(SubscriptionRenewalDto serviceRenewal) {
+        this.serviceRenewal = serviceRenewal;
     }
 
     /* (non-Javadoc)

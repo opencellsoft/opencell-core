@@ -142,7 +142,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
             result.setNbItemsCorrectlyProcessed(nbItems);
         } catch (Exception e) {
             log.error("Failed to run export EDR/WO/RT job", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
             result.addReport(e.getMessage());
         }
     }

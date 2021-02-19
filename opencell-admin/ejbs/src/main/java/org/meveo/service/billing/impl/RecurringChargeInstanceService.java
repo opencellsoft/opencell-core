@@ -103,15 +103,15 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         return chargeInstance;
     }
 
-    public List<Long> findIdsByStatusAndSubscriptionCode(InstanceStatusEnum status, Date maxChargeDate, String subscriptionCode) {
+    public List<Long> findIdsByStatusAndSubscriptionId(InstanceStatusEnum status, Date maxChargeDate, Long subscriptionId) {
 
         QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
         qb.addCriterionEnum("c.status", status);
         qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate, false, false);
-        qb.addCriterion("c.subscription.code", "=", subscriptionCode, true);
+        qb.addValueIsEqualToField("c.subscription.id", subscriptionId, false,  false);
 
         List<Long> ids = qb.getIdQuery(getEntityManager()).getResultList();
-        log.trace("Found recurring charges by status {} and subscriptionCode {} . Result size found={}.", status, subscriptionCode, (ids != null ? ids.size() : "NULL"));
+        log.trace("Found recurring charges by status {} and subscriptionId {} . Result size found={}.", status, subscriptionId, (ids != null ? ids.size() : "NULL"));
 
         return ids;
     }
@@ -173,7 +173,8 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             }
         }
 
-        log.debug("create chargeInstance for charge {}", chargeCode);
+        log.debug("Instanciate a recurring charge for code {} on subscription {}", chargeCode, serviceInstance.getSubscription().getCode());
+
         RecurringChargeInstance chargeInstance = new RecurringChargeInstance(null, null, recurringChargeTemplate, serviceInstance, InstanceStatusEnum.INACTIVE, recurringChargeTemplate.getCalendar(),
             recurringChargeTemplate.getApplyInAdvance());
 
@@ -183,19 +184,17 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         List<WalletTemplate> walletTemplates = recChTmplServ.getWalletTemplates();
 
         if (walletTemplates != null && walletTemplates.size() > 0) {
-            log.debug("associate {} walletsInstance", walletTemplates.size());
             for (WalletTemplate walletTemplate : walletTemplates) {
                 if (walletTemplate == null) {
-                    log.debug("walletTemplate is null, we continue");
                     continue;
                 }
                 if (walletTemplate.getWalletType() == BillingWalletTypeEnum.PREPAID) {
-                    log.debug("one walletTemplate is prepaid, we set the chargeInstance as being prepaid");
+                    // One walletTemplate is prepaid, we set the chargeInstance as being prepaid
                     chargeInstance.setPrepaid(true);
                 }
 
                 WalletInstance walletInstance = walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(), walletTemplate, isVirtual);
-                log.debug("add the wallet instance {} to the chargeInstance {}", walletInstance.getId(), chargeInstance.getId());
+                log.debug("Added the wallet instance {} to the chargeInstance {}", walletInstance.getId(), chargeInstance.getId());
                 chargeInstance.getWalletInstances().add(walletInstance);
             }
         } else {
@@ -209,16 +208,13 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         if ((serviceChargeTemplateRecurring.getAccumulatorCounterTemplates() != null && !serviceChargeTemplateRecurring.getAccumulatorCounterTemplates().isEmpty())
                 || serviceChargeTemplateRecurring.getCounterTemplate() != null) {
-            log.debug("Usage charge has {} accumulator counter templates", serviceChargeTemplateRecurring.getAccumulatorCounterTemplates().size());
             for (CounterTemplate counterTemplate : serviceChargeTemplateRecurring.getAccumulatorCounterTemplates()) {
-                log.debug("Accumulator counter template {}", counterTemplate);
                 CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, counterTemplate, isVirtual);
-                log.debug("Accumulator counter instance {} will be add to charge instance {}", counterInstance, chargeInstance);
+                log.debug("Accumulator counter instance {} will be added to charge instance {}", counterInstance, chargeInstance);
                 chargeInstance.addCounterInstance(counterInstance);
             }
-            log.debug("Counter template {}", serviceChargeTemplateRecurring.getCounterTemplate());
             CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, serviceChargeTemplateRecurring.getCounterTemplate(), isVirtual);
-            log.debug("Counter instance {} will be add to charge instance {}", counterInstance, chargeInstance);
+            log.debug("Counter instance {} will be added to charge instance {}", counterInstance, chargeInstance);
             chargeInstance.setCounter(counterInstance);
             if (!isVirtual) {
                 update(chargeInstance);

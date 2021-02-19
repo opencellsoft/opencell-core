@@ -28,6 +28,7 @@ import org.meveo.api.UserApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.UsersDto;
+import org.meveo.api.dto.response.GetCurrentUserResponse;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -108,7 +109,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
 
         return result;
     }
-    
+
     public UsersDto listGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
 
         UsersDto result = new UsersDto();
@@ -135,7 +136,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
 
         return result;
     }
-    
+
     @Override
     public ActionStatus createExternalUser(UserDto postData) {
         ActionStatus result = new ActionStatus();
@@ -174,5 +175,9 @@ public class UserRsImpl extends BaseRs implements UserRs {
 
         return result;
     }
-    
+
+    @Override
+    public GetCurrentUserResponse getCurrentUser() {
+        return new GetCurrentUserResponse(userApi.getCurrentUser());
+    }
 }

@@ -21,7 +21,7 @@
                         valueIdField="chargeTemplate.id" />
                     <hftl:column label="#{messages['chargeApplication.status']}" field="status.label" width="7%"  isMessage="true" />
                     <hftl:column label="#{messages['chargeInstance.chargeDate.oneShot']}" field="chargeDate" isDate="true" width="12%" />
-                    <hftl:column label="#{messages['serviceInstance.quantity']}" field="quantity" />
+                    <hftl:column label="#{messages['serviceInstance.quantity']}" field="quantity" converterParam="4digits" />
                     <hftl:column label="#{messages['oneShotChargeInstance.amountWithoutTaxShort']}" field="amountWithoutTax" isMessage="false" rendered="#{appProvider.entreprise}" />
                     <p:column headerText="#{messages['oneShotChargeInstance.amountWithTaxShort']}" rendered="#{!appProvider.entreprise}">
                         <h:outputText value="#{entity.amountWithTax}" converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />

@@ -292,9 +292,21 @@
 
     <profiles>
         <profile>
+            <id>base</id>
+            <properties>
+                <liquibase.changeLogFile>src/main/db_resources/changelog/db.base.xml</liquibase.changeLogFile>
+            </properties>
+        </profile>
+        <profile>
             <id>rebuild</id>
             <properties>
                 <liquibase.changeLogFile>src/main/db_resources/changelog/db.rebuild.xml</liquibase.changeLogFile>
+            </properties>
+        </profile>
+        <profile>
+            <id>dunning</id>
+            <properties>
+                <liquibase.changeLogFile>src/main/db_resources/changelog/db.dunning.xml</liquibase.changeLogFile>
             </properties>
         </profile>
 

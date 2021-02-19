@@ -18,9 +18,23 @@
 
 package org.meveo.api.generic.wf;
 
+import static java.util.Optional.ofNullable;
+import static org.meveo.api.dto.ActionStatusEnum.SUCCESS;
+import static org.meveo.api.MeveoApiErrorCodeEnum.CONDITION_FALSE;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
+
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.dto.generic.wf.GWFTransitionDto;
 import org.meveo.api.dto.generic.wf.GenericWorkflowDto;
@@ -40,18 +54,13 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.generic.wf.GWFTransition;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
+import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.generic.wf.GWFTransitionService;
 import org.meveo.service.generic.wf.GenericWorkflowService;
 import org.meveo.service.generic.wf.WFStatusService;
 import org.meveo.service.generic.wf.WorkflowInstanceHistoryService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * The Class GenericWorkflowApi
@@ -100,13 +109,13 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         
         FilterDto filterDto = genericWorkflowDto.getFilter();
         if (filterDto != null && filterDto.getCode() != null) {
-            Filter filter = filterService.findByCode(filterDto.getCode());
+            Filter filter = (Filter) Hibernate.unproxy(filterService.findByCode(filterDto.getCode()));
             if (filter == null) {
                 filter = filterFromDto(genericWorkflowDto.getFilter());
                 filterService.create(filter);
-                genericWorkflow.setFilter(filterService.findByCode(filterDto.getCode()));
+                genericWorkflow.setFilter(filter);
             } else {
-                filter = filterFromDto(genericWorkflowDto.getFilter());
+                filter = filterFromDto(genericWorkflowDto.getFilter(), filter);
                 genericWorkflow.setFilter(filterService.update(filter));
             }
         }
@@ -120,11 +129,9 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         }
 
         if (genericWorkflowDto.getTransitions() != null && !genericWorkflowDto.getTransitions().isEmpty()) {
-            int priority = 1;
-            for (GWFTransitionDto wfTransitionDto : genericWorkflowDto.getTransitions()) {
-                wfTransitionDto.setPriority(priority);
+           
+            for (GWFTransitionDto wfTransitionDto : genericWorkflowDto.getTransitions()) {              
                 gwfTransitionApi.create(genericWorkflow, wfTransitionDto);
-                priority++;
             }
         }
 
@@ -160,13 +167,13 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         
         FilterDto filterDto = genericWorkflowDto.getFilter();
         if (filterDto != null && filterDto.getCode() != null) {
-            Filter filter = filterService.findByCode(filterDto.getCode());
+            Filter filter = (Filter) Hibernate.unproxy(filterService.findByCode(filterDto.getCode()));
             if (filter == null) {
                 filter = filterFromDto(genericWorkflowDto.getFilter());
                 filterService.create(filter);
-                genericWorkflow.setFilter(filterService.findByCode(filterDto.getCode()));
+                genericWorkflow.setFilter(filter);
             } else {
-                filter = filterFromDto(genericWorkflowDto.getFilter());
+                filter = filterFromDto(genericWorkflowDto.getFilter(), filter);
                 genericWorkflow.setFilter(filterService.update(filter));
             }
         }
@@ -200,13 +207,9 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
 
         genericWorkflow.getTransitions().removeAll(gwfTransitionsToRemove);
 
-        if (genericWorkflowDto.getTransitions() != null && !genericWorkflowDto.getTransitions().isEmpty()) {
-            int priority = 1;
-            for (GWFTransitionDto gwfTransitionDto : genericWorkflowDto.getTransitions()) {
-                gwfTransitionDto.setPriority(priority);
-                gwfTransitionApi.createOrUpdate(genericWorkflow, gwfTransitionDto);
-                priority++;
-
+        if (genericWorkflowDto.getTransitions() != null && !genericWorkflowDto.getTransitions().isEmpty()) {           
+            for (GWFTransitionDto gwfTransitionDto : genericWorkflowDto.getTransitions()) {                
+                gwfTransitionApi.createOrUpdate(genericWorkflow, gwfTransitionDto);               
             }
         }
 
@@ -276,7 +279,22 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
         filter.setCode(filterDto.getCode());
         filter.setDescription(filterDto.getDescription());
         filter.setInputXml(filterDto.getInputXml());
-        filter.setShared(filterDto.getShared());
+        if(filterDto.getShared() != null) {
+            filter.setShared(filterDto.getShared());
+        }
+        filter.setPollingQuery(filterDto.getPollingQuery());
+        return filter;
+    }
+    
+    private Filter filterFromDto(FilterDto filterDto, Filter filter) {
+        if (filterDto == null) {
+            return filter;
+        }
+        filter.setDescription(filterDto.getDescription());
+        filter.setInputXml(filterDto.getInputXml());
+        if(filterDto.getShared() != null) {
+            filter.setShared(filterDto.getShared());
+        }
         filter.setPollingQuery(filterDto.getPollingQuery());
         return filter;
     }
@@ -393,5 +411,39 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
             }
         }
         return result;
+    }
+
+    public ActionStatus executeTransition(String baseEntityName, String entityInstanceCode, String workflowCode, String transitionUUID,
+                                          boolean ignoreConditionEL) throws BusinessException, MeveoApiException {
+        if (StringUtils.isBlank(baseEntityName)) {
+            missingParameters.add("baseEntityName");
+            handleMissingParameters();
+        }
+        if (StringUtils.isBlank(entityInstanceCode)) {
+            missingParameters.add("entityInstanceCode");
+            handleMissingParameters();
+        }
+        GenericWorkflow genericWorkflow = ofNullable(genericWorkflowService.findByCode(workflowCode))
+                .orElseThrow(() -> new EntityDoesNotExistsException(GenericWorkflow.class, workflowCode));
+        BusinessEntity businessEntity = ofNullable(businessEntityFrom(baseEntityName, entityInstanceCode ))
+                .orElseThrow(() -> new EntityDoesNotExistsException(BaseEntity.class, entityInstanceCode ));
+        GWFTransition transition =  ofNullable(gwfTransitionService.findWFTransitionByUUID(transitionUUID))
+                .orElseThrow(() -> new EntityDoesNotExistsException(GWFTransition.class, transitionUUID));
+        WorkflowInstance result = genericWorkflowService.executeTransition(transition, businessEntity, genericWorkflow, ignoreConditionEL);
+        if (result == null) {
+            throw new MeveoApiException(CONDITION_FALSE, "Transition not executed: condition is false");
+        }
+        return new ActionStatus(SUCCESS, "Transition executed successfully");
+    }
+
+    private BusinessEntity businessEntityFrom(String baseEntityName, String entityInstanceCode) {
+        Class<BusinessEntity> clazz;
+        try {
+            clazz = (Class<BusinessEntity>) Class.forName(baseEntityName);
+        } catch (Exception e) {
+            throw new MeveoApiException("Can not find class for baseEntityName");
+        }
+        businessEntityService.setEntityClass(clazz);
+        return businessEntityService.findByCode(entityInstanceCode);
     }
 }

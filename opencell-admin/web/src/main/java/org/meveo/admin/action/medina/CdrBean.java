@@ -32,12 +32,16 @@ import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.job.cdr.CDRBackoutJob;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.medina.impl.CDRService;
 
 @Named
@@ -52,6 +56,15 @@ public class CdrBean extends BaseBean<CDR> {
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
     
+    @Inject
+    JobInstanceService jobInstanceService;
+    
+    @Inject
+    CDRBackoutJob cdrBackoutJob;
+    
+    @Inject
+    JobExecutionService jobExecutionService;
+
     private Set<String> params;
         
     private String writeOffReason;
@@ -96,6 +109,10 @@ public class CdrBean extends BaseBean<CDR> {
         cdrService.reprocess(Arrays.asList(cdr.getId()));
     }
     
+    public List<CDR> getCDRFileNames() {
+        return cdrService.getCDRFileNames();
+    }
+
     public void writeOff() {
         if(StringUtils.isBlank(writeOffReason)) {
             return;
@@ -140,8 +157,13 @@ public class CdrBean extends BaseBean<CDR> {
     }
         
     public void backout() {
-        log.debug("Backing-out CDR File : " + getEntity().getOriginBatch());
-        cdrService.backout(getEntity().getOriginBatch());
+        log.debug("Backing-out CDR File : {}", getEntity().getOriginBatch());
+        
+        JobInstance jobInstance = jobInstanceService.findByCode("CDR_BACK_OUT_JOB");
+        jobInstance.setParametres(getEntity().getOriginBatch());
+
+        log.debug("Execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate());
+        jobExecutionService.manualExecute(jobInstance);       
     }      
     
     @Override

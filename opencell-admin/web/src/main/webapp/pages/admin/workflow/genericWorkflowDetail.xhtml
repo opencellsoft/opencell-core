@@ -161,7 +161,6 @@
                             <hftl:column label="#{messages['dunningPlanTransition.toStatus']}" field="toStatus" />
                             <hftl:column label="#{messages['businessEntity.description']}" field="description" />
                             <hftl:column label="#{messages['dunningPlan.conditionEl']}" field="conditionEl" />
-                            <hftl:column label="#{messages['generic.wf.actionScript']}" field="actionScript.code" />
 
                             <p:column styleClass="actions-column" rendered="#{genericWorkflowBean.edit}">
                                 <f:facet name="header">
@@ -188,7 +187,7 @@
                                 <p:commandButton id="addTransition" rendered="#{!genericWorkflowBean.showDetailPage}" action="#{genericWorkflowBean.newTransition}"
                                     value="#{messages['dunningPlanTransition.addNew']}"
 									 update=":genericWFFormId:tabView:dunningPlanTransition_panel,:genericWFFormId:tabView:formDunningPlanTransition"
-									 process="@this"/>
+									 process="@this" />
                             </hftl:decorateFormField>
                         </p:panel>
                         <p:panel rendered="#{genericWorkflowBean.showDetailPage}">
@@ -206,16 +205,16 @@
 
                                     <hftl:formField label="#{messages['transition.description']}" field="description" required="true" edit="#{genericWorkflowBean.edit}" />
 
-                                    <hftl:formField
-                                    	id="scriptSelectId" label="#{messages['generic.wf.actionScript']}" field="actionScript" valueLabelField="code" popup="true" 
-                                    	showResetButton="true" popupId="actionScriptPopup" edit="#{genericWorkflowBean.edit}" required="false" />
-                                </p:panel>
+
+								</p:panel>
 
                                 <ui:param name="buttons" value="true" />
                                 <p:panel id="buttons">
                                     <p:commandButton action="#{genericWorkflowBean.saveWfTransition}" value="#{messages['action.save']}" process="@form" update=":genericWFFormId:tabView:dunningPlanTransition_panel" />
                                     <p:commandButton action="#{genericWorkflowBean.cancelTransitionDetail}" value="#{messages['action.cancel']}" process="@this"
                                         update=":genericWFFormId:tabView:dunningPlanTransition_panel" />
+									<p:commandButton action="#{genericWorkflowBean.showTransitionActions(genericWorkflowBean.entity.code, gWFTransitionBean.entity.uuid)}"
+													 value="#{messages['action.show']}" process="@this"/>
                                 </p:panel>
                             </hftl:formPanel>
                         </p:panel>

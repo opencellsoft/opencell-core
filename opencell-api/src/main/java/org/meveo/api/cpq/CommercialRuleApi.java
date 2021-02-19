@@ -387,6 +387,17 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 		return result;
 	}
 	
+	public GetListCommercialRulesResponseDto findGroupedAttributeRules(String groupedAttributeCode,String productCode) { 
+		if(StringUtils.isBlank(groupedAttributeCode)) {
+			missingParameters.add("groupedAttributeCode");
+		}
+		if(StringUtils.isBlank(productCode)) {
+			missingParameters.add("productCode");
+		}
+		List<CommercialRuleHeader> commercialRules=commercialRuleHeaderService.getGroupedAttributesRules(groupedAttributeCode, productCode);
+		GetListCommercialRulesResponseDto result=getCommmercialRules(commercialRules);
+		return result;
+	}
  
 		
 		

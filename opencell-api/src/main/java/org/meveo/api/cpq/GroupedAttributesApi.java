@@ -1,5 +1,6 @@
 package org.meveo.api.cpq;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +44,7 @@ public class GroupedAttributesApi extends BaseApi{
 	 * @param attributeCodes
 	 * @param isNew
 	 */
-	public void addToGroup(GroupedAttributes groupedAttribute, List<AttributeDTO> attributes, boolean isNew) {
+	public List<Attribute> addToGroup(GroupedAttributes groupedAttribute, List<AttributeDTO> attributes, boolean isNew) {
 		var templates = attributes.stream().map(attributeDTO -> {
 							final Attribute template = attributeService.findByCode(attributeDTO.getCode());
 							if(template == null) 
@@ -59,6 +60,7 @@ public class GroupedAttributesApi extends BaseApi{
 			template.setGroupedAttributes(groupedAttribute);
 			attributeService.update(template);
 		});
+		return templates;
 	}
 	
 	/**
@@ -82,11 +84,12 @@ public class GroupedAttributesApi extends BaseApi{
 		}
 		groupedAttribute.setDisplay(groupedAttributeDto.isDisplay());
 		groupedAttribute.setMandatory(groupedAttributeDto.isMandatory());
+		List<Attribute> attributes = new ArrayList<Attribute>();
 		groupedAttributeService.create(groupedAttribute);
 		if(groupedAttributeDto.getAttributes() != null && !groupedAttributeDto.getAttributes().isEmpty()) {
-			addToGroup(groupedAttribute, groupedAttributeDto.getAttributes(), true);
+			attributes = addToGroup(groupedAttribute, groupedAttributeDto.getAttributes(), true);
 		}
-		return new GroupedAttributeDto(groupedAttribute);
+		return new GroupedAttributeDto(groupedAttribute, attributes);
 	}
 	
 	/**
@@ -139,7 +142,8 @@ public class GroupedAttributesApi extends BaseApi{
 		if(groupedAttribute == null) {
 			throw new EntityDoesNotExistsException(GroupedAttributes.class, code);
 		}
-		return new GroupedAttributeDto(groupedAttribute);
+		var attributes = attributeService.findByGroupedAttribute(groupedAttribute);
+		return new GroupedAttributeDto(groupedAttribute, attributes);
 	}
 	
 	private void checkParams(GroupedAttributeDto groupedAttributeDto) {

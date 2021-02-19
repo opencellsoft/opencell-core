@@ -34,6 +34,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * Represents a custom field value type - reference to an Meveo entity identified by a classname and code. In case a class is a generic Custom Entity Template a classnameCode is
  * required to identify a concrete custom entity template by its code
  * 
+ * For CustomEntityInstance classname = CustomEntityInstance.class, code = CustomEntityTemplate.code, code = CustomEntityInstance.code
+ * For CustomTable record classname = CustomEntityInstance.class, code = CustomEntityTemplate.code, code = Custom table record id
+ * 
  * @author Andrius Karpavicius
  **/
 @JsonInclude(JsonInclude.Include.NON_NULL)

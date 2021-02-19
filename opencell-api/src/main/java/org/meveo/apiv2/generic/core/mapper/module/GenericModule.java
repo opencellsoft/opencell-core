@@ -7,11 +7,15 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.model.IEntity;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.payments.PaymentMethod;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class GenericModule extends SimpleModule {
@@ -19,7 +23,7 @@ public class GenericModule extends SimpleModule {
     private static final VersionUtil VERSION_UTIL = new VersionUtil() {};
     static final String DATA_ROOT_ELEMENT = "data";
 
-    GenericModule(Set<String> nestedEntitiesToLoad) {
+    GenericModule(Set<String> nestedEntitiesToLoad, Long nestedDepth) {
         super(NAME, VERSION_UTIL.version());
         Set<IEntity> sharedEntityToSerialize = new HashSet<>();
         Set<String> nestedEntities = nestedEntitiesToLoad
@@ -39,7 +43,8 @@ public class GenericModule extends SimpleModule {
             }
         });
         addSerializer(HibernateProxy.class, new LazyProxySerializer(nestedEntities, sharedEntityToSerialize));
-        addSerializer(Collection.class, new ListCustomSerializer(nestedEntities, sharedEntityToSerialize));
+        addSerializer(Collection.class, new ListCustomSerializer(nestedEntities, sharedEntityToSerialize, nestedDepth));
+        addDeserializer(ChargeInstance.class, new ChargeInstanceDeserializer());
         addDeserializer(PaymentMethod.class, new PaymentDeserializer());
         addKeyDeserializer(Tax.class, new KeyDeserializer() {
             @Override
@@ -65,8 +70,15 @@ public class GenericModule extends SimpleModule {
 
     public static class Builder {
         private Set<String> nestedEntities;
+        private Long nestedDepth;
+
         public Builder withEntityToLoad(Set<String> nestedEntities){
             this.nestedEntities = nestedEntities;
+            return this;
+        }
+
+        public Builder withNestedDepth(Long nestedDepth){
+            this.nestedDepth = nestedDepth;
             return this;
         }
 
@@ -76,9 +88,9 @@ public class GenericModule extends SimpleModule {
 
         public GenericModule build(){
             if(nestedEntities != null){
-                return new GenericModule(nestedEntities);
+                return new GenericModule(nestedEntities, nestedDepth == null ?  0 : nestedDepth);
             }
-            return new GenericModule(Collections.emptySet());
+            return new GenericModule(Collections.emptySet(), nestedDepth == null ? 0 : nestedDepth);
         }
     }
 

@@ -54,6 +54,7 @@
 
                         <hftl:formField label="#{messages['jobInstance.parametres']}" field="parametres" />
                         <hftl:formField label="#{messages['jobInstance.verboseReport']}" field="verboseReport" />
+                        <hftl:formField label="#{messages['jobInstance.stopOnError']}" field="stopOnError" />
                         <hftl:decorateFormField fieldId="timerFollowingJob" label="#{messages['timer.followingJob']}">
                             <p:selectOneMenu id="timerFollowingJob" value="#{jobInstanceBean.entity.followingJob}" rendered="#{jobInstanceBean.edit}">
                                 <hftl:objectConverter />
@@ -142,7 +143,7 @@
                 <p:fieldset legend="#{messages['jobInstance.jobErrors']}" styleClass="clearLeft">
 
 
-                    <hftl:dataList backingBean="#{recurringRatingJobExecutionErrorBean}" dataModel="#{jobInstanceBean.getJobExecutionErrors()}" resultsId="error_list_results"
+                    <hftl:dataList backingBean="#{recurringChargeJobExecutionErrorBean}" dataModel="#{jobInstanceBean.getJobExecutionErrors()}" resultsId="error_list_results"
                         exportButton="false" exportXlsxButton="false" checkMany="false" sortBy="id">
                         <hftl:column label="#{messages['jobInstance.error.created']}" field="created" isDate="true" width="10%" />
                         <hftl:column label="#{messages['charge.label']}" field="entity.code" entityView="subscriptionDetailRecChargeTab" objectIdParamName="subscriptionId"

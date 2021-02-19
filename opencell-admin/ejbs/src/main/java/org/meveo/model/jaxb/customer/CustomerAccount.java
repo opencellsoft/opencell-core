@@ -25,23 +25,19 @@
 
 package org.meveo.model.jaxb.customer;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.meveo.model.jaxb.account.Address;
+import org.meveo.model.jaxb.account.BankCoordinates;
 import org.meveo.model.jaxb.account.BillingAccounts;
 import org.meveo.model.jaxb.account.Name;
+
+import javax.xml.bind.annotation.*;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -68,26 +64,29 @@ import org.meveo.model.jaxb.account.Name;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-	"code",
-    "description",
-    "externalRef1",
-    "externalRef2",
-    "company",
-    "name",
-    "address",
-    "paymentMethod",
-    "email",
-    "tel1",
-    "tel2",
-    "tradingCurrencyCode",
-    "tradingLanguageCode",
-    "customFields",
-    "billingAccounts"
+        "code",
+        "description",
+        "externalRef1",
+        "externalRef2",
+        "company",
+        "name",
+        "address",
+        "paymentMethod",
+        "mandateIdentification", // Added by Mohamed Ali Hammal
+        "mandateDate", // Added by Mohamed Ali Hammal
+        "bankCoordinates", // Added by Mohamed Ali Hammal
+        "email",
+        "tel1",
+        "tel2",
+        "tradingCurrencyCode",
+        "tradingLanguageCode",
+        "customFields",
+        "billingAccounts"
 })
 @XmlRootElement(name = "customerAccount")
 public class CustomerAccount {
@@ -108,6 +107,12 @@ public class CustomerAccount {
     protected Address address;
     @XmlElement(required = true)
     protected String paymentMethod;
+    @XmlElement(required = false)
+    protected String mandateIdentification; // Added by Mohamed Ali Hammal
+    @XmlElement(required = false)
+    protected String mandateDate; // Added by Mohamed Ali Hammal
+    @XmlElement(required = false)
+    protected BankCoordinates bankCoordinates; // Added by Mohamed Ali Hammal
     @XmlElement(required = true)
     protected String email;
     @XmlElement(required = true)
@@ -125,17 +130,17 @@ public class CustomerAccount {
     protected CustomFields customFields;
     @XmlElement(required = false)
     protected BillingAccounts billingAccounts;
-   
-    
-    public CustomerAccount(){}    
 
-	/**
+
+    public CustomerAccount(){}
+
+    /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDescription() {
         return description;
@@ -143,11 +148,11 @@ public class CustomerAccount {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDescription(String value) {
         this.description = value;
@@ -155,11 +160,11 @@ public class CustomerAccount {
 
     /**
      * Gets the value of the externalRef1 property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getExternalRef1() {
         return externalRef1;
@@ -167,11 +172,11 @@ public class CustomerAccount {
 
     /**
      * Sets the value of the externalRef1 property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setExternalRef1(String value) {
         this.externalRef1 = value;
@@ -179,11 +184,11 @@ public class CustomerAccount {
 
     /**
      * Gets the value of the externalRef2 property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getExternalRef2() {
         return externalRef2;
@@ -191,11 +196,11 @@ public class CustomerAccount {
 
     /**
      * Sets the value of the externalRef2 property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setExternalRef2(String value) {
         this.externalRef2 = value;
@@ -203,11 +208,11 @@ public class CustomerAccount {
 
     /**
      * Gets the value of the company property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCompany() {
         return company;
@@ -215,11 +220,11 @@ public class CustomerAccount {
 
     /**
      * Sets the value of the company property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCompany(String value) {
         this.company = value;
@@ -227,11 +232,11 @@ public class CustomerAccount {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Name }
-     *     
+     *
      */
     public Name getName() {
         return name;
@@ -239,11 +244,11 @@ public class CustomerAccount {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Name }
-     *     
+     *
      */
     public void setName(Name value) {
         this.name = value;
@@ -251,11 +256,11 @@ public class CustomerAccount {
 
     /**
      * Gets the value of the address property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Address }
-     *     
+     *
      */
     public Address getAddress() {
         return address;
@@ -263,11 +268,11 @@ public class CustomerAccount {
 
     /**
      * Sets the value of the address property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Address }
-     *     
+     *
      */
     public void setAddress(Address value) {
         this.address = value;
@@ -275,35 +280,111 @@ public class CustomerAccount {
 
     /**
      * Gets the value of the paymentMethod property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPaymentMethod() {
         return paymentMethod;
-    }
+    } // Added by Mohamed Ali Hammal
 
     /**
      * Sets the value of the paymentMethod property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPaymentMethod(String value) {
         this.paymentMethod = value;
+    } // Added by Mohamed Ali Hammal
+
+    /**
+     * Gets the value of the mandateIdentification property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String}
+     *
+     */
+
+    public String getMandateIdentification() { // Added by Mohamed Ali Hammal
+        return mandateIdentification;
     }
 
     /**
+     * Sets the value of the mandateIdentification property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     **/
+
+    public void setMandateIdentification(String value) { // Added by Mohamed Ali Hammal
+        this.mandateIdentification = value;
+    }
+
+    /**
+     * Gets the value of the mandateDate property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String}
+     **/
+
+
+    public String getMandateDate() { // Added by Mohamed Ali Hammal
+        return mandateDate;
+    }
+
+    /**
+     * Sets the value of the mandateDate property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String}
+     **/
+
+    public void setMandateDate(String value) { // Added by Mohamed Ali Hammal
+        this.mandateDate = value;
+    }
+
+    /**
+     * Gets the value of the bankCoordinates property.
+     *
+     * @return
+     *     possible object is
+     *     {@link BankCoordinates}
+     **/
+
+
+    public BankCoordinates getBankCoordinates() {
+        return bankCoordinates;
+    } // Added by Mohamed Ali Hammal
+
+    /**
+     * Sets the value of the bankCoordinates property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link BankCoordinates }
+     **/
+
+
+    public void setBankCoordinates(BankCoordinates value) {
+        this.bankCoordinates = value;
+    } // Added by Mohamed Ali Hammal
+
+    /**
      * Gets the value of the email property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEmail() {
         return email;
@@ -311,11 +392,11 @@ public class CustomerAccount {
 
     /**
      * Sets the value of the email property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEmail(String value) {
         this.email = value;
@@ -323,11 +404,11 @@ public class CustomerAccount {
 
     /**
      * Gets the value of the tel1 property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTel1() {
         return tel1;
@@ -335,11 +416,11 @@ public class CustomerAccount {
 
     /**
      * Sets the value of the tel1 property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTel1(String value) {
         this.tel1 = value;
@@ -347,11 +428,11 @@ public class CustomerAccount {
 
     /**
      * Gets the value of the tel2 property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTel2() {
         return tel2;
@@ -359,41 +440,76 @@ public class CustomerAccount {
 
     /**
      * Sets the value of the tel2 property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTel2(String value) {
         this.tel2 = value;
     }
 
-    public String getTradingCurrencyCode() {
-		return tradingCurrencyCode;
-	}
-
-	public void setTradingCurrencyCode(String tradingCurrencyCode) {
-		this.tradingCurrencyCode = tradingCurrencyCode;
-	}
-
-	
-	
-	public String getTradingLanguageCode() {
-		return tradingLanguageCode;
-	}
-
-	public void setTradingLanguageCode(String tradingLanguageCode) {
-		this.tradingLanguageCode = tradingLanguageCode;
-	}
-
-	/**
-     * Gets the value of the code property.
-     * 
+    /**
+     * Gets the value of the tradingCurrencyCode property.
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
+     */
+
+    public String getTradingCurrencyCode() {
+        return tradingCurrencyCode;
+    }
+
+    /**
+     * Sets the value of the tradingCurrencyCode property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+
+    public void setTradingCurrencyCode(String value) {
+        this.tradingCurrencyCode = value;
+    }
+
+
+    /**
+     * Gets the value of the tradingLanguageCode property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+
+    public String getTradingLanguageCode() {
+        return tradingLanguageCode;
+    }
+
+    /**
+     * Sets the value of the tradingLanguageCode property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+
+    public void setTradingLanguageCode(String value) {
+        this.tradingLanguageCode = value;
+    }
+
+    /**
+     * Gets the value of the code property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
      */
     public String getCode() {
         return code;
@@ -401,11 +517,11 @@ public class CustomerAccount {
 
     /**
      * Sets the value of the code property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCode(String value) {
         this.code = value;
@@ -413,11 +529,11 @@ public class CustomerAccount {
 
     /**
      * Gets the value of the creditCategory property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCreditCategory() {
         return creditCategory;
@@ -425,44 +541,44 @@ public class CustomerAccount {
 
     /**
      * Sets the value of the creditCategory property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCreditCategory(String value) {
         this.creditCategory = value;
     }
 
-	/**
-	 * @return the ignoreCheck
-	 */
-	public Boolean getIgnoreCheck() {
-		return ignoreCheck;
-	}
+    /**
+     * @return the ignoreCheck
+     */
+    public Boolean getIgnoreCheck() {
+        return ignoreCheck;
+    }
 
-	/**
-	 * @param ignoreCheck the ignoreCheck to set
-	 */
-	public void setIgnoreCheck(Boolean ignoreCheck) {
-		this.ignoreCheck = ignoreCheck;
-	}
+    /**
+     * @param ignoreCheck the ignoreCheck to set
+     */
+    public void setIgnoreCheck(Boolean ignoreCheck) {
+        this.ignoreCheck = ignoreCheck;
+    }
 
-	public CustomFields getCustomFields() {
-		return customFields;
-	}
+    public CustomFields getCustomFields() {
+        return customFields;
+    }
 
-	public void setCustomFields(CustomFields customFields) {
-		this.customFields = customFields;
-	}
+    public void setCustomFields(CustomFields customFields) {
+        this.customFields = customFields;
+    }
 
-	public BillingAccounts getBillingAccounts() {
-		return billingAccounts;
-	}
+    public BillingAccounts getBillingAccounts() {
+        return billingAccounts;
+    }
 
-	public void setBillingAccounts(BillingAccounts billingAccounts) {
-		this.billingAccounts = billingAccounts;
-	}
+    public void setBillingAccounts(BillingAccounts billingAccounts) {
+        this.billingAccounts = billingAccounts;
+    }
 
 }

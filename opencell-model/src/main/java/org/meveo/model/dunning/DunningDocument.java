@@ -22,14 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
@@ -81,6 +74,13 @@ public class DunningDocument extends BusinessEntity implements IWFEntity {
     @OneToMany(mappedBy = "dunningDocument", fetch = FetchType.LAZY, cascade = CascadeType.REFRESH, orphanRemoval = true)
     @Where(clause = "transaction_type='P'")
     private List<Payment> payments = new ArrayList<>();
+
+    /**
+     * Dunning document status
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 25)
+    private DunningDocumentStatus status;
 
     public CustomerAccount getCustomerAccount() {
         return customerAccount;
@@ -136,5 +136,13 @@ public class DunningDocument extends BusinessEntity implements IWFEntity {
     @Transient
     public BigDecimal getPaidAmount() {
     	return payments.stream().map(Payment::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public void setStatus(DunningDocumentStatus status) {
+        this.status = status;
+    }
+
+    public DunningDocumentStatus getStatus() {
+        return status;
     }
 }
