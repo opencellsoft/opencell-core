@@ -135,6 +135,19 @@ public class ContactApi extends AccountEntityApi {
 
         contactService.create(contact);
 
+        if(postData.getCustomerCodes() != null){
+            List<Customer> customers = postData.getCustomerCodes()
+                    .stream()
+                    .map(customerCode -> {
+                        Customer customer = customerService.findByCode(customerCode);
+                        if (customer == null)
+                            throw new EntityDoesNotExistsException(Customer.class, customerCode);
+                        return customer;
+                    }).collect(Collectors.toList());
+            contact.addCustomers(customers);
+            contactService.update(contact);
+        }
+
         return contact;
     }
 
@@ -159,6 +172,17 @@ public class ContactApi extends AccountEntityApi {
         }
 
         dtoToEntity(contact, postData);
+        if(postData.getCustomerCodes() != null){
+            List<Customer> customers = postData.getCustomerCodes()
+                    .stream()
+                    .map(customerCode -> {
+                        Customer customer = customerService.findByCode(customerCode);
+                        if (customer == null)
+                            throw new EntityDoesNotExistsException(Customer.class, customerCode);
+                        return customer;
+                    }).collect(Collectors.toList());
+            contact.addCustomers(customers);
+        }
 
         contact = contactService.update(contact);
         return contact;
@@ -212,18 +236,6 @@ public class ContactApi extends AccountEntityApi {
 
         if (postData.getTags() != null) {
             contact.setTags(postData.getTags());
-        }
-
-        if(postData.getCustomerCodes() != null){
-            List<Customer> customers = postData.getCustomerCodes()
-                    .stream()
-                    .map(code -> {
-                        Customer customer = customerService.findByCode(code);
-                        if (customer == null)
-                            throw new EntityDoesNotExistsException(Customer.class, code);
-                        return customer;
-                    }).collect(Collectors.toList());
-            contact.setCustomers(customers);
         }
 
         if (isNew || (contact.getCompany() != null && contact.getCompany().equals(postData.getCompany()))) {
@@ -423,7 +435,7 @@ public class ContactApi extends AccountEntityApi {
                         throw new EntityDoesNotExistsException(Customer.class, code);
                     return customer;
                 }).collect(Collectors.toList());
-        contact.getCustomers().addAll(customers);
+        contact.addCustomers(customers);
         contact = contactService.update(contact);
         return new ContactDto(contact);
     }

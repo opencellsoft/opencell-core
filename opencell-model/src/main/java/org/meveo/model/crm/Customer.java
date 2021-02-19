@@ -172,11 +172,8 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     @Column(name = "threshold_per_entity")
     private boolean thresholdPerEntity;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "customers", cascade = CascadeType.REMOVE)
-    private List<Contact> contacts;
-
-    @Column(name = "role")
-    private String role;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ContactCustomer> contacts;
 
     public AddressBook getAddressbook() {
         return addressbook;
@@ -338,19 +335,11 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
         this.checkThreshold = checkThreshold;
     }
 
-    public List<Contact> getContacts() {
+    public List<ContactCustomer> getContacts() {
         return contacts;
     }
 
-    public void setContacts(List<Contact> contacts) {
+    public void setContacts(List<ContactCustomer> contacts) {
         this.contacts = contacts;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 }

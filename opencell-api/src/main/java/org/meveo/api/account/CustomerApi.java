@@ -284,18 +284,6 @@ public class CustomerApi extends AccountEntityApi {
             customer.setSeller(seller);
         }
 
-        if(postData.getContactCodes() != null) {
-            List<Contact> contacts = postData.getContactCodes()
-                    .stream()
-                    .map(code -> {
-                        Contact contact = contactService.findByCode(code);
-                        if (code == null)
-                            throw new EntityDoesNotExistsException(Contact.class, code);
-                        return contact;
-                    }).collect(Collectors.toList());
-            customer.setContacts(contacts);
-        }
-
         updateAccount(customer, postData, checkCustomFields);
 
         if (businessAccountModel != null) {

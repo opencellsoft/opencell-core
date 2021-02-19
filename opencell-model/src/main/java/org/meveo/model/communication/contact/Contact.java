@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -31,8 +32,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -46,6 +45,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
+import org.meveo.model.crm.ContactCustomer;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.intcrm.AddressBook;
 
@@ -191,9 +191,8 @@ public class Contact extends AccountEntity implements ISearchable {
     @Column(name = "tag")
     private Set<String> tags = new HashSet<String>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinTable(name = "bi_contacts_customers", joinColumns = @JoinColumn(name = "contact_id"), inverseJoinColumns = @JoinColumn(name = "customer_id"))
-    private List<Customer> customers = new ArrayList<>();
+    @OneToMany( mappedBy = "contact",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ContactCustomer> customers = new ArrayList<>();
 
     public Contact() {
         accountType = ACCOUNT_TYPE;
@@ -347,11 +346,25 @@ public class Contact extends AccountEntity implements ISearchable {
         return this.getName().toString() + " code:" + this.getCode();
     }
 
-    public List<Customer> getCustomers() {
+    public List<ContactCustomer> getCustomers() {
         return customers;
     }
 
-    public void setCustomers(List<Customer> customers) {
+    public void setCustomers(List<ContactCustomer> customers) {
         this.customers = customers;
+    }
+
+    public List<Customer> loadCustomers() {
+        return customers.stream().map(c -> c.getCustomer()).collect(Collectors.toList());
+    }
+
+    public void addCustomers(List<Customer> customers) {
+        customers.forEach(this::addCustomer);
+    }
+
+    public void addCustomer(Customer customer){
+        ContactCustomer contactCustomer = new ContactCustomer(this, customer);
+        this.customers.add(contactCustomer);
+        customer.getContacts().add(contactCustomer);
     }
 }
