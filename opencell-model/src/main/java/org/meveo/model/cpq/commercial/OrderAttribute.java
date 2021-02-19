@@ -68,7 +68,11 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 		updateAudit(currentUser);
 		assignedAttributeValue = quoteAttribute.getAssignedAttributeValue()
 				.stream()
-				.map(nestedQuoteAttribute -> new OrderAttribute(nestedQuoteAttribute, currentUser))
+				.map(nestedQuoteAttribute -> {
+					OrderAttribute orderAttribute = new OrderAttribute(nestedQuoteAttribute, currentUser);
+					orderAttribute.setParentAttributeValue(this);
+					return orderAttribute;
+				})
 				.collect(Collectors.toList());
 	}
 
