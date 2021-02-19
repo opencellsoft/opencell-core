@@ -7,6 +7,7 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.OrderAttribute;
+import org.meveo.security.MeveoUser;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,14 +46,19 @@ public class AttributeInstance extends AttributeValue<AttributeInstance> {
                                         .collect(Collectors.toList());
     }
 
-    public AttributeInstance(OrderAttribute orderAttribute) {
+    public AttributeInstance(OrderAttribute orderAttribute, MeveoUser currentUser) {
         attribute=orderAttribute.getAttribute();
         stringValue=orderAttribute.getStringValue();
         dateValue=orderAttribute.getDateValue();
         doubleValue=orderAttribute.getDoubleValue();
+        updateAudit(currentUser);
         assignedAttributeValue = orderAttribute.getAssignedAttributeValue()
                 .stream()
-                .map(AttributeInstance::new)
+                .map(oa -> {
+                    AttributeInstance attributeInstance = new AttributeInstance(oa, currentUser);
+                    attributeInstance.setParentAttributeValue(this);
+                    return attributeInstance;
+                })
                 .collect(Collectors.toList());
     }
 
