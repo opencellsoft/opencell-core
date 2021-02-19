@@ -203,6 +203,7 @@ public class GDPRJobBean extends BaseJobBean {
     private void bulkInvoiceDelete(List<Invoice> inactiveInvoices, JobExecutionResultImpl result) {
         for (Invoice inactiveInvoice : inactiveInvoices) {
             try {
+                ratedTransactionService.detachRTsFromInvoice(inactiveInvoice);
                 invoiceService.remove(inactiveInvoice);
                 result.setNbItemsCorrectlyProcessed(result.getNbItemsCorrectlyProcessed() + 1);
             } catch(Exception e) {

@@ -1910,6 +1910,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     public void detachRTsFromSubscription(Subscription subscription) {
         getEntityManager().createNamedQuery("RatedTransaction.detachRTsFromSubscription").setParameter("subscription", subscription).executeUpdate();
     }
+    
+    /**
+     * Detach RTs From invoice.
+     *
+     * @param invoice invoice
+     */
+    public void detachRTsFromInvoice(Invoice invoice) {
+        getEntityManager().createNamedQuery("RatedTransaction.detachRTsFromInvoice").setParameter("invoice", invoice).executeUpdate();
+    }
 
     /**
      * Retrun the total of positive rated transaction grouped by billing account for a billing run.
