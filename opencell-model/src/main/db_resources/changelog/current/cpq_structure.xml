@@ -3318,5 +3318,438 @@
 								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
 	</changeSet>
+	
+	  <changeSet id="#268_20210219_cpq_structure" author="Mbarek-Ay"> 
+	    <dropNotNullConstraint columnName="tax_class_id" tableName="cat_charge_template"/>  
+	</changeSet>
+	
+	
+			<changeSet id="#222_20210219" author="Mbarek-Ay">
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-26, 0, 0, now(), 'org.meveo.api.billing.QuoteValidation', 'QuoteValidation', 'JAVA', '
+        package org.meveo.api.billing;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.cpq.commercial.CommercialOrderEnum;
+import org.meveo.model.cpq.commercial.OrderArticleLine;
+import org.meveo.model.cpq.commercial.OrderAttribute;
+import org.meveo.model.cpq.commercial.OrderLot;
+import org.meveo.model.cpq.commercial.OrderOffer;
+import org.meveo.model.cpq.commercial.OrderPrice;
+import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.model.cpq.commercial.OrderType;
+import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.quote.QuoteArticleLine;
+import org.meveo.model.quote.QuoteLot;
+import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
+import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.cpq.QuoteVersionService;
+import org.meveo.service.cpq.order.CommercialOrderService;
+import org.meveo.service.cpq.order.OrderArticleLineService;
+import org.meveo.service.cpq.order.OrderAttributeService;
+import org.meveo.service.cpq.order.OrderLotService;
+import org.meveo.service.cpq.order.OrderOfferService;
+import org.meveo.service.cpq.order.OrderPriceService;
+import org.meveo.service.cpq.order.OrderProductService;
+import org.meveo.service.cpq.order.OrderTypeService;
+import org.meveo.service.cpq.order.QuotePriceService;
+import org.meveo.service.script.module.ModuleScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@SuppressWarnings("serial")
+public class QuoteValidation extends ModuleScript {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(QuoteVersionService.class);
+
+	private QuoteVersionService quoteVersionService = (QuoteVersionService) getServiceInterface(QuoteVersionService.class.getSimpleName());
+    private InvoiceTypeService invoiceTypeService = (InvoiceTypeService) getServiceInterface(InvoiceTypeService.class.getSimpleName());
+    private CommercialOrderService commercialOrderService = (CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
+    private OrderOfferService orderOfferService = (OrderOfferService) getServiceInterface(OrderOfferService.class.getSimpleName());
+    private OrderProductService orderProductService = (OrderProductService) getServiceInterface(OrderProductService.class.getSimpleName());
+    private OrderAttributeService orderAttributeService = (OrderAttributeService) getServiceInterface(OrderAttributeService.class.getSimpleName());
+    private OrderLotService orderCustomerServiceService = (OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
+    private OrderArticleLineService orderArticleLineService = (OrderArticleLineService) getServiceInterface(OrderArticleLineService.class.getSimpleName());
+    private OrderPriceService orderPriceService = (OrderPriceService) getServiceInterface(OrderPriceService.class.getSimpleName());
+    private QuotePriceService quotePriceService = (QuotePriceService) getServiceInterface(QuotePriceService.class.getSimpleName());
+    private OrderTypeService orderTypeService = (OrderTypeService) getServiceInterface(OrderTypeService.class.getSimpleName());
+    
+	
+	@Override
+	public void execute(Map<String, Object> methodContext) throws BusinessException {
+		final CpqQuote cpqQuote = (CpqQuote) methodContext.get("cpqQuote");
+		if(cpqQuote == null)
+			throw new BusinessException("No Quote found");
+		LOGGER.info("start creation order from quote code {}", cpqQuote.getCode());
+		var quotesVersions = quoteVersionService.findByQuoteIdAndStatusActive(cpqQuote.getId());
+		if(quotesVersions.size() > 1)
+			throw new BusinessException("More than one quote version is published !!");
+		var quoteVersion = quotesVersions.get(0);
+		var orderByBillingAccount = new Hashtable<String, List<QuoteOffer>>();
+		var billingAccount = new Hashtable<String, BillingAccount>();
+		quoteVersion.getQuoteOffers().forEach(quoteOffer -> {
+			if(quoteOffer.getBillableAccount() == null) {
+				quoteOffer.setBillableAccount(cpqQuote.getBillableAccount());
+			}
+			List<QuoteOffer> offers = new ArrayList<>();
+			if(orderByBillingAccount.get(quoteOffer.getBillableAccount().getCode()) != null) {
+				offers = orderByBillingAccount.get(quoteOffer.getBillableAccount().getCode());
+			}
+			offers.add(quoteOffer);
+			orderByBillingAccount.put(quoteOffer.getBillableAccount().getCode(), offers);
+			billingAccount.put(quoteOffer.getBillableAccount().getCode(), quoteOffer.getBillableAccount());
+			
+		});
+		orderByBillingAccount.keySet().forEach(ba -> {
+			List<QuoteOffer> offers = orderByBillingAccount.get(ba);
+			BillingAccount billableAccount = billingAccount.get(ba);
+			CommercialOrder order = processCommercialOrder(cpqQuote, quoteVersion, billableAccount);
+			offers.forEach(offer -> {
+				processOrderOffer(offer, order);
+				OrderLot orderLot = processOrderCustomerService(offer.getQuoteLot(), order);
+				OrderOffer orderOffer = processOrderOffer(offer, order);
+				offer.getQuoteProduct().forEach(quoteProduct -> {
+					processOrderProduct(quoteProduct, order, orderLot, orderOffer);
+				});
+			});
+		});
+		LOGGER.info("End creation order from quote code {}, number of order created is {}", cpqQuote.getCode(), orderByBillingAccount.size());
+		
+		
+	}
+	private CommercialOrder processCommercialOrder(CpqQuote cpqQuote, QuoteVersion quoteVersion, BillingAccount account) {
+		CommercialOrder order = new CommercialOrder();
+		order.setSeller(cpqQuote.getSeller());
+		order.setBillingAccount(account);
+		order.setQuote(cpqQuote);
+		order.setContract(cpqQuote.getContract());
+		order.setCustomerServiceBegin(quoteVersion.getStartDate());
+		order.setStatus(CommercialOrderEnum.DRAFT.toString());
+		Date now = Calendar.getInstance().getTime();
+		order.setStatusDate(now);
+		order.setOrderDate(now);
+		order.setCustomerServiceDuration(cpqQuote.getQuoteLotDuration());
+		order.setExternalReference(null);
+		order.setInvoicingPlan(null); //TODO: how to map invoice plan
+		order.setOrderType(createOrderTypeTemp()); //TODO: how to map order type
+		order.setOrderProgress(0);
+		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
+		order.setProgressDate(Calendar.getInstance().getTime());
+		order.setUserAccount(account.getUsersAccounts().size() > 0 ? account.getUsersAccounts().get(0) : null);
+		commercialOrderService.create(order);
+		return order;
+	}
+	
+	private OrderType createOrderTypeTemp() {
+		final String TEMP_CODE = "COMMERCIAL"; 
+		OrderType orderType = orderTypeService.findByCode(TEMP_CODE);
+		if(orderType == null) {
+			orderType = new OrderType();
+			orderType.setCode(TEMP_CODE);
+			orderType.setDescription("generated on quote validation  script");
+			orderTypeService.create(orderType);
+		}
+		return orderType;
+	}
+	
+	private OrderOffer processOrderOffer(QuoteOffer quoteOffer, CommercialOrder order) {
+		OrderOffer offer = new OrderOffer();
+		offer.setOrder(order);
+		offer.setOfferTemplate(quoteOffer.getOfferTemplate()); 
+		orderOfferService.create(offer);
+		return offer;
+	}
+	
+	private OrderProduct processOrderProduct(QuoteProduct product, CommercialOrder commercialOrder, OrderLot orderLot, OrderOffer orderOffer) {
+		OrderProduct orderProduct = new OrderProduct();
+		orderProduct.setOrder(commercialOrder);
+		orderProduct.setOrderServiceCommercial(orderLot);
+		orderProduct.setProductVersion(product.getProductVersion());
+		orderProduct.setQuantity(product.getQuantity());
+		orderProduct.setOrderOffer(orderOffer);  
+		
+		orderProductService.create(orderProduct);
+		
+		product.getQuoteAttributes().forEach(quoteAttribute -> {
+			processOrderAttribute(quoteAttribute, commercialOrder, orderLot, orderProduct);
+		});
+		
+		product.getQuoteArticleLines().forEach(quoteArticleLine -> {
+			OrderArticleLine orderArticleLine = processOrderArticleLine(quoteArticleLine, commercialOrder, orderLot, orderProduct);
+			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffre().getQuoteVersion());
+		});
+		
+		
+		return orderProduct;
+	}
+	
+	private void processOrderAttribute(QuoteAttribute quoteAttribute, CommercialOrder commercialOrder, OrderLot orderLot, OrderProduct orderProduct) {
+		OrderAttribute orderAttribute = new OrderAttribute();
+		orderAttribute.setOrderCode(commercialOrder);
+		orderAttribute.setOrderLot(orderLot);
+		orderAttribute.setOrderProduct(orderProduct);
+		orderAttribute.setAccessPoint(null);
+		orderAttribute.setAttribute(quoteAttribute.getAttribute());
+		orderAttribute.setStringValue(quoteAttribute.getStringValue());
+		orderAttribute.setDateValue(quoteAttribute.getDateValue());
+		orderAttribute.setDoubleValue(quoteAttribute.getDoubleValue());
+		orderAttributeService.create(orderAttribute);
+	}
+	
+	private OrderLot processOrderCustomerService(QuoteLot quoteLot, CommercialOrder commercialOrder) {
+		OrderLot orderCustomer = new OrderLot();
+		orderCustomer.setCode(UUID.randomUUID().toString());
+		orderCustomer.setCode(orderCustomerServiceService.findDuplicateCode(orderCustomer));
+		orderCustomer.setOrder(commercialOrder);
+		orderCustomerServiceService.create(orderCustomer);
+		return orderCustomer;
+	}
+	
+	private OrderArticleLine processOrderArticleLine(QuoteArticleLine quoteArticleLine, CommercialOrder commercialOrder, OrderLot orderCustomerService, OrderProduct orderProduct) {
+		OrderArticleLine articleLine = new OrderArticleLine();
+		articleLine.setCode(orderArticleLineService.findDuplicateCode(articleLine));
+		articleLine.setOrder(commercialOrder);
+		articleLine.setOrderCustomerService(orderCustomerService);
+		articleLine.setQuantity(quoteArticleLine.getQuantity());
+		articleLine.setQuantityService(quoteArticleLine.getServiceQuantity());
+		articleLine.setAccountingArticle(quoteArticleLine.getAccountingArticle());
+		articleLine.setOrderProduct(orderProduct);
+		orderArticleLineService.create(articleLine);
+		return articleLine;
+	}
+	
+	private void processOrderPrice(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion) {
+		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(quoteArticleLineId, quoteVersion.getId());
+		quotePrices.forEach( price -> {
+			OrderPrice orderPrice = new OrderPrice();
+			orderPrice.setCode(UUID.randomUUID().toString());
+			orderPrice.setCode(orderPriceService.findDuplicateCode(orderPrice));
+			orderPrice.setOrderArticleLine(orderArticleLine);
+			orderPrice.setOrder(commercialOrder);
+			orderPrice.setPriceLevelEnum(price.getPriceLevelEnum());
+			orderPrice.setAmountWithTax(price.getAmountWithTax());
+			orderPrice.setUnitPriceWithoutTax(price.getUnitPriceWithoutTax());
+			orderPrice.setAmountWithoutTax(price.getAmountWithoutTax());
+			orderPrice.setAmountWithoutTaxWithDiscount(price.getAmountWithoutTaxWithDiscount());
+			orderPrice.setTaxAmount(price.getTaxAmount());
+			orderPrice.setTaxRate(price.getTaxRate());
+			orderPrice.setPriceOverCharged(price.getPriceOverCharged());
+			orderPrice.setCurrencyCode(price.getCurrencyCode());
+			orderPrice.setRecurrenceDuration(price.getRecurrenceDuration());
+			orderPrice.setRecurrencePeriodicity(price.getRecurrencePeriodicity());
+			orderPrice.setChargeTemplate(price.getChargeTemplate());
+			orderPriceService.create(orderPrice);
+		});
+	}
+	
+}
+	
+	
+	');
+        ]]></sql>
+        
+           
+        
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-27, 0, 0, now(), 'org.meveo.api.billing.OrderAdvancement', 'OrderAdvancement', 'JAVA', '
+  package org.meveo.api.billing;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.cpq.CommercialOrderApi;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.cpq.commercial.CommercialOrderEnum;
+import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.cpq.commercial.InvoicingPlanItem;
+import org.meveo.model.cpq.commercial.OrderPrice;
+import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.service.billing.impl.InvoiceLinesService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.cpq.order.CommercialOrderService;
+import org.meveo.service.cpq.order.OrderPriceService;
+import org.meveo.service.script.module.ModuleScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@SuppressWarnings("serial")
+public class OrderAdvancement extends ModuleScript {
+
+    private OrderPriceService orderPriceService = (OrderPriceService) getServiceInterface(OrderPriceService.class.getSimpleName());
+    private CommercialOrderService commercialOrderService = (CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
+    private CommercialOrderApi commercialOrderApi = (CommercialOrderApi) getServiceInterface(CommercialOrderApi.class.getSimpleName());
+    private AccountingArticleService accountingArticleService = (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
+    private InvoiceLinesService invoiceLinesService = (InvoiceLinesService) getServiceInterface(InvoiceLinesService.class.getSimpleName());
+    private InvoiceService invoiceService = (InvoiceService) getServiceInterface(InvoiceService.class.getSimpleName());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+        CommercialOrder commercialOrder = (CommercialOrder) methodContext.get("commercialOrder");
+        if(commercialOrder == null) {
+            throw new BusinessException("No Commercial order is found");
+        }
+        Integer orderProgress = commercialOrder.getOrderProgress();
+
+        if (commercialOrder.getInvoicingPlan() != null) {
+
+            Date nextDay = java.sql.Date.valueOf(LocalDate.now().plusDays(1));
+            Date firstTransactionDate = java.sql.Date.valueOf(LocalDate.now().minusDays(1));
+            Date invoiceDate = new Date();
+            List<OrderPrice> pricesToBill = orderPriceService.findByOrder(commercialOrder).stream()
+                    .filter(this::isPriceRelatedToOneShotChargeTemplateOfTypeOther)
+                    .collect(Collectors.toList());
+
+            if (pricesToBill.isEmpty()) {
+                log.info("No order prices to bill related to a one shot charge were found for commercial order: " + commercialOrder.getId());
+                return;
+            }
+
+            AccountingArticle defaultAccountingArticle = getDefaultAccountingArticle();
+
+            BigDecimal totalAmountWithoutTax = pricesToBill.stream()
+                    .map(OrderPrice::getAmountWithoutTax)
+                    .reduce(BigDecimal.valueOf(0), BigDecimal::add);
+
+            BigDecimal totalAmountWithTax = pricesToBill.stream()
+                    .map(OrderPrice::getAmountWithTax)
+                    .reduce(BigDecimal.valueOf(0), BigDecimal::add);
+
+            BigDecimal totalTax = pricesToBill.stream()
+                    .map(OrderPrice::getTaxAmount)
+                    .reduce(BigDecimal.valueOf(0), BigDecimal::add);
+
+            BigDecimal totalTaxRate = pricesToBill.stream()
+                    .map(OrderPrice::getTaxRate)
+                    .reduce(BigDecimal.valueOf(0), BigDecimal::add);
+
+            OrderProduct orderProduct = pricesToBill.get(0).getOrderArticleLine().getOrderProduct();
+
+            if(orderProgress == 100) {
+                if(commercialOrder.getRateInvoiced() < 100) {
+                    generateGlobalInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct);
+                    commercialOrder.setOrderProgressTmp(orderProgress);
+                    commercialOrder.setRateInvoiced(100);
+                }
+                commercialOrderApi.validateOrder(commercialOrder, true);
+            } else {
+                List<InvoicingPlanItem> itemsToBill = commercialOrder.getInvoicingPlan().getInvoicingPlanItems().stream()
+                        .filter(item -> item.getAdvancement() == orderProgress)
+                        .collect(Collectors.toList());
+
+                if (itemsToBill.isEmpty()) {
+                    log.info("No invoicing plan item found for the order progress: " + orderProgress + " commercial order id: " + commercialOrder.getId());
+                    return;
+                } else if (itemsToBill.size() > 1)
+                    throw new BusinessException("Many invoicing plan items are set for the advancement: " + orderProgress + " using the invoicing plan: " + commercialOrder.getInvoicingPlan().getCode());
+
+                InvoicingPlanItem invoicingPlanItem = itemsToBill.get(0);
+
+                BigDecimal newRateInvoiced = invoicingPlanItem.getRateToBill().add(BigDecimal.valueOf(commercialOrder.getRateInvoiced()));
+                if (newRateInvoiced.compareTo(BigDecimal.valueOf(100)) > 0) {
+                    throw new BusinessException("the invoicing plan rate is grater than remaining rate to invoice");
+                }
+                if(newRateInvoiced.compareTo(BigDecimal.valueOf(100)) == 0){
+                    generateGlobalInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct);
+                }else {
+                    BigDecimal amountWithoutTaxToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithoutTax);
+                    BigDecimal amountWithTaxToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithTax);
+                    BigDecimal taxAmountToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalTax);
+
+                    createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
+                    invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
+                }
+                commercialOrder.setRateInvoiced(newRateInvoiced.intValue());
+                commercialOrder.setOrderProgressTmp(orderProgress);
+                commercialOrderService.update(commercialOrder);
+            }
+        }
+
+
+    }
+
+    private void generateGlobalInvoice(CommercialOrder commercialOrder, Date nextDay, Date firstTransactionDate, Date invoiceDate, AccountingArticle defaultAccountingArticle, BigDecimal totalAmountWithoutTax, BigDecimal totalAmountWithTax, BigDecimal totalTax, BigDecimal totalTaxRate, OrderProduct orderProduct) {
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        List<AttributeValue> orderAttributes = orderProduct.getOrderAttributes().stream().map(oa -> (AttributeValue)oa).collect(Collectors.toList());
+        for (AttributeValue orderAttribute : orderAttributes) {
+            Attribute attribute = orderAttribute.getAttribute();
+            Object value = attribute.getAttributeType().getValue(orderAttribute);
+            if (value != null) {
+                attributes.put(orderAttribute.getAttribute().getCode(), value);
+            }
+        }
+        Product product = orderProduct.getProductVersion().getProduct();
+        Optional<AccountingArticle> accountingArticle = accountingArticleService.getAccountingArticle(product, attributes);
+        if (!accountingArticle.isPresent())
+            throw new BusinessException("No accounting article found for product code: " + product.getCode() + " and attributes: " + attributes.toString());
+
+        List<InvoiceLine> accounts = invoiceLinesService.findByCommercialOrder(commercialOrder);
+        for(InvoiceLine account : accounts){
+            createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, account.getAmountWithoutTax().negate(), account.getAmountWithTax().negate(), account.getAmountTax().negate(), account.getTaxRate());
+        }
+
+        createInvoiceLine(commercialOrder, accountingArticle.get(), orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
+        invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
+    }
+
+    private AccountingArticle getDefaultAccountingArticle() {
+        String articleCode = ParamBean.getInstance().getProperty("advancePayment.accountingArticleCode", "ACT-STD");
+
+        AccountingArticle accountingArticle = accountingArticleService.findByCode(articleCode);
+        if (accountingArticle == null)
+            throw new EntityDoesNotExistsException(AccountingArticle.class, articleCode);
+        return accountingArticle;
+    }
+
+    private void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, OrderProduct orderProduct, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+        invoiceLinesService.createInvoiceLine(commercialOrder, accountingArticle, orderProduct, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
+    }
+
+    private boolean isPriceRelatedToOneShotChargeTemplateOfTypeOther(OrderPrice price) {
+        return price.getChargeTemplate().getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.ONESHOT
+                && ((OneShotChargeTemplate) price.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER;
+    }
+
+
+}
+
+	
+	
+	');
+        ]]></sql>
+        
+        
+        
+        
+    </changeSet>
 
 </databaseChangeLog>
