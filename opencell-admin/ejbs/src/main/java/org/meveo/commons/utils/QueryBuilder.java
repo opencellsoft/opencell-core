@@ -254,7 +254,7 @@ public class QueryBuilder {
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
-                query.append(" left join fetch " + alias + "." + fetchField);
+                query.append(" left join fetch " + alias + "." + fetchField + " as " + getJoinAlias(alias, fetchField));
             }
         }
 
@@ -264,6 +264,15 @@ public class QueryBuilder {
     }
 
     /**
+	 * @param alias
+	 * @param fetchField
+	 * @return
+	 */
+	private static String getJoinAlias(String alias, String fetchField) {
+		return alias+"_"+fetchField.replaceAll("\\.", "_");
+	}
+
+	/**
      * @return string buffer for SQL
      */
     public StringBuffer getSqlStringBuffer() {
@@ -1352,10 +1361,16 @@ public class QueryBuilder {
             String[] fields = orderings[0].toString().split(", ");
             for (String field : fields){
                 String[] fieldAndOrder = field.split(" ");
-                if(fieldAndOrder.length == 1)
-                    addOrderCriterion(((alias != null) ? (alias + ".") : "") + field, defaultOrder == SortOrder.ASCENDING);
-                else
-                    addOrderCriterion(((alias != null) ? (alias + ".") : "") + fieldAndOrder[0], fieldAndOrder[1].toLowerCase().equals("asc"));
+            	boolean ascending = defaultOrder == SortOrder.ASCENDING;
+                if(fieldAndOrder.length > 1) {
+                	field = fieldAndOrder[0];
+                	ascending = fieldAndOrder[1].toLowerCase().equals("asc");
+                }
+                if(field.contains(".")) {
+            		alias = getJoinAlias(alias, field.substring(0,field.lastIndexOf(".")));
+            		field =field.substring(field.lastIndexOf(".")+1);
+            	}
+				addOrderCriterion(((alias != null) ? (alias + ".") : "") + field, ascending);
             }
         }
     }
