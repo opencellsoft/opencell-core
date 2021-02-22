@@ -1,5 +1,13 @@
 package org.meveo.apiv2.generic.core;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.assertj.core.util.VisibleForTesting;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
@@ -8,13 +16,6 @@ import org.meveo.apiv2.generic.core.filter.FactoryFilterMapper;
 import org.meveo.apiv2.generic.core.filter.FilterMapper;
 import org.meveo.model.IEntity;
 import org.meveo.service.base.PersistenceService;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GenericRequestMapper {
     private final Class entityClass;
@@ -34,7 +35,7 @@ public class GenericRequestMapper {
     private PaginationConfiguration getPaginationConfiguration(GenericPagingAndFiltering genericPagingAndFiltering) {
         return new PaginationConfiguration(genericPagingAndFiltering.getOffset().intValue(), genericPagingAndFiltering.getLimitOrDefault(GenericHelper.getDefaultLimit()).intValue(),
                 evaluateFilters(genericPagingAndFiltering.getFilters(), entityClass), genericPagingAndFiltering.getFullTextFilter(),
-                Collections.emptyList(), genericPagingAndFiltering.getSortBy(),
+                List.copyOf(genericPagingAndFiltering.getNestedEntities()), genericPagingAndFiltering.getSortBy(),
                 org.primefaces.model.SortOrder.valueOf(genericPagingAndFiltering.getSortOrder()));
     }
     @VisibleForTesting
