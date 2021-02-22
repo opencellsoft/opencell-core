@@ -50,16 +50,6 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	private static final long serialVersionUID = -5934892816847168643L;
 
-
-
-
-	/**
-	 * the grouped service
-	 */
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
-	private GroupedAttributes groupedAttributes;
-	
 	  
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
@@ -148,20 +138,6 @@ public class Attribute extends EnableBusinessCFEntity{
 
 	public Attribute(Long id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the groupedAttributes
-	 */
-	public GroupedAttributes getGroupedAttributes() {
-		return groupedAttributes;
-	}
-
-	/**
-	 * @param groupedAttributes the groupedAttributes to set
-	 */
-	public void setGroupedAttributes(GroupedAttributes groupedAttributes) {
-		this.groupedAttributes = groupedAttributes;
 	}
 
 	/**
