@@ -21,6 +21,7 @@ package org.meveo.api.catalog;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +32,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections4.list.TreeList;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -507,13 +509,15 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
     
     private void processOfferProductDtos(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
-        List<OfferProductsDto> offerProductDtos = postData.getOfferProducts();  
+        List<OfferProductsDto> offerProductDtos = postData.getOfferProducts(); 
             List<OfferComponent> newOfferProductDtos = new ArrayList<>();
             OfferComponent offerComponent = null;
             boolean hasOfferComponentDtos = offerProductDtos != null && !offerProductDtos.isEmpty();
+            var productCodes = new HashSet<String>();
             if(hasOfferComponentDtos) {
             	offerTemplate.getOfferComponents().clear();
 	            for (OfferProductsDto offerProductDto : offerProductDtos) {
+	            	if(offerProductDto.getProduct() == null || !productCodes.add(offerProductDto.getProduct().getCode())) continue;
 	            	offerComponent = getOfferComponentFromDto(offerProductDto);
 	            	offerComponent.setOfferTemplate(offerTemplate);
 	            	newOfferProductDtos.add(offerComponent);
@@ -915,6 +919,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
     
     public void updateStatus(String offerTemplateCode, LifeCycleStatusEnum status, Date validFrom, Date validTo) {
+    	if(status == null)
+    		missingParameters.add("status");
+    	handleMissingParameters();
     	OfferTemplate offerTemplate = offerTemplateService.findByCode(offerTemplateCode, validFrom, validTo);
     	if(offerTemplate == null)
     		throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);

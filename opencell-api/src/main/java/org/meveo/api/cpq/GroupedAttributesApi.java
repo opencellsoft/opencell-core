@@ -1,5 +1,6 @@
 package org.meveo.api.cpq;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -43,7 +45,7 @@ public class GroupedAttributesApi extends BaseApi{
 	 * @param attributeCodes
 	 * @param isNew
 	 */
-	public void addToGroup(GroupedAttributes groupedAttribute, List<AttributeDTO> attributes, boolean isNew) {
+	public List<Attribute> addToGroup(GroupedAttributes groupedAttribute, List<AttributeDTO> attributes, boolean isNew) {
 		var templates = attributes.stream().map(attributeDTO -> {
 							final Attribute template = attributeService.findByCode(attributeDTO.getCode());
 							if(template == null) 
@@ -59,6 +61,7 @@ public class GroupedAttributesApi extends BaseApi{
 			template.setGroupedAttributes(groupedAttribute);
 			attributeService.update(template);
 		});
+		return templates;
 	}
 	
 	/**
@@ -72,8 +75,14 @@ public class GroupedAttributesApi extends BaseApi{
 		groupedAttribute.setCode(groupedAttributeDto.getCode());
 		groupedAttribute.setDescription(groupedAttributeDto.getDescription());
 		try {
-			if(!Strings.isEmpty(groupedAttributeDto.getProductCode()))
+			if(!Strings.isEmpty(groupedAttributeDto.getProductCode())) {
+				ProductVersion version=productVersionService.findByProductAndVersion(groupedAttributeDto.getProductCode(), groupedAttributeDto.getProductVersion());
+				if(version==null) {
+					throw new MeveoApiException("The product version "+groupedAttributeDto.getProductVersion()+" does not exist for this product");
+				}
 				groupedAttribute.setProductVersion(productVersionService.findByProductAndVersion(groupedAttributeDto.getProductCode(), groupedAttributeDto.getProductVersion()));
+			}
+				
 		}catch(MeveoApiException e) {
 			if(e instanceof EntityDoesNotExistsException == false)
 				throw new 	MeveoApiException(e);
@@ -82,11 +91,13 @@ public class GroupedAttributesApi extends BaseApi{
 		}
 		groupedAttribute.setDisplay(groupedAttributeDto.isDisplay());
 		groupedAttribute.setMandatory(groupedAttributeDto.isMandatory());
+		groupedAttribute.setDisabled(groupedAttributeDto.isDisabled());
+		List<Attribute> attributes = new ArrayList<Attribute>();
 		groupedAttributeService.create(groupedAttribute);
 		if(groupedAttributeDto.getAttributes() != null && !groupedAttributeDto.getAttributes().isEmpty()) {
-			addToGroup(groupedAttribute, groupedAttributeDto.getAttributes(), true);
+			attributes = addToGroup(groupedAttribute, groupedAttributeDto.getAttributes(), true);
 		}
-		return new GroupedAttributeDto(groupedAttribute);
+		return new GroupedAttributeDto(groupedAttribute, attributes);
 	}
 	
 	/**
@@ -115,6 +126,7 @@ public class GroupedAttributesApi extends BaseApi{
 		}
 		groupedAttribute.setDisplay(groupedAttributeDto.isDisplay());
 		groupedAttribute.setMandatory(groupedAttributeDto.isMandatory());
+		groupedAttribute.setDisabled(groupedAttributeDto.isDisabled());
 		groupedAttributeService.update(groupedAttribute);
 	}
 	
@@ -139,7 +151,8 @@ public class GroupedAttributesApi extends BaseApi{
 		if(groupedAttribute == null) {
 			throw new EntityDoesNotExistsException(GroupedAttributes.class, code);
 		}
-		return new GroupedAttributeDto(groupedAttribute);
+		var attributes = attributeService.findByGroupedAttribute(groupedAttribute);
+		return new GroupedAttributeDto(groupedAttribute, attributes);
 	}
 	
 	private void checkParams(GroupedAttributeDto groupedAttributeDto) {

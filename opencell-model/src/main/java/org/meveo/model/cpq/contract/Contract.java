@@ -1,7 +1,10 @@
 package org.meveo.model.cpq.contract;
 
+import static javax.persistence.CascadeType.ALL;
+
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -13,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,6 +30,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.cpq.commercial.OrderPrice;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
@@ -136,6 +141,10 @@ public class Contract extends EnableBusinessCFEntity {
 	 */
 	@Column(name = "contract_duration")
 	private int contractDuration;
+	
+	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
+	private List<ContractItem> contractItems;
+	
 
 	/**
 	 * @return the seller
@@ -315,6 +324,20 @@ public class Contract extends EnableBusinessCFEntity {
 				&& Objects.equals(endDate, other.endDate) && renewal == other.renewal
 				&& Objects.equals(seller, other.seller) && status == other.status
 				&& Objects.equals(statusDate, other.statusDate);
+	}
+
+	/**
+	 * @return the contractItems
+	 */
+	public List<ContractItem> getContractItems() {
+		return contractItems;
+	}
+
+	/**
+	 * @param contractItems the contractItems to set
+	 */
+	public void setContractItems(List<ContractItem> contractItems) {
+		this.contractItems = contractItems;
 	}
 	
 	
