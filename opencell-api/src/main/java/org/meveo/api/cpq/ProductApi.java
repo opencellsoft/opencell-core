@@ -332,6 +332,7 @@ public class ProductApi extends BaseApi {
 		productVersion.setStatusDate(Calendar.getInstance().getTime());
 		processAttributes(postData,productVersion);
 		processTags(postData, productVersion);
+		processGroupedAttribute(postData, productVersion);
 	}
 
 	private void checkMandatoryFields(ProductVersionDto postData) {
@@ -391,6 +392,7 @@ public class ProductApi extends BaseApi {
 		productVersion.setStatusDate(Calendar.getInstance().getTime());
 		processAttributes(postData,productVersion);
 		processTags(postData, productVersion);
+		processGroupedAttribute(postData, productVersion);
 		try {
 			productVersionService.updateProductVersion(productVersion);
 		} catch (BusinessException e) {
@@ -662,7 +664,17 @@ public class ProductApi extends BaseApi {
 		} 
 		return result;
 	} 
-	
+	private void processGroupedAttribute(ProductVersionDto postData, ProductVersion productVersion) {
+		Set<String> groupedAttributesCodes = postData.getGroupedAttributeCodes();
+		if(groupedAttributesCodes != null && !groupedAttributesCodes.isEmpty()) {
+			List<GroupedAttributes> groupedAttributes = new ArrayList<GroupedAttributes>();
+			for (String groupedCode : groupedAttributesCodes) {
+				GroupedAttributes attributes = loadEntityByCode(groupedAttributeService, groupedCode, GroupedAttributes.class);
+				groupedAttributes.add(attributes);
+			}
+			productVersion.setGroupedAttributes(groupedAttributes);
+		}
+	}
 	private void processAttributes(ProductVersionDto postData, ProductVersion productVersion) {
 		Set<String> attributeCodes = postData.getAttributeCodes(); 
 		if(attributeCodes != null && !attributeCodes.isEmpty()){

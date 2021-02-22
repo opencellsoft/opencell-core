@@ -661,13 +661,10 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 							final Attribute template = attributeService.findByCode(code);
 							if(template == null) 
 								throw new EntityDoesNotExistsException(ServiceTemplate.class, code);
-							if(template.getGroupedAttributes() != null)
-								throw new BusinessException("Attribute code " + template.getCode() + " is already assigned to a group code " + template.getGroupedAttributes().getCode());
 							return template;
 						}).collect(Collectors.toList());
 		
 		templates.stream().forEach(template -> {
-			template.setGroupedAttributes(groupedService);
 			attributeService.update(template);
 		});
 	}
