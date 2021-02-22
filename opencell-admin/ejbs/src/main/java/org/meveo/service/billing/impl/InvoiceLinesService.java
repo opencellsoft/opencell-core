@@ -11,12 +11,7 @@ import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -447,4 +442,24 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
 		invoiceLine.setStatus(InvoiceLineStatusEnum.CANCELED);
 		invoiceLine.setInvoice(null);
 	}
+
+    public List<Object[]> getTotalPositiveILAmountsByBR(BillingRun billingRun) {
+        return getEntityManager().createNamedQuery("InvoiceLine.sumPositiveILByBillingRun")
+                .setParameter("billingRunId", billingRun.getId())
+                .getResultList();
+    }
+
+    public void uninvoiceILs(Collection<Long> invoicesIds) {
+        getEntityManager().createNamedQuery("RatedTransaction.unInvoiceByInvoiceIds")
+                .setParameter("now", new Date())
+                .setParameter("invoiceIds", invoicesIds)
+                .executeUpdate();
+
+    }
+
+    public void deleteSupplementalILs(Collection<Long> invoicesIds) {
+        getEntityManager().createNamedQuery("RatedTransaction.deleteSupplementalRTByInvoiceIds")
+                .setParameter("invoicesIds", invoicesIds)
+                .executeUpdate();
+    }
 }
