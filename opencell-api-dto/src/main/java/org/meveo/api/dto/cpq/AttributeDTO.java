@@ -48,13 +48,6 @@ public class AttributeDTO extends EnableBusinessDto {
     /** The Constant serialVersionUID. */
     protected static final long serialVersionUID = -6794700715161690227L;
 
-
-  
-    /**
-     * Corresponding to minimum one shot charge template code.
-     */
-    protected String groupedAttributeCode;
-    
     /**
      * Corresponding to minimum one shot charge template code.
      */
@@ -130,7 +123,6 @@ public class AttributeDTO extends EnableBusinessDto {
         priority=attribute.getPriority();
         allowedValues=attribute.getAllowedValues();
         attributeType=attribute.getAttributeType();
-        groupedAttributeCode=attribute.getGroupedAttributes()!=null?attribute.getGroupedAttributes().getCode():null;
         display=attribute.isDisplay();
         code=attribute.getCode();
         description=attribute.getDescription();
@@ -151,16 +143,6 @@ public class AttributeDTO extends EnableBusinessDto {
         
         
     }
-
- 
-
-	public String getGroupedAttributeCode() {
-		return groupedAttributeCode;
-	}
-
-	public void setGroupedAttributeCode(String groupedAttributeCode) {
-		this.groupedAttributeCode = groupedAttributeCode;
-	}
 
 	public AttributeTypeEnum getAttributeType() {
 		return attributeType;
