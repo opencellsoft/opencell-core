@@ -278,6 +278,14 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
             Calendar invoicingCalendar = CalendarService.initializeCalendar(chargeInstance.getInvoicingCalendar(), defaultInitDate, chargeInstance);
             invoicingDate = invoicingCalendar.nextCalendarDate(applicationDate);
+            if(chargeInstance instanceof RecurringChargeInstance) {
+            	boolean isApplyInAdvance = walletOperationService.isApplyInAdvance((RecurringChargeInstance)chargeInstance);
+            	DatePeriod period = walletOperationService.getRecurringPeriod((RecurringChargeInstance)chargeInstance, applicationDate);
+
+            	 invoicingDate=isApplyInAdvance && !applicationDate.after(period.getFrom()) ? applicationDate : invoicingDate;
+                 
+            }
+           
         }
 
         if (isReservation) {
