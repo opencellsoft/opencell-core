@@ -3540,7 +3540,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         } else {
             invoice.setHasTaxes(true);
-            invoice.setHasDiscounts(true);
+            if(!discountAggregates.isEmpty()) {
+                invoice.setHasDiscounts(true);
+            }
             for (SubCategoryInvoiceAgregate discountAggregate : discountAggregates) {
                 invoice.addAmountWithoutTax(discountAggregate.getAmountWithoutTax());
                 invoice.addAmountWithTax(discountAggregate.getAmountWithTax());
