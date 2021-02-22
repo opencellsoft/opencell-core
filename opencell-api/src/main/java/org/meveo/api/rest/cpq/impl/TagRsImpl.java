@@ -1,16 +1,11 @@
 package org.meveo.api.rest.cpq.impl;
 
-import java.util.Collections;
-
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.TagApi;
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.cpq.TagTypeDto;
-import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetTagDtoResponse;
 import org.meveo.api.dto.response.cpq.GetTagTypeDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
@@ -22,12 +17,16 @@ public class TagRsImpl extends BaseRs implements TagRs {
 	@Inject
 	private TagApi tagApi;
 	
+	public static final String TAG_TYPE_CREATED = "the Tag type successfully created";
+	public static final String TAG_CREATED = "the Tag successfully created";
+	
 	@Override
 	public Response createTag(TagDto tagDto) {
       
         GetTagDtoResponse result = new GetTagDtoResponse();
         try {
         	tagApi.create(tagDto);
+        	result.getActionStatus().setMessage(TAG_CREATED);
         	return Response.ok(result).build();
         } catch(MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());
@@ -73,6 +72,7 @@ public class TagRsImpl extends BaseRs implements TagRs {
 		 GetTagTypeDtoResponse result = new GetTagTypeDtoResponse();
 	        try {
 	        	tagApi.create(tagTypeDto);
+	        	result.getActionStatus().setMessage(TAG_TYPE_CREATED);
 	        	return Response.ok(result).build();
 	        } catch(MeveoApiException e) {
 			       return errorResponse(e, result.getActionStatus());
