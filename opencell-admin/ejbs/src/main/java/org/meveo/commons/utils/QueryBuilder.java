@@ -269,7 +269,7 @@ public class QueryBuilder {
 	 * @return
 	 */
 	private static String getJoinAlias(String alias, String fetchField) {
-		return alias+"_"+fetchField;
+		return alias+"_"+fetchField.replaceAll("\\.", "_");
 	}
 
 	/**
@@ -1367,8 +1367,8 @@ public class QueryBuilder {
                 	ascending = fieldAndOrder[1].toLowerCase().equals("asc");
                 }
                 if(field.contains(".")) {
-            		alias = getJoinAlias(alias, field.substring(0,field.indexOf(".")));
-            		field =field.substring(field.indexOf(".")+1);
+            		alias = getJoinAlias(alias, field.substring(0,field.lastIndexOf(".")));
+            		field =field.substring(field.lastIndexOf(".")+1);
             	}
 				addOrderCriterion(((alias != null) ? (alias + ".") : "") + field, ascending);
             }
