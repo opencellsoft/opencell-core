@@ -1,5 +1,7 @@
 package org.meveo.apiv2.generic.core;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +37,31 @@ public class GenericRequestMapper {
     private PaginationConfiguration getPaginationConfiguration(GenericPagingAndFiltering genericPagingAndFiltering) {
         return new PaginationConfiguration(genericPagingAndFiltering.getOffset().intValue(), genericPagingAndFiltering.getLimitOrDefault(GenericHelper.getDefaultLimit()).intValue(),
                 evaluateFilters(genericPagingAndFiltering.getFilters(), entityClass), genericPagingAndFiltering.getFullTextFilter(),
-                List.copyOf(genericPagingAndFiltering.getNestedEntities()), genericPagingAndFiltering.getSortBy(),
+                computeFetchFields(genericPagingAndFiltering.getSortBy()), genericPagingAndFiltering.getSortBy(),
                 org.primefaces.model.SortOrder.valueOf(genericPagingAndFiltering.getSortOrder()));
     }
+    private List<String> computeFetchFields(String sortBy) {
+        return Stream.of(sortBy.split(","))
+                .filter(s -> !s.isBlank() && s.contains("."))
+                .map(s -> getFetchList(s))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+    
+   private List<String> getFetchList(String orderBy){
+    	List<String> result = new ArrayList<String>();
+    	final String[] split = orderBy.split("\\.");
+    	String current="";
+    	for(String str:split) {
+    		if(!current.isEmpty()) {
+    			result.add(current);
+    			current=current.concat(".");
+    		}
+    		current=current.concat(str);
+    	}
+    	return result;
+    }
+	   
     @VisibleForTesting
     public Map<String, Object> evaluateFilters(Map<String, Object> filters, Class<? extends IEntity> entity) {
         return Stream.of(filters.keySet().toArray())
