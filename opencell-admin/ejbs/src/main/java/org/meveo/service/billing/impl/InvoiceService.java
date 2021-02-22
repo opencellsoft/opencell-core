@@ -3539,6 +3539,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.addAmountTax(taxAggregate.getAmountTax());
             }
         } else {
+            invoice.setHasTaxes(true);
+            invoice.setHasDiscounts(true);
             for (SubCategoryInvoiceAgregate discountAggregate : discountAggregates) {
                 invoice.addAmountWithoutTax(discountAggregate.getAmountWithoutTax());
                 invoice.addAmountWithTax(discountAggregate.getAmountWithTax());
@@ -4853,17 +4855,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, ba);
             }
 
+            boolean hasMin = false;
             if (minAmountInvoiceLines != null && !minAmountInvoiceLines.isEmpty()) {
                 for (InvoiceLine minInvoiceLine : minAmountInvoiceLines) {
                     minInvoiceLine.setBillingAccount(billingAccountService.retrieveIfNotManaged(minInvoiceLine.getBillingAccount()));
                     minInvoiceLine.setAccountingArticle(accountingArticleService.retrieveIfNotManaged(minInvoiceLine.getAccountingArticle()));
                     invoiceLinesService.create(minInvoiceLine);
                 }
+                hasMin = true;
                 commit();
             }
 
             return createAggregatesAndInvoiceFromIls(entityToInvoice, billingRun, filter, invoiceDate, firstTransactionDate,
-                    lastTransactionDate, isDraft, billingCycle, ba, paymentMethod, invoiceType, balance, automaticInvoiceCheck);
+                    lastTransactionDate, isDraft, billingCycle, ba, paymentMethod, invoiceType, balance, automaticInvoiceCheck, hasMin);
         } catch (Exception e) {
             log.error("Error for entity {}", entityToInvoice.getCode(), e);
             if (entityToInvoice instanceof BillingAccount) {
@@ -4885,7 +4889,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                                             Date firstTransactionDate, Date lastTransactionDate,
                                                             boolean isDraft, BillingCycle defaultBillingCycle, BillingAccount billingAccount,
                                                             PaymentMethod defaultPaymentMethod, InvoiceType defaultInvoiceType, BigDecimal balance,
-                                                            boolean automaticInvoiceCheck) throws BusinessException {
+                                                            boolean automaticInvoiceCheck, boolean hasMin) throws BusinessException {
         List<Invoice> invoiceList = new ArrayList<>();
         boolean moreInvoiceLinesExpected = true;
         Map<String, InvoiceAggregateProcessingInfo> invoiceLineGroupToInvoiceMap = new HashMap<>();
@@ -4945,6 +4949,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
 
                     Invoice invoice = invoiceAggregateProcessingInfo.invoice;
+                    invoice.setHasMinimum(hasMin);
 
                     appendInvoiceAggregatesIL(entityToInvoice, invoiceLinesGroup.getBillingAccount(), invoice, invoiceLinesGroup.getInvoiceLines(),
                             false, invoiceAggregateProcessingInfo, !allIlsInOneRun);
@@ -4979,6 +4984,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     EntityManager em = getEntityManager();
                     invoice.setNewInvoicingProcess(true);
+                    invoice.setHasMinimum(true);
                     if (invoice.getId() == null) {
                         this.create(invoice);
 
