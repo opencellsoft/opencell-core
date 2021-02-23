@@ -3,6 +3,7 @@ package org.meveo.api.cpq;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,14 +81,15 @@ public class CommercialOrderApi extends BaseApi {
 	public CommercialOrderDto create(CommercialOrderDto orderDto) {
 		checkParam(orderDto);
 		final CommercialOrder order = new CommercialOrder();
-		final Seller seller = sellerService.findByCode(orderDto.getSellerCode());
-		if(seller == null)
-			throw new EntityDoesNotExistsException(Seller.class, orderDto.getSellerCode());
-		order.setSeller(seller);
+		
 		final BillingAccount billingAccount = billingAccountService.findByCode(orderDto.getBillingAccountCode());
 		if(billingAccount == null)
 			throw new EntityDoesNotExistsException(BillingAccount.class, orderDto.getBillingAccountCode());
 		order.setBillingAccount(billingAccount);
+		final Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
+		if(seller == null)
+			throw new EntityDoesNotExistsException(Seller.class, orderDto.getSellerCode());
+		order.setSeller(seller);
 		final OrderType orderType = orderTypeService.findByCode(orderDto.getOrderTypeCode());
 		if(orderType == null)
 			throw new EntityDoesNotExistsException(OrderType.class, orderDto.getOrderTypeCode());
@@ -134,11 +136,14 @@ public class CommercialOrderApi extends BaseApi {
 				throw new EntityDoesNotExistsException("No Access found for code : " + accessDto.getCode() + " and subscription : " + accessDto.getSubscription());
 			order.setAccess(access);
 		}
+		if(Strings.isEmpty(orderDto.getQuoteCode())) {
+			
+		}
 		order.setStatus(CommercialOrderEnum.DRAFT.toString());
 		order.setStatusDate(Calendar.getInstance().getTime());
-		order.setOrderProgress(orderDto.getOrderProgress());
-		order.setProgressDate(orderDto.getProgressDate());
-		order.setOrderDate(orderDto.getOrderDate());
+		order.setOrderProgress(orderDto.getOrderProgress()!=null?orderDto.getOrderProgress():0);
+		order.setProgressDate(new Date());
+		order.setOrderDate(orderDto.getOrderDate()!=null?orderDto.getOrderDate():new Date());
 		order.setRealisationDate(orderDto.getRealisationDate());
 		order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
 		order.setCustomerServiceDuration(orderDto.getCustomerServiceDuration());
@@ -394,18 +399,11 @@ public class CommercialOrderApi extends BaseApi {
 	}
 	
 	private void checkParam(CommercialOrderDto order) {
-		if(Strings.isEmpty(order.getSellerCode()))
-			missingParameters.add("sellerCode");
 		if(Strings.isEmpty(order.getBillingAccountCode()))
 			missingParameters.add("billingAccountCode");
 		if(Strings.isEmpty(order.getOrderTypeCode()))
 			missingParameters.add("orderTypeCode");
-		if(order.getOrderProgress() == null)
-			missingParameters.add("orderProgress");
-		if(order.getProgressDate() == null)
-			missingParameters.add("progressDate");
-		if(order.getOrderDate() == null)
-			missingParameters.add("orderDate");
+		
 		handleMissingParameters();
 	}
 
