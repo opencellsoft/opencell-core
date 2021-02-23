@@ -41,6 +41,8 @@ public class MediaDto extends BaseEntityDto{
 	
 	public MediaDto(Media media) {
 		this.id=media.getId(); 
+		this.code=media.getCode();
+		this.description=media.getCode();
 		this.mediaName = media.getMediaName();
 		this.label = media.getLabel();
 		this.main = media.getMain();

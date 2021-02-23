@@ -95,41 +95,6 @@ public class MediaApi extends BaseApi {
 
 		return result;
 	}
-	
-	
-	/*@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "media.medias", 
-    			itemPropertiesToFilter = { 
-    							@FilterProperty(property = "product", entityClass = Product.class),
-    							@FilterProperty(property = "serviceTemplate", entityClass = ServiceTemplate.class) }, totalRecords = "media.listSize")
-	public MediaListResponsDto listMedia(PagingAndFiltering pagingAndFiltering) {
-		 String sortBy = DEFAULT_SORT_ORDER_ID;
-	        if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
-	            sortBy = pagingAndFiltering.getSortBy();
-	        }
-	        var filters = new HashedMap<String, Object>();
-			 pagingAndFiltering.getFilters().forEach( (key, value) -> {
-				 String newKey = key.replace("offerCode", "offer.code")
-						 .replace("productCode", "product.code")
-						 .replace("serviceTemplateCode", "serviceTemplate.code")
-						 .replace("attributeCode", "attribute.code");
-				 filters.put(key.replace(key, newKey), value);
-			 });
-			 pagingAndFiltering.getFilters().clear();
-			 pagingAndFiltering.getFilters().putAll(filters);
-			 List<String> fields = Arrays.asList("offer", "product", "attribute", "serviceTemplate");
-	        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, org.primefaces.model.SortOrder.ASCENDING, fields, pagingAndFiltering, Media.class);
-	        
-	        Long totalCount = mediaService.count(paginationConfiguration);
-	        MediaListResponsDto result = new MediaListResponsDto();
-	        
-	        if(totalCount > 0) {
-	        	mediaService.list(paginationConfiguration).stream().forEach( m -> {
-	        		result.getMedia().getMedias().add(new MediaDto(m));
-	        	});
-		        result.getMedia().setListSize(totalCount.intValue());
-	        }
-	    	return result;
-	}*/
+	  
 	
 }
