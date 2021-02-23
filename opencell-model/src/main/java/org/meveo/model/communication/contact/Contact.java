@@ -190,7 +190,7 @@ public class Contact extends AccountEntity implements ISearchable {
     @Column(name = "tag")
     private Set<String> tags = new HashSet<String>();
 
-    @OneToMany( mappedBy = "contact",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany( mappedBy = "contact")
     private List<CustomerContact> customers = new ArrayList<>();
 
     public Contact() {

@@ -169,7 +169,7 @@ public class Customer extends AccountEntity implements IWFEntity, ICounterEntity
     @Column(name = "threshold_per_entity")
     private boolean thresholdPerEntity;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "customer")
     private List<CustomerContact> contacts;
 
     public AddressBook getAddressbook() {

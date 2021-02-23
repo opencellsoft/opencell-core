@@ -51,6 +51,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
+import org.meveo.service.crm.impl.CustomerContactService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
@@ -88,6 +89,9 @@ public class ContactApi extends AccountEntityApi {
 
     @Inject
     CustomerCategoryService customerCategoryService;
+
+    @Inject
+    CustomerContactService customerContactService;
 
     public Contact create(ContactDto postData) throws MeveoApiException, BusinessException {
 
@@ -137,7 +141,6 @@ public class ContactApi extends AccountEntityApi {
 
         if(postData.getCustomersContact() != null){
             addCustomers(contact, postData.getCustomersContact());
-            contactService.update(contact);
         }
 
         return contact;
@@ -152,8 +155,7 @@ public class ContactApi extends AccountEntityApi {
             Customer customer = customerService.findByCode(customerContactCDto.getCustomerCode());
             if (customer == null)
                 throw new EntityDoesNotExistsException(Customer.class, customerContactCDto.getCustomerCode());
-            contact.addCustomer(customer, customerContactCDto.getRole());
-
+            customerContactService.create(contact, customer, customerContactCDto.getRole());
         }
     }
 
@@ -179,6 +181,8 @@ public class ContactApi extends AccountEntityApi {
 
         dtoToEntity(contact, postData);
         if(postData.getCustomersContact() != null){
+            customerContactService.removeAll(contact.getCustomers());
+            contact.getCustomers().clear();
             addCustomers(contact, postData.getCustomersContact());
         }
 

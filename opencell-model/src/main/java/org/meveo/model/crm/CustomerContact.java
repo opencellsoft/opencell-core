@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.communication.contact.Contact;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -21,12 +22,12 @@ import javax.persistence.UniqueConstraint;
 public class CustomerContact {
 
     @Id
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name ="contact_id", referencedColumnName = "id")
     private Contact contact;
 
     @Id
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name ="customer_id",referencedColumnName = "id")
     private Customer customer;
 
