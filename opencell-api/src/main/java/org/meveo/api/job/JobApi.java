@@ -109,13 +109,23 @@ public class JobApi extends BaseApi {
             jobCacheContainerProvider.resetJobRunningStatus(jobInstance.getId());
         }
 
-        Long executionId = jobExecutionService.executeJobWithResultId(jobInstance, null);
+        JobExecutionResultImpl executeJobWithResult = jobExecutionService.executeJobWithResult(jobInstance, null);
 
-        return findJobExecutionResult(null, executionId);
+        return findJobExecutionResult(executeJobWithResult);
     }
-
     
-    /**
+    private JobExecutionResultDto findJobExecutionResult(JobExecutionResultImpl executeJobWithResult) {
+    	JobExecutionResultDto jobExecutionResultDto = new JobExecutionResultDto(executeJobWithResult);
+        if (executeJobWithResult.getEndDate() == null) {
+            List<String> nodeNames = jobCacheContainerProvider.getNodesJobIsRuningOn(executeJobWithResult.getJobInstance().getId());
+            if (nodeNames != null && !nodeNames.isEmpty()) {
+                jobExecutionResultDto.setRunningOnNodes(StringUtils.concatenate(",", nodeNames));
+            }
+        }
+        return jobExecutionResultDto;
+	}
+
+	/**
      * Sets the run time job values.
      *
      * @param jobExecution the job execution

@@ -188,7 +188,35 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
             throw e;
         }
     }
+    
+    /**
+     * Execute job and return job execution result ID to be able to query execution results later. Job execution result is persisted right away, while job is executed
+     * asynchronously.
+     * 
+     * @param jobInstance Job instance to execute.
+     * @param params Parameters (currently not used)
+     * @return Job execution result ID
+     * @throws BusinessException Any exception
+     */
+    public JobExecutionResultImpl executeJobWithResult(JobInstance jobInstance, Map<String, String> params) throws BusinessException {
+        log.info("Execute a job {}  of type {} with parameters {} ", jobInstance, jobInstance.getJobTemplate(), params);
+        try {
+            JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
+            jobExecutionResult.setJobInstance(jobInstance);
 
+            Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
+            job.executeInNewTrans(jobInstance, jobExecutionResult);
+
+            log.debug("Job execution result ID for job {} of type {} is {}", jobInstance, jobInstance.getJobTemplate(), jobExecutionResult.getId());
+            return jobExecutionResult;
+
+        } catch (Exception e) {
+            log.error("Failed to execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate(), e);
+            throw new BusinessException(e);
+        }
+    }
+    
+    
     /**
      * Execute job and return job execution result ID to be able to query execution results later. Job execution result is persisted right away, while job is executed
      * asynchronously.
