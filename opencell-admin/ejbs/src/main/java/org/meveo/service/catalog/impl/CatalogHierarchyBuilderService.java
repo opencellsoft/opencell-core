@@ -690,8 +690,7 @@ public class CatalogHierarchyBuilderService {
         serviceTemplate.getServiceRecurringCharges().size();
         serviceTemplate.getServiceSubscriptionCharges().size();
         serviceTemplate.getServiceTerminationCharges().size();
-        serviceTemplate.getServiceUsageCharges().size();
-        serviceTemplate.getMedias().size();
+        serviceTemplate.getServiceUsageCharges().size(); 
 
         ServiceTemplate newServiceTemplate = new ServiceTemplate();
         String newCode = prefix + serviceTemplate.getCode();
@@ -716,7 +715,6 @@ public class CatalogHierarchyBuilderService {
             newServiceTemplate.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
             newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
             newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
-            newServiceTemplate.setMedias(new ArrayList<Media>());
             
             this.duplicateAndSetImgPath(serviceTemplate, newServiceTemplate, serviceConfiguration != null ? serviceConfiguration.getImagePath() : "");
 
