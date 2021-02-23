@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "fca598d2-dab2-4bed-9316-e2a205f7f3e5",
+		"_postman_id": "bd8e2256-094c-47c3-b4ab-2c4dfdce5caa",
 		"name": "CPQ Functional Process",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1315,7 +1315,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{groupedAttributeCode}}\",\r\n    \"description\": \"This is grouped attribute test description\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"productVersion\": \"{{productOneVersion}}\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{groupedAttributeCode}}\",\r\n    \"description\": \"This is grouped attribute test description\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1924,7 +1924,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"productCode\": \"{{tvDecoderCode}}\",\r\n  \"shortDescription\": \"Product version TV_DECODER description\",\r\n  \"currentVersion\": {{televisionVersion}},\r\n  \"status\": \"DRAFT\",\r\n  \"statusDate\": \"2020-11-24\",\r\n   \"validity\":{\r\n   \"from\": \"2020-11-24\",\r\n   \"to\": \"2022-12-25\"\r\n    }\r\n}",
+									"raw": "{\r\n  \"productCode\": \"{{tvDecoderCode}}\",\r\n  \"shortDescription\": \"Product version TV_DECODER description\",\r\n  \"currentVersion\": {{tvDecoderVersion}},\r\n  \"status\": \"DRAFT\",\r\n  \"statusDate\": \"2020-11-24\",\r\n   \"validity\":{\r\n   \"from\": \"2020-11-24\",\r\n   \"to\": \"2022-12-25\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1947,7 +1947,7 @@
 							"response": []
 						},
 						{
-							"name": "Publish TV_DECODER Product Version",
+							"name": "Publish TV_DECODER Version",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -2039,7 +2039,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{tvGroupedAttributeCode}}\",\r\n    \"description\": \"This is the grouped tv attribute desc\",\r\n    \"productCode\": \"{{tvDecoderCode}}\",\r\n    \"productVersion\": {{tvDecoderVersion}}\r\n}",
+									"raw": "{\r\n    \"code\": \"{{tvGroupedAttributeCode}}\",\r\n    \"description\": \"This is the grouped tv attribute description\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2078,7 +2078,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{setupPriceAttribute}}\",\r\n    \"description\": \"This is setup price attribute desc\",\r\n    \"disabled\": true,\r\n    \"groupedAttributeCode\": \"{{tvGroupedAttributeCode}}\",\r\n    \"attributeType\": \"TEXT\",\r\n    \"allowedValues\": [\r\n        \"115\",\r\n        \"205\"\r\n    ],\r\n    \"display\": true,\r\n    \"sequence\": 0,\r\n    \"priority\": 0,\r\n    \"mandatory\": true\r\n}",
+									"raw": "{\r\n    \"code\": \"{{setupPriceAttribute}}\",\r\n    \"description\": \"This is setup price attribute desc\",\r\n    \"disabled\": true,\r\n    \"attributeType\": \"TEXT\",\r\n    \"allowedValues\": [\r\n        \"115\",\r\n        \"205\"\r\n    ],\r\n    \"display\": true,\r\n    \"sequence\": 0,\r\n    \"priority\": 0,\r\n    \"mandatory\": true\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2116,7 +2116,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"code\": \"{{brandAttribute}}\",\r\n  \"description\": \"This is brand attribute desc\", \r\n  \"disabled\": true,\r\n  \"groupedAttributeCode\": \"{{tvGroupedAttributeCode}}\", \r\n  \"attributeType\":\"TEXT\",\r\n  \"allowedValues\": [\r\n    \"SAMSUNG\",\"SONY\"\r\n  ],\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0,\r\n  \"mandatory\": true\r\n  }",
+									"raw": "{\r\n  \"code\": \"{{brandAttribute}}\",\r\n  \"description\": \"This is brand attribute desc\", \r\n  \"disabled\": true,\r\n  \"attributeType\":\"TEXT\",\r\n  \"allowedValues\": [\r\n    \"SAMSUNG\",\"SONY\"\r\n  ],\r\n  \"display\": true,\r\n  \"sequence\": 0,\r\n  \"priority\": 0,\r\n  \"mandatory\": true\r\n  }",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2224,7 +2224,7 @@
 							"response": []
 						},
 						{
-							"name": "Create Product Version of TELEVISION",
+							"name": "Create TELEVISION Version",
 							"event": [
 								{
 									"listen": "test",
@@ -2264,7 +2264,7 @@
 							"response": []
 						},
 						{
-							"name": "Publish TELEVISION Product Version",
+							"name": "Publish TELEVISION Version",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -2356,7 +2356,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{bouquetsAttribute}}\",\r\n    \"description\": \"This is bouquets attribute desc\",\r\n    \"groupedAttributeCode\": \"{{tvGroupedAttributeCode}}\",\r\n    \"disabled\": true,\r\n    \"attributeType\": \"TEXT\",\r\n    \"allowedValues\": [\r\n        \"Netflix\",\r\n        \"Canal\"\r\n    ],\r\n    \"display\": true,\r\n    \"sequence\": 0,\r\n    \"priority\": 0,\r\n    \"mandatory\": true\r\n}",
+									"raw": "{\r\n    \"code\": \"{{bouquetsAttribute}}\",\r\n    \"description\": \"This is bouquets attribute desc\",\r\n    \"disabled\": true,\r\n    \"attributeType\": \"TEXT\",\r\n    \"allowedValues\": [\r\n        \"Netflix\",\r\n        \"Canal\"\r\n    ],\r\n    \"display\": true,\r\n    \"sequence\": 0,\r\n    \"priority\": 0,\r\n    \"mandatory\": true\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2444,7 +2444,7 @@
 							"response": []
 						},
 						{
-							"name": "Create Commercial Rule Header",
+							"name": "Create Pre-Requisite Commercial Rule Header",
 							"event": [
 								{
 									"listen": "test",
@@ -2494,7 +2494,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "  {\r\n  \"code\": \"{{tvCommercialRuleCode}}\",\r\n  \"description\": \"This is TV commerciale rule desc\", \r\n  \"offerCode\": \"{{tvDecoderOffer}}\",\r\n  \"ruleType\": \"PRE_REQUISITE\", \r\n  \"productCode\": \"{{televisionCode}}\",\r\n  \"productVersion\": {{televisionVersion}},\r\n  \"commercialRuleItems\": [\r\n    {\r\n      \"operator\": \"AND\",\r\n      \"commercialRuleLines\": [\r\n        {\r\n          \"productCode\": \"{{tvDecoderCode}}\",  \r\n          \"attributeCode\": \"{{brandAttribute}}\",  \r\n          \"attributeValue\": \"SONY\",\r\n          \"operator\": \"EQUAL\"\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}\r\n  "
+									"raw": "  {\r\n  \"code\": \"{{tvCommercialRuleCode}}\",\r\n  \"description\": \"This is TV commerciale rule desc\", \r\n  \"offerCode\": \"{{tvDecoderOffer}}\",\r\n  \"groupedAttributeCode\": \"{{tvGroupedAttributeCode}}\",\r\n  \"targetAttributeValue\": \"SONY\",\r\n  \"ruleType\": \"PRE_REQUISITE\", \r\n  \"productCode\": \"{{tvDecoderCode}}\",\r\n  \"productVersion\": {{televisionVersion}},\r\n  \"commercialRuleItems\": [\r\n    {\r\n      \"operator\": \"AND\",\r\n      \"commercialRuleLines\": [\r\n        {\r\n          \"productCode\": \"{{tvDecoderCode}}\",  \r\n          \"attributeCode\": \"{{brandAttribute}}\",  \r\n          \"attributeValue\": \"SONY\",\r\n          \"operator\": \"EQUAL\"\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/commercialRule/",
@@ -2510,7 +2510,73 @@
 							"response": []
 						},
 						{
-							"name": "Read TV Commercial Rule",
+							"name": "Create Replacement Commercial Rule Header",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{opencell.username}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{opencell.password}}",
+											"type": "string"
+										},
+										{
+											"key": "saveHelperData",
+											"type": "any"
+										},
+										{
+											"key": "showPassword",
+											"value": false,
+											"type": "boolean"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "  {\r\n  \"code\": \"{{repCommercialRuleCode}}\",\r\n  \"description\": \"This is replacement commerciale rule desc\", \r\n  \"offerCode\": \"{{tvDecoderOffer}}\",\r\n  \"ruleType\": \"REPLACEMENT\",\r\n  \"attributeCode\":\"{{brandAttribute}}\",\r\n  \"productCode\": \"{{tvDecoderCode}}\",\r\n  \"productVersion\": {{tvDecoderVersion}},\r\n  \"commercialRuleItems\": [\r\n    {\r\n      \"operator\": \"AND\",\r\n      \"commercialRuleLines\": [\r\n        {\r\n          \"productCode\": \"{{tvDecoderCode}}\",\r\n          \"attributeCode\": \"{{brandAttribute}}\"\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}"
+								},
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule/",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read TELEVISION Commercial Rule",
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -2526,6 +2592,30 @@
 										{
 											"key": "code",
 											"value": "{{tvCommercialRuleCode}}"
+										}
+									]
+								},
+								"description": "Retrieving a product with its code"
+							},
+							"response": []
+						},
+						{
+							"name": "Read REPLACEMENT Commercial Rule",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{opencell.url}}/commercialRule?code={{repCommercialRuleCode}}",
+									"host": [
+										"{{opencell.url}}"
+									],
+									"path": [
+										"commercialRule"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "{{repCommercialRuleCode}}"
 										}
 									]
 								},
@@ -4604,7 +4694,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\":{{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"quoteAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 24\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 24\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n            \"stringValue\": \"Monthly\",\r\n            \"doubleValue\": 24,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4642,7 +4732,45 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountTwoCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\":{{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"quoteAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Annually\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 12\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountTwoCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\":{{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Annually\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 12\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/quote/quoteItem",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"quoteItem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Annually Quote Offer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quoteOfferId\": \"{{quoteOfferTwoId}}\",\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountTwoCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Annually\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 12\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n            \"stringValue\": \"Annually\",\r\n            \"doubleValue\": 12,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4691,6 +4819,41 @@
 								{
 									"key": "quoteItemId",
 									"value": "{{quoteOfferOneId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Annually Quote Offer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/quote/quoteItem?quoteItemId={{quoteOfferTwoId}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"quote",
+								"quoteItem"
+							],
+							"query": [
+								{
+									"key": "quoteItemId",
+									"value": "{{quoteOfferTwoId}}"
 								}
 							]
 						}
@@ -4753,6 +4916,132 @@
 								"product",
 								"cpq",
 								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Products w/ Commercial Rule Replacement & Quote Offer Context",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"offerCode\":\"{{offerTemplateCode}}\", \r\n    \r\n    \"selectedProducts\": [\r\n        \r\n        {\r\n        \"productCode\":\"{{tvDecoderCode}}\",\r\n        \"selectedAttributes\": {\r\n        \"brand\":\"SONY\"\r\n      }\r\n        }\r\n        \r\n        ] ,\r\n    \"customerContextDTO\": {\r\n    \"requestedTagTypes\":[]\r\n    }\r\n\r\n} \r\n\r\n"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/product/cpq/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"product",
+								"cpq",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Grouped Attribute Rules",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{opencell.password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{opencell.username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{opencell.url}}/commercialRule/groupedAttributeRules?groupedAttributeCode={{tvGroupedAttributeCode}}&productCode={{tvDecoderCode}}",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"commercialRule",
+								"groupedAttributeRules"
+							],
+							"query": [
+								{
+									"key": "groupedAttributeCode",
+									"value": "{{tvGroupedAttributeCode}}"
+								},
+								{
+									"key": "productCode",
+									"value": "{{tvDecoderCode}}"
+								}
 							]
 						}
 					},
@@ -5715,6 +6004,7 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
+					"var data = pm.response.json();",
 					"pm.test(\"Status is SUCCESS\", () => {",
 					"  pm.expect(pm.response.code).to.be.oneOf([200,201]);",
 					"});"
@@ -5866,6 +6156,10 @@
 		{
 			"key": "tvCommercialRuleCode",
 			"value": "TV_COMMERCIAL_RULE"
+		},
+		{
+			"key": "repCommercialRuleCode",
+			"value": "REPLACEMENT_COMMERCIAL_RULE"
 		},
 		{
 			"key": "orderTypeCode",
