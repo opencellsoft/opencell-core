@@ -104,14 +104,6 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	private InvoiceSubCategory invoiceSubCategory;
 
 	/**
-	 * @deprecated As of version 5.0. No replacement.
-	 */
-	@Deprecated // until further analysis
-	@Column(name = "accounting_code", length = 255)
-	@Size(max = 255)
-	private String accountingCode;
-
-	/**
 	 * Expression to determine if discount applies
 	 */
 	@Column(name = "expression_el", length = 2000)
@@ -192,7 +184,9 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 * If fase, then amount for the discount line produce by the discount plan item cannot exceed the amount of discounted lines.
 	 * Default: false
 	 */
+	@Type(type = "numeric_boolean")
 	@Column(name = "allow_to_negate")
+	@NotNull
 	private boolean allowToNegate;
 
 	public DiscountPlan getDiscountPlan() {
@@ -285,14 +279,6 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 			return false;
 		}
 		return true;
-	}
-
-	public String getAccountingCode() {
-		return accountingCode;
-	}
-
-	public void setAccountingCode(String accountingCode) {
-		this.accountingCode = accountingCode;
 	}
 
 	public DiscountPlanItemTypeEnum getDiscountPlanItemType() {

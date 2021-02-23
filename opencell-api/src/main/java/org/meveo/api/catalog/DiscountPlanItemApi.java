@@ -268,9 +268,6 @@ public class DiscountPlanItemApi extends BaseApi {
             }
             discountPlanItem.setInvoiceSubCategory(invoiceSubCategory);
         }
-        if (source.getAccountingCode() != null) {
-            discountPlanItem.setAccountingCode(source.getAccountingCode());
-        }
         if (source.getExpressionEl() != null) {
             discountPlanItem.setExpressionEl(source.getExpressionEl());
         }

@@ -144,7 +144,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.discountPlanCode = discountPlanItem.getDiscountPlan().getCode();
         this.invoiceCategoryCode = discountPlanItem.getInvoiceCategory() != null ? discountPlanItem.getInvoiceCategory().getCode() : null;
         this.invoiceSubCategoryCode = discountPlanItem.getInvoiceSubCategory() != null ? discountPlanItem.getInvoiceSubCategory().getCode() : null;
-        this.accountingCode = discountPlanItem.getAccountingCode();
         this.expressionEl = discountPlanItem.getExpressionEl();
         this.expressionElSpark = discountPlanItem.getExpressionElSpark();
         this.disabled = discountPlanItem.isDisabled();

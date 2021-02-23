@@ -293,7 +293,6 @@ public class CatalogHierarchyBuilderService {
 				duplicate.setCfValues(dp.getCfValues());
 				duplicate.setCfAccumulatedValues(dp.getCfAccumulatedValues());
 				duplicate.setInvoiceCategory(dp.getInvoiceCategory());
-				duplicate.setAccountingCode(dp.getAccountingCode());
 				
 				discountPlanItemService.create(duplicate);
 				discountPlanItem.add(duplicate);

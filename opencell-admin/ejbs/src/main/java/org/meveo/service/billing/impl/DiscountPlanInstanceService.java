@@ -107,7 +107,7 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 
 
 	public IDiscountable instantiateDiscountPlan(IDiscountable entity, DiscountPlan dp, List<DiscountPlanInstance> toAdd) throws BusinessException {
-		if (!dp.getStatus().equals(DiscountPlanStatusEnum.IN_USE) || !dp.getStatus().equals(DiscountPlanStatusEnum.ACTIVE)) {
+		if (!(dp.getStatus().equals(DiscountPlanStatusEnum.IN_USE) || dp.getStatus().equals(DiscountPlanStatusEnum.ACTIVE))) {
 			throw new BusinessException("only ACTIVE and IN_USE discount plans can be used instantiated");
 		}
 		if (entity.getAllDiscountPlanInstances() == null || entity.getAllDiscountPlanInstances().isEmpty()) {

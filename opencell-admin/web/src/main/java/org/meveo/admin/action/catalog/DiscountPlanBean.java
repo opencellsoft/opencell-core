@@ -58,7 +58,7 @@ public class DiscountPlanBean extends CustomFieldBean<DiscountPlan> {
 
 	@Override
 	public DiscountPlan initEntity() {
-		discountPlanItem.setAccountingCode(appProvider.getDiscountAccountingCode());
+		//discountPlanItem.setAccountingCode(appProvider.getDiscountAccountingCode());
 
 		entity = super.initEntity();
 
@@ -131,7 +131,7 @@ public class DiscountPlanBean extends CustomFieldBean<DiscountPlan> {
 
 		activeDPITabIndex = 0;
 		discountPlanItem = new DiscountPlanItem();
-		discountPlanItem.setAccountingCode(appProvider.getDiscountAccountingCode());
+		//discountPlanItem.setAccountingCode(appProvider.getDiscountAccountingCode());
 	}
 
 	public void newDiscountPlanItem() {

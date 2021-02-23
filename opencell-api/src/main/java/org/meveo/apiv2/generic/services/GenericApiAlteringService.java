@@ -54,12 +54,14 @@ public class GenericApiAlteringService {
         checkId(id).checkDto(jsonDto);
         Class entityClass = GenericHelper.getEntityClass(entityName);
         IEntity iEntity = PersistenceServiceHelper.getPersistenceService(entityClass).findById(id);
-        if(iEntity == null) {
-            throw new NotFoundException("entity " + entityName + " with id "+id+ " not found.");
+
+        if (iEntity == null) {
+            throw new NotFoundException("entity " + entityName + " with id " + id + " not found.");
         }
         JsonGenericMapper jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().build();
         refreshEntityWithDotFields(jsonGenericMapper.readValue(jsonDto, Map.class), iEntity, jsonGenericMapper.parseFromJson(jsonDto, iEntity.getClass()));
-        return jsonGenericMapper.toJson(null, entityClass, persistenceDelegate.update(entityClass, iEntity));
+        IEntity updatedEntity = persistenceDelegate.update(entityClass, iEntity);
+        return jsonGenericMapper.toJson(null, entityClass, updatedEntity);
     }
 
 
@@ -77,21 +79,22 @@ public class GenericApiAlteringService {
         checkId(id);
         Class entityClass = GenericHelper.getEntityClass(entityName);
         IEntity iEntity = PersistenceServiceHelper.getPersistenceService(entityClass).findById(id);
-        if(iEntity == null) {
-            throw new NotFoundException("entity " + entityName + " with id "+id+ " not found.");
+        if (iEntity == null) {
+            throw new NotFoundException("entity " + entityName + " with id " + id + " not found.");
         }
         persistenceDelegate.remove(entityClass, iEntity);
-        return JsonGenericMapper.Builder
-                .getBuilder().withNestedEntities(null).build()
-                .toJson(null, entityClass, iEntity);
+        return JsonGenericMapper.Builder.getBuilder().withNestedEntities(null).build().toJson(null, entityClass, iEntity);
     }
 
-    private void refreshEntityWithDotFields(Map<String,Object> readValueMap, Object fetchedEntity, Object parsedEntity) {
-        readValueMap.keySet().forEach(key -> {if(!forbiddenFieldsToUpdate.contains(key)) FetchOrSetField(key, readValueMap, parsedEntity, fetchedEntity);});
+    public void refreshEntityWithDotFields(Map<String, Object> readValueMap, Object fetchedEntity, Object parsedEntity) {
+        readValueMap.keySet().forEach(key -> {
+            if (!forbiddenFieldsToUpdate.contains(key))
+                FetchOrSetField(key, readValueMap, parsedEntity, fetchedEntity);
+        });
     }
 
     private void FetchOrSetField(String fieldName, Map<String, Object> readValueMap, Object parsedEntity, Object fetchedEntity) {
-        if("cfValues".equalsIgnoreCase(fieldName)) {
+        if ("cfValues".equalsIgnoreCase(fieldName)) {
             CustomFieldTemplateService customFieldTemplateService = (CustomFieldTemplateService) PersistenceServiceHelper.getPersistenceService(CustomFieldTemplate.class);
             Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo((ICustomFieldEntity) parsedEntity);
             if (customFieldTemplates != null) {
@@ -100,7 +103,7 @@ public class GenericApiAlteringService {
             }
         } else {
             Field updatedField = FieldUtils.getField(parsedEntity.getClass(), fieldName, true);
-            if(updatedField != null){
+            if (updatedField != null) {
                 try {
                     Object newValue = updatedField.get(parsedEntity);
                     if(updatedField.getType().isAssignableFrom(List.class)){

@@ -105,6 +105,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
     }
 
     private List<DiscountPlan> getIncompatibleDiscountPlans(List<DiscountPlanDto> incompatibleDiscountPlansDto) {
+        if (incompatibleDiscountPlansDto == null) {
+            return null;
+        }
         List<DiscountPlan> incompatibleDiscountPlans = new ArrayList<>();
         for (DiscountPlanDto discountPlanDto : incompatibleDiscountPlansDto) {
             DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanDto.getCode());
@@ -196,6 +199,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
     }
 
     private List<ApplicableEntity> getApplicableEntities(List<ApplicableEntityDto> applicableEntitiesDto) {
+        if (applicableEntitiesDto == null) {
+            return null;
+        }
         List<ApplicableEntity> applicableEntities = new ArrayList<>();
         for (ApplicableEntityDto dto : applicableEntitiesDto) {
             ApplicableEntity applicableEntity = new ApplicableEntity();
