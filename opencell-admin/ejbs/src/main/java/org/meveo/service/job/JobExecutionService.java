@@ -102,7 +102,10 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 isPersistResult = "true".equals(paramBeanFactory.getInstance().getProperty("meveo.job.persistResult", "true"));
             }
             if (isPersistResult) {
+            	log.info("isPersistResult true");
                 if (resultToPersist.isTransient()) {
+                	log.info("isTransient true");
+                	log.info("resultToPersist {}", resultToPersist.getEndDate());
                     create(resultToPersist);
                     result.setId(resultToPersist.getId());
                 } else {
@@ -110,9 +113,16 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                     JobExecutionResultImpl updateEntity = findById(result.getId());
                     if (updateEntity != null) {
                         JobExecutionResultImpl.updateFromInterface(result, updateEntity);
+                        log.info("isTransient true");
+                    	log.info("updateEntity {}", updateEntity.getEndDate());
+                    	log.info("result {}", result.getEndDate());
                         update(updateEntity);
+                    } else {
+                    	log.info("updateEntity is null");
                     }
                 }
+            } else {
+            	log.info("isPersistResult false");
             }
             return resultToPersist.isDone();
 

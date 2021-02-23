@@ -40,8 +40,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterface {
 	
-	Logger log = LoggerFactory.getLogger(this.getClass());
-    
     protected Object getServiceInterface(String serviceInterfaceName) {
         return EjbUtils.getServiceInterface(serviceInterfaceName);
     }
@@ -49,8 +47,6 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
     @Override
     public List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException {
     	
-    	log.info("AbstractDDRequestBuilder : findListAoToPay");
-        
         FilterService filterService = (FilterService) getServiceInterface(FilterService.class.getSimpleName());
         AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(AccountOperationService.class.getSimpleName());
 
@@ -60,7 +56,6 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
 
         List<AccountOperation> listAoToPay = null;
         if (filter == null) {
-        	log.info("filter : is null");
             if (fromDueDate == null) {
                 throw new BusinessEntityException("fromDuDate is empty");
             }
@@ -70,11 +65,8 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
             if (fromDueDate.after(toDueDate)) {
                 throw new BusinessEntityException("fromDueDate is after toDueDate");
             }
-            log.info("accountOperationService : getAOsToPayOrRefund");
             listAoToPay = accountOperationService.getAOsToPayOrRefund(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate,ddrequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess(),ddrequestLotOp.getSeller());
         } else {
-        	 log.info("filter : {}", filter);
-        	 log.info("filterService : filteredListAsObjects");
             listAoToPay = (List<AccountOperation>) filterService.filteredListAsObjects(filter);
         }
         return listAoToPay;
