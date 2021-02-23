@@ -29,6 +29,8 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.filter.FilterService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  An abstract class to centralize some common methods such as getting the list of AOs to pay.
@@ -37,6 +39,8 @@ import org.meveo.service.filter.FilterService;
  *  @lastModifiedVersion 10.0
  */
 public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterface {
+	
+	Logger log = LoggerFactory.getLogger(this.getClass());
     
     protected Object getServiceInterface(String serviceInterfaceName) {
         return EjbUtils.getServiceInterface(serviceInterfaceName);
@@ -44,6 +48,8 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
 
     @Override
     public List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException {
+    	
+    	log.info("AbstractDDRequestBuilder : findListAoToPay");
         
         FilterService filterService = (FilterService) getServiceInterface(FilterService.class.getSimpleName());
         AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(AccountOperationService.class.getSimpleName());
@@ -54,6 +60,7 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
 
         List<AccountOperation> listAoToPay = null;
         if (filter == null) {
+        	log.info("filter : is null");
             if (fromDueDate == null) {
                 throw new BusinessEntityException("fromDuDate is empty");
             }
@@ -63,8 +70,11 @@ public abstract class AbstractDDRequestBuilder implements DDRequestBuilderInterf
             if (fromDueDate.after(toDueDate)) {
                 throw new BusinessEntityException("fromDueDate is after toDueDate");
             }
+            log.info("accountOperationService : getAOsToPayOrRefund");
             listAoToPay = accountOperationService.getAOsToPayOrRefund(PaymentMethodEnum.DIRECTDEBIT, fromDueDate, toDueDate,ddrequestLotOp.getPaymentOrRefundEnum().getOperationCategoryToProcess(),ddrequestLotOp.getSeller());
         } else {
+        	 log.info("filter : {}", filter);
+        	 log.info("filterService : filteredListAsObjects");
             listAoToPay = (List<AccountOperation>) filterService.filteredListAsObjects(filter);
         }
         return listAoToPay;
