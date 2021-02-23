@@ -76,6 +76,7 @@ public class QueryBuilder {
     private Class<?> clazz;
 
     static final String FROM = "from ";
+    public static final String  JOIN_AS = " as ";
 
     public Class<?> getEntityClass() {
         return clazz;
@@ -254,7 +255,8 @@ public class QueryBuilder {
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
-                query.append(" left join fetch " + alias + "." + fetchField + " as " + getJoinAlias(alias, fetchField));
+				String joinAlias = fetchField.contains(JOIN_AS) ? "" : JOIN_AS + getJoinAlias(alias, fetchField);
+				query.append(" left join fetch " + alias + "." + fetchField + joinAlias);
             }
         }
 
