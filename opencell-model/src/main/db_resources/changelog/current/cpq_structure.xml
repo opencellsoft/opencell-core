@@ -3856,5 +3856,31 @@ public class OrderAdvancement extends ModuleScript {
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
 	        
     </changeSet>
+    
+    <changeSet id="#20210222_540_269" author="TarikFA.">
+    	<dropColumn tableName="cpq_grouped_attributes">
+    		<column name="product_version_id"></column>
+    	</dropColumn>
+    	
+    	<dropColumn tableName="cpq_attribute">
+    		<column name="grouped_attributes_id"></column>
+    	</dropColumn>
+    	
+	    <createTable tableName="cpq_grouped_attributes_attribute">
+            <column name="grouped_attributes" type="bigint" >
+            	<constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint" >
+            	<constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_grouped_attributes_attribute" constraintName="fk_cpq_grouped_attributes_attribute_attribute_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+        <addForeignKeyConstraint baseColumnNames="grouped_attributes" baseTableName="cpq_grouped_attributes_attribute" constraintName="fk_cpq_grouped_attributes_attribute_groupedattribute_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
+	        
+    </changeSet>
 
 </databaseChangeLog>
