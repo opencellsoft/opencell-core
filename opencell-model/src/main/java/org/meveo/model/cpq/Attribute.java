@@ -118,9 +118,13 @@ public class Attribute extends EnableBusinessCFEntity{
     @NotNull
     protected boolean display;
     
-    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id")
-    private List<Media> medias = new ArrayList<>();
+    
+    /**
+     * list of Media
+     */   
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cpq_attribute_media", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
+    private List<Media> medias = new ArrayList<Media>();
     
     
     @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
@@ -259,20 +263,7 @@ public class Attribute extends EnableBusinessCFEntity{
 	public void setChargeTemplates(Set<ChargeTemplate> chargeTemplates) {
 		this.chargeTemplates = chargeTemplates;
 	}
-
-	/**
-	 * @return the medias
-	 */
-	public List<Media> getMedias() {
-		return medias;
-	}
-
-	/**
-	 * @param medias the medias to set
-	 */
-	public void setMedias(List<Media> medias) {
-		this.medias = medias;
-	}
+ 
 
 	/**
 	 * @return the tags
@@ -342,6 +333,20 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setUnitNbDecimal(int unitNbDecimal) {
 		this.unitNbDecimal = unitNbDecimal;
+	}
+
+	/**
+	 * @return the medias
+	 */
+	public List<Media> getMedias() {
+		return medias;
+	}
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<Media> medias) {
+		this.medias = medias;
 	}
 	
 	

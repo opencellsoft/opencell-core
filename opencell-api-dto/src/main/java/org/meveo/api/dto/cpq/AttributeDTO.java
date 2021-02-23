@@ -19,6 +19,7 @@
 package org.meveo.api.dto.cpq;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -95,11 +96,11 @@ public class AttributeDTO extends EnableBusinessDto {
     @XmlElementWrapper(name = "commercialRuleCodes")
     @XmlElement(name = "commercialRuleCodes") 
     protected List<String> commercialRuleCodes=new ArrayList<String>();
-    
-    /** The medias */
-    @XmlElementWrapper(name = "medias")
-    @XmlElement(name = "medias")
-    protected List<MediaDto> medias = new ArrayList<MediaDto>();
+     
+    /** The media codes. */
+    @XmlElementWrapper(name = "mediaCodes")
+    @XmlElement(name = "mediaCodes")
+    protected Set<String> mediaCodes = new HashSet<String>();
     
     
     /** The tags */
@@ -136,13 +137,7 @@ public class AttributeDTO extends EnableBusinessDto {
         description=attribute.getDescription();
         id=attribute.getId();
         mandatory=attribute.isMandatory();
-        unitNbDecimal = attribute.getUnitNbDecimal();
-        
-        if (attribute.getMedias()!=null) {
-        	for (Media media:attribute.getMedias()) {
-        		medias.add(new MediaDto(media));
-        	}
-        }
+        unitNbDecimal = attribute.getUnitNbDecimal(); 
         if (attribute.getAssignedAttributes()!=null) {
         	for (Attribute attr:attribute.getAssignedAttributes()) {
         		assignedAttributeCodes.add(attr.getCode());
@@ -334,22 +329,23 @@ public class AttributeDTO extends EnableBusinessDto {
 		this.chargeTemplateCodes = chargeTemplateCodes;
 	}
 
+	
 
 
 	/**
-	 * @return the medias
+	 * @return the mediaCodes
 	 */
-	public List<MediaDto> getMedias() {
-		return medias;
+	public Set<String> getMediaCodes() {
+		return mediaCodes;
 	}
 
 
 
 	/**
-	 * @param medias the medias to set
+	 * @param mediaCodes the mediaCodes to set
 	 */
-	public void setMedias(List<MediaDto> medias) {
-		this.medias = medias;
+	public void setMediaCodes(Set<String> mediaCodes) {
+		this.mediaCodes = mediaCodes;
 	}
 
 

@@ -194,8 +194,7 @@ public class CatalogHierarchyBuilderService {
         	entity.setAttributes(new ArrayList<Attribute>());
         	for (Attribute attribute : attributes) {
         		for(Media media : attribute.getMedias()) {
-        			Media newMedia = new Media(media); 
-        			newMedia.setAttribute(attribute);
+        			Media newMedia = new Media(media);
         			mediaService.create(newMedia);
         			attribute.getMedias().add(newMedia);
         		}
@@ -276,8 +275,7 @@ public class CatalogHierarchyBuilderService {
     	
     	if(medias != null) {
     		medias.forEach(media -> {
-    			Media newMedia = new Media(media); 
-    			newMedia.setProduct(entity);
+    			Media newMedia = new Media(media);
     			mediaService.create(newMedia);
     			entity.getMedias().add(newMedia);
     		});

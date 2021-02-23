@@ -21,13 +21,10 @@ public class MediaDto extends BaseEntityDto{
 
 	private Long id;
 	
-	private String offerCode;
+	private String code;
 
-	private String productCode;
-
-	private String serviceTemplateCode;
-	
-	private String attributeCode;
+	private String description;
+ 
 	@NotNull
 	private String mediaName;
 	@NotNull
@@ -43,43 +40,50 @@ public class MediaDto extends BaseEntityDto{
 	}
 	
 	public MediaDto(Media media) {
-		this.id=media.getId();
-		this.productCode = media.getProduct()!=null? media.getProduct().getCode():null;
-		this.serviceTemplateCode = media.getServiceTemplate()!=null?media.getServiceTemplate().getCode():null;
-		this.offerCode=media.getOffer()!=null?media.getOffer().getCode():null;
+		this.id=media.getId(); 
 		this.mediaName = media.getMediaName();
 		this.label = media.getLabel();
 		this.main = media.getMain();
 		this.mediaPath = media.getMediaPath();
 		this.mediaType = media.getMediaType();
-		if(media.getAttribute() != null)
-			this.attributeCode = media.getAttribute().getCode();
 	}
 	
+	 
 	/**
-	 * @return the productCode
+	 * @return the code
 	 */
-	public String getProductCode() {
-		return productCode;
+	public String getCode() {
+		return code;
 	}
+
 	/**
-	 * @param productCode the productCode to set
+	 * @param code the code to set
 	 */
-	public void setProductCode(String productCode) {
-		this.productCode = productCode;
+	public void setCode(String code) {
+		this.code = code;
 	}
+
 	/**
-	 * @return the serviceTemplateCode
+	 * @return the description
 	 */
-	public String getServiceTemplateCode() {
-		return serviceTemplateCode;
+	public String getDescription() {
+		return description;
 	}
+
 	/**
-	 * @param serviceTemplateCode the serviceTemplateCode to set
+	 * @param description the description to set
 	 */
-	public void setServiceTemplateCode(String serviceTemplateCode) {
-		this.serviceTemplateCode = serviceTemplateCode;
+	public void setDescription(String description) {
+		this.description = description;
 	}
+
+	/**
+	 * @return the main
+	 */
+	public Boolean getMain() {
+		return main;
+	}
+
 	/**
 	 * @return the mediaName
 	 */
@@ -141,34 +145,7 @@ public class MediaDto extends BaseEntityDto{
 		this.mediaPath = mediaPath;
 	}
 
-	/**
-	 * @return the offerCode
-	 */
-	public String getOfferCode() {
-		return offerCode;
-	}
-
-	/**
-	 * @param offerCode the offerCode to set
-	 */
-	public void setOfferCode(String offerCode) {
-		this.offerCode = offerCode;
-	}
-
-	/**
-	 * @return the attributeCode
-	 */
-	public String getAttributeCode() {
-		return attributeCode;
-	}
-
-	/**
-	 * @param attributeCode the attributeCode to set
-	 */
-	public void setAttributeCode(String attributeCode) {
-		this.attributeCode = attributeCode;
-	}
-
+	  
 	/**
 	 * @return the id
 	 */

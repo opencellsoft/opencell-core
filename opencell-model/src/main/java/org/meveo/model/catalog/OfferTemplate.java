@@ -19,7 +19,9 @@ package org.meveo.model.catalog;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -184,9 +186,12 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     private List<Attribute> attributes = new ArrayList<Attribute>();
 
 
-    @OneToMany(mappedBy = "offer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id")
-    private List<Media> medias = new ArrayList<>();
+	/**
+     * list of Media
+     */   
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cpq_offer_template_media", joinColumns = @JoinColumn(name = "offer_template_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
+    private List<Media> medias = new ArrayList<Media>();
 
     @OneToMany(mappedBy = "targetOfferTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
@@ -554,6 +559,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
 	}
+ 
 
 	/**
 	 * @return the medias

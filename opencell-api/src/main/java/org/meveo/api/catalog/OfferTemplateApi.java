@@ -21,7 +21,6 @@ package org.meveo.api.catalog;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +31,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.collections4.list.TreeList;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -87,6 +85,7 @@ import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
@@ -106,6 +105,7 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.AttributeService;
+import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -176,6 +176,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     
     @Inject
     private ProductVersionService productVersionService;
+    
+    @Inject
+    private MediaService mediaService;
     
     
     @Override
@@ -398,6 +401,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         processTags(postData, offerTemplate); 
         processOfferProductDtos(postData, offerTemplate);
         processAttributes(postData, offerTemplate);
+        processMedias(postData, offerTemplate);
         try {
         	String imagePath = postData.getImagePath();
 			if(StringUtils.isBlank(imagePath) && StringUtils.isBlank(postData.getImageBase64())) {
@@ -462,6 +466,21 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 				tags.add(tag);
 			}
 			offerTemplate.setTags(tags);
+		}
+	}
+    
+    private void processMedias(OfferTemplateDto postData, OfferTemplate offerTemplate) {
+		Set<String> mediaCodes = postData.getMediaCodes(); 
+		if(mediaCodes != null && !mediaCodes.isEmpty()){
+			List<Media> medias=new ArrayList<Media>();
+			for(String code:mediaCodes) {
+				Media media=mediaService.findByCode(code);
+				if(media == null) { 
+					throw new EntityDoesNotExistsException(Media.class,code);
+				}
+				medias.add(media);
+			}
+			offerTemplate.setMedias(medias);
 		}
 	}
 
@@ -681,7 +700,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
          	List<Tag> tags=offerTemplateService.getOfferTagsByType(requestedTagTypes);
          	offerTemplate.setTags(tags);
          }
-    	 GetOfferTemplateResponseDto dto = new GetOfferTemplateResponseDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false,true);
+    	 GetOfferTemplateResponseDto dto = new GetOfferTemplateResponseDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false,true,true);
        
         dto.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
         dto.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
@@ -915,7 +934,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     	if(offerTemplate == null)
     		throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
     	OfferTemplate duplicated = offerTemplateService.duplicate(offerTemplate, duplicateHierarchy, true, preserveCode);
-    	return new GetOfferTemplateResponseDto(duplicated, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false,true);
+    	return new GetOfferTemplateResponseDto(duplicated, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false,true,true);
     }
     
     public void updateStatus(String offerTemplateCode, LifeCycleStatusEnum status, Date validFrom, Date validTo) {

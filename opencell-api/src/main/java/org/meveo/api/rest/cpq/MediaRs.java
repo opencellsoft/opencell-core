@@ -63,37 +63,35 @@ public interface MediaRs {
 	public Response update(@Parameter(required = true, description = "updading for a new media") MediaDto mediaDto);
 
 	@GET
-	@Path("/{productCode}/{mediaName}")
+	@Path("/{code}")
 	@Operation(
-			summary = "update an existing Media",
+			summary = "get an existing Media",
 			tags = {"Media management"},
-			description = "update an exsiting  Media",
+			description = "get an exsiting  Media",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "The media is succeffully fetched", content = @Content(schema = @Schema(implementation = GetMediaDtoResponse.class))),
 					@ApiResponse(responseCode = "412", description = "One of the requied parameters is missing ", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 		            @ApiResponse(responseCode = "404", description = "composed id of media does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 		   }
 			)
-	public Response findByCode(@Parameter(required = true, description = "product of the media") @PathParam("productCode") String productCode,
-							   @Parameter(required = true, description = "media name") @PathParam("mediaName") String mediaName);
+	public Response findByCode(@Parameter(required = true, description = "media code") @PathParam("code") String code);
 
 	@DELETE
-	@Path("/{productCode}/{mediaName}")
+	@Path("/{code}")
 	@Operation(
-			summary = "update an existing Media",
+			summary = "delete an existing Media",
 			tags = {"Media management"},
-			description = "update an exsiting  Media",
+			description = "delete an exsiting  Media",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "The media is succeffully deleted", content = @Content(schema = @Schema(implementation = ActionStatus.class))),
 					@ApiResponse(responseCode = "412", description = "One of the requied parameters is missing ", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 		            @ApiResponse(responseCode = "404", description = "composed id of media does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 		   }
 			)
-	public Response deleteMedia(@Parameter(required = true, description = "product of the media") @PathParam("productCode") String productCode,
-							   @Parameter(required = true, description = "media name") @PathParam("mediaName") String mediaName);
+	public Response deleteMedia(@Parameter(required = true, description = "media code") @PathParam("code") String code);
 	
 	
-	@POST
+	/*@POST
 	@Path("/list")
 	@Operation(summary = "This endpoint allows to find list of media with filters and paging",
     description ="Find a list of media by filtrering on its property",
@@ -105,6 +103,7 @@ public interface MediaRs {
     		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
     })
 	Response ListPost(PagingAndFiltering pagingAndFiltering);
+	*/
 	
 	
 }

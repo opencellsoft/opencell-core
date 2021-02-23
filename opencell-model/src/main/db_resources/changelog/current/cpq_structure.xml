@@ -3747,9 +3747,89 @@ public class OrderAdvancement extends ModuleScript {
 	');
         ]]></sql>
         
+          </changeSet>
+          
+       <changeSet id="#270_20210222" author="Mbarek-Ay">
+        <addColumn tableName="cpq_media">  
+		<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+		</addColumn>
+		 <dropColumn tableName="cpq_media">
+            <column name="product_id"></column>
+            <column name="offer_id"></column>
+            <column name="attribute_id"></column>
+             <column name="service_template_id"></column>
+        </dropColumn>
+
+	<createTable tableName="cpq_offer_template_media">
+		<column name="offer_template_id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="media_id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+	</createTable>
+ <addUniqueConstraint columnNames="offer_template_id,media_id" constraintName="cpq_offer_template_media_pkey" tableName="cpq_offer_template_media" />
+	<addForeignKeyConstraint
+		baseTableName="cpq_offer_template_media"
+		baseColumnNames="offer_template_id"
+		constraintName="cpq_offer_template_media_offer_template_id_fk"
+		referencedTableName="cat_offer_template" referencedColumnNames="id" />
+
+	<addForeignKeyConstraint
+		baseTableName="cpq_offer_template_media" baseColumnNames="media_id"
+		constraintName="cpq_offer_template_media_media_id_fk"
+		referencedTableName="cpq_media" referencedColumnNames="id" />  
+		
+		
+   <createTable tableName="cpq_product_media">
+		<column name="product_id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="media_id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+	</createTable>
+<addUniqueConstraint columnNames="product_id,media_id" constraintName="cpq_product_media_pkey" tableName="cpq_product_media" />
+	<addForeignKeyConstraint
+		baseTableName="cpq_product_media"
+		baseColumnNames="product_id"
+		constraintName="cpq_product_media_product_id_fk"
+		referencedTableName="cpq_product" referencedColumnNames="id" />
+
+	<addForeignKeyConstraint
+		baseTableName="cpq_product_media" baseColumnNames="media_id"
+		constraintName="cpq_product_media_id_fk"
+		referencedTableName="cpq_media" referencedColumnNames="id" />  
+		
+		
+	 <createTable tableName="cpq_attribute_media">
+		<column name="attribute_id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="media_id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+	</createTable>
+<addUniqueConstraint columnNames="attribute_id,media_id" constraintName="cpq_attribute_media_pkey" tableName="cpq_attribute_media" />
+	<addForeignKeyConstraint
+		baseTableName="cpq_attribute_media"
+		baseColumnNames="attribute_id"
+		constraintName="cpq_attribute_media_attribute_id_fk"
+		referencedTableName="cpq_attribute" referencedColumnNames="id" />
+
+	<addForeignKeyConstraint
+		baseTableName="cpq_attribute_media" baseColumnNames="media_id"
+		constraintName="cpq_attribute_media_id_fk"
+		referencedTableName="cpq_media" referencedColumnNames="id" /> 	    
+        
+</changeSet>
         
         
         
-    </changeSet>
+        
+  
 
 </databaseChangeLog>
