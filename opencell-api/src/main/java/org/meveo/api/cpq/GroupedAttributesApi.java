@@ -106,8 +106,7 @@ public class GroupedAttributesApi extends BaseApi{
 		if(groupedAttribute == null) {
 			throw new EntityDoesNotExistsException(GroupedAttributes.class, code);
 		}
-		var attributes = attributeService.findByGroupedAttribute(groupedAttribute);
-		return new GroupedAttributeDto(groupedAttribute, attributes);
+		return new GroupedAttributeDto(groupedAttribute, groupedAttribute.getAttributes());
 	}
 	
 	private void checkParams(GroupedAttributeDto groupedAttributeDto) {
