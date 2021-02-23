@@ -203,7 +203,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
         try {
             JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
             jobExecutionResult.setJobInstance(jobInstance);
-            create(jobExecutionResult);
+            //create(jobExecutionResult);
 
             Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
             job.executeInNewTrans(jobInstance, jobExecutionResult);
