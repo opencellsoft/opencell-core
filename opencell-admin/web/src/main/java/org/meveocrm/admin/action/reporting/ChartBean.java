@@ -72,7 +72,7 @@ public class ChartBean extends ChartEntityBean<Chart, ChartModel, ChartEntityMod
     public ChartBean() {
         super(Chart.class);
     }
-
+    
     public ChartBean(final Class<Chart> clazz) {
         super(clazz);
     }

@@ -33,9 +33,11 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -86,6 +88,7 @@ public class CustomTableImportJob extends Job {
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
+        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
@@ -132,7 +135,7 @@ public class CustomTableImportJob extends Job {
 
                     } catch (ExecutionException e) {
                         Throwable cause = e.getCause();
-                        result.registerError(cause.getMessage());
+                        jobExecutionService.registerError(result, cause.getMessage());
                         log.error("Failed to execute async method", cause);
                     }
                 }
@@ -140,7 +143,7 @@ public class CustomTableImportJob extends Job {
 
         } catch (Exception e) {
             log.error("Failed to run custom table data import", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
     }
 
@@ -157,6 +160,7 @@ public class CustomTableImportJob extends Job {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> launchAndForget(String customTableDir, List<File> files, JobExecutionResultImpl result, String parameter, MeveoUser lastCurrentUser)
             throws BusinessException {
 
@@ -200,12 +204,12 @@ public class CustomTableImportJob extends Job {
                 }
 
                 customTableService.importData(customTable, file, appendImportedData);
-                result.registerSucces();
+                jobExecutionService.registerSucces(result);
                 FileUtils.moveFile(outputDir, file, filename);
 
             } catch (Exception e) {
                 log.error("Failed to import data from file {} into custom table", filename, e);
-                result.registerError(filename, e.getMessage());
+                jobExecutionService.registerError(result, filename, e.getMessage());
                 FileUtils.moveFile(rejectDir, file, filename);
             }
         }

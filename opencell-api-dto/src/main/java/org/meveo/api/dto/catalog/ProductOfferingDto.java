@@ -62,6 +62,15 @@ public class ProductOfferingDto extends EnableBusinessDto implements IVersionedD
     /** The valid to. */
     @XmlAttribute()
     protected Date validTo;
+    
+    /** The new valid from. */
+    @XmlAttribute()
+    protected Date newValidFrom;
+
+    /** The new valid to. */
+    @XmlAttribute()
+    protected Date newValidTo;
+
 
     /** The name. */
     @XmlElement(required = true)
@@ -482,5 +491,33 @@ public class ProductOfferingDto extends EnableBusinessDto implements IVersionedD
 
     public void setCustomerCategories(List<CustomerCategoryDto> customerCategories) {
         this.customerCategories = customerCategories;
+    }
+
+    /**
+     * @return the newValidFrom
+     */
+    public Date getNewValidFrom() {
+        return newValidFrom;
+    }
+
+    /**
+     * @param newValidFrom the newValidFrom to set
+     */
+    public void setNewValidFrom(Date newValidFrom) {
+        this.newValidFrom = newValidFrom;
+    }
+
+    /**
+     * @return the newValidTo
+     */
+    public Date getNewValidTo() {
+        return newValidTo;
+    }
+
+    /**
+     * @param newValidTo the newValidTo to set
+     */
+    public void setNewValidTo(Date newValidTo) {
+        this.newValidTo = newValidTo;
     }
 }

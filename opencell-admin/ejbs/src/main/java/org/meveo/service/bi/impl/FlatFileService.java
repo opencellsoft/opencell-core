@@ -27,6 +27,8 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -115,8 +117,8 @@ public class FlatFileService extends BusinessService<FlatFile> {
      * @return the flat files list
      */
     public List<FlatFile> findByFileOriginalName(String fileOriginalName) {
-        Query query = getEntityManager().createQuery("SELECT ff from FlatFile ff where ff.fileOriginalName=:fileOriginalName");
-        query.setParameter("fileOriginalName", fileOriginalName);
+        TypedQuery<FlatFile> query = getEntityManager().createNamedQuery("FlatFile.findByOriginalName", FlatFile.class);
+        query.setParameter("fileOriginalName", fileOriginalName.toLowerCase());
         return query.getResultList();
     }
 

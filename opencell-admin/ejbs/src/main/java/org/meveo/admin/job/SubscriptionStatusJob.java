@@ -74,7 +74,7 @@ public class SubscriptionStatusJob extends Job {
         try {
 
             List<Long> subscriptionIds = subscriptionService.getSubscriptionsToRenewOrNotify(untilDate);
-
+            jobExecutionService.initCounterElementsRemaining(result, subscriptionIds.size());
             int i = 0;
             for (Long subscriptionId : subscriptionIds) {
                 i++;
@@ -82,11 +82,12 @@ public class SubscriptionStatusJob extends Job {
                     break;
                 }
                 subscriptionStatusJobBean.updateSubscriptionStatus(result, subscriptionId, untilDate);
+                jobExecutionService.decCounterElementsRemaining(result);
             }
 
         } catch (Exception e) {
             log.error("Failed to run subscription status job {}", jobInstance.getCode(), e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
 
         try {
@@ -102,7 +103,7 @@ public class SubscriptionStatusJob extends Job {
 
         } catch (Exception e) {
             log.error("Failed to run subscription status job {}", jobInstance.getCode(), e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
     }
 

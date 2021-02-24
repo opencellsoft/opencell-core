@@ -54,16 +54,7 @@ public class CheckPaymentMethod extends PaymentMethod {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (!(obj instanceof CheckPaymentMethod)) {
-            return false;
-        }
-
-        // Only one check payment can be as it has no extra information
-        return true;
+        return super.equals(obj);
     }
 
     @Override

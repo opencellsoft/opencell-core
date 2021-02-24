@@ -62,5 +62,4 @@ public class CustomTableDataResponseDto extends SearchResponse {
     public String toString() {
         return "CustomTableDataResponseDto [customTableData=" + customTableData + " " + super.toString() + "]";
     }
-
 }

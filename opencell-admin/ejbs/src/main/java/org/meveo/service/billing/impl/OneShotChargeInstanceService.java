@@ -33,6 +33,7 @@ import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingWalletTypeEnum;
+import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -45,6 +46,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -120,7 +122,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
         OneShotChargeTemplate chargeTemplate = (OneShotChargeTemplate) serviceChargeTemplate.getChargeTemplate();
 
-        log.debug("Instanciate a oneshot for code {} on subscription {}", chargeTemplate.getCode(), serviceInstance.getSubscription().getCode());
+        log.debug("Instanciate a oneshot charge for code {} on subscription {}", chargeTemplate.getCode(), serviceInstance.getSubscription().getCode());
 
         OneShotChargeInstance oneShotChargeInstance = null;
 
@@ -129,36 +131,33 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         } else {
             oneShotChargeInstance = new TerminationChargeInstance(amoutWithoutTax, amoutWithTax, chargeTemplate, serviceInstance, InstanceStatusEnum.INACTIVE);
         }
-                
+
         List<WalletTemplate> walletTemplates = null;
 
         // FIXME : this code should not be here
         if (isSubscriptionCharge) {
             ServiceChargeTemplateSubscription recChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateSubscriptionByChargeCode(chargeTemplate.getCode());
             walletTemplates = recChTmplServ.getWalletTemplates();
-            log.debug("retrieve wallet templates from subscription service charge templates : {}", walletTemplates);
+
         } else {
             ServiceChargeTemplateTermination recChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateTerminationByChargeCode(chargeTemplate.getCode());
             walletTemplates = recChTmplServ.getWalletTemplates();
-            log.debug("retrieve wallet templates from termination service charge templates : {}", walletTemplates);
         }
-        log.debug("by default we set the charge instance as being postpaid");
+        // By default we set the charge instance as being postpaid
         oneShotChargeInstance.setPrepaid(false);
         if (walletTemplates != null && walletTemplates.size() > 0) {
-            log.debug("found {} wallets", walletTemplates.size());
             for (WalletTemplate walletTemplate : walletTemplates) {
-                log.debug("walletTemplate {}", walletTemplate.getCode());
                 if (walletTemplate.getWalletType() == BillingWalletTypeEnum.PREPAID) {
-                    log.debug("this wallet is prepaid, we set the charge instance itself as being prepaid");
+                    // This wallet is prepaid, we set the charge instance itself as being prepaid
                     oneShotChargeInstance.setPrepaid(true);
 
                 }
                 WalletInstance walletInstance = walletService.getWalletInstance(serviceInstance.getSubscription().getUserAccount(), walletTemplate, isVirtual);
-                log.debug("add the wallet instance {} to the chargeInstance {}", walletInstance.getId(), oneShotChargeInstance.getId());
+                log.debug("Added the wallet instance {} to the chargeInstance {}", walletInstance.getId(), oneShotChargeInstance.getId());
                 oneShotChargeInstance.getWalletInstances().add(walletInstance);
             }
         } else {
-            log.debug("as the charge is postpaid, we add the principal wallet");
+            // As the charge is postpaid, we add the principal wallet
             oneShotChargeInstance.getWalletInstances().add(serviceInstance.getSubscription().getUserAccount().getWallet());
         }
 
@@ -167,9 +166,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         }
 
         if (serviceChargeTemplate.getAccumulatorCounterTemplates() != null && !serviceChargeTemplate.getAccumulatorCounterTemplates().isEmpty()) {
-            log.debug("OS charge has {} counter templates", serviceChargeTemplate.getAccumulatorCounterTemplates().size());
             for (Object counterTemplate : serviceChargeTemplate.getAccumulatorCounterTemplates()) {
-                log.debug("Counter template {}", counterTemplate);
                 CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance, (CounterTemplate) counterTemplate, isVirtual);
                 log.debug("Counter instance {} will be add to charge instance {}", counterInstance, oneShotChargeInstance);
                 oneShotChargeInstance.addCounterInstance(counterInstance);
@@ -184,7 +181,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     }
 
     /**
-     * Instantiate and apply a one shot charge
+     * Instantiate and apply a one shot charge. Charge will be applied with a charge mode "Subscription".
      * 
      * @param subscription Subscription, to instantiate a charge against
      * @param chargetemplate Charge to instantiate
@@ -202,7 +199,8 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate, String walletCode, Date chargeDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithTax,
             BigDecimal quantity, String orderNumber, boolean applyCharge) throws BusinessException, RatingException {
 
-        return oneShotChargeApplication(subscription, null, chargetemplate, walletCode, chargeDate, amoutWithoutTax, amoutWithTax, quantity, null, null, null, null, orderNumber, null, applyCharge);
+        return oneShotChargeApplication(subscription, null, chargetemplate, walletCode, chargeDate, amoutWithoutTax, amoutWithTax, quantity, null, null, null, null, orderNumber, null, applyCharge,
+            ChargeApplicationModeEnum.SUBSCRIPTION);
     }
 
     /**
@@ -223,13 +221,14 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @param orderNumber Order number
      * @param cfValues Custom field values
      * @param applyCharge True if wallet operation should be created
+     * @param chargeMode Charge mode
      * @return One shot charge instance
      * @throws BusinessException General business exception
      * @throws RatingException Rating related exception
      */
     public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, ServiceInstance serviceInstance, OneShotChargeTemplate chargeTemplate, String walletCode, Date chargeDate, BigDecimal amoutWithoutTax,
-            BigDecimal amoutWithTax, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumber, CustomFieldValues cfValues, boolean applyCharge)
-            throws BusinessException, RatingException {
+            BigDecimal amoutWithTax, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumber, CustomFieldValues cfValues, boolean applyCharge,
+            ChargeApplicationModeEnum chargeMode) throws BusinessException, RatingException {
 
         if (quantity == null) {
             quantity = BigDecimal.ONE;
@@ -243,9 +242,21 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         OneShotChargeInstance oneShotChargeInstance = null;
 
         if (serviceInstance != null) {
-            oneShotChargeInstance = new OneShotChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, serviceInstance, chargeTemplate);
+            if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION) {
+                oneShotChargeInstance = new SubscriptionChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, serviceInstance, chargeTemplate);
+            } else if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION) {
+                oneShotChargeInstance = new TerminationChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, serviceInstance, chargeTemplate);
+            } else {
+                oneShotChargeInstance = new OneShotChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, serviceInstance, chargeTemplate);
+            }
         } else {
-            oneShotChargeInstance = new OneShotChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, subscription, chargeTemplate);
+            if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION) {
+                oneShotChargeInstance = new SubscriptionChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, subscription, chargeTemplate);
+            } else if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION) {
+                oneShotChargeInstance = new TerminationChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, subscription, chargeTemplate);
+            } else {
+                oneShotChargeInstance = new OneShotChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, subscription, chargeTemplate);
+            }
         }
 
         oneShotChargeInstance.setCriteria1(criteria1);
@@ -279,13 +290,14 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         }
 
         if (applyCharge) {
-            walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, chargeDate, false, subscription.getOrderNumber());
+            walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, chargeDate, false, subscription.getOrderNumber(), chargeMode);
+            oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
         }
         return oneShotChargeInstance;
     }
 
     /**
-     * Apply a charge that WAS INSTANTIATED before
+     * Apply a charge that WAS INSTANTIATED before. Charge will be applied with a charge mode "Subscription".
      * 
      * @param oneShotChargeInstance A charge to apply
      * @param chargeDate Charge date
@@ -295,13 +307,31 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @throws RatingException Rating related exception
      */
     public void oneShotChargeApplication(OneShotChargeInstance oneShotChargeInstance, Date chargeDate, BigDecimal quantity, String orderNumberOverride) throws BusinessException, RatingException {
+        oneShotChargeApplication(oneShotChargeInstance, chargeDate, quantity, orderNumberOverride, ChargeApplicationModeEnum.SUBSCRIPTION);
+    }
+
+    /**
+     * Apply a charge that WAS INSTANTIATED before
+     * 
+     * @param oneShotChargeInstance A charge to apply
+     * @param chargeDate Charge date
+     * @param quantity Quantity to apply
+     * @param orderNumberOverride Order number to override
+     * @param chargeMode Charge mode
+     * @throws BusinessException General business exception
+     * @throws RatingException Rating related exception
+     */
+    public void oneShotChargeApplication(OneShotChargeInstance oneShotChargeInstance, Date chargeDate, BigDecimal quantity, String orderNumberOverride, ChargeApplicationModeEnum chargeMode)
+            throws BusinessException, RatingException {
 
         if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeInstance.getChargeTemplate().getFilterExpression())) {
             log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", oneShotChargeInstance.getCode());
             return;
         }
 
-        walletOperationService.applyOneShotWalletOperation(oneShotChargeInstance.getSubscription(), oneShotChargeInstance, quantity, null, chargeDate, false, orderNumberOverride);
+        walletOperationService.applyOneShotWalletOperation(oneShotChargeInstance.getSubscription(), oneShotChargeInstance, quantity, null, chargeDate, false, orderNumberOverride, chargeMode);
+
+        oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
     }
 
     /**
@@ -325,8 +355,11 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             return null;
         }
 
-        return walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effectiveDate, true, subscription.getOrderNumber());
+        WalletOperation wo = walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effectiveDate, true, subscription.getOrderNumber(),
+            ChargeApplicationModeEnum.SUBSCRIPTION);
 
+        oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
+        return wo;
     }
 
     @SuppressWarnings("unchecked")
@@ -402,10 +435,11 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         }
         BigDecimal inputQuantity = BigDecimal.ONE;
 
-        WalletOperation op = walletOperationService.applyOneShotWalletOperation(firstActiveSubscription, matchingCharge, inputQuantity, null, new Date(), false, firstActiveSubscription.getOrderNumber());
+        WalletOperation op = walletOperationService.applyOneShotWalletOperation(firstActiveSubscription, matchingCharge, inputQuantity, null, new Date(), false, firstActiveSubscription.getOrderNumber(),
+            ChargeApplicationModeEnum.SUBSCRIPTION);
         op.changeStatus(WalletOperationStatusEnum.TREATED);
 
-        walletOperationService.applyOneShotWalletOperation(firstActiveSubscription, compensationCharge, inputQuantity, null, new Date(), false, null);
+        walletOperationService.applyOneShotWalletOperation(firstActiveSubscription, compensationCharge, inputQuantity, null, new Date(), false, null, ChargeApplicationModeEnum.SUBSCRIPTION);
 
         // we check that balance is unchanged
         BigDecimal cacheBalance = walletService.getWalletBalance(wallet.getId());

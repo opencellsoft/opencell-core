@@ -107,11 +107,6 @@ public class ProductVersionService extends
     	productVersion.getAttributes().size();
     	productVersion.getTags().size();
     	
-    	if(!productVersion.getAttributes().isEmpty()) {
-    		for (Attribute services : productVersion.getAttributes()) {
-    			services.getGroupedAttributes();
-			}
-    	}
     	var serviceTemplateList = new ArrayList<>(productVersion.getAttributes());
     	var tagList = new ArrayList<>(productVersion.getTags());
 

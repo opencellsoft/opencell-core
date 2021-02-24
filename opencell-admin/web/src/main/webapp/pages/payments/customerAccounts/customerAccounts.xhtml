@@ -1,32 +1,30 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" 
-xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:hftl="http://hftl.org" 
-        xmlns:p="http://primefaces.org/ui"
-    template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
             <f:event type="preRenderView" listener="#{customerAccountListBean.preRenderView}" />
+            <f:viewParam name="parentObjectId" value="#{customerAccountListBean.parentEntityId}" />
         </f:metadata>
     </ui:define>
 
     <ui:define name="body">
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
-				<p:menuitem outcome="customerAccounts" value="#{messages['menu.customerAccounts']}" />
-			</p:breadCrumb>
-		</h:form>     
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+                <p:menuitem outcome="customerAccounts" value="#{messages['menu.customerAccounts']}" />
+            </p:breadCrumb>
+        </h:form>
         <!-- Entity select popup. -->
         <hftl:entityPopup id="searchCustomerPopup" header="#{messages['customer.popup.header']}" backingBean="#{customerBean}" searchField1Label="#{messages['customer.code']}"
-            searchField1="code" column1Label="#{messages['customer.code']}" column1="code" selection="#{customerAccountListBean.filters['customer']}"
-            updateField=":searchForm:customer">
+            searchField1="code" column1Label="#{messages['customer.code']}" column1="code" searchField2="description" column2Label="#{messages['businessEntity.description']}"
+            column2="description" selection="#{customerAccountListBean.filters['customer']}" updateField=":searchForm:customer">
         </hftl:entityPopup>
 
         <hftl:searchPanel label="#{messages['customerAccount.search']}" backingBean="#{customerAccountListBean}">
-            <hftl:searchField id="customer" label="#{messages['customerAccount.customer']}" field="customer" valueLabelField="code" popup="true" popupId="searchCustomerPopup" />
             <hftl:searchField label="#{messages['businessEntity.code']}" field="code" />
             <hftl:searchField label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:searchField id="customer" label="#{messages['customerAccount.customer']}" field="customer" valueLabelField="code" popup="true" popupId="searchCustomerPopup" />
             <hftl:searchField label="#{messages['customerAccount.name']}" field="name" />
             <hftl:searchField label="#{messages['customerAccount.status']}" field="status" />
             <hftl:searchField label="#{messages['customerAccount.creditCategory']}" field="creditCategory.code" />

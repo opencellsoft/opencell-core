@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -41,6 +42,7 @@ import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.DiscountInvoiceAggregateDto;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
+import org.meveo.api.dto.SubcategoryInvoiceAgregateAmountDto;
 import org.meveo.api.dto.TaxInvoiceAggregateDto;
 import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
 import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
@@ -77,7 +79,9 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.dunning.DunningDocument;
@@ -156,10 +160,9 @@ public class InvoiceApi extends BaseApi {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
-    
+
     @Inject
     private PaymentApi paymentApi;
-
 
     @Inject
     @MeveoParamBean
@@ -181,6 +184,10 @@ public class InvoiceApi extends BaseApi {
      * @throws Exception exception
      */
     public CreateInvoiceResponseDto create(InvoiceDto invoiceDTO) throws MeveoApiException, BusinessException, Exception {
+
+        if (invoiceDTO.getSendByEmail() == null) {
+            invoiceDTO.setSendByEmail(true);
+        }
         log.debug("InvoiceDto:" + JsonUtils.toJson(invoiceDTO, true));
         validateInvoiceDto(invoiceDTO);
 
@@ -192,11 +199,17 @@ public class InvoiceApi extends BaseApi {
         if (invoiceType == null) {
             throw new EntityDoesNotExistsException(InvoiceType.class, invoiceDTO.getInvoiceType());
         }
-        
 
         Seller seller = this.getSeller(invoiceDTO, billingAccount);
         Invoice invoice = invoiceService.createInvoice(invoiceDTO, seller, billingAccount, invoiceType);
-
+        // Validate and populate customFields
+        try {
+            populateCustomFields(invoiceDTO.getCustomFields(), invoice, false);
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to invoice: {}", e.getMessage());
+            throw e;
+        }
+        
         CreateInvoiceResponseDto response = new CreateInvoiceResponseDto();
         response.setInvoiceId(invoice.getId());
         response.setAmountWithoutTax(invoice.getAmountWithoutTax());
@@ -214,9 +227,9 @@ public class InvoiceApi extends BaseApi {
         if ((invoiceDTO.isReturnXml() != null && invoiceDTO.isReturnXml()) || (invoiceDTO.isReturnPdf() != null && invoiceDTO.isReturnPdf())) {
             invoice = invoiceService.produceInvoiceXml(invoice);
             String invoiceXml = invoiceService.getInvoiceXml(invoice);
-            if((invoiceDTO.isReturnXml() != null && invoiceDTO.isReturnXml())) {
-	            response.setXmlInvoice(invoiceXml);
-	            response.setXmlFilename(invoice.getXmlFilename());
+            if ((invoiceDTO.isReturnXml() != null && invoiceDTO.isReturnXml())) {
+                response.setXmlInvoice(invoiceXml);
+                response.setXmlFilename(invoice.getXmlFilename());
             }
         }
 
@@ -230,7 +243,7 @@ public class InvoiceApi extends BaseApi {
         if (invoice.isDraft()) {
             invoiceService.cancelInvoice(invoice);
         } else {
-        	invoiceService.update(invoice);
+            invoiceService.update(invoice);
         }
 
         return response;
@@ -432,8 +445,7 @@ public class InvoiceApi extends BaseApi {
             // TODO AKK need to extract custom fields and use them inside the generateInvoice()
             // this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), invoice, false);
 
-            GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf,
-                generateInvoiceRequestDto.isIncludeRatedTransactions());
+            GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf, generateInvoiceRequestDto.isIncludeRatedTransactions());
             invoicesDtos.add(generateInvoiceResultDto);
             if (isDraft) {
                 invoiceService.cancelInvoice(invoice);
@@ -443,8 +455,7 @@ public class InvoiceApi extends BaseApi {
         return invoicesDtos;
     }
 
-    public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includeXml, boolean includePdf, Boolean includeRatedTransactions)
-            throws BusinessException {
+    public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includeXml, boolean includePdf, Boolean includeRatedTransactions) throws BusinessException {
         GenerateInvoiceResultDto dto = generateInvoiceResultToDto(invoice, includeRatedTransactions);
 
         if (invoiceService.isInvoicePdfExist(invoice)) {
@@ -501,8 +512,7 @@ public class InvoiceApi extends BaseApi {
      * @throws EntityDoesNotExistsException the entity does not exists exception
      * @throws Exception the exception
      */
-    public byte[] getPdfInvoice(Long invoiceId, String invoiceNumber, String invoiceTypeCode, boolean generatePdfIfNoExist)
-            throws MissingParameterException, EntityDoesNotExistsException, Exception {
+    public byte[] getPdfInvoice(Long invoiceId, String invoiceNumber, String invoiceTypeCode, boolean generatePdfIfNoExist) throws MissingParameterException, EntityDoesNotExistsException, Exception {
         log.debug("getPdfInvoince  invoiceNumber:{}", invoiceNumber);
 
         if (StringUtils.isBlank(invoiceTypeCode)) {
@@ -597,7 +607,7 @@ public class InvoiceApi extends BaseApi {
             missingParameters.add("invoiceType");
         }
 
-        if (StringUtils.isBlank(invoiceDTO.getCategoryInvoiceAgregates()) || invoiceDTO.getCategoryInvoiceAgregates().isEmpty()) {
+        if ((invoiceDTO.getRatedTransactionsTolink() == null || invoiceDTO.getRatedTransactionsTolink().isEmpty()) && (StringUtils.isBlank(invoiceDTO.getCategoryInvoiceAgregates()) || invoiceDTO.getCategoryInvoiceAgregates().isEmpty())) {
             missingParameters.add("categoryInvoiceAgregates");
         }
 
@@ -682,8 +692,7 @@ public class InvoiceApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
-    public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions, boolean includePdf, boolean includeXml)
-            throws MeveoApiException, BusinessException {
+    public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions, boolean includePdf, boolean includeXml) throws MeveoApiException, BusinessException {
         Invoice invoice = find(id, invoiceNumber, invoiceTypeCode);
         return invoiceToDto(invoice, includeTransactions, includePdf, includeXml);
     }
@@ -829,8 +838,7 @@ public class InvoiceApi extends BaseApi {
         if (totalCount > 0) {
             List<Invoice> invoices = invoiceService.list(paginationConfig);
             for (Invoice invoice : invoices) {
-                result.getInvoices().add(invoiceToDto(invoice, pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("transactions"),
-                    pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("pdf")));
+                result.getInvoices().add(invoiceToDto(invoice, pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("transactions"), pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("pdf")));
             }
         }
 
@@ -884,8 +892,7 @@ public class InvoiceApi extends BaseApi {
      * @throws EntityDoesNotExistsException
      * @throws BusinessException
      */
-    public List<GenerateInvoiceResultDto> sendByEmail(List<GenerateInvoiceResultDto> invoicesResult)
-            throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+    public List<GenerateInvoiceResultDto> sendByEmail(List<GenerateInvoiceResultDto> invoicesResult) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
         for (GenerateInvoiceResultDto invoiceResult : invoicesResult) {
             invoiceResult.setCheckAlreadySent(true);
             invoiceResult.setSentByEmail(false);
@@ -904,8 +911,7 @@ public class InvoiceApi extends BaseApi {
      * @param dtoToUpdate DTO entity to fill information with
      */
     @SuppressWarnings("deprecation")
-    private SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateToDto(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate, boolean includeTransactions,
-            SubCategoryInvoiceAgregateDto dtoToUpdate) {
+    private SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateToDto(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate, boolean includeTransactions, SubCategoryInvoiceAgregateDto dtoToUpdate) {
 
         SubCategoryInvoiceAgregateDto dto = dtoToUpdate == null ? new SubCategoryInvoiceAgregateDto() : dtoToUpdate;
         dto.setItemNumber(subCategoryInvoiceAgregate.getItemNumber());
@@ -924,6 +930,14 @@ public class InvoiceApi extends BaseApi {
             dto.setUserAccountCode(subCategoryInvoiceAgregate.getUserAccount().getCode());
         }
 
+        if (!subCategoryInvoiceAgregate.getAmountsByTax().isEmpty()) {
+            dto.setAmountsByTax(new ArrayList<SubcategoryInvoiceAgregateAmountDto>());
+
+            for (Entry<Tax, SubcategoryInvoiceAgregateAmount> amount : subCategoryInvoiceAgregate.getAmountsByTax().entrySet()) {
+                dto.getAmountsByTax().add(new SubcategoryInvoiceAgregateAmountDto(amount.getValue(), amount.getKey()));
+            }
+            dto.getAmountsByTax().sort(Comparator.comparing(SubcategoryInvoiceAgregateAmountDto::getAmountWithoutTax));
+        }
         if (includeTransactions) {
 
             List<RatedTransaction> ratedTransactions = ratedTransactionService.getRatedTransactionsByInvoiceAggr(subCategoryInvoiceAgregate);
@@ -934,8 +948,7 @@ public class InvoiceApi extends BaseApi {
                 ratedTransactionDtos.add(new RatedTransactionDto(ratedTransaction));
             }
 
-            ratedTransactionDtos
-                .sort(Comparator.comparing(RatedTransactionDto::getUsageDate).thenComparing(RatedTransactionDto::getAmountWithTax).thenComparing(RatedTransactionDto::getCode));
+            ratedTransactionDtos.sort(Comparator.comparing(RatedTransactionDto::getUsageDate).thenComparing(RatedTransactionDto::getAmountWithTax).thenComparing(RatedTransactionDto::getCode));
 
             dto.setRatedTransactions(ratedTransactionDtos);
         }
@@ -955,6 +968,15 @@ public class InvoiceApi extends BaseApi {
 
         dto.setDiscountPlanItemCode(subCategoryInvoiceAgregate.getDiscountPlanItem().getCode());
         dto.setDiscountPercent(subCategoryInvoiceAgregate.getDiscountPercent());
+
+        if (!subCategoryInvoiceAgregate.getAmountsByTax().isEmpty()) {
+            dto.setAmountsByTax(new ArrayList<SubcategoryInvoiceAgregateAmountDto>());
+
+            for (Entry<Tax, SubcategoryInvoiceAgregateAmount> amount : subCategoryInvoiceAgregate.getAmountsByTax().entrySet()) {
+                dto.getAmountsByTax().add(new SubcategoryInvoiceAgregateAmountDto(amount.getValue(), amount.getKey()));
+            }
+            dto.getAmountsByTax().sort(Comparator.comparing(SubcategoryInvoiceAgregateAmountDto::getAmountWithoutTax));
+        }
 
         return dto;
     }
@@ -1017,26 +1039,26 @@ public class InvoiceApi extends BaseApi {
         dto.setInvoiceId(invoice.getId());
         dto.setBillingAccountCode(invoice.getBillingAccount().getCode());
         Subscription subscription = invoice.getSubscription();
-		if (subscription != null) {
+        if (subscription != null) {
             dto.setSubscriptionCode(subscription.getCode());
             dto.setSubscriptionId(subscription.getId());
             List<PaymentScheduleInstanceDto> instances = new ArrayList<PaymentScheduleInstanceDto>();
-			for(ServiceInstance serviceInstance : subscription.getServiceInstances()) {
-				for(PaymentScheduleInstance psInstance:serviceInstance.getPsInstances()) {
-					PaymentScheduleInstanceDto psiDto = new PaymentScheduleInstanceDto(psInstance);
-					instances.add(psiDto);
-				}
+            for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+                for (PaymentScheduleInstance psInstance : serviceInstance.getPsInstances()) {
+                    PaymentScheduleInstanceDto psiDto = new PaymentScheduleInstanceDto(psInstance);
+                    instances.add(psiDto);
+                }
             }
-			PaymentScheduleInstancesDto instancesDto = new PaymentScheduleInstancesDto();
-			instancesDto.setInstances(instances);
-			dto.setPaymentScheduleInstancesDto(instancesDto);
-			BigDecimal writeOffAmount = BigDecimal.ZERO;
-			for(AccountOperation ao : subscription.getAccountOperations()) {
-				if(ao instanceof WriteOff) {
-					writeOffAmount.add(ao.getAmount());
-				}
-			}
-			dto.setWriteOffAmount(writeOffAmount);
+            PaymentScheduleInstancesDto instancesDto = new PaymentScheduleInstancesDto();
+            instancesDto.setInstances(instances);
+            dto.setPaymentScheduleInstancesDto(instancesDto);
+            BigDecimal writeOffAmount = BigDecimal.ZERO;
+            for (AccountOperation ao : subscription.getAccountOperations()) {
+                if (ao instanceof WriteOff) {
+                    writeOffAmount.add(ao.getAmount());
+                }
+            }
+            dto.setWriteOffAmount(writeOffAmount);
         }
         if (invoice.getOrder() != null) {
             dto.setOrderNumber(invoice.getOrder().getOrderNumber());
@@ -1059,6 +1081,7 @@ public class InvoiceApi extends BaseApi {
         dto.setDiscount(invoice.getDiscount());
         dto.setCheckAlreadySent(invoice.isAlreadySent());
         dto.setSentByEmail(invoice.isDontSend());
+        dto.setInitialCollectionDate(invoice.getInitialCollectionDate());
 
         List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<>();
         List<TaxInvoiceAggregateDto> taxAggregates = new ArrayList<>();
@@ -1091,37 +1114,37 @@ public class InvoiceApi extends BaseApi {
 
         RecordedInvoice recordedInvoice = invoice.getRecordedInvoice();
         if (recordedInvoice != null) {
-        	RecordedInvoiceDto recordedInvoiceDto = new RecordedInvoiceDto(recordedInvoice);
+            RecordedInvoiceDto recordedInvoiceDto = new RecordedInvoiceDto(recordedInvoice);
             dto.setRecordedInvoiceDto(recordedInvoiceDto);
-            if(invoice.getRecordedInvoice().getPaymentHistories() != null && !invoice.getRecordedInvoice().getPaymentHistories().isEmpty()) {
-            	for(PaymentHistory ph : invoice.getRecordedInvoice().getPaymentHistories() ) {
-            		recordedInvoiceDto.getPaymentHistories().add(paymentApi.fromEntity(ph,false));
-            	}
+            if (invoice.getRecordedInvoice().getPaymentHistories() != null && !invoice.getRecordedInvoice().getPaymentHistories().isEmpty()) {
+                for (PaymentHistory ph : invoice.getRecordedInvoice().getPaymentHistories()) {
+                    recordedInvoiceDto.getPaymentHistories().add(paymentApi.fromEntity(ph, false));
+                }
             }
-            
-			DunningDocument dunningDocument = recordedInvoice.getDunningDocument();
-			if(dunningDocument!=null) {
-				dto.setDunningEntryDate(dunningDocument.getAuditable().getCreated());
-				dto.setDunningLastModification(dunningDocument.getAuditable().getUpdated());
-				List<WorkflowInstance> workflows = workflowInstanceService.findByEntityIdAndClazz(dunningDocument.getId(), DunningDocument.class);
-				if(workflows!=null && !workflows.isEmpty()) {
-					dto.setDunningStatus(workflows.get(0).getCurrentStatus().getCode());
-				}
-				List<Payment> payments = dunningDocument.getPayments();
-				if(payments!=null && !payments.isEmpty()) {
-					List<PaymentHistory> paymentHistory = payments.get(0).getPaymentHistories();
-					if(paymentHistory!=null) {
-						dto.setPaymentIncidents(paymentHistory.stream().map(x->x.getErrorMessage()).collect(Collectors.toList()));
-					}
-					Date paymentDate = new Date(0);
-					for(Payment payment : payments) {
-						if(payment.getAuditable()!=null && payment.getAuditable().getCreated().after(paymentDate)) {
-							paymentDate=payment.getAuditable().getCreated();
-						}
-					}
-					dto.setPaymentDate(paymentDate);
-				}
-			}
+
+            DunningDocument dunningDocument = recordedInvoice.getDunningDocument();
+            if (dunningDocument != null) {
+                dto.setDunningEntryDate(dunningDocument.getAuditable().getCreated());
+                dto.setDunningLastModification(dunningDocument.getAuditable().getUpdated());
+                List<WorkflowInstance> workflows = workflowInstanceService.findByEntityIdAndClazz(dunningDocument.getId(), DunningDocument.class);
+                if (workflows != null && !workflows.isEmpty()) {
+                    dto.setDunningStatus(workflows.get(0).getCurrentStatus().getCode());
+                }
+                List<Payment> payments = dunningDocument.getPayments();
+                if (payments != null && !payments.isEmpty()) {
+                    List<PaymentHistory> paymentHistory = payments.get(0).getPaymentHistories();
+                    if (paymentHistory != null) {
+                        dto.setPaymentIncidents(paymentHistory.stream().map(x -> x.getErrorMessage()).collect(Collectors.toList()));
+                    }
+                    Date paymentDate = new Date(0);
+                    for (Payment payment : payments) {
+                        if (payment.getAuditable() != null && payment.getAuditable().getCreated().after(paymentDate)) {
+                            paymentDate = payment.getAuditable().getCreated();
+                        }
+                    }
+                    dto.setPaymentDate(paymentDate);
+                }
+            }
         }
         dto.setRealTimeStatus(invoice.getRealTimeStatus());
         dto.setNetToPay(invoice.getNetToPay());

@@ -40,7 +40,24 @@ import java.util.Date;
 		@NamedQuery(name = "InvoiceLine.listToInvoiceBySubscription", query = "FROM InvoiceLine il where il.subscription.id=:subscriptionId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByBillingAccount", query = "FROM InvoiceLine il where il.billingAccount.id=:billingAccountId AND il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate"),
 		@NamedQuery(name = "InvoiceLine.updateWithInvoice", query = "UPDATE InvoiceLine il set il.auditable.updated = :now , il.invoice=:invoice where il.id in :ids"),
-		@NamedQuery(name = "InvoiceLine.updateWithInvoiceInfo", query = "UPDATE InvoiceLine il set il.auditable.updated = :now, il.invoice=:invoice, il.amountWithoutTax=:amountWithoutTax, il.amountWithTax=:amountWithTax, il.amountTax=:amountTax, il.tax=:tax, il.taxRate=:taxPercent where il.id=:id")
+		@NamedQuery(name = "InvoiceLine.updateWithInvoiceInfo", query = "UPDATE InvoiceLine il set il.auditable.updated = :now, il.invoice=:invoice, il.amountWithoutTax=:amountWithoutTax, il.amountWithTax=:amountWithTax, il.amountTax=:amountTax, il.tax=:tax, il.taxRate=:taxPercent where il.id=:id"),
+		@NamedQuery(name = "InvoiceLine.sumTotalInvoiceableByOrderNumber", query = "SELECT new org.meveo.model.billing.Amounts(sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax)) FROM InvoiceLine il WHERE il.status='OPEN' AND il.orderNumber=:orderNumber AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate "),
+		@NamedQuery(name = "InvoiceLine.sumInvoiceableByServiceWithMinAmountBySubscription", query = "SELECT sum(il.amountWithoutTax), sum(il.amountWithTax), il.serviceInstance.id FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate AND il.subscription=:subscription AND il.serviceInstance.minimumAmountEl is not null GROUP BY il.serviceInstance.id"),
+		@NamedQuery(name = "InvoiceLine.sumInvoiceableByServiceWithMinAmountByBillingAccount", query = "SELECT sum(il.amountWithoutTax), sum(il.amountWithTax), il.serviceInstance.id  FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate AND il.billingAccount=:billingAccount AND il.serviceInstance.minimumAmountEl is not null GROUP BY il.serviceInstance.id"),
+		@NamedQuery(name = "InvoiceLine.sumInvoiceableBySubscriptionWithMinAmountBySubscription", query = "SELECT sum(il.amountWithoutTax), sum(il.amountWithTax), il.subscription.id FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate AND il.subscription=:subscription AND il.subscription.minimumAmountEl is not null GROUP BY il.subscription.id"),
+		@NamedQuery(name = "InvoiceLine.sumInvoiceableBySubscriptionWithMinAmountByBillingAccount", query = "SELECT sum(il.amountWithoutTax), sum(il.amountWithTax), il.subscription.id  FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate AND il.billingAccount=:billingAccount AND il.subscription.minimumAmountEl is not null GROUP BY il.subscription.id"),
+		@NamedQuery(name = "InvoiceLine.sumInvoiceableForUAWithMinAmountBySubscription", query = "SELECT sum(il.amountWithoutTax), sum(il.amountWithTax), il.subscription.userAccount.id, il.subscription.seller.id FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate and il.subscription=:subscription and il.subscription.userAccount.minimumAmountEl is not null GROUP BY il.subscription.seller.id, il.subscription.userAccount.id"),
+		@NamedQuery(name = "InvoiceLine.sumInvoiceableForBAWithMinAmountBySubscription", query = "SELECT sum(il.amountWithoutTax), sum(il.amountWithTax), il.billingAccount.id, il.subscription.seller.id FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate and il.subscription=:subscription and il.billingAccount.minimumAmountEl is not null GROUP BY il.subscription.seller.id, il.billingAccount.id"),
+		@NamedQuery(name = "InvoiceLine.sumInvoiceableWithMinAmountByBillingAccount", query = "SELECT sum(il.amountWithoutTax), sum(il.amountWithTax), il.billingAccount.id, il.subscription.seller.id FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate and il.billingAccount=:billingAccount GROUP BY il.subscription.seller.id, il.billingAccount.id"),
+		@NamedQuery(name = "InvoiceLine.sumInvoiceableForCAWithMinAmountBySubscription", query = "SELECT sum(il.amountWithoutTax), sum(il.amountWithTax), il.billingAccount.customerAccount.id, il.subscription.seller.id FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate and il.subscription=:subscription and il.billingAccount.customerAccount.minimumAmountEl is not null GROUP BY il.subscription.seller.id, il.billingAccount.customerAccount.id"),
+		@NamedQuery(name = "InvoiceLine.sumInvoiceableWithMinAmountByCA", query = "SELECT sum(il.amountWithoutTax), sum(il.amountWithTax), il.billingAccount.customerAccount.id, il.subscription.seller.id FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate and il.billingAccount.customerAccount=:customerAccount GROUP BY il.subscription.seller.id, il.billingAccount.customerAccount.id"),
+		@NamedQuery(name = "InvoiceLine.sumInvoiceableForCustomerWithMinAmountBySubscription", query = "SELECT sum(il.amountWithoutTax), sum(il.amountWithTax), il.billingAccount.customerAccount.customer.id, il.subscription.seller.id FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate and il.subscription=:subscription and il.billingAccount.customerAccount.customer.minimumAmountEl is not null GROUP BY il.subscription.seller.id, il.billingAccount.customerAccount.customer.id"),
+		@NamedQuery(name = "InvoiceLine.sumInvoiceableWithMinAmountByCustomer", query = "SELECT sum(il.amountWithoutTax), sum(il.amountWithTax), il.billingAccount.customerAccount.customer.id, il.subscription.seller.id FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate and il.billingAccount.customerAccount.customer=:customer GROUP BY il.subscription.seller.id, il.billingAccount.customerAccount.customer.id"),
+		@NamedQuery(name = "InvoiceLine.sumTotalInvoiceableBySubscription", query = "SELECT new org.meveo.model.billing.Amounts(sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax)) FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate and il.subscription=:subscription"),
+		@NamedQuery(name = "InvoiceLine.sumTotalInvoiceableByBA", query = "SELECT new org.meveo.model.billing.Amounts(sum(il.amountWithoutTax), sum(il.amountWithTax), sum(il.amountTax)) FROM InvoiceLine il WHERE il.status='OPEN' AND :firstTransactionDate<=il.valueDate AND il.valueDate<:lastTransactionDate and il.billingAccount=:billingAccount"),
+		@NamedQuery(name = "InvoiceLine.sumPositiveILByBillingRun", query = "select sum(il.amountWithoutTax), sum(il.amountWithTax), il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id FROM InvoiceLine il where il.billingRun.id=:billingRunId and il.amountWithoutTax > 0 and il.status='BILLED' group by il.invoice.id, il.billingAccount.id, il.billingAccount.customerAccount.id, il.billingAccount.customerAccount.customer.id"),
+		@NamedQuery(name = "InvoiceLine.unInvoiceByInvoiceIds", query = "update InvoiceLine il set il.status='OPEN', il.auditable.updated = :now , il.billingRun= null, il.invoice=null, il.accountingArticle=null where il.status=org.meveo.model.billing.InvoiceLineStatusEnum.BILLED and il.invoice.id IN (:invoiceIds)"),
+		@NamedQuery(name = "InvoiceLine.deleteSupplementalILByInvoiceIds", query = "DELETE from InvoiceLine il WHERE il.invoice.id IN (:invoicesIds)"),
 
 })
 public class InvoiceLine extends BusinessEntity {
@@ -176,6 +193,22 @@ public class InvoiceLine extends BusinessEntity {
 	private InvoiceLineStatusEnum status = OPEN;
 
 	public InvoiceLine() {
+	}
+
+	public InvoiceLine(Date valueDate, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, InvoiceLineStatusEnum status,
+					   BillingAccount billingAccount, String code, String label, Tax tax, BigDecimal taxRate, AccountingArticle accountingArticle) {
+		this.code = code;
+		this.label = label;
+		this.valueDate = valueDate;
+		this.quantity = quantity;
+		this.amountWithoutTax = amountWithoutTax;
+		this.amountWithTax = amountWithTax;
+		this.amountTax = amountTax;
+		this.status = status;
+		this.billingAccount = billingAccount;
+		this.tax = tax;
+		this.taxRate = taxRate;
+		this.accountingArticle = accountingArticle;
 	}
 
 	public Invoice getInvoice() {

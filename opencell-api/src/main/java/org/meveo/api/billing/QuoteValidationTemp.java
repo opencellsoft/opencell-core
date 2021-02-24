@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
@@ -25,6 +26,8 @@ import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.cpq.QuoteVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
@@ -36,6 +39,7 @@ import org.meveo.service.cpq.order.OrderPriceService;
 import org.meveo.service.cpq.order.OrderProductService;
 import org.meveo.service.cpq.order.OrderTypeService;
 import org.meveo.service.cpq.order.QuotePriceService;
+import org.meveo.service.crm.impl.CurrentUserProducer;
 import org.meveo.service.script.module.ModuleScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +60,8 @@ public class QuoteValidationTemp extends ModuleScript {
     private OrderPriceService orderPriceService = (OrderPriceService) getServiceInterface(OrderPriceService.class.getSimpleName());
     private QuotePriceService quotePriceService = (QuotePriceService) getServiceInterface(QuotePriceService.class.getSimpleName());
     private OrderTypeService orderTypeService = (OrderTypeService) getServiceInterface(OrderTypeService.class.getSimpleName());
-    
+    private MeveoUser currentUser = ((CurrentUserProducer) getServiceInterface(CurrentUserProducer.class.getSimpleName())).getCurrentUser();
+
 	
 	@Override
 	public void execute(Map<String, Object> methodContext) throws BusinessException {
@@ -134,7 +139,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		}
 		return orderType;
 	}
-	private static final String GENERIC_CODE = "COMMERCIAL_GEN";
+	
 	private OrderOffer processOrderOffer(QuoteOffer quoteOffer, CommercialOrder order) {
 		OrderOffer offer = new OrderOffer();
 		offer.setOrder(order);
@@ -167,21 +172,17 @@ public class QuoteValidationTemp extends ModuleScript {
 	}
 	
 	private void processOrderAttribute(QuoteAttribute quoteAttribute, CommercialOrder commercialOrder, OrderLot orderLot, OrderProduct orderProduct) {
-		OrderAttribute orderAttribute = new OrderAttribute();
+		OrderAttribute orderAttribute = new OrderAttribute(quoteAttribute, currentUser);
 		orderAttribute.setOrderCode(commercialOrder);
 		orderAttribute.setOrderLot(orderLot);
 		orderAttribute.setOrderProduct(orderProduct);
 		orderAttribute.setAccessPoint(null);
-		orderAttribute.setAttribute(quoteAttribute.getAttribute());
-		orderAttribute.setStringValue(quoteAttribute.getStringValue());
-		orderAttribute.setDateValue(quoteAttribute.getDateValue());
-		orderAttribute.setDoubleValue(quoteAttribute.getDoubleValue());
 		orderAttributeService.create(orderAttribute);
 	}
 	
 	private OrderLot processOrderCustomerService(QuoteLot quoteLot, CommercialOrder commercialOrder) {
 		OrderLot orderCustomer = new OrderLot();
-		orderCustomer.setCode(GENERIC_CODE);
+		orderCustomer.setCode(UUID.randomUUID().toString());
 		orderCustomer.setCode(orderCustomerServiceService.findDuplicateCode(orderCustomer));
 		orderCustomer.setOrder(commercialOrder);
 		orderCustomerServiceService.create(orderCustomer);
@@ -205,7 +206,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(quoteArticleLineId, quoteVersion.getId());
 		quotePrices.forEach( price -> {
 			OrderPrice orderPrice = new OrderPrice();
-			orderPrice.setCode(GENERIC_CODE);
+			orderPrice.setCode(UUID.randomUUID().toString());
 			orderPrice.setCode(orderPriceService.findDuplicateCode(orderPrice));
 			orderPrice.setOrderArticleLine(orderArticleLine);
 			orderPrice.setOrder(commercialOrder);

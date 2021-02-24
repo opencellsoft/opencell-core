@@ -36,7 +36,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -56,7 +55,6 @@ import org.meveo.model.annotation.ImageType;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.tags.Tag;
 
 /**
@@ -261,11 +259,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
             }
         }
         return result;
-    }
-    
-    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id")
-    private List<Media> medias = new ArrayList<>();
+    } 
 
     public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
         return serviceRecurringCharges;
@@ -570,20 +564,7 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
 	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
 	}
-
-	/**
-	 * @return the medias
-	 */
-	public List<Media> getMedias() {
-		return medias;
-	}
-
-	/**
-	 * @param medias the medias to set
-	 */
-	public void setMedias(List<Media> medias) {
-		this.medias = medias;
-	}
+ 
 
 	
 	

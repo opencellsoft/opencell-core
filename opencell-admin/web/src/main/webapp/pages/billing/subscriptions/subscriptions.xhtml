@@ -1,53 +1,48 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:hftl="http://hftl.org"
-    xmlns:p="http://primefaces.org/ui"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"	
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:hftl="http://hftl.org"
+    xmlns:p="http://primefaces.org/ui" xmlns:h="http://xmlns.jcp.org/jsf/html" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
-    	<f:metadata>
-    		<f:event type="preRenderView"
-    			listener="#{subscriptionListBean.preRenderView}" />
-    	</f:metadata>
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{subscriptionListBean.preRenderView}" />
+            <f:viewParam name="parentObjectId" value="#{subscriptionListBean.parentEntityId}" />
+        </f:metadata>
     </ui:define>
 
-	<ui:define name="body">
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.customers']}" disabled="true" />
-				<p:menuitem outcome="subscriptions" value="#{messages['menu.subscriptions']}" />
-			</p:breadCrumb>
-		</h:form> 	
+    <ui:define name="body">
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.customers']}" disabled="true" />
+                <p:menuitem outcome="subscriptions" value="#{messages['menu.subscriptions']}" />
+            </p:breadCrumb>
+        </h:form>
 
-		<hftl:searchPanel columns="3" label="#{messages['subscription.search']}"
-			backingBean="#{subscriptionListBean}">
-			<hftl:searchField label="#{messages['subscription.code']}" field="code" maxlength="72" />
-			<hftl:searchField label="#{messages['subscription.description']}"
-				field="description" />
-            <hftl:searchField label="#{messages['subscription.status']}"
-                field="status" />
-		</hftl:searchPanel>
+        <!-- Entity select popup. -->
+        <hftl:entityPopup id="searchUserAccountPopup" header="#{messages['userAccount.popup.header']}" backingBean="#{userAccountBean}"
+            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code" searchField2="description"
+            column2Label="#{messages['businessEntity.description']}" column2="description" selection="#{subscriptionListBean.filters['userAccount']}"
+            updateField=":searchForm:userAccount">
+        </hftl:entityPopup>
 
-		<hftl:dataList label="#{messages['subscription.title']}" sortBy="code"
-			backingBean="#{subscriptionListBean}">
-			<hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true"/>
-			<hftl:column label="#{messages['businessEntity.description']}"
-				field="description" />
-			<hftl:column label="#{messages['subscription.userAccount']}"
-				field="userAccount.code" valueIdField="userAccount.id" objectIdParamName="userAccountId"
-				entityView="userAccountDetail" propagateConversation="false"/>
-			<hftl:column label="#{messages['subscription.serviceInstances']}"
-				field="serviceInstances" isList="true" valueLabelField="descriptionAndStatus"
-				valueIdField="id" objectIdParamName="serviceInstanceId" useCustomIdParam="false"
-				entityView="serviceInstanceDetail" backView="subscriptions"	/>
-            <hftl:column label="#{messages['subscription.status']}"
-                field="status.label" isMessage="true" />
-<!-- 			<hftl:actionsColumn useCustomIdParam="true" renderDeleteLink="false" -->
-<!-- 				permission="#{currentUser.hasRole('billingManagement')}" /> -->
-		</hftl:dataList>
+        <hftl:searchPanel columns="3" label="#{messages['subscription.search']}" backingBean="#{subscriptionListBean}">
+            <hftl:searchField label="#{messages['subscription.code']}" field="code" maxlength="72" />
+            <hftl:searchField label="#{messages['subscription.description']}" field="description" />
+            <hftl:searchField id="userAccount" label="#{messages['subscription.userAccount']}" field="userAccount" valueLabelField="code" popup="true"
+                popupId="searchUserAccountPopup" />
+            <hftl:searchField label="#{messages['subscription.status']}" field="status" />
+        </hftl:searchPanel>
 
-	</ui:define>
+        <hftl:dataList label="#{messages['subscription.title']}" sortBy="code" backingBean="#{subscriptionListBean}">
+            <hftl:column label="#{messages['businessEntity.code']}" field="code" useCustomIdParam="true" />
+            <hftl:column label="#{messages['businessEntity.description']}" field="description" />
+            <hftl:column label="#{messages['subscription.userAccount']}" field="userAccount.code" valueIdField="userAccount.id" objectIdParamName="userAccountId"
+                entityView="userAccountDetail" propagateConversation="false" />
+            <hftl:column label="#{messages['subscription.serviceInstances']}" field="serviceInstances" isList="true" valueLabelField="descriptionAndStatus" valueIdField="id"
+                objectIdParamName="serviceInstanceId" useCustomIdParam="false" entityView="serviceInstanceDetail" backView="subscriptions" />
+            <hftl:column label="#{messages['subscription.status']}" field="status.label" isMessage="true" />
+            <!-- 			<hftl:actionsColumn useCustomIdParam="true" renderDeleteLink="false" -->
+            <!-- 				permission="#{currentUser.hasRole('billingManagement')}" /> -->
+        </hftl:dataList>
+
+    </ui:define>
 
 </ui:composition>

@@ -19,6 +19,7 @@
 package org.meveo.api.dto.cpq;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -48,13 +49,6 @@ public class AttributeDTO extends EnableBusinessDto {
     /** The Constant serialVersionUID. */
     protected static final long serialVersionUID = -6794700715161690227L;
 
-
-  
-    /**
-     * Corresponding to minimum one shot charge template code.
-     */
-    protected String groupedAttributeCode;
-    
     /**
      * Corresponding to minimum one shot charge template code.
      */
@@ -95,11 +89,11 @@ public class AttributeDTO extends EnableBusinessDto {
     @XmlElementWrapper(name = "commercialRuleCodes")
     @XmlElement(name = "commercialRuleCodes") 
     protected List<String> commercialRuleCodes=new ArrayList<String>();
-    
-    /** The medias */
-    @XmlElementWrapper(name = "medias")
-    @XmlElement(name = "medias")
-    protected List<MediaDto> medias = new ArrayList<MediaDto>();
+     
+    /** The media codes. */
+    @XmlElementWrapper(name = "mediaCodes")
+    @XmlElement(name = "mediaCodes")
+    protected Set<String> mediaCodes = new HashSet<String>();
     
     
     /** The tags */
@@ -130,19 +124,12 @@ public class AttributeDTO extends EnableBusinessDto {
         priority=attribute.getPriority();
         allowedValues=attribute.getAllowedValues();
         attributeType=attribute.getAttributeType();
-        groupedAttributeCode=attribute.getGroupedAttributes()!=null?attribute.getGroupedAttributes().getCode():null;
         display=attribute.isDisplay();
         code=attribute.getCode();
         description=attribute.getDescription();
         id=attribute.getId();
         mandatory=attribute.isMandatory();
-        unitNbDecimal = attribute.getUnitNbDecimal();
-        
-        if (attribute.getMedias()!=null) {
-        	for (Media media:attribute.getMedias()) {
-        		medias.add(new MediaDto(media));
-        	}
-        }
+        unitNbDecimal = attribute.getUnitNbDecimal(); 
         if (attribute.getAssignedAttributes()!=null) {
         	for (Attribute attr:attribute.getAssignedAttributes()) {
         		assignedAttributeCodes.add(attr.getCode());
@@ -151,16 +138,6 @@ public class AttributeDTO extends EnableBusinessDto {
         
         
     }
-
- 
-
-	public String getGroupedAttributeCode() {
-		return groupedAttributeCode;
-	}
-
-	public void setGroupedAttributeCode(String groupedAttributeCode) {
-		this.groupedAttributeCode = groupedAttributeCode;
-	}
 
 	public AttributeTypeEnum getAttributeType() {
 		return attributeType;
@@ -334,22 +311,23 @@ public class AttributeDTO extends EnableBusinessDto {
 		this.chargeTemplateCodes = chargeTemplateCodes;
 	}
 
+	
 
 
 	/**
-	 * @return the medias
+	 * @return the mediaCodes
 	 */
-	public List<MediaDto> getMedias() {
-		return medias;
+	public Set<String> getMediaCodes() {
+		return mediaCodes;
 	}
 
 
 
 	/**
-	 * @param medias the medias to set
+	 * @param mediaCodes the mediaCodes to set
 	 */
-	public void setMedias(List<MediaDto> medias) {
-		this.medias = medias;
+	public void setMediaCodes(Set<String> mediaCodes) {
+		this.mediaCodes = mediaCodes;
 	}
 
 

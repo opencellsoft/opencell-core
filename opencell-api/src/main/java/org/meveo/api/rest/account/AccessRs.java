@@ -78,7 +78,7 @@ public interface AccessRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    GetAccessResponseDto find(@QueryParam("accessCode") String accessCode, @QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("startDate") Date startDate, @QueryParam("endDate") Date endDate, @QueryParam("usageDate") Date usageDate);
+    GetAccessResponseDto find(@QueryParam("accessCode") String accessCode, @QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate, @QueryParam("startDate") Date startDate, @QueryParam("endDate") Date endDate, @QueryParam("usageDate") Date usageDate);
 
     /**
      * Remove an access with a given access code and subscription code.

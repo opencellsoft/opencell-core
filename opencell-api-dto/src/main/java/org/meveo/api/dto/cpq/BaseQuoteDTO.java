@@ -51,7 +51,7 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 
     private DatePeriod validity = new DatePeriod();
 
-    private QuoteStatusEnum status = QuoteStatusEnum.IN_PROGRESS;
+    private String status = QuoteStatusEnum.IN_PROGRESS.toString();
  
     @NotNull
 	private String applicantAccountCode;
@@ -107,7 +107,7 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	/**
 	 * @return the status
 	 */
-	public QuoteStatusEnum getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
@@ -115,7 +115,7 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	/**
 	 * @param status the status to set
 	 */
-	public void setStatus(QuoteStatusEnum status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 

@@ -49,7 +49,6 @@ import org.meveo.model.catalog.WalletTemplate;
  */
 @Entity
 @ObservableEntity
-@Cacheable
 @ExportIdentifier({ "code", "userAccount.code" })
 @Table(name = "billing_wallet", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "user_account_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -96,6 +95,13 @@ public class WalletInstance extends BusinessEntity {
      */
     @Column(name = "low_balance_level", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal lowBalanceLevel;
+
+    /**
+     * Date of creation
+     */
+    @Column(name = "created", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date Created;
 
     /**
      * Balance level at which further consumption should be rejected
@@ -157,6 +163,18 @@ public class WalletInstance extends BusinessEntity {
      */
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
+    }
+
+    /**
+     */
+    public Date getCreated() { return Created;
+    }
+
+    /**
+     * @param Created Associated to WalletInstance
+     */
+    public void setCreated(Date Created) {
+        this.Created = Created;
     }
 
     public List<RatedTransaction> getRatedTransactions() {

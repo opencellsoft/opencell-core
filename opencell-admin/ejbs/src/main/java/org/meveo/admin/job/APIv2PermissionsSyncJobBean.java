@@ -18,6 +18,21 @@
 
 package org.meveo.admin.job;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.persistence.Entity;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
@@ -29,16 +44,8 @@ import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.admin.impl.RoleService;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.persistence.Entity;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Job to synchronize and generate permissions all, list, create, update and remove for each
@@ -63,6 +70,9 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
 
     @Inject
     private PermissionService permissionService;
+
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     /**
      * APIv2 super role
@@ -156,7 +166,7 @@ public class APIv2PermissionsSyncJobBean extends BaseJobBean {
 
         } catch (Exception e) {
             log.error("Failed to run APIv2 permissions synchronisation job ", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
     }
 

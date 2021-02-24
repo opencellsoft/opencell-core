@@ -70,6 +70,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
@@ -89,6 +90,7 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.ProviderContactService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
@@ -162,8 +164,11 @@ public class BillingAccountApi extends AccountEntityApi {
     private CustomFieldTemplateService customFieldTemplateService;
     
     @Inject
+    private ProviderContactService providerContactService;
+
+    @Inject
     private TagService tagService;
-    
+
     public BillingAccount create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
     }
@@ -204,7 +209,7 @@ public class BillingAccountApi extends AccountEntityApi {
         BillingAccount billingAccount = new BillingAccount();
 
         dtoToEntity(billingAccount, postData, checkCustomFields, businessAccountModel);
-       
+
         processTags(postData,billingAccount);
 
         billingAccountService.createBillingAccount(billingAccount);
@@ -242,20 +247,20 @@ public class BillingAccountApi extends AccountEntityApi {
     }
 
     private void processTags(BillingAccountDto postData, BillingAccount billingAccount) {
-    	Set<String> tagCodes = postData.getTagCodes(); 
+    	Set<String> tagCodes = postData.getTagCodes();
 		if(tagCodes != null && !tagCodes.isEmpty()){
 			List<Tag> tags=new ArrayList<Tag>();
 			for(String code:tagCodes) {
 				Tag tag=tagService.findByCode(code);
-				if(tag == null) { 
+				if(tag == null) {
 					throw new EntityDoesNotExistsException(Tag.class,code);
 				}
 				tags.add(tag);
 			}
 			billingAccount.setTags(tags);
 		}
-    } 
-    
+    }
+
     public BillingAccount update(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return update(postData, true);
     }
@@ -285,7 +290,7 @@ public class BillingAccountApi extends AccountEntityApi {
 
         dtoToEntity(billingAccount, postData, checkCustomFields, businessAccountModel);
         processTags(postData,billingAccount);
-        
+
         billingAccount = billingAccountService.update(billingAccount);
 
         // terminate discounts
@@ -511,6 +516,19 @@ public class BillingAccountApi extends AccountEntityApi {
             billingAccount.setBusinessAccountModel(businessAccountModel);
         }
 
+        if (postData.getPrimaryContact() != null) {
+            if (StringUtils.isBlank(postData.getPrimaryContact())) {
+                billingAccount.setPrimaryContact(null);
+            } else {
+                ProviderContact primaryContact = providerContactService.findByCode(postData.getPrimaryContact());
+                if (primaryContact == null) {
+                    throw new EntityDoesNotExistsException(ProviderContact.class, postData.getPrimaryContact());
+                } else {
+                    billingAccount.setPrimaryContact(primaryContact);
+                }
+            }
+        }
+
         // Update payment method information in a customer account.
         // ONLY used to handle deprecated billingAccountDto.paymentMethod and billingAccountDto.bankCoordinates fields. Use
         createOrUpdatePaymentMethodInCA(postData, billingAccount);
@@ -530,11 +548,11 @@ public class BillingAccountApi extends AccountEntityApi {
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public BillingAccountDto find(String billingAccountCode) throws MeveoApiException {
-        return find(billingAccountCode, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+        return find(billingAccountCode, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false);
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
-    public BillingAccountDto find(String billingAccountCode, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
+    public BillingAccountDto find(String billingAccountCode, CustomFieldInheritanceEnum inheritCF, boolean includeUserAccounts) throws MeveoApiException {
         if (StringUtils.isBlank(billingAccountCode)) {
             missingParameters.add("billingAccountCode");
             handleMissingParameters();
@@ -544,7 +562,7 @@ public class BillingAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(BillingAccount.class, billingAccountCode);
         }
 
-        BillingAccountDto billingAccountDto = accountHierarchyApi.billingAccountToDto(billingAccount, inheritCF);
+        BillingAccountDto billingAccountDto = accountHierarchyApi.billingAccountToDto(billingAccount, inheritCF, includeUserAccounts);
 
         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
             billingAccountDto.setDiscountPlanInstances(billingAccount.getDiscountPlanInstances().stream()

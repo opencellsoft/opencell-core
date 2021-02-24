@@ -25,6 +25,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
@@ -85,7 +86,11 @@ public class QuoteOffer extends AuditableCFEntity {
     @OneToMany(mappedBy = "quoteOffre", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
 	private List<QuoteProduct> quoteProduct;
-	
+    
+    
+    @OneToMany(mappedBy = "quoteOffer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+	private List<QuoteAttribute> quoteAttributes = new ArrayList<QuoteAttribute>();
     /**
 	 * opportunityRef
 	 */
@@ -241,6 +246,23 @@ public class QuoteOffer extends AuditableCFEntity {
 	 */
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+
+	
+
+	/**
+	 * @return the quoteAttributes
+	 */
+	public List<QuoteAttribute> getQuoteAttributes() {
+		return quoteAttributes;
+	}
+
+
+	/**
+	 * @param quoteAttributes the quoteAttributes to set
+	 */
+	public void setQuoteAttributes(List<QuoteAttribute> quoteAttributes) {
+		this.quoteAttributes = quoteAttributes;
 	}
 
 

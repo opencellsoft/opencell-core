@@ -55,7 +55,6 @@ public class TagApi extends BaseApi {
 		final Tag tag = new Tag();
 		tag.setCode(tagDto.getCode());
 		tag.setDescription(tagDto.getDescription());		
-		tag.setSeller(sellerService.findByCode(tagDto.getSellerCode()));
 		tag.setName(tagDto.getName());
 		
 		TagType tagType = tagTypeService.findByCode(tagDto.getTagTypeCode());
@@ -63,6 +62,11 @@ public class TagApi extends BaseApi {
 			throw new EntityDoesNotExistsException(TagType.class, tagDto.getTagTypeCode());
 		}
 		tag.setTagType(tagType);
+		
+
+		if(!Strings.isEmpty(tagDto.getSellerCode())) {
+			tag.setSeller(loadEntityByCode(sellerService, tagDto.getSellerCode(), Seller.class));
+		}
 
 		if(!StringUtils.isBlank(tagDto.getParentTagCode())) {
 			Tag parentTag=tagService.findByCode(tagDto.getParentTagCode());

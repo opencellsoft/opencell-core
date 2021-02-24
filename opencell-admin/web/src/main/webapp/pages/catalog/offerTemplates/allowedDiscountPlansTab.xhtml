@@ -28,8 +28,6 @@
             <f:facet name="header">
                 <h:outputText value="#{messages['commons.actions']}" />
             </f:facet>
-            <p:commandButton update="#{mainFormId}:messages #{mainFormId}:tabView:allowedDiscountPlansMessages #{mainFormId}:tabView:allowedDiscountPlanDetails"
-                             action="#{mainBackingBean.editAllowedDiscountPlan(entity)}" icon="ui-icon-document" process="@this" />
             <p:commandButton action="#{mainBackingBean.deleteAllowedDiscountPlan(entity)}" rendered="#{mainBackingBean.edit and mainBackingBean.canUserUpdateEntity()}" icon="ui-icon-trash"
                              update="#{mainFormId}:messages #{mainFormId}:tabView:allowedDiscountPlansMessages #{mainFormId}:tabView:allowedDiscountPlanDetails #{mainFormId}:tabView:allowedDiscountPlans" process="@this" />
         </p:column>

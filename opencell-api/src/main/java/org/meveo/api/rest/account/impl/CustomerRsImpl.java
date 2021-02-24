@@ -28,12 +28,15 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.api.account.CustomerApi;
 import org.meveo.api.account.CustomerSequenceApi;
+import org.meveo.api.custom.GenericCodeApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.billing.CounterInstanceDto;
+import org.meveo.api.dto.custom.GenericCodeDto;
+import org.meveo.api.dto.custom.GenericCodeResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
@@ -67,6 +70,9 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     @Inject
     private CustomerSequenceApi customerSequenceApi;
 
+    @Inject
+    private GenericCodeApi genericCodeApi;
+
     @Override
     public ActionStatus create(CustomerDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -96,11 +102,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public GetCustomerResponseDto find(String customerCode, CustomFieldInheritanceEnum inheritCF) {
+    public GetCustomerResponseDto find(String customerCode, CustomFieldInheritanceEnum inheritCF, boolean includeCustomerAccounts) {
         GetCustomerResponseDto result = new GetCustomerResponseDto();
 
         try {
-            result.setCustomer(customerApi.find(customerCode, inheritCF));
+            result.setCustomer(customerApi.find(customerCode, inheritCF, includeCustomerAccounts));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

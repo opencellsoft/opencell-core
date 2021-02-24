@@ -87,6 +87,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         pricePlanMatrixLine.getPricePlanMatrixValues().clear();
         pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
         pricePlanMatrixLine.setPricePlanMatrixVersion(pricePlanMatrixVersion);
+        pricePlanMatrixLine.setDescription(pricePlanMatrixLineDto.getDescription());
         PricePlanMatrixLine update = super.update(pricePlanMatrixLine);
         return new PricePlanMatrixLineDto(update);
     }

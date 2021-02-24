@@ -139,9 +139,11 @@ public abstract class Job {
 
         auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
         auditOrigin.setAuditOriginName(jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
-        // add counter metrics
+        // Init counters
+        jobExecutionService.iniJobCounters(jobInstance);
+        // Add counter metrics
         Metadata metadata = new MetadataBuilder().withName("is_running_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode()).build();
-        // counter that return 1 when job is running
+        // Counter that return 1 when job is running
         Tag tgName = new Tag("name", jobInstance.getCode());
         Counter counter = registry.counter(metadata, tgName);
         counter.inc();
@@ -149,12 +151,14 @@ public abstract class Job {
         if (executionResult == null) {
             executionResult = new JobExecutionResultImpl();
             executionResult.setJobInstance(jobInstance);
+            jobExecutionService.create(executionResult);
         }
 
         JobRunningStatusEnum isRunning = jobCacheContainerProvider.markJobAsRunning(jobInstance.getId(), jobInstance.isLimitToSingleNode());
         if (isRunning == JobRunningStatusEnum.NOT_RUNNING || (isRunning == JobRunningStatusEnum.RUNNING_OTHER && !jobInstance.isLimitToSingleNode())) {
-            log.info("Starting Job {} of type {}  with currentUser {}. Processors available {}, paralel procesors requested {}. Job parameters {}", jobInstance.getCode(), jobInstance.getJobTemplate(),
-                currentUser.toString(), Runtime.getRuntime().availableProcessors(), customFieldInstanceService.getCFValue(jobInstance, CF_NB_RUNS, false), jobInstance.getParametres());
+            log.info("Starting Job {} of type {}  with currentUser {}. Processors available {}, paralel procesors requested {}. Job parameters {}", jobInstance.getCode(),
+                jobInstance.getJobTemplate(), currentUser.toString(), Runtime.getRuntime().availableProcessors(),
+                customFieldInstanceService.getCFValue(jobInstance, CF_NB_RUNS, false), jobInstance.getParametres());
 
             try {
                 execute(executionResult, jobInstance);
@@ -168,13 +172,19 @@ public abstract class Job {
 
                 if (jobCompleted != null && jobExecutionService.isJobRunningOnThis(jobInstance)) {
                     jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
-
-                    if (!jobCompleted) {
-                        execute(jobInstance, null);
-
-                    } else if (jobInstance.getFollowingJob() != null) {
-                        MeveoUser lastCurrentUser = currentUser.unProxy();
-                        jobExecutionService.executeNextJob(this, jobInstance, lastCurrentUser);
+                    try {
+                        if (!jobCompleted) {
+                            execute(jobInstance, null);
+                        } else if (jobInstance.getFollowingJob() != null) {
+                            MeveoUser lastCurrentUser = currentUser.unProxy();
+                            jobExecutionService.executeNextJob(this, jobInstance, lastCurrentUser);
+                        }
+                    } catch (Exception e) {
+                        if (!jobInstance.isStopOnError()) {
+                            MeveoUser lastCurrentUser = currentUser.unProxy();
+                            jobExecutionService.executeNextJob(this, jobInstance, lastCurrentUser);
+                        }
+                        throw new BusinessException(e);
                     }
                 }
 
@@ -182,20 +192,27 @@ public abstract class Job {
                 log.error("Failed to execute a job {} of type {}", jobInstance.getJobTemplate(), jobInstance.getJobTemplate(), e);
                 throw new BusinessException(e);
             } finally {
+                counter.inc(-1);
                 jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
             }
 
         } else {
-            log.info("Job {} of type {} execution will be skipped. Reason: isRunning={}", jobInstance.getCode(), jobInstance.getJobTemplate(), isRunning);
+            try {
+                log.info("Job {} of type {} execution will be skipped. Reason: isRunning={}", jobInstance.getCode(), jobInstance.getJobTemplate(), isRunning);
 
-            // Mark job a finished. Applies in cases where execution result was already saved to db - like when executing job from API
-            if (!executionResult.isTransient()) {
-                executionResult.close();
-                jobExecutionService.persistResult(this, executionResult, jobInstance);
+                // Mark job a finished. Applies in cases where execution result was already saved to db - like when executing job from API
+                if (!executionResult.isTransient()) {
+                    executionResult.close();
+                    jobExecutionService.persistResult(this, executionResult, jobInstance);
+                }
+            } catch (Exception e) {
+                log.error("Failed to execute a job {} of type {}", jobInstance.getJobTemplate(), jobInstance.getJobTemplate(), e);
+                throw new BusinessException(e);
+            } finally {
+                // revert counter to return 0 at the end of the job
+                counter.inc(-1);
             }
         }
-        // revert counter to return 0 at the end of the job
-        counter.inc(-1);
     }
 
     /**

@@ -17,6 +17,7 @@
  */
 package org.meveo.service.crm.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -29,6 +30,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.AccountService;
 /**
@@ -148,4 +150,16 @@ public class CustomerService extends AccountService<Customer> {
 		return qb.getQuery(getEntityManager()).getResultList();
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	public List<Customer> listInactiveProspect(int nYear) {
+        Date higherBound = DateUtils.addYearsToDate(new Date(), -1 * nYear);
+        
+        try {
+            return getEntityManager().createNamedQuery("Customer.getProspects").setParameter("creationDate", higherBound).getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting list subscription by customer", e);
+            return null;
+        }
+    }
 }

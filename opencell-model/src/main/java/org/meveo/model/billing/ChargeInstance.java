@@ -26,7 +26,7 @@ import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -74,7 +74,6 @@ import org.slf4j.LoggerFactory;
  */
 @Entity
 @ObservableEntity
-@Cacheable
 @CustomFieldEntity(cftCodePrefix = "ChargeInstance", inheritCFValuesFrom = "chargeTemplate")
 @Table(name = "billing_charge_instance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_charge_instance_seq"), })
@@ -178,7 +177,7 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     /**
      * Wallet operations associated with a charge
      */
-    @OneToMany(mappedBy = "chargeInstance", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "chargeInstance", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     protected List<WalletOperation> walletOperations = new ArrayList<>();
 
     /**

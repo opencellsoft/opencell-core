@@ -19,32 +19,33 @@ package org.meveo.model.payments;
 
 public enum DunningLevelEnum {
 
-    R0(1, "DunningLevelEnum.R0"), R1(2, "DunningLevelEnum.R1"), R2(3, "DunningLevelEnum.R2"), R3(4, "DunningLevelEnum.R3"), R4(5, "DunningLevelEnum.R4");
+	R0(1, "DunningLevelEnum.R0"), R1(2, "DunningLevelEnum.R1"), R2(3, "DunningLevelEnum.R2"), R3(4, "DunningLevelEnum.R3"), R4(5, "DunningLevelEnum.R4"),
+	R5(6, "DunningLevelEnum.R5"), R6(7, "DunningLevelEnum.R6");
 
-    private Integer id;
-    private String label;
+	private Integer id;
+	private String label;
 
-    DunningLevelEnum(Integer id, String label) {
-        this.id = id;
-        this.label = label;
-    }
+	DunningLevelEnum(Integer id, String label) {
+		this.id = id;
+		this.label = label;
+	}
 
-    public Integer getId() {
-        return this.id;
-    }
+	public Integer getId() {
+		return this.id;
+	}
 
-    public String getLabel() {
-        return this.label;
-    }
+	public String getLabel() {
+		return this.label;
+	}
 
-    public static DunningLevelEnum getValue(Integer id) {
-        if (id != null) {
-            for (DunningLevelEnum status : values()) {
-                if (status.getId().intValue() == id.intValue()) {
-                    return status;
-                }
-            }
-        }
-        return null;
-    }
+	public static DunningLevelEnum getValue(Integer id) {
+		if (id != null) {
+			for (DunningLevelEnum status : values()) {
+				if (status.getId().intValue() == id.intValue()) {
+					return status;
+				}
+			}
+		}
+		return null;
+	}
 }

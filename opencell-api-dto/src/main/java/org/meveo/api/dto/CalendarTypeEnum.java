@@ -57,6 +57,11 @@ public enum CalendarTypeEnum {
     UNION,
     
     /**
+     * An append of two calendars. The second calendar is only used after consuming the main calendar
+     */
+    APPEND,
+    
+    /**
      * A union of two calendars. A union of calendars "Monday-Tuesday" and "Tuesday-Friday" would result in "Monday-Friday" time range
      */
     BANKING,

@@ -447,7 +447,7 @@ public class CalendarInterval extends Calendar {
 
                 // Adjust given date time if interval is on another week - and date time corresponds to previous week. E.g checking friday for monday to wednesday period
                 int intervalBeginAdjusted = interval.getIntervalBegin();
-                if (weekday > interval.getIntervalBegin()) {
+                if (weekday >= interval.getIntervalBegin()) {
                     intervalBeginAdjusted = intervalBeginAdjusted + 7;
 
                 }
@@ -479,7 +479,7 @@ public class CalendarInterval extends Calendar {
 
                 // Adjust given date time if interval is on another year - and date time corresponds to previous year. E.g checking 05/20 for 01/15 to 03/25 period
                 int intervalBeginAdjusted = interval.getIntervalBegin();
-                if (monthDay > interval.getIntervalBegin()) {
+                if (monthDay >= interval.getIntervalBegin()) {
                     intervalBeginAdjusted = intervalBeginAdjusted + 1200;
 
                 }
@@ -518,7 +518,7 @@ public class CalendarInterval extends Calendar {
 
                 // Adjust interval begin time if interval begin time is on another day - and date time corresponds to previous day. E.g checking 23:00 for 02:00 - 11:30 period
                 int intervalBeginAdjusted = interval.getIntervalBegin();
-                if (hourMin > interval.getIntervalBegin()) {
+                if (hourMin >= interval.getIntervalBegin()) {
                     intervalBeginAdjusted = intervalBeginAdjusted + 2400;
 
                 }

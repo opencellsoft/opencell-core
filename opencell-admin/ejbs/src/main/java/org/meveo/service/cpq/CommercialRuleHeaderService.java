@@ -102,7 +102,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 			throw new EntityDoesNotExistsException(GroupedAttributes.class,groupedAttributeCode);
 		}
 		Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getGroupedAttributeRules")
-				.setParameter("groupedAttributeCode", groupedAttributeCode).setParameter("offerTemplateCode", productCode);
+				.setParameter("groupedAttributeCode", groupedAttributeCode).setParameter("productCode", productCode);
 		List<CommercialRuleHeader> commercialRules=(List<CommercialRuleHeader>)query.getResultList();
 		return commercialRules;
 	}
@@ -120,21 +120,32 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<CommercialRuleHeader> getProductRules(String offerCode,String productCode,int currentVersion) throws BusinessException{
-		OfferTemplate offer=offerTemplateService.findByCode(offerCode);
-		if(offer == null) { 
-			throw new EntityDoesNotExistsException(OfferTemplate.class,offerCode);
+	public List<CommercialRuleHeader> getProductRules(String offerCode,String productCode,Integer currentVersion) throws BusinessException{
+		String queryName="CommercialRuleHeader.getProductRules";
+		if(!StringUtils.isEmpty(offerCode)) {
+			OfferTemplate offer=offerTemplateService.findByCode(offerCode);
+			if(offer == null) { 
+				throw new EntityDoesNotExistsException(OfferTemplate.class,offerCode);
+			}
+			queryName="CommercialRuleHeader.getProductRulesWithOffer";
 		}
+		
 		Product product=productService.findByCode(productCode);
 		if(product == null) { 
 			throw new EntityDoesNotExistsException(Product.class,productCode);
 		};
-		ProductVersion productVersion=productVersionService.findByProductAndVersion(productCode, currentVersion);
-		if(productVersion==null) {
-			throw new EntityDoesNotExistsException(ProductVersion.class, productCode+" and version "+currentVersion);
+		if(currentVersion!=null) {
+			ProductVersion productVersion=productVersionService.findByProductAndVersion(productCode, currentVersion);
+			if(productVersion==null) {
+				throw new EntityDoesNotExistsException(ProductVersion.class, productCode+" and version "+currentVersion);
+			}
 		}
-		Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getProductRules")
-				.setParameter("offerCode", offerCode).setParameter("productCode", productCode).setParameter("currentVersion", currentVersion);
+		
+		Query query = getEntityManager().createNamedQuery(queryName)
+				.setParameter("productCode", productCode);
+		if(!StringUtils.isEmpty(offerCode)) {
+		 query.setParameter("offerCode", offerCode);
+		}
 		List<CommercialRuleHeader> commercialRules=(List<CommercialRuleHeader>)query.getResultList();
 		return commercialRules;
 	}

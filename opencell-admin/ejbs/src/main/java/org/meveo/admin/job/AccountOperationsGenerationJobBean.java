@@ -43,6 +43,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
@@ -69,6 +70,9 @@ public class AccountOperationsGenerationJobBean extends BaseJobBean {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     /** The script instance service. */
     @Inject
@@ -83,17 +87,21 @@ public class AccountOperationsGenerationJobBean extends BaseJobBean {
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
+        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
-            List<Long> ids = invoiceService.queryInvoiceIdsWithNoAccountOperation(null, jobInstance.isExcludeInvoicesWithoutAmount(), Boolean.TRUE);
 
-            log.debug("invoices to traite:" + (ids == null ? null : ids.size()));
+            Boolean isExcludeInvoicesWithoutAmount = (Boolean) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_excludeInvoicesWithoutAmount", Boolean.FALSE);
+            List<Long> ids = invoiceService.queryInvoiceIdsWithNoAccountOperation(null, isExcludeInvoicesWithoutAmount, Boolean.TRUE);
+            int invoicesToTraite = ids == null ? null : ids.size();
+            log.debug("invoices to traite:" + invoicesToTraite);
+            jobExecutionService.initCounterElementsRemaining(result, invoicesToTraite);
 
             String scriptInstanceCode = null;
             Map<String, Object> context = new HashMap<String, Object>();
             try {
-            	scriptInstanceCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_script")).getCode();
+                scriptInstanceCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_script")).getCode();
                 if (this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_variables") != null) {
                     context = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "AccountOperationsGenerationJob_variables");
                 }
@@ -130,13 +138,13 @@ public class AccountOperationsGenerationJobBean extends BaseJobBean {
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
+                    jobExecutionService.registerError(result, cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }
         } catch (Exception e) {
             log.error("Failed to run accountOperation generation  job", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
     }
 

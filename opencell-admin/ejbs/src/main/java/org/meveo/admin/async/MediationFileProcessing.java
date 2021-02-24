@@ -28,13 +28,18 @@ import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.mediation.Access;
@@ -100,6 +105,7 @@ public class MediationFileProcessing {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
+	@Interceptors({ JobMultithreadingHistoryInterceptor.class })
 	public Future<String> processFileAsync(ICdrReader cdrReader, ICdrParser cdrParser, JobExecutionResultImpl result, String fileName, PrintWriter rejectFileWriter, PrintWriter outputFileWriter,
 			MeveoUser lastCurrentUser) throws BusinessException {
 
@@ -130,9 +136,9 @@ public class MediationFileProcessing {
 	                synchronized (outputFileWriter) {
 	                    outputFileWriter.println(cdr.getLine());
 	                }
-	                result.registerSucces();
+	                jobExecutionService.registerSucces(result);
 				} else {
-				    result.registerError("file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
+				    jobExecutionService.registerError(result, "file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
 				    cdr.setStatus(CDRStatusEnum.ERROR);
 				    createOrUpdateCdr(cdr);
 				    
@@ -148,27 +154,46 @@ public class MediationFileProcessing {
 				break;
 
 			} catch (Exception e) {
-
 				String errorReason = e.getMessage();
-				if (e instanceof CDRParsingException) {
+				final Throwable rootCause = getRootCause(e);
+				if (e instanceof EJBTransactionRolledbackException && rootCause instanceof ConstraintViolationException) {
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("Invalid values passed: ");
+                    for (ConstraintViolation<?> violation : ((ConstraintViolationException) rootCause).getConstraintViolations()) {
+                        builder.append(String.format(" %s.%s: value '%s' - %s;", violation.getRootBeanClass().getSimpleName(), violation.getPropertyPath().toString(), violation.getInvalidValue(), violation.getMessage()));
+                    }
+                    errorReason = builder.toString();
 					log.error("Failed to process a CDR line: {} from file {} error {}", cdr != null ? cdr.getLine() : null, fileName, errorReason);
-				} else {
+				}
+				else if (e instanceof CDRParsingException) {
+					log.error("Failed to process a CDR line: {} from file {} error {}", cdr != null ? cdr.getLine() : null, fileName, errorReason);
+				} 
+				else {
 					log.error("Failed to process a CDR line: {} from file {} error {}", cdr != null ? cdr.getLine() : null, fileName, errorReason, e);
 				}
 
 				synchronized (rejectFileWriter) {
 					rejectFileWriter.println((cdr != null ? cdr.getLine() : "") + "\t" + errorReason);
 				}
-				result.registerError("file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + errorReason);
+				jobExecutionService.registerError(result, "file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + errorReason);
                 cdr.setStatus(CDRStatusEnum.ERROR);
                 cdr.setRejectReason(e.getMessage());
                 createOrUpdateCdr(cdr);
 			}
+
+            jobExecutionService.decCounterElementsRemaining(result);
 		}
 		return new AsyncResult<String>("OK");
 	}
+	
+	private Throwable getRootCause(Throwable e) {
+		if(e.getCause()!=null) {
+			return getRootCause(e.getCause());
+		}
+		return e;
+	}
 
-    /**
+	/**
      * Save the cdr if the configuration property mediation.persistCDR is true.
      *
      * @param cdr the cdr

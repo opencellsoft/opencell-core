@@ -59,9 +59,9 @@
                                 <h:panelGroup id="userNamePanel" layout="block">
                                     <hftl:formField
                                         label="#{messages[(customerBean.entity.name.title != null and customerBean.entity.name.title.isCompany)?'name.company':'name.lastName']}"
-                                        field="name" childField="lastName" required="#{customerBean.entity.name.title != null}" />
+                                        field="name" childField="lastName" required="#{customerBean.entity.name.title != null}"  disabled = "#{customerBean.isEncrypted(customerBean.entity.name.lastName)}"/>
                                     <hftl:formField label="#{messages['name.firstName']}" field="name" childField="firstName"
-                                        rendered="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany}" />
+                                        rendered="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany}" disabled = "#{customerBean.isEncrypted(customerBean.entity.name.firstName)}" />
                                 </h:panelGroup>
 
 
@@ -73,18 +73,18 @@
 
                             <p:fieldset legend="#{messages['customer.minimumToInvoice']}" styleClass="clearLeft">
                                 <hftl:formField label="#{messages['account.minimumLabelEl']}" field="minimumLabelEl" id="minimumLabelEl" textArea="true" rows="1" maxlength="2000"
-                                    componentWidth="50" newLine="true" />
+                                    componentWidth="50" newLine="true" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                 <hftl:formField label="#{messages[appProvider.entreprise?'account.minimumAmountWithoutTaxEl':'account.minimumAmountWithTaxEl']}"
-                                    field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" />
+                                    field="minimumAmountEl" id="minimumAmountEl" textArea="true" rows="1" maxlength="2000" componentWidth="50" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                 <hftl:formField label="#{messages['account.minimumLabelElSpark']}" field="minimumLabelElSpark" id="minimumLabelElSpark" textArea="true" rows="1"
-                                    maxlength="2000" componentWidth="50" newLine="true" rendered="#{paramBean.sparkEnabled}" />
+                                    maxlength="2000" componentWidth="50" newLine="true" rendered="#{paramBean.sparkEnabled and paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                 <hftl:formField label="#{messages[appProvider.entreprise?'account.minimumAmountWithoutTaxElSpark':'account.minimumAmountWithTaxElSpark']}"
                                     field="minimumAmountElSpark" id="minimumAmountElSpark" textArea="true" rows="1" maxlength="2000" componentWidth="50"
-                                    rendered="#{paramBean.sparkEnabled}" />
+                                    rendered="#{paramBean.sparkEnabled and paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                 <hftl:formField id="minimumTargetAccount" label="#{messages['customerAccount.minimumTargetAccount']}" field="minimumTargetAccount"
-                                    valueLabelField="code" popup="true" popupId="billingAccountPopup" allowEdit="true" componentWidth="20" />
+                                    valueLabelField="code" popup="true" popupId="billingAccountPopup" allowEdit="true" componentWidth="20" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                                 <hftl:formField label="#{messages['account.minimumChargeTemplate']}" id="chargeTemplateId" field="minimumChargeTemplate" valueLabelField="code"
-                                    listBean="#{oneShotChargeTemplateBean}" listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}" componentWidth="20" />
+                                    listBean="#{oneShotChargeTemplateBean}" listElements="#{oneShotChargeTemplateBean.getOtherOneShotCharges()}" componentWidth="20" rendered="#{paramBean.getBooleanValue('billing.minimumRating.global.enabled',true)}"/>
                             </p:fieldset>
 
 
@@ -108,10 +108,10 @@
                         <p:tab title="#{messages['customer.tab.information']}" id="tab1">
                             <p:fieldset legend="#{messages['commons.contacts']}">
                                 <hftl:formField label="#{messages['contactInformation.email']}" field="contactInformation" childField="email" popup="false" required="false"
-                                    id="email" validateEmail="true" />
+                                    id="email" validateEmail="true" disabled = "#{customerBean.isEncrypted(customerBean.entity.contactInformation.email)}"/>
 
-                                <hftl:formField label="#{messages['contactInformation.phone']}" maxlength="50" field="contactInformation" childField="phone" popup="false" />
-                                <hftl:formField label="#{messages['contactInformation.mobile']}" maxlength="50" field="contactInformation" childField="mobile" popup="false" />
+                                <hftl:formField label="#{messages['contactInformation.phone']}" maxlength="50" field="contactInformation" childField="phone" popup="false" disabled = "#{customerBean.isEncrypted(customerBean.entity.contactInformation.phone)}"/>
+                                <hftl:formField label="#{messages['contactInformation.mobile']}" maxlength="50" field="contactInformation" childField="mobile" popup="false" disabled = "#{customerBean.isEncrypted(customerBean.entity.contactInformation.mobile)}"/>
                             </p:fieldset>
                             <p:fieldset legend="#{messages['commons.address']}">
                                 <hftl:formField label="#{messages['address.address1']}" field="address" id="address1" childField="address1" popup="false" />
@@ -172,7 +172,7 @@
                                 </p:button>
                                 <p:commandButton ajax="false" rendered="#{!entity.transient}" value="#{messages['action.export']}"
                                     action="#{customerBean.exportCustomerHierarchy()}" />
-                                <p:commandButton action="#{customerBean.anonymizeGpdr()}" rendered="#{!entity.transient}" value="#{messages['action.anonymizeGDPR']}"
+                                <p:commandButton action="#{customerBean.anonymizeGdpr()}" rendered="#{!entity.transient}" value="#{messages['action.anonymizeGDPR']}"
                                     update="@(form)">
                                     <p:confirm header="#{messages['action.confirm']}" message="#{messages['confirmationMessage.confirmGDPRDelete']}" icon="ui-icon-alert" />
                                 </p:commandButton>

@@ -31,14 +31,15 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.UnitRatedTransactionsJobBean;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.AggregatedWalletOperation;
-import org.meveo.service.billing.impl.RatedTransactionsJobAggregationSetting;
 import org.meveo.service.job.JobExecutionService;
 
 /**
@@ -69,6 +70,7 @@ public class RatedTransactionAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> launchAndForget(List<Long> walletOperations, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -79,6 +81,7 @@ public class RatedTransactionAsync {
                 break;
             }
             unitRatedTransactionsJobBean.execute(result, walletOperationId);
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<>("OK");
     }
@@ -95,6 +98,7 @@ public class RatedTransactionAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> launchAndForget(List<AggregatedWalletOperation> nextWorkSet, JobExecutionResultImpl result, MeveoUser lastCurrentUser,
             WalletOperationAggregationSettings aggregationSettings, Date invoicingDate) {
 
@@ -107,6 +111,7 @@ public class RatedTransactionAsync {
                 break;
             }
             unitRatedTransactionsJobBean.execute(result, aggregatedWo, aggregationSettings, invoicingDate);
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<>("OK");
     }

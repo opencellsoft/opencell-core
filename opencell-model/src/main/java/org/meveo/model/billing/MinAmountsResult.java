@@ -18,6 +18,8 @@
 
 package org.meveo.model.billing;
 
+import org.meveo.model.cpq.commercial.InvoiceLine;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +65,11 @@ public class MinAmountsResult implements Serializable {
      * The extra amount added for an entity to get the required minimum amount
      */
     List<ExtraMinAmount> extraMinAmounts = new ArrayList<>();
+
+    /**
+     * The list for additional invoice lines
+     */
+    List<InvoiceLine> minAmountInvoiceLines = new ArrayList<>();
 
     /**
      * Instantiate
@@ -151,5 +158,17 @@ public class MinAmountsResult implements Serializable {
      */
     public void setExtraMinAmounts(List<ExtraMinAmount> extraMinAmounts) {
         this.extraMinAmounts = extraMinAmounts;
+    }
+
+    public List<InvoiceLine> getMinAmountInvoiceLines() {
+        return minAmountInvoiceLines;
+    }
+
+    public void setMinAmountInvoiceLines(List<InvoiceLine> minAmountInvoiceLines) {
+        this.minAmountInvoiceLines = minAmountInvoiceLines;
+    }
+
+    public void addMinAmountIL(InvoiceLine invoiceLine) {
+        minAmountInvoiceLines.add(invoiceLine);
     }
 }

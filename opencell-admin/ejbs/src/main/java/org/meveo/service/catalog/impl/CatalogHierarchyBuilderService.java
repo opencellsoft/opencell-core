@@ -79,6 +79,8 @@ import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.quote.QuoteArticleLine;
+import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.security.CurrentUser;
@@ -87,9 +89,11 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.cpq.QuoteArticleLineService;
 import org.meveo.service.cpq.QuoteAttributeService;
 import org.meveo.service.cpq.QuoteProductService;
 import org.meveo.service.cpq.QuoteVersionService;
+import org.meveo.service.cpq.order.QuotePriceService;
 import org.meveo.service.quote.QuoteOfferService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -174,6 +178,14 @@ public class CatalogHierarchyBuilderService {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+
+    @Inject private QuoteVersionService quoteVersionService;
+    @Inject private QuoteOfferService quoteOfferService;
+    @Inject private QuoteProductService quoteProductService;
+    @Inject private QuoteAttributeService quoteAttributeService;
+    @Inject private QuoteArticleLineService articleLineService;
+    @Inject private QuotePriceService quotePriceService;
 
 
     public void duplicateProductVersion(ProductVersion entity, List<Attribute> attributes, List<Tag> tags, String prefix) throws BusinessException {
@@ -181,6 +193,11 @@ public class CatalogHierarchyBuilderService {
         if(attributes != null) {
         	entity.setAttributes(new ArrayList<Attribute>());
         	for (Attribute attribute : attributes) {
+        		for(Media media : attribute.getMedias()) {
+        			Media newMedia = new Media(media);
+        			mediaService.create(newMedia);
+        			attribute.getMedias().add(newMedia);
+        		}
 				entity.getAttributes().add(attribute);
 			}
         }
@@ -201,6 +218,10 @@ public class CatalogHierarchyBuilderService {
     		ProductVersion tmpProductVersion = productVersionService.findById(productVersion.getId());
     		tmpProductVersion.getTags().size();
     		tmpProductVersion.getAttributes().size();
+    		tmpProductVersion.getAttributes().forEach(att -> {
+    			att.getMedias().size();
+    			att.getAssignedAttributes().size();
+    		});
     		
     		var tagList = new ArrayList<>(tmpProductVersion.getTags());
     		var serviceList = new ArrayList<>(tmpProductVersion.getAttributes());
@@ -253,26 +274,42 @@ public class CatalogHierarchyBuilderService {
     	}
     	
     	if(medias != null) {
-    		entity.getMedias().clear();
     		medias.forEach(media -> {
-    			Media newMedia = new Media(media); 
-    			newMedia.setProduct(entity);
+    			Media newMedia = new Media(media);
     			mediaService.create(newMedia);
     			entity.getMedias().add(newMedia);
     		});
     	}
     	
     	if(productCharge != null) {
-    		entity.getProductCharges().clear();;
     		productCharge.forEach(pct -> { 
     			ProductChargeTemplateMapping duplicat = new ProductChargeTemplateMapping();
     			duplicat.setCounterTemplate(pct.getCounterTemplate());
     			duplicat.setChargeTemplate(pct.getChargeTemplate()); 
     			duplicat.setProduct(entity);
+    			duplicat.setAccumulatorCounterTemplates(new ArrayList<>());
+    			duplicat.setWalletTemplates(new ArrayList<>());
     			productChargeTemplateMappingService.create(duplicat);
+    			entity.getProductCharges().add(duplicat);
     		});
     	}
     }
+	
+	/*@SuppressWarnings("unchecked")
+	private void duplicateCounterTemplate(Product entity, ProductChargeTemplateMapping productChargetTemplate, List<CounterTemplate> coutnerTemplates) {
+		if(productChargetTemplate.getAccumulatorCounterTemplates() != null) {
+			productChargetTemplate.getAccumulatorCounterTemplates().forEach(ct -> {
+				if(ct instanceof CounterTemplate) {
+					CounterTemplate counter = (CounterTemplate) ct;
+					CounterTemplate duplicate = new CounterTemplate();
+					duplicate.setAccumulator(counter.getAccumulator());
+					duplicate.setAccumulatorType(counter.getAccumulatorType());
+					duplicate.setActive(counter.isActive());
+					duplicate.setCode(counterTemplateService.);
+				}
+			});
+		}
+	}*/
 	
 	
 	private void duplicateDiscount(DiscountPlan entity, List<DiscountPlanItem> discountPlanItem) {
@@ -581,7 +618,15 @@ public class CatalogHierarchyBuilderService {
                 newServiceTemplate.setCode(newCode + "_" + UUID.randomUUID());
             }
             duplicateCharges(newServiceTemplate);
+            if (newServiceTemplate.getServiceUsageCharges() != null) {
+            	for(ServiceChargeTemplateUsage s : newServiceTemplate.getServiceUsageCharges()) {
+            		ArrayList<CounterTemplate> newCounterTemplates = new ArrayList<>();
+            		s.getAccumulatorCounterTemplates().stream().forEach(x->newCounterTemplates.add(x));
+					s.setAccumulatorCounterTemplates(newCounterTemplates);
+            	}
+            }
             serviceTemplateService.create(newServiceTemplate);
+            serviceTemplateService.commit();
 
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new BusinessException(e.getMessage());
@@ -628,7 +673,6 @@ public class CatalogHierarchyBuilderService {
         });
         entity.setServiceUsageCharges(new ArrayList<>(entity.getServiceUsageCharges()));
         entity.getServiceUsageCharges().forEach(sctUsageCharge -> {
-        	sctUsageCharge.setAccumulatorCounterTemplates(new ArrayList<>(sctUsageCharge.getAccumulatorCounterTemplates()));
             serviceChargeTemplateUsageService.detach(sctUsageCharge);
             linkAnExistingChargeToNewServiceTemplate(entity, sctUsageCharge);
         });
@@ -646,8 +690,7 @@ public class CatalogHierarchyBuilderService {
         serviceTemplate.getServiceRecurringCharges().size();
         serviceTemplate.getServiceSubscriptionCharges().size();
         serviceTemplate.getServiceTerminationCharges().size();
-        serviceTemplate.getServiceUsageCharges().size();
-        serviceTemplate.getMedias().size();
+        serviceTemplate.getServiceUsageCharges().size(); 
 
         ServiceTemplate newServiceTemplate = new ServiceTemplate();
         String newCode = prefix + serviceTemplate.getCode();
@@ -672,7 +715,6 @@ public class CatalogHierarchyBuilderService {
             newServiceTemplate.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
             newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
             newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
-            newServiceTemplate.setMedias(new ArrayList<Media>());
             
             this.duplicateAndSetImgPath(serviceTemplate, newServiceTemplate, serviceConfiguration != null ? serviceConfiguration.getImagePath() : "");
 
@@ -1139,14 +1181,14 @@ public class CatalogHierarchyBuilderService {
     		qo.getQuoteProduct().size();
     		qo.getQuoteProduct().forEach(qp -> {
     			qp.getQuoteAttributes().size();
+    			qp.getQuoteArticleLines().size();
+    			qp.getQuoteArticleLines().forEach(qal -> {
+    				qal.getQuotePrices().size();
+    			});
     		});
     	});
     }
     
-    @Inject private QuoteVersionService quoteVersionService;
-    @Inject private QuoteOfferService quoteOfferService;
-    @Inject private QuoteProductService quoteProductService;
-    @Inject private QuoteAttributeService quoteAttributeService;
     
     public void duplicateQuoteVersion(CpqQuote entity, QuoteVersion quoteVersion) {
     	final QuoteVersion duplicate = new QuoteVersion();
@@ -1186,6 +1228,7 @@ public class CatalogHierarchyBuilderService {
 			final var duplicate = new QuoteProduct(quoteProduct);
 			quoteProductService.detach(quoteProduct);
 			var quoteAttributes = quoteProduct.getQuoteAttributes();
+			var quoteArticleLines = quoteProduct.getQuoteArticleLines(); 
 			duplicate.setQuoteOffre(offer);
 			duplicate.setQuote(offer.getQuoteVersion().getQuote());
 			duplicate.setQuoteVersion(offer.getQuoteVersion());
@@ -1193,6 +1236,28 @@ public class CatalogHierarchyBuilderService {
 			quoteProductService.create(duplicate);
 			
 			duplicateQuoteAttribute(quoteAttributes, duplicate);
+			duplicateArticleLine(quoteArticleLines, duplicate);
+			
+		}
+    }
+    
+    
+    private void duplicateArticleLine(List<QuoteArticleLine> quoteArticleLines, QuoteProduct quoteProduct) {
+    	for (QuoteArticleLine quoteArticleLine : quoteArticleLines) {
+			var quotePrices = quoteArticleLine.getQuotePrices();
+			final var duplicate = new QuoteArticleLine(quoteArticleLine);
+			duplicate.setQuoteProduct(quoteProduct);
+			articleLineService.create(duplicate);
+			duplicateQuotePrice(quotePrices, duplicate);
+		}
+    }
+    
+    private void duplicateQuotePrice(List<QuotePrice> quotePrices, QuoteArticleLine articleLine) {
+    	for (QuotePrice quotePrice : quotePrices) {
+			final var duplicate = new QuotePrice(quotePrice);
+			duplicate.setQuoteArticleLine(articleLine);
+			duplicate.setQuoteVersion(articleLine.getQuoteProduct().getQuoteVersion());
+			quotePriceService.create(duplicate);
 		}
     }
     

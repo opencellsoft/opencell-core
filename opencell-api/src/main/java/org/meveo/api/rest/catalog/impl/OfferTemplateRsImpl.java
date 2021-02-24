@@ -93,8 +93,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(
-                offerTemplateApi.find(offerTemplateCode, validFrom, validTo, inheritCF, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate, loadAllowedDiscountPlan));
+            result=offerTemplateApi.find(offerTemplateCode, validFrom, validTo, inheritCF, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate, loadAllowedDiscountPlan);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -203,10 +202,10 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
     }
 
 	@Override
-	public Response duplicateOffer(String offerTemplateCode, boolean duplicateHierarchy, boolean preserveCode) {
+	public Response duplicateOffer(String offerTemplateCode, boolean duplicateHierarchy, boolean preserveCode, Date validFrom, Date validTo) {
 		GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 		try {
-            result.setOfferTemplate(offerTemplateApi.duplicate(offerTemplateCode, duplicateHierarchy, preserveCode));
+            result.setOfferTemplate(offerTemplateApi.duplicate(offerTemplateCode, duplicateHierarchy, preserveCode, validFrom, validTo));
         	return Response.ok(result).build();
         } catch (MeveoApiException e) {
             return errorResponse(e, result.getActionStatus());
@@ -215,10 +214,10 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 	}
 
 	@Override
-	public Response updateStatus(String offerTemplateCode, LifeCycleStatusEnum status) {
+	public Response updateStatus(String offerTemplateCode, LifeCycleStatusEnum status, Date validFrom, Date validTo) {
 		   ActionStatus result = new ActionStatus();
 	        try {
-	            offerTemplateApi.updateStatus(offerTemplateCode, status);
+	            offerTemplateApi.updateStatus(offerTemplateCode, status, validFrom, validTo);
 	            return Response.ok(result).build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, result);

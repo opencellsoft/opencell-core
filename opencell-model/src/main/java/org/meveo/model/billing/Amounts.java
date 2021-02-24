@@ -18,10 +18,6 @@
 
 package org.meveo.model.billing;
 
-import org.meveo.model.crm.custom.CustomFieldValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -243,33 +239,7 @@ public class Amounts implements Serializable, Cloneable {
      */
     @Override
     public Amounts clone() {
-        try {
-            Amounts cloned = (Amounts) super.clone();
-
-            if (this.getAmountWithoutTax() != null) {
-                cloned.setAmountWithoutTax(this.getAmountWithoutTax());
-            }
-
-            if (this.getAmountWithTax() != null) {
-                cloned.setAmountWithTax(this.getAmountWithTax());
-            }
-
-            if (this.getAmountTax() != null) {
-                cloned.setAmountTax(this.getAmountTax());
-            }
-
-            if (this.getTax() != null) {
-                cloned.setTax(this.getTax());
-            }
-
-            return cloned;
-        }
-        catch (CloneNotSupportedException e){
-            Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
-            log.error("Failed to clone", e);
-            return this;
-        }
-//        return new Amounts(amountWithoutTax, amountWithTax, amountTax, tax);
+        return new Amounts(amountWithoutTax, amountWithTax, amountTax, tax);
     }
 
     /**

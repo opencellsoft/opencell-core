@@ -1,7 +1,8 @@
 package org.meveo.model.billing;
 
 public enum ThresholdOptionsEnum {
-    BEFORE_DISCOUNT(1, "thresholdOptionsEnum.beforeDiscount"), AFTER_DISCOUNT(2, "thresholdOptionsEnum.afterDiscount"), POSITIVE_RT(3, "thresholdOptionsEnum.positiveRT");
+    BEFORE_DISCOUNT(1, "thresholdOptionsEnum.beforeDiscount"), AFTER_DISCOUNT(2, "thresholdOptionsEnum.afterDiscount"),
+    POSITIVE_RT(3, "thresholdOptionsEnum.positiveRT"), POSITIVE_IL(4, "thresholdOptionsEnum.positiveIL");
 
     private Integer id;
     private String label;
@@ -12,7 +13,7 @@ public enum ThresholdOptionsEnum {
      * @param id
      * @param label
      */
-    private ThresholdOptionsEnum(Integer id, String label){
+    ThresholdOptionsEnum(Integer id, String label){
         this.id = id;
         this.label = label;
     }

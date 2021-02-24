@@ -9,7 +9,7 @@ interface GenericSerializer {
     Set<String> getNestedEntities();
 
     default String getPathToRoot(JsonGenerator gen){
-        return gen.getOutputContext().pathAsPointer(false).toString().replaceFirst("/", "").replaceAll("\\d/", "").replaceAll("/", ".");
+        return gen.getOutputContext().pathAsPointer(false).toString().replaceFirst("/", "").replaceAll("\\d+/", "").replaceAll("/", ".");
     }
 
     default boolean isNestedEntityCandidate(String pathToRoot, String current) {

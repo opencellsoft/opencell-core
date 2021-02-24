@@ -17,14 +17,13 @@
  */
 package org.meveo.commons.utils;
 
-import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Properties;
 
 /**
  * Util class for remote ejb lookups.
@@ -37,6 +36,8 @@ public class EjbUtils {
     private static final Logger logger = LoggerFactory.getLogger(EjbUtils.class);
 
     private static final String LOCALHOST = "127.0.0.1";
+
+    private static final String JBOSSHOST = "JBOSS_HOST";
 
     /**
      * Non instantiable class.
@@ -54,12 +55,9 @@ public class EjbUtils {
      */
     public static Object getInterface(String nameEJB) throws NamingException {
         InitialContext ctx = null;
-//        if (System.getenv("JBOSS_HOST") != null) {
-        if (System.getProperty("JBOSS_HOST") != null) {
-//            logger.info(String.format("JBOSS_HOST=", System.getenv("JBOSS_HOST")));
-//            ctx = getInitialContext(System.getenv("JBOSS_HOST"));
-            logger.info(String.format("JBOSS_HOST=", System.getProperty("JBOSS_HOST")));
-            ctx = getInitialContext(System.getProperty("JBOSS_HOST"));
+        if (System.getProperty(JBOSSHOST) != null) {
+            logger.info(String.format("JBOSS_HOST=", System.getProperty(JBOSSHOST)));
+            ctx = getInitialContext(System.getProperty(JBOSSHOST));
         } else {
             ctx = getInitialContext(LOCALHOST);
         }
@@ -105,7 +103,7 @@ public class EjbUtils {
             return ic.lookup("java:global/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + "/" + serviceInterfaceName);
         } catch (Exception e) {
             Logger log = LoggerFactory.getLogger(EjbUtils.class);
-            log.error("Failed to obtain service interface for {} {}", serviceInterfaceName, e.getMessage());
+            log.debug("Failed to obtain service interface for {} {}", serviceInterfaceName, e.getMessage());
         }
         return null;
     }

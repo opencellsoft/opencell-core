@@ -27,6 +27,7 @@ import java.io.Serializable;
  * 
  * @author Andrius Karpavicius
  */
+@Deprecated
 public class ESIndexNameAndType implements Serializable {
 
     private static final long serialVersionUID = 2183194936642780997L;

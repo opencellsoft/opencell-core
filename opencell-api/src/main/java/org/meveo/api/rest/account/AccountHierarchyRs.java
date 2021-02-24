@@ -30,6 +30,8 @@ import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 /**
  * Web service for managing account hierarchy. Account hierarchy is {@link org.meveo.model.crm.Customer}-&gt;{!link org.meveo.model.payments.CustomerAccount}-&gt;
  * {@link org.meveo.model.billing.BillingAccount}-&gt; {@link org.meveo.model.billing.UserAccount}.
@@ -48,6 +50,8 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/find")
+    @Operation(summary = "Search for a list of customer accounts given a set of filter",
+    tags = { "AccountHierarchy" })
     CustomerListResponse find(AccountHierarchyDto customerDto,  @QueryParam("calculateBalances") Boolean calculateBalances);
 
     /**
@@ -58,6 +62,8 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/")
+    @Operation(summary = "Create account hierarchy",
+    tags = { "AccountHierarchy" })
     ActionStatus create(AccountHierarchyDto accountHierarchyDto);
 
     /**
@@ -68,6 +74,8 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+    @Operation(summary = "Update account hierarchy",
+    tags = { "AccountHierarchy" })
     ActionStatus update(AccountHierarchyDto accountHierarchyDto);
 
     /**
@@ -80,6 +88,11 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/customerHierarchyUpdate")
+    @Operation(summary = "Update account hierarchy",
+    tags = { "AccountHierarchy" },
+    description ="This service allows to create / update (if exist already) and close / terminate (if termination date is set) a list of customer, customer accounts, billing accounts, user"
+    		+ " accounts, subscriptions, services, and access in one transaction. It can activate and terminate subscription and service instance. Close customer account. Terminate billing"
+    		+ " and user account")
     ActionStatus customerHierarchyUpdate(CustomerHierarchyDto postData);
 
     /**
@@ -92,6 +105,11 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/findAccountHierarchy")
+    @Operation(summary = "Find account hierarchy",
+    tags = { "AccountHierarchy" },
+    description =" Is an update of findAccountHierarchy wherein the user can search on 1 or multiple levels of the hierarchy in 1 search. These are the modes that can be combined by using"
+    		+ " bitwise - or |. Example: If we search on level=BA for lastName=legaspi and found a match, the search will return the hierarchy from BA to CUST. If we search on level=UA for"
+    		+ " address1=my_address and found a match, the search will return the hierarchy from UA to CUST.\", notes = \"CUST = 1, CA = 2, BA = 4, UA = 8")
     GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData);
 
     /**
@@ -101,6 +119,8 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/createCRMAccountHierarchy")
+    @Operation(summary = "Create a CRMAccountHerarchy",
+    tags = { "AccountHierarchy" })
     ActionStatus createCRMAccountHierarchy(CRMAccountHierarchyDto postData);
 
     /**
@@ -110,6 +130,8 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/updateCRMAccountHierarchy")
+    @Operation(summary = " Update a CRM Account HerarHierarchychy",
+    tags = { "AccountHierarchy" })
     ActionStatus updateCRMAccountHierarchy(CRMAccountHierarchyDto postData);
 
     /**
@@ -119,6 +141,8 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdateCRMAccountHierarchy")
+    @Operation(summary = "Create or update a CRM Account Hierarchy",
+    tags = { "AccountHierarchy" })
     ActionStatus createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData);
 
     /**
@@ -129,6 +153,8 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+    @Operation(summary = "Create or update Account Hierarchy based on code",
+    tags = { "AccountHierarchy" })
     ActionStatus createOrUpdate(AccountHierarchyDto accountHierarchyDto);
 
 }

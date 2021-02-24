@@ -218,7 +218,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	}
 
 	@Override
-	public Response updateQuoteStatus(String quoteCode, QuoteStatusEnum status) {
+	public Response updateQuoteStatus(String quoteCode, String status) {
 		ActionStatus result = new ActionStatus();
 		 try {
 			 cpqQuoteApi.updateQuoteStatus(quoteCode, status);

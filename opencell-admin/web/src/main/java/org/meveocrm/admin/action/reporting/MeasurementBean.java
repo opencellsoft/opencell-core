@@ -27,6 +27,8 @@ import org.meveocrm.services.dwh.MeasuredValueService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -55,6 +57,7 @@ public class MeasurementBean extends BaseBean<MeasuredValue> {
 
     public MeasurementBean() {
         super(MeasuredValue.class);
+        showDeprecatedWarning();
     }
 
     /**

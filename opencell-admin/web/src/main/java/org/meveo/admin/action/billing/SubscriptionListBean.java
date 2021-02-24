@@ -25,37 +25,58 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.model.billing.Subscription;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UserAccountService;
 
 /**
- * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
+ * edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ConversationScoped
 public class SubscriptionListBean extends BaseBean<Subscription> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Inject
-	private SubscriptionService subscriptionService;
+    @Inject
+    private SubscriptionService subscriptionService;
 
-	public SubscriptionListBean() {
-		super(Subscription.class);
-	}
+    @Inject
+    private UserAccountService userAccountService;
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<Subscription> getPersistenceService() {
-		return subscriptionService;
-	}
+    private Long parentEntityId;
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
+    public SubscriptionListBean() {
+        super(Subscription.class);
+    }
+
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<Subscription> getPersistenceService() {
+        return subscriptionService;
+    }
+
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
+
+    public void setParentEntityId(Long parentEntityId) {
+        this.parentEntityId = parentEntityId;
+    }
+
+    public Long getParentEntityId() {
+        return parentEntityId;
+    }
+
+    @Override
+    public void preRenderView() {
+        super.preRenderView();
+
+        if (parentEntityId != null) {
+            filters.put("userAccount", userAccountService.findById(parentEntityId));
+        }
+    }
 
 }

@@ -29,6 +29,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
@@ -85,7 +86,6 @@ import java.util.Map;
 @Entity
 @WorkflowedEntity
 @ObservableEntity
-@Cacheable
 @CustomFieldEntity(cftCodePrefix = "ServiceInstance", inheritCFValuesFrom = "serviceTemplate")
 @Table(name = "billing_service_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
@@ -93,8 +93,9 @@ import java.util.Map;
         @Parameter(name = "sequence_name", value = "billing_service_instance_seq"), })
 @NamedQueries({
         @NamedQuery(name = "ServiceInstance.getExpired", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
+        @NamedQuery(name = "ServiceInstance.findByServiceCodeAndSubscriptionCodeAndValidity", query = "select s from ServiceInstance s where lower(s.code) = :code and lower(s.subscription.code) = :subscriptionCode AND (s.subscription.validity is null or (s.subscription.validity.from <= :subscriptionValidityDate and  (s.subscription.validity.to is null or :subscriptionValidityDate < s.subscription.validity.to)))"),
         @NamedQuery(name = "ServiceInstance.getToNotifyExpiration", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
-        @NamedQuery(name = "ServiceInstance.getMimimumRTUsed", query = "select s.minimumAmountEl from ServiceInstance s where s.minimumAmountEl is not null"),
+        @NamedQuery(name = "ServiceInstance.getMinimumAmountUsed", query = "select s.minimumAmountEl from ServiceInstance s where s.minimumAmountEl is not null"),
         @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountBySubscription", query = "select s from ServiceInstance s where s.minimumAmountEl is not null  AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription=:subscription"),
         @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountByBA", query = "select s from ServiceInstance s where s.minimumAmountEl is not null  AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription.userAccount.billingAccount=:billingAccount") })
 public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity {
@@ -111,12 +112,12 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_template_id")
     private ServiceTemplate serviceTemplate;
-    
+
     /** Service template/definition. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_version_id")
     private ProductVersion productVersion;
-    
+
     /** Service template/definition. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_product_id")
@@ -166,6 +167,12 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
      */
     @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ChargeInstance> chargeInstances = new ArrayList<>();
+
+    /**
+     * RT associated with a service instance
+     */
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
+    private List<RatedTransaction> ratedTransactions = new ArrayList<>();
 
     /** Termination reason. */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -296,6 +303,13 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 
     @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AttributeInstance> attributeInstances;
+
+    /**
+     * Corresponding to minimum invoice AccountingArticle
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_article_id")
+    private AccountingArticle minimumArticle;
 
     /**
      * PK of OrderItem.id.
@@ -1125,8 +1139,8 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     public void setChargeInstances(List<ChargeInstance> chargeInstances) {
         this.chargeInstances = chargeInstances;
     }
-    
-    
+
+
 
     /**
 	 * @return the attributeInstances
@@ -1141,16 +1155,16 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 	public void setAttributeInstances(List<AttributeInstance> attributeInstances) {
 		this.attributeInstances = attributeInstances;
 	}
-	
+
 	public void addAttributeInstance(AttributeInstance attributeInstance) {
 		attributeInstances=attributeInstances!=null?attributeInstances:new ArrayList<AttributeInstance>();
 		if(attributeInstance!=null) {
 			attributeInstances.add(attributeInstance);
 		}
-		
-	}	
-	
-	
+
+	}
+
+
 
 	/**
 	 * @return the product
@@ -1165,8 +1179,8 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 	public void setProductVersion(ProductVersion productVersion) {
 		this.productVersion = productVersion;
 	}
-	
-	
+
+
 
 	/**
 	 * @return the quoteProduct
@@ -1183,6 +1197,22 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 	}
 
 	/**
+
+    /**
+     * @return the ratedTransactions
+     */
+    public List<RatedTransaction> getRatedTransactions() {
+        return ratedTransactions;
+    }
+
+    /**
+     * @param ratedTransactions the ratedTransactions to set
+     */
+    public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        this.ratedTransactions = ratedTransactions;
+    }
+
+    /**
      * Sort out charge instances by their type
      */
     private void splitChargeInstances() {
@@ -1204,5 +1234,13 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
                 usageChargeInstances.add((UsageChargeInstance) chargeInstance);
             }
         }
+    }
+
+    public AccountingArticle getMinimumArticle() {
+        return minimumArticle;
+    }
+
+    public void setMinimumArticle(AccountingArticle minimumArticle) {
+        this.minimumArticle = minimumArticle;
     }
 }

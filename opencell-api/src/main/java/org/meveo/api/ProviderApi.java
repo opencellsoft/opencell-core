@@ -260,7 +260,7 @@ public class ProviderApi extends BaseApi {
         List<Tax> taxes = taxService.list();
         if (taxes != null) {
             for (Tax tax : taxes) {
-                result.getTaxes().getTax().add(new TaxDto(tax, entityToDtoConverter.getCustomFieldsDTO(tax, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+                result.getTaxes().getTax().add(new TaxDto(tax, entityToDtoConverter.getCustomFieldsDTO(tax, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false));
             }
         }
 

@@ -85,6 +85,7 @@ import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
@@ -104,6 +105,7 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.AttributeService;
+import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -175,6 +177,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     @Inject
     private ProductVersionService productVersionService;
     
+    @Inject
+    private MediaService mediaService;
+    
     
     @Override
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
@@ -238,11 +243,11 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                     + DateUtils.formatDateWithPattern(postData.getValidTo(), datePattern));
         }
 
-        List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(), offerTemplate.getId(),
+        List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(postData.getCode(), postData.getNewValidFrom(), postData.getNewValidTo(), offerTemplate.getId(),
             true);
         if (!matchedVersions.isEmpty()) {
             throw new InvalidParameterException(
-                "An offer, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBeanFactory.getInstance().getDateFormat())
+                "An offer, valid on " + new DatePeriod(postData.getNewValidFrom(), postData.getNewValidTo()).toString(paramBeanFactory.getInstance().getDateFormat())
                         + ", already exists. Please change the validity dates of an existing offer first.");
         }
 
@@ -267,12 +272,26 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     private OfferTemplate populateFromDto(OfferTemplateDto postData, OfferTemplate offerTemplateToUpdate) throws MeveoApiException, BusinessException {
 
         OfferTemplate offerTemplate = offerTemplateToUpdate;
-        
+
         if (offerTemplate == null) {
             offerTemplate = new OfferTemplate();
             if (postData.isDisabled() != null) {
                 offerTemplate.setDisabled(postData.isDisabled());
             }
+        }
+
+        offerTemplate.setOfferChangeRestricted(postData.isOfferChangeRestricted());
+
+        if(postData.getAllowedOfferChange() != null && !postData.getAllowedOfferChange().isEmpty()){
+            List<OfferTemplate> allowedOffers = new ArrayList<>();
+            for (String offerTemplateCode : postData.getAllowedOfferChange()){
+                OfferTemplate allowedOffer = offerTemplateService.findByCode(offerTemplateCode);
+                if(allowedOffer == null){
+                    throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
+                }
+                allowedOffers.add(allowedOffer);
+            }
+            offerTemplate.setAllowedOffersChange(allowedOffers);
         }
         
         Boolean autoEndOfEngagement = postData.getAutoEndOfEngagement();
@@ -347,7 +366,11 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setDescription(postData.getDescription());
         offerTemplate.setName(postData.getName());
         offerTemplate.setLongDescription(postData.getLongDescription());
-        offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
+        if(postData.getNewValidFrom() != null && postData.getNewValidTo() != null) {
+            offerTemplate.setValidity(new DatePeriod(postData.getNewValidFrom(), postData.getNewValidTo()));
+        } else {
+            offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
+        }
         offerTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
         offerTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         offerTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());
@@ -378,6 +401,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         processTags(postData, offerTemplate); 
         processOfferProductDtos(postData, offerTemplate);
         processAttributes(postData, offerTemplate);
+        processMedias(postData, offerTemplate);
         try {
         	String imagePath = postData.getImagePath();
 			if(StringUtils.isBlank(imagePath) && StringUtils.isBlank(postData.getImageBase64())) {
@@ -444,6 +468,21 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 			offerTemplate.setTags(tags);
 		}
 	}
+    
+    private void processMedias(OfferTemplateDto postData, OfferTemplate offerTemplate) {
+		Set<String> mediaCodes = postData.getMediaCodes(); 
+		if(mediaCodes != null && !mediaCodes.isEmpty()){
+			List<Media> medias=new ArrayList<Media>();
+			for(String code:mediaCodes) {
+				Media media=mediaService.findByCode(code);
+				if(media == null) { 
+					throw new EntityDoesNotExistsException(Media.class,code);
+				}
+				medias.add(media);
+			}
+			offerTemplate.setMedias(medias);
+		}
+	}
 
     private void processOfferServiceTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
         List<OfferServiceTemplateDto> offerServiceTemplateDtos = postData.getOfferServiceTemplates();
@@ -489,13 +528,15 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
     
     private void processOfferProductDtos(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
-        List<OfferProductsDto> offerProductDtos = postData.getOfferProducts();  
+        List<OfferProductsDto> offerProductDtos = postData.getOfferProducts(); 
             List<OfferComponent> newOfferProductDtos = new ArrayList<>();
             OfferComponent offerComponent = null;
             boolean hasOfferComponentDtos = offerProductDtos != null && !offerProductDtos.isEmpty();
+            var productCodes = new HashSet<String>();
             if(hasOfferComponentDtos) {
             	offerTemplate.getOfferComponents().clear();
 	            for (OfferProductsDto offerProductDto : offerProductDtos) {
+	            	if(offerProductDto.getProduct() == null || !productCodes.add(offerProductDto.getProduct().getCode())) continue;
 	            	offerComponent = getOfferComponentFromDto(offerProductDto);
 	            	offerComponent.setOfferTemplate(offerTemplate);
 	            	newOfferProductDtos.add(offerComponent);
@@ -619,12 +660,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
     @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
     public OfferTemplateDto find(String code, Date validFrom, Date validTo) throws MeveoApiException {
-        return find(code, validFrom, validTo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, true, true, true, true);
+        return find(code, validFrom, validTo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
     }
 
     @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
     @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
-    public OfferTemplateDto find(String code, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate,
+    public GetOfferTemplateResponseDto find(String code, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate,
             boolean loadOfferProductTemplate, boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan) throws MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
@@ -639,7 +680,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                 code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }
 
-        return fromOfferTemplate(offerTemplate, inheritCF,false, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate, loadAllowedDiscountPlan,false,false,null);
+        return fromOfferTemplate(offerTemplate, inheritCF,Boolean.TRUE, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate, loadAllowedDiscountPlan,Boolean.FALSE,Boolean.FALSE,null);
     }
 
     @Override
@@ -655,17 +696,17 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     public GetOfferTemplateResponseDto fromOfferTemplate(OfferTemplate offerTemplate, CustomFieldInheritanceEnum inheritCF, boolean loadOfferProducts, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
             boolean  loadServiceChargeTemplate, boolean loadProductChargeTemplate, boolean loadAllowedDiscountPlan, boolean loadAttributes, boolean loadTags,List<String> requestedTagTypes) {
 
-    	 if (loadTags && !requestedTagTypes.isEmpty()) {
+    	 if (loadTags && requestedTagTypes!=null && !requestedTagTypes.isEmpty()) {
          	List<Tag> tags=offerTemplateService.getOfferTagsByType(requestedTagTypes);
          	offerTemplate.setTags(tags);
          }
-    	 GetOfferTemplateResponseDto dto = new GetOfferTemplateResponseDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false,true);
+    	 GetOfferTemplateResponseDto dto = new GetOfferTemplateResponseDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false,true,true);
        
         dto.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
         dto.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
         dto.setMinimumAmountElSpark(offerTemplate.getMinimumAmountElSpark());
         dto.setMinimumLabelElSpark(offerTemplate.getMinimumLabelElSpark());
-        dto.setOfferTemplate(new OfferTemplateDto(offerTemplate,entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false));
+        //dto.setOfferTemplate(new OfferTemplateDto(offerTemplate,entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false));
         
         if (loadOfferServiceTemplate && offerTemplate.getOfferServiceTemplates() != null && !offerTemplate.getOfferServiceTemplates().isEmpty()) {
             List<OfferServiceTemplateDto> offerTemplateServiceDtos = new ArrayList<>();
@@ -715,7 +756,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         					  
         					for(ProductVersion productVersion : productVersionList) {  
         						if(productVersion.getValidity().isCorrespondsToPeriod(new Date())) {
-        							if(!requestedTagTypes.isEmpty()) {
+        							if(requestedTagTypes!=null && !requestedTagTypes.isEmpty()) {
         							   tags=productVersionService.getProductTagsByType(requestedTagTypes);
         					           productVersion.setTags(new HashSet<Tag>(tags));
         							}
@@ -888,16 +929,19 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         return result;
     }
     
-    public OfferTemplateDto duplicate(String offerTemplateCode, boolean duplicateHierarchy, boolean preserveCode) {
-    	OfferTemplate offerTemplate = offerTemplateService.findByCode(offerTemplateCode);
+    public OfferTemplateDto duplicate(String offerTemplateCode, boolean duplicateHierarchy, boolean preserveCode, Date validFrom, Date validTo) {
+    	OfferTemplate offerTemplate = offerTemplateService.findByCode(offerTemplateCode, validFrom, validTo);
     	if(offerTemplate == null)
     		throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
     	OfferTemplate duplicated = offerTemplateService.duplicate(offerTemplate, duplicateHierarchy, true, preserveCode);
-    	return new GetOfferTemplateResponseDto(duplicated, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false,true);
+    	return new GetOfferTemplateResponseDto(duplicated, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false,true,true);
     }
     
-    public void updateStatus(String offerTemplateCode, LifeCycleStatusEnum status) {
-    	OfferTemplate offerTemplate = offerTemplateService.findByCode(offerTemplateCode);
+    public void updateStatus(String offerTemplateCode, LifeCycleStatusEnum status, Date validFrom, Date validTo) {
+    	if(status == null)
+    		missingParameters.add("status");
+    	handleMissingParameters();
+    	OfferTemplate offerTemplate = offerTemplateService.findByCode(offerTemplateCode, validFrom, validTo);
     	if(offerTemplate == null)
     		throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
     	offerTemplate.setLifeCycleStatus(status);
