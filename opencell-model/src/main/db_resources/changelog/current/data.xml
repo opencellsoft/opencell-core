@@ -1701,7 +1701,7 @@ public class ValidateBRScript extends Script {
             <column name="occ_category" value="CREDIT" />
         </insert>        
       </changeSet>
-    
+
       <changeSet id="#5308_20200618 - Add script" author="AndriusKarpavicius">
         <insert tableName="meveo_script_instance">
             <column name="id" valueSequenceNext="meveo_script_instance_seq" />
@@ -1735,12 +1735,12 @@ public class ValidateBRScript extends Script {
         <insert tableName="adm_role_permission">
             <column name="role_id" value="-1"></column>
             <column name="permission_id" value="-119"></column>
-        </insert>    
+        </insert>
                 <insert tableName="adm_role_permission">
             <column name="role_id" value="-1"></column>
             <column name="permission_id" value="-120"></column>
-        </insert>    
-	</changeSet>   
+        </insert>
+	</changeSet>
 	<changeSet id="#5418_20201030" author="Mohammed_ELAZZOUZI">
 	    <insert tableName="adm_role">
             <column name="id" valueNumeric="-200" />
@@ -1766,7 +1766,7 @@ public class ValidateBRScript extends Script {
         <insert tableName="adm_role_permission">
             <column name="role_id" value="-1"></column>
             <column name="permission_id" value="-121"></column>
-        </insert>    
+        </insert>
 	</changeSet>
 
     <changeSet id="#5425_20200930 - Failed to execute some report extract" author="Mohamed-Ali-HAMMAL">
@@ -2128,33 +2128,6 @@ public class ValidateBRScript extends Script {
         </update>
     </changeSet>
 
-    <changeSet id="#5621_20201119_offer_template_data" author="NabilOUACHI">
-        <insert tableName="adm_notification">
-            <column name="id" valueNumeric="-14"></column>
-            <column name="uuid" value="9c268621-1ea7-4f10-ba00-4e3f03e412b9"></column>
-            <column name="version" value="0"></column>
-            <column name="disabled" value="0"></column>
-            <column name="created" valueDate="now()"></column>
-            <column name="creator" value="applicationInitializer"></column>
-            <column name="code" value="VERSION_CREATED"></column>
-
-            <column name="class_name_filter" value="org.meveo.model.billing.Subscription"></column>
-            <column name="event_type_filter" value="VERSION_CREATED"></column>
-        </insert>
-        <insert tableName="adm_notification">
-            <column name="id" valueNumeric="-15"></column>
-            <column name="uuid" value="f2e1867d-3608-46bd-a3bd-e2f64a849079"></column>
-            <column name="version" value="0"></column>
-            <column name="disabled" value="0"></column>
-            <column name="created" valueDate="now()"></column>
-            <column name="creator" value="applicationInitializer"></column>
-            <column name="code" value="VERSION_REMOVED"></column>
-
-            <column name="class_name_filter" value="org.meveo.model.billing.Subscription"></column>
-            <column name="event_type_filter" value="VERSION_REMOVED"></column>
-        </insert>
-    </changeSet>
-
     <changeSet id="5657_20201201" author="NabilOuachi">
         <insert tableName="crm_custom_field_tmpl">
             <column name="id" valueNumeric="-2" />
@@ -2260,6 +2233,6 @@ public class ValidateBRScript extends Script {
     <changeSet id="5678_20210214" author="anasseh">
 	      <sql><![CDATA[UPDATE ${db.schema.adapted}ar_payment_history set operation_category ='CREDIT' where payment_id is not null ]]> </sql>
 	      <sql><![CDATA[UPDATE ${db.schema.adapted}ar_payment_history set operation_category ='DEBIT' where refund_id is not null ]]> </sql>
-   </changeSet>    
+   </changeSet>
 
 </databaseChangeLog>
