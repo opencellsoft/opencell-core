@@ -64,7 +64,7 @@ public class JobRsImpl extends BaseRs implements JobRs {
         try {
             JobExecutionResultDto executionResult = jobApi.executeJob(jobInstanceInfoDto);
             result.setJobExecutionResultDto(executionResult);
-            result.getActionStatus().setMessage(executionResult.getId() == null ? "NOTHING_TO_DO" : executionResult.getId().toString());
+            result.getActionStatus().setMessage(executionResult.getId() == null ? "" : executionResult.getId().toString());
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());

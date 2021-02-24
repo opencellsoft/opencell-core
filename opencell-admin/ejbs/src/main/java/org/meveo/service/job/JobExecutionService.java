@@ -93,19 +93,14 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
         try {
             JobExecutionResultImpl resultToPersist = JobExecutionResultImpl.createFromInterface(jobInstance, result);
             boolean isPersistResult = false;
-
             if ((resultToPersist.getNbItemsCorrectlyProcessed() + resultToPersist.getNbItemsProcessedWithError() + resultToPersist.getNbItemsProcessedWithWarning()) > 0) {
-                log.info(job.getClass().getName() + " " + resultToPersist.toString());
                 isPersistResult = true;
             } else {
                 log.info("{}/{}: No items were found to process", job.getClass().getName(), jobInstance.getCode());
                 isPersistResult = "true".equals(paramBeanFactory.getInstance().getProperty("meveo.job.persistResult", "true"));
             }
             if (isPersistResult) {
-            	log.info("isPersistResult true");
                 if (resultToPersist.isTransient()) {
-                	log.info("isTransient true");
-                	log.info("resultToPersist {}", resultToPersist.getEndDate());
                     create(resultToPersist);
                     result.setId(resultToPersist.getId());
                 } else {
@@ -113,23 +108,14 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                     JobExecutionResultImpl updateEntity = findById(result.getId());
                     if (updateEntity != null) {
                         JobExecutionResultImpl.updateFromInterface(result, updateEntity);
-                        log.info("isTransient true");
-                    	log.info("updateEntity {}", updateEntity.getEndDate());
-                    	log.info("result {}", result.getEndDate());
                         update(updateEntity);
-                    } else {
-                    	log.info("updateEntity is null");
-                    }
+                    } 
                 }
-            } else {
-            	log.info("isPersistResult false");
-            }
+            } 
             return resultToPersist.isDone();
-
         } catch (Exception e) { // FIXME:BusinessException e) {
             log.error("Failed to persist job execution results", e);
         }
-
         return null;
     }
 
