@@ -3777,5 +3777,38 @@ public class OrderAdvancement extends ModuleScript {
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
 	        
     </changeSet>
+    
+    <changeSet id="#20210123_540_280" author="TarikFA.">
+    
+    	<addColumn tableName="adm_secured_entity">
+    		<column name="disable" type="boolean" defaultValueNumeric="0">
+    			<constraints nullable="false" />
+    		</column>
+    	</addColumn>
+    	
+    	<addColumn tableName="adm_role_secured_entity">
+    		<column name="disable" type="boolean" defaultValueNumeric="0" >
+    			<constraints nullable="false" />
+    		</column>
+    	</addColumn>
+    	
+    </changeSet>
+    
+    
+    <changeSet   id="#20210123_540_281" author="TarikFA.">
+        <addColumn tableName="adm_role">
+            <column name="uuid" type="varchar(60)" defaultValue="" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="cf_values_accum" type="${type.json}" />
+			<column name="created" type="datetime" defaultValueDate="now()">
+				<constraints nullable="false" />
+			</column>
+			<column name="creator" type="varchar(100)" />
+			<column name="updated" type="datetime" />
+			<column name="updater" type="varchar(100)" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}adm_role set uuid = 'role'||id</sql>
+        <addNotNullConstraint tableName="adm_role" columnName="uuid"/>
+    </changeSet>
 
 </databaseChangeLog>
