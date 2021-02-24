@@ -39,7 +39,6 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.order.OrderService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.meveo.util.ApplicationProvider;
@@ -83,12 +82,6 @@ public class InvoiceServiceTest {
 
     @Mock
     private InvoiceLinesService invoiceLinesService;
-
-    @Mock
-    private OrderService orderService;
-
-    @Mock
-    private InvoiceTypeService invoiceTypeService;
 
     @Before
     public void setUp() {
