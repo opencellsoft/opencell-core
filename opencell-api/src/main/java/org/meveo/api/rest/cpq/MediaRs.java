@@ -89,21 +89,7 @@ public interface MediaRs {
 		   }
 			)
 	public Response deleteMedia(@Parameter(required = true, description = "media code") @PathParam("code") String code);
-	
-	
-	/*@POST
-	@Path("/list")
-	@Operation(summary = "This endpoint allows to find list of media with filters and paging",
-    description ="Find a list of media by filtrering on its property",
-    tags = { "Contract" },
-    responses = {
-            @ApiResponse(responseCode="200", description = "The Media successfully retrieved",
-            		content = @Content(schema = @Schema(implementation = ContractListResponsDto.class))),
-            @ApiResponse(responseCode = "412", description = "One of the parameters is missing",
-    		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
-    })
-	Response ListPost(PagingAndFiltering pagingAndFiltering);
-	*/
+ 
 	
 	
 }

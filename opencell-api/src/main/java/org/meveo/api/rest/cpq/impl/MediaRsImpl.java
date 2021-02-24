@@ -61,17 +61,6 @@ public class MediaRsImpl extends BaseRs implements MediaRs{
 			       return errorResponse(e, result);
 	        }
 	}
- 
 
-//	@Override
-//	public Response ListPost(PagingAndFiltering pagingAndFiltering) {
-//		MediaListResponsDto result = new MediaListResponsDto();
-//		try {
-//			result = mediaApi.listMedia(pagingAndFiltering);
-//            return Response.ok(result).build();
-//        } catch (MeveoApiException e) {
-//		       return errorResponse(e, result.getActionStatus());
-//        }
-//	}
 
 }

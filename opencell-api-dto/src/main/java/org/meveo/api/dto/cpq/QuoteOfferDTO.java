@@ -70,7 +70,7 @@ public class QuoteOfferDTO extends BaseEntityDto{
     
     private List<QuoteProductDTO> products = new ArrayList<QuoteProductDTO>();
     
-    List<QuoteAttributeDTO> offerAttributes =new ArrayList<QuoteAttributeDTO>();
+    private List<QuoteAttributeDTO> offerAttributes =new ArrayList<QuoteAttributeDTO>();
     
     
 
