@@ -73,7 +73,7 @@ public class FilteringJobBean extends IteratorBasedJobBean<IEntity> {
     /**
      * Script context - Job execution parameter
      */
-    private Map<String, Object> context;
+    private Map<String, Object> scriptContext;
 
     /**
      * Script record variable name - Job execution parameter
@@ -86,7 +86,7 @@ public class FilteringJobBean extends IteratorBasedJobBean<IEntity> {
         super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::applyScriptOnEntity, null, this::finalizeScript, JobSpeedEnum.NORMAL);
 
         scriptInterface = null;
-        context = null;
+        scriptContext = null;
         recordVariableName = null;
     }
 
@@ -101,8 +101,8 @@ public class FilteringJobBean extends IteratorBasedJobBean<IEntity> {
 
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
-        ScriptInterface scriptInterface = null;
-        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptInterface = null;
+        scriptContext = new HashMap<String, Object>();
 
         String filterCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "FilteringJob_filter")).getCode();
         String scriptCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "FilteringJob_script")).getCode();
@@ -187,7 +187,7 @@ public class FilteringJobBean extends IteratorBasedJobBean<IEntity> {
      */
     private void finalizeScript(JobExecutionResultImpl jobExecutionResult) {
         try {
-            scriptInterface.terminate(context);
+            scriptInterface.terminate(scriptContext);
 
         } catch (Exception e) {
             log.error("Error on script finalize execute", e);
