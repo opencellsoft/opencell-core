@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.meveo.model.shared.DateUtils;
-import org.slf4j.LoggerFactory;
 
 /**
  * Tracks job execution status in cache
