@@ -25,6 +25,7 @@ import javax.inject.Named;
 
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -60,12 +61,16 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
     @Inject
     @Param
     private Long invoiceCategoryId;
+    
+    private InvoiceSubCategory selectedInvoiceSubCategory;
 
-    /**
+
+	/**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
     public InvoiceSubCategoryBean() {
         super(InvoiceSubCategory.class);
+        selectedInvoiceSubCategory = new InvoiceSubCategory();
     }
 
     /**
@@ -107,4 +112,13 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
     protected String getDefaultSort() {
         return "code";
     }
+    
+
+    public InvoiceSubCategory getSelectedInvoiceSubCategory() {
+		return selectedInvoiceSubCategory;
+	}
+
+	public void setSelectedInvoiceSubCategory(InvoiceSubCategory selectedInvoiceSubCategory) {
+		this.selectedInvoiceSubCategory = selectedInvoiceSubCategory;
+	}
 }

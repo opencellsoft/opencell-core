@@ -23,6 +23,9 @@ import java.io.Serializable;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -31,6 +34,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
+import org.meveo.model.article.AccountingArticle;
 
 /**
  * Invoicing configuration
@@ -121,6 +125,41 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
      */
     @Column(name = "current_invoice_nb")
     private Long currentInvoiceNb = 0L;
+    
+    /**
+     * Default invoice subcategory
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_subcategory_id")
+    private InvoiceSubCategory invoiceSubCategory;
+
+	/**
+     * Default generic accounting article
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "generic_article_id")
+    private AccountingArticle genericAccountingArticle;
+    
+    /**
+     * Default discount accounting article
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_article_id")
+    private AccountingArticle discountAccountingArticle;
+    
+    /**
+     * Default advanced payment accounting article
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "advanced_payment_article_id")
+    private AccountingArticle advancedPaymentAccountingArticle;
+    
+    /**
+     * Default advanced payment accounting article
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_minimum_article_id")
+    private AccountingArticle invoiceMinimumAccountingArticle;
 
     /**
      * Should wallet operations be displayed in the XML invoice
@@ -208,6 +247,46 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     public void setDisplayBillingCycle(boolean displayBillingCycle) {
         this.displayBillingCycle = displayBillingCycle;
     }
+    
+    public InvoiceSubCategory getInvoiceSubCategory() {
+		return invoiceSubCategory;
+	}
+
+	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
+		this.invoiceSubCategory = invoiceSubCategory;
+	}
+
+	public AccountingArticle getGenericAccountingArticle() {
+		return genericAccountingArticle;
+	}
+
+	public void setGenericAccountingArticle(AccountingArticle genericAccountingArticle) {
+		this.genericAccountingArticle = genericAccountingArticle;
+	}
+
+	public AccountingArticle getDiscountAccountingArticle() {
+		return discountAccountingArticle;
+	}
+
+	public void setDiscountAccountingArticle(AccountingArticle discountAccountingArticle) {
+		this.discountAccountingArticle = discountAccountingArticle;
+	}
+
+	public AccountingArticle getAdvancedPaymentAccountingArticle() {
+		return advancedPaymentAccountingArticle;
+	}
+
+	public void setAdvancedPaymentAccountingArticle(AccountingArticle advancedPaymentAccountingArticle) {
+		this.advancedPaymentAccountingArticle = advancedPaymentAccountingArticle;
+	}
+
+	public AccountingArticle getInvoiceMinimumAccountingArticle() {
+		return invoiceMinimumAccountingArticle;
+	}
+
+	public void setInvoiceMinimumAccountingArticle(AccountingArticle invoiceMinimumAccountingArticle) {
+		this.invoiceMinimumAccountingArticle = invoiceMinimumAccountingArticle;
+	}
 
     @Override
     public String toString() {
