@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -16,6 +17,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
@@ -27,10 +29,13 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
+import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.cpq.commercial.OrderType;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.order.Order;
@@ -45,6 +50,7 @@ import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.InvoicingPlanService;
+import org.meveo.service.cpq.order.OrderLotService;
 import org.meveo.service.cpq.order.OrderTypeService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderService;
@@ -77,6 +83,7 @@ public class CommercialOrderApi extends BaseApi {
     @Inject private SubscriptionService subscriptionService;
     @Inject private ServiceSingleton serviceSingleton;
 	@Inject private ScriptInstanceService scriptInstanceService;
+	@Inject private OrderLotService orderLotService;
 	
 	public CommercialOrderDto create(CommercialOrderDto orderDto) {
 		checkParam(orderDto);
@@ -155,6 +162,7 @@ public class CommercialOrderApi extends BaseApi {
 			order.setOrderParent(orderParent);
 		}
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
+		processAttributes(orderDto, order);
 		commercialOrderService.create(order);
 		return new CommercialOrderDto(order);
 	}
@@ -283,6 +291,7 @@ public class CommercialOrderApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Order.class, orderDto.getOrderParentCode());
 			order.setOrderParent(orderParent);
 		}
+		processAttributes(orderDto, order);
 		commercialOrderService.update(order);
 		return new CommercialOrderDto(order);
 	}
@@ -442,4 +451,19 @@ public class CommercialOrderApi extends BaseApi {
 		CommercialOrder commercialOrder = commercialOrderService.validateOrder(order, orderCompleted);
 		return new CommercialOrderDto(commercialOrder);
 	}
+	
+	private void processAttributes(CommercialOrderDto postData, CommercialOrder commercialOrder) {
+		Set<String> orderLots = postData.getOrderLotCodes(); 
+		if(orderLots != null && !orderLots.isEmpty()){
+			List<OrderLot> orderLotList=new ArrayList<OrderLot>();
+			for(String code:orderLots) {
+				OrderLot orderLot=orderLotService.findByCode(code);
+				if(orderLot == null) { 
+					throw new EntityDoesNotExistsException(OrderLot.class,code);
+				}
+				orderLotList.add(orderLot);
+			}
+			commercialOrder.setOrderLots(orderLotList);
+		}
+	} 
 }
