@@ -90,7 +90,6 @@ public class PaginationConfiguration implements Serializable {
         }
 
         this.ordering = sortValues.size() > 0 ? sortValues.toArray() : null;
-        }
     }
 
     /**
