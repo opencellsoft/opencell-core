@@ -312,7 +312,7 @@ public class CpqQuoteApi extends BaseApi {
 	}
 	
 	private void newPopulateOfferAttribute(List<QuoteAttributeDTO> quoteAttributeDtos, QuoteOffer quoteOffer) {
-		if(quoteAttributeDtos != null) {  
+		if(quoteAttributeDtos != null) { 
 			for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributeDtos) { 
 				 Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
 			        if (attribute == null)
@@ -324,6 +324,7 @@ public class CpqQuoteApi extends BaseApi {
 		        quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
 		        quoteAttribute.updateAudit(currentUser);
 		        quoteAttribute.setQuoteOffer(quoteOffer);
+		       
 		        if(!quoteAttributeDTO.getLinkedQuoteAttribute().isEmpty()){
 		            List<QuoteAttribute> linkedQuoteAttributes = quoteAttributeDTO.getLinkedQuoteAttribute()
 		                    .stream()
@@ -335,6 +336,7 @@ public class CpqQuoteApi extends BaseApi {
 		                    .collect(Collectors.toList());
 		            quoteAttribute.setAssignedAttributeValue(linkedQuoteAttributes);
 		        }
+		        quoteAttributeService.create(quoteAttribute);
 				quoteOffer.getQuoteAttributes().add(quoteAttribute); 
 			}
 		}
@@ -857,8 +859,10 @@ public class CpqQuoteApi extends BaseApi {
         quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
         quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
         quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+        if(quoteProduct!=null) {
         quoteProduct.getQuoteAttributes().add(quoteAttribute);
         quoteAttribute.setQuoteProduct(quoteProduct);
+        }
         if(isNew)
             quoteAttributeService.create(quoteAttribute);
         return quoteAttribute;

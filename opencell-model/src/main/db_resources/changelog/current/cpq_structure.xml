@@ -3883,4 +3883,12 @@ public class OrderAdvancement extends ModuleScript {
 	        
     </changeSet>
 
+	<changeSet id="#20210224_5868" author="Mbarek-Ay">
+	<addColumn tableName="cpq_commercial_order">
+	<column name="oneshot_total_amount" type="numeric(23, 12)" />
+	</addColumn>
+	<dropForeignKeyConstraint baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_cpq_quote_offer_id"/>
+		<addForeignKeyConstraint baseColumnNames="cpq_quote_offer_id" baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_quote_offer_id" deferrable="false" initiallyDeferred="false"
+			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
+ </changeSet>
 </databaseChangeLog>
