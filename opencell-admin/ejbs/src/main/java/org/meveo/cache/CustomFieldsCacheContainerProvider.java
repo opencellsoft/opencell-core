@@ -418,7 +418,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     	return cetsByCode.entrySet().stream()
     			.filter(x-> ((providerCode==null && x.getKey().getProvider()==null) 
     					|| (providerCode!=null && providerCode.equals(x.getKey().getProvider()))))
-    			.map(x -> x.getValue()).collect(Collectors.toList());
+    			.map(x -> x.getValue()).collect(()-> Collectors.toList());
     }
 
     /**
