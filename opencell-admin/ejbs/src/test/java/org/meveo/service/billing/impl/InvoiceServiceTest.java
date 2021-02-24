@@ -25,30 +25,11 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.AccountingCode;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionGroup;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.DiscountPlanItem;
-import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
-import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.*;
+import org.meveo.model.catalog.*;
+import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
@@ -58,6 +39,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.order.OrderService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.meveo.util.ApplicationProvider;
@@ -99,6 +81,15 @@ public class InvoiceServiceTest {
     @Mock
     private ParamBeanFactory paramBeanFactory;
 
+    @Mock
+    private InvoiceLinesService invoiceLinesService;
+
+    @Mock
+    private OrderService orderService;
+
+    @Mock
+    private InvoiceTypeService invoiceTypeService;
+
     @Before
     public void setUp() {
         when(ratedTransactionService.listRTsToInvoice(any(), any(), any(), any(), anyInt())).thenAnswer(new Answer<List<RatedTransaction>>() {
@@ -113,6 +104,19 @@ public class InvoiceServiceTest {
                 ratedTransactions.add(rt3);
                 return ratedTransactions;
             }
+        });
+
+        when(invoiceLinesService.listInvoiceLinesToInvoice(any(), any(), any(), any(), anyInt()))
+                .thenAnswer((Answer<List<InvoiceLine>>) invocation -> {
+            List<InvoiceLine> invoiceLines = new ArrayList<>();
+            IBillableEntity entity = (IBillableEntity) invocation.getArguments()[0];
+            InvoiceLine invoiceLine = getInvoiceLine(entity);
+            InvoiceLine invoiceLine2 = getInvoiceLine(entity);
+            InvoiceLine invoiceLine3 = getInvoiceLine(entity);
+                    invoiceLines.add(invoiceLine);
+                    invoiceLines.add(invoiceLine2);
+                    invoiceLines.add(invoiceLine3);
+            return invoiceLines;
         });
 
         when(emWrapper.getEntityManager()).thenReturn(entityManager);
@@ -744,5 +748,251 @@ public class InvoiceServiceTest {
         assertThat(invoice.getAmountWithoutTax()).isEqualTo(new BigDecimal(1559.05d).setScale(2, RoundingMode.HALF_UP));
         assertThat(invoice.getAmountWithTax()).isEqualTo(new BigDecimal(1783.56d).setScale(2, RoundingMode.HALF_UP));
         assertThat(invoice.getAmountTax()).isEqualTo(new BigDecimal(224.51d).setScale(2, RoundingMode.HALF_UP));
+    }
+
+    @Test
+    public void test_getInvoiceLines_EntityToInvoice_BillingAccount() {
+        BillingAccount ba = mock(BillingAccount.class);
+        BillingCycle bc = mock(BillingCycle.class);
+        InvoiceType invoiceType = mock(InvoiceType.class);
+        PaymentMethod paymentMethod = mock(PaymentMethod.class);
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesGroups = invoiceService.getInvoiceLinesGroups(ba, ba, null, bc, invoiceType, null, null, null, false, paymentMethod);
+        assertThat(invoiceLinesGroups).isNotNull();
+        Assert.assertEquals(invoiceLinesGroups.invoiceLinesGroups.size(), 1);
+        InvoiceLinesGroup invoiceLinesGroup = invoiceLinesGroups.invoiceLinesGroups.get(0);
+        Assert.assertEquals(invoiceLinesGroup.getBillingAccount(), ba);
+        Assert.assertEquals(invoiceLinesGroup.getInvoiceKey().split("_").length, 4);
+    }
+
+    @Test
+    public void test_getInvoiceLinesGroups_EntityToInvoice_Subscription() {
+        Subscription subscription = mock(Subscription.class);
+        BillingAccount ba = mock(BillingAccount.class);
+        BillingCycle bc = mock(BillingCycle.class);
+        InvoiceType invoiceType = mock(InvoiceType.class);
+        PaymentMethod paymentMethod = mock(PaymentMethod.class);
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba,
+                null, bc, invoiceType, null, null, null, false, paymentMethod);
+        assertThat(invoiceLinesToInvoice).isNotNull();
+        Assert.assertEquals(invoiceLinesToInvoice.invoiceLinesGroups.size(), 1);
+        InvoiceLinesGroup invoiceLinesGroup = invoiceLinesToInvoice.invoiceLinesGroups.get(0);
+        Assert.assertEquals(invoiceLinesGroup.getBillingAccount(), ba);
+        Assert.assertEquals(invoiceLinesGroup.getInvoiceKey().split("_").length, 4);
+    }
+
+    @Test
+    public void test_getInvoiceLinesGroups_EntityToInvoice_Order() {
+        Order order = new Order();
+        BillingAccount ba = new BillingAccount();
+        ba.setId(1L);
+        BillingCycle bc = new BillingCycle();
+        InvoiceType invoiceType = new InvoiceType();
+        PaymentMethod paymentMethod = new CardPaymentMethod();
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice =
+                invoiceService.getInvoiceLinesGroups(order, ba, new BillingRun(), bc, invoiceType,
+                        mock(Filter.class), mock(Date.class), mock(Date.class), false, paymentMethod);
+        assertThat(invoiceLinesToInvoice).isNotNull();
+        Assert.assertEquals(invoiceLinesToInvoice.invoiceLinesGroups.size(), 1);
+        InvoiceLinesGroup invoiceLinesGroup = invoiceLinesToInvoice.invoiceLinesGroups.get(0);
+        Assert.assertEquals(invoiceLinesGroup.getInvoiceKey().split("_").length, 4);
+    }
+
+    private InvoiceLine getInvoiceLine(IBillableEntity entity) {
+        InvoiceLine invoiceLine = new InvoiceLine();
+        if (entity instanceof Subscription) {
+            invoiceLine.setSubscription((Subscription) entity);
+        } else if (entity instanceof BillingAccount) {
+            invoiceLine.setBillingAccount((BillingAccount) entity);
+        } else if (entity instanceof Order) {
+            invoiceLine.setOrderNumber(((Order) entity).getOrderNumber());
+
+        }
+        Seller seller = new Seller();
+        seller.setCode("sellerTest");
+        BillingAccount billingAccount = mock(BillingAccount.class);
+        CustomerAccount customerAccount = mock(CustomerAccount.class);
+        Customer customer = mock(Customer.class);
+        invoiceLine.setBillingAccount(billingAccount);
+        when(billingAccount.getCustomerAccount()).thenReturn(customerAccount);
+        when(customerAccount.getCustomer()).thenReturn(customer);
+        when(customer.getSeller()).thenReturn(seller);
+        return invoiceLine;
+    }
+
+    @Test
+    public void test_appendInvoiceAggregates_IL_with_BAMinAmount() {
+        InvoiceCategory cat1 = new InvoiceCategory();
+        cat1.setCode("cat1");
+        cat1.setId(11L);
+
+        InvoiceCategory cat2 = new InvoiceCategory();
+        cat2.setCode("cat2");
+        cat2.setId(12L);
+
+        InvoiceSubCategory subCat11 = new InvoiceSubCategory();
+        subCat11.setInvoiceCategory(cat1);
+        subCat11.setCode("subCat11");
+        subCat11.setId(13L);
+
+        InvoiceSubCategory subCat12 = new InvoiceSubCategory();
+        subCat12.setInvoiceCategory(cat1);
+        subCat12.setCode("subCat12");
+        subCat12.setId(14L);
+
+        InvoiceSubCategory subCat21 = new InvoiceSubCategory();
+        subCat21.setInvoiceCategory(cat2);
+        subCat21.setCode("subCat21");
+        subCat21.setId(15L);
+
+        InvoiceSubCategory subCat22 = new InvoiceSubCategory();
+        subCat22.setInvoiceCategory(cat2);
+        subCat22.setCode("subCat22");
+        subCat22.setId(16L);
+
+        Tax tax20 = new Tax();
+        tax20.setId(18L);
+        tax20.setCode("tax20");
+        tax20.setPercent(new BigDecimal(20));
+
+        CustomerAccount ca = new CustomerAccount();
+        ca.setId(1L);
+        BillingAccount ba = new BillingAccount();
+        ba.setCustomerAccount(ca);
+        ba.setId(2L);
+        List<InvoiceLine> minInvoiceLines = new ArrayList<>();
+        InvoiceLine minInvoiceLine = new InvoiceLine();
+        minInvoiceLine.setAmountWithTax(new BigDecimal(10));
+        minInvoiceLine.setAmountWithoutTax(new BigDecimal(8));
+        minInvoiceLine.setTaxRate(new BigDecimal(20));
+        minInvoiceLine.setTax(tax20);
+        minInvoiceLine.setLabel("Min");
+        minInvoiceLine.setCode("Min_amount");
+        minInvoiceLines.add(minInvoiceLine);
+
+        ba.setMinInvoiceLines(minInvoiceLines);
+        List<DiscountPlanInstance> discountPlanInstances = new ArrayList<>();
+        ba.setDiscountPlanInstances(discountPlanInstances);
+
+        DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
+        DiscountPlan discountPlan = new DiscountPlan();
+
+        DiscountPlanItem di = new DiscountPlanItem();
+        di.setDiscountPlanItemType(DiscountPlanItemTypeEnum.FIXED);
+        di.setDiscountValue(new BigDecimal(13.0542d));
+        di.setInvoiceSubCategory(subCat11);
+        discountPlan.addDiscountPlanItem(di);
+
+        di = new DiscountPlanItem();
+        di.setDiscountPlanItemType(DiscountPlanItemTypeEnum.PERCENTAGE);
+        di.setDiscountValue(new BigDecimal(7d));
+        di.setInvoiceSubCategory(subCat12);
+        discountPlan.addDiscountPlanItem(di);
+
+        di = new DiscountPlanItem();
+        di.setDiscountPlanItemType(DiscountPlanItemTypeEnum.FIXED);
+        di.setDiscountValue(new BigDecimal(300d));
+        di.setInvoiceSubCategory(subCat21);
+        discountPlan.addDiscountPlanItem(di);
+
+        di = new DiscountPlanItem();
+        di.setDiscountPlanItemType(DiscountPlanItemTypeEnum.FIXED);
+        di.setDiscountValue(new BigDecimal(-300d));
+        di.setInvoiceSubCategory(subCat22);
+        discountPlan.addDiscountPlanItem(di);
+
+        discountPlanInstance.setDiscountPlan(discountPlan);
+        discountPlanInstances.add(discountPlanInstance);
+
+        TradingLanguage tradingLanguage = new TradingLanguage();
+        tradingLanguage.setLanguageCode("en");
+        tradingLanguage.setId(3L);
+
+        ba.setTradingLanguage(tradingLanguage);
+
+        List<InvoiceLine> invoiceLines = new ArrayList<>();
+
+        UserAccount ua1 = new UserAccount();
+        WalletInstance wallet1 = new WalletInstance();
+        wallet1.setId(5L);
+        wallet1.setCode("wallet1");
+        ua1.setCode("ua1");
+        ua1.setWallet(wallet1);
+        ua1.setBillingAccount(ba);
+        ua1.setId(6L);
+
+        Subscription subscription1 = new Subscription();
+        subscription1.setCode("subsc1");
+        subscription1.setUserAccount(ua1);
+        subscription1.setId(9L);
+
+        Tax tax10 = new Tax();
+        tax10.setId(17L);
+        tax10.setCode("tax10");
+        tax10.setPercent(new BigDecimal(10));
+
+        TaxClass taxClass10 = new TaxClass();
+        taxClass10.setCode("C10");
+        taxClass10.setId(18L);
+
+        TaxClass taxClass20 = new TaxClass();
+        taxClass20.setCode("C20");
+        taxClass20.setId(19L);
+
+        AccountingCode accountingCode = new AccountingCode();
+        accountingCode.setId(19L);
+
+        InvoiceType invoiceType = new InvoiceType();
+        invoiceType.setId(4L);
+
+        long i = 30L;
+
+        Object[][] ilDatas = new Object[][] { { 100.01d, 110.011d, 10.001d, tax10, taxClass10 }, { 100.01d, 110.011d, 10.001d, tax10, taxClass10 },
+                { 100.003d, 120.0036d, 20.0006d, tax20, taxClass20 }, { 100.003d, 120.0036d, 20.0006d, tax20, taxClass20 } };
+        InvoiceSubCategory[] subCategories = new InvoiceSubCategory[] { subCat11, subCat12, subCat21, subCat22 };
+        for (Object[] ilData : ilDatas) {
+            for (InvoiceSubCategory subCategory : subCategories) {
+                AccountingArticle accountingArticle = new AccountingArticle();
+                accountingArticle.setDescription("accounting");
+                accountingArticle.setInvoiceSubCategory(subCategory);
+                InvoiceLine invoiceLine = new InvoiceLine(new Date(), new BigDecimal(1),new BigDecimal((double) ilData[0]),
+                        new BigDecimal((double) ilData[1]), new BigDecimal((double) ilData[1]),InvoiceLineStatusEnum.OPEN, ba,
+                        "code1", "label", (Tax) ilData[3], ((Tax) ilData[3]).getPercent(),  accountingArticle);
+                invoiceLine.setId(i);
+                invoiceLines.add(invoiceLine);
+                i++;
+            }
+        }
+
+        when(billingAccountService.isExonerated(any())).thenReturn(false);
+        TaxInfo taxInfo10 = taxMappingService.new TaxInfo();
+        taxInfo10.tax = tax10;
+        taxInfo10.taxClass = taxClass10;
+
+        TaxInfo taxInfo20 = taxMappingService.new TaxInfo();
+        taxInfo20.tax = tax20;
+        taxInfo20.taxClass = taxClass20;
+
+        when(appProvider.getRoundingMode()).thenReturn(RoundingModeEnum.NEAREST);
+        when(appProvider.getRounding()).thenReturn(6);
+        when(appProvider.getInvoiceRoundingMode()).thenReturn(RoundingModeEnum.NEAREST);
+        when(appProvider.getInvoiceRounding()).thenReturn(2);
+        when(appProvider.isEntreprise()).thenReturn(true);
+
+        ParamBean paramBean = mock(ParamBean.class);
+        when(paramBean.getPropertyAsBoolean(eq("invoice.agregateByUA"), anyBoolean())).thenReturn(true);
+
+        when(paramBeanFactory.getInstance()).thenReturn(paramBean);
+
+        Invoice invoice = new Invoice();
+        invoice.setInvoiceType(invoiceType);
+        invoice.setBillingAccount(ba);
+        invoiceService.appendInvoiceAggregatesIL(ba, ba, invoice, invoiceLines, false, null, false);
+
+        assertThat(invoice.getInvoiceAgregates().size()).isEqualTo(12);
+        SubCategoryInvoiceAgregate subAggr11 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(0);
+        assertThat(subAggr11.getInvoiceSubCategory().getCode()).isEqualTo("subCat11");
+        assertThat(subAggr11.getAmountWithoutTax()).isEqualTo(new BigDecimal(400.03d).setScale(2, RoundingMode.HALF_UP));
+        assertThat(subAggr11.getAmountWithTax()).isEqualTo(new BigDecimal(460.03d).setScale(2, RoundingMode.HALF_UP));
+        assertThat(subAggr11.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, RoundingMode.HALF_UP));
     }
 }

@@ -4826,7 +4826,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 throw new BusinessException("invoiceDate must be set if billingRun is null");
             }
             if (StringUtils.isBlank(lastTransactionDate) && filter == null) {
-                throw new BusinessException("lastTransactionDate or ratedTransactionFilter must be set if billingRun is null");
+                throw new BusinessException("lastTransactionDate or filter must be set if billingRun is null");
             }
         }
 
