@@ -19,6 +19,7 @@
 package org.meveo.service.security;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -71,7 +72,7 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
             Class<?> entityClass = getEntityRealClass(entity);
             securedEntities = allSecuredEntitiesMap.get(entityClass);
         }
-
+        
         // Doing this check first allows verification without going to DB.
         if (entityFoundInSecuredEntities(entity, securedEntities)) {
             // Match was found authorization successful
