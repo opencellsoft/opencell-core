@@ -744,37 +744,31 @@ public class CpqQuoteApi extends BaseApi {
     }
     
     private void processQuoteAttribute(QuoteOfferDTO quoteOfferDTO, QuoteOffer quoteOffer) { 
-        var quoteAttributeDtos = quoteOfferDTO.getOfferAttributes();
-        var hasQuoteAttributeDtos = quoteAttributeDtos != null && !quoteAttributeDtos.isEmpty();
-
+        var quoteAttributeDtos = quoteOfferDTO.getOfferAttributes(); 
         var existencQuoteAttributes = quoteOffer.getQuoteAttributes();
         var hasExistingQuotes = existencQuoteAttributes != null && !existencQuoteAttributes.isEmpty();
-
-        if (hasQuoteAttributeDtos) {
+        
+        if (quoteAttributeDtos != null && !quoteAttributeDtos.isEmpty()) {
             var newQuoteAttributes = new ArrayList<QuoteAttribute>();
-            QuoteAttribute quoteAttribute = null;
-            int i = 1;
+            QuoteAttribute quoteAttribute = null; 
             for (QuoteAttributeDTO quoteAttributeDto : quoteAttributeDtos) {
                 quoteAttribute = getQuoteAttributeFromDto(quoteAttributeDto, null);
-                newQuoteAttributes.add(quoteAttribute);
-                i++;
+                newQuoteAttributes.add(quoteAttribute); 
             }
             if (!hasExistingQuotes) {
                 quoteOffer.getQuoteAttributes().addAll(newQuoteAttributes);
             } else {
                 existencQuoteAttributes.retainAll(newQuoteAttributes);
-                for (QuoteAttribute qpNew : newQuoteAttributes) {
-                    int index = existencQuoteAttributes.indexOf(qpNew);
+                for (QuoteAttribute newQa : newQuoteAttributes) {
+                    int index = existencQuoteAttributes.indexOf(newQa);
                     if (index >= 0) {
                         QuoteAttribute old = existencQuoteAttributes.get(index);
-                        old.update(qpNew);
+                        old.update(newQa);
                     } else {
-                        existencQuoteAttributes.add(qpNew);
+                        existencQuoteAttributes.add(newQa);
                     }
                 }
             }
-        } else if (hasExistingQuotes) {
-            quoteOffer.getQuoteAttributes().removeAll(existencQuoteAttributes);
         }
     }
 
