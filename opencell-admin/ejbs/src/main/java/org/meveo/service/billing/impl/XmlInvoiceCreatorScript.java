@@ -78,7 +78,6 @@ import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
@@ -107,9 +106,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -177,18 +174,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
     @Inject
     protected WalletOperationService walletOperationService;
-    
-    @Inject
-    protected CustomerAccountService customerAccountService;
-    
-    @Inject
-    private TradingLanguageService tradingLanguageService;
-    
-    @Inject
-    private BillingCycleService billingCycleService;
-    
-    @Inject
-    private TradingCurrencyService tradingCurrencyService;
+ 
 
     /** transformer factory. */
     protected TransformerFactory transfac = TransformerFactory.newInstance();
@@ -321,8 +307,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element userAccountsTag = doc.createElement("userAccounts");
         
-        TradingLanguage tradingLanguage = tradingLanguageService.refreshOrRetrieve(invoice.getBillingAccount().getTradingLanguage());
-        String invoiceLanguageCode = tradingLanguage.getLanguage().getLanguageCode();
+        String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
 
         for (UserAccount userAccount : invoice.getBillingAccount().getUsersAccounts()) {
 
@@ -1122,8 +1107,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
         String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
         
-        TradingLanguage tradingLanguage = tradingLanguageService.refreshOrRetrieve(invoice.getBillingAccount().getTradingLanguage());
-        String invoiceLanguageCode = tradingLanguage.getLanguage().getLanguageCode();
+        String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
 
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<>();
 
@@ -1169,8 +1153,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
             taxes.setAttribute("total", toPlainString(invoice.getAmountTax()));
             
-            TradingLanguage tradingLanguage = tradingLanguageService.refreshOrRetrieve(invoice.getBillingAccount().getTradingLanguage());
-            String invoiceLanguageCode = tradingLanguage.getLanguage().getLanguageCode();
+            String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
 
             List<TaxInvoiceAgregate> taxInvoiceAgregates = new ArrayList<TaxInvoiceAgregate>();
             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
@@ -1239,9 +1222,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      */
     protected Element createHeaderCategoriesSection(Document doc, Invoice invoice, InvoiceConfiguration invoiceConfiguration) {
 
-    	TradingLanguage tradingLanguage = tradingLanguageService.refreshOrRetrieve(invoice.getBillingAccount().getTradingLanguage());
-    	String billingAccountLanguage = tradingLanguage.getLanguageCode();
-
+    	String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguageCode();
         LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO> headerCategories = new LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO>();
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
         // List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregate>();
@@ -1431,9 +1412,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         invoiceTag.setAttribute("type", invoice.getInvoiceType().getCode());
         invoiceTag.setAttribute("invoiceCounter", invoice.getAlias());
         invoiceTag.setAttribute("id", invoice.getId() != null ? invoice.getId().toString() : "");
-        CustomerAccount customerAccount = customerAccountService.refreshOrRetrieve(invoice.getBillingAccount().getCustomerAccount());
-        invoiceTag.setAttribute("customerId", customerAccount.getCustomer().getCode());
-        invoiceTag.setAttribute("customerAccountCode", customerAccount.getCode());
+        invoiceTag.setAttribute("customerId", invoice.getBillingAccount().getCustomerAccount().getCustomer().getCode());
+        invoiceTag.setAttribute("customerAccountCode", invoice.getBillingAccount().getCustomerAccount().getCode());
         if (isInvoiceAdjustment) {
             Set<Invoice> linkedInvoices = invoice.getLinkedInvoices();
             invoiceTag.setAttribute("adjustedInvoiceNumber", getLinkedInvoicesnumberAsString(new ArrayList<Invoice>(linkedInvoices)));
@@ -1537,7 +1517,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         }
         if (billingCycle == null) {
             billingCycle = billingAccount.getBillingCycle();
-            billingCycle = billingCycleService.refreshOrRetrieve(billingCycle);
         }
 
         billingAccountTag.setAttribute("billingCycleCode", billingCycle != null ? billingCycle.getCode() : "");
@@ -1572,14 +1551,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             billingAccountTag.appendChild(email);
         }
         
-        TradingLanguage tradingLanguage = tradingLanguageService.refreshOrRetrieve(invoice.getBillingAccount().getTradingLanguage());
-
-        Element nameTag = createNameSection(doc, billingAccount, tradingLanguage.getLanguage().getLanguageCode());
+        Element nameTag = createNameSection(doc, billingAccount, invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode());
         if (nameTag != null) {
             billingAccountTag.appendChild(nameTag);
         }
 
-        Element addressTag = createAddressSection(doc, billingAccount, tradingLanguage.getLanguage().getLanguageCode());
+        Element addressTag = createAddressSection(doc, billingAccount, invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode());
         if (addressTag != null) {
             billingAccountTag.appendChild(addressTag);
         }
@@ -1602,12 +1579,10 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Element customerAccountTag = doc.createElement("customerAccount");
 
         CustomerAccount customerAccount = invoice.getBillingAccount().getCustomerAccount();
-        customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
 
         TradingLanguage tradingLanguage = customerAccount.getTradingLanguage();
         String languageDescription = null;
         if (tradingLanguage != null) {
-        	tradingLanguage = tradingLanguageService.refreshOrRetrieve(tradingLanguage);
             languageDescription = tradingLanguage.getLanguage().getDescriptionEn();
         }
 
@@ -1642,13 +1617,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (paymentMethodTag != null) {
             customerAccountTag.appendChild(paymentMethodTag);
         }
-        TradingLanguage refreshedTradingLanguage = tradingLanguageService.refreshOrRetrieve(invoice.getBillingAccount().getTradingLanguage());
-        Element nameTag = createNameSection(doc, customerAccount, refreshedTradingLanguage.getLanguage().getLanguageCode());
+        Element nameTag = createNameSection(doc, customerAccount, invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode());
         if (nameTag != null) {
             customerAccountTag.appendChild(nameTag);
         }
 
-        Element addressTag = createAddressSection(doc, customerAccount, refreshedTradingLanguage.getLanguage().getLanguageCode());
+        Element addressTag = createAddressSection(doc, customerAccount, invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode());
         if (addressTag != null) {
             customerAccountTag.appendChild(addressTag);
         }
@@ -1682,9 +1656,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         sellerTag.setAttribute("registrationNo", getDefaultIfNull(seller.getRegistrationNo(), ""));
 
         addCustomFields(seller, doc, sellerTag);
-        BillingAccount billingAccount = invoice.getBillingAccount();
-        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
-        Element addressTag = createAddressSection(doc, seller, billingAccount.getTradingLanguage().getLanguage().getLanguageCode());
+        Element addressTag = createAddressSection(doc, seller, invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode());
         if (addressTag != null) {
             sellerTag.appendChild(addressTag);
         }
@@ -1704,8 +1676,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      */
     protected Element createCustomerSection(Document doc, Invoice invoice, InvoiceConfiguration invoiceConfiguration) {
     	
-    	CustomerAccount customerAccount = customerAccountService.refreshOrRetrieve(invoice.getBillingAccount().getCustomerAccount());
-        Customer customer = customerAccount.getCustomer();
+    	Customer customer = invoice.getBillingAccount().getCustomerAccount().getCustomer();
         CustomerBrand customerBrand = customer.getCustomerBrand();
         Seller customerSeller = customer.getSeller();
         CustomerCategory customerCategory = customer.getCustomerCategory();
@@ -1727,14 +1698,12 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         addCustomFields(customer, doc, customerTag);
         
-        BillingAccount billingAccount = invoice.getBillingAccount();
-        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
-        Element nameTag = createNameSection(doc, customer, billingAccount.getTradingLanguage().getLanguage().getLanguageCode());
+        Element nameTag = createNameSection(doc, customer, invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode());
         if (nameTag != null) {
             customerTag.appendChild(nameTag);
         }
 
-        Element addressTag = createAddressSection(doc, customer, billingAccount.getTradingLanguage().getLanguage().getLanguageCode());
+        Element addressTag = createAddressSection(doc, customer, invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode());
         if (addressTag != null) {
             customerTag.appendChild(addressTag);
         }
@@ -1832,9 +1801,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         Element amount = doc.createElement("amount");
         Element currency = doc.createElement("currency");
-        CustomerAccount customerAccount = customerAccountService.refreshOrRetrieve(invoice.getBillingAccount().getCustomerAccount());
-        //TradingCurrency tradingCurrency = tradingCurrencyService.refreshOrRetrieve(customerAccount.getTradingCurrency());
-        Text currencyTxt = doc.createTextNode(customerAccount.getTradingCurrency().getCurrencyCode());
+        Text currencyTxt = doc.createTextNode(invoice.getBillingAccount().getCustomerAccount().getTradingCurrency().getCurrencyCode());
         currency.appendChild(currencyTxt);
         amount.appendChild(currency);
 
