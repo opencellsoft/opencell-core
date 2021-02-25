@@ -623,7 +623,7 @@
 							"response": []
 						},
 						{
-							"name": "Read The Media 1",
+							"name": "Read The 1st Media",
 							"event": [
 								{
 									"listen": "test",
@@ -669,7 +669,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{mediaTwoCode}}\",\r\n    \"mediaName\": \"{{mediaTwoName}}\",\r\n    \"description\": \"This is media one test desc\",\r\n    \"label\": \"This is media label\",\r\n    \"mediaType\": \"IMAGE\",\r\n    \"main\": true,\r\n    \"mediaPath\": \"/path/created/dir2\"\r\n}",
+									"raw": "{\r\n    \"code\": \"{{mediaTwoCode}}\",\r\n    \"mediaName\": \"{{mediaTwoName}}\",\r\n    \"description\": \"This is media two test desc\",\r\n    \"label\": \"This is media label\",\r\n    \"mediaType\": \"IMAGE\",\r\n    \"main\": true,\r\n    \"mediaPath\": \"/path/created/dir2\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -689,33 +689,7 @@
 							"response": []
 						},
 						{
-							"name": "Update The Media 2",
-							"request": {
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"id\": \"{{mediaTwoId}}\",\r\n    \"code\":\"{{mediaTwoCode}}\",\r\n    \"mediaName\": \"{{mediaOneName}}\",\r\n    \"label\": \"This is an updated media label\",\r\n    \"mediaPath\": \"/newPath/updated/newDir\",\r\n    \"mediaType\": \"VIDEO\",\r\n    \"main\": true\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/media",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"media"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read Updated Media",
+							"name": "Read The 2nd Media",
 							"event": [
 								{
 									"listen": "test",
@@ -1005,7 +979,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{productOneCode}}\",\r\n    \"label\": \"This is the product one label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"chargeTemplateCodes\": [\r\n        \"{{recChargeTemplateCode}}\",\r\n        \"{{oneShotTemplateCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"code\": \"{{productOneCode}}\",\r\n    \"label\": \"This is the product one label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"chargeTemplateCodes\": [\r\n        \"{{recChargeTemplateCode}}\",\r\n        \"{{oneShotTemplateCode}}\"\r\n    ],\r\n    \"mediaCodes\": [\r\n        \"{{mediaOneCode}}\",\r\n        \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1027,7 +1001,7 @@
 							"response": []
 						},
 						{
-							"name": "Read  Product 1",
+							"name": "Read The 1st Product",
 							"event": [
 								{
 									"listen": "test",
@@ -1059,55 +1033,6 @@
 									]
 								},
 								"description": "Retrieving a product with its code"
-							},
-							"response": []
-						},
-						{
-							"name": "Update Product 1",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{productOneCode}}\",\r\n    \"label\": \"This is the updated product one label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2021-11-25\",\r\n    \"chargeTemplateCodes\": [\r\n        \"{{recChargeTemplateCode}}\",\r\n        \"{{oneShotTemplateCode}}\"\r\n    ]\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{opencell.url}}/catalog/product/{{productOneCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"catalog",
-										"product",
-										"{{productOneCode}}"
-									]
-								},
-								"description": "Creation of the product"
 							},
 							"response": []
 						},
@@ -1287,7 +1212,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{productTwoCode}}\",\r\n    \"label\": \"this is the product two label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"chargeTemplateCodes\": [\r\n        \"{{oneShotTemplateCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"code\": \"{{productTwoCode}}\",\r\n    \"label\": \"this is the product two label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"chargeTemplateCodes\": [\r\n        \"{{oneShotTemplateCode}}\"\r\n    ],\r\n    \"mediaCodes\": [\r\n        \"{{mediaOneCode}}\",\r\n        \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1309,7 +1234,7 @@
 							"response": []
 						},
 						{
-							"name": "Create Product 2 Version 1 with Attributes & Tags",
+							"name": "Create Product 2 Version 1",
 							"event": [
 								{
 									"listen": "test",
@@ -1397,7 +1322,7 @@
 							"response": []
 						},
 						{
-							"name": "Read  Product 2",
+							"name": "Read The 2nd Product",
 							"event": [
 								{
 									"listen": "test",
@@ -1681,115 +1606,6 @@
 									]
 								},
 								"description": "Retrieving a product with its code"
-							},
-							"response": []
-						},
-						{
-							"name": "Create Commercial Rule 3",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "basic",
-									"basic": [
-										{
-											"key": "username",
-											"value": "{{opencell.username}}",
-											"type": "string"
-										},
-										{
-											"key": "password",
-											"value": "{{opencell.password}}",
-											"type": "string"
-										},
-										{
-											"key": "saveHelperData",
-											"type": "any"
-										},
-										{
-											"key": "showPassword",
-											"value": false,
-											"type": "boolean"
-										}
-									]
-								},
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Authorization",
-										"value": "Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4="
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{commercialRuleThreeCode}}\",\r\n    \"description\": \"This is commercial rule 3 test description\",\r\n    \"ruleType\": \"PRE_REQUISITE\",\r\n    \"ruleEl\": \"ruleEl1\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"productVersion\": 1,\r\n    \"attributeCode\": \"{{engagementAttributeCode}}\",\r\n    \"tagCode\": \"{{tagTwoCode}}\",\r\n    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n    \"targetAttributeValue\": \"VALUE_TWO\",\r\n    \"commercialRuleItems\": [\r\n        {\r\n            \"operator\": \"AND\",\r\n            \"commercialRuleLines\": [\r\n                {\r\n                    \"offerCode\": \"{{offerTemplateCode}}\",\r\n                    \"productCode\": \"{{productOneCode}}\",\r\n                    \"productVersion\": 1,\r\n                    \"attributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"groupedAttributeCode\": \"{{groupedAttributeCode}}\",\r\n                    \"attributeValue\": \"Attribute value of commercial rule 2\",\r\n                    \"tagCode\": \"{{tagVipCode}}\",\r\n                    \"operator\": 0\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}"
-								},
-								"url": {
-									"raw": "{{opencell.url}}/commercialRule/",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"commercialRule",
-										""
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Read  Commercial Rule 3",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{opencell.url}}/commercialRule?code={{commercialRuleThreeCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"commercialRule"
-									],
-									"query": [
-										{
-											"key": "code",
-											"value": "{{commercialRuleThreeCode}}"
-										}
-									]
-								},
-								"description": "Retrieving a product with its code"
-							},
-							"response": []
-						},
-						{
-							"name": "Delete Commercial Rule 3",
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{opencell.url}}/commercialRule/{{commercialRuleThreeCode}}",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"commercialRule",
-										"{{commercialRuleThreeCode}}"
-									]
-								},
-								"description": "Remove a product by its code"
 							},
 							"response": []
 						},
@@ -3002,7 +2818,7 @@
 			]
 		},
 		{
-			"name": "Price Plan Matrix Process",
+			"name": "Price Plan Matrix",
 			"item": [
 				{
 					"name": "Create Price Plan Matrix 1 w/ Recurring Charge",
@@ -3129,7 +2945,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"code\": \"{{ppmOsCode}}\",\n    \"eventCode\": \"{{oneShotTemplateCode}}\",\n    \"amountWithoutTax\": 120\n}",
+							"raw": "{\n    \"code\": \"{{ppmOsCode}}\",\n    \"eventCode\": \"{{oneShotTemplateCode}}\",\n    \"description\": \"This is the price plan description\",\n    \"amountWithoutTax\": 120\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3259,49 +3075,7 @@
 					"response": []
 				},
 				{
-					"name": "Update Price Plan Matrix 2",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "opencell.admin",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "opencell.admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"code\": \"{{ppmOsCode}}\",\n    \"eventCode\": \"{{oneShotTemplateCode}}\",\n    \"description\": \"This is an updated price plan description\",\n    \"amountWithoutTax\": 250\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/catalog/pricePlan",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"catalog",
-								"pricePlan"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "List Read Price Plan Matrix by Charge Code",
+					"name": "List Price Plans by Charge Code",
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -4380,94 +4154,6 @@
 				},
 				{
 					"name": "Read The Accounting Article",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "username",
-									"value": "opencell.admin",
-									"type": "string"
-								},
-								{
-									"key": "password",
-									"value": "opencell.admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{opencell.url}}/v2/article/{{accountingArticleCode}}",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"v2",
-								"article",
-								"{{accountingArticleCode}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Accounting Article",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "username",
-									"value": "opencell.admin",
-									"type": "string"
-								},
-								{
-									"key": "password",
-									"value": "opencell.admin",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"code\" : \"{{accountingArticleCode}}\",\r\n    \"description\" : \"This is the accounting article updated desc\",\r\n    \"taxClass\" : {\r\n        \"id\" : -1\r\n    },\r\n    \"invoiceSubCategory\" : {\r\n        \"id\" : -2\r\n    }\r\n\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/v2/article/{{accountArticleId}}",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"v2",
-								"article",
-								"{{accountArticleId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Read Updated Accounting Article",
 					"event": [
 						{
 							"listen": "test",
@@ -5826,7 +5512,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									""
+									"setTimeout(function(){}, 10000);"
 								],
 								"type": "text/javascript"
 							}
