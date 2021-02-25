@@ -37,6 +37,7 @@ import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Subscription;
@@ -156,6 +157,19 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
+    public ActionStatus terminateSubscriptionPut(TerminateSubscriptionRequestDto putData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.terminateSubscription(putData, ChargeInstance.NO_ORDER_NUMBER);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
     public ActionStatus terminateServices(TerminateSubscriptionServicesRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -188,6 +202,17 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         }
 
         return result;
+    }
+
+    @Override
+    public SubscriptionsListResponseDto list() {
+        try {
+            return subscriptionApi.listGetAll( null, GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
+        } catch (Exception e) {
+            SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
+        }
     }
     
     @Override
@@ -415,6 +440,19 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
         try {
             subscriptionApi.activateSubscription(subscriptionCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus activate(ActivateSubscriptionRequestDto putData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            subscriptionApi.activateSubscription(putData.getSubscriptionCode());
         } catch (Exception e) {
             processException(e, result);
         }
