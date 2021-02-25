@@ -36,10 +36,18 @@ import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.BillingAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -110,6 +118,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
     @Override
     public BillingAccountsResponseDto listByCustomerAccount(String customerAccountCode) {
         BillingAccountsResponseDto result = new BillingAccountsResponseDto();
+        result.setPaging( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
 
         try {
             result.setBillingAccounts(billingAccountApi.listByCustomerAccount(customerAccountCode));

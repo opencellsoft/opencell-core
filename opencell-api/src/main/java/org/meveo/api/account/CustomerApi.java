@@ -18,6 +18,8 @@
 
 package org.meveo.api.account;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -69,6 +71,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.exception.*;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
@@ -96,19 +99,25 @@ import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.crm.impl.CustomerBrandService;
-import org.meveo.service.crm.impl.CustomerCategoryService;
-import org.meveo.service.crm.impl.CustomerService;
-import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.crm.impl.*;
 import org.meveo.service.dwh.GdprService;
 import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.tax.TaxCategoryService;
 import org.primefaces.model.SortOrder;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author Edward P. Legaspi
@@ -489,6 +498,55 @@ public class CustomerApi extends AccountEntityApi {
         return result;
     }
 
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = DEFAULT_SORT_ORDER_CODE, entityClass = Customer.class) }, totalRecords = "customers.totalNumberOfRecords")
+    public CustomersResponseDto listGetAll(CustomerDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+        return listGetAll(postData, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = DEFAULT_SORT_ORDER_CODE, entityClass = Customer.class) }, totalRecords = "customers.totalNumberOfRecords")
+    public CustomersResponseDto listGetAll(CustomerDto postData, PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
+
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+
+        if (postData != null) {
+            pagingAndFiltering.addFilter("customerCategory.code", postData.getCustomerCategory());
+            pagingAndFiltering.addFilter("seller.code", postData.getSeller());
+            pagingAndFiltering.addFilter("customerBrand.code", postData.getCustomerBrand());
+            pagingAndFiltering.addFilter(DEFAULT_SORT_ORDER_CODE, postData.getCode());
+        }
+
+        String sortBy = DEFAULT_SORT_ORDER_CODE;
+        if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+            sortBy = pagingAndFiltering.getSortBy();
+        }
+
+        PaginationConfiguration paginationConfig =
+                toPaginationConfiguration(sortBy, pagingAndFiltering.getMultiSortOrder(), null, pagingAndFiltering, Customer.class);
+
+        Long totalCount = customerService.count(paginationConfig);
+
+        CustomersDto customerDtos = new CustomersDto();
+        CustomersResponseDto result = new CustomersResponseDto();
+
+        result.setPaging(pagingAndFiltering);
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+        customerDtos.setTotalNumberOfRecords(totalCount);
+
+        if (totalCount > 0) {
+            List<Customer> customers = customerService.list(paginationConfig);
+            for (Customer c : customers) {
+                customerDtos.getCustomer().add(accountHierarchyApi.customerToDto(c, inheritCF));
+            }
+        }
+
+        result.setCustomers(customerDtos);
+        return result;
+    }
+
     public void createBrand(CustomerBrandDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -627,11 +685,11 @@ public class CustomerApi extends AccountEntityApi {
             }
             customerCategory.setAccountingCode(accountingCode);
         }
-        
+
         if (postData.getTaxCategoryCode()!=null && StringUtils.isBlank(postData.getTaxCategoryCode()) && customerCategory.getTaxCategory()!=null) {
             customerCategory.setTaxCategory(null);
             toUpdate = true;
-        
+
         }else if (!StringUtils.isBlank(postData.getTaxCategoryCode()) && (customerCategory.getTaxCategory()==null || !customerCategory.getTaxCategory().getCode().equals(postData.getTaxCategoryCode())))  {
             TaxCategory taxCategory = taxCategoryService.findByCode(postData.getTaxCategoryCode());
             if (taxCategory == null) {
@@ -645,7 +703,7 @@ public class CustomerApi extends AccountEntityApi {
             customerCategory.setTaxCategoryEl(postData.getTaxCategoryEl());
             toUpdate = true;
         }
-        
+
         if (postData.getTaxCategoryElSpark() != null && StringUtils.compare(postData.getTaxCategoryElSpark(), customerCategory.getTaxCategoryElSpark()) != 0) {
             customerCategory.setTaxCategoryElSpark(postData.getTaxCategoryElSpark());
             toUpdate = true;
@@ -915,14 +973,14 @@ public class CustomerApi extends AccountEntityApi {
     public  void updateCustomerNumberSequence(GenericSequenceDto postData) throws  BusinessException {
         if (postData.getSequenceSize() > 20) {
             throw new MeveoApiException("sequenceSize must be <= 20.");
-        }        
-        providerService.updateCustomerNumberSequence(GenericSequenceApi.toGenericSequence(postData, appProvider.getCustomerNoSequence())); 
-             
+        }
+        providerService.updateCustomerNumberSequence(GenericSequenceApi.toGenericSequence(postData, appProvider.getCustomerNoSequence()));
+
     }
 
     public  GenericSequenceValueResponseDto getNextCustomerNumber() throws BusinessException {
-        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();        
-        GenericSequence genericSequence = providerService.getNextCustomerNumber();      
+        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
+        GenericSequence genericSequence = providerService.getNextCustomerNumber();
         String sequenceNumber = StringUtils.getLongAsNChar(genericSequence.getCurrentSequenceNb(), genericSequence.getSequenceSize());
         result.setSequence(GenericSequenceApi.fromGenericSequence(genericSequence));
         String prefix = genericSequence.getPrefix();

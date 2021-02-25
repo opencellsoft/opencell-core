@@ -18,12 +18,6 @@
 
 package org.meveo.api.rest.catalog.impl;
 
-import java.util.Date;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -36,9 +30,15 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.OfferTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.serialize.RestDateParam;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.Date;
 
 /**
  * @author Edward P. Legaspi
@@ -109,6 +109,19 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
         }
 
         return result;
+    }
+
+    @Override
+    public GetListOfferTemplateResponseDto list(@Deprecated String code, @Deprecated @RestDateParam Date validFrom,
+                                                @Deprecated @RestDateParam Date validTo, CustomFieldInheritanceEnum inheritCF) {
+        try {
+            return offerTemplateApi.listGetAll( code, validFrom, validTo,
+                    GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering(), inheritCF );
+        } catch (Exception e) {
+            GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
+        }
     }
 
     @Override
