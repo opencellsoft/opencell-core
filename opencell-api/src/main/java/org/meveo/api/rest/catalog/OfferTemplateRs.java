@@ -18,20 +18,6 @@
 
 package org.meveo.api.rest.catalog;
 
-import java.util.Date;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -41,6 +27,10 @@ import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.Date;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.OfferTemplate}.
@@ -120,6 +110,17 @@ public interface OfferTemplateRs extends IBaseRs {
             @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy,
             @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+
+    /**
+     * List Offer templates matching a given criteria
+     *
+     * @return List of Offer templates
+     */
+    @GET
+    @Path("/listGetAll")
+    GetListOfferTemplateResponseDto list(@Deprecated @QueryParam("offerTemplateCode") String code, @Deprecated @QueryParam("validFrom") @RestDateParam Date validFrom,
+                                         @Deprecated @QueryParam("validTo") @RestDateParam Date validTo,
+                                         @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * List offerTemplates matching a given criteria

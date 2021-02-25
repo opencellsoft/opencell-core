@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.account.SellerApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -31,9 +27,14 @@ import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.SellerRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Edward P. Legaspi
@@ -105,6 +106,7 @@ public class SellerRsImpl extends BaseRs implements SellerRs {
     @Override
     public SellerResponseDto list() {
         SellerResponseDto result = new SellerResponseDto();
+        result.setPaging( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
 
         try {
             result.setSellers(sellerApi.list());

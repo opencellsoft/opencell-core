@@ -141,6 +141,15 @@ public interface CustomerRs extends IBaseRs {
     /**
      * List customers matching a given criteria
      *
+     * @return List of customers
+     */
+    @GET
+    @Path("/listGetAll")
+    CustomersResponseDto list();
+
+    /**
+     * List customers matching a given criteria
+     *
      * @param pagingAndFiltering Pagination and filtering criteria
      * @return List of customers
      */

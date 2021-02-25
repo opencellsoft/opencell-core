@@ -18,19 +18,10 @@
 
 package org.meveo.api.rest.billing.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.billing.WalletApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.billing.AmountsDto;
-import org.meveo.api.dto.billing.FindWalletOperationsDto;
-import org.meveo.api.dto.billing.WalletBalanceDto;
-import org.meveo.api.dto.billing.WalletOperationDto;
-import org.meveo.api.dto.billing.WalletReservationDto;
-import org.meveo.api.dto.billing.WalletTemplateDto;
+import org.meveo.api.dto.billing.*;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
@@ -39,9 +30,14 @@ import org.meveo.api.dto.response.billing.WalletBalanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.WalletRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.WalletTemplate;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * Wallet operation and balance related REST API
@@ -217,6 +213,17 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         }
 
         return result;
+    }
+
+    @Override
+    public FindWalletOperationsResponseDto list( Boolean withRTs ) {
+        try {
+            return walletApi.listGetAll(null, GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering(), withRTs );
+        } catch (Exception e) {
+            FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
+        }
     }
 
     @Override
