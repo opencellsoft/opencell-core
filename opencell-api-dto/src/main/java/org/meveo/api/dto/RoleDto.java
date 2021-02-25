@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.admin.SecuredEntity;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 
@@ -71,6 +72,10 @@ public class RoleDto extends BaseEntityDto {
     @XmlElementWrapper(name = "accessibleEntities")
     @XmlElement(name = "accessibleEntity")
     private List<SecuredEntityDto> securedEntities;
+    
+    private String uuid;
+
+    protected CustomFieldsDto customFields;
 
     /**
      * Instantiates a new role dto.
@@ -110,6 +115,7 @@ public class RoleDto extends BaseEntityDto {
     public RoleDto(Role role, boolean includeRoles, boolean includePermissions, boolean includeSecuredEntities) {
         this.setName(role.getName());
         this.setDescription(role.getDescription());
+        this.uuid = role.getUuid();
 
         Set<Permission> permissions = role.getPermissions();
 
@@ -236,5 +242,33 @@ public class RoleDto extends BaseEntityDto {
 	 */
 	public void setSecuredEntities(List<SecuredEntityDto> securedEntities) {
 		this.securedEntities = securedEntities;
+	}
+
+	/**
+	 * @return the uuid
+	 */
+	public String getUuid() {
+		return uuid;
+	}
+
+	/**
+	 * @param uuid the uuid to set
+	 */
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 }
