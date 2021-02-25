@@ -2,6 +2,7 @@ package org.meveo.service.catalog.impl;
 
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
@@ -53,9 +54,9 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
     
 
 	@SuppressWarnings("unchecked")
-	public List<PricePlanMatrixColumn> findLastVersionByCode(String code, int currentVersion) {
+	public List<PricePlanMatrixColumn> findByCodeAndPlanMaptrixVersion(String code, PricePlanMatrixVersion pricePlanMatrixVersion) {
 			return this.getEntityManager().createNamedQuery("PricePlanMatrixColumn.findByVersion")
 																			.setParameter("code", code)
-																			.setParameter("pricePlanMatrixVersionId", currentVersion).getResultList();
+																			.setParameter("pricePlanMatrixVersionId", pricePlanMatrixVersion.getId()).getResultList();
 	}
 }
