@@ -18,19 +18,38 @@
 
 package org.meveo.service.billing.impl;
 
-import static java.time.Instant.*;
+import static java.time.Instant.now;
 import static java.util.Optional.ofNullable;
 import static java.util.UUID.randomUUID;
-import static org.meveo.model.sequence.SequenceTypeEnum.*;
+import static org.meveo.model.sequence.SequenceTypeEnum.ALPHA_UP;
+import static org.meveo.model.sequence.SequenceTypeEnum.CUSTOMER_NO;
+import static org.meveo.model.sequence.SequenceTypeEnum.NUMERIC;
+import static org.meveo.model.sequence.SequenceTypeEnum.REGEXP;
+import static org.meveo.model.sequence.SequenceTypeEnum.RUM;
+import static org.meveo.model.sequence.SequenceTypeEnum.SEQUENCE;
+import static org.meveo.model.sequence.SequenceTypeEnum.UUID;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
-import com.mifmif.common.regex.Generex;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.InvoiceNumberAssigned;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceType;
@@ -53,10 +72,7 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
-import javax.ejb.*;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import java.util.*;
+import com.mifmif.common.regex.Generex;
 
 /**
  * A singleton service to handle synchronized calls. DO not change lock mode to Write
@@ -96,6 +112,9 @@ public class ServiceSingleton {
 
     @Inject
     private ProviderService providerService;
+    
+    @Inject
+    private BillingAccountService billingAccountService;
 
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
@@ -391,7 +410,9 @@ public class ServiceSingleton {
         InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
 
         String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
-        Customer cust = invoice.getBillingAccount().getCustomerAccount().getCustomer();
+        BillingAccount billingAccount = invoice.getBillingAccount();
+        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
+        Customer cust = billingAccount.getCustomerAccount().getCustomer();
 
         Seller seller = invoice.getSeller();
         if (seller == null && cust.getSeller() != null) {
