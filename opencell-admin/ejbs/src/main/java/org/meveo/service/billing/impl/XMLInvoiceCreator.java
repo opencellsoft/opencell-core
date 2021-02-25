@@ -141,12 +141,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject
     private WalletOperationService walletOperationService;
     
-    @Inject
-    private TradingLanguageService tradingLanguageService;
-    
-    @Inject
-    private UserAccountService userAccountService;
-    
     /** transformer factory. */
     private TransformerFactory transfac = TransformerFactory.newInstance();
 
@@ -676,14 +670,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             parent.appendChild(userAccountsTag);
         }
         BillingAccount billingAccount = invoice.getBillingAccount();
-        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
         TradingLanguage tradingLanguage = billingAccount.getTradingLanguage();
-        tradingLanguage = tradingLanguageService.refreshOrRetrieve(tradingLanguage);
         Language language = tradingLanguage.getLanguage();
         String billingAccountLanguage = language.getLanguageCode();
         List<UserAccount> usersAccounts = billingAccount.getUsersAccounts();
         for (UserAccount userAccount : usersAccounts) {
-        	userAccount = userAccountService.refreshOrRetrieve(userAccount);
             List<Subscription> subscriptions = userAccount.getSubscriptions();
             Element userAccountTag = doc.createElement("userAccount");
 
@@ -1467,10 +1458,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
         String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
-        
-        BillingAccount billingAccount = invoice.getBillingAccount();
-        billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
-        String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
+
+        String languageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
 
         
         List<Element> categoriesList = new ArrayList<>();
@@ -1995,7 +1984,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                         BillingAccount billingAccount = invoice.getBillingAccount();
                         if (billingAccount != null) {
                             TradingLanguage tradingLanguage = billingAccount.getTradingLanguage();
-                            tradingLanguage = tradingLanguageService.refreshOrRetrieve(tradingLanguage);
                             if (tradingLanguage != null
                                     && tradingLanguage.getLanguageCode() != null) {
                                 String languageCode = tradingLanguage.getLanguageCode();
