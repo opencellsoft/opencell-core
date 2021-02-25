@@ -11,15 +11,19 @@ import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -27,7 +31,6 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
-import org.meveo.model.IEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.Amounts;
@@ -41,6 +44,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.MinAmountData;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.MinAmountsResult;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
@@ -312,13 +316,13 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
 	 * @return 
 	 */
 	public void create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource) {
-		InvoiceLine invoiceLine = invoiceLineRessourceToEntity(invoiceLineRessource, null);
+		InvoiceLine invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, null);
 		invoiceLine.setCode(invoice.getCode());
 		invoiceLine.setInvoice(invoice);
 		create(invoiceLine);
 	}
 	
-	protected InvoiceLine invoiceLineRessourceToEntity(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
+	public InvoiceLine initInvoiceLineFromRessource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
 		if(invoiceLine==null) {
 			invoiceLine = new InvoiceLine();
 		}
@@ -380,48 +384,13 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
 		return invoiceLine;
 	}
 	
-    /**
-	 * @param entity
-	 * @param id
-	 * @return
-	 */
-	private IEntity tryToFindByEntityClassAndId(Class<? extends IEntity> entity, Long id) {
-    	if(id==null) {
-    		return null;
-    	}
-        QueryBuilder qb = new QueryBuilder(entity, "entity", null);
-        qb.addCriterion("entity.id", "=", id, true);
-        try {
-			return (IEntity) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with id '"+id+"' found");
-        } catch (NonUniqueResultException e) {
-        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+" with id '"+id+"' found");
-        }
-	}
-
-	public BusinessEntity tryToFindByEntityClassAndCode(Class<? extends BusinessEntity> entity, String code) {
-    	if(code==null) {
-    		return null;
-    	}
-        QueryBuilder qb = new QueryBuilder(entity, "entity", null);
-        qb.addCriterion("entity.code", "=", code, true);
-        try {
-			return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with code '"+code+"' found");
-        } catch (NonUniqueResultException e) {
-        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+" with code '"+code+"' found");
-        }
-    }
-
 	/**
 	 * @param invoice
 	 * @param invoiceLine
 	 */
 	public void update(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource, Long invoiceLineId) {
 		InvoiceLine invoiceLine = findInvoiceLine(invoice, invoiceLineId);
-		invoiceLine = invoiceLineRessourceToEntity(invoiceLineRessource, invoiceLine);
+		invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, invoiceLine);
 		update(invoiceLine);
 	}
 
@@ -462,4 +431,39 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
                 .setParameter("invoicesIds", invoicesIds)
                 .executeUpdate();
     }
+    
+    /**
+     * Get a list of invoiceable Invoice Liness for a given BllingAccount and a list of ids
+     *
+     * @param billingAccountId
+     * @param ids
+     *
+     * @return A list of InvoiceLine entities
+     * @throws BusinessException General exception
+     */
+	public List<InvoiceLine> listByBillingAccountAndIDs(Long billingAccountId, Set<Long> ids) throws BusinessException {
+		return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByBillingAccountAndIDs", InvoiceLine.class)
+				.setParameter("billingAccountId", billingAccountId).setParameter("listOfIds", ids).getResultList();
+	}
+
+	/**
+	 * @param object
+	 * @param invoiceSubCategory
+	 * @param object2
+	 * @param object3
+	 * @return
+	 */
+	public List<InvoiceLine> findOpenILbySubCat(InvoiceSubCategory invoiceSubCategory) {
+        QueryBuilder qb = new QueryBuilder("select il from InvoiceLine il ", "il");
+        if (invoiceSubCategory != null) {
+            qb.addCriterionEntity("il.accountingArticle.invoiceSubCategory", invoiceSubCategory);
+        }
+        qb.addSql("il.status='OPEN'");
+
+        try {
+            return qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            return new ArrayList<InvoiceLine>();
+        }
+	}
 }
