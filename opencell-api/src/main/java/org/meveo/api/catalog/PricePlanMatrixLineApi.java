@@ -40,6 +40,15 @@ public class PricePlanMatrixLineApi extends BaseApi {
           return new GetPricePlanVersionResponseDto(ppmVersion);
     }
 
+    
+    public GetPricePlanVersionResponseDto updatePricePlanMatrixLines(PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
+            for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLinesDto()) {
+            	updatePricePlanMatrixLine(pricePlanMatrixLineDto);
+            }
+           PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
+          return new GetPricePlanVersionResponseDto(ppmVersion);
+    }
+    
     public PricePlanMatrixLineDto updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto) {
 
         if(StringUtils.isBlank(pricePlanMatrixLineDto.getPpmLineId()))

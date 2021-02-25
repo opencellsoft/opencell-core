@@ -1,21 +1,19 @@
 package org.meveo.model.cpq;
 
-import org.meveo.model.AuditableEntity;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+
+import org.meveo.model.AuditableEntity;
 
 @MappedSuperclass
 public class AttributeValue<T extends AttributeValue> extends AuditableEntity {
