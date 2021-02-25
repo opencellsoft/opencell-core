@@ -3281,4 +3281,25 @@ END $$;]]>
 		</addColumn>
     </changeSet>
 
+    <changeSet id="#5975_20210225_offer_template_allowed_offer_change_should_be_many_to_many" author="MounirBOUKAYOUA">
+        <dropColumn tableName="cat_offer_template">
+            <column name="offer_template_id"></column>
+        </dropColumn>
+
+        <createTable tableName="cat_offer_allowed_offer_change">
+            <column name="offer_tmpl_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="allowed_offer_change_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="offer_tmpl_id, allowed_offer_change_id" constraintName="cat_offer_allowed_offer_change_pkey" tableName="cat_offer_allowed_offer_change" />
+        <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="offer_tmpl_id"
+                                 constraintName="cat_offer_allowed_offer_change_fk1" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="allowed_offer_change_id"
+                                 constraintName="cat_offer_allowed_offer_change_fk2" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>
