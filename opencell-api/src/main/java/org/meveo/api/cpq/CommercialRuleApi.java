@@ -154,6 +154,8 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 	
 	
 	public void populateCommercialRuleHeader(CommercialRuleHeaderDTO dto,CommercialRuleHeader commercialRuleHeader) {
+		
+		commercialRuleHeader.setTargetAttributeValue(dto.getTargetAttributeValue());
 
 		if(!Strings.isEmpty(dto.getDescription()))
 			commercialRuleHeader.setDescription(dto.getDescription()); 
@@ -169,6 +171,8 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 				throw new EntityDoesNotExistsException(OfferTemplate.class, dto.getOfferCode());
 			}
 			commercialRuleHeader.setTargetOfferTemplate(offerTemplate);
+		}else {
+			commercialRuleHeader.setTargetOfferTemplate(null);
 		}
 		if(!StringUtils.isBlank(dto.getProductCode())) {
 			Product product =productService.findByCode(dto.getProductCode());
@@ -176,6 +180,8 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 				throw new EntityDoesNotExistsException(Product.class, dto.getProductCode());
 			}
 			commercialRuleHeader.setTargetProduct(product);
+		}else {
+			commercialRuleHeader.setTargetProduct(null);
 		}
 		if(!StringUtils.isBlank(dto.getProductVersion()) && !StringUtils.isBlank(dto.getProductCode())) {
 			ProductVersion productVersion =productVersionService.findByProductAndVersion(dto.getProductCode(), dto.getProductVersion());
@@ -183,6 +189,8 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 				throw new EntityDoesNotExistsException(ProductVersion.class, dto.getProductCode()+" and version "+dto.getProductVersion());
 			}
 			commercialRuleHeader.setTargetProductVersion(productVersion);
+		}else {
+			commercialRuleHeader.setTargetProductVersion(null);
 		}
 
 		if(!StringUtils.isBlank(dto.getAttributeCode())) {
@@ -198,6 +206,8 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 				throw new EntityDoesNotExistsException(Tag.class, dto.getTagCode());
 			}
 			commercialRuleHeader.setTargetTag(tag);
+		}else {
+			commercialRuleHeader.setTargetTag(null);
 		}
 
 		if(!StringUtils.isBlank(dto.getGroupedAttributeCode())) {
@@ -206,6 +216,8 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 				throw new EntityDoesNotExistsException(GroupedAttributes.class, dto.getGroupedAttributeCode());
 			}
 			commercialRuleHeader.setTargetGroupedAttributes(groupedAttributes);
+		}else {
+			commercialRuleHeader.setTargetGroupedAttributes(null);
 		}
 		if(dto.getDisabled()!=null)
 			commercialRuleHeader.setDisabled(dto.getDisabled());
@@ -254,6 +266,8 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 				throw new EntityDoesNotExistsException(OfferTemplate.class, dto.getOfferCode());
 			}
 			commercialRuleLine.setSourceOfferTemplate(offerTemplate);
+		}else {
+			commercialRuleLine.setSourceOfferTemplate(null);
 		}
 		if(!StringUtils.isBlank(dto.getProductCode())) {
 			Product product =productService.findByCode(dto.getProductCode());
@@ -261,6 +275,8 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 				throw new EntityDoesNotExistsException(Product.class, dto.getProductCode());
 			}
 			commercialRuleLine.setSourceProduct(product);
+		}else {
+			commercialRuleLine.setSourceProduct(null);
 		}
 		if(!StringUtils.isBlank(dto.getProductVersion()) && !StringUtils.isBlank(dto.getProductCode())) {
 			ProductVersion productVersion =productVersionService.findByProductAndVersion(dto.getProductCode(), dto.getProductVersion());
@@ -268,6 +284,8 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 				throw new EntityDoesNotExistsException(ProductVersion.class, dto.getProductCode()+" and version "+dto.getProductVersion());
 			}
 			commercialRuleLine.setSourceProductVersion(productVersion);
+		}else {
+			commercialRuleLine.setSourceProductVersion(null);
 		}
 
 		if(!StringUtils.isBlank(dto.getAttributeCode())) {
@@ -276,6 +294,8 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 				throw new EntityDoesNotExistsException(Attribute.class, dto.getAttributeCode());
 			}
 			commercialRuleLine.setSourceAttribute(attribute);
+		}else {
+			commercialRuleLine.setSourceAttribute(null);
 		}
 		if(!StringUtils.isBlank(dto.getTagCode())) {
 			Tag tag =tagService.findByCode(dto.getTagCode());
@@ -283,6 +303,8 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 				throw new EntityDoesNotExistsException(Tag.class, dto.getTagCode());
 			}
 			commercialRuleLine.setSourceTag(tag);
+		}else {
+			commercialRuleLine.setSourceTag(null);
 		}
 
 		if(!StringUtils.isBlank(dto.getGroupedAttributeCode())) {
@@ -292,6 +314,8 @@ public class CommercialRuleApi extends BaseCrudApi<CommercialRuleHeader, Commerc
 			}
 			
 			commercialRuleLine.setSourceGroupedAttributes(groupedAttributes);
+		}else {
+			commercialRuleLine.setSourceGroupedAttributes(null);
 		}
 	}
 	

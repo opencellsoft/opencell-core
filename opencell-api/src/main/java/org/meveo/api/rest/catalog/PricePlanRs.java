@@ -441,7 +441,7 @@ public interface PricePlanRs extends IBaseRs {
      *
      */
     @POST
-    @Path("/addPricePlanMatrixLines")
+    @Path("/updatePricePlanMatrixLines")
     @Operation(summary = "update all price plan matrix lines",
             tags = { "Price Plan" },
             description ="update all price plan matrix lines",
