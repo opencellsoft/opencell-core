@@ -287,7 +287,7 @@ public class ServiceSingleton {
 		Provider provider = providerService.findById(appProvider.getId());
 		GenericSequence sequence = provider.getRumSequence();
 		if (type == SequenceTypeEnum.CUSTOMER_NO) {
-			sequence = appProvider.getCustomerNoSequence();
+			sequence = provider.getCustomerNoSequence();
 		}
 		if (sequence == null) {
 			sequence = new GenericSequence();
