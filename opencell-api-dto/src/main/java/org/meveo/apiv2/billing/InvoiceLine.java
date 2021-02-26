@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @Value.Style(jdkOnly = true)
 @JsonDeserialize(as = ImmutableInvoiceLine.class)
 public interface InvoiceLine extends Resource {
-	
+
 	/**
 	 * @return the invoice id
 	 */

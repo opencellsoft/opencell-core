@@ -1,5 +1,7 @@
 package org.meveo.apiv2.billing;
 
+import java.math.BigDecimal;
+
 import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
@@ -9,19 +11,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
-@JsonDeserialize(as = ImmutableFile.class)
-public interface File extends Resource {
+@JsonDeserialize(as = ImmutableDiscountInvoiceAggregate.class)
+public interface DiscountInvoiceAggregate extends Resource {
 
 	@Nullable
-	Long getReferencedEntity();
+	public String getDiscountPlanItemCode();
 
 	@Nullable
-	String getFileType();
-
-	@Nullable
-	String getFileName();
-
-	@Nullable
-	byte[] getFileContent();
+	public BigDecimal getDiscountPercent();
 
 }
