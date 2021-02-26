@@ -440,7 +440,7 @@ public interface PricePlanRs extends IBaseRs {
      * add all price plan matrix lines
      *
      */
-    @PUT
+    @POST
     @Path("/addPricePlanMatrixLines")
     @Operation(summary = "update all price plan matrix lines",
             tags = { "Price Plan" },

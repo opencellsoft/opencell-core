@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -98,5 +99,26 @@ public class PricePlanMatrixLine extends AuditableEntity {
         return pricePlanMatrixValues.stream()
                 .allMatch(v -> v.match(attributeValues));
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ Objects.hash(description, pricePlanMatrixVersion, pricetWithoutTax, priority);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		PricePlanMatrixLine other = (PricePlanMatrixLine) obj;
+		return Objects.equals(description, other.description)
+				&& Objects.equals(pricePlanMatrixVersion, other.pricePlanMatrixVersion)
+				&& Objects.equals(pricetWithoutTax, other.pricetWithoutTax) && Objects.equals(priority, other.priority);
+	}
 
 }
