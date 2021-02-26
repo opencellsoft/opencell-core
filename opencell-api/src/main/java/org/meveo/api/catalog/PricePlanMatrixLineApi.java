@@ -1,5 +1,8 @@
 package org.meveo.api.catalog;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -13,8 +16,10 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.service.catalog.impl.PricePlanMatrixLineService;
+import org.meveo.service.catalog.impl.PricePlanMatrixValueService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 
 @Stateless
@@ -24,6 +29,8 @@ public class PricePlanMatrixLineApi extends BaseApi {
     private PricePlanMatrixLineService pricePlanMatrixLineService;
     @Inject
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+    @Inject
+    private PricePlanMatrixValueService pricePlanMatrixValueService;
 
     public PricePlanMatrixLineDto addPricePlanMatrixLine(PricePlanMatrixLineDto dtoData) throws MeveoApiException, BusinessException {
 
@@ -42,10 +49,24 @@ public class PricePlanMatrixLineApi extends BaseApi {
 
     
     public GetPricePlanVersionResponseDto updatePricePlanMatrixLines(PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
+        PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
+        	ppmVersion.getLines().clear();
+        	Set<PricePlanMatrixLine> lines = new HashSet<PricePlanMatrixLine>();
             for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLinesDto()) {
-            	updatePricePlanMatrixLine(pricePlanMatrixLineDto);
+            	PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
+            	pricePlanMatrixLine.setPricetWithoutTax(pricePlanMatrixLineDto.getPricetWithoutTax());
+                pricePlanMatrixLine.setPriority(pricePlanMatrixLineDto.getPriority());
+                pricePlanMatrixLine.getPricePlanMatrixValues().clear();
+                pricePlanMatrixLine.setPricePlanMatrixVersion(ppmVersion);
+                pricePlanMatrixLine.setDescription(pricePlanMatrixLineDto.getDescription());
+                pricePlanMatrixLineService.create(pricePlanMatrixLine);
+                Set<PricePlanMatrixValue> pricePlanMatrixValues = pricePlanMatrixLineService.getPricePlanMatrixValues(pricePlanMatrixLineDto, pricePlanMatrixLine);
+                pricePlanMatrixValues.stream().forEach(ppmv -> pricePlanMatrixValueService.create(ppmv));
+                pricePlanMatrixLine.getPricePlanMatrixValues().addAll(pricePlanMatrixValues);
+                lines.add(pricePlanMatrixLine);
             }
-           PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
+            ppmVersion.getLines().addAll(lines);
+            pricePlanMatrixVersionService.update(ppmVersion);
           return new GetPricePlanVersionResponseDto(ppmVersion);
     }
     

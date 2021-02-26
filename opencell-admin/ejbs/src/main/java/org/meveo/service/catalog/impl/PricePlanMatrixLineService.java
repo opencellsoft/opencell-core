@@ -104,7 +104,7 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         return pricePlanMatrixVersion;
     }
 
-    private Set<PricePlanMatrixValue> getPricePlanMatrixValues(PricePlanMatrixLineDto dtoData, PricePlanMatrixLine pricePlanMatrixLine) {
+    public Set<PricePlanMatrixValue> getPricePlanMatrixValues(PricePlanMatrixLineDto dtoData, PricePlanMatrixLine pricePlanMatrixLine) {
         return dtoData.getPricePlanMatrixValues()
                 .stream()
                 .map(value -> {
