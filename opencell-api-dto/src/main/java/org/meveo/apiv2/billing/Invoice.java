@@ -2,6 +2,7 @@ package org.meveo.apiv2.billing;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -18,7 +19,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableInvoice.class)
 public interface Invoice extends Resource {
 
-	Resource getBillingAccount();
+	String getBillingAccountCode();
 
 	@Nullable
 	Resource getBillingRun();
@@ -82,7 +83,7 @@ public interface Invoice extends Resource {
 	@Nullable
 	Resource getAdjustedInvoice();
 
-	Resource getInvoiceType();
+	String getInvoiceTypeCode();
 
 	@Nullable
 	Resource getCfValues();
@@ -119,7 +120,7 @@ public interface Invoice extends Resource {
 	@JsonProperty("dontSend")
 	Boolean isDontSend();
 
-	Resource getSeller();
+	String getSellerCode();
 
 	@Nullable
 	@JsonProperty("prepaid")
@@ -187,5 +188,17 @@ public interface Invoice extends Resource {
 
 	@Nullable
 	String getDescription();
+
+	@Nullable
+	List<InvoiceLine> getInvoiceLines();
+
+	@Nullable
+	List<Long> getListLinkedInvoices();
+
+	@Nullable
+	List<CategoryInvoiceAgregate> getCategoryInvoiceAgregates();
+
+	@Nullable
+	List<Long> getInvoiceLinesTolink();
 
 }

@@ -18,7 +18,6 @@ import org.meveo.apiv2.billing.InvoiceLinesInput;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.billing.impl.InvoiceLinesService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -39,10 +38,6 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	@Inject
 	private InvoiceLinesService invoiceLinesService;
 	
-	@Inject
-	private BusinessEntityService businessEntityService;
-	
-	
 	
 	@Override
 	public List<Invoice> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -62,7 +57,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	}
 
 	@Override
-	public Invoice create(Invoice baseEntity) {
+	public Invoice create(Invoice invoice) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -195,6 +190,18 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 */
 	public void cancelInvoice(Invoice invoice) {
 		invoiceService.cancelInvoice(invoice);
+	}
+
+	/**
+	 * @param invoice
+	 * @return
+	 */
+	public Invoice create(org.meveo.apiv2.billing.InvoiceInput input) {
+		return invoiceService.createInvoiceV11(input.getInvoice(), input.getSkipValidation(), input.getIsDraft(), input.getIsVirtual(), input.getIsIncludeBalance(), input.getIsAutoValidation());
+	}
+	
+	public Invoice update(Invoice invoice, Invoice input) {
+		return invoiceService.update(invoice, input);
 	}
 
 }

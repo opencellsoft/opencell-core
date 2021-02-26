@@ -17,12 +17,13 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.meveo.apiv2.billing.BasicInvoice;
+import org.meveo.apiv2.billing.Invoice;
+import org.meveo.apiv2.billing.InvoiceInput;
 import org.meveo.apiv2.billing.InvoiceLineInput;
 import org.meveo.apiv2.billing.InvoiceLinesToRemove;
 import org.meveo.apiv2.billing.InvoiceLinesInput;
 import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.models.ApiException;
-import org.meveo.model.billing.Invoice;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -242,5 +243,23 @@ public interface InvoiceResource {
 	@ApiResponse(responseCode = "200", description = "invoice successfully canceled"),
 	@ApiResponse(responseCode = "403", description = "error when canceling invoice") })
 	Response cancelInvoiceLine(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id);
+	
+	@POST
+	@Path("/invoices")
+	@Operation(summary = "Create a new invoice", tags = {
+			"Invoices" }, description = "Create a new invoice", 
+					responses = {
+					@ApiResponse(responseCode = "200", description = "the Invoice is successfully created"),
+					@ApiResponse(responseCode = "400", description = "bad request when Invoice information contains an error") })
+	Response create( @Parameter(description = "the Invoice input object", required = true) InvoiceInput input);
+	
+	@PUT
+	@Path("/invoices/{id}")
+	@Operation(summary = "Create a new invoice", tags = {
+			"Invoices" }, description = "Create a new invoice", 
+					responses = {
+					@ApiResponse(responseCode = "200", description = "the Invoice is successfully created"),
+					@ApiResponse(responseCode = "400", description = "bad request when Invoice information contains an error") })
+	Response update(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id, @Parameter(description = "the Invoice object", required = true) Invoice input);
 
 }
