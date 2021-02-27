@@ -3615,11 +3615,22 @@ END $$;]]>
 
         <addColumn tableName="cat_offer_template">
             <column name="is_offer_change_restricted" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="offer_template_id" type="bigint"/>
         </addColumn>
 
-        <addForeignKeyConstraint baseTableName="cat_offer_template" baseColumnNames="offer_template_id"
-                                 constraintName="offer_template_offer_template_fk" referencedTableName="cat_offer_template"
+        <createTable tableName="cat_offer_allowed_offer_change">
+            <column name="offer_tmpl_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="allowed_offer_change_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="offer_tmpl_id, allowed_offer_change_id" constraintName="cat_offer_allowed_offer_change_pkey" tableName="cat_offer_allowed_offer_change" />
+        <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="offer_tmpl_id"
+                                 constraintName="cat_offer_allowed_offer_change_fk1" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="allowed_offer_change_id"
+                                 constraintName="cat_offer_allowed_offer_change_fk2" referencedTableName="cat_offer_template"
                                  referencedColumnNames="id"/>
     </changeSet>
 
