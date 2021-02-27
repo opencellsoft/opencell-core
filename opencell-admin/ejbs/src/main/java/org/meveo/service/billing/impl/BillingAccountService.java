@@ -17,35 +17,13 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.AccountStatusEnum;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CustomerAccount;
@@ -53,6 +31,14 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * The Class BillingAccountService.
@@ -399,6 +385,25 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         QueryBuilder qb = new QueryBuilder(BillingAccount.class, "c");
         qb.addCriterionEntity("customerAccount", customerAccount);
         qb.addOrderCriterionAsIs("c.id", true);
+        try {
+            return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting list by customer account", e);
+            return null;
+        }
+    }
+
+    /**
+     * List billingAccounts by customer account with paginationConfiguration
+     *
+     * @param customerAccount the customer account
+     * @return the list of billingAccounts
+     */
+    @SuppressWarnings("unchecked")
+    public List<BillingAccount> listByCustomerAccount(CustomerAccount customerAccount, PaginationConfiguration config) {
+        QueryBuilder qb = getQuery(config);
+        qb.addCriterionEntity("customerAccount", customerAccount);
+
         try {
             return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {

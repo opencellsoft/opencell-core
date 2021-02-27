@@ -135,7 +135,7 @@ public class DefaultObserver {
     }
 
     public void customEntityChange(@Observes CustomTableEvent e) throws BusinessException {
-        log.debug("Defaut observer: CustomEntity {} with id {} created", e.getClass().getName());
+        log.debug("Defaut observer: CustomEntity {} with id {} created", e.getClass().getName(), e.getId());
         checkEvent(e.getType(), e);
     }
     
@@ -305,7 +305,7 @@ public class DefaultObserver {
      * @throws BusinessException General business exception
      */
     public void versionCreated(@Observes @VersionCreated Subscription subscription) throws BusinessException {
-        log.debug("Defaut observer: Subscription version created, id: ", subscription.getId());
+        log.debug("Defaut observer: Subscription version created, id: {}", subscription.getId());
         checkEvent(NotificationEventTypeEnum.VERSION_CREATED, subscription);
     }
 
@@ -316,7 +316,7 @@ public class DefaultObserver {
      * @throws BusinessException General business exception
      */
     public void versionRemoved(@Observes @VersionRemoved Subscription subscription) throws BusinessException {
-        log.debug("Defaut observer: Subscription version removed, id: ", subscription.getId());
+        log.debug("Defaut observer: Subscription version removed, id: {}", subscription.getId());
         checkEvent(NotificationEventTypeEnum.VERSION_REMOVED, subscription);
     }
 

@@ -108,7 +108,6 @@
         <createSequence sequenceName="crm_email_seq" />
         <createSequence sequenceName="crm_provider_contact_seq" startValue="2" />
         <createSequence sequenceName="crm_provider_seq" startValue="2" />
-        <createSequence sequenceName="crm_seller_seq" startValue="4" />
         <createSequence sequenceName="dwh_account_operation_seq" />
         <createSequence sequenceName="dwh_journal_entries_seq" />
         <createSequence sequenceName="dwh_measurable_quant_seq" />
@@ -832,12 +831,6 @@
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}crm_provider_seq values(2)</sql>
-        <createTable tableName="crm_seller_seq">
-            <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_seller_seq_pk" />
-            </column>
-        </createTable>
-        <sql>insert into ${db.schema.adapted}crm_seller_seq values(4)</sql>
         <createTable tableName="dwh_account_operation_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_account_operation_seq_pk" />

@@ -77,8 +77,6 @@ import org.meveo.model.shared.ContactInformation;
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_S")
 @Table(name = "crm_seller")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "crm_seller_seq"), })
 public class Seller extends AccountEntity implements IWFEntity {
 
     public static final String ACCOUNT_TYPE = Seller.class.getAnnotation(DiscriminatorValue.class).value();

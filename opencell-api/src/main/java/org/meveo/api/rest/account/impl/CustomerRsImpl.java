@@ -18,14 +18,6 @@
 
 package org.meveo.api.rest.account.impl;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.account.CustomerApi;
 import org.meveo.api.account.CustomerSequenceApi;
 import org.meveo.api.dto.ActionStatus;
@@ -46,10 +38,18 @@ import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.CustomerRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -136,6 +136,17 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     public CustomersResponseDto listGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder, CustomFieldInheritanceEnum inheritCF) {
         try {
             return customerApi.list(null, new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder), inheritCF);
+        } catch (Exception e) {
+            CustomersResponseDto result = new CustomersResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
+        }
+    }
+
+    @Override
+    public CustomersResponseDto list() {
+        try {
+            return customerApi.listGetAll(null, GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
         } catch (Exception e) {
             CustomersResponseDto result = new CustomersResponseDto();
             processException(e, result.getActionStatus());
