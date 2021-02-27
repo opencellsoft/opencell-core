@@ -39,7 +39,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -71,9 +70,6 @@ public class PDFParametersConstruction {
 
     @Inject
     private InvoiceService invoiceService;
-    
-    @Inject
-    private BillingAccountService billingAccountService;
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
@@ -150,10 +146,8 @@ public class PDFParametersConstruction {
 
     public String getCustomerAddress(Invoice invoice) {
 
-    	BillingAccount billingAccount = invoice.getBillingAccount();
-    	billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
-        String billingAccountLanguage = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
-        CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+    	String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+        CustomerAccount customerAccount = invoice.getBillingAccount().getCustomerAccount();
         String name = "";
         if (customerAccount.getName() != null) {
             name = "";
@@ -191,7 +185,6 @@ public class PDFParametersConstruction {
 
         if (invoice != null && invoice.getBillingAccount() != null) {
             BillingAccount billingAccount = invoice.getBillingAccount();
-            billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
             String languageCode = billingAccount.getTradingLanguage() != null ? billingAccount.getTradingLanguage().getLanguageCode() : null;
             if (languageCode == null) {
                 return Locale.getDefault();
