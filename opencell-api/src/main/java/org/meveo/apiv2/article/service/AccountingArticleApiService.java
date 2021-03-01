@@ -133,6 +133,9 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         if(!Strings.isEmpty(baseEntity.getDescription())) {
         	accountingArticle.setDescription(baseEntity.getDescription());
         }
+        if(baseEntity.getDescriptionI18n()!=null && !baseEntity.getDescriptionI18n().isEmpty() ) {
+        	accountingArticle.getDescriptionI18n().putAll((baseEntity.getDescriptionI18n()));
+        }
         accountingArticleService.update(accountingArticle);
         
         return accountingArticleOtional;
