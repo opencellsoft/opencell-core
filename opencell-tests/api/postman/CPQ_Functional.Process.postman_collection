@@ -5636,7 +5636,7 @@
 					"response": []
 				},
 				{
-					"name": "Find Commercial Order 2",
+					"name": "Read Commercial Order 2",
 					"request": {
 						"auth": {
 							"type": "basic",
