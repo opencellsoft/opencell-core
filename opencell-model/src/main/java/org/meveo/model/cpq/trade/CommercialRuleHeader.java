@@ -44,7 +44,8 @@ import org.meveo.model.cpq.tags.Tag;
 @NamedQueries({ 
 	@NamedQuery(name = "CommercialRuleHeader.getTagRules", query = "select c from CommercialRuleHeader c where c.targetTag.code=:tagCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getOfferAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetProduct is null and c.targetOfferTemplate.code=:offerTemplateCode"),
-	@NamedQuery(name = "CommercialRuleHeader.getAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetProduct.code=:productCode"),
+	@NamedQuery(name = "CommercialRuleHeader.getProductAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode and c.targetProduct.code=:productCode"),
+	@NamedQuery(name = "CommercialRuleHeader.getAttributeRules", query = "select c from CommercialRuleHeader c where c.targetAttribute.code=:attributeCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getOfferRules", query = "select c from CommercialRuleHeader c where c.targetOfferTemplate.code=:offerCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getGroupedAttributeRules", query = "select c from CommercialRuleHeader c where c.targetGroupedAttributes.code=:groupedAttributeCode and c.targetProduct.code=:productCode"),
 	@NamedQuery(name = "CommercialRuleHeader.getProductRules", query = "select c from CommercialRuleHeader c where c.targetProduct.code=:productCode"),

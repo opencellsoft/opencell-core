@@ -68,6 +68,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
@@ -86,6 +87,7 @@ import org.meveo.model.quote.QuoteVersion;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -186,17 +188,18 @@ public class CatalogHierarchyBuilderService {
     @Inject private QuoteAttributeService quoteAttributeService;
     @Inject private QuoteArticleLineService articleLineService;
     @Inject private QuotePriceService quotePriceService;
+    @Inject private GroupedAttributeService groupedAttributeService;
 
 
-    public void duplicateProductVersion(ProductVersion entity, List<Attribute> attributes, List<Tag> tags, String prefix) throws BusinessException {
+    public void duplicateProductVersion(ProductVersion entity, List<Attribute> attributes, List<Tag> tags, List<GroupedAttributes> groupedAttributes, String prefix) throws BusinessException {
     
         if(attributes != null) {
         	entity.setAttributes(new ArrayList<Attribute>());
         	for (Attribute attribute : attributes) {
         		for(Media media : attribute.getMedias()) {
         			Media newMedia = new Media(media);
+        			newMedia.setCode(media.getCode() + "_" + entity.getId());
         			mediaService.create(newMedia);
-        			attribute.getMedias().add(newMedia);
         		}
 				entity.getAttributes().add(attribute);
 			}
@@ -208,7 +211,20 @@ public class CatalogHierarchyBuilderService {
 				entity.getTags().add(tag);
 			}
         }
+        
+        if(groupedAttributes != null) {
+        	entity.setGroupedAttributes(new ArrayList<GroupedAttributes>());
+        	for (GroupedAttributes groupedAttribute : groupedAttributes) {
+        		GroupedAttributes duplicateGroupedAttribute = new GroupedAttributes(groupedAttribute);
+        		duplicateGroupedAttribute.setCode(groupedAttribute.getCode() + "_" + entity.getId());
+        		var groupAttr = new ArrayList<>(groupedAttribute.getAttributes());
+        		duplicateGroupedAttribute.setAttributes(groupAttr);
+        		groupedAttributeService.create(duplicateGroupedAttribute);
+        		entity.getGroupedAttributes().add(duplicateGroupedAttribute);
+			}
+        }
     }
+    
    
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void duplicateProduct(Product entity, ProductVersion productVersion, Set<DiscountPlan> discountPlans, 
@@ -222,13 +238,24 @@ public class CatalogHierarchyBuilderService {
     			att.getMedias().size();
     			att.getAssignedAttributes().size();
     		});
+
+    		tmpProductVersion.getGroupedAttributes().forEach(ga -> {
+        		ga.getAttributes().size();
+        		ga.getAttributes().forEach(a ->  {
+        			a.getMedias().size();
+        			a.getTags().size();
+        		});
+        		ga.getCommercialRules().size();
+        		ga.getCommercialRules().forEach(cr -> cr.getCommercialRuleItems().size());
+        	});
     		
     		var tagList = new ArrayList<>(tmpProductVersion.getTags());
     		var serviceList = new ArrayList<>(tmpProductVersion.getAttributes());
+    		var groupedAttribute = new ArrayList<>(tmpProductVersion.getGroupedAttributes());
 
     		ProductVersion newProductVersion = new ProductVersion(tmpProductVersion, entity);
     		productVersionService.create(newProductVersion);    		
-			duplicateProductVersion(newProductVersion, serviceList, tagList, newProductVersion.getId() + "_");			
+			duplicateProductVersion(newProductVersion, serviceList, tagList, groupedAttribute, newProductVersion.getId() + "_");			
 			entity.getProductVersions().add(newProductVersion);
     	}
     	if(discountPlans != null) {
