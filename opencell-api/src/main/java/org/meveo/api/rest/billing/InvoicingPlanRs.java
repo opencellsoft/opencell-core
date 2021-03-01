@@ -28,6 +28,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -98,5 +99,5 @@ public interface InvoicingPlanRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/createOrUpdate")
-	ActionStatus createOrUpdate(InvoicingPlanDto postData);
+	Response createOrUpdate(InvoicingPlanDto postData);
 }
