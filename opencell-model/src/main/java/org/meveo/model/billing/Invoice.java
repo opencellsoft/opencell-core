@@ -569,6 +569,18 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "new_invoicing_process")
     private boolean newInvoicingProcess = false;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "has_taxes")
+    private boolean hasTaxes;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "has_discounts")
+    private boolean hasDiscounts;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "has_minimum")
+    private boolean hasMinimum;
+
     /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
      */
@@ -1399,4 +1411,27 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 		this.newInvoicingProcess = newInvoicingProcess;
 	}
 
+    public boolean isHasTaxes() {
+        return hasTaxes;
+    }
+
+    public void setHasTaxes(boolean hasTaxes) {
+        this.hasTaxes = hasTaxes;
+    }
+
+    public boolean isHasDiscounts() {
+        return hasDiscounts;
+    }
+
+    public void setHasDiscounts(boolean hasDiscounts) {
+        this.hasDiscounts = hasDiscounts;
+    }
+
+    public boolean isHasMinimum() {
+        return hasMinimum;
+    }
+
+    public void setHasMinimum(boolean hasMinimum) {
+        this.hasMinimum = hasMinimum;
+    }
 }
