@@ -4,6 +4,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.tags.TagType;
@@ -34,7 +35,7 @@ public class TagTypeService extends BusinessService<TagType> {
 			isTagTypeAttached = this.tagService.isTagTypeExist(tag.getId());
 			if(isTagTypeAttached) {
 				log.warn("Impossible to remove  tag type {}, because it attached to a tag", codeTagType);
-				throw new BusinessException(String.format(TAG_TYPE_ATTACHED, codeTagType));
+				throw new BusinessApiException(String.format(TAG_TYPE_ATTACHED, codeTagType));
 			}
 			this.remove(tag.getId());
 	}
