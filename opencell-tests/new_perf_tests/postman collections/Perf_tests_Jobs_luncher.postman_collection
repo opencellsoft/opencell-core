@@ -1,0 +1,758 @@
+{
+	"info": {
+		"_postman_id": "3479f9da-f751-491f-9c62-da5bb07b4dbc",
+		"name": "Tests_Perf_Jobs",
+		"description": "# Introduction\r\n\r\nThis configuration file is designed to be a basis for all configurations provided by Opencell.\r\nIt merely contains most common general settings and a catalog of services implementing various rating models.\r\n\r\n# Configuring Opencell\r\n\r\nThere are 2 main ways for configuring ***Opencell***:\r\n* GUI (*Administration GUI* and *Marketing Manager*)\r\n* API (all Opencell configuration and operations can be performed using our extensive API library)\r\n\r\nThe most flexible way is using APIs which currently are available as **Rest** and **Soap**.\r\nThe **Soap** API are deprecated, so will won't mention them anymore.\r\n\r\n## Tools\r\n\r\nAny tools able to send HTTP requests will do.\r\nOne could even just script *curl* calls using shell script.\r\nBut of course, a more user friendly tool will make things easier.\r\n\r\nHere at ***Opencell***, we prefer **Postman** (https://getpostman.com):\r\n* it has a modern, friendly interface\r\n* Sets of API request can be organized into collections, themselves structured into a folder tree.\r\n* Collections can be exported as _JSON_ files or shared with other team members using collaboration features (payed version)\r\n* it allows to uses variables at different levels (collection, environement, global) and to execute *Javascript* scripts before and after executing API calls which allows great flexibility and API response testing.\r\n\r\n\r\n\r\n# Configuration documentation guidelines\r\n\r\nIn order to document our configuration, we make full used of the internal documentation capabilities of the Markdown fields on Postman Objects\r\n\r\n## Default template for *Collection* documentation\r\n\r\n## Default template for *Folder* documentation\r\n\r\n## Default template for *Request* documentation\r\n\r\n\r\n\r\n# Tips & guidelines\r\n\r\nHere follow a few tips for understanding this collection.\r\n\r\n## Collection pre-request script\r\n\r\n```javascript\r\npm.globals.set(\"timestamp.iso\", (new Date()).toISOString());\r\npm.globals.set(\"request.label\", pm.info.requestName);\r\n\r\nvar parts = pm.info.requestName.split(\"|\");\r\n\r\nfor(let i=0; i<parts.length; i++) {\r\n    pm.globals.set(\"request.label.\"+i, parts[i]);\r\n}\r\n```\r\n\r\n## Configuration guidelines\r\n\r\n## Entities\r\n\r\n<entity>_<project_code>_XXX\r\n\r\n### Custom Fields\r\n\r\nCF_<entity>_<project_code>_ XXX\r\n\r\n<entity> will be discarded for inherited\r\n\r\n#### Custom field visibility\r\n\r\nSE_<entity>_<project_code>_<markers>_XXX\r\n\r\n<markers> are used in CFT.applicableOnEl to show CFT on entities\r\n\r\n\r\n## Entity abbreviation\r\n\r\n| code  | entity                        |\r\n|:-----:|:------------------------------|\r\n|   P   | Provider                      |\r\n|   S   | Seller                        |\r\n|   C   | Customer                      |\r\n|  CA   | Customer Account              |\r\n|  BA   | Billing Account               |\r\n|  UA   | User Account                  |\r\n|  SU   | Subscription                  |\r\n|  AP   | Access Point                  |\r\n|  OF   | Offer Template                |\r\n|  SE   | Service Template and Instance |\r\n|  CH   | Charge Template               |\r\n|  PP   | Price Plan                    |\r\n|  CN   | Counter                       |\r\n| ICAT  | Invoice Category              |\r\n| ISCAT | Invoice SubCategory           |\r\n|  CAL  | Calendar                      |\r\n|  BC   | Billing Cycle                 |\r\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Jobs",
+			"item": [
+				{
+					"name": "DDREQUEST CReation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fromDueDate\": \"2010-03-28T00:00:00Z\",\r\n    \"toDueDate\": \"2026-05-18T00:00:00Z\",\r\n    \"ddrequestOp\": \"CREATE\",\r\n    \"status\": \"WAIT\",\r\n    \"ddRequestBuilderCode\": \"SEPA_STD\"\r\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/payment/ddrequestLotOp",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"payment",
+								"ddrequestLotOp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create|code=A_SEPA",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"A_SEPA\",\n    \"jobCategory\": \"PAYMENT\",\n    \"jobTemplate\": \"SepaDirectDebitJob\",\n    \"customFields\": {\n            \"customField\": [\n                {\n                    \"code\": \"SepaJob_ddRequestBuilder\",\n                    \"description\": \"DDRequest builder\",\n                    \"fieldType\": \"ENTITY\",\n                    \"entityReferenceValue\": {\n                        \"classname\": \"org.meveo.model.payments.DDRequestBuilder\",\n                        \"classnameCode\": null,\n                        \"code\": \"Sepa_STD\"\n                    },\n                    \"guiPosition\": \"tab:Configuration:0;field:2\"\n                }\n            ]\n        },    \n    \"followingJob\": \"SendRresults\",\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=AO_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"AO_Job\",\n    \"jobCategory\": \"ACCOUNT_RECEIVABLES\",\n    \"jobTemplate\": \"AccountOperationsGenerationJob\",\n    \"active\": true,\n    \"followingJob\": \"A_SEPA\",\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=PDF_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"PDF_Job\",\n    \"disabled\": false,\n    \"jobCategory\": \"INVOICING\",\n    \"jobTemplate\": \"PDFInvoiceGenerationJob\",\n    \"active\": true,\n    \"followingJob\": \"AO_Job\",\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=XML_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"XML_Job\",\n    \"jobCategory\": \"INVOICING\",\n    \"jobTemplate\": \"XMLInvoiceGenerationJob\",\n    \"active\": true,\n    \"followingJob\": \"PDF_Job\",\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=Inv_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"Inv_Job\",\n    \"jobCategory\": \"INVOICING\",\n    \"jobTemplate\": \"InvoicingJob\",\n    \"active\": true,\n    \"followingJob\": \"XML_Job\",\n    \"verboseReport\": true\n}\n"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=BillingRunJob",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"BillingRunJob\",\n    \"disabled\": false,\n    \"jobCategory\": \"INVOICING\",\n    \"jobTemplate\": \"BillingRunJob\",\n    \"active\": true,\n    \"customFields\": {\n        \"customField\": [\n            {\n                \"code\": \"BillingRunJob_lastTransactionDate\",\n                \"description\": \"Last Transaction Date\",\n                \"fieldType\": \"DATE\", \n                \"dateValue\": \"2020-12-31T00:00:00Z\",\n                \"guiPosition\": \"tab:Configuration:0;field:0\"\n            },\n            {\n                \"code\": \"BillingRunJob_billingCycle\",\n                \"description\": \"Billing Cycles\",\n                \"fieldType\": \"ENTITY\",\n                \"guiPosition\": \"tab:Configuration:0;field:2\",\n                \"value\": [\n                    {\n                        \"value\": {\n                            \"entityReferenceValue\": {\n                                \"classname\": \"org.meveo.model.billing.BillingCycle\",\n                                \"classnameCode\": null,\n                                \"code\": \"CYC_INV_MT_1\"\n                            }\n                        }\n                    }\n                ]\n            },\n            {\n                \"code\": \"BillingRunJob_invoiceDate\",\n                \"description\": \"invoice Date\",\n                \"fieldType\": \"DATE\",\n                \"dateValue\": \"2021-01-01T00:00:00Z\",\n                \"guiPosition\": \"tab:Configuration:0;field:1\"\n            }\n        ]\n    },\n    \"timerCode\": \"Monthly\",\n    \"followingJob\":\"Inv_Job\",\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=RT_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"RT_Job\",\n    \"disabled\": false,\n    \"jobCategory\": \"INVOICING\",\n    \"jobTemplate\": \"RatedTransactionsJob\",\n    \"active\": true,\n    \"followingJob\": \"BillingRunJob\",\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=U_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"U_Job\",\n    \"jobCategory\": \"MEDIATION\",\n    \"jobTemplate\": \"MediationJob\",\n    \"followingJob\": \"RT_Job\",\n    \"active\": true,\n    \"limitToSingleNode\": true,\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=M_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"code\": \"M_Job\",\n    \"disabled\": false,\n    \"jobCategory\": \"MEDIATION\",\n    \"jobTemplate\": \"MediationJob\",\n    \"limitToSingleNode\": true,\n    \"verboseReport\": true,\n    \"followingJob\": \"U_Job\",\n    \"active\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=Subs_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"Subs_Job\",\n    \"jobCategory\": \"IMPORT_HIERARCHY\",\n    \"jobTemplate\": \"ImportSubscriptionsJob\",\n    \"followingJob\": \"M_Job\",\n    \"active\": true,\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=Acco_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"Acco_Job\",\n    \"disabled\": false,\n    \"jobCategory\": \"IMPORT_HIERARCHY\",\n    \"jobTemplate\": \"ImportAccountsJob\",\n    \"followingJob\": \"Subs_Job\",\n    \"active\": true,\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=Cust_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"Cust_Job\",\n    \"jobTemplate\": \"ImportCustomersJob\",\n    \"active\": true,\n    \"followingJob\": \"Acco_Job\",\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Run|code=Cust_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"Cust_Job\"\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/execute",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"execute"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "JOB|code=Cust_Job|desc=test|nextJob=Acco_Job Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/payments/ddrequestLotOp",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"payments",
+								"ddrequestLotOp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "JOB|code=Cust_Job|desc=test|nextJob=Acco_Job Copy 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{opencell.url}}/payment/ddrequestLotOp/list",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"payment",
+								"ddrequestLotOp",
+								"list"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "opencell.admin",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "opencell.admin",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Initialize variables",
+					"var now=new Date();",
+					"pm.globals.set(\"timestamp.iso\", now.toISOString());",
+					"pm.globals.set(\"request.label\", pm.info.requestName);",
+					"",
+					"var parts = pm.info.requestName.split(\"|\");",
+					"",
+					"for(let i=0; i<parts.length; i++) {",
+					"    pm.globals.set(\"wait\", 0);",
+					"    pm.globals.set(\"request.label.\"+i, parts[i]);",
+					"",
+					"    if(parts[i].indexOf(\"=\") != -1 ){",
+					"        propName = parts[i].split(\"=\")[0].trim();",
+					"        propValue = parts[i].split(\"=\")[1];",
+					"        pm.globals.set(propName, propValue);",
+					"    }",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"var wait = pm.variables.get(\"wait\");",
+					"if (wait > 0) {",
+					"    // utils.sleep(wait); doesn't seem to work",
+					"    console.log(\"Waiting for \" + pm.variables.get(\"request.label.0\") + \" for \" + wait + \" seconds...\");",
+					"    setTimeout(function () { }, wait * 1000);",
+					"}",
+					"",
+					"if (pm.response.code == 401) {",
+					"    console.log(\"Unauthorized[401] : access_token may be invalid -> deleting token. Please retry...\");",
+					"    pm.variables.unset(\"access_token\");",
+					"    console.log(\"Jumping to \" + pm.info.requestName);",
+					"    postman.setNextRequest(pm.info.requestName);",
+					"} else {",
+					"    tests[\"is.success\"] = (pm.response.code == 200 || pm.response.code == 204);",
+					"}",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "provider.code",
+			"value": "DEMO"
+		},
+		{
+			"key": "template.code",
+			"value": "BASE"
+		},
+		{
+			"key": "template.label",
+			"value": "Démo Opencell"
+		},
+		{
+			"key": "seller.code",
+			"value": "OPENCELL"
+		},
+		{
+			"key": "offer.code",
+			"value": "OF"
+		},
+		{
+			"key": "project.code",
+			"value": "Basic-001"
+		},
+		{
+			"key": "project.description",
+			"value": "Basic Offer for Base Conf"
+		},
+		{
+			"key": "project.type",
+			"value": "Setup"
+		},
+		{
+			"key": "project.version",
+			"value": "9.4+"
+		},
+		{
+			"key": "DoChargeTest",
+			"value": "true"
+		}
+	]
+}

@@ -1,0 +1,786 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Jmeter" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="Variables pré-définies" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="GenerateInvoiceByBR_Oauth" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${__P(loops,1)}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(users,20)}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${__P(period,10)}</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.delayedStart">true</boolProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="opencell_protocol" elementType="Argument">
+              <stringProp name="Argument.name">opencell_protocol</stringProp>
+              <stringProp name="Argument.value">${__P(protocol,http)}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="opencell_host" elementType="Argument">
+              <stringProp name="Argument.name">opencell_host</stringProp>
+              <stringProp name="Argument.value">${__P(host,perf1.opencellsoft.com)}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="opencell_port" elementType="Argument">
+              <stringProp name="Argument.name">opencell_port</stringProp>
+              <stringProp name="Argument.value">${__P(port,8081)}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="opencell_path" elementType="Argument">
+              <stringProp name="Argument.name">opencell_path</stringProp>
+              <stringProp name="Argument.value">/opencell/api/rest</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="customerCode" elementType="Argument">
+              <stringProp name="Argument.name">customerCode</stringProp>
+              <stringProp name="Argument.value">${__P(firstCustomerId,1)}     </stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="customerCode2" elementType="Argument">
+              <stringProp name="Argument.name">customerCode2</stringProp>
+              <stringProp name="Argument.value">${__P(firstCustomerId2,1)}  </stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="timestamp" elementType="Argument">
+              <stringProp name="Argument.name">timestamp</stringProp>
+              <stringProp name="Argument.value">2019-07-11T17:30:58.955Z</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="seller.code" elementType="Argument">
+              <stringProp name="Argument.name">seller.code</stringProp>
+              <stringProp name="Argument.value">OPENCELL</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">Seller code</stringProp>
+            </elementProp>
+            <elementProp name="offer.code" elementType="Argument">
+              <stringProp name="Argument.name">offer.code</stringProp>
+              <stringProp name="Argument.value">OF</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="provider.code" elementType="Argument">
+              <stringProp name="Argument.name">provider.code</stringProp>
+              <stringProp name="Argument.value">DEMO</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="template.code" elementType="Argument">
+              <stringProp name="Argument.name">template.code</stringProp>
+              <stringProp name="Argument.value">BASE</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="template.label" elementType="Argument">
+              <stringProp name="Argument.name">template.label</stringProp>
+              <stringProp name="Argument.value">Démo Opencell</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="offer.code" elementType="Argument">
+              <stringProp name="Argument.name">offer.code</stringProp>
+              <stringProp name="Argument.value">OF</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="project.code" elementType="Argument">
+              <stringProp name="Argument.name">project.code</stringProp>
+              <stringProp name="Argument.value">Basic-001</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="project.description" elementType="Argument">
+              <stringProp name="Argument.name">project.description</stringProp>
+              <stringProp name="Argument.value">Basic Offer for Base Conf</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="project.type" elementType="Argument">
+              <stringProp name="Argument.name">project.type</stringProp>
+              <stringProp name="Argument.value">Setup</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="project.version" elementType="Argument">
+              <stringProp name="Argument.name">project.version</stringProp>
+              <stringProp name="Argument.value">9.4+</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="DoChargeTest" elementType="Argument">
+              <stringProp name="Argument.name">DoChargeTest</stringProp>
+              <stringProp name="Argument.value">true</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="account.code" elementType="Argument">
+              <stringProp name="Argument.name">account.code</stringProp>
+              <stringProp name="Argument.value">OPENCELL-</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">Customer Code </stringProp>
+            </elementProp>
+            <elementProp name="account.description" elementType="Argument">
+              <stringProp name="Argument.name">account.description</stringProp>
+              <stringProp name="Argument.value">Nuage SAS Nuage SAS OPENCELL-00</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="account.firstname" elementType="Argument">
+              <stringProp name="Argument.name">account.firstname</stringProp>
+              <stringProp name="Argument.value">Nuage SAS</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="account.lastname" elementType="Argument">
+              <stringProp name="Argument.name">account.lastname</stringProp>
+              <stringProp name="Argument.value">Nuage SAS</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="index" elementType="Argument">
+              <stringProp name="Argument.name">index</stringProp>
+              <stringProp name="Argument.value">00</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="subscription.code" elementType="Argument">
+              <stringProp name="Argument.name">subscription.code</stringProp>
+              <stringProp name="Argument.value">OPENCELL-SU-</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">Subscription code</stringProp>
+            </elementProp>
+            <elementProp name="subscription.date" elementType="Argument">
+              <stringProp name="Argument.name">subscription.date</stringProp>
+              <stringProp name="Argument.value">2019-12-15T01:23:45.678Z</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="qtt" elementType="Argument">
+              <stringProp name="Argument.name">qtt</stringProp>
+              <stringProp name="Argument.value">10</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="invoice.number" elementType="Argument">
+              <stringProp name="Argument.name">invoice.number</stringProp>
+              <stringProp name="Argument.value">INV_0001</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="init" elementType="Argument">
+              <stringProp name="Argument.name">init</stringProp>
+              <stringProp name="Argument.value">0</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="iter" elementType="Argument">
+              <stringProp name="Argument.name">iter</stringProp>
+              <stringProp name="Argument.value">2</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="name" elementType="Argument">
+              <stringProp name="Argument.name">name</stringProp>
+              <stringProp name="Argument.value">Offre Opencell</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="request.label.1" elementType="Argument">
+              <stringProp name="Argument.name">request.label.1</stringProp>
+              <stringProp name="Argument.value">OF_BASIC</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="request.label.2" elementType="Argument">
+              <stringProp name="Argument.name">request.label.2</stringProp>
+              <stringProp name="Argument.value">OPENCELL</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="request.label.3" elementType="Argument">
+              <stringProp name="Argument.name">request.label.3</stringProp>
+              <stringProp name="Argument.value">2019-12-15T01:23:45.678Z</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="request.label.4" elementType="Argument">
+              <stringProp name="Argument.name">request.label.4</stringProp>
+              <stringProp name="Argument.value">SE_USG_UNIT</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="request.label.5" elementType="Argument">
+              <stringProp name="Argument.name">request.label.5</stringProp>
+              <stringProp name="Argument.value">2019-12-15T01:23:45.678Z</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="subscription.code1" elementType="Argument">
+              <stringProp name="Argument.name">subscription.code1</stringProp>
+              <stringProp name="Argument.value">OPENCELL-SU-</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">Subscription code</stringProp>
+            </elementProp>
+            <elementProp name="request.label.1.1" elementType="Argument">
+              <stringProp name="Argument.name">request.label.1.1</stringProp>
+              <stringProp name="Argument.value">SE_OSS</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="request.label.2.2" elementType="Argument">
+              <stringProp name="Argument.name">request.label.2.2</stringProp>
+              <stringProp name="Argument.value">SE_OST</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="request.label.3.3" elementType="Argument">
+              <stringProp name="Argument.name">request.label.3.3</stringProp>
+              <stringProp name="Argument.value">SE_REC_ADV</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="request.label.4.4" elementType="Argument">
+              <stringProp name="Argument.name">request.label.4.4</stringProp>
+              <stringProp name="Argument.value">SE_USG_UNIT</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="ind" elementType="Argument">
+              <stringProp name="Argument.name">ind</stringProp>
+              <stringProp name="Argument.value">174654</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </Arguments>
+        <hashTree/>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="View Results in Table" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Graph Results" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Delay_between_requests" enabled="true">
+          <stringProp name="ConstantTimer.delay">100</stringProp>
+        </ConstantTimer>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Requête HTTPToken" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="Variables pré-définies" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="client_id" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                <stringProp name="Argument.value">opencell-web</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">client_id</stringProp>
+              </elementProp>
+              <elementProp name="username" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                <stringProp name="Argument.value">opencell.admin</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">username</stringProp>
+              </elementProp>
+              <elementProp name="password" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                <stringProp name="Argument.value">opencell.admin</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">password</stringProp>
+              </elementProp>
+              <elementProp name="grant_type" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                <stringProp name="Argument.value">password</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">grant_type</stringProp>
+              </elementProp>
+              <elementProp name="client_secret" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                <stringProp name="Argument.value">afe07e5a-68cb-4fb0-8b75-5b6053b07dc3</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">client_secret</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${opencell_host}</stringProp>
+          <stringProp name="HTTPSampler.port">${opencell_port}</stringProp>
+          <stringProp name="HTTPSampler.protocol">${opencell_protocol}</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/auth/realms/opencell/protocol/openid-connect/token</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.proxyUser">opencell.admin</stringProp>
+          <stringProp name="HTTPSampler.proxyPass">opencell.admin</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Cache-Control</stringProp>
+                <stringProp name="Header.value">no-cache</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Accept-Encoding</stringProp>
+                <stringProp name="Header.value">gzip, deflate, br</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extracteur JSON" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">brearerToken</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">access_token</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+        </hashTree>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Authorization</stringProp>
+              <stringProp name="Header.value">bearer ${brearerToken}</stringProp>
+            </elementProp>
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">application/json</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+        <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Contrôleur Simple" enabled="false"/>
+        <hashTree>
+          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Contrôleur Boucle" enabled="true">
+            <boolProp name="LoopController.continue_forever">true</boolProp>
+            <stringProp name="LoopController.loops">5201</stringProp>
+          </LoopController>
+          <hashTree>
+            <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter" enabled="true">
+              <stringProp name="CounterConfig.start">294799</stringProp>
+              <stringProp name="CounterConfig.end">300000</stringProp>
+              <stringProp name="CounterConfig.incr">1</stringProp>
+              <stringProp name="CounterConfig.name">ind</stringProp>
+              <stringProp name="CounterConfig.format"></stringProp>
+              <boolProp name="CounterConfig.per_user">false</boolProp>
+              <stringProp name="TestPlan.comments">			</stringProp>
+            </CounterConfig>
+            <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CustomerAccountHierarchy${ind}" enabled="true">
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
+  &quot;crmAccountType&quot; : &quot;C_UA&quot;,&#xd;
+  &quot;crmParentCode&quot; : &quot;${seller.code}&quot;,&#xd;
+  &quot;code&quot; : &quot;${account.code}${ind}&quot;,&#xd;
+  &quot;description&quot;: &quot;${account.description}&quot;,&#xd;
+  &quot;name&quot; : {&#xd;
+    &quot;title&quot; : &quot;Cie&quot;,&#xd;
+    &quot;firstName&quot; : &quot;${account.firstname}&quot;,&#xd;
+    &quot;lastName&quot; : &quot;${account.lastname}&quot;&#xd;
+  },&#xd;
+  &quot;subscriptionDate&quot;: &quot;2010-01-10&quot;,&#xd;
+  &quot;jobTitle&quot;: &quot;...&quot;,&#xd;
+  &quot;vatNo&quot;: &quot;FR12345678901234&quot;,&#xd;
+  &quot;registrationNo&quot;: &quot;12354678901234&quot;,&#xd;
+  &quot;address&quot; : {&#xd;
+    &quot;address1&quot; : &quot;3 rue passante&quot;,&#xd;
+    &quot;address2&quot; : &quot;Batiment A&quot;,&#xd;
+    &quot;address3&quot; : &quot;Bureau D42&quot;,&#xd;
+    &quot;zipCode&quot; : &quot;75001&quot;,&#xd;
+    &quot;city&quot; : &quot;PARIS&quot;,&#xd;
+    &quot;country&quot; : &quot;FR&quot;&#xd;
+  },&#xd;
+  &quot;contactInformation&quot; : {&#xd;
+    &quot;email&quot; : &quot;${seller.code}@exemple.com&quot;,&#xd;
+    &quot;mobile&quot; : &quot;+33123546789&quot;&#xd;
+  },&#xd;
+  &quot;email&quot; : &quot;fr.fr@fr.com&quot;,&#xd;
+  &quot;language&quot; : &quot;FRA&quot;,&#xd;
+  &quot;paymentMethod&quot; : &quot;CHECK&quot;,&#xd;
+  &quot;customerCategory&quot; : &quot;CLIENT&quot;,&#xd;
+  &quot;currency&quot; : &quot;EUR&quot;,&#xd;
+  &quot;billingCycle&quot; : &quot;BC_MONTHLY_1ST&quot;,&#xd;
+  &quot;country&quot; : &quot;FR&quot;,&#xd;
+  &quot;electronicBilling&quot; : &quot;true&quot;,&#xd;
+  &quot;customFields&quot;: null&#xd;
+}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.domain">${opencell_host}</stringProp>
+              <stringProp name="HTTPSampler.port">${opencell_port}</stringProp>
+              <stringProp name="HTTPSampler.protocol">${opencell_protocol}</stringProp>
+              <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+              <stringProp name="HTTPSampler.path">${opencell_path}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+              <stringProp name="HTTPSampler.proxyUser">opencell.admin</stringProp>
+              <stringProp name="HTTPSampler.proxyPass">opencell.admin</stringProp>
+              <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+              <stringProp name="HTTPSampler.response_timeout"></stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="CustomerAccountHierarchy${ind}" enabled="true">
+                <collectionProp name="HeaderManager.headers"/>
+              </HeaderManager>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="account.firstname" enabled="false">
+                <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                <stringProp name="JSONPostProcessor.referenceNames">account.firstname</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">[2]</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">Nuage SAS</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="account.description" enabled="false">
+                <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                <stringProp name="JSONPostProcessor.referenceNames">account.description</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">[1] + suffix</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">Nuage SAS Nuage SAS OPENCELL-00</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="iter" enabled="false">
+                <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                <stringProp name="JSONPostProcessor.referenceNames">iter</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs"></stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="index" enabled="false">
+                <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                <stringProp name="JSONPostProcessor.referenceNames">index</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">00</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">00</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="account.lastname" enabled="false">
+                <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                <stringProp name="JSONPostProcessor.referenceNames">account.lastname</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">[3]</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">Nuage SAS</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="account.code" enabled="false">
+                <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                <stringProp name="JSONPostProcessor.referenceNames">account.code</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs"> + parts[0]</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">OPENCELL-00</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extracteur JSON" enabled="false">
+                <stringProp name="JSONPostProcessor.referenceNames"></stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs"></stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="subscriptions${ind}" enabled="true">
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
+    &quot;code&quot;: &quot;${subscription.code}${ind}&quot;,&#xd;
+    &quot;description&quot;: &quot;Souscription ${subscription.code}${ind}&quot;,&#xd;
+    &quot;userAccount&quot;: &quot;${account.code}${ind}&quot;,&#xd;
+    &quot;offerTemplate&quot;: &quot;${request.label.1}&quot;,&#xd;
+    &quot;seller&quot;: &quot;${request.label.2}&quot;,&#xd;
+    &quot;subscriptionDate&quot;: &quot;${request.label.3}&quot;,&#xd;
+    &quot;terminationDate&quot;: null,&#xd;
+    &quot;endAgreementDate&quot;: &quot;2020-12-20&quot;,&#xd;
+    &quot;status&quot;: null,&#xd;
+    &quot;terminationReason&quot;: null,&#xd;
+    &quot;customFields&quot;: null&#xd;
+}&#xd;
+</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.domain">${opencell_host}</stringProp>
+              <stringProp name="HTTPSampler.port">${opencell_port}</stringProp>
+              <stringProp name="HTTPSampler.protocol">${opencell_protocol}</stringProp>
+              <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+              <stringProp name="HTTPSampler.path">${opencell_path}/billing/subscription/createOrUpdate</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+              <stringProp name="HTTPSampler.proxyUser">opencell.admin</stringProp>
+              <stringProp name="HTTPSampler.proxyPass">opencell.admin</stringProp>
+              <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+              <stringProp name="HTTPSampler.response_timeout"></stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="SU|OF_BASIC|OPENCELL|2019-12-15T01:23:45.678Z${ind}" enabled="true">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="Content-Type" elementType="Header">
+                    <stringProp name="Header.name">Content-Type</stringProp>
+                    <stringProp name="Header.value">application/json</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </HeaderManager>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="subscription.code" enabled="false">
+                <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                <stringProp name="JSONPostProcessor.referenceNames">subscription.code</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">globals.get(&quot;account.code&quot;</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="subscription.date" enabled="false">
+                <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                <stringProp name="JSONPostProcessor.referenceNames">subscription.date</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">globals.get(&quot;request.label.3&quot;</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="iter" enabled="false">
+                <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                <stringProp name="JSONPostProcessor.referenceNames">iter</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">(iter</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="activateServices|SE_OSS|SE_OST|SE_REC_ADV|SE_USG_UNIT|${subscription.date}${ind}" enabled="true">
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
+    &quot;subscription&quot;: &quot;${subscription.code1}${ind}&quot;,&#xd;
+    &quot;servicesToActivate&quot;: {&#xd;
+        &quot;service&quot;: [&#xd;
+            {&#xd;
+                &quot;code&quot;: &quot;${request.label.1.1}&quot;,&#xd;
+                &quot;quantity&quot;: 10,&#xd;
+                &quot;subscriptionDate&quot;: &quot;${request.label.5}&quot;,&#xd;
+                &quot;rateUntilDate&quot;: null&#xd;
+            },&#xd;
+            {&#xd;
+                &quot;code&quot;: &quot;${request.label.2.2}&quot;,&#xd;
+                &quot;quantity&quot;: 1,&#xd;
+                &quot;subscriptionDate&quot;: &quot;${request.label.5}&quot;,&#xd;
+                &quot;rateUntilDate&quot;: null,&#xd;
+                &quot;customFields&quot;: {&#xd;
+                    &quot;customField&quot;: [&#xd;
+                        {&#xd;
+                            &quot;code&quot;: &quot;CF_SE_DOUBLE&quot;,&#xd;
+                            &quot;doubleValue&quot;: 100&#xd;
+                        }&#xd;
+                    ]&#xd;
+                }&#xd;
+            },&#xd;
+            {&#xd;
+                &quot;code&quot;: &quot;${request.label.3.3}&quot;,&#xd;
+                &quot;quantity&quot;: 1,&#xd;
+                &quot;subscriptionDate&quot;: &quot;${request.label.5}&quot;,&#xd;
+                &quot;rateUntilDate&quot;: null,&#xd;
+                &quot;customFields&quot;: {&#xd;
+                    &quot;customField&quot;: [&#xd;
+                        {&#xd;
+                            &quot;code&quot;: &quot;CF_SE_BUILD_RUN_SITUATION&quot;,&#xd;
+                            &quot;valuePeriodStartDate&quot;: &quot;2010-04-19&quot;,&#xd;
+                            &quot;valuePeriodEndDate&quot;: &quot;2020-05-19&quot;,&#xd;
+                            &quot;valuePeriodPriority&quot;: 1,&#xd;
+                            &quot;stringValue&quot;: &quot;BUILD&quot;&#xd;
+                        },&#xd;
+                        {&#xd;
+                            &quot;code&quot;: &quot;CF_SE_BUILD_RUN_SITUATION&quot;,&#xd;
+                            &quot;valuePeriodStartDate&quot;: &quot;2020-05-20&quot;,&#xd;
+                            &quot;valuePeriodEndDate&quot;: &quot;2030-05-19&quot;,&#xd;
+                            &quot;valuePeriodPriority&quot;: 2,&#xd;
+                            &quot;stringValue&quot;: &quot;RUN&quot;&#xd;
+                        },&#xd;
+                        {&#xd;
+                            &quot;code&quot;: &quot;CF_SE_BUILD_DOUBLE_VERSION&quot;,&#xd;
+                            &quot;valuePeriodPriority&quot;: 1,&#xd;
+                            &quot;valuePeriodStartDate&quot;: &quot;2010-04-19&quot;,&#xd;
+                            &quot;valuePeriodEndDate&quot;: &quot;2030-04-19&quot;,&#xd;
+                            &quot;doubleValue&quot;: 5000.00&#xd;
+                        },&#xd;
+                        {&#xd;
+                            &quot;code&quot;: &quot;CF_SE_RUN_DOUBLE_VERSION&quot;,&#xd;
+                            &quot;valuePeriodPriority&quot;: 1,&#xd;
+                            &quot;valuePeriodStartDate&quot;: &quot;2010-04-19&quot;,&#xd;
+                            &quot;valuePeriodEndDate&quot;: &quot;2030-04-19&quot;,&#xd;
+                            &quot;doubleValue&quot;: 8000.00&#xd;
+                        }&#xd;
+                    ]&#xd;
+                }&#xd;
+            },&#xd;
+            {&#xd;
+                &quot;code&quot;: &quot;${request.label.4.4}&quot;,&#xd;
+                &quot;quantity&quot;: 1,&#xd;
+                &quot;subscriptionDate&quot;: &quot;${request.label.5}&quot;,&#xd;
+                &quot;rateUntilDate&quot;: null,&#xd;
+                &quot;customFields&quot;: null&#xd;
+            }&#xd;
+        ]&#xd;
+    }&#xd;
+}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.domain">${opencell_host}</stringProp>
+              <stringProp name="HTTPSampler.port">${opencell_port}</stringProp>
+              <stringProp name="HTTPSampler.protocol">${opencell_protocol}</stringProp>
+              <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+              <stringProp name="HTTPSampler.path">${opencell_path}/billing/subscription/activateServices</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+              <stringProp name="HTTPSampler.proxyUser">opencell.admin</stringProp>
+              <stringProp name="HTTPSampler.proxyPass">opencell.admin</stringProp>
+              <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+              <stringProp name="HTTPSampler.response_timeout"></stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="activateServices|SE_OSS|SE_OST|SE_REC_ADV|SE_USG_UNIT|${subscription.date}${ind}" enabled="true">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="Content-Type" elementType="Header">
+                    <stringProp name="Header.name">Content-Type</stringProp>
+                    <stringProp name="Header.value">application/json</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </HeaderManager>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="subscription.code" enabled="false">
+                <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                <stringProp name="JSONPostProcessor.referenceNames">subscription.code</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">globals.get(&quot;account.code&quot;</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="subscription.date" enabled="false">
+                <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                <stringProp name="JSONPostProcessor.referenceNames">subscription.date</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">globals.get(&quot;request.label.3&quot;</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="iter" enabled="false">
+                <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
+                <stringProp name="JSONPostProcessor.referenceNames">iter</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">(iter</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

@@ -149,8 +149,8 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Column(name = "is_offer_change_restricted")
     private Boolean isOfferChangeRestricted;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name="offer_template_id")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_offer_allowed_offer_change", joinColumns = @JoinColumn(name = "offer_tmpl_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "allowed_offer_change_id", referencedColumnName = "id"))
     private List<OfferTemplate> allowedOffersChange;
 
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
