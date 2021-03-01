@@ -1,14 +1,15 @@
 package org.meveo.apiv2.article;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.immutables.value.Value;
-import org.meveo.apiv2.generic.LanguageDescription;
-import org.meveo.apiv2.models.Resource;
+import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
-import java.util.List;
+import org.immutables.value.Value;
+import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.apiv2.models.Resource;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Value.Immutable
 @Value.Style(jdkOnly=true)
@@ -43,7 +44,7 @@ public interface AccountingArticle extends Resource {
     String getAnalyticCode3();
 
     @Nullable
-    List<LanguageDescription> getLanguageDescriptions();
+    List<LanguageDescriptionDto> getLanguageDescriptions();
 
     //CustomFieldsDto getCustomFields();
 

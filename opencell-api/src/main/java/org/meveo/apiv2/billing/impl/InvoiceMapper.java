@@ -4,7 +4,6 @@ import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.order.Order;
@@ -14,8 +13,7 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 	@Override
 	protected org.meveo.apiv2.billing.Invoice toResource(Invoice entity) {
 
-		return ImmutableInvoice.builder().billingAccount(buildById(entity.getBillingAccount()))
-				.billingRun(buildById(entity.getBillingRun())).recordedInvoice(buildById(entity.getRecordedInvoice()))
+		return ImmutableInvoice.builder().billingRun(buildById(entity.getBillingRun())).recordedInvoice(buildById(entity.getRecordedInvoice()))
 				.status(entity.getStatus()).paymentStatus(entity.getPaymentStatus())
 				.invoiceNumber(entity.getInvoiceNumber()).productDate(entity.getProductDate())
 				.invoiceDate(entity.getInvoiceDate()).dueDate(entity.getDueDate()).amount(entity.getAmount())
@@ -25,12 +23,11 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 				.tradingCurrency(buildById(entity.getTradingCurrency()))
 				.tradingCountry(buildById(entity.getTradingCountry()))
 				.tradingLanguage(buildById(entity.getTradingLanguage())).comment(entity.getComment())
-				.invoiceType(buildById(entity.getInvoiceType())).quote(buildById(entity.getQuote()))
+				.quote(buildById(entity.getQuote()))
 				.subscription(buildById(entity.getSubscription())).order(buildById(entity.getOrder()))
 				.xmlFilename(entity.getXmlFilename()).pdfFilename(entity.getPdfFilename())
 				.paymentMethod(buildById(entity.getPaymentMethod())).dueBalance(entity.getDueBalance())
-				.seller(buildById(entity.getSeller())).externalRef(entity.getExternalRef())
-				.rejectReason(entity.getRejectReason()).initialCollectionDate(entity.getInitialCollectionDate())
+				.externalRef(entity.getExternalRef()).rejectReason(entity.getRejectReason()).initialCollectionDate(entity.getInitialCollectionDate())
 				.statusDate(entity.getStatusDate()).xmlDate(entity.getXmlDate()).pdfDate(entity.getPdfDate())
 				.emailSentDate(entity.getEmailSentDate()).paymentStatusDate(entity.getPaymentStatusDate())
 				.startDate(entity.getStartDate()).endDate(entity.getEndDate()).rawAmount(entity.getRawAmount())
@@ -54,10 +51,6 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 			billingRun.setId(resource.getBillingRun().getId());
 			invoice.setBillingRun(billingRun);
 		}
-
-		BillingAccount billingAccount = new BillingAccount();
-		billingAccount.setId(resource.getBillingAccount().getId());
-		invoice.setBillingAccount(billingAccount);
 
 		invoice.setDiscountRate(resource.getDiscountRate());
 		invoice.setAmountWithTax(resource.getAmountWithTax());

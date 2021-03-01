@@ -4,6 +4,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.service.base.BusinessService;
 
@@ -35,7 +36,7 @@ public class ProductLineService extends
 		boolean isProductExist = productService.checkIfProductLineExist(productLine.getId());
 		if(isProductExist) {
 			log.warn("this product line ({}) can not be delete, it attached to product", productLine.getCode());
-			throw new BusinessException(productLine.getCode());
+			throw new BusinessApiException("Product line can not be deleted, its referenced by a product, product line code: " +  productLine.getCode());
 		}
 		super.remove(productLine);
 	}

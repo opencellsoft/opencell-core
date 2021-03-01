@@ -320,6 +320,7 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
         }
     }
 
+
     @Override
     public Response updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto) {
         GetPricePlanMatrixLineResponseDto response = new GetPricePlanMatrixLineResponseDto();
@@ -384,6 +385,18 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
             return errorResponse(e, response.getActionStatus());
         }
     }
+
+	@Override
+	public Response updatePricePlanMatrixLines(PricePlanMatrixLinesDto pricePlanMatrixLinesDto) {
+		GetPricePlanVersionResponseDto result = new GetPricePlanVersionResponseDto();
+        try {
+        	result = pricePlanMatrixLineApi.updatePricePlanMatrixLines(pricePlanMatrixLinesDto);
+
+        	  return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result.getActionStatus());
+        }
+	}
 
 
 }

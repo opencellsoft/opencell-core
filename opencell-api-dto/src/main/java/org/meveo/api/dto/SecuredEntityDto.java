@@ -45,6 +45,9 @@ public class SecuredEntityDto extends BaseEntityDto {
     @XmlAttribute(required = true)
     private String entityClass;
 
+    @XmlAttribute(required = true)
+    private boolean disabled;
+
     /**
      * Instantiates a new secured entity dto.
      */
@@ -59,6 +62,7 @@ public class SecuredEntityDto extends BaseEntityDto {
     public SecuredEntityDto(SecuredEntity entity) {
         this.code = entity.getCode();
         this.entityClass = entity.getEntityClass();
+        this.disabled = entity.isDisabled();
     }
 
     /**
@@ -96,5 +100,19 @@ public class SecuredEntityDto extends BaseEntityDto {
     public void setEntityClass(String entityClass) {
         this.entityClass = entityClass;
     }
+
+	/**
+	 * @return the disabled
+	 */
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	/**
+	 * @param disabled the disabled to set
+	 */
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
+	}
 
 }

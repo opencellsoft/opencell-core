@@ -40,6 +40,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
@@ -139,6 +140,17 @@ public class RoleApi extends BaseApi {
         
         List<SecuredEntity> securedEntities = extractSecuredEntities(postData.getSecuredEntities());
         role.setSecuredEntities(securedEntities);
+        
+
+        try {
+            populateCustomFields(postData.getCustomFields(), role, true);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
         roleService.create(role);
 
@@ -156,6 +168,7 @@ public class RoleApi extends BaseApi {
                 securedEntity = new SecuredEntity();
                 securedEntity.setCode(securedEntityDto.getCode());
                 securedEntity.setEntityClass(securedEntityDto.getEntityClass());
+                securedEntity.setDisabled(false);
                 BusinessEntity businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getCode());
                 if (businessEntity == null) {
                     throw new EntityDoesNotExistsException(securedEntity.getEntityClass(), securedEntity.getCode());
@@ -239,6 +252,16 @@ public class RoleApi extends BaseApi {
 				role.setSecuredEntities(extractSecuredEntities(postData.getSecuredEntities()));
 			}
 		}
+
+        try {
+            populateCustomFields(postData.getCustomFields(), role, true);
+        } catch (MissingParameterException | InvalidParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
         return roleService.update(role);
     }

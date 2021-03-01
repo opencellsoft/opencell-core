@@ -680,6 +680,8 @@ public class ProductApi extends BaseApi {
 				groupedAttributes.add(attributes);
 			}
 			productVersion.setGroupedAttributes(groupedAttributes);
+		}else {
+			productVersion.setGroupedAttributes(null);
 		}
 	}
 	private void processAttributes(ProductVersionDto postData, ProductVersion productVersion) {
@@ -694,6 +696,8 @@ public class ProductApi extends BaseApi {
 				attributes.add(attribute);
 			}
 			productVersion.setAttributes(attributes);
+		}else{
+			productVersion.setAttributes(null);
 		}
 	} 
 	
@@ -709,6 +713,8 @@ public class ProductApi extends BaseApi {
 				tags.add(tag);
 			}
 			productVersion.setTags(tags);
+		}else {
+			productVersion.setTags(null);
 		}
 	} 
 	
@@ -724,6 +730,8 @@ public class ProductApi extends BaseApi {
 				medias.add(media);
 			}
 			product.setMedias(medias);
+		}else {
+			product.setMedias(null);
 		}
 	}
 	

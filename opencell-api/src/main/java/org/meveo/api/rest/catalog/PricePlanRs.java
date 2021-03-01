@@ -434,6 +434,22 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode = "400", description = "Internat error")
             })
     Response addPricePlanMatrixLines(PricePlanMatrixLinesDto pricePlanMatrixLinesDto);
+    
+
+    /**
+     * add all price plan matrix lines
+     *
+     */
+    @POST
+    @Path("/updatePricePlanMatrixLines")
+    @Operation(summary = "update all price plan matrix lines",
+            tags = { "Price Plan" },
+            description ="update all price plan matrix lines",
+            responses = {
+                    @ApiResponse(responseCode="201", description = "the price plan line successfully updated",content = @Content(schema = @Schema(implementation = GetPricePlanVersionResponseDto.class))),
+                    @ApiResponse(responseCode = "400", description = "Internat error")
+            })
+    Response updatePricePlanMatrixLines(PricePlanMatrixLinesDto pricePlanMatrixLinesDto);
 
     @POST
     @Path("/matrixRating")

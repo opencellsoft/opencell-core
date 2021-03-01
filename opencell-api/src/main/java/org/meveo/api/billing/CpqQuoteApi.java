@@ -312,7 +312,7 @@ public class CpqQuoteApi extends BaseApi {
 	}
 	
 	private void newPopulateOfferAttribute(List<QuoteAttributeDTO> quoteAttributeDtos, QuoteOffer quoteOffer) {
-		if(quoteAttributeDtos != null) {  
+		if(quoteAttributeDtos != null) { 
 			for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributeDtos) { 
 				 Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
 			        if (attribute == null)
@@ -324,6 +324,7 @@ public class CpqQuoteApi extends BaseApi {
 		        quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
 		        quoteAttribute.updateAudit(currentUser);
 		        quoteAttribute.setQuoteOffer(quoteOffer);
+		       
 		        if(!quoteAttributeDTO.getLinkedQuoteAttribute().isEmpty()){
 		            List<QuoteAttribute> linkedQuoteAttributes = quoteAttributeDTO.getLinkedQuoteAttribute()
 		                    .stream()
@@ -335,6 +336,7 @@ public class CpqQuoteApi extends BaseApi {
 		                    .collect(Collectors.toList());
 		            quoteAttribute.setAssignedAttributeValue(linkedQuoteAttributes);
 		        }
+		        quoteAttributeService.create(quoteAttribute);
 				quoteOffer.getQuoteAttributes().add(quoteAttribute); 
 			}
 		}
@@ -742,20 +744,16 @@ public class CpqQuoteApi extends BaseApi {
     }
     
     private void processQuoteAttribute(QuoteOfferDTO quoteOfferDTO, QuoteOffer quoteOffer) { 
-        var quoteAttributeDtos = quoteOfferDTO.getOfferAttributes();
-        var hasQuoteAttributeDtos = quoteAttributeDtos != null && !quoteAttributeDtos.isEmpty();
-
+        var quoteAttributeDtos = quoteOfferDTO.getOfferAttributes();   
         var existencQuoteAttributes = quoteOffer.getQuoteAttributes();
         var hasExistingQuotes = existencQuoteAttributes != null && !existencQuoteAttributes.isEmpty();
 
-        if (hasQuoteAttributeDtos) {
+        if (quoteAttributeDtos != null && !quoteAttributeDtos.isEmpty()) {
             var newQuoteAttributes = new ArrayList<QuoteAttribute>();
-            QuoteAttribute quoteAttribute = null;
-            int i = 1;
+            QuoteAttribute quoteAttribute = null; 
             for (QuoteAttributeDTO quoteAttributeDto : quoteAttributeDtos) {
-                quoteAttribute = getQuoteAttributeFromDto(quoteAttributeDto, null);
-                newQuoteAttributes.add(quoteAttribute);
-                i++;
+                quoteAttribute = getQuoteAttributeFromDto(quoteAttributeDto, null,quoteOffer);
+                newQuoteAttributes.add(quoteAttribute); 
             }
             if (!hasExistingQuotes) {
                 quoteOffer.getQuoteAttributes().addAll(newQuoteAttributes);
@@ -815,7 +813,7 @@ public class CpqQuoteApi extends BaseApi {
             var newQuoteProducts = new ArrayList<QuoteAttribute>();
             QuoteAttribute quoteAttribute = null;
             for (QuoteAttributeDTO quoteAttributeDTO : quoteAttributeDtos) {
-                quoteAttribute = getQuoteAttributeFromDto(quoteAttributeDTO, q);
+                quoteAttribute = getQuoteAttributeFromDto(quoteAttributeDTO, q,null);
                 newQuoteProducts.add(quoteAttribute);
             }
             if(!hasExistingQuotes) {
@@ -836,7 +834,7 @@ public class CpqQuoteApi extends BaseApi {
             q.getQuoteAttributes().removeAll(existencQuoteProducts);
         }
     }
-    private QuoteAttribute getQuoteAttributeFromDto(QuoteAttributeDTO quoteAttributeDTO, QuoteProduct quoteProduct) {
+    private QuoteAttribute getQuoteAttributeFromDto(QuoteAttributeDTO quoteAttributeDTO, QuoteProduct quoteProduct,QuoteOffer quoteOffer) {
         Attribute attribute = attributeService.findByCode(quoteAttributeDTO.getQuoteAttributeCode());
         if(attribute == null)
             throw new EntityDoesNotExistsException(Attribute.class, quoteAttributeDTO.getQuoteAttributeCode());
@@ -857,8 +855,13 @@ public class CpqQuoteApi extends BaseApi {
         quoteAttribute.setStringValue(quoteAttributeDTO.getStringValue());
         quoteAttribute.setDateValue(quoteAttributeDTO.getDateValue());
         quoteAttribute.setDoubleValue(quoteAttributeDTO.getDoubleValue());
+        if(quoteOffer!=null){
+        	quoteAttribute.setQuoteOffer(quoteOffer);
+        }
+        if(quoteProduct!=null) {
         quoteProduct.getQuoteAttributes().add(quoteAttribute);
         quoteAttribute.setQuoteProduct(quoteProduct);
+        }
         if(isNew)
             quoteAttributeService.create(quoteAttribute);
         return quoteAttribute;

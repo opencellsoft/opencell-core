@@ -86,11 +86,19 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 	@SuppressWarnings("unchecked")
 	public List<CommercialRuleHeader> getProductAttributeRules(String attributeCode,String productCode) throws BusinessException{
 		Attribute attribute=attributeService.findByCode(attributeCode);
+		String queryName="CommercialRuleHeader.getAttributeRules";
 		if(attribute == null) { 
 			throw new EntityDoesNotExistsException(Attribute.class,attributeCode);
 		}
-		Query query = getEntityManager().createNamedQuery("CommercialRuleHeader.getAttributeRules")
-				.setParameter("attributeCode", attributeCode).setParameter("productCode", productCode);
+		if(!StringUtils.isEmpty(productCode)) { 
+			queryName="CommercialRuleHeader.getProductAttributeRules";
+		}
+		Query query = getEntityManager().createNamedQuery(queryName)
+				.setParameter("attributeCode", attributeCode);
+		if(!StringUtils.isEmpty(productCode)) { 
+			query.setParameter("productCode", productCode);
+		}
+				
 		List<CommercialRuleHeader> commercialRules=(List<CommercialRuleHeader>)query.getResultList();
 		return commercialRules;
 	}

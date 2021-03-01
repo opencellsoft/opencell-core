@@ -54,7 +54,9 @@ public class MediaApi extends BaseApi {
 		handleMissingParameters();
 		Media media = mediaService.findByCode(mediaDto.getCode());
 		if(media == null)
-			throw new EntityDoesNotExistsException(Media.class, mediaDto.getId()); 
+			throw new EntityDoesNotExistsException(Media.class, mediaDto.getCode()); 
+		if(!StringUtils.isBlank(mediaDto.getDescription()))
+			media.setDescription(mediaDto.getDescription());
 		if(!Strings.isEmpty(mediaDto.getMediaName()))
 			media.setMediaName(mediaDto.getMediaName());
 		if(!Strings.isEmpty(mediaDto.getLabel()))

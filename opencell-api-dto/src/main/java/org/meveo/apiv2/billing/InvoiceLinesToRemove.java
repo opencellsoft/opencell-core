@@ -12,9 +12,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @Value.Style(jdkOnly = true)
 @JsonDeserialize(as = ImmutableInvoiceLinesToRemove.class)
 public interface InvoiceLinesToRemove {
-	
+
 	List<Long> getIds();
-	
+
 	@Nullable
 	Boolean getSkipValidation();
 }

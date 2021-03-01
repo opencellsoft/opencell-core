@@ -199,6 +199,9 @@ public class CommercialOrder extends AuditableCFEntity  {
 	@OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
 	private List<OrderPrice> orderPrices;
 	
+    @Column(name = "oneshot_total_amount")
+    private BigDecimal oneShotTotalAmount;
+	
 	/**
 	 * @return the seller
 	 */
@@ -604,6 +607,20 @@ public class CommercialOrder extends AuditableCFEntity  {
 	 */
 	public void setOrderPrices(List<OrderPrice> orderPrices) {
 		this.orderPrices = orderPrices;
+	}
+
+	/**
+	 * @return the oneShotTotalAmount
+	 */
+	public BigDecimal getOneShotTotalAmount() {
+		return oneShotTotalAmount;
+	}
+
+	/**
+	 * @param oneShotTotalAmount the oneShotTotalAmount to set
+	 */
+	public void setOneShotTotalAmount(BigDecimal oneShotTotalAmount) {
+		this.oneShotTotalAmount = oneShotTotalAmount;
 	}
 	
 	

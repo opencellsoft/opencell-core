@@ -8,6 +8,7 @@ import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.cpq.TagTypeDto;
 import org.meveo.api.dto.response.cpq.GetTagDtoResponse;
 import org.meveo.api.dto.response.cpq.GetTagTypeDtoResponse;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.cpq.TagRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -50,8 +51,14 @@ public class TagRsImpl extends BaseRs implements TagRs {
 	        try {
 	        	tagApi.removeTag(codeTag);
 	        	return Response.ok(result).build();
-	        } catch(MeveoApiException e) {
-			       return errorResponse(e, result.getActionStatus());
+	        } catch(Exception e) {
+				MeveoApiException exp = null;
+				if (e instanceof MeveoApiException) {
+					exp = (MeveoApiException) e;
+				} else {
+					exp = new BusinessApiException("This tag can not be deleted, technical error");
+				}
+				return errorResponse(exp, result.getActionStatus());
 	        }
 	}
 
