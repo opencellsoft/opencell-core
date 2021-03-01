@@ -36,6 +36,21 @@ import org.meveo.model.cpq.trade.CommercialRuleHeader;
         @Parameter(name = "sequence_name", value = "cpq_grouped_attributes_seq"), }) 
 public class GroupedAttributes extends EnableBusinessCFEntity {
 
+	public GroupedAttributes() {
+	}
+
+	
+
+	public GroupedAttributes(GroupedAttributes copy) {
+		this.mandatory = copy.mandatory;
+		this.display = copy.display;
+		this.sequence = copy.sequence;
+		this.code = copy.code;
+		this.description = copy.description;
+	}
+
+
+
 	/**
 	 * 
 	 */
