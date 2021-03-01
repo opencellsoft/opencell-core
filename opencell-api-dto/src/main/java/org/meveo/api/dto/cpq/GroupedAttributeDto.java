@@ -1,11 +1,11 @@
 package org.meveo.api.dto.cpq;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
@@ -15,14 +15,12 @@ public class GroupedAttributeDto {
 	private Long id;
 	
     @NotNull
-	private String productCode;
-    @NotNull
-	private int productVersion;
-    @NotNull
 	private String code;
 	private String description;
 	private List<AttributeDTO> attributes = new ArrayList<AttributeDTO>();
+	private Set<String> attributeCodes = new HashSet<String>();
 	private boolean display;
+	private boolean disabled;
 	private boolean mandatory;
 	private boolean selectable=Boolean.TRUE;  
 	private boolean ruled=Boolean.FALSE;
@@ -37,11 +35,7 @@ public class GroupedAttributeDto {
 			this.code = groupedService.getCode();
 			this.description = groupedService.getDescription();
 			this.display = groupedService.getDisplay();
-			
-			if(groupedService.getProductVersion() != null && groupedService.getProductVersion().getProduct() != null) {
-				this.productCode = groupedService.getProductVersion().getProduct().getCode();
-				this.productVersion = groupedService.getProductVersion().getCurrentVersion();
-			}
+			this.disabled=groupedService.isDisabled();
 			this.id = groupedService.getId();
 		}
 	}
@@ -54,19 +48,6 @@ public class GroupedAttributeDto {
 			});
 	}
 
-	/**
-	 * @return the productCode
-	 */
-	public String getProductCode() {
-		return productCode;
-	}
-
-	/**
-	 * @param productCode the productCode to set
-	 */
-	public void setProductCode(String productCode) {
-		this.productCode = productCode;
-	}
 
 	/**
 	 * @return the code
@@ -95,25 +76,6 @@ public class GroupedAttributeDto {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	
-	
-
-	/**
-	 * @return the productVersion
-	 */
-	public int getProductVersion() {
-		return productVersion;
-	}
-
-	/**
-	 * @param productVersion the productVersion to set
-	 */
-	public void setProductVersion(int productVersion) {
-		this.productVersion = productVersion;
-	}
-
-
 
 	/**
 	 * @return the attributes
@@ -211,6 +173,34 @@ public class GroupedAttributeDto {
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the disabled
+	 */
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	/**
+	 * @param disabled the disabled to set
+	 */
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
+	}
+
+	/**
+	 * @return the attributeCodes
+	 */
+	public Set<String> getAttributeCodes() {
+		return attributeCodes;
+	}
+
+	/**
+	 * @param attributeCodes the attributeCodes to set
+	 */
+	public void setAttributeCodes(Set<String> attributeCodes) {
+		this.attributeCodes = attributeCodes;
 	}
 
 	

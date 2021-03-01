@@ -1,6 +1,7 @@
 package org.meveo.api.dto.cpq.order;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
@@ -47,7 +48,7 @@ public class CommercialOrderDto extends BaseEntityDto {
 	private String orderParentCode;
 	private String userAccountCode;
 	private AccessDto accessDto; 
-	
+	private Set<String> orderLotCodes;
 	
 	public CommercialOrderDto() {
 	}
@@ -328,6 +329,20 @@ public class CommercialOrderDto extends BaseEntityDto {
 	 */
 	public void setAccessDto(AccessDto accessDto) {
 		this.accessDto = accessDto;
+	}
+
+	/**
+	 * @return the orderLotCodes
+	 */
+	public Set<String> getOrderLotCodes() {
+		return orderLotCodes;
+	}
+
+	/**
+	 * @param orderLotCodes the orderLotCodes to set
+	 */
+	public void setOrderLotCodes(Set<String> orderLotCodes) {
+		this.orderLotCodes = orderLotCodes;
 	}
 	
 	

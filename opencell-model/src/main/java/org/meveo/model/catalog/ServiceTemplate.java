@@ -36,7 +36,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -56,7 +55,6 @@ import org.meveo.model.annotation.ImageType;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.tags.Tag;
 
 /**
@@ -222,11 +220,6 @@ public class ServiceTemplate extends ServiceCharge implements IImageUpload {
 				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
 			)
     private List<Attribute> attributes = new ArrayList<>();
-
-
-    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id")
-    private List<Media> medias = new ArrayList<>();
 
     @Override
     public boolean equals(Object obj) {
@@ -467,19 +460,6 @@ public class ServiceTemplate extends ServiceCharge implements IImageUpload {
 		this.attributes = attributes;
 	}
 
-	/**
-	 * @return the medias
-	 */
-	public List<Media> getMedias() {
-		return medias;
-	}
-
-	/**
-	 * @param medias the medias to set
-	 */
-	public void setMedias(List<Media> medias) {
-		this.medias = medias;
-	}
 
 	
 	

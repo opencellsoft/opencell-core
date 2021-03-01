@@ -171,15 +171,18 @@ public class Product extends ServiceCharge {
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductChargeTemplateMapping> productCharges = new ArrayList<>();
-
-	
-	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderBy("id")
-	private List<Media> medias = new ArrayList<>();
-		
+ 	
 	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_version_id")
 	private ProductVersion currentVersion;
+	
+	
+	 /**
+     * list of Media
+     */   
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cpq_product_media", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
+    private List<Media> medias = new ArrayList<Media>();
 
 	/**
 	 * @return the status
@@ -411,22 +414,7 @@ public class Product extends ServiceCharge {
 	public void setProductCharges(List<ProductChargeTemplateMapping> productCharges) {
 		this.productCharges = productCharges;
 	}
-
-
-	/**
-	 * @return the medias
-	 */
-	public List<Media> getMedias() {
-		return medias;
-	}
-
-
-	/**
-	 * @param medias the medias to set
-	 */
-	public void setMedias(List<Media> medias) {
-		this.medias = medias;
-	}
+ 
 
 
 	/**
@@ -443,6 +431,24 @@ public class Product extends ServiceCharge {
 	public void setCurrentVersion(ProductVersion currentVersion) {
 		this.currentVersion = currentVersion;
 	}
+
+
+	/**
+	 * @return the medias
+	 */
+	public List<Media> getMedias() {
+		return medias;
+	}
+
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<Media> medias) {
+		this.medias = medias;
+	}
+	
+	
 	
 	
 }

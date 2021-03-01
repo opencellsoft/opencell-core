@@ -194,8 +194,7 @@ public class CatalogHierarchyBuilderService {
         	entity.setAttributes(new ArrayList<Attribute>());
         	for (Attribute attribute : attributes) {
         		for(Media media : attribute.getMedias()) {
-        			Media newMedia = new Media(media); 
-        			newMedia.setAttribute(attribute);
+        			Media newMedia = new Media(media);
         			mediaService.create(newMedia);
         			attribute.getMedias().add(newMedia);
         		}
@@ -276,8 +275,7 @@ public class CatalogHierarchyBuilderService {
     	
     	if(medias != null) {
     		medias.forEach(media -> {
-    			Media newMedia = new Media(media); 
-    			newMedia.setProduct(entity);
+    			Media newMedia = new Media(media);
     			mediaService.create(newMedia);
     			entity.getMedias().add(newMedia);
     		});
@@ -692,8 +690,7 @@ public class CatalogHierarchyBuilderService {
         serviceTemplate.getServiceRecurringCharges().size();
         serviceTemplate.getServiceSubscriptionCharges().size();
         serviceTemplate.getServiceTerminationCharges().size();
-        serviceTemplate.getServiceUsageCharges().size();
-        serviceTemplate.getMedias().size();
+        serviceTemplate.getServiceUsageCharges().size(); 
 
         ServiceTemplate newServiceTemplate = new ServiceTemplate();
         String newCode = prefix + serviceTemplate.getCode();
@@ -718,7 +715,6 @@ public class CatalogHierarchyBuilderService {
             newServiceTemplate.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
             newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
             newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
-            newServiceTemplate.setMedias(new ArrayList<Media>());
             
             this.duplicateAndSetImgPath(serviceTemplate, newServiceTemplate, serviceConfiguration != null ? serviceConfiguration.getImagePath() : "");
 

@@ -28,6 +28,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,10 +48,14 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.metamodel.Attribute;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotFoundException;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -617,7 +622,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public List<E> list(PaginationConfiguration config) {
         Map<String, Object> filters = config.getFilters();
-
+		if(isAnEmptyListInFilter(filters)) {
+			return new ArrayList<E>();
+		}
+		
         if (filters != null && filters.containsKey("$FILTER")) {
             Filter filter = (Filter) filters.get("$FILTER");
             FilteredQueryBuilder queryBuilder = (FilteredQueryBuilder) getQuery(config);
@@ -632,6 +640,15 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
+	 * @param filters
+	 * @return
+	 */
+	private boolean isAnEmptyListInFilter(Map<String, Object> filters) {
+		return filters == null ? false : filters.values().stream()
+				.filter(v -> v != null && v instanceof Collection && ((Collection) v).isEmpty()).findAny().isPresent();
+	}
+
+	/**
      * Used to retrieve related fields of an entity
      */
     @SuppressWarnings({ "unchecked" })
@@ -674,6 +691,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public long count(PaginationConfiguration config) {
+        Map<String, Object> filters = config.getFilters();
+		if(isAnEmptyListInFilter(filters)) {
+			return 0;
+		} 
         List<String> fetchFields = config.getFetchFields();
         config.setFetchFields(null);
         QueryBuilder queryBuilder = getQuery(config);
@@ -930,13 +951,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public QueryBuilder getQuery(PaginationConfiguration config) {
-
         Map<String, Object> filters = config.getFilters();
-
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields());
-
         if (filters != null && !filters.isEmpty()) {
-
             if (filters.containsKey(SEARCH_FILTER)) {
                 Filter filter = (Filter) filters.get(SEARCH_FILTER);
                 Map<CustomFieldTemplate, Object> parameterMap = (Map<CustomFieldTemplate, Object>) filters.get(SEARCH_FILTER_PARAMETERS);
@@ -1260,4 +1277,39 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
            ois.close();
         }
    }
+    
+    /**
+	 * @param entity
+	 * @param id
+	 * @return
+	 */
+	public IEntity tryToFindByEntityClassAndId(Class<? extends IEntity> entity, Long id) {
+    	if(id==null) {
+    		return null;
+    	}
+        QueryBuilder qb = new QueryBuilder(entity, "entity", null);
+        qb.addCriterion("entity.id", "=", id, true);
+        try {
+			return (IEntity) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with id '"+id+"' found");
+        } catch (NonUniqueResultException e) {
+        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+" with id '"+id+"' found");
+        }
+	}
+
+	public BusinessEntity tryToFindByEntityClassAndCode(Class<? extends BusinessEntity> entity, String code) {
+    	if(code==null) {
+    		return null;
+    	}
+        QueryBuilder qb = new QueryBuilder(entity, "entity", null);
+        qb.addCriterion("entity.code", "=", code, true);
+        try {
+			return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with code '"+code+"' found");
+        } catch (NonUniqueResultException e) {
+        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+" with code '"+code+"' found");
+        }
+    }
 }

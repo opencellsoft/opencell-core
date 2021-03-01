@@ -24,7 +24,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
 
-import org.apache.lucene.search.Collector;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.commons.utils.StringUtils;
@@ -180,5 +179,5 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
             return null;
         }
     }
-
+    
 }

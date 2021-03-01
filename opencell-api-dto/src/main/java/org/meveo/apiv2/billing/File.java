@@ -14,14 +14,14 @@ public interface File extends Resource {
 
 	@Nullable
 	Long getReferencedEntity();
-	
+
 	@Nullable
 	String getFileType();
-	
+
 	@Nullable
 	String getFileName();
-	
+
 	@Nullable
 	byte[] getFileContent();
-	
+
 }

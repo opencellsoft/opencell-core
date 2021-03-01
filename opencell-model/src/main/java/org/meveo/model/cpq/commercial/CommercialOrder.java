@@ -191,6 +191,17 @@ public class CommercialOrder extends AuditableCFEntity  {
 	@OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
 	private List<OrderOffer> offers;
 
+	
+	@OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
+	private List<OrderLot> orderLots;
+	
+	
+	@OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
+	private List<OrderPrice> orderPrices;
+	
+    @Column(name = "oneshot_total_amount")
+    private BigDecimal oneShotTotalAmount;
+	
 	/**
 	 * @return the seller
 	 */
@@ -569,4 +580,48 @@ public class CommercialOrder extends AuditableCFEntity  {
 	public void addInvoicedRate(BigDecimal rateToBill) {
 		this.rateInvoiced = this.rateInvoiced.intValue() + rateToBill.intValue();
 	}
+
+	/**
+	 * @return the orderLots
+	 */
+	public List<OrderLot> getOrderLots() {
+		return orderLots;
+	}
+
+	/**
+	 * @param orderLots the orderLots to set
+	 */
+	public void setOrderLots(List<OrderLot> orderLots) {
+		this.orderLots = orderLots;
+	}
+
+	/**
+	 * @return the orderPrices
+	 */
+	public List<OrderPrice> getOrderPrices() {
+		return orderPrices;
+	}
+
+	/**
+	 * @param orderPrices the orderPrices to set
+	 */
+	public void setOrderPrices(List<OrderPrice> orderPrices) {
+		this.orderPrices = orderPrices;
+	}
+
+	/**
+	 * @return the oneShotTotalAmount
+	 */
+	public BigDecimal getOneShotTotalAmount() {
+		return oneShotTotalAmount;
+	}
+
+	/**
+	 * @param oneShotTotalAmount the oneShotTotalAmount to set
+	 */
+	public void setOneShotTotalAmount(BigDecimal oneShotTotalAmount) {
+		this.oneShotTotalAmount = oneShotTotalAmount;
+	}
+	
+	
 }

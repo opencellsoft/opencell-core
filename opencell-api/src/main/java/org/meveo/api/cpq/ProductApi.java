@@ -22,6 +22,7 @@ import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.CpqOfferDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.cpq.GroupedAttributeDto;
@@ -47,6 +48,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.cpq.ProductVersion;
@@ -64,6 +66,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.GroupedAttributeService;
+import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -125,6 +128,9 @@ public class ProductApi extends BaseApi {
 	@Inject
 	private GroupedAttributeService  groupedAttributeService;
 	
+	 @Inject
+	 private MediaService mediaService;
+	
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 	
 	/**
@@ -155,6 +161,7 @@ public class ProductApi extends BaseApi {
 				response.setCurrentProductVersion(new ProductVersionDto(productVersion));
 			}
 			product.setCurrentVersion(productVersion);
+			processMedias(productDto, product);
 			return response;
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
@@ -259,7 +266,7 @@ public class ProductApi extends BaseApi {
 							.sorted( (pv1, pv2) -> pv2.getAuditable().compareByUpdated(pv1.getAuditable())).collect(Collectors.toList());
 				product.setCurrentVersion(noPublishedVersion.get(0));
 			}
-			
+			processMedias(productDto, product);
 			productService.updateProduct(product);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
@@ -309,7 +316,7 @@ public class ProductApi extends BaseApi {
 			chargeTemplateDto=new ChargeTemplateDto(prodcutCharge.getChargeTemplate(),entityToDtoConverter.getCustomFieldsDTO(prodcutCharge.getChargeTemplate()));
 			chargeTemplateDtos.add(chargeTemplateDto); 	
 		}
-			GetProductDtoResponse  result = new GetProductDtoResponse(product,chargeTemplateDtos); 
+			GetProductDtoResponse  result = new GetProductDtoResponse(product,chargeTemplateDtos,true); 
 			return result;
 		}
 
@@ -332,6 +339,7 @@ public class ProductApi extends BaseApi {
 		productVersion.setStatusDate(Calendar.getInstance().getTime());
 		processAttributes(postData,productVersion);
 		processTags(postData, productVersion);
+		processGroupedAttribute(postData, productVersion);
 	}
 
 	private void checkMandatoryFields(ProductVersionDto postData) {
@@ -391,6 +399,7 @@ public class ProductApi extends BaseApi {
 		productVersion.setStatusDate(Calendar.getInstance().getTime());
 		processAttributes(postData,productVersion);
 		processTags(postData, productVersion);
+		processGroupedAttribute(postData, productVersion);
 		try {
 			productVersionService.updateProductVersion(productVersion);
 		} catch (BusinessException e) {
@@ -662,7 +671,19 @@ public class ProductApi extends BaseApi {
 		} 
 		return result;
 	} 
-	
+	private void processGroupedAttribute(ProductVersionDto postData, ProductVersion productVersion) {
+		Set<String> groupedAttributesCodes = postData.getGroupedAttributeCodes();
+		if(groupedAttributesCodes != null && !groupedAttributesCodes.isEmpty()) {
+			List<GroupedAttributes> groupedAttributes = new ArrayList<GroupedAttributes>();
+			for (String groupedCode : groupedAttributesCodes) {
+				GroupedAttributes attributes = loadEntityByCode(groupedAttributeService, groupedCode, GroupedAttributes.class);
+				groupedAttributes.add(attributes);
+			}
+			productVersion.setGroupedAttributes(groupedAttributes);
+		}else {
+			productVersion.setGroupedAttributes(null);
+		}
+	}
 	private void processAttributes(ProductVersionDto postData, ProductVersion productVersion) {
 		Set<String> attributeCodes = postData.getAttributeCodes(); 
 		if(attributeCodes != null && !attributeCodes.isEmpty()){
@@ -675,6 +696,8 @@ public class ProductApi extends BaseApi {
 				attributes.add(attribute);
 			}
 			productVersion.setAttributes(attributes);
+		}else{
+			productVersion.setAttributes(null);
 		}
 	} 
 	
@@ -690,8 +713,27 @@ public class ProductApi extends BaseApi {
 				tags.add(tag);
 			}
 			productVersion.setTags(tags);
+		}else {
+			productVersion.setTags(null);
 		}
 	} 
+	
+	private void processMedias(ProductDto postData, Product product) {
+		Set<String> mediaCodes = postData.getMediaCodes(); 
+		if(mediaCodes != null && !mediaCodes.isEmpty()){
+			List<Media> medias=new ArrayList<Media>();
+			for(String code:mediaCodes) {
+				Media media=mediaService.findByCode(code);
+				if(media == null) { 
+					throw new EntityDoesNotExistsException(Media.class,code);
+				}
+				medias.add(media);
+			}
+			product.setMedias(medias);
+		}else {
+			product.setMedias(null);
+		}
+	}
 	
 	
 	public List<GetProductVersionResponse> findProductVersionByProduct(String productCode)  throws MeveoApiException, BusinessException  { 

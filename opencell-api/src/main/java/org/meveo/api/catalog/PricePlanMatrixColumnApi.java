@@ -45,8 +45,9 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
 
         checkMissingParameters(dtoData);
 
-
-        if(!pricePlanMatrixColumnService.findLastVersionByCode(dtoData.getCode(), dtoData.getPricePlanMatrixVersion()).isEmpty()) {
+        PricePlanMatrixVersion pricePlanMatrixVersion = getPricePlanMatrixVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
+        
+        if(!pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(dtoData.getCode(), pricePlanMatrixVersion).isEmpty()) {
             throw new EntityAlreadyExistsException(PricePlanMatrixColumn.class, "(" + dtoData.getCode() + ", " + dtoData.getPricePlanMatrixVersion() + ")");
         }
 
@@ -55,7 +56,7 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
         pricePlanMatrixColumn.setAttribute(attribute);
         pricePlanMatrixColumn.setRange(dtoData.getRange());
         pricePlanMatrixColumn.setType(attribute.getAttributeType().getColumnType(dtoData.getRange()));
-        populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn);
+        populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn, pricePlanMatrixVersion);
 
 
         pricePlanMatrixColumnService.create(pricePlanMatrixColumn);
@@ -66,8 +67,9 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
     @Override
     public PricePlanMatrixColumn update(PricePlanMatrixColumnDto dtoData) throws MeveoApiException, BusinessException {
         checkMissingParameters(dtoData);
+        PricePlanMatrixVersion pricePlanMatrixVersion = getPricePlanMatrixVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
         PricePlanMatrixColumn pricePlanMatrixColumn = loadEntityByCode(pricePlanMatrixColumnService, dtoData.getCode(), PricePlanMatrixColumn.class);
-        populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn);
+        populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn, pricePlanMatrixVersion);
         Attribute attribute = loadEntityByCode(attributeService, dtoData.getAttributeCode(), Attribute.class);
         pricePlanMatrixColumn.setAttribute(attribute);
         return pricePlanMatrixColumnService.update(pricePlanMatrixColumn);
@@ -97,11 +99,7 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
         handleMissingParametersAndValidate(dtoData);
     }
 
-    private void populatePricePlanMatrixColumn(PricePlanMatrixColumnDto dtoData, PricePlanMatrixColumn pricePlanMatrixColumn) {
-        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
-        if(pricePlanMatrixVersion == null){
-            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, dtoData.getPricePlanMatrixCode(), "pricePlanMatrixCode", ""+dtoData.getPricePlanMatrixVersion(), "pricePlanMatrixVersion");
-        }
+    private void populatePricePlanMatrixColumn(PricePlanMatrixColumnDto dtoData, PricePlanMatrixColumn pricePlanMatrixColumn, PricePlanMatrixVersion pricePlanMatrixVersion) {
         pricePlanMatrixColumn.setPricePlanMatrixVersion(pricePlanMatrixVersion);
         if(!Strings.isEmpty(dtoData.getProductCode()))
         	pricePlanMatrixColumn.setProduct(loadEntityByCode(productService, dtoData.getProductCode(), Product.class));
@@ -112,5 +110,13 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
         pricePlanMatrixColumn.setPosition(dtoData.getPosition());
         if(dtoData.getRange() != null)
         	pricePlanMatrixColumn.setRange(dtoData.getRange());
+    }
+    
+    private PricePlanMatrixVersion getPricePlanMatrixVersion(String plnaMatrixCode, int currentPricePlanMatrixVersion) {
+        PricePlanMatrixVersion pricePlanMatrixVersion = pricePlanMatrixVersionService.findByPricePlanAndVersion(plnaMatrixCode, currentPricePlanMatrixVersion);
+        if(pricePlanMatrixVersion == null){
+            throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, plnaMatrixCode, "pricePlanMatrixCode", ""+currentPricePlanMatrixVersion, "pricePlanMatrixVersion");
+        }
+        return pricePlanMatrixVersion;
     }
 }

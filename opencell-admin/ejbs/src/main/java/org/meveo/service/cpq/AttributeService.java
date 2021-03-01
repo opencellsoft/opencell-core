@@ -17,5 +17,4 @@ import org.meveo.service.base.BusinessService;
 public class AttributeService extends BusinessService<Attribute>{
 
  
- 
 }

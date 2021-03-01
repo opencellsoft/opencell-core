@@ -41,10 +41,10 @@ public class MediaRsImpl extends BaseRs implements MediaRs{
 	}
 
 	@Override
-	public Response findByCode(String productCode, String mediaName) {
+	public Response findByCode(String code) {
 		 GetMediaDtoResponse result = new GetMediaDtoResponse();
 		 try {
-			 result.setMediaDto(mediaApi.findByCode(productCode, mediaName));
+			 result.setMediaDto(mediaApi.findByCode(code));
 	            return Response.ok(result).build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, result.getActionStatus());
@@ -52,25 +52,15 @@ public class MediaRsImpl extends BaseRs implements MediaRs{
 	}
 
 	@Override
-	public Response deleteMedia(String productCode, String mediaName) {
+	public Response deleteMedia(String mediaName) {
 		ActionStatus result = new ActionStatus();
 		 try {
-			 	mediaApi.deleteMedia(productCode, mediaName);
+			 	mediaApi.deleteMedia(mediaName);
 	            return Response.ok(result).build();
 	        } catch (MeveoApiException e) {
 			       return errorResponse(e, result);
 	        }
 	}
 
-	@Override
-	public Response ListPost(PagingAndFiltering pagingAndFiltering) {
-		MediaListResponsDto result = new MediaListResponsDto();
-		try {
-			result = mediaApi.listMedia(pagingAndFiltering);
-            return Response.ok(result).build();
-        } catch (MeveoApiException e) {
-		       return errorResponse(e, result.getActionStatus());
-        }
-	}
 
 }

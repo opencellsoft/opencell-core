@@ -33,7 +33,7 @@ public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 		this.quoteProduct = copy.quoteProduct;
 		this.dateValue = copy.dateValue;
 		this.doubleValue = copy.doubleValue;
-		this.quoteProduct = copy.quoteProduct;
+		this.quoteOffer = copy.quoteOffer;
 	}
 
 
@@ -49,7 +49,7 @@ public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 	
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "cpq_quote_offer_id")
+	@JoinColumn(name = "cpq_quote_offer_id",referencedColumnName = "id")
 	private QuoteOffer  quoteOffer;
 
 

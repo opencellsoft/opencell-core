@@ -12,6 +12,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
+import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.TagDto;
@@ -23,14 +24,17 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.GroupedAttributeService;
+import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
@@ -59,6 +63,10 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 	
 	@Inject
 	private TagService  tagService;
+	
+    @Inject
+    private MediaService mediaService;
+	
 
 	@Override
 	public Attribute create(AttributeDTO postData) throws MeveoApiException, BusinessException {
@@ -73,11 +81,9 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		handleMissingParametersAndValidate(postData);
 
 		// check if groupedAttributes  exists
-		GroupedAttributes groupedAttributes = groupedAttributeService.findByCode(postData.getGroupedAttributeCode()); 
 		Attribute attribute = new Attribute();
 		attribute.setCode(postData.getCode());
 		attribute.setDescription(postData.getDescription());
-		attribute.setGroupedAttributes(groupedAttributes);
 		attribute.setPriority(postData.getPriority());
 		attribute.setDisplay(postData.isDisplay());
 		attribute.setMandatory(postData.isMandatory());
@@ -89,6 +95,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attributeService.create(attribute);
 		processTags(postData,attribute);
 		processAssignedAttributes(postData,attribute);
+		processMedias(postData,attribute);
 		return attribute;
 	}
 	
@@ -107,6 +114,21 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 			attribute.getTags().addAll(tags);
 		}
 	} 
+	
+	 private void processMedias(AttributeDTO postData, Attribute attribute) {
+			Set<String> mediaCodes = postData.getMediaCodes(); 
+			if(mediaCodes != null && !mediaCodes.isEmpty()){
+				List<Media> medias=new ArrayList<Media>();
+				for(String code:mediaCodes) {
+					Media media=mediaService.findByCode(code);
+					if(media == null) { 
+						throw new EntityDoesNotExistsException(Media.class,code);
+					}
+					medias.add(media);
+				}
+				attribute.setMedias(medias);
+			}
+		}
 	
 	private void processAssignedAttributes(AttributeDTO postData, Attribute attribute) {
 		List<String> assignedAttrCodes = postData.getAssignedAttributeCodes(); 
@@ -136,10 +158,8 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if (attribute== null) {
 			throw new EntityDoesNotExistsException(Attribute.class, postData.getCode());
 		} 
-		GroupedAttributes groupedAttributes = groupedAttributeService.findByCode(postData.getGroupedAttributeCode()); 
 		attribute.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 		attribute.setDescription(postData.getDescription());
-		attribute.setGroupedAttributes(groupedAttributes);
 		attribute.setPriority(postData.getPriority());
 		attribute.setDisplay(postData.isDisplay());
 		attribute.setMandatory(postData.isMandatory());
@@ -158,6 +178,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		}
 		processTags(postData,attribute);
 		processAssignedAttributes(postData,attribute);
+		processMedias(postData,attribute);
 		attributeService.update(attribute);
 		return attribute;
 	}
@@ -192,7 +213,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 			assignedAttributes.add(attributeDto);
 		}
 		
-		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute,chargeTemplateDtos,tagDtos,assignedAttributes); 
+		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute,chargeTemplateDtos,tagDtos,assignedAttributes,true); 
 		return result;
 	}
 

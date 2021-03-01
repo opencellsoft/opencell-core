@@ -13,21 +13,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.cpq.TagTypeDto;
 import org.meveo.api.dto.response.cpq.GetTagDtoResponse;
 import org.meveo.api.dto.response.cpq.GetTagTypeDtoResponse;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.api.rest.cpq.impl.TagRsImpl;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -54,12 +49,13 @@ public interface TagRs extends IBaseRs {
     tags = { "Tag" },
     description ="Creating a new tag",
     responses = {
-            @ApiResponse(responseCode="200", description = "the Tag successfully added",
+            @ApiResponse(responseCode="200", description = TagRsImpl.TAG_CREATED,
             		content = @Content(schema = @Schema(implementation = GetTagDtoResponse.class))),
-            @ApiResponse(responseCode = "412", description = "missing required paramter for TagDto.The required params are : code, name, tagTypeCode",
-            		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
-            @ApiResponse(responseCode = "400", description = "No tag type is found for the parameter tagTypeCode", 
-    		content = @Content(schema = @Schema(implementation = BusinessException.class)))
+            @ApiResponse(responseCode = "302", description = "Tag with code=${tagDto.code} already exists."),
+            @ApiResponse(responseCode = "400", description = "Parent and child has the same code !!"),
+            @ApiResponse(responseCode = "404", description = "TagType with code=${tagDto.tagTypeCode} does not exists."),
+            @ApiResponse(responseCode = "404", description = "Seller with code=${tagDto.sellerCode} does not exists."),
+            @ApiResponse(responseCode = "412", description = "The following parameters are required or contain invalid values: code, name, TagTypeCode.")
     })
 	
 	Response createTag(	@Parameter( name = "tagDto",
@@ -73,10 +69,11 @@ public interface TagRs extends IBaseRs {
     responses = {
             @ApiResponse(responseCode="200", description = "the Tag successfully updated",
             		content = @Content(schema = @Schema(implementation = GetTagDtoResponse.class))),
-            @ApiResponse(responseCode = "412", description = "missing required paramter for TagDto.The required params are : code, name, tagTypeCode",
-            		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
-            @ApiResponse(responseCode = "400", description = "No tag type is found for the parameter tagTypeCode", 
-    		content = @Content(schema = @Schema(implementation = BusinessException.class)))
+            @ApiResponse(responseCode = "400", description = "Tag code : ${parentTag.code} already has a tag parent with code : ${tagDto.code}"),
+            @ApiResponse(responseCode = "404", description = "Tag with code=${tagDto.code} does not exists."),
+            @ApiResponse(responseCode = "404", description = "TagType with code=${tagDto.tagTypeCode} does not exists."),
+            @ApiResponse(responseCode = "404", description = "Seller with code=${tagDto.sellerCode} does not exists."),
+            @ApiResponse(responseCode = "412", description = "The following parameters are required or contain invalid values: code, name, TagTypeCode."),
     })
 	Response updateTag(@Parameter(description = "tag dto for updating an existing tag", required = true) TagDto tagDto);
 	
@@ -112,9 +109,9 @@ public interface TagRs extends IBaseRs {
     description ="Creating a new tag type",
     tags = { "Tag" },
     responses = {
-            @ApiResponse(responseCode="200", description = "the Tag type successfully added",content = @Content(schema = @Schema(implementation = GetTagTypeDtoResponse.class))),
-            @ApiResponse(responseCode = "412", description = "missing required paramter for TagDto.The required parameter is  code",
-            		content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
+            @ApiResponse(responseCode="200", description = TagRsImpl.TAG_TYPE_CREATED ,content = @Content(schema = @Schema(implementation = GetTagTypeDtoResponse.class))),
+            @ApiResponse(responseCode = "412", description = "The following parameters are required or contain invalid values: code."),
+            @ApiResponse(responseCode = "302", description = "TagType with code=${code} already exists.")
     })
 	Response createTagType(@Parameter(description = "tag type dto for new insertion", required = true)TagTypeDto tagTypeDto);
 	

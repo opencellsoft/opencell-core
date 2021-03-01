@@ -15,9 +15,10 @@ import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.ImmutableFile;
 import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.billing.ImmutableInvoices;
+import org.meveo.apiv2.billing.InvoiceInput;
 import org.meveo.apiv2.billing.InvoiceLineInput;
-import org.meveo.apiv2.billing.InvoiceLinesToRemove;
 import org.meveo.apiv2.billing.InvoiceLinesInput;
+import org.meveo.apiv2.billing.InvoiceLinesToRemove;
 import org.meveo.apiv2.billing.Invoices;
 import org.meveo.apiv2.billing.resource.InvoiceResource;
 import org.meveo.apiv2.billing.service.InvoiceApiService;
@@ -217,6 +218,21 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
 		invoiceApiService.cancelInvoice(invoice);
 		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
+                .build();
+	}
+
+	@Override
+	public Response create(InvoiceInput input) {
+		Invoice invoiceEntity = invoiceApiService.create(input);
+		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, invoiceEntity.getId()).build())
+                .build();
+	}
+	
+	@Override
+	public Response update(Long id, org.meveo.apiv2.billing.Invoice invoiceRessource) {
+		final Invoice invoice = findInvoiceEligibleToUpdate(id);
+		invoiceApiService.update(invoice, invoiceMapper.toEntity(invoiceRessource));
+		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
                 .build();
 	}
 }

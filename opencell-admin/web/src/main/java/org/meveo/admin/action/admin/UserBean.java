@@ -720,6 +720,28 @@ public class UserBean extends CustomFieldBean<User> {
         super.saveOrUpdate(false);
     }
 
+    @ActionMethod
+    public void enable(SecuredEntity selectedSecuredEntity) throws BusinessException {
+        for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
+            if (securedEntity.equals(selectedSecuredEntity)) {
+            	securedEntity.setDisabled(false);
+                break;
+            }
+        }
+        super.saveOrUpdate(false);
+    }
+    
+    @ActionMethod
+    public void disable(SecuredEntity selectedSecuredEntity) throws BusinessException {
+        for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
+            if (securedEntity.equals(selectedSecuredEntity)) {
+            	securedEntity.setDisabled(true);
+                break;
+            }
+        }
+        super.saveOrUpdate(false);
+    }
+
     /**
      * This will set the correct account bean based on the selected type(Seller, Customer, etc.)
      */

@@ -191,12 +191,16 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     private Map<Class<?>, Set<SecuredEntity>> getAllSecuredEntities(MeveoUser currentUser) {
         List<SecuredEntity> allSecuredEntities = new ArrayList<>();
         User user = userService.findByUsername(currentUser.getUserName());
-        allSecuredEntities.addAll(user.getSecuredEntities());
+        allSecuredEntities.addAll(user.getSecuredEntities().stream().filter(securedEntity -> !securedEntity.isDisabled()).collect(Collectors.toList()));
 
         List<Role> rolesWithSecuredEntities = roleService.getEntityManager().createNamedQuery("Role.getRolesWithSecuredEntities", Role.class)
                 .setParameter("currentUserRoles", currentUser.getRoles())
                 .getResultList();
-        allSecuredEntities.addAll(rolesWithSecuredEntities.stream().map(Role::getSecuredEntities).flatMap(List::stream).collect(Collectors.toList()));
+        allSecuredEntities.addAll(rolesWithSecuredEntities.stream()
+        													.map(Role::getSecuredEntities)
+    														.flatMap(List::stream)
+    														.filter(securedEntity -> !securedEntity.isDisabled())
+    														.collect(Collectors.toList()));
 
 
         // group secured entites by types into Map

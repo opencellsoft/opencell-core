@@ -2,6 +2,7 @@ package org.meveo.api.dto.cpq;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -60,10 +61,10 @@ public class ProductDto extends BaseEntityDto{
 	protected List<String> discountListCodes=new ArrayList<String>();
     
    
-    /** The medias */
-    @XmlElementWrapper(name = "medias")
-    @XmlElement(name = "medias")
-    protected List<MediaDto> medias;
+	  /** The media codes. */
+    @XmlElementWrapper(name = "mediaCodes")
+    @XmlElement(name = "mediaCodes")
+    protected Set<String> mediaCodes = new HashSet<String>();
     
     
     public ProductDto() {}
@@ -87,8 +88,7 @@ public class ProductDto extends BaseEntityDto{
     	this.packageFlag = p.isPackageFlag();
     	this.discountList = p.getDiscountList().stream()
 				.map(dl -> new DiscountPlanDto(dl, null))
-				.collect(Collectors.toSet());
-    	this.medias = p.getMedias().stream().map(m -> new MediaDto(m)).collect(Collectors.toList());
+				.collect(Collectors.toSet()); 
     }
 	/**
 	 * @return the status
@@ -314,20 +314,20 @@ public class ProductDto extends BaseEntityDto{
 		this.commercialRuleCodes = commercialRuleCodes;
 	}
 
+	 
 	/**
-	 * @return the medias
+	 * @return the mediaCodes
 	 */
-	public List<MediaDto> getMedias() {
-		return medias;
+	public Set<String> getMediaCodes() {
+		return mediaCodes;
 	}
 
 	/**
-	 * @param medias the medias to set
+	 * @param mediaCodes the mediaCodes to set
 	 */
-	public void setMedias(List<MediaDto> medias) {
-		this.medias = medias;
+	public void setMediaCodes(Set<String> mediaCodes) {
+		this.mediaCodes = mediaCodes;
 	}
-
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
