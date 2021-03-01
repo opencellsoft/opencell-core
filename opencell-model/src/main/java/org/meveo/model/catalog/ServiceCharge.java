@@ -6,35 +6,37 @@ import org.meveo.model.EnableBusinessCFEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
+@MappedSuperclass
 public abstract class ServiceCharge extends EnableBusinessCFEntity {
     /**
      * Mapping between service and recurring charges
      */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<>();
+    protected List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<>();
     /**
      * Mapping between service and subscription charges
      */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<>();
+    protected List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<>();
     /**
      * Mapping between service and termination charges
      */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<>();
+    protected List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<>();
     /**
      * Mapping between service and usage charges
      */
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<>();
+    protected List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<>();
 
     public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
         ServiceChargeTemplateRecurring result = null;
