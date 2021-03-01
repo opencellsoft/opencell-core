@@ -127,6 +127,8 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 					medias.add(media);
 				}
 				attribute.setMedias(medias);
+			}else {
+				attribute.getMedias().clear();
 			}
 		}
 	
@@ -143,6 +145,11 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 				assignedAttributes.add(attr);
 			}
 			attribute.getAssignedAttributes().addAll(assignedAttributes);
+		}else {
+			for(Attribute att : attribute.getAssignedAttributes()) {
+				att.setParentAttribute(null);
+			}
+			
 		}
 	}
 	

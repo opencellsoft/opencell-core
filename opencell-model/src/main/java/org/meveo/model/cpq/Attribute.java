@@ -125,7 +125,7 @@ public class Attribute extends EnableBusinessCFEntity{
     @OrderBy("id")
     private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
     
-    @OneToMany(mappedBy = "parentAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parentAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
     @OrderBy("id")
     private List<Attribute> assignedAttributes = new ArrayList<>();
     
