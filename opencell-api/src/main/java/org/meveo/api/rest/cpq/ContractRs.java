@@ -32,6 +32,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.model.cpq.enums.ProductStatusEnum;
 
 
 /**
@@ -129,6 +130,21 @@ public interface ContractRs extends IBaseRs {
     })
 	Response findByCode(@Parameter(description = "retrieving a Contract with its code") @QueryParam("contractAccountLevel") ContractAccountLevel contractAccountLevel,
 								@Parameter(description = "retrieving a Contract with its code") @QueryParam("accountCode") String accountCode);
+
+	@PUT
+	@Path("/{contractCode}/status/{status}")
+	@Operation(summary = "This endpoint allows update the contract status",
+			description ="update contract status",
+			tags = { "Contract" },
+			responses = {
+					@ApiResponse(responseCode="200", description = "The Contract successfully updated",
+							content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+					@ApiResponse(responseCode = "412", description = "One of the parameters is missing",
+							content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
+			})
+	Response updateStatus(@Parameter(description = "contract code to update status") @PathParam("contractCode")String contractCode, @Parameter(description = "target contract status") @PathParam("status") ProductStatusEnum status);
+
+
 	@POST
 	@Path("/list")
 	@Operation(summary = "This endpoint allows to find list of contract with filters and paging",

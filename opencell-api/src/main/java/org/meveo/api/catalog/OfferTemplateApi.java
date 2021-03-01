@@ -263,7 +263,10 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-
+        processMedias(postData, offerTemplate);
+        processAttributes(postData, offerTemplate);
+        processTags(postData, offerTemplate);
+        
         offerTemplate = offerTemplateService.update(offerTemplate);
 
         return offerTemplate;
@@ -446,6 +449,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     
     private void processAttributes(OfferTemplateDto postData, OfferTemplate offerTemplate) {
         List<AttributeDTO> attributes = postData.getAttributes();
+        offerTemplate.getAttributes().clear();
         if(attributes != null && !attributes.isEmpty()){
             offerTemplate.setAttributes(attributes
                     .stream()
@@ -456,6 +460,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
  
     private void processTags(OfferTemplateDto postData, OfferTemplate offerTemplate) {
 		Set<String> tagCodes = postData.getTagCodes(); 
+		offerTemplate.getTags().clear();
 		if(tagCodes != null && !tagCodes.isEmpty()){
 			List<Tag> tags=new ArrayList<Tag>();
 			for(String code:tagCodes) {
@@ -471,6 +476,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     
     private void processMedias(OfferTemplateDto postData, OfferTemplate offerTemplate) {
 		Set<String> mediaCodes = postData.getMediaCodes(); 
+		offerTemplate.getMedias().clear();
 		if(mediaCodes != null && !mediaCodes.isEmpty()){
 			List<Media> medias=new ArrayList<Media>();
 			for(String code:mediaCodes) {
