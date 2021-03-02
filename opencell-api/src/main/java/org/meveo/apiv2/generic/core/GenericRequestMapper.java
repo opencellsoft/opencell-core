@@ -37,20 +37,25 @@ public class GenericRequestMapper {
     private PaginationConfiguration getPaginationConfiguration(GenericPagingAndFiltering genericPagingAndFiltering) {
         return new PaginationConfiguration(genericPagingAndFiltering.getOffset().intValue(), genericPagingAndFiltering.getLimitOrDefault(GenericHelper.getDefaultLimit()).intValue(),
                 evaluateFilters(genericPagingAndFiltering.getFilters(), entityClass), genericPagingAndFiltering.getFullTextFilter(),
-                computeFetchFields(genericPagingAndFiltering.getSortBy()), genericPagingAndFiltering.getSortBy(),
+                computeFetchFields(genericPagingAndFiltering), genericPagingAndFiltering.getSortBy(),
                 org.primefaces.model.SortOrder.valueOf(genericPagingAndFiltering.getSortOrder()));
     }
-    private List<String> computeFetchFields(String sortBy) {
-        return Stream.of(sortBy.split(","))
+    private List<String> computeFetchFields(GenericPagingAndFiltering genericPagingAndFiltering) {
+        List<String> sortByFetchList = Stream.of(genericPagingAndFiltering.getSortBy().split(","))
                 .filter(s -> !s.isBlank() && s.contains("."))
                 .map(s -> getFetchList(s))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
+        for(String filter : genericPagingAndFiltering.getFilters().keySet()) {
+        	filter = filter.replaceAll(".* ", "");
+        	sortByFetchList.addAll(getFetchList(filter));
+        }
+		return sortByFetchList;
     }
     
-   private List<String> getFetchList(String orderBy){
+   private List<String> getFetchList(String fetchProperty){
     	List<String> result = new ArrayList<String>();
-    	final String[] split = orderBy.split("\\.");
+    	final String[] split = fetchProperty.split("\\.");
     	String current="";
     	for(String str:split) {
     		if(!current.isEmpty()) {
