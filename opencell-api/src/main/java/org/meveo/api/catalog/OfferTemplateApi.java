@@ -263,10 +263,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-        processMedias(postData, offerTemplate);
-        processAttributes(postData, offerTemplate);
-        processTags(postData, offerTemplate);
-        
         offerTemplate = offerTemplateService.update(offerTemplate);
 
         return offerTemplate;
@@ -439,8 +435,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     private void processAllowedDiscountPlans(OfferTemplateDto postData, OfferTemplate offerTemplate) {
         List<DiscountPlanDto> allowedDiscountPlans = postData.getAllowedDiscountPlans();
+        offerTemplate.getAllowedDiscountPlans().clear();
         if(allowedDiscountPlans != null && !allowedDiscountPlans.isEmpty()){
-            offerTemplate.setAllowedDiscountPlans(allowedDiscountPlans
+            offerTemplate.getAllowedDiscountPlans().addAll(allowedDiscountPlans
                     .stream()
                     .map(discountPlanDto -> discountPlanService.findByCode(discountPlanDto.getCode()))
                     .collect(Collectors.toList()));
@@ -539,8 +536,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             OfferComponent offerComponent = null;
             boolean hasOfferComponentDtos = offerProductDtos != null && !offerProductDtos.isEmpty();
             var productCodes = new HashSet<String>();
+        	offerTemplate.getOfferComponents().clear();
             if(hasOfferComponentDtos) {
-            	offerTemplate.getOfferComponents().clear();
 	            for (OfferProductsDto offerProductDto : offerProductDtos) {
 	            	if(offerProductDto.getProduct() == null || !productCodes.add(offerProductDto.getProduct().getCode())) continue;
 	            	offerComponent = getOfferComponentFromDto(offerProductDto);
