@@ -33,6 +33,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * This class is used to construct the HashMap for URL Redirection at deployment
+ *
+ * @author Thang Nguyen
+ */
+
 @ApplicationPath(GenericOpencellRestfulAPIv1.API_VERSION)
 public class GenericOpencellRestfulAPIv1 extends Application {
     public static List<Map<String,String>> VERSION_INFO = new ArrayList<Map<String, String>>();
@@ -80,7 +86,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                 .collect(Collectors.toSet());
         if(GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")){
             resources.add(GenericApiLoggingFilter.class);
-            log.info("generic api requests logging is enabled, to disable logging for generic api request, put {} to false", GENERIC_API_REQUEST_LOGGING_CONFIG_KEY);
+            log.info("api requests logging is enabled, to disable logging for api request, put {} to false", GENERIC_API_REQUEST_LOGGING_CONFIG_KEY);
         }
         log.info("Opencell OpenAPI definition is accessible in /api/rest/v2/openapi.{type:json|yaml}");
         return resources;

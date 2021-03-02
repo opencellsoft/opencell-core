@@ -2,9 +2,6 @@ package org.meveo.apiv2.generic;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
@@ -12,7 +9,6 @@ import org.meveo.api.dto.billing.ActivateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
-import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
 import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.util.Inflector;
@@ -34,7 +30,7 @@ import java.util.regex.Pattern;
  * @author Thang Nguyen
  */
 @RequestScoped
-@Interceptors({ WsRestApiInterceptor.class })
+@Interceptors({ AuthenticationFilter.class })
 public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
     private static final String METHOD_GET_ALL = "/list";
@@ -61,8 +57,6 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
     private static final String API_REST = "api/rest";
 
-    ResteasyClient httpClient;
-
     private List<PathSegment> segmentsOfPathAPIv2;
     private String entityCode;
     private String pathIBaseRS;
@@ -73,11 +67,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     @Context
     private UriInfo uriInfo;
 
-    public GenericResourceAPIv1Impl(){
-        BasicAuthentication basicAuthentication = new BasicAuthentication("opencell.admin", "opencell.admin");
-        httpClient = new ResteasyClientBuilder().build();
-        httpClient.register(basicAuthentication);
-    }
+    @Context
+    private HttpHeaders headers;
 
     /*
      * This request is used to retrieve all entities, or also a particular entity
@@ -271,9 +262,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 ActivateSubscriptionRequestDto aDto = new ActivateSubscriptionRequestDto();
                 aDto.setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
 
-//                return Response.temporaryRedirect( redirectURI )
-//                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
-                return httpClient.target( redirectURI ).request()
+                return AuthenticationFilter.httpClient.target( redirectURI ).request()
                         .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
             }
             // Handle the special endpoint: suspension of a subscription
@@ -283,9 +272,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 OperationSubscriptionRequestDto aDto = new OperationSubscriptionRequestDto();
                 aDto.setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
 
-//                return Response.temporaryRedirect( redirectURI )
-//                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
-                return httpClient.target( redirectURI ).request()
+                return AuthenticationFilter.httpClient.target( redirectURI ).request()
                         .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
             }
             // Handle the special endpoint: termination of a subscription
@@ -295,9 +282,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 Object aDto = new ObjectMapper().readValue( jsonDto, TerminateSubscriptionRequestDto.class );
                 ((TerminateSubscriptionRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
 
-//                return Response.temporaryRedirect( redirectURI )
-//                        .entity( Entity.entity(aDto, MediaType.APPLICATION_JSON) ).build();
-                return httpClient.target( redirectURI ).request()
+                return AuthenticationFilter.httpClient.target( redirectURI ).request()
                         .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
             }
             // Handle the special endpoint: update existing services of a subscription
@@ -307,9 +292,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 Object aDto = new ObjectMapper().readValue( jsonDto, UpdateServicesRequestDto.class );
                 ((UpdateServicesRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
 
-//                return Response.temporaryRedirect( redirectURI )
-//                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
-                return httpClient.target( redirectURI ).request()
+                return AuthenticationFilter.httpClient.target( redirectURI ).request()
                         .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
             }
         }
@@ -334,9 +317,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_UPDATE );
 
-            String updatedEntity = httpClient.target( redirectURI ).request().put( Entity.entity( aDto, MediaType.APPLICATION_JSON ), String.class );
-
-            return Response.ok( updatedEntity ).build();
+            return AuthenticationFilter.httpClient.target( redirectURI ).request()
+                    .put( Entity.entity( aDto, MediaType.APPLICATION_JSON ) );
         }
 
         return Response.status(Response.Status.NOT_FOUND).build();
@@ -363,6 +345,6 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
     @PreDestroy
     public void destroy() {
-        this.httpClient.close();
+        AuthenticationFilter.httpClient.close();
     }
 }
