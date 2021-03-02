@@ -2594,6 +2594,8 @@ public class ValidateBRScript extends Script {
         </insert>
         <insert tableName="billing_invoice_sub_cat">
         	<column name="id" value='-3'/>
+        	<column name="invoice_category_id" value='-3'/>
+        	<column name="version" valueNumeric="0" />
             <column name="code" value="ISCAT_DEFAULT"/>
             <column name="description_i18n" value='{"FRA":"Sous-rubrique facture par défaut","ENG":"Default invoice sub-category"}'/>
             <column name="created" valueDate="now()" />
@@ -2603,6 +2605,7 @@ public class ValidateBRScript extends Script {
 
         <insert tableName="billing_accounting_article">
         	<column name="id" value='-1'/>
+        	<column name="version" valueNumeric="0" />
         	<column name="code" value="ADV-STD"/>
         	<column name="tax_class_id" value="-1"/>
             <column name="invoice_sub_category_id" value="-3"/>
@@ -2614,6 +2617,7 @@ public class ValidateBRScript extends Script {
         </insert>
         <insert tableName="billing_accounting_article">
         	<column name="id" value='-2'/>
+        	<column name="version" valueNumeric="0" />
         	<column name="code" value="DISC-STD"/>
             <column name="tax_class_id" value="-5"/>
             <column name="invoice_sub_category_id" value="-3"/>
@@ -2625,6 +2629,7 @@ public class ValidateBRScript extends Script {
         </insert>
         <insert tableName="billing_accounting_article">
         	<column name="id" value='-3'/>
+        	<column name="version" valueNumeric="0" />
         	<column name="code" value="ART-STD"/>
             <column name="tax_class_id" value="-5"/>
             <column name="invoice_sub_category_id" value="-3"/>
@@ -2636,6 +2641,7 @@ public class ValidateBRScript extends Script {
         </insert>
         <insert tableName="billing_accounting_article">
         	<column name="id" value='-4'/>
+        	<column name="version" valueNumeric="0" />
         	<column name="code" value="MIN-STD"/>
             <column name="tax_class_id" value="-5"/>
             <column name="invoice_sub_category_id" value="-3"/>

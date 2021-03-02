@@ -17,31 +17,31 @@
         </h:form>
         
         <hftl:entityPopup id="genericAccountingPopup" header="#{messages['defaultArticleConfiguration.genericAccounting']}" updateField=":providerFormId:tabView:genericAccountingId :providerFormId:tabView:genericAccountingId_text"
-	            selection="#{accountingArticleBean.selectedAccountingArticle}" backingBean="#{accountingArticleBean}"
+	            selection="#{providerBean.entity.invoiceConfiguration.genericAccountingArticle}" backingBean="#{accountingArticleBean}"
 	            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
 	            column2Label="#{messages['businessEntity.description']}" column2="description">
 	    </hftl:entityPopup>
 	    
 	    <hftl:entityPopup id="discountAccountingPopup" header="#{messages['defaultArticleConfiguration.discountAccounting']}" updateField=":providerFormId:tabView:discountAccountingId :providerFormId:tabView:discountAccountingId_text"
-	            selection="#{accountingArticleBean.selectedAccountingArticle}" backingBean="#{accountingArticleBean}"
+	            selection="#{providerBean.entity.invoiceConfiguration.discountAccountingArticle}" backingBean="#{accountingArticleBean}"
 	            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
 	            column2Label="#{messages['businessEntity.description']}" column2="description">
 	    </hftl:entityPopup>
 	    
 	    <hftl:entityPopup id="advancedPaymentPopup" header="#{messages['defaultArticleConfiguration.advancedPayment']}" updateField=":providerFormId:tabView:advancedPaymentId :providerFormId:tabView:advancedPaymentId_text"
-	            selection="#{accountingArticleBean.selectedAccountingArticle}" backingBean="#{accountingArticleBean}"
+	            selection="#{providerBean.entity.invoiceConfiguration.advancedPaymentAccountingArticle}" backingBean="#{accountingArticleBean}"
 	            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
 	            column2Label="#{messages['businessEntity.description']}" column2="description">
 	    </hftl:entityPopup>
 	    
 	    <hftl:entityPopup id="invoiceMinimumPopup" header="#{messages['defaultArticleConfiguration.invoiceMinimum']}" updateField=":providerFormId:tabView:invoiceMinimumId :providerFormId:tabView:invoiceMinimumId_text"
-	            selection="#{accountingArticleBean.selectedAccountingArticle}" backingBean="#{accountingArticleBean}"
+	            selection="#{providerBean.entity.invoiceConfiguration.invoiceMinimumAccountingArticle}" backingBean="#{accountingArticleBean}"
 	            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
 	            column2Label="#{messages['businessEntity.description']}" column2="description">
 	    </hftl:entityPopup>
 	    
 	    <hftl:entityPopup id="invoiceSubCategoryPopup" header="#{messages['defaultArticleConfiguration.invoiceSubCategory']}" updateField=":providerFormId:tabView:invoiceSubCategoryId :providerFormId:tabView:invoiceSubCategoryId_text"
-	            selection="#{invoiceSubCategoryBean.selectedInvoiceSubCategory}" backingBean="#{invoiceSubCategoryBean}"
+	            selection="#{providerBean.entity.invoiceConfiguration.invoiceSubCategory}" backingBean="#{invoiceSubCategoryBean}"
 	            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
 	            column2Label="#{messages['businessEntity.description']}" column2="description">
 	    </hftl:entityPopup>
@@ -155,25 +155,25 @@
                     </p:fieldset>
                     <p:fieldset legend="#{messages['defaultArticleConfiguration.title']}" styleClass="clearLeft">
                     
-                    <hftl:formField id="invoiceSubCategoryId" label="#{messages['defaultArticleConfiguration.invoiceSubCategory']}" entity="#{invoiceSubCategoryBean.selectedInvoiceSubCategory}"
-					                popup="true" required="false" popupId="invoiceSubCategoryPopup" field="code">
-					</hftl:formField>
-                    
-                    <hftl:formField id="genericAccountingId" label="#{messages['defaultArticleConfiguration.genericAccounting']}" entity="#{accountingArticleBean.selectedAccountingArticle}"
-					                popup="true" required="false" popupId="genericAccountingPopup" field="code">
-					</hftl:formField>
-					
-					<hftl:formField id="discountAccountingId" label="#{messages['defaultArticleConfiguration.discountAccounting']}" entity="#{accountingArticleBean.selectedAccountingArticle}"
-					                popup="true" required="false" popupId="discountAccountingPopup" field="code">
-					</hftl:formField>
-					
-					<hftl:formField id="advancedPaymentId" label="#{messages['defaultArticleConfiguration.advancedPayment']}" entity="#{accountingArticleBean.selectedAccountingArticle}"
-					                popup="true" required="false" popupId="advancedPaymentPopup" field="code">
-					</hftl:formField>
-					
-					<hftl:formField id="invoiceMinimumId" label="#{messages['defaultArticleConfiguration.invoiceMinimum']}" entity="#{accountingArticleBean.selectedAccountingArticle}"
-					                popup="true" required="false" popupId="invoiceMinimumPopup" field="code">
-					</hftl:formField>
+	                    <hftl:formField id="invoiceSubCategoryId" label="#{messages['defaultArticleConfiguration.invoiceSubCategory']}" 
+						                popup="true" popupId="invoiceSubCategoryPopup" valueLabelField="code" field="invoiceConfiguration" childField="invoiceSubCategory">
+						</hftl:formField>
+	                    
+	                    <hftl:formField id="genericAccountingId" label="#{messages['defaultArticleConfiguration.genericAccounting']}" 
+						                popup="true" required="false" popupId="genericAccountingPopup" valueLabelField="code" field="invoiceConfiguration" childField="genericAccountingArticle">
+						</hftl:formField>
+						
+						<hftl:formField id="discountAccountingId" label="#{messages['defaultArticleConfiguration.discountAccounting']}" 
+						                popup="true" required="false" popupId="discountAccountingPopup" valueLabelField="code" field="invoiceConfiguration" childField="discountAccountingArticle">
+						</hftl:formField>
+						
+						<hftl:formField id="advancedPaymentId" label="#{messages['defaultArticleConfiguration.advancedPayment']}" 
+						                popup="true" required="false" popupId="advancedPaymentPopup" valueLabelField="code" field="invoiceConfiguration" childField="advancedPaymentAccountingArticle">
+						</hftl:formField>
+						
+						<hftl:formField id="invoiceMinimumId" label="#{messages['defaultArticleConfiguration.invoiceMinimum']}" 
+						                popup="true" required="false" popupId="invoiceMinimumPopup" valueLabelField="code" field="invoiceConfiguration" childField="invoiceMinimumAccountingArticle">
+						</hftl:formField>
 					</p:fieldset>
 					
                 </p:tab>

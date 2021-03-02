@@ -62,7 +62,7 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
     @Param
     private Long invoiceCategoryId;
     
-    private InvoiceSubCategory selectedInvoiceSubCategory;
+    
 
 
 	/**
@@ -70,7 +70,7 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
      */
     public InvoiceSubCategoryBean() {
         super(InvoiceSubCategory.class);
-        selectedInvoiceSubCategory = new InvoiceSubCategory();
+        
     }
 
     /**
@@ -113,12 +113,4 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
         return "code";
     }
     
-
-    public InvoiceSubCategory getSelectedInvoiceSubCategory() {
-		return selectedInvoiceSubCategory;
-	}
-
-	public void setSelectedInvoiceSubCategory(InvoiceSubCategory selectedInvoiceSubCategory) {
-		this.selectedInvoiceSubCategory = selectedInvoiceSubCategory;
-	}
 }

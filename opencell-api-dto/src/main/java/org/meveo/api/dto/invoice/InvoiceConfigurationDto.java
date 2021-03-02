@@ -79,8 +79,25 @@ public class InvoiceConfigurationDto implements Serializable {
     
     /** display wallet operations. */
     private Boolean displayWalletOperations;
+    
+    /** Default invoice sub-category */
+    private Long invoice_subcategory_id;
+    
+    /** Default generic accounting article */
+    private Long generic_article_id;
+    
+    /** Default discount accounting article */
+    private Long discount_article_id;
+    
+    /** Default advanced payment accounting article */
+    private Long advanced_payment_article_id;
+    
+    /** Default invoice minimum accounting article */
+    private Long invoice_minimum_article_id;
+    
+    
 
-    /**
+	/**
      * Instantiates a new invoice configuration dto.
      */
     public InvoiceConfigurationDto() {
@@ -104,6 +121,11 @@ public class InvoiceConfigurationDto implements Serializable {
         displayOrders = invoiceConfiguration.isDisplayOrders();
         currentInvoiceNb = invoiceConfiguration.getCurrentInvoiceNb();
         displayWalletOperations=invoiceConfiguration.isDisplayWalletOperations();
+        invoice_subcategory_id = invoiceConfiguration.getInvoiceSubCategory().getId();
+        generic_article_id = invoiceConfiguration.getGenericAccountingArticle().getId();
+        discount_article_id = invoiceConfiguration.getDiscountAccountingArticle().getId();
+        advanced_payment_article_id = invoiceConfiguration.getAdvancedPaymentAccountingArticle().getId();
+        invoice_minimum_article_id = invoiceConfiguration.getInvoiceMinimumAccountingArticle().getId();
     }
 
     /**
@@ -353,4 +375,46 @@ public class InvoiceConfigurationDto implements Serializable {
                 + ", displayDetail=" + displayDetail + ", displayChargesPeriods=" + displayChargesPeriods + ", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice
                 + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders=" + displayOrders + ",currentInvoiceNb="+currentInvoiceNb+ ",displayWalletOperations="+displayWalletOperations+"]";
     }
+    
+
+
+    public Long getInvoice_subcategory_id() {
+		return invoice_subcategory_id;
+	}
+
+	public void setInvoice_subcategory_id(Long invoice_subcategory_id) {
+		this.invoice_subcategory_id = invoice_subcategory_id;
+	}
+
+	public Long getGeneric_article_id() {
+		return generic_article_id;
+	}
+
+	public void setGeneric_article_id(Long generic_article_id) {
+		this.generic_article_id = generic_article_id;
+	}
+
+	public Long getDiscount_article_id() {
+		return discount_article_id;
+	}
+
+	public void setDiscount_article_id(Long discount_article_id) {
+		this.discount_article_id = discount_article_id;
+	}
+
+	public Long getAdvanced_payment_article_id() {
+		return advanced_payment_article_id;
+	}
+
+	public void setAdvanced_payment_article_id(Long advanced_payment_article_id) {
+		this.advanced_payment_article_id = advanced_payment_article_id;
+	}
+
+	public Long getInvoice_minimum_article_id() {
+		return invoice_minimum_article_id;
+	}
+
+	public void setInvoice_minimum_article_id(Long invoice_minimum_article_id) {
+		this.invoice_minimum_article_id = invoice_minimum_article_id;
+	}
 }

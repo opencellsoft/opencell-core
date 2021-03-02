@@ -58,6 +58,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Country;
@@ -87,6 +88,7 @@ import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -157,6 +159,9 @@ public class ProviderApi extends BaseApi {
 
     @Inject
     private TitleService titleService;
+    
+    @Inject
+    private AccountingArticleService accountingArticleService;
 
     public ProviderDto find() throws MeveoApiException {
 
@@ -544,6 +549,41 @@ public class ProviderApi extends BaseApi {
             }
             if (invoiceConfigurationDto.getDisplayWalletOperations() != null) {
                 invoiceConfiguration.setDisplayWalletOperations(invoiceConfigurationDto.getDisplayWalletOperations());
+            }
+            if (invoiceConfigurationDto.getInvoice_subcategory_id() != null) {
+            	InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(invoiceConfigurationDto.getInvoice_subcategory_id());
+            	if (invoiceSubCategory == null) {
+                    throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceConfiguration().getInvoice_subcategory_id());
+                }
+                invoiceConfiguration.setInvoiceSubCategory(invoiceSubCategory);
+            }
+            if (invoiceConfigurationDto.getGeneric_article_id() != null) {
+            	AccountingArticle genericArticle = accountingArticleService.findById(invoiceConfigurationDto.getGeneric_article_id());
+            	if(genericArticle == null) {
+            		throw new EntityDoesNotExistsException(AccountingArticle.class, postData.getInvoiceConfiguration().getGeneric_article_id());
+            	}
+                invoiceConfiguration.setGenericAccountingArticle(genericArticle);
+            }
+            if (invoiceConfigurationDto.getAdvanced_payment_article_id() != null) {
+            	AccountingArticle advancedPaymentArticle = accountingArticleService.findById(invoiceConfigurationDto.getAdvanced_payment_article_id());
+            	if(advancedPaymentArticle == null) {
+            		throw new EntityDoesNotExistsException(AccountingArticle.class, postData.getInvoiceConfiguration().getAdvanced_payment_article_id());
+            	}
+                invoiceConfiguration.setAdvancedPaymentAccountingArticle(advancedPaymentArticle);
+            }
+            if (invoiceConfigurationDto.getInvoice_minimum_article_id() != null) {
+            	AccountingArticle invoiceMinimumArticle = accountingArticleService.findById(invoiceConfigurationDto.getInvoice_minimum_article_id());
+            	if(invoiceMinimumArticle == null) {
+            		throw new EntityDoesNotExistsException(AccountingArticle.class, postData.getInvoiceConfiguration().getInvoice_minimum_article_id());
+            	}
+                invoiceConfiguration.setInvoiceMinimumAccountingArticle(invoiceMinimumArticle);
+            }
+            if (invoiceConfigurationDto.getDiscount_article_id() != null) {
+            	AccountingArticle discountArticle = accountingArticleService.findById(invoiceConfigurationDto.getDiscount_article_id());
+            	if(discountArticle == null) {
+            		throw new EntityDoesNotExistsException(AccountingArticle.class, postData.getInvoiceConfiguration().getDiscount_article_id());
+            	}
+                invoiceConfiguration.setDiscountAccountingArticle(discountArticle);
             }
         }
         return provider;

@@ -21,11 +21,13 @@ package org.meveo.model.billing;
 import java.io.Serializable;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -129,35 +131,35 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     /**
      * Default invoice subcategory
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "invoice_subcategory_id")
     private InvoiceSubCategory invoiceSubCategory;
 
 	/**
      * Default generic accounting article
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "generic_article_id")
     private AccountingArticle genericAccountingArticle;
     
     /**
      * Default discount accounting article
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "discount_article_id")
     private AccountingArticle discountAccountingArticle;
     
     /**
      * Default advanced payment accounting article
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "advanced_payment_article_id")
     private AccountingArticle advancedPaymentAccountingArticle;
     
     /**
      * Default advanced payment accounting article
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "invoice_minimum_article_id")
     private AccountingArticle invoiceMinimumAccountingArticle;
 
