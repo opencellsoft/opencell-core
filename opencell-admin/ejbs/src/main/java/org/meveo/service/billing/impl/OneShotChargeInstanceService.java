@@ -47,9 +47,11 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.service.base.BusinessService;
@@ -108,6 +110,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * Instantiate subscription or termination charge
      *
      * @param serviceInstance Service instance
+     * @param serviceCharge
      * @param serviceChargeTemplate Service Charge template
      * @param amoutWithoutTax Amount without tax
      * @param amoutWithTax Amount with tax
@@ -117,8 +120,8 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @throws BusinessException General exception
      */
     @SuppressWarnings("rawtypes")
-    public OneShotChargeInstance oneShotChargeInstanciation(ServiceInstance serviceInstance, ServiceChargeTemplate serviceChargeTemplate, BigDecimal amoutWithoutTax, BigDecimal amoutWithTax, boolean isSubscriptionCharge,
-            boolean isVirtual) throws BusinessException {
+    public OneShotChargeInstance oneShotChargeInstanciation(ServiceInstance serviceInstance, ServiceCharge serviceCharge, ServiceChargeTemplate serviceChargeTemplate, BigDecimal amoutWithoutTax, BigDecimal amoutWithTax, boolean isSubscriptionCharge,
+                                                            boolean isVirtual) throws BusinessException {
 
         OneShotChargeTemplate chargeTemplate = (OneShotChargeTemplate) serviceChargeTemplate.getChargeTemplate();
 
@@ -136,11 +139,11 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
         // FIXME : this code should not be here
         if (isSubscriptionCharge) {
-            ServiceChargeTemplateSubscription recChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateSubscriptionByChargeCode(chargeTemplate.getCode());
+            ServiceChargeTemplateSubscription recChTmplServ = serviceCharge.getServiceChargeTemplateSubscriptionByChargeCode(chargeTemplate.getCode());
             walletTemplates = recChTmplServ.getWalletTemplates();
 
         } else {
-            ServiceChargeTemplateTermination recChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateTerminationByChargeCode(chargeTemplate.getCode());
+            ServiceChargeTemplateTermination recChTmplServ = serviceCharge.getServiceChargeTemplateTerminationByChargeCode(chargeTemplate.getCode());
             walletTemplates = recChTmplServ.getWalletTemplates();
         }
         // By default we set the charge instance as being postpaid
