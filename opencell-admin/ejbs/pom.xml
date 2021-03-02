@@ -663,6 +663,12 @@
 		</dependency>
 
         <dependency>
+            <groupId>com.worldline.sips</groupId>
+            <artifactId>payment-sdk</artifactId>
+            <version>${version.sips-payment-sdk}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-admin-client</artifactId>
             <version>${version.keycloak}</version>

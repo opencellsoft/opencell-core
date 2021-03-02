@@ -27,6 +27,7 @@ import org.apache.http.client.utils.DateUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
+import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -758,7 +759,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     }
 
 	@Override
-	public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
+	public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
 		try {
 			String returnUrl = hostedCheckoutInput.getReturnUrl();
 			Long id = hostedCheckoutInput.getCustomerAccountId();
@@ -805,8 +806,8 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			CreateHostedCheckoutResponse response = client.merchant(paymentGateway.getMarchandId()).hostedcheckouts().create(body);			
 			log.info("RESPONSE:"+marshaller.marshal(response));
 			redirectionUrl = paramBean().getProperty("ingenico.hostedCheckoutUrl.prefix", "https://payment.") + response.getPartialRedirectUrl();
-			return redirectionUrl;
 
+			return new PaymentHostedCheckoutResponseDto(redirectionUrl, null, null);
 		} catch (Exception e) {
 			log.error("Error on getHostedCheckoutUrl:",e);
 			throw new BusinessException(e.getMessage());

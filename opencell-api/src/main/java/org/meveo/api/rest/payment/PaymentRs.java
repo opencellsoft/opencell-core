@@ -209,6 +209,19 @@ public interface PaymentRs extends IBaseRs {
     @Path("/paymentMethod/list")
     public PaymentMethodTokensDto listPaymentMethodGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+    
+    
+    /**
+     * List Payment Methods matching a customer account
+     * 
+     * @param customerAccountCode customer account code.
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @return An payment method list
+     */
+    @GET
+    @Path("/paymentMethod/findByCustomerAccount")
+    public PaymentMethodTokensDto findPaymentMethodByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit);
 
     /**
      * List paymentMethods matching a given criteria
@@ -554,16 +567,30 @@ public interface PaymentRs extends IBaseRs {
      * @param skipAuthentication the skipAuthentication boolean
      * @param gatewayPaymentName the gatewayPayment Name
      * @param variant the variant Look
+     * @param automaticReturnUrl the automatic return URL (currently only for ATOS Wallet)
+     * @param allowedActions the allowed actions (currently only for ATOS Wallet)
+     * @param returnContext the return context (currently only for ATOS Wallet)
+     * @param advancedOptions the advanced options (currently only for ATOS Wallet)
      * @return the PaymentHostedCheckoutResponseDto
      */
     @GET
     @Path("/paymentGateway/getHostedCheckoutUrl")
-    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(@QueryParam("ca") String customerAccountCode, @QueryParam("returnUrl") String returnUrl,
-            @DefaultValue("fr_FR") @QueryParam("locale") String locale, @DefaultValue("100") @QueryParam("amount") String amount,
-            @DefaultValue("EUR") @QueryParam("currencyCode") String currencyCode, @DefaultValue("FINAL_AUTHORIZATION") @QueryParam("authorizationMode") String authorizationMode,
-            @DefaultValue("fr") @QueryParam("countryCode") String countryCode, @DefaultValue("false") @QueryParam("skipAuthentication") Boolean skipAuthentication,
-            @DefaultValue("INGENICO_GC") @QueryParam("gatewayPaymentName") String gatewayPaymentName, @DefaultValue("101") @QueryParam("variant") String variant,
-            @QueryParam("seller") String sellerCode);
+    PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(@QueryParam("ca") String customerAccountCode,
+                                                                 @QueryParam("returnUrl") String returnUrl,
+                                                                 @DefaultValue("fr_FR") @QueryParam("locale") String locale,
+                                                                 @DefaultValue("100") @QueryParam("amount") String amount,
+                                                                 @DefaultValue("EUR") @QueryParam("currencyCode") String currencyCode,
+                                                                 @DefaultValue("FINAL_AUTHORIZATION") @QueryParam("authorizationMode") String authorizationMode,
+                                                                 @DefaultValue("fr") @QueryParam("countryCode") String countryCode,
+                                                                 @DefaultValue("false") @QueryParam("skipAuthentication") Boolean skipAuthentication,
+                                                                 @DefaultValue("INGENICO_GC") @QueryParam("gatewayPaymentName") String gatewayPaymentName,
+                                                                 @DefaultValue("101") @QueryParam("variant") String variant,
+                                                                 @QueryParam("seller") String sellerCode,
+                                                                 @QueryParam("automaticReturnUrl") String automaticReturnUrl,
+                                                                 @QueryParam("allowedActions") String allowedActions,
+                                                                 @QueryParam("returnContext") String returnContext,
+                                                                 @DefaultValue("") @QueryParam("advancedOptions") String advancedOptions
+    );
 
     /************************************************************************************************/
     /****                           Payment Schedules                                            ****/

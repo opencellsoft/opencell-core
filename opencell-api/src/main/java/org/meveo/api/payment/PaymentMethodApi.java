@@ -223,6 +223,36 @@ public class PaymentMethodApi extends BaseApi {
         }
         return result;
     }
+    
+    /**
+     * List By Customer Account Code.
+     * 
+     * @param customerAccountCode customerAccountCode
+     * @return the payment method tokens dto
+     * @throws MeveoApiException the meveo api exception
+     */
+    public PaymentMethodTokensDto listByCustomerAccountCode(String customerAccountCode, Integer firstRow, Integer numberOfRows) throws MeveoApiException {
+        
+        if (StringUtils.isBlank(customerAccountCode)) {
+            missingParameters.add("customerAccountCode");
+            handleMissingParameters();
+        }
+        
+        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
+        if (customerAccount == null) {
+            throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
+        }
+
+        PaymentMethodTokensDto result = new PaymentMethodTokensDto();
+        List<PaymentMethod> paymentMethods = paymentMethodService.listByCustomerAccount(customerAccount, firstRow, numberOfRows);
+        if (paymentMethods != null) {
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                result.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
+            }
+        }
+
+        return result;
+    }
 
     public PaymentMethodTokensDto listGet(PagingAndFiltering pagingAndFiltering) {
         PaymentMethodTokensDto result = new PaymentMethodTokensDto();
@@ -407,7 +437,7 @@ public class PaymentMethodApi extends BaseApi {
         }
     }
 
-    public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException {
+    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException {
         return paymentMethodService.getHostedCheckoutUrl(hostedCheckoutInput);
     }
 
