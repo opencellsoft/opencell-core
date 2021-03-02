@@ -3731,4 +3731,10 @@ END $$;]]>
                                  referencedColumnNames="id"/>
     </changeSet>
 
+    <changeSet author="NabilOUACHI" id="#20210302">
+        <addColumn tableName="com_contact">
+            <column name="is_natural_person" type="${type.boolean}"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

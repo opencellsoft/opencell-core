@@ -193,6 +193,10 @@ public class Contact extends AccountEntity implements ISearchable {
     @OneToMany( mappedBy = "contact")
     private List<CustomerContact> customers = new ArrayList<>();
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_natural_person")
+    private Boolean isNaturalPerson;
+
     public Contact() {
         accountType = ACCOUNT_TYPE;
     }
@@ -357,5 +361,13 @@ public class Contact extends AccountEntity implements ISearchable {
         CustomerContact customerContact = new CustomerContact(this, customer, role);
         this.customers.add(customerContact);
         customer.getContacts().add(customerContact);
+    }
+
+    public Boolean getNaturalPerson() {
+        return isNaturalPerson;
+    }
+
+    public void setNaturalPerson(Boolean naturalPerson) {
+        isNaturalPerson = naturalPerson;
     }
 }

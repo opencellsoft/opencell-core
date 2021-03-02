@@ -240,6 +240,8 @@ public class ContactApi extends AccountEntityApi {
             contact.setTags(postData.getTags());
         }
 
+        contact.setNaturalPerson(postData.getNaturalPerson());
+
         if (isNew || (contact.getCompany() != null && contact.getCompany().equals(postData.getCompany()))) {
             contact.setCompany(postData.getCompany());
             Customer customer = null;

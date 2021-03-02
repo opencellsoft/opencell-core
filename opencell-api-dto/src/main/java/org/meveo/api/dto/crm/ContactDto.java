@@ -67,6 +67,8 @@ public class ContactDto extends AccountDto {
 
     private List<CustomerContactDto> customersContact;
 
+    private Boolean isNaturalPerson;
+
     public ContactDto() {
 
     }
@@ -88,6 +90,7 @@ public class ContactDto extends AccountDto {
         isProspect = contact.isProspect();
         agreedToUA = contact.isAgreedToUA();
         tags = contact.getTags();
+        isNaturalPerson = contact.getNaturalPerson();
         customersContact = contact.getCustomers().stream()
                 .map(customer -> {
                     CustomerContactDto customerContactDto = new CustomerContactDto();
@@ -246,5 +249,13 @@ public class ContactDto extends AccountDto {
 
     public void setCustomersContact(List<CustomerContactDto> customersContact) {
         this.customersContact = customersContact;
+    }
+
+    public Boolean getNaturalPerson() {
+        return isNaturalPerson;
+    }
+
+    public void setNaturalPerson(Boolean naturalPerson) {
+        isNaturalPerson = naturalPerson;
     }
 }
