@@ -183,7 +183,7 @@ public class Product extends ServiceCharge {
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductChargeTemplateMapping> productCharges = new ArrayList<>();
  	
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_version_id")
 	private ProductVersion currentVersion;
 	

@@ -7,7 +7,9 @@ import org.meveo.apiv2.article.ArticleMappingLine;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -27,4 +29,16 @@ public interface ArticleMappingLineResource {
                     @ApiResponse(responseCode = "400", description = "bad request when article mapping line information contains an error")
             })
     Response createArticleMappingLine(@Parameter(description = "the article mapping line object", required = true) ArticleMappingLine articleMappingLine);
+
+    @PUT
+    @Path("/{id}")
+    @Operation(summary = "This endpoint allows to updating an existing article mapping line resource",
+            tags = { "articleMappingLine" },
+            description ="update an existing article mapping line resource",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the article mapping line resource successfully updated, and the object is returned in the response"),
+                    @ApiResponse(responseCode = "400", description = "bad request when article mapping line information contains an error")
+            })
+    Response updateArticleMappingLine(@Parameter(description = "id of the article mapping line", required = true) @PathParam("id") Long id,
+    								  @Parameter(description = "the article mapping line object", required = true) ArticleMappingLine articleMappingLine);
 }
