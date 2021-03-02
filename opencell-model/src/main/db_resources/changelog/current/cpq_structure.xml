@@ -3936,5 +3936,14 @@ public class OrderAdvancement extends ModuleScript {
 			<column name="has_minimum" type="${type.boolean}" defaultValueNumeric="0"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="" author="">
+		<!-- 
+		<addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_product_version_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+		 -->
+		<dropForeignKeyConstraint baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_product_version_id"/>
+		<addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_product_version_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+		
+	</changeSet>
 
 </databaseChangeLog>

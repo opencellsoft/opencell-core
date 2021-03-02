@@ -8,6 +8,7 @@ import org.meveo.apiv2.ordering.common.LinkGenerator;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 public class ArticleMappingLineResourceImpl implements ArticleMappingLineResource {
@@ -26,6 +27,16 @@ public class ArticleMappingLineResourceImpl implements ArticleMappingLineResourc
                 .build();
     }
 
+	@Override
+	public Response updateArticleMappingLine(Long id, ArticleMappingLine articleMappingLine) {
+        org.meveo.model.article.ArticleMappingLine articleMappingLineEntity = 
+        					articleMappingLineApiService.update(id, mapper.toEntity(articleMappingLine)).orElseThrow(NotFoundException::new);
+        return Response
+                .created(LinkGenerator.getUriBuilderFromResource(ArticleMappingLineResource.class, articleMappingLineEntity.getId()).build())
+                .entity(toResourceOrderWithLink(mapper.toResource(articleMappingLineEntity)))
+                .build();
+	}
+	
     private org.meveo.apiv2.article.ArticleMappingLine toResourceOrderWithLink(org.meveo.apiv2.article.ArticleMappingLine articleMappingLineResource) {
         return ImmutableArticleMappingLine.copyOf(articleMappingLineResource)
                 .withLinks(
@@ -35,4 +46,5 @@ public class ArticleMappingLineResourceImpl implements ArticleMappingLineResourc
                                 .build()
                 );
     }
+
 }

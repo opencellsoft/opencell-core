@@ -104,7 +104,8 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
     }
 
     @Override
-    public Optional<ArticleMappingLine> update(Long id, ArticleMappingLine baseEntity) {
+    public Optional<ArticleMappingLine> update(Long id, ArticleMappingLine articleMappingLine) {
+        ArticleMapping articleMapping = Optional.ofNullable(articleMappingApiService.findById(id)).get();
         return Optional.empty();
     }
 
