@@ -57,6 +57,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -246,6 +247,20 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         return true;
     }
 
+    private boolean checkProductAssociatedWithOffer(ServiceInstance serviceInstance){
+
+        OfferTemplate offer = serviceInstance.getSubscription().getOffer();
+        if ( !offer.haveProduct(serviceInstance.getCode())) {
+            throw new ValidationException("Service " + serviceInstance.getCode() + " is not associated with Offer");
+        }
+
+        if (offer != null && serviceInstance != null) {
+            log.debug("check service {} is associated with offer {}", serviceInstance.getCode(), offer.getCode());
+
+        }
+        return true;
+    }
+
     /**
      * @param serviceInstance service instance
      * @param subscriptionAmount subscription amount
@@ -258,82 +273,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     public void cpqServiceInstanciation(ServiceInstance serviceInstance, Product product, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual) throws BusinessException {
-
-        ServiceTemplate serviceTemplate = new ServiceTemplate();
-        serviceTemplate.setCode(product.getCode());
-        serviceTemplate.setDescription(product.getDescription());
-
-        List<ServiceChargeTemplateRecurring> serviceChargeTemplateRecurrings = product.getProductCharges().stream()
-                .filter(pc -> pc.getChargeTemplate() != null)
-                .map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
-                .filter(charge -> charge instanceof RecurringChargeTemplate)
-                .map(ch -> {
-                    ServiceChargeTemplateRecurring serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
-                    serviceChargeTemplateRecurring.setChargeTemplate((RecurringChargeTemplate)ch);
-                    return serviceChargeTemplateRecurring;
-                })
-                .collect(Collectors.toList());
-        serviceTemplate.setServiceRecurringCharges(serviceChargeTemplateRecurrings);
-
-        List<ServiceChargeTemplateUsage> serviceChargeTemplateUsages = product.getProductCharges().stream()
-                .filter(pc -> pc.getChargeTemplate() != null)
-                .map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
-                .filter(charge -> charge instanceof UsageChargeTemplate)
-                .map(ch -> {
-                    ServiceChargeTemplateUsage serviceChargeTemplateRecurring = new ServiceChargeTemplateUsage();
-                    serviceChargeTemplateRecurring.setChargeTemplate((UsageChargeTemplate)ch);
-                    return serviceChargeTemplateRecurring;
-                })
-                .collect(Collectors.toList());
-        serviceTemplate.setServiceUsageCharges(serviceChargeTemplateUsages);
-
-        List<ServiceChargeTemplateSubscription> serviceChargeTemplateSubscriptions = product.getProductCharges().stream()
-                .filter(pc -> pc.getChargeTemplate() != null)
-                .map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
-                .filter(charge -> charge instanceof OneShotChargeTemplate)
-                .filter(ch -> (((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION) || ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER)
-                .map(ch -> {
-                    ServiceChargeTemplateSubscription serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
-                    serviceChargeTemplateSubscription.setChargeTemplate((OneShotChargeTemplate) ch);
-                    return serviceChargeTemplateSubscription;
-                })
-                .collect(Collectors.toList());
-        serviceTemplate.setServiceSubscriptionCharges(serviceChargeTemplateSubscriptions);
-
-        List<ServiceChargeTemplateTermination> serviceChargeTemplateTerminations = product.getProductCharges().stream()
-                .filter(pc -> pc.getChargeTemplate() != null)
-                .map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
-                .filter(charge -> charge instanceof OneShotChargeTemplate)
-                .filter(ch -> ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION)
-                .map(ch -> {
-                    ServiceChargeTemplateTermination serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
-                    serviceChargeTemplateTermination.setChargeTemplate((OneShotChargeTemplate) ch);
-                    return serviceChargeTemplateTermination;
-                })
-                .collect(Collectors.toList());
-        serviceTemplate.setServiceTerminationCharges(serviceChargeTemplateTerminations);
-        if(!isVirtual)
-            serviceTemplateService.create(serviceTemplate);
-        serviceInstance.setServiceTemplate(serviceTemplate);
-        serviceInstanciation(serviceInstance, null, subscriptionAmount, terminationAmount, isVirtual);
-        serviceInstance.setServiceTemplate(null);
-        if(!isVirtual) {
-            serviceTemplateService.remove(serviceTemplate);
-        }
-    }
-
-    public static <T> T initializeAndUnproxy(T entity) {
-        if (entity == null) {
-            throw new
-                    NullPointerException("Entity passed for initialization is null");
-        }
-
-        Hibernate.initialize(entity);
-        if (entity instanceof HibernateProxy) {
-            entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer()
-                    .getImplementation();
-        }
-        return entity;
+        productServiceInstanciation(serviceInstance, product, subscriptionAmount, terminationAmount, isVirtual);
     }
 
     /**
@@ -406,33 +346,87 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         subscription.getServiceInstances().add(serviceInstance);
 
-        for (ServiceChargeTemplateRecurring serviceChargeTemplateRecurring : serviceTemplate.getServiceRecurringCharges()) { //
-            RecurringChargeInstance chargeInstance = recurringChargeInstanceService.recurringChargeInstanciation(serviceInstance, serviceChargeTemplateRecurring, isVirtual);
+        instanciateCharges(serviceInstance,  serviceTemplate, subscriptionAmount, terminationAmount, isVirtual);
+
+        if (!isVirtual) {
+            // execute instantiation script
+            if (serviceTemplate.getBusinessServiceModel() != null && serviceTemplate.getBusinessServiceModel().getScript() != null) {
+                serviceModelScriptService.instantiateServiceInstance(serviceInstance, serviceTemplate.getBusinessServiceModel().getScript().getCode());
+            }
+        }
+
+        if (serviceInstance.getOrderItemId() != null && serviceInstance.getOrderItemAction() != null) {
+            orderHistoryService.create(serviceInstance.getOrderNumber(), serviceInstance.getOrderItemId(), serviceInstance, serviceInstance.getOrderItemAction());
+        }
+    }
+
+    public void productServiceInstanciation(ServiceInstance serviceInstance, Product product, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual) throws BusinessException {
+
+        log.debug("Will instantiate service {} for subscription {} quantity {}", serviceInstance.getCode(), serviceInstance.getSubscription().getCode(), serviceInstance.getQuantity());
+
+        Subscription subscription = serviceInstance.getSubscription();
+
+        if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
+            throw new IncorrectSusbcriptionException("Subscription is not active");
+        }
+        if (!isVirtual) {
+            if (paramBean.isServiceMultiInstantiation()) {
+                List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(product.getCode(), subscription, InstanceStatusEnum.INACTIVE);
+                if (serviceInstances != null && !serviceInstances.isEmpty()) {
+                    throw new IncorrectServiceInstanceException("Service instance with code=" + serviceInstance.getCode() + ", subscription code=" + subscription.getCode() + " is already instantiated.");
+                }
+            } else {
+                List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(product.getCode(), subscription, InstanceStatusEnum.INACTIVE, InstanceStatusEnum.ACTIVE);
+                if (serviceInstances != null && !serviceInstances.isEmpty()) {
+                    throw new IncorrectServiceInstanceException("Service instance with code=" + serviceInstance.getCode() + " and subscription code=" + subscription.getCode() + " is already instantiated or activated.");
+                }
+            }
+        }
+        checkProductAssociatedWithOffer(serviceInstance);
+
+        if (serviceInstance.getSubscriptionDate() == null) {
+            serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate() != null ? subscription.getSubscriptionDate() : new Date());
+        }
+        serviceInstance.setStatus(InstanceStatusEnum.INACTIVE);
+        if (serviceInstance.getCode() == null) {
+            serviceInstance.setCode(product.getCode());
+        }
+
+        serviceInstance.setDescription(product.getDescription());
+
+        if (!isVirtual) {
+            create(serviceInstance);
+        } else {
+            serviceInstance.updateSubscribedTillAndRenewalNotifyDates();
+        }
+
+        subscription.getServiceInstances().add(serviceInstance);
+
+        instanciateCharges(serviceInstance, product, subscriptionAmount, terminationAmount, isVirtual);
+
+    }
+
+    private void instanciateCharges(ServiceInstance serviceInstance, ServiceCharge serviceCharge, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual) {
+        for (ServiceChargeTemplateRecurring serviceChargeTemplateRecurring : serviceCharge.getServiceRecurringCharges()) { //
+            RecurringChargeInstance chargeInstance = recurringChargeInstanceService.recurringChargeInstanciation(serviceInstance, serviceCharge, serviceChargeTemplateRecurring, isVirtual);
             serviceInstance.getRecurringChargeInstances().add(chargeInstance);
         }
 
-        for (ServiceChargeTemplateSubscription serviceChargeTemplate : serviceTemplate.getServiceSubscriptionCharges()) {
-            SubscriptionChargeInstance chargeInstance = (SubscriptionChargeInstance) oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate, subscriptionAmount, null, true,
+        for (ServiceChargeTemplateSubscription serviceChargeTemplate : serviceCharge.getServiceSubscriptionCharges()) {
+            SubscriptionChargeInstance chargeInstance = (SubscriptionChargeInstance) oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance, serviceCharge, serviceChargeTemplate, subscriptionAmount, null, true,
                     isVirtual || (serviceChargeTemplate.getChargeTemplate().getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER));
             serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
         }
 
-        for (ServiceChargeTemplateTermination serviceChargeTemplate : serviceTemplate.getServiceTerminationCharges()) {
-            TerminationChargeInstance chargeInstance = (TerminationChargeInstance) oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance, serviceChargeTemplate, terminationAmount, null, false,
-                isVirtual);
+        for (ServiceChargeTemplateTermination serviceChargeTemplate : serviceCharge.getServiceTerminationCharges()) {
+            TerminationChargeInstance chargeInstance = (TerminationChargeInstance) oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance, serviceCharge, serviceChargeTemplate, terminationAmount, null, false,
+                    isVirtual);
             serviceInstance.getTerminationChargeInstances().add(chargeInstance);
         }
 
-        for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : serviceTemplate.getServiceUsageCharges()) {
+        for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : serviceCharge.getServiceUsageCharges()) {
             UsageChargeInstance chargeInstance = usageChargeInstanceService.usageChargeInstanciation(serviceInstance, serviceUsageChargeTemplate, isVirtual);
             serviceInstance.getUsageChargeInstances().add(chargeInstance);
-        }
-
-        if (!isVirtual) {
-            // execute instantiation script
-            if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
-                serviceModelScriptService.instantiateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode());
-            }
         }
 
         if (serviceInstance.getOrderItemId() != null && serviceInstance.getOrderItemAction() != null) {
