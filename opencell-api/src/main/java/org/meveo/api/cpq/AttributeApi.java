@@ -145,11 +145,9 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 				assignedAttributes.add(attr);
 			}
 			attribute.getAssignedAttributes().addAll(assignedAttributes);
-		}else {
-			for(Attribute att : attribute.getAssignedAttributes()) {
-				att.setParentAttribute(null);
-			}
-			
+		}else{
+			if(!attribute.getAssignedAttributes().isEmpty())
+			attributeService.updateParentAttribute(attribute.getId());
 		}
 	}
 	
