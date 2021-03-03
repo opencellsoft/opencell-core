@@ -19,22 +19,19 @@ public class AuthenticationFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         httpClient = new ResteasyClientBuilder().build();
-        if ( servletRequest != null ) {
-            if ( servletRequest instanceof HttpServletRequest) {
-                HttpServletRequest aHttpServletRequest = (HttpServletRequest) servletRequest;
-                if ( aHttpServletRequest.getHeader("Authorization") != null ) {
-                    String base64Credentials = aHttpServletRequest.getHeader("Authorization").substring("Basic".length()).trim();
-                    byte[] credDecoded = Base64.getDecoder().decode(base64Credentials);
-                    String credentials = new String(credDecoded, StandardCharsets.UTF_8);
-                    // credentials = username:password
-                    final String[] values = credentials.split(":", 2);
+        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
 
-                    BasicAuthentication basicAuthentication = new BasicAuthentication( values[0], values[1] );
-                    httpClient.register(basicAuthentication);
-                }
+        if ( httpServletRequest.getHeader("Authorization") != null ) {
+            String base64Credentials = httpServletRequest.getHeader("Authorization").substring("Basic".length()).trim();
+            byte[] credDecoded = Base64.getDecoder().decode(base64Credentials);
+            String credentials = new String(credDecoded, StandardCharsets.UTF_8);
+            // credentials = username:password
+            final String[] values = credentials.split(":", 2);
 
-                filterChain.doFilter(servletRequest, servletResponse);
-            }
+            BasicAuthentication basicAuthentication = new BasicAuthentication( values[0], values[1] );
+            httpClient.register(basicAuthentication);
         }
+
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 }
