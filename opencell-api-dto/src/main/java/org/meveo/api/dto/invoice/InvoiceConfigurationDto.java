@@ -81,19 +81,19 @@ public class InvoiceConfigurationDto implements Serializable {
     private Boolean displayWalletOperations;
     
     /** Default invoice sub-category */
-    private Long invoice_subcategory_id;
+    private String defaultInvoiceSubcategoryCode;
     
     /** Default generic accounting article */
-    private Long generic_article_id;
+    private String defaultGenericArticleCode;
     
     /** Default discount accounting article */
-    private Long discount_article_id;
+    private String defaultDiscountArticleCode;
     
     /** Default advanced payment accounting article */
-    private Long advanced_payment_article_id;
+    private String defaultAdvancedPaymentArticleCode;
     
     /** Default invoice minimum accounting article */
-    private Long invoice_minimum_article_id;
+    private String defaultInvoiceMinimumArticleCode;
     
     
 
@@ -121,11 +121,11 @@ public class InvoiceConfigurationDto implements Serializable {
         displayOrders = invoiceConfiguration.isDisplayOrders();
         currentInvoiceNb = invoiceConfiguration.getCurrentInvoiceNb();
         displayWalletOperations=invoiceConfiguration.isDisplayWalletOperations();
-        invoice_subcategory_id = invoiceConfiguration.getInvoiceSubCategory().getId();
-        generic_article_id = invoiceConfiguration.getGenericAccountingArticle().getId();
-        discount_article_id = invoiceConfiguration.getDiscountAccountingArticle().getId();
-        advanced_payment_article_id = invoiceConfiguration.getAdvancedPaymentAccountingArticle().getId();
-        invoice_minimum_article_id = invoiceConfiguration.getInvoiceMinimumAccountingArticle().getId();
+        defaultInvoiceSubcategoryCode = invoiceConfiguration.getDefaultInvoiceSubCategory().getCode();
+        defaultGenericArticleCode = invoiceConfiguration.getDefaultGenericAccountingArticle().getCode();
+        defaultDiscountArticleCode = invoiceConfiguration.getDefaultDiscountAccountingArticle().getCode();
+        defaultAdvancedPaymentArticleCode = invoiceConfiguration.getDefaultAdvancedPaymentAccountingArticle().getCode();
+        defaultInvoiceMinimumArticleCode = invoiceConfiguration.getDefaultInvoiceMinimumAccountingArticle().getCode();
     }
 
     /**
@@ -375,46 +375,45 @@ public class InvoiceConfigurationDto implements Serializable {
                 + ", displayDetail=" + displayDetail + ", displayChargesPeriods=" + displayChargesPeriods + ", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice
                 + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders=" + displayOrders + ",currentInvoiceNb="+currentInvoiceNb+ ",displayWalletOperations="+displayWalletOperations+"]";
     }
-    
 
-
-    public Long getInvoice_subcategory_id() {
-		return invoice_subcategory_id;
+	public String getDefaultInvoiceSubcategoryCode() {
+		return defaultInvoiceSubcategoryCode;
 	}
 
-	public void setInvoice_subcategory_id(Long invoice_subcategory_id) {
-		this.invoice_subcategory_id = invoice_subcategory_id;
+	public void setDefaultInvoiceSubcategoryCode(String defaultInvoiceSubcategoryCode) {
+		this.defaultInvoiceSubcategoryCode = defaultInvoiceSubcategoryCode;
 	}
 
-	public Long getGeneric_article_id() {
-		return generic_article_id;
+	public String getDefaultGenericArticleCode() {
+		return defaultGenericArticleCode;
 	}
 
-	public void setGeneric_article_id(Long generic_article_id) {
-		this.generic_article_id = generic_article_id;
+	public void setDefaultGenericArticleCode(String defaultGenericArticleCode) {
+		this.defaultGenericArticleCode = defaultGenericArticleCode;
 	}
 
-	public Long getDiscount_article_id() {
-		return discount_article_id;
+	public String getDefaultDiscountArticleCode() {
+		return defaultDiscountArticleCode;
 	}
 
-	public void setDiscount_article_id(Long discount_article_id) {
-		this.discount_article_id = discount_article_id;
+	public void setDefaultDiscountArticleCode(String defaultDiscountArticleCode) {
+		this.defaultDiscountArticleCode = defaultDiscountArticleCode;
 	}
 
-	public Long getAdvanced_payment_article_id() {
-		return advanced_payment_article_id;
+	public String getDefaultAdvancedPaymentArticleCode() {
+		return defaultAdvancedPaymentArticleCode;
 	}
 
-	public void setAdvanced_payment_article_id(Long advanced_payment_article_id) {
-		this.advanced_payment_article_id = advanced_payment_article_id;
+	public void setDefaultAdvancedPaymentArticleCode(String defaultAdvancedPaymentArticleCode) {
+		this.defaultAdvancedPaymentArticleCode = defaultAdvancedPaymentArticleCode;
 	}
 
-	public Long getInvoice_minimum_article_id() {
-		return invoice_minimum_article_id;
+	public String getDefaultInvoiceMinimumArticleCode() {
+		return defaultInvoiceMinimumArticleCode;
 	}
 
-	public void setInvoice_minimum_article_id(Long invoice_minimum_article_id) {
-		this.invoice_minimum_article_id = invoice_minimum_article_id;
+	public void setDefaultInvoiceMinimumArticleCode(String defaultInvoiceMinimumArticleCode) {
+		this.defaultInvoiceMinimumArticleCode = defaultInvoiceMinimumArticleCode;
 	}
+
 }

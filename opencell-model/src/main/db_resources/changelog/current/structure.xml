@@ -4214,34 +4214,34 @@ END $$;]]>
     
     <changeSet id="#5991_20210224" author="HatimOUDAD">
     	<addColumn tableName="billing_invoice_configuration">
-    		<column name="invoice_subcategory_id" type="bigint"/>
+    		<column name="default_invoice_subcategory_id" type="bigint"/>
     	</addColumn>
     	<addForeignKeyConstraint constraintName="fk_invoice_configuration_invoice_subcategory_id" referencedTableName="billing_invoice_sub_cat"
-                                 baseColumnNames="invoice_subcategory_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
+                                 baseColumnNames="default_invoice_subcategory_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
                                  
         <addColumn tableName="billing_invoice_configuration">
-    		<column name="generic_article_id" type="bigint"/>
+    		<column name="default_generic_article_id" type="bigint"/>
     	</addColumn>
     	<addForeignKeyConstraint constraintName="fk_invoice_configuration_generic_article_id" referencedTableName="billing_accounting_article"
-                                 baseColumnNames="generic_article_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
+                                 baseColumnNames="default_generic_article_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
                                  
         <addColumn tableName="billing_invoice_configuration">
-    		<column name="discount_article_id" type="bigint"/>
+    		<column name="default_discount_article_id" type="bigint"/>
     	</addColumn>
     	<addForeignKeyConstraint constraintName="fk_invoice_configuration_discount_article_id" referencedTableName="billing_accounting_article"
-                                 baseColumnNames="discount_article_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
+                                 baseColumnNames="default_discount_article_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
                                  
         <addColumn tableName="billing_invoice_configuration">
-    		<column name="advanced_payment_article_id" type="bigint"/>
+    		<column name="default_advanced_payment_article_id" type="bigint"/>
     	</addColumn>
     	<addForeignKeyConstraint constraintName="fk_invoice_configuration_advanced_payment_article_id" referencedTableName="billing_accounting_article"
-                                 baseColumnNames="advanced_payment_article_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
+                                 baseColumnNames="default_advanced_payment_article_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
                                  
         <addColumn tableName="billing_invoice_configuration">
-    		<column name="invoice_minimum_article_id" type="bigint"/>
+    		<column name="default_invoice_minimum_article_id" type="bigint"/>
     	</addColumn>
     	<addForeignKeyConstraint constraintName="fk_invoice_configuration_invoice_minimum_article_id" referencedTableName="billing_accounting_article"
-                                 baseColumnNames="invoice_minimum_article_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
+                                 baseColumnNames="default_invoice_minimum_article_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
     </changeSet>
 
 </databaseChangeLog>

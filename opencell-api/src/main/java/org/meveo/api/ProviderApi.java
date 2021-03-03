@@ -550,40 +550,40 @@ public class ProviderApi extends BaseApi {
             if (invoiceConfigurationDto.getDisplayWalletOperations() != null) {
                 invoiceConfiguration.setDisplayWalletOperations(invoiceConfigurationDto.getDisplayWalletOperations());
             }
-            if (invoiceConfigurationDto.getInvoice_subcategory_id() != null) {
-            	InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(invoiceConfigurationDto.getInvoice_subcategory_id());
+            if (invoiceConfigurationDto.getDefaultInvoiceSubcategoryCode() != null) {
+            	InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceConfigurationDto.getDefaultInvoiceSubcategoryCode());
             	if (invoiceSubCategory == null) {
-                    throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceConfiguration().getInvoice_subcategory_id());
+                    throw new EntityDoesNotExistsException(InvoiceSubCategory.class.getName(), postData.getInvoiceConfiguration().getDefaultInvoiceSubcategoryCode());
                 }
-                invoiceConfiguration.setInvoiceSubCategory(invoiceSubCategory);
+                invoiceConfiguration.setDefaultInvoiceSubCategory(invoiceSubCategory);
             }
-            if (invoiceConfigurationDto.getGeneric_article_id() != null) {
-            	AccountingArticle genericArticle = accountingArticleService.findById(invoiceConfigurationDto.getGeneric_article_id());
+            if (invoiceConfigurationDto.getDefaultGenericArticleCode() != null) {
+            	AccountingArticle genericArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultGenericArticleCode());
             	if(genericArticle == null) {
-            		throw new EntityDoesNotExistsException(AccountingArticle.class, postData.getInvoiceConfiguration().getGeneric_article_id());
+            		throw new EntityDoesNotExistsException(AccountingArticle.class, postData.getInvoiceConfiguration().getDefaultGenericArticleCode());
             	}
-                invoiceConfiguration.setGenericAccountingArticle(genericArticle);
+                invoiceConfiguration.setDefaultGenericAccountingArticle(genericArticle);
             }
-            if (invoiceConfigurationDto.getAdvanced_payment_article_id() != null) {
-            	AccountingArticle advancedPaymentArticle = accountingArticleService.findById(invoiceConfigurationDto.getAdvanced_payment_article_id());
+            if (invoiceConfigurationDto.getDefaultAdvancedPaymentArticleCode() != null) {
+            	AccountingArticle advancedPaymentArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultAdvancedPaymentArticleCode());
             	if(advancedPaymentArticle == null) {
-            		throw new EntityDoesNotExistsException(AccountingArticle.class, postData.getInvoiceConfiguration().getAdvanced_payment_article_id());
+            		throw new EntityDoesNotExistsException(AccountingArticle.class.getName(), postData.getInvoiceConfiguration().getDefaultAdvancedPaymentArticleCode());
             	}
-                invoiceConfiguration.setAdvancedPaymentAccountingArticle(advancedPaymentArticle);
+                invoiceConfiguration.setDefaultAdvancedPaymentAccountingArticle(advancedPaymentArticle);
             }
-            if (invoiceConfigurationDto.getInvoice_minimum_article_id() != null) {
-            	AccountingArticle invoiceMinimumArticle = accountingArticleService.findById(invoiceConfigurationDto.getInvoice_minimum_article_id());
+            if (invoiceConfigurationDto.getDefaultInvoiceMinimumArticleCode() != null) {
+            	AccountingArticle invoiceMinimumArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultInvoiceMinimumArticleCode());
             	if(invoiceMinimumArticle == null) {
-            		throw new EntityDoesNotExistsException(AccountingArticle.class, postData.getInvoiceConfiguration().getInvoice_minimum_article_id());
+            		throw new EntityDoesNotExistsException(AccountingArticle.class.getName(), postData.getInvoiceConfiguration().getDefaultInvoiceMinimumArticleCode());
             	}
-                invoiceConfiguration.setInvoiceMinimumAccountingArticle(invoiceMinimumArticle);
+                invoiceConfiguration.setDefaultInvoiceMinimumAccountingArticle(invoiceMinimumArticle);
             }
-            if (invoiceConfigurationDto.getDiscount_article_id() != null) {
-            	AccountingArticle discountArticle = accountingArticleService.findById(invoiceConfigurationDto.getDiscount_article_id());
+            if (invoiceConfigurationDto.getDefaultDiscountArticleCode() != null) {
+            	AccountingArticle discountArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultDiscountArticleCode());
             	if(discountArticle == null) {
-            		throw new EntityDoesNotExistsException(AccountingArticle.class, postData.getInvoiceConfiguration().getDiscount_article_id());
+            		throw new EntityDoesNotExistsException(AccountingArticle.class.getName(), postData.getInvoiceConfiguration().getDefaultDiscountArticleCode());
             	}
-                invoiceConfiguration.setDiscountAccountingArticle(discountArticle);
+                invoiceConfiguration.setDefaultDiscountAccountingArticle(discountArticle);
             }
         }
         return provider;

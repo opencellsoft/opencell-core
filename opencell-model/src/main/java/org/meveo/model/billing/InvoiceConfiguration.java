@@ -24,9 +24,7 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -131,37 +129,37 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     /**
      * Default invoice subcategory
      */
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "invoice_subcategory_id")
-    private InvoiceSubCategory invoiceSubCategory;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "default_invoice_subcategory_id")
+    private InvoiceSubCategory defaultInvoiceSubCategory;
 
 	/**
      * Default generic accounting article
      */
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "generic_article_id")
-    private AccountingArticle genericAccountingArticle;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "default_generic_article_id")
+    private AccountingArticle defaultGenericAccountingArticle;
     
     /**
      * Default discount accounting article
      */
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "discount_article_id")
-    private AccountingArticle discountAccountingArticle;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "default_discount_article_id")
+    private AccountingArticle defaultDiscountAccountingArticle;
     
     /**
      * Default advanced payment accounting article
      */
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "advanced_payment_article_id")
-    private AccountingArticle advancedPaymentAccountingArticle;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "default_advanced_payment_article_id")
+    private AccountingArticle defaultAdvancedPaymentAccountingArticle;
     
     /**
      * Default advanced payment accounting article
      */
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "invoice_minimum_article_id")
-    private AccountingArticle invoiceMinimumAccountingArticle;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "default_invoice_minimum_article_id")
+    private AccountingArticle defaultInvoiceMinimumAccountingArticle;
 
     /**
      * Should wallet operations be displayed in the XML invoice
@@ -250,47 +248,48 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
         this.displayBillingCycle = displayBillingCycle;
     }
     
-    public InvoiceSubCategory getInvoiceSubCategory() {
-		return invoiceSubCategory;
+    
+    public InvoiceSubCategory getDefaultInvoiceSubCategory() {
+		return defaultInvoiceSubCategory;
 	}
 
-	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
-		this.invoiceSubCategory = invoiceSubCategory;
+	public void setDefaultInvoiceSubCategory(InvoiceSubCategory defaultInvoiceSubCategory) {
+		this.defaultInvoiceSubCategory = defaultInvoiceSubCategory;
 	}
 
-	public AccountingArticle getGenericAccountingArticle() {
-		return genericAccountingArticle;
+	public AccountingArticle getDefaultGenericAccountingArticle() {
+		return defaultGenericAccountingArticle;
 	}
 
-	public void setGenericAccountingArticle(AccountingArticle genericAccountingArticle) {
-		this.genericAccountingArticle = genericAccountingArticle;
+	public void setDefaultGenericAccountingArticle(AccountingArticle defaultGenericAccountingArticle) {
+		this.defaultGenericAccountingArticle = defaultGenericAccountingArticle;
 	}
 
-	public AccountingArticle getDiscountAccountingArticle() {
-		return discountAccountingArticle;
+	public AccountingArticle getDefaultDiscountAccountingArticle() {
+		return defaultDiscountAccountingArticle;
 	}
 
-	public void setDiscountAccountingArticle(AccountingArticle discountAccountingArticle) {
-		this.discountAccountingArticle = discountAccountingArticle;
+	public void setDefaultDiscountAccountingArticle(AccountingArticle defaultDiscountAccountingArticle) {
+		this.defaultDiscountAccountingArticle = defaultDiscountAccountingArticle;
 	}
 
-	public AccountingArticle getAdvancedPaymentAccountingArticle() {
-		return advancedPaymentAccountingArticle;
+	public AccountingArticle getDefaultAdvancedPaymentAccountingArticle() {
+		return defaultAdvancedPaymentAccountingArticle;
 	}
 
-	public void setAdvancedPaymentAccountingArticle(AccountingArticle advancedPaymentAccountingArticle) {
-		this.advancedPaymentAccountingArticle = advancedPaymentAccountingArticle;
+	public void setDefaultAdvancedPaymentAccountingArticle(AccountingArticle defaultAdvancedPaymentAccountingArticle) {
+		this.defaultAdvancedPaymentAccountingArticle = defaultAdvancedPaymentAccountingArticle;
 	}
 
-	public AccountingArticle getInvoiceMinimumAccountingArticle() {
-		return invoiceMinimumAccountingArticle;
+	public AccountingArticle getDefaultInvoiceMinimumAccountingArticle() {
+		return defaultInvoiceMinimumAccountingArticle;
 	}
 
-	public void setInvoiceMinimumAccountingArticle(AccountingArticle invoiceMinimumAccountingArticle) {
-		this.invoiceMinimumAccountingArticle = invoiceMinimumAccountingArticle;
+	public void setDefaultInvoiceMinimumAccountingArticle(AccountingArticle defaultInvoiceMinimumAccountingArticle) {
+		this.defaultInvoiceMinimumAccountingArticle = defaultInvoiceMinimumAccountingArticle;
 	}
 
-    @Override
+	@Override
     public String toString() {
         return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", " + "displayPricePlans=" + displayPricePlans
                 + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", " + "displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayWalletOperations="

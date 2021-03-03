@@ -64,10 +64,6 @@ public class AccountingArticleBean extends BaseBean<AccountingArticle> {
 	protected IPersistenceService<AccountingArticle> getPersistenceService() {
 		return accountingArticleService;
 	}
-
-	public void test() throws BatchUpdateException {
-		throw new BatchUpdateException();
-	}
 	
 	public AccountingArticle getSelectedAccountingArticle() {
 		return selectedAccountingArticle;
