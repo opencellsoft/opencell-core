@@ -29,6 +29,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.contract.Contract;
@@ -287,8 +288,11 @@ public class ContractApi extends BaseApi{
     		item.setPricePlan(pricePlanMatrixService.findByCode(contractItemDto.getPricePlanCode()));
     	if(!Strings.isEmpty(contractItemDto.getChargeTemplateCode()))
     		item.setChargeTemplate(chargeTemplateService.findByCode(contractItemDto.getChargeTemplateCode()));
+		if(!Strings.isEmpty(contractItemDto.getOfferTemplateCode()))
+			item.setOfferTemplate(loadEntityByCode(offerTemplateService, contractItemDto.getOfferTemplateCode(), OfferTemplate.class));
     	item.setRate(contractItemDto.getRate());
     	item.setAmountWithoutTax(contractItemDto.getAmountWithoutTax());
+    	item.setDescription(contractItemDto.getDescription());
     	
     	try {
     		contractItemService.create(item);
