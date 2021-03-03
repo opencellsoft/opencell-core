@@ -52,6 +52,8 @@ public class JobInstanceInfoDto implements Serializable {
     @XmlAttribute(required = true)
     private String code;
 
+    private boolean start = true;
+
     /** The last transaction date. */
     private Date lastTransactionDate;
 
@@ -222,6 +224,14 @@ public class JobInstanceInfoDto implements Serializable {
      */
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
+    }
+
+    public boolean isStart() {
+        return start;
+    }
+
+    public void setStart(boolean start) {
+        this.start = start;
     }
 
     @Override

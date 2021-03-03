@@ -51,8 +51,22 @@ public interface AccountHierarchyRs extends IBaseRs {
     @POST
     @Path("/find")
     @Operation(summary = "Search for a list of customer accounts given a set of filter",
-    tags = { "AccountHierarchy" })
+    deprecated = true,
+    tags = { "Deprecated" })
+    @Deprecated
     CustomerListResponse find(AccountHierarchyDto customerDto,  @QueryParam("calculateBalances") Boolean calculateBalances);
+
+    /**
+     * Search for a list of customer accounts given a set of filter.
+     * @param customerDto customer dto
+     * @param calculateBalances  true if needs  to calculate balances
+     * @return customer list.
+     */
+    @POST
+    @Path("/filtering")
+    @Operation(summary = "Search for a list of customer accounts given a set of filter",
+            tags = { "AccountHierarchy" })
+    CustomerListResponse findV2(AccountHierarchyDto customerDto,  @QueryParam("calculateBalances") Boolean calculateBalances);
 
     /**
      * Create account hierarchy.

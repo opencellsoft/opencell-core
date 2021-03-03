@@ -72,7 +72,18 @@ public class JobRsImpl extends BaseRs implements JobRs {
 
         return result;
     }
-    
+
+    @Override
+    public JobExecutionResultResponseDto execution(JobInstanceInfoDto postData) {
+        if(postData.isStart())
+            return execute(postData);
+        else {
+            JobExecutionResultResponseDto jobExecutionResultResponseDto = new JobExecutionResultResponseDto();
+            jobExecutionResultResponseDto.setActionStatus(stop(postData.getCode()));
+            return jobExecutionResultResponseDto;
+        }
+    }
+
     @Override
     public ActionStatus stop(String jobInstanceCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -94,6 +105,11 @@ public class JobRsImpl extends BaseRs implements JobRs {
         }
 
         return result;
+    }
+
+    @Override
+    public ActionStatus createV2(JobInstanceDto jobInstanceDto) {
+        return create(jobInstanceDto);
     }
 
     @Override
@@ -143,6 +159,11 @@ public class JobRsImpl extends BaseRs implements JobRs {
         }
 
         return result;
+    }
+
+    @Override
+    public JobInstanceResponseDto findV2(String jobInstanceCode) {
+        return find(jobInstanceCode);
     }
 
     @Override
@@ -199,6 +220,11 @@ public class JobRsImpl extends BaseRs implements JobRs {
     }
 
     @Override
+    public TimerEntityResponseDto findTimerV2(String timerCode) {
+        return findTimer(timerCode);
+    }
+
+    @Override
     public ActionStatus removeTimer(String timerCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -221,6 +247,11 @@ public class JobRsImpl extends BaseRs implements JobRs {
             processException(e, result.getActionStatus());
         }
         return result;
+    }
+
+    @Override
+    public JobExecutionResultResponseDto findJobExecutionResultV2(String code, Long jobExecutionResultId) {
+        return findJobExecutionResult(code, jobExecutionResultId);
     }
 
     @Override

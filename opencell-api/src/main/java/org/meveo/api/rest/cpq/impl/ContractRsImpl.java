@@ -136,7 +136,7 @@ public class ContractRsImpl  extends BaseRs implements ContractRs {
 	}
 
 	@Override
-	public Response getContractLines(String contractItemCode) {
+	public Response getContractLine(String contractItemCode) {
 		GetContractLineDtoResponse result = new GetContractLineDtoResponse();
 		 try {
 		    	result.setContractItem(contractApi.getContractLines(contractItemCode));
