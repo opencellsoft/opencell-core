@@ -37,8 +37,12 @@ import javax.inject.Named;
  */
 @Named
 @ViewScoped
-public class AccountingWritingBean extends BaseBean<AccountingEntry> {
+public class AccountingEntryBean extends BaseBean<AccountingEntry> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     /**
      * Injected @{link {@link AccountingEntry} service. Extends {@link PersistenceService}
      */
@@ -48,7 +52,7 @@ public class AccountingWritingBean extends BaseBean<AccountingEntry> {
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
-    public AccountingWritingBean() {
+    public AccountingEntryBean() {
         super(AccountingEntry.class);
     }
 
