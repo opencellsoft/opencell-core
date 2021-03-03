@@ -1,15 +1,17 @@
 package org.meveo.apiv2.article.impl;
 
+import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+
 import org.meveo.apiv2.article.ArticleMappingLine;
 import org.meveo.apiv2.article.ImmutableArticleMappingLine;
 import org.meveo.apiv2.article.resource.ArticleMappingLineResource;
 import org.meveo.apiv2.article.service.ArticleMappingLineApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
 
 public class ArticleMappingLineResourceImpl implements ArticleMappingLineResource {
 
@@ -36,6 +38,31 @@ public class ArticleMappingLineResourceImpl implements ArticleMappingLineResourc
                 .entity(toResourceOrderWithLink(mapper.toResource(articleMappingLineEntity)))
                 .build();
 	}
+
+	@Override
+	public Response findById(Long id, Request request) {
+		return articleMappingLineApiService.findById(id)
+				.map(aml -> {
+					 EntityTag etag = new EntityTag(Integer.toString(aml.hashCode()));
+	                    CacheControl cc = new CacheControl();
+	                    cc.setMaxAge(1000);
+	                    Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
+	                    if (builder != null) {
+	                        builder.cacheControl(cc);
+	                        return builder.build();
+	                    }
+	                    return Response.ok().cacheControl(cc).tag(etag)
+	                            .entity(toResourceOrderWithLink(mapper.toResource(aml))).build();
+				})
+				 .orElseThrow(NotFoundException::new);
+	}
+
+	@Override
+	public Response deleteById(Long id) {
+		return articleMappingLineApiService.delete(id)
+				.map(aml -> Response.ok().entity(toResourceOrderWithLink(mapper.toResource(aml))).build())
+                .orElseThrow(NotFoundException::new);
+	}
 	
     private org.meveo.apiv2.article.ArticleMappingLine toResourceOrderWithLink(org.meveo.apiv2.article.ArticleMappingLine articleMappingLineResource) {
         return ImmutableArticleMappingLine.copyOf(articleMappingLineResource)
@@ -46,5 +73,6 @@ public class ArticleMappingLineResourceImpl implements ArticleMappingLineResourc
                                 .build()
                 );
     }
+
 
 }

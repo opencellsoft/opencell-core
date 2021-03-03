@@ -1,5 +1,14 @@
 package org.meveo.apiv2.article.service;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMapping;
@@ -7,27 +16,15 @@ import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.billing.impl.article.ArticleMappingLineService;
 import org.meveo.service.billing.impl.article.ArticleMappingService;
-import org.meveo.service.billing.impl.article.AttributeMappingService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductService;
-
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class ArticleMappingLineApiService implements ApiService<ArticleMappingLine> {
 
@@ -45,8 +42,6 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
     private AttributeService attributeService;
     @Inject
     private ProductService productService;
-    @Inject
-    private AttributeMappingService AttributeMappingService;
 
     @Override
     public List<ArticleMappingLine> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -60,7 +55,8 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
 
     @Override
     public Optional<ArticleMappingLine> findById(Long id) {
-        return Optional.of(articleMappingLineService.findById(id));
+    	List<String> fields = Arrays.asList("accountingArticle", "articleMapping", "offerTemplate", "product", "chargeTemplate");
+        return Optional.ofNullable(articleMappingLineService.findById(id, fields, true));
     }
 
     @Override
@@ -84,7 +80,7 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
                         return attributeMapping;
                     })
                     .collect(Collectors.toList());
-            articleMappingLine.getAttributesMapping().addAll(attributesMapping);
+            articleMappingLine.setAttributesMapping(attributesMapping);
         }
         populateArtcileMappingLine(articleMappingLine);
         articleMappingLine.setAccountingArticle(accountingArticle);
@@ -95,7 +91,6 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
 
     @Override
     public Optional<ArticleMappingLine> update(Long id, ArticleMappingLine articleMappingLine) {
-//    	List<String> fields = Arrays.asList("accountingArticle", "articleMapping", "offerTemplate", "product", "chargeTemplate");
         ArticleMappingLine articleMappingLineUpdated = articleMappingLineService.findById(id, true);
         if(articleMappingLineUpdated == null) return Optional.empty();
         if(articleMappingLine.getAccountingArticle().getId() != null) {
@@ -162,6 +157,12 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
 
     @Override
     public Optional<ArticleMappingLine> delete(Long id) {
-        return Optional.empty();
+    	Optional<ArticleMappingLine> articleMappingLine = findById(id);
+    	if(articleMappingLine.isPresent()) {
+    		ArticleMappingLine current = articleMappingLine.get();
+    		articleMappingLineService.remove(current);
+    		return Optional.of(current);
+    	}
+         return Optional.empty();
     }
 }
