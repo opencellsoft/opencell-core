@@ -19,10 +19,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.cpq.CpqAccountingArticle;
 
 
 /**
