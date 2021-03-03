@@ -347,9 +347,6 @@ public class MEVEOCdrParser implements ICdrParser {
             edr.setAccessCode(accessPoint.getAccessUserId());
         }
         
-        if(subscription != null && !subscription.getStatus().equals(SubscriptionStatusEnum.ACTIVE)) {
-            throw new BusinessException("The subscription " + subscription.getCode() + " is not active");
-        }
         edr.setSubscription(subscription);
 
         return edr;
