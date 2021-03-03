@@ -1150,7 +1150,8 @@ public class InvoiceApi extends BaseApi {
         dto.setNetToPay(invoice.getNetToPay());
         dto.setStatus(invoice.getStatus());
         dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(invoice));
-
+        setAuditableFieldsDto(invoice, dto);
+        
         return dto;
     }
 
