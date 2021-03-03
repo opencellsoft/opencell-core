@@ -42,6 +42,7 @@ public class ContractItemDto extends BusinessEntityDto {
     		this.serviceTemplateCode = c.getServiceTemplate().getCode();
     	this.rate = c.getRate();
     	this.amountWithoutTax = c.getAmountWithoutTax();
+    	this.description = c.getDescription();
     	this.code = c.getCode();
     }
     
