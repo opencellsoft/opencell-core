@@ -35,13 +35,12 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.async.FlatFileProcessing;
 import org.meveo.admin.parse.csv.MEVEOCdrFlatFileReader;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.model.bi.FileStatusEnum;
-import org.meveo.model.bi.FlatFile;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.mediation.Access;
@@ -49,7 +48,6 @@ import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.bi.impl.FlatFileService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.service.medina.impl.CDRParsingException;
@@ -76,9 +74,8 @@ public class MediationJobBean extends BaseJobBean {
     @Inject
     private CDRParsingService cdrParserService;
 
-    /** The flat file service. */
     @Inject
-    private FlatFileService flatFileService;
+    private FlatFileProcessing flatFileProcessing;
 
     @Inject
     private CDRService cdrService;
@@ -135,6 +132,9 @@ public class MediationJobBean extends BaseJobBean {
         File rejectFile = null;
         PrintWriter rejectFileWriter = null;
         PrintWriter outputFileWriter = null;
+        String fileCurrentName = null;
+        String rejectedfileName = fileName + ".rejected";
+        String processedfileName = fileName + ".processed";
 
         File currentFile = null;
         ICdrReader cdrReader = null;
@@ -150,10 +150,10 @@ public class MediationJobBean extends BaseJobBean {
 
         try {
 
-            rejectFile = new File(rejectDir + File.separator + fileName + ".rejected");
+            rejectFile = new File(rejectDir + File.separator + rejectedfileName);
             rejectFileWriter = new PrintWriter(rejectFile);
 
-            File outputFile = new File(outputDir + File.separator + fileName + ".processed");
+            File outputFile = new File(outputDir + File.separator + processedfileName);
             outputFileWriter = new PrintWriter(outputFile);
 
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
@@ -164,7 +164,7 @@ public class MediationJobBean extends BaseJobBean {
             Integer totalNummberOfRecords = cdrReader.getNumberOfRecords();
             boolean updateTotalCount = totalNummberOfRecords == null;
             if (totalNummberOfRecords != null) {
-                jobExecutionResult.setNbItemsToProcess(totalNummberOfRecords);
+                jobExecutionResult.addNbItemsToProcess(totalNummberOfRecords);
                 jobExecutionResultService.persistResult(jobExecutionResult);
             }
 
@@ -341,20 +341,14 @@ public class MediationJobBean extends BaseJobBean {
             jobExecutionResult.addReport(e.getMessage());
             errors.add(e.getMessage());
             if (currentFile != null) {
-                FileUtils.moveFileDontOverwrite(rejectDir, currentFile, fileName);
+                fileCurrentName = FileUtils.moveFileDontOverwrite(rejectDir, currentFile, fileName);
             }
 
         } finally {
-            FlatFile flatFile = flatFileService.getFlatFileByFileName(fileName);
-            if (flatFile != null) {
-                FileStatusEnum status = FileStatusEnum.VALID;
-                if (errors != null && !errors.isEmpty()) {
-                    status = FileStatusEnum.REJECTED;
-                }
-                flatFile.setStatus(status);
-                flatFileService.update(flatFile);
+            if (MEVEOCdrFlatFileReader.class.isAssignableFrom(cdrReader.getClass())) {
+                flatFileProcessing.updateFlatFile(fileName, fileCurrentName, rejectedfileName, processedfileName, rejectDir, outputDir, errors, jobExecutionResult.getNbItemsCorrectlyProcessed(),
+                    jobExecutionResult.getNbItemsProcessedWithError(), jobExecutionResult.getJobInstance().getCode());
             }
-
             try {
                 if (cdrReader != null) {
                     cdrReader.close();

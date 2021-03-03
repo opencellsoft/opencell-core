@@ -19,6 +19,7 @@
 package org.meveo.admin.job;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -134,6 +135,12 @@ public class FlatFileProcessingJobBean extends BaseJobBean {
             if (flatFile != null) {
                 flatFile.setFileCurrentName(currentFile.getName());
                 flatFileService.update(flatFile);
+            }
+
+            try {
+                int numberOfLines = FileUtils.countLines(currentFile);
+                jobExecutionResult.addNbItemsToProcess(numberOfLines);
+            } catch (IOException e) {
             }
 
             script = scriptInstanceService.getScriptInstance(scriptInstanceFlowCode);

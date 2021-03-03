@@ -100,7 +100,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
             cdrReader.init("DB");
             Integer totalNummberOfRecords = cdrReader.getNumberOfRecords();
             if (totalNummberOfRecords != null) {
-                jobExecutionResult.setNbItemsToProcess(totalNummberOfRecords);
+                jobExecutionResult.addNbItemsToProcess(totalNummberOfRecords);
                 jobExecutionResultService.persistResult(jobExecutionResult);
             }
 
