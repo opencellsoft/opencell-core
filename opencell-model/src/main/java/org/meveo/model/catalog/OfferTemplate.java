@@ -123,7 +123,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_offer_tmpl_discount_plan", joinColumns = @JoinColumn(name = "offer_tmpl_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "discount_plan_id", referencedColumnName = "id"))
-    private List<DiscountPlan> allowedDiscountPlans;
+    private List<DiscountPlan> allowedDiscountPlans = new ArrayList<>();
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
@@ -156,7 +156,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 //    private Map<ChargeTypeEnum, List<ServiceTemplate>> serviceTemplatesByChargeType;
 
     @Transient
-    private List<ProductTemplate> productTemplates;
+    private List<ProductTemplate> productTemplates = new ArrayList<>();
 
     @Transient
     private String transientCode;
@@ -212,7 +212,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name="offer_template_id")
-    private List<OfferTemplate> allowedOffersChange;
+    private List<OfferTemplate> allowedOffersChange = new ArrayList<>();
 
 
     /**
