@@ -60,12 +60,16 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
     @Inject
     @Param
     private Long invoiceCategoryId;
+    
+    
 
-    /**
+
+	/**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
     public InvoiceSubCategoryBean() {
         super(InvoiceSubCategory.class);
+        
     }
 
     /**
@@ -107,4 +111,5 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
     protected String getDefaultSort() {
         return "code";
     }
+    
 }
