@@ -4,11 +4,14 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.CommercialOrderApi;
+import org.meveo.api.cpq.OrderOfferApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
+import org.meveo.api.dto.cpq.order.OrderOfferDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
+import org.meveo.api.dto.response.cpq.GetOrderOfferDtoResponse;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.cpq.CommercialOrderRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -129,5 +132,56 @@ public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 			return errorResponse(e, result.getActionStatus());
 		}
 	}
+	
+	
+	@Inject
+	private OrderOfferApi orderOfferApi;
+
+	@Override
+	public Response createOrderOffer(OrderOfferDto orderOfferDto) {
+		 GetOrderOfferDtoResponse result = new GetOrderOfferDtoResponse();
+		 try {
+			 result.setOrderOfferDto(orderOfferApi.create(orderOfferDto));
+	            return Response.ok(result).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, result.getActionStatus());
+	        }
+	}
+	
+	 
+
+	@Override
+	public Response updateOrderOffer(OrderOfferDto orderOfferDto) {
+		GetOrderOfferDtoResponse result = new GetOrderOfferDtoResponse();
+		try {  
+			result.setOrderOfferDto(orderOfferApi.update(orderOfferDto));
+			return Response.ok(result).build();
+		} catch(MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		}
+	}
+
+	@Override
+	public Response deleteOrderOffer(Long id) {
+		ActionStatus status = new ActionStatus();
+		try {
+			orderOfferApi.remove(id);;
+			return Response.ok(status).build();
+		}catch(MeveoApiException e) {
+			return errorResponse(e, status);
+		}
+	}
+
+	@Override
+	public Response findOrderOffer(Long id) {
+		GetOrderOfferDtoResponse result = new GetOrderOfferDtoResponse();
+		try {  
+			result.setOrderOfferDto(orderOfferApi.find(id));
+			return Response.ok(result).build();
+		} catch(MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
+		}
+	}
+	
 
 }

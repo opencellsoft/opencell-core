@@ -41,7 +41,7 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_id")
-	private CommercialOrder orderCode;
+	private CommercialOrder commercialOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_lot_id")
@@ -76,20 +76,22 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 				.collect(Collectors.toList());
 	}
 
+ 
+
+
 	/**
-	 * @return the orderCode
+	 * @return the commercialOrder
 	 */
-	public CommercialOrder getOrderCode() {
-		return orderCode;
+	public CommercialOrder getCommercialOrder() {
+		return commercialOrder;
 	}
 
 	/**
-	 * @param orderCode the orderCode to set
+	 * @param commercialOrder the commercialOrder to set
 	 */
-	public void setOrderCode(CommercialOrder orderCode) {
-		this.orderCode = orderCode;
+	public void setCommercialOrder(CommercialOrder commercialOrder) {
+		this.commercialOrder = commercialOrder;
 	}
-
 
 	/**
 	 * @return the orderProduct
@@ -140,7 +142,7 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 		if (o == null || getClass() != o.getClass()) return false;
 		if (!super.equals(o)) return false;
 		OrderAttribute that = (OrderAttribute) o;
-		return Objects.equals(orderCode, that.orderCode) &&
+		return Objects.equals(commercialOrder, that.commercialOrder) &&
 				Objects.equals(orderLot, that.orderLot) &&
 				Objects.equals(orderProduct, that.orderProduct) &&
 				Objects.equals(accessPoint, that.accessPoint);
@@ -148,6 +150,6 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), orderCode, orderLot, orderProduct, accessPoint);
+		return Objects.hash(super.hashCode(), commercialOrder, orderLot, orderProduct, accessPoint);
 	}
 }

@@ -1,14 +1,16 @@
 package org.meveo.model.cpq.commercial;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -46,8 +48,11 @@ public class OrderOffer extends AuditableCFEntity {
 	private OfferTemplate offerTemplate;
 
 	@OneToMany(mappedBy = "orderOffer", fetch = FetchType.LAZY)
-	private List<OrderProduct> products;
+	private List<OrderProduct> products=new ArrayList<OrderProduct>();
 
+	@OneToMany(mappedBy = "quoteOffer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+	private List<OrderAttribute> OrderAttributes = new ArrayList<OrderAttribute>();
 	/**
 	 * @return the order
 	 */

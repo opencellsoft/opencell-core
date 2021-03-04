@@ -173,7 +173,7 @@ public class QuoteValidationTemp extends ModuleScript {
 	
 	private void processOrderAttribute(QuoteAttribute quoteAttribute, CommercialOrder commercialOrder, OrderLot orderLot, OrderProduct orderProduct) {
 		OrderAttribute orderAttribute = new OrderAttribute(quoteAttribute, currentUser);
-		orderAttribute.setOrderCode(commercialOrder);
+		orderAttribute.setCommercialOrder(commercialOrder);
 		orderAttribute.setOrderLot(orderLot);
 		orderAttribute.setOrderProduct(orderProduct);
 		orderAttribute.setAccessPoint(null);
