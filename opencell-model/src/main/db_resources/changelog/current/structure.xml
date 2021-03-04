@@ -3801,9 +3801,15 @@ END $$;]]>
         <addColumn tableName="cat_discount_plan">
             <column name="status" type="varchar(50)"/>
             <column name="status_date" type="datetime"/>
-            <column name="initial_quantity" type="bigint" defaultValue="0"/>
-            <column name="used_quantity" type="bigint" defaultValue="0"/>
-            <column name="application_limit" type="bigint" defaultValue="0"/>
+            <column name="initial_quantity" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="used_quantity" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="application_limit" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
             <column name="application_filter_el" type="varchar(2000)"/>
             <column name="discount_plan_id" type="bigint"/>
         </addColumn>
@@ -3816,7 +3822,9 @@ END $$;]]>
         <addColumn tableName="billing_discount_plan_instance">
             <column name="status" type="varchar(50)"/>
             <column name="status_date" type="datetime"/>
-            <column name="application_count" type="bigint"/>
+            <column name="application_count" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
         </addColumn>
         <createTable tableName="cat_discount_plan_item_acc_articles">
             <column name="discount_plan_item_id" type="bigint">

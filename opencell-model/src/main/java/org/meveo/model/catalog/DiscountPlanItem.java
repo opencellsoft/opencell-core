@@ -187,7 +187,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	@Type(type = "numeric_boolean")
 	@Column(name = "allow_to_negate")
 	@NotNull
-	private boolean allowToNegate;
+	private boolean allowToNegate = false;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;

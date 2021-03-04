@@ -38,6 +38,7 @@ import org.meveo.model.catalog.ApplicableEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
@@ -87,6 +88,12 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	private List<DiscountPlanItemDto> discountPlanItems;
 
 	/**
+	 * Type of the discount plan. Defines on which entity the discount plan can be applied.
+	 */
+
+	private DiscountPlanTypeEnum discountPlanType;
+
+	/**
 	 * Status of the discount plan:
 	 * DRAFT “Draft”: The discount plan is being configured and is waiting for validation
 	 * ACTIVE “Active”: the discount plan is available and can be set used
@@ -107,7 +114,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	 * Default value is 0 = infinite.
 	 * For types QUOTE, INVOICE, INVOICE_LINE, the value is forced to 0.
 	 */
-	private Long initialQuantity;
+	private Long initialQuantity = 0L;
 
 	/**
 	 * How many times the discount plan has been used.
@@ -115,7 +122,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	 * If intialQuantity is not 0, then reaching the initialQuantity expires the discount plan.
 	 * The value is incremented every time the discountPlan is instantiated on any Billing Account, Subscription, or ProductInstance
 	 */
-	private Long usedQuantity;
+	private Long usedQuantity = 0L;
 
 	/**
 	 * How many times the discount can be applied on a given entity (BillingAccount, Subscription, Product Instance).
@@ -124,7 +131,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	 * See DiscountPlanInstance below for more details.
 	 * This has no real meaning for discounts applied to invoices or invoice lines.
 	 */
-	private Long applicationLimit;
+	private Long applicationLimit = 0L;
 
 	/**
 	 * A boolean EL that must evaluate to true to allow the discount plan to be applied.
@@ -276,6 +283,9 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	}
 
 	public Long getInitialQuantity() {
+		if (initialQuantity == null) {
+			initialQuantity = 0L;
+		}
 		return initialQuantity;
 	}
 
@@ -284,6 +294,9 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	}
 
 	public Long getUsedQuantity() {
+		if (usedQuantity == null) {
+			usedQuantity = 0L;
+		}
 		return usedQuantity;
 	}
 
@@ -292,6 +305,9 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	}
 
 	public Long getApplicationLimit() {
+		if (applicationLimit == null) {
+			applicationLimit = 0L;
+		}
 		return applicationLimit;
 	}
 
@@ -321,5 +337,13 @@ public class DiscountPlanDto extends EnableBusinessDto {
 
 	public void setApplicableEntities(List<ApplicableEntityDto> applicableEntities) {
 		this.applicableEntities = applicableEntities;
+	}
+
+	public DiscountPlanTypeEnum getDiscountPlanType() {
+		return discountPlanType;
+	}
+
+	public void setDiscountPlanType(DiscountPlanTypeEnum discountPlanType) {
+		this.discountPlanType = discountPlanType;
 	}
 }

@@ -1139,7 +1139,7 @@ public abstract class BaseApi {
 
     /**
      * Convert pagination and filtering DTO to a pagination configuration used in services.
-     * 
+     *
      * @param defaultSortBy A default value to sortBy
      * @param defaultSortOrder A default sort order
      * @param fetchFields Fields to fetch
@@ -1149,8 +1149,8 @@ public abstract class BaseApi {
      * @throws InvalidParameterException invalid parameter exception.
      */
     @SuppressWarnings("rawtypes")
-    protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering, Class targetClass)
-            throws InvalidParameterException {
+    public PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering,
+            Class targetClass) throws InvalidParameterException {
 
         if (pagingAndFiltering != null && targetClass != null) {
             Map<String, CustomFieldTemplate> cfts = null;
@@ -1193,7 +1193,7 @@ public abstract class BaseApi {
 
     /**
      * Convert pagination and filtering DTO to a pagination configuration used in services.
-     * 
+     *
      * @param defaultSortBy A default value to sortBy
      * @param defaultSortOrder A default sort order
      * @param fetchFields Fields to fetch

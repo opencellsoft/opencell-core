@@ -5,10 +5,13 @@ import org.meveo.apiv2.billing.resource.DiscountPlanInstanceResource;
 import org.meveo.apiv2.billing.service.DiscountPlanInstanceApiService;
 import org.meveo.apiv2.catalog.resource.DiscountPlanResource;
 import org.meveo.apiv2.catalog.service.DiscountPlanApiService;
+import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.common.LinkGenerator;
+import org.meveo.apiv2.generic.core.GenericRequestMapper;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.catalog.DiscountPlan;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -38,14 +41,16 @@ public class DiscountPlanInstanceResourceImpl implements DiscountPlanInstanceRes
 	}
 
 	@Override
-	public Response getDiscountPlanInstances(Long id, Long offset, Long limit, String sort, String orderBy, String filter) {
+	public Response getDiscountPlanInstances(Long id, GenericPagingAndFiltering searchConfig) {
 		Set<String> genericFields = null;
 		Set<String> nestedEntities = new HashSet<>();
-		nestedEntities.add("discountPlan");
-		nestedEntities.add("billingAccount");
-		Map<String, Object> filters = new HashMap<>();
-		filters.put("billingAccount.id", id);
-		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), filters, filter, null, null, null);
+		if (searchConfig != null) {
+			genericFields = searchConfig.getGenericFields();
+			nestedEntities = searchConfig.getNestedEntities();
+		}
+		GenericRequestMapper genericRequestMapper = new GenericRequestMapper(DiscountPlan.class, PersistenceServiceHelper.getPersistenceService());
+		PaginationConfiguration paginationConfiguration = genericRequestMapper.mapTo(searchConfig);
+		paginationConfiguration.getFilters().put("billingAccount.id", id);
 		String jsonEntity = discountPlanInstanceApiService.findPaginatedRecords(paginationConfiguration, genericFields, nestedEntities);
 		return Response.ok().entity(jsonEntity).links(buildPaginatedResourceLink(ENTITY_NAME)).build();
 	}
@@ -54,8 +59,6 @@ public class DiscountPlanInstanceResourceImpl implements DiscountPlanInstanceRes
 	public Response getDiscountPlanInstance(Long id, Long idInsance) {
 		Set<String> genericFields = null;
 		Set<String> nestedEntities = new HashSet<>();
-		nestedEntities.add("discountPlan");
-		nestedEntities.add("billingAccount");
 		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(null, null);
 		return discountPlanInstanceApiService.findById(idInsance, paginationConfiguration, genericFields, nestedEntities)
 				.map(fetchedEntity -> Response.ok().entity(fetchedEntity).links(buildSingleResourceLink(ENTITY_NAME, id)).build())
@@ -90,14 +93,16 @@ public class DiscountPlanInstanceResourceImpl implements DiscountPlanInstanceRes
 	}
 
 	@Override
-	public Response getDiscountPlanInstancesBySubscription(Long id, Long offset, Long limit, String sort, String orderBy, String filter) {
+	public Response getDiscountPlanInstancesBySubscription(Long id, GenericPagingAndFiltering searchConfig) {
 		Set<String> genericFields = null;
-		Set<String> nestedEntities = new HashSet<>();
-		nestedEntities.add("discountPlan");
-		nestedEntities.add("subscription");
-		Map<String, Object> filters = new HashMap<>();
-		filters.put("subscription.id", id);
-		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), filters, filter, null, null, null);
+		Set<String> nestedEntities = null;
+		if (searchConfig != null) {
+			genericFields = searchConfig.getGenericFields();
+			nestedEntities = searchConfig.getNestedEntities();
+		}
+		GenericRequestMapper genericRequestMapper = new GenericRequestMapper(DiscountPlan.class, PersistenceServiceHelper.getPersistenceService());
+		PaginationConfiguration paginationConfiguration = genericRequestMapper.mapTo(searchConfig);
+		paginationConfiguration.getFilters().put("subscription.id", id);
 		String jsonEntity = discountPlanInstanceApiService.findPaginatedRecords(paginationConfiguration, genericFields, nestedEntities);
 		return Response.ok().entity(jsonEntity).links(buildPaginatedResourceLink(ENTITY_NAME)).build();
 	}
@@ -106,8 +111,6 @@ public class DiscountPlanInstanceResourceImpl implements DiscountPlanInstanceRes
 	public Response getDiscountPlanInstanceBySubscription(Long id, Long idInsance) {
 		Set<String> genericFields = null;
 		Set<String> nestedEntities = new HashSet<>();
-		nestedEntities.add("discountPlan");
-		nestedEntities.add("subscription");
 		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(null, null);
 		return discountPlanInstanceApiService.findById(idInsance, paginationConfiguration, genericFields, nestedEntities)
 				.map(fetchedEntity -> Response.ok().entity(fetchedEntity).links(buildSingleResourceLink(ENTITY_NAME, id)).build())

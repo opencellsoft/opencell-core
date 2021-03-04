@@ -309,4 +309,23 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
     public void setApplicationCount(Long applicationCount) {
         this.applicationCount = applicationCount;
     }
+
+    public void setDiscountPlanInstanceStatus(DiscountPlan dp) {
+        Date now = new Date();
+        if (dp.getStartDate() == null && dp.getEndDate() == null) {
+            this.status = DiscountPlanInstanceStatusEnum.ACTIVE;
+            return;
+        }
+        if (now.after(dp.getStartDate()) && now.before(dp.getEndDate())) {
+            this.status = DiscountPlanInstanceStatusEnum.ACTIVE;
+            return;
+        }
+        if (now.before(dp.getStartDate())) {
+            this.status = DiscountPlanInstanceStatusEnum.APPLIED;
+            return;
+        }
+        this.status = DiscountPlanInstanceStatusEnum.EXPIRED;
+        this.statusDate = now;
+    }
+
 }

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.models.ApiException;
 import org.meveo.model.catalog.DiscountPlan;
 
@@ -34,8 +35,7 @@ public interface DiscountPlanInstanceResource {
                     @Header(name = "ETag", description = "a pseudo-unique identifier that represents the version of the data sent back", schema = @Schema(type = "integer", format = "int64")) }, description = "the searched discount Plan"),
             @ApiResponse(responseCode = "404", description = "Discount plan instance not found", content = @Content(schema = @Schema(implementation = ApiException.class))) })
     Response getDiscountPlanInstances(@Parameter(description = "id of the billing Account", required = true) @PathParam("billingAccountId") Long billingAccountId,
-            @DefaultValue("0") @QueryParam("offset") Long offset, @DefaultValue("50") @QueryParam("limit") Long limit, @QueryParam("sort") String sort,
-            @QueryParam("orderBy") String orderBy, @QueryParam("filter") String filter);
+            @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig);
 
     @GET
     @Path("billingAccounts/{billingAccountId}/discountPlanInstances/{id}")
@@ -93,8 +93,7 @@ public interface DiscountPlanInstanceResource {
             @Header(name = "ETag", description = "a pseudo-unique identifier that represents the version of the data sent back", schema = @Schema(type = "integer", format = "int64")) }, description = "the searched discount Plan"),
             @ApiResponse(responseCode = "404", description = "Discount plan instance not found", content = @Content(schema = @Schema(implementation = ApiException.class))) })
     Response getDiscountPlanInstancesBySubscription(@Parameter(description = "id of the subscription", required = true) @PathParam("subscriptionId") Long subscriptionId,
-            @DefaultValue("0") @QueryParam("offset") Long offset, @DefaultValue("50") @QueryParam("limit") Long limit, @QueryParam("sort") String sort,
-            @QueryParam("orderBy") String orderBy, @QueryParam("filter") String filter);
+            @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig);
 
     @GET
     @Path("/subscriptions/{subscriptionId}/discountPlanInstances/{id}")

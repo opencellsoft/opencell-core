@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.apiv2.article.AccountingArticle;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.models.ApiException;
@@ -38,8 +39,8 @@ public interface DiscountPlanResource {
                     @Header(name = "ETag", description = "a pseudo-unique identifier that represents the version of the data sent back.", schema = @Schema(type = "integer", format = "int64")) }, description = "list of discountPlans", content = @Content(schema = @Schema(implementation = DiscountPlan.class))),
             @ApiResponse(responseCode = "304", description = "Lists discountPlans with filtering, sorting, paging."),
             @ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content(schema = @Schema(implementation = ApiException.class))) })
-    Response getAll(@DefaultValue("0") @QueryParam("offset") Long offset, @DefaultValue("50") @QueryParam("limit") Long limit, @QueryParam("sort") String sort,
-            @QueryParam("orderBy") String orderBy, @QueryParam("filter") String filter);
+    Response getAll(
+            @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig);
 
     @GET
     @Path("/{id}")
@@ -79,9 +80,8 @@ public interface DiscountPlanResource {
     @Operation(summary = "Return an discount plan items", tags = { "Discount Plans" }, description = "Returns the discount plan items data", responses = {
             @ApiResponse(responseCode = "200", description = "paginated results successfully retrieved with hypermedia links"),
             @ApiResponse(responseCode = "400", description = "bad request when entityName not well formed or entity unrecognized") })
-    Response getDiscountPlanItems(@Parameter(description = "id of the discount plan", required = true) @PathParam("id") Long id,
-            @DefaultValue("0") @QueryParam("offset") Long offset, @DefaultValue("50") @QueryParam("limit") Long limit, @QueryParam("sort") String sort,
-            @QueryParam("orderBy") String orderBy, @QueryParam("filter") String filter);
+    Response getDiscountPlanItems(@Parameter(description = "id of the discount plan ", required = true) @PathParam("id") Long id,
+            @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig);
 
     @GET
     @Path("/{id}/discountPlanItems/{idItem}")

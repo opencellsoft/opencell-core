@@ -23,7 +23,10 @@ import javax.ejb.Stateless;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.service.base.BusinessService;
+
+import java.util.Date;
 
 /**
  * @author Edward P. Legaspi
@@ -38,7 +41,13 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 			log.error("Invalid effectivity dates");
 			throw new BusinessException("Invalid effectivity dates");
 		}
+		if (entity.getDiscountPlanType() != null && (entity.getDiscountPlanType().equals(DiscountPlanTypeEnum.QUOTE) || entity.getDiscountPlanType()
+				.equals(DiscountPlanTypeEnum.INVOICE) || entity.getDiscountPlanType().equals(DiscountPlanTypeEnum.INVOICE_LINE)) || entity.getInitialQuantity() == null) {
+			entity.setInitialQuantity(0L);
+		}
+
 		if (entity.getStatus().equals(DiscountPlanStatusEnum.DRAFT) || entity.getStatus().equals(DiscountPlanStatusEnum.ACTIVE)) {
+			entity.setStatusDate(new Date());
 			super.create(entity);
 		} else {
 			log.error("Only status DRAFT and ACTIVE are allowed to create a discount plan: {}", entity.getCode());

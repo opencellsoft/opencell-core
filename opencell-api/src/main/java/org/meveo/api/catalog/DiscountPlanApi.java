@@ -81,6 +81,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (postData.getDurationUnit() != null) {
             discountPlan.setDurationUnit(postData.getDurationUnit());
         }
+        discountPlan.setDiscountPlanType(postData.getDiscountPlanType());
         discountPlan.setStatus(postData.getStatus());
         discountPlan.setStatusDate(postData.getStatusDate());
         discountPlan.setInitialQuantity(postData.getInitialQuantity());
@@ -161,6 +162,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             } else {
                 discountPlan.setDurationUnit(postData.getDurationUnit());
             }
+        }
+        if (postData.getDiscountPlanType() != null) {
+            discountPlan.setDiscountPlanType(postData.getDiscountPlanType());
         }
         if (postData.getInitialQuantity() != null) {
             discountPlan.setInitialQuantity(postData.getInitialQuantity());

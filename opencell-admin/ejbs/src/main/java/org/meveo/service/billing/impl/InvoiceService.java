@@ -277,9 +277,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     @InvoiceNumberAssigned
     private Event<Invoice> invoiceNumberAssignedEventProducer;
-    
+
     @Inject
-	private AccountingArticleService accountingArticleService;
+    private AccountingArticleService accountingArticleService;
 
     @Inject
     protected ParamBeanFactory paramBeanFactory;
@@ -287,19 +287,32 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     private InvoiceLinesService invoiceLinesService;
 
-    /** folder for pdf . */
+    @Inject
+    private DiscountPlanInstanceService discountPlanInstanceService;
+
+    /**
+     * folder for pdf .
+     */
     private String PDF_DIR_NAME = "pdf";
 
-    /** folder for adjustment pdf. */
+    /**
+     * folder for adjustment pdf.
+     */
     private String ADJUSTEMENT_DIR_NAME = "invoiceAdjustmentPdf";
 
-    /** template jasper name. */
+    /**
+     * template jasper name.
+     */
     private String INVOICE_TEMPLATE_FILENAME = "invoice.jasper";
 
-    /** date format. */
+    /**
+     * date format.
+     */
     private String DATE_PATERN = "yyyy.MM.dd";
 
-    /** map used to store temporary jasper report. */
+    /**
+     * map used to store temporary jasper report.
+     */
     private Map<String, JasperReport> jasperReportMap = new HashMap<>();
 
     /**
@@ -3477,8 +3490,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             // If the discount and the aggregate are of opposite signs, then the absolute value of the discount must not be greater than the absolute value of the
             // considered invoice aggregate
-            if (!((discountAmount.compareTo(BigDecimal.ZERO) < 0 && amountToApplyDiscountOn.compareTo(BigDecimal.ZERO) < 0)
-                    || (discountAmount.compareTo(BigDecimal.ZERO) > 0 && amountToApplyDiscountOn.compareTo(BigDecimal.ZERO) > 0)) && (discountAmount.abs().compareTo(amountToApplyDiscountOn.abs()) > 0)) {
+            if (allowToNegate(discountAmount, amountToApplyDiscountOn, discountPlanItem)) {
                 discountAmountsByTax.putAll(amountsByTax);
                 discountAmountsByTax.replaceAll((tax, amount) -> amount.negate());
             } else {
@@ -3520,12 +3532,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     }
 
+    private boolean allowToNegate(BigDecimal discountAmount, BigDecimal amountToApplyDiscountOn, DiscountPlanItem discountPlanItem) {
+        if (!((discountAmount.compareTo(BigDecimal.ZERO) < 0 && amountToApplyDiscountOn.compareTo(BigDecimal.ZERO) < 0) || (discountAmount.compareTo(BigDecimal.ZERO) > 0
+                && amountToApplyDiscountOn.compareTo(BigDecimal.ZERO) > 0)) && (discountAmount.abs().compareTo(amountToApplyDiscountOn.abs()) > 0)) {
+            return discountPlanItem.isAllowToNegate();
+        }
+        return false;
+    }
+
     /**
      * Determine a discount amount or percent to apply
      *
-     * @param invoice Invoice to apply discount on
-     * @param scAggregate Subcategory aggregate to apply discount on
-     * @param amount Amount to apply discount on
+     * @param invoice          Invoice to apply discount on
+     * @param scAggregate      Subcategory aggregate to apply discount on
+     * @param amount           Amount to apply discount on
      * @param discountPlanItem Discount configuration
      * @return A discount percent (0-100)
      */
@@ -3551,7 +3571,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
         for (DiscountPlanInstance dpi : discountPlanInstances) {
-            if (!dpi.isEffective(invoice.getInvoiceDate())) {
+            if (!dpi.isEffective(invoice.getInvoiceDate()) || dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.EXPIRED)) {
                 continue;
             }
             if (dpi.getDiscountPlan().isActive()) {
@@ -3560,6 +3580,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     if (discountPlanItem.isActive() && matchDiscountPlanItemExpression(discountPlanItem.getExpressionEl(), customerAccount, billingAccount, invoice, dpi)) {
                         applicableDiscountPlanItems.add(discountPlanItem);
                     }
+                }
+                if (!invoice.isDraft()) {
+                    dpi.setApplicationCount(dpi.getApplicationCount() == null ? 1 : dpi.getApplicationCount() + 1);
+
+                    if (dpi.getDiscountPlan().getApplicationLimit() != 0 && dpi.getApplicationCount() >= dpi.getDiscountPlan().getApplicationLimit()) {
+                        dpi.setStatusDate(new Date());
+                        dpi.setStatus(DiscountPlanInstanceStatusEnum.EXPIRED);
+                    }
+                    if (dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.ACTIVE)) {
+                        dpi.setStatusDate(new Date());
+                        dpi.setStatus(DiscountPlanInstanceStatusEnum.IN_USE);
+                    }
+                    discountPlanInstanceService.update(dpi);
                 }
             }
         }

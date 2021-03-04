@@ -177,7 +177,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	 * See DiscountPlanInstance below for more details.
 	 * This has no real meaning for discounts applied to invoices or invoice lines.
 	 */
-	@Column(name = "application_limit")
+	@Column(name = "application_limit", columnDefinition = "bigint default 0", nullable = false)
 	private Long applicationLimit = 0L;
 
 	/**
@@ -358,6 +358,9 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	}
 
 	public Long getInitialQuantity() {
+		if (initialQuantity == null) {
+			initialQuantity = 0L;
+		}
 		return initialQuantity;
 	}
 
@@ -366,6 +369,9 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	}
 
 	public Long getUsedQuantity() {
+		if (usedQuantity == null) {
+			usedQuantity = 0L;
+		}
 		return usedQuantity;
 	}
 
@@ -374,6 +380,9 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	}
 
 	public Long getApplicationLimit() {
+		if (applicationLimit == null) {
+			applicationLimit = 0L;
+		}
 		return applicationLimit;
 	}
 
