@@ -91,6 +91,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 entityClassName = "WalletOperation";
             else if ( pathIBaseRS.equals( "/catalog/pricePlan" ) )
                 entityClassName = "PricePlanMatrix";
+            else if ( pathIBaseRS.equals( "/countryIso" ) )
+                entityClassName = "Country";
             else
                 entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
