@@ -2219,6 +2219,9 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParameters();
 
+        if (subscriptionValidityDate == null) {
+            subscriptionValidityDate = new Date();
+        }
         Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
