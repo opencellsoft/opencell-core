@@ -3697,7 +3697,36 @@ END $$;]]>
 		<sql>DROP INDEX IF EXISTS customer_code</sql>
     </changeSet>
 
-    <changeSet id="#5621_20201104_offer_template" author="NabilOUACHI">
+    <changeSet id="#5621_20201104_offer_template_fix" author="NabilOUACHI" failOnError="false">
+        <addColumn tableName="billing_subscription">
+            <column name="valid_from" type="datetime"/>
+            <column name="valid_to" type="datetime"/>
+        </addColumn>
+        <dropUniqueConstraint tableName="billing_subscription" constraintName="uk_9fnf93rp352nkw2kpd4oq5xp9"/>
+        <addUniqueConstraint columnNames="code, valid_from, valid_to" constraintName="uk_9fnf93rp352nkw2kpd4oq5xp9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_subscription" />
+
+        <addColumn tableName="cat_offer_template">
+            <column name="is_offer_change_restricted" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+
+        <createTable tableName="cat_offer_allowed_offer_change">
+            <column name="offer_tmpl_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="allowed_offer_change_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="offer_tmpl_id, allowed_offer_change_id" constraintName="cat_offer_allowed_offer_change_pkey" tableName="cat_offer_allowed_offer_change" />
+        <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="offer_tmpl_id"
+                                 constraintName="cat_offer_allowed_offer_change_fk1" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="allowed_offer_change_id"
+                                 constraintName="cat_offer_allowed_offer_change_fk2" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#5621_20201104_offer_template" author="NabilOUACHI" failOnError="false">
         <addColumn tableName="billing_subscription">
             <column name="valid_from" type="datetime"/>
             <column name="valid_to" type="datetime"/>
@@ -3714,6 +3743,31 @@ END $$;]]>
                                  constraintName="offer_template_offer_template_fk" referencedTableName="cat_offer_template"
                                  referencedColumnNames="id"/>
     </changeSet>
+    
+    <changeSet id="#5975_20210225_offer_template_allowed_offer_change_should_be_many_to_many" author="MounirBOUKAYOUA" failOnError="false">
+        <dropColumn tableName="cat_offer_template">
+            <column name="offer_template_id"></column>
+        </dropColumn>
+
+        <createTable tableName="cat_offer_allowed_offer_change">
+            <column name="offer_tmpl_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="allowed_offer_change_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="offer_tmpl_id, allowed_offer_change_id" constraintName="cat_offer_allowed_offer_change_pkey" tableName="cat_offer_allowed_offer_change" />
+
+        <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="offer_tmpl_id"
+                                 constraintName="cat_offer_allowed_offer_change_fk1" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="allowed_offer_change_id"
+                                 constraintName="cat_offer_allowed_offer_change_fk2" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+    </changeSet>   
 
 
     <changeSet id="#5599_20201029" author="AndriusKarpavicius">

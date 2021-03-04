@@ -670,6 +670,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	        invoiceService.postCreate(entity);
 	        
     	}
+    	entity.setBillingAccount(billingAccountService.findById(entity.getBillingAccount().getId()));
     	if(entity.getInvoiceNumber() == null) {
     		entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
     	}

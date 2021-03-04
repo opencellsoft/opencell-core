@@ -52,7 +52,6 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * The Class BillingAccountService.
@@ -77,11 +76,6 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
-    
-    @Inject
-    private CustomerAccountService customerAccountService;
-    
-    
 
     /**
      * Inits the billing account.
@@ -424,8 +418,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         if (ba == null) {
             return false;
         }
-        CustomerAccount customerAccount = customerAccountService.refreshOrRetrieve(ba.getCustomerAccount());
-        CustomerCategory customerCategory = customerAccount.getCustomer().getCustomerCategory();
+        CustomerCategory customerCategory = ba.getCustomerAccount().getCustomer().getCustomerCategory();
         if (customerCategory == null) {
             return false;
         }

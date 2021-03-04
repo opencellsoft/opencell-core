@@ -1,5 +1,14 @@
 package org.meveo.service.base.expressions;
 
+import static org.meveo.service.base.PersistenceService.SEARCH_WILDCARD_OR;
+import static org.meveo.service.base.PersistenceService.SEARCH_WILDCARD_OR_IGNORE_CAS;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
@@ -7,13 +16,6 @@ import org.meveo.model.UniqueEntity;
 import org.meveo.service.base.PersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import static org.meveo.service.base.PersistenceService.SEARCH_WILDCARD_OR;
-import static org.meveo.service.base.PersistenceService.SEARCH_WILDCARD_OR_IGNORE_CAS;
 
 public class NativeExpressionFactory {
 
@@ -30,6 +32,11 @@ public class NativeExpressionFactory {
 
     public void addFilters(String key, Object value) {
         checkOnCondition(key, value, new ExpressionParser(key.split(" ")));
+    	if(key.endsWith(".id")) {
+        	Object ids = (value instanceof Collection)? ((Collection)value).stream().map(x->Long.parseLong(x.toString())).collect(Collectors.toList()):Long.parseLong(value.toString());
+            checkOnCondition(key, ids, new ExpressionParser(key.split(" ")));
+    	} else
+    		checkOnCondition(key, value, new ExpressionParser(key.split(" ")));
     }
 
     protected void checkOnCondition(String key, Object value, ExpressionParser exp) {
