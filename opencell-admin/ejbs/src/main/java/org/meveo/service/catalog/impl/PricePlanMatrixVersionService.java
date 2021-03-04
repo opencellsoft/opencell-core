@@ -13,6 +13,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -104,12 +105,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return duplicate;
     }
 
-    private Integer getLastVersion(String ppmCode) {
-        return this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion", Integer.class)
-                    .setParameter("pricePlanMatrixCode", ppmCode)
-                    .getSingleResult();
+    @SuppressWarnings("unchecked")
+	public Integer getLastVersion(String ppmCode) {
+    	List<PricePlanMatrixVersion> pricesVersions = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion")
+                												.setParameter("pricePlanMatrixCode", ppmCode).getResultList();
+        return pricesVersions.isEmpty() ? 0 : pricesVersions.get(0).getCurrentVersion();
     }
-
+    
     public PricePlanMatrixVersionDto load(Long id) {
         PricePlanMatrixVersion pricePlanMatrixVersion = findById(id);
         return new PricePlanMatrixVersionDto(pricePlanMatrixVersion);

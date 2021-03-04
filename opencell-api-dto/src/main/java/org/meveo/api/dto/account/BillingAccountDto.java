@@ -213,6 +213,11 @@ public class BillingAccountDto extends AccountDto {
     @XmlElement
     protected Boolean thresholdPerEntity;
 
+    /**
+     * Contact code
+     */
+    private String primaryContact;
+
     public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
 	}
@@ -220,13 +225,13 @@ public class BillingAccountDto extends AccountDto {
 	public void setThresholdPerEntity(Boolean thresholdPerEntity) {
 		this.thresholdPerEntity = thresholdPerEntity;
 	}
- 
-    /** The tags. */ 
+
+    /** The tags. */
     @XmlElementWrapper(name = "tagCodes")
     @XmlElement(name = "tagCodes")
     protected Set<String> tagCodes = new HashSet<String>();
 
-    
+
     /**
      * Instantiates a new billing account dto.
      */
@@ -295,6 +300,10 @@ public class BillingAccountDto extends AccountDto {
             taxCategoryCode = e.getTaxCategory().getCode();
         }
 
+        if(e.getPrimaryContact() != null) {
+            setPrimaryContact(e.getPrimaryContact().getCode());
+        }
+
         // Start compatibility with pre-4.6 versions
         PaymentMethod paymentMethod = e.getCustomerAccount().getPreferredPaymentMethod();
         if(Objects.nonNull(e.getPaymentMethod())){
@@ -306,7 +315,7 @@ public class BillingAccountDto extends AccountDto {
                 setBankCoordinates(new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates()));
             }
         }
-         
+
         // End compatibility with pre-4.6 versions
     }
     
@@ -871,6 +880,20 @@ public class BillingAccountDto extends AccountDto {
 		this.infoGdpr = infoGdpr;
 	}
 
+    /**
+     * @return the primaryContact
+     */
+    public String getPrimaryContact() {
+        return primaryContact;
+    }
+
+    /**
+     * @param primaryContact the primaryContact to set
+     */
+    public void setPrimaryContact(String primaryContact) {
+        this.primaryContact = primaryContact;
+    }
+
 	/**
 	 * @return the tagCodes
 	 */
@@ -885,8 +908,8 @@ public class BillingAccountDto extends AccountDto {
 		this.tagCodes = tagCodes;
 	}
 
- 
-	
-	
+
+
+
 
 }

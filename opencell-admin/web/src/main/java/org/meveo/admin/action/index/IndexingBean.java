@@ -27,6 +27,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.admin.action.BaseBean;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.index.ElasticClient;
@@ -53,7 +54,11 @@ public class IndexingBean implements Serializable {
     protected MeveoUser currentUser;
 
     private Future<ReindexingStatistics> reindexingFuture;
-
+    
+	public IndexingBean() {
+		BaseBean.showDeprecatedWarning();
+	}
+	
     /**
      * Drop and recreate index and reindex data of current provider
      */

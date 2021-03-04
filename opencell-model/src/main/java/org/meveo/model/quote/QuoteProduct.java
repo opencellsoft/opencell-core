@@ -22,8 +22,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.AuditableEntity;
-import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.AuditableCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
@@ -32,15 +32,15 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 
 @SuppressWarnings("serial")
 @Entity
+@CustomFieldEntity(cftCodePrefix = "QuoteProduct")
 @Table(name = "cpq_quote_product")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_product_seq"), })
 @NamedQueries({
 		@NamedQuery(name = "QuoteProduct.findByQuoteId", query = "select q from QuoteProduct q where q.quote.id=:id"),
-		@NamedQuery(name = "QuoteProduct.findByQuoteCode", query = "select q from QuoteProduct q where q.quote.code=:code"),
 		@NamedQuery(name = "QuoteProduct.findByQuoteVersionAndQuoteOffer", query = "select q from QuoteProduct q left join q.quoteVersion qq left join q.quoteOffre qqo where qq.id=:quoteVersionId and qqo.id=:quoteOfferId")
 })
-public class QuoteProduct extends AuditableEntity {
+public class QuoteProduct extends AuditableCFEntity {
 
 	/**
      * quote

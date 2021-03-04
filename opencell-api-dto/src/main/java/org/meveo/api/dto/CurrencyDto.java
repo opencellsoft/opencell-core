@@ -18,6 +18,8 @@
 
 package org.meveo.api.dto;
 
+import java.math.BigDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -55,6 +57,9 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
      * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
      */
     private Boolean disabled;
+    
+    @Deprecated
+    private BigDecimal prCurrencyToThis;
 
     /** The language descriptions. */
     private List<LanguageDescriptionDto> languageDescriptions;
@@ -76,6 +81,7 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
         code = tradingCurrency.getCurrencyCode();
         description = tradingCurrency.getPrDescription();
         disabled = tradingCurrency.isDisabled();
+        prCurrencyToThis = tradingCurrency.getPrCurrencyToThis();
     }
 
     /**
@@ -133,6 +139,20 @@ public class CurrencyDto extends AuditableEntityDto implements IEnableDto {
     @Override
     public Boolean isDisabled() {
         return disabled;
+    }
+    
+    /**
+     * @return the prCurrencyToThis
+     */
+    public BigDecimal getPrCurrencyToThis() {
+        return prCurrencyToThis;
+    }
+
+    /**
+     * @param prCurrencyToThis the prCurrencyToThis to set
+     */
+    public void setPrCurrencyToThis(BigDecimal prCurrencyToThis) {
+        this.prCurrencyToThis = prCurrencyToThis;
     }
 
     @Override

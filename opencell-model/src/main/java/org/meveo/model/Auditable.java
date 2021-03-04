@@ -124,6 +124,19 @@ public class Auditable implements Serializable {
             this.created = this.updated;
         }
     }
+    
+    public int compareByUpdated(Auditable other) {
+    	 if (this.updated == null && other.updated == null) {
+             return 0;
+         } else if (this.updated != null && other.updated == null) {
+             return 1;
+         } else if (this.updated == null && other.updated != null) {
+             return -1;
+         } else if (this.updated != null) {
+             return this.updated.compareTo(other.updated);
+         }
+         return 0;
+    }
 
     /**
      * Is current user a creator of this entity

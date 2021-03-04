@@ -21,6 +21,7 @@ package org.meveo.api.rest.billing.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.billing.InvoicingPlanApi;
 import org.meveo.api.dto.ActionStatus;
@@ -29,6 +30,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.InvoicingPlanDto;
 import org.meveo.api.dto.response.billing.InvoicingPlanResponseDto;
 import org.meveo.api.dto.response.billing.InvoicingPlansResponseDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.InvoicingPlanRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -93,16 +95,16 @@ public class InvoicingPlanRsImpl extends BaseRs implements InvoicingPlanRs {
 	}
 
 	@Override
-	public ActionStatus createOrUpdate(InvoicingPlanDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	public Response createOrUpdate(InvoicingPlanDto postData) {
+		InvoicingPlanResponseDto result = new InvoicingPlanResponseDto();
 
 		try {
-			invoicingPlanApi.createOrUpdate(postData);
-		} catch (Exception e) {
-			processException(e, result);
+			result.setInvoicingPlanDto(new InvoicingPlanDto(invoicingPlanApi.createOrUpdate(postData), null));
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+		    return errorResponse(e, result.getActionStatus());
 		}
 
-		return result;
 	}
 
 	@Override

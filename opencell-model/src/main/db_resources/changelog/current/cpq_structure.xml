@@ -1575,9 +1575,7 @@
 	            <column name="cpq_attribute_id" type="bigint" >
 	            	<constraints nullable="false"/>
 	            </column>
-	            <column name="cpq_quote_product_id" type="bigint" >
-	            	<constraints nullable="false"/>
-	            </column>
+	            <column name="cpq_quote_product_id" type="bigint" />
             	<column name="string_value" type="varchar(255)" />
             	<column name="double_value" type="float8" />
             	<column name="date_value" type="datetime" />
@@ -3037,4 +3035,921 @@
             </column>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#20210209_540177" author="TarikFA">
+    	<addColumn tableName="cpq_product">
+    		<column name="product_version_id" type="bigint" />
+    	</addColumn>
+		<addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product"
+								 constraintName="fk_cpq_product_product_version_id" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="cpq_product_version" />
+    </changeSet>
+
+	<changeSet id="#20210215-248" author="NabilOUACHI">
+		<addColumn tableName="cpq_attribute_instance">
+			<column name="parent_id" type="bigint"/>
+		</addColumn>
+		<addColumn tableName="cpq_quote_attribute">
+			<column name="parent_id" type="bigint"/>
+		</addColumn>
+		<addColumn tableName="cpq_order_item">
+			<column name="parent_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="cpq_attribute_instance"
+								 constraintName="fk_cpq_attribute_instance_parent_id" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="cpq_attribute_instance" />
+
+		<addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="cpq_quote_attribute"
+								 constraintName="fk_cpq_quote_instance_parent_id" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="cpq_quote_attribute" />
+
+		<addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="cpq_order_item"
+								 constraintName="fk_cpq_order_instance_parent_id" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="cpq_order_item" />
+
+	</changeSet>
+    
+    <changeSet id="#20210212_540238" author="TarikFA">
+    	<addUniqueConstraint columnNames="code,ppm_version_id" tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
+    </changeSet>
+    
+    <changeSet id="#5950_20210210" author="MohammedELAZZOUZI">
+        <addColumn tableName="billing_billing_run">
+            <column name="minimum_applied" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="threshold_checked" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+        <addColumn tableName="billing_billing_run">
+            <column name="discount_applied" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+    
+
+    <changeSet id="#246_20210212" author="Mbarek-Ay">
+		<addColumn tableName="cpq_invoicing_plan">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column>
+			<column name="disabled" type="${type.boolean}"
+				defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_commercial_order">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_product_line">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_quote_lot">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_order_lot">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+			<addColumn tableName="cpq_contract_item">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column>
+			<column name="disabled" type="${type.boolean}"
+				defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_contract">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column>
+			<column name="disabled" type="${type.boolean}"
+				defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_grouped_attributes">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column>
+			<column name="disabled" type="${type.boolean}"
+				defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_invoicing_plan_item">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column>
+			<column name="disabled" type="${type.boolean}"
+				defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="quote_offer">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_quote_product">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		
+		<addColumn tableName="cpq_order_product">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		
+		<addColumn tableName="cpq_order_offer">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_quote">
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+		
+		<addColumn tableName="cpq_media">  
+			<column name="created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated" type="datetime" />   
+			<column name="creator" type="varchar(100)" />
+			<column name="updater" type="varchar(100)" />
+		 <column name="uuid" type="varchar(60)">
+            	<constraints nullable="false" unique="true"/>
+            </column> 
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+		</addColumn>
+</changeSet>
+
+	<changeSet id="#248_20210215" author="NabilOuachi">
+		<sql>
+			<![CDATA[
+					alter table cpq_order_offer drop column code;
+					alter table cpq_order_offer drop column description;
+					alter table cpq_order_product drop column code;
+					alter table cpq_order_product drop column description;
+					alter table cpq_order_item alter column order_id drop not null;
+					alter table cpq_attribute_instance alter column service_instance_id drop not null;
+					alter table cpq_attribute_instance alter column subscription_id drop not null;
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="#20200215-247" author="Mbarek-Ay">
+		<addColumn tableName="cpq_quote_attribute">
+			<column name="cpq_quote_offer_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="cpq_quote_offer_id" baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_cpq_quote_offer_id" deferrable="false" initiallyDeferred="false"
+			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
+	  </changeSet>
+	  
+	  <changeSet id="#20210217_260" author="TarikFA">
+	  	<dropTable tableName="cpq_product_mapping"/>
+	  </changeSet>
+
+	<changeSet id="#5952_20210210" author="ZBariki">
+		<addColumn tableName="crm_customer">
+			<column name="minimum_article_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="ar_customer_account">
+			<column name="minimum_article_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="billing_billing_account">
+			<column name="minimum_article_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="billing_user_account">
+			<column name="minimum_article_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="billing_subscription">
+			<column name="minimum_article_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="billing_service_instance">
+			<column name="minimum_article_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="cat_offer_template">
+			<column name="minimum_article_id" type="bigint" />
+		</addColumn>
+
+		<addForeignKeyConstraint baseColumnNames="minimum_article_id" baseTableName="crm_customer"
+								 constraintName="fk_crm_customer_iminimum_article_id" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+		<addForeignKeyConstraint baseColumnNames="minimum_article_id" baseTableName="ar_customer_account"
+								 constraintName="fk_ar_customer_account_minimum_article_id"
+								 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+		<addForeignKeyConstraint baseColumnNames="minimum_article_id" baseTableName="billing_billing_account"
+								 constraintName="fk_billing_billing_account_minimum_article_id"
+								 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+		<addForeignKeyConstraint baseColumnNames="minimum_article_id" baseTableName="billing_user_account"
+								 constraintName="fk_billing_user_account_minimum_article_id"
+								 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+		<addForeignKeyConstraint baseColumnNames="minimum_article_id" baseTableName="billing_subscription"
+								 constraintName="fk_billing_subscription_minimum_article_id"
+								 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+		<addForeignKeyConstraint baseColumnNames="minimum_article_id" baseTableName="billing_service_instance"
+								 constraintName="fk_billing_service_instance_minimum_article_id"
+								 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+		<addForeignKeyConstraint baseColumnNames="minimum_article_id" baseTableName="cat_offer_template"
+								 constraintName="fk_cat_offer_template_minimum_article_id" deferrable="false"
+								 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+								 referencedColumnNames="id" referencedTableName="billing_accounting_article" />
+	</changeSet>
+	
+	  <changeSet id="#268_20210219_cpq_structure" author="Mbarek-Ay"> 
+	    <dropNotNullConstraint columnName="tax_class_id" tableName="cat_charge_template"/>  
+	</changeSet>
+	
+	
+			<changeSet id="#222_20210219" author="Mbarek-Ay">
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-26, 0, 0, now(), 'org.meveo.api.billing.QuoteValidation', 'QuoteValidation', 'JAVA', '
+        package org.meveo.api.billing;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.cpq.commercial.CommercialOrderEnum;
+import org.meveo.model.cpq.commercial.OrderArticleLine;
+import org.meveo.model.cpq.commercial.OrderAttribute;
+import org.meveo.model.cpq.commercial.OrderLot;
+import org.meveo.model.cpq.commercial.OrderOffer;
+import org.meveo.model.cpq.commercial.OrderPrice;
+import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.model.cpq.commercial.OrderType;
+import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.quote.QuoteArticleLine;
+import org.meveo.model.quote.QuoteLot;
+import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
+import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.cpq.QuoteVersionService;
+import org.meveo.service.cpq.order.CommercialOrderService;
+import org.meveo.service.cpq.order.OrderArticleLineService;
+import org.meveo.service.cpq.order.OrderAttributeService;
+import org.meveo.service.cpq.order.OrderLotService;
+import org.meveo.service.cpq.order.OrderOfferService;
+import org.meveo.service.cpq.order.OrderPriceService;
+import org.meveo.service.cpq.order.OrderProductService;
+import org.meveo.service.cpq.order.OrderTypeService;
+import org.meveo.service.cpq.order.QuotePriceService;
+import org.meveo.service.script.module.ModuleScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@SuppressWarnings("serial")
+public class QuoteValidation extends ModuleScript {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(QuoteVersionService.class);
+
+	private QuoteVersionService quoteVersionService = (QuoteVersionService) getServiceInterface(QuoteVersionService.class.getSimpleName());
+    private InvoiceTypeService invoiceTypeService = (InvoiceTypeService) getServiceInterface(InvoiceTypeService.class.getSimpleName());
+    private CommercialOrderService commercialOrderService = (CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
+    private OrderOfferService orderOfferService = (OrderOfferService) getServiceInterface(OrderOfferService.class.getSimpleName());
+    private OrderProductService orderProductService = (OrderProductService) getServiceInterface(OrderProductService.class.getSimpleName());
+    private OrderAttributeService orderAttributeService = (OrderAttributeService) getServiceInterface(OrderAttributeService.class.getSimpleName());
+    private OrderLotService orderCustomerServiceService = (OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
+    private OrderArticleLineService orderArticleLineService = (OrderArticleLineService) getServiceInterface(OrderArticleLineService.class.getSimpleName());
+    private OrderPriceService orderPriceService = (OrderPriceService) getServiceInterface(OrderPriceService.class.getSimpleName());
+    private QuotePriceService quotePriceService = (QuotePriceService) getServiceInterface(QuotePriceService.class.getSimpleName());
+    private OrderTypeService orderTypeService = (OrderTypeService) getServiceInterface(OrderTypeService.class.getSimpleName());
+    
+	
+	@Override
+	public void execute(Map<String, Object> methodContext) throws BusinessException {
+		final CpqQuote cpqQuote = (CpqQuote) methodContext.get("cpqQuote");
+		if(cpqQuote == null)
+			throw new BusinessException("No Quote found");
+		LOGGER.info("start creation order from quote code {}", cpqQuote.getCode());
+		var quotesVersions = quoteVersionService.findByQuoteIdAndStatusActive(cpqQuote.getId());
+		if(quotesVersions.size() > 1)
+			throw new BusinessException("More than one quote version is published !!");
+		var quoteVersion = quotesVersions.get(0);
+		var orderByBillingAccount = new Hashtable<String, List<QuoteOffer>>();
+		var billingAccount = new Hashtable<String, BillingAccount>();
+		quoteVersion.getQuoteOffers().forEach(quoteOffer -> {
+			if(quoteOffer.getBillableAccount() == null) {
+				quoteOffer.setBillableAccount(cpqQuote.getBillableAccount());
+			}
+			List<QuoteOffer> offers = new ArrayList<>();
+			if(orderByBillingAccount.get(quoteOffer.getBillableAccount().getCode()) != null) {
+				offers = orderByBillingAccount.get(quoteOffer.getBillableAccount().getCode());
+			}
+			offers.add(quoteOffer);
+			orderByBillingAccount.put(quoteOffer.getBillableAccount().getCode(), offers);
+			billingAccount.put(quoteOffer.getBillableAccount().getCode(), quoteOffer.getBillableAccount());
+			
+		});
+		orderByBillingAccount.keySet().forEach(ba -> {
+			List<QuoteOffer> offers = orderByBillingAccount.get(ba);
+			BillingAccount billableAccount = billingAccount.get(ba);
+			CommercialOrder order = processCommercialOrder(cpqQuote, quoteVersion, billableAccount);
+			offers.forEach(offer -> {
+				processOrderOffer(offer, order);
+				OrderLot orderLot = processOrderCustomerService(offer.getQuoteLot(), order);
+				OrderOffer orderOffer = processOrderOffer(offer, order);
+				offer.getQuoteProduct().forEach(quoteProduct -> {
+					processOrderProduct(quoteProduct, order, orderLot, orderOffer);
+				});
+			});
+		});
+		LOGGER.info("End creation order from quote code {}, number of order created is {}", cpqQuote.getCode(), orderByBillingAccount.size());
+		
+		
+	}
+	private CommercialOrder processCommercialOrder(CpqQuote cpqQuote, QuoteVersion quoteVersion, BillingAccount account) {
+		CommercialOrder order = new CommercialOrder();
+		order.setSeller(cpqQuote.getSeller());
+		order.setBillingAccount(account);
+		order.setQuote(cpqQuote);
+		order.setContract(cpqQuote.getContract());
+		order.setCustomerServiceBegin(quoteVersion.getStartDate());
+		order.setStatus(CommercialOrderEnum.DRAFT.toString());
+		Date now = Calendar.getInstance().getTime();
+		order.setStatusDate(now);
+		order.setOrderDate(now);
+		order.setCustomerServiceDuration(cpqQuote.getQuoteLotDuration());
+		order.setExternalReference(null);
+		order.setInvoicingPlan(null); //TODO: how to map invoice plan
+		order.setOrderType(createOrderTypeTemp()); //TODO: how to map order type
+		order.setOrderProgress(0);
+		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
+		order.setProgressDate(Calendar.getInstance().getTime());
+		order.setUserAccount(account.getUsersAccounts().size() > 0 ? account.getUsersAccounts().get(0) : null);
+		commercialOrderService.create(order);
+		return order;
+	}
+	
+	private OrderType createOrderTypeTemp() {
+		final String TEMP_CODE = "COMMERCIAL"; 
+		OrderType orderType = orderTypeService.findByCode(TEMP_CODE);
+		if(orderType == null) {
+			orderType = new OrderType();
+			orderType.setCode(TEMP_CODE);
+			orderType.setDescription("generated on quote validation  script");
+			orderTypeService.create(orderType);
+		}
+		return orderType;
+	}
+	
+	private OrderOffer processOrderOffer(QuoteOffer quoteOffer, CommercialOrder order) {
+		OrderOffer offer = new OrderOffer();
+		offer.setOrder(order);
+		offer.setOfferTemplate(quoteOffer.getOfferTemplate()); 
+		orderOfferService.create(offer);
+		return offer;
+	}
+	
+	private OrderProduct processOrderProduct(QuoteProduct product, CommercialOrder commercialOrder, OrderLot orderLot, OrderOffer orderOffer) {
+		OrderProduct orderProduct = new OrderProduct();
+		orderProduct.setOrder(commercialOrder);
+		orderProduct.setOrderServiceCommercial(orderLot);
+		orderProduct.setProductVersion(product.getProductVersion());
+		orderProduct.setQuantity(product.getQuantity());
+		orderProduct.setOrderOffer(orderOffer);  
+		
+		orderProductService.create(orderProduct);
+		
+		product.getQuoteAttributes().forEach(quoteAttribute -> {
+			processOrderAttribute(quoteAttribute, commercialOrder, orderLot, orderProduct);
+		});
+		
+		product.getQuoteArticleLines().forEach(quoteArticleLine -> {
+			OrderArticleLine orderArticleLine = processOrderArticleLine(quoteArticleLine, commercialOrder, orderLot, orderProduct);
+			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffre().getQuoteVersion());
+		});
+		
+		
+		return orderProduct;
+	}
+	
+	private void processOrderAttribute(QuoteAttribute quoteAttribute, CommercialOrder commercialOrder, OrderLot orderLot, OrderProduct orderProduct) {
+		OrderAttribute orderAttribute = new OrderAttribute();
+		orderAttribute.setOrderCode(commercialOrder);
+		orderAttribute.setOrderLot(orderLot);
+		orderAttribute.setOrderProduct(orderProduct);
+		orderAttribute.setAccessPoint(null);
+		orderAttribute.setAttribute(quoteAttribute.getAttribute());
+		orderAttribute.setStringValue(quoteAttribute.getStringValue());
+		orderAttribute.setDateValue(quoteAttribute.getDateValue());
+		orderAttribute.setDoubleValue(quoteAttribute.getDoubleValue());
+		orderAttributeService.create(orderAttribute);
+	}
+	
+	private OrderLot processOrderCustomerService(QuoteLot quoteLot, CommercialOrder commercialOrder) {
+		OrderLot orderCustomer = new OrderLot();
+		orderCustomer.setCode(UUID.randomUUID().toString());
+		orderCustomer.setCode(orderCustomerServiceService.findDuplicateCode(orderCustomer));
+		orderCustomer.setOrder(commercialOrder);
+		orderCustomerServiceService.create(orderCustomer);
+		return orderCustomer;
+	}
+	
+	private OrderArticleLine processOrderArticleLine(QuoteArticleLine quoteArticleLine, CommercialOrder commercialOrder, OrderLot orderCustomerService, OrderProduct orderProduct) {
+		OrderArticleLine articleLine = new OrderArticleLine();
+		articleLine.setCode(orderArticleLineService.findDuplicateCode(articleLine));
+		articleLine.setOrder(commercialOrder);
+		articleLine.setOrderCustomerService(orderCustomerService);
+		articleLine.setQuantity(quoteArticleLine.getQuantity());
+		articleLine.setQuantityService(quoteArticleLine.getServiceQuantity());
+		articleLine.setAccountingArticle(quoteArticleLine.getAccountingArticle());
+		articleLine.setOrderProduct(orderProduct);
+		orderArticleLineService.create(articleLine);
+		return articleLine;
+	}
+	
+	private void processOrderPrice(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion) {
+		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(quoteArticleLineId, quoteVersion.getId());
+		quotePrices.forEach( price -> {
+			OrderPrice orderPrice = new OrderPrice();
+			orderPrice.setCode(UUID.randomUUID().toString());
+			orderPrice.setCode(orderPriceService.findDuplicateCode(orderPrice));
+			orderPrice.setOrderArticleLine(orderArticleLine);
+			orderPrice.setOrder(commercialOrder);
+			orderPrice.setPriceLevelEnum(price.getPriceLevelEnum());
+			orderPrice.setAmountWithTax(price.getAmountWithTax());
+			orderPrice.setUnitPriceWithoutTax(price.getUnitPriceWithoutTax());
+			orderPrice.setAmountWithoutTax(price.getAmountWithoutTax());
+			orderPrice.setAmountWithoutTaxWithDiscount(price.getAmountWithoutTaxWithDiscount());
+			orderPrice.setTaxAmount(price.getTaxAmount());
+			orderPrice.setTaxRate(price.getTaxRate());
+			orderPrice.setPriceOverCharged(price.getPriceOverCharged());
+			orderPrice.setCurrencyCode(price.getCurrencyCode());
+			orderPrice.setRecurrenceDuration(price.getRecurrenceDuration());
+			orderPrice.setRecurrencePeriodicity(price.getRecurrencePeriodicity());
+			orderPrice.setChargeTemplate(price.getChargeTemplate());
+			orderPriceService.create(orderPrice);
+		});
+	}
+	
+}
+	
+	
+	');
+        ]]></sql>
+        
+           
+        
+        <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-27, 0, 0, now(), 'org.meveo.api.billing.OrderAdvancement', 'OrderAdvancement', 'JAVA', '
+  package org.meveo.api.billing;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.cpq.CommercialOrderApi;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.cpq.commercial.CommercialOrderEnum;
+import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.cpq.commercial.InvoicingPlanItem;
+import org.meveo.model.cpq.commercial.OrderPrice;
+import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.service.billing.impl.InvoiceLinesService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.cpq.order.CommercialOrderService;
+import org.meveo.service.cpq.order.OrderPriceService;
+import org.meveo.service.script.module.ModuleScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@SuppressWarnings("serial")
+public class OrderAdvancement extends ModuleScript {
+
+    private OrderPriceService orderPriceService = (OrderPriceService) getServiceInterface(OrderPriceService.class.getSimpleName());
+    private CommercialOrderService commercialOrderService = (CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
+    private CommercialOrderApi commercialOrderApi = (CommercialOrderApi) getServiceInterface(CommercialOrderApi.class.getSimpleName());
+    private AccountingArticleService accountingArticleService = (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
+    private InvoiceLinesService invoiceLinesService = (InvoiceLinesService) getServiceInterface(InvoiceLinesService.class.getSimpleName());
+    private InvoiceService invoiceService = (InvoiceService) getServiceInterface(InvoiceService.class.getSimpleName());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+        CommercialOrder commercialOrder = (CommercialOrder) methodContext.get("commercialOrder");
+        if(commercialOrder == null) {
+            throw new BusinessException("No Commercial order is found");
+        }
+        Integer orderProgress = commercialOrder.getOrderProgress();
+
+        if (commercialOrder.getInvoicingPlan() != null) {
+
+            Date nextDay = java.sql.Date.valueOf(LocalDate.now().plusDays(1));
+            Date firstTransactionDate = java.sql.Date.valueOf(LocalDate.now().minusDays(1));
+            Date invoiceDate = new Date();
+            List<OrderPrice> pricesToBill = orderPriceService.findByOrder(commercialOrder).stream()
+                    .filter(this::isPriceRelatedToOneShotChargeTemplateOfTypeOther)
+                    .collect(Collectors.toList());
+
+            if (pricesToBill.isEmpty()) {
+                log.info("No order prices to bill related to a one shot charge were found for commercial order: " + commercialOrder.getId());
+                return;
+            }
+
+            AccountingArticle defaultAccountingArticle = getDefaultAccountingArticle();
+
+            BigDecimal totalAmountWithoutTax = pricesToBill.stream()
+                    .map(OrderPrice::getAmountWithoutTax)
+                    .reduce(BigDecimal.valueOf(0), BigDecimal::add);
+
+            BigDecimal totalAmountWithTax = pricesToBill.stream()
+                    .map(OrderPrice::getAmountWithTax)
+                    .reduce(BigDecimal.valueOf(0), BigDecimal::add);
+
+            BigDecimal totalTax = pricesToBill.stream()
+                    .map(OrderPrice::getTaxAmount)
+                    .reduce(BigDecimal.valueOf(0), BigDecimal::add);
+
+            BigDecimal totalTaxRate = pricesToBill.stream()
+                    .map(OrderPrice::getTaxRate)
+                    .reduce(BigDecimal.valueOf(0), BigDecimal::add);
+
+            OrderProduct orderProduct = pricesToBill.get(0).getOrderArticleLine().getOrderProduct();
+
+            if(orderProgress == 100) {
+                if(commercialOrder.getRateInvoiced() < 100) {
+                    generateGlobalInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct);
+                    commercialOrder.setOrderProgressTmp(orderProgress);
+                    commercialOrder.setRateInvoiced(100);
+                }
+                commercialOrderApi.validateOrder(commercialOrder, true);
+            } else {
+                List<InvoicingPlanItem> itemsToBill = commercialOrder.getInvoicingPlan().getInvoicingPlanItems().stream()
+                        .filter(item -> item.getAdvancement() == orderProgress)
+                        .collect(Collectors.toList());
+
+                if (itemsToBill.isEmpty()) {
+                    log.info("No invoicing plan item found for the order progress: " + orderProgress + " commercial order id: " + commercialOrder.getId());
+                    return;
+                } else if (itemsToBill.size() > 1)
+                    throw new BusinessException("Many invoicing plan items are set for the advancement: " + orderProgress + " using the invoicing plan: " + commercialOrder.getInvoicingPlan().getCode());
+
+                InvoicingPlanItem invoicingPlanItem = itemsToBill.get(0);
+
+                BigDecimal newRateInvoiced = invoicingPlanItem.getRateToBill().add(BigDecimal.valueOf(commercialOrder.getRateInvoiced()));
+                if (newRateInvoiced.compareTo(BigDecimal.valueOf(100)) > 0) {
+                    throw new BusinessException("the invoicing plan rate is grater than remaining rate to invoice");
+                }
+                if(newRateInvoiced.compareTo(BigDecimal.valueOf(100)) == 0){
+                    generateGlobalInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct);
+                }else {
+                    BigDecimal amountWithoutTaxToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithoutTax);
+                    BigDecimal amountWithTaxToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithTax);
+                    BigDecimal taxAmountToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalTax);
+
+                    createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
+                    invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
+                }
+                commercialOrder.setRateInvoiced(newRateInvoiced.intValue());
+                commercialOrder.setOrderProgressTmp(orderProgress);
+                commercialOrderService.update(commercialOrder);
+            }
+        }
+
+
+    }
+
+    private void generateGlobalInvoice(CommercialOrder commercialOrder, Date nextDay, Date firstTransactionDate, Date invoiceDate, AccountingArticle defaultAccountingArticle, BigDecimal totalAmountWithoutTax, BigDecimal totalAmountWithTax, BigDecimal totalTax, BigDecimal totalTaxRate, OrderProduct orderProduct) {
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        List<AttributeValue> orderAttributes = orderProduct.getOrderAttributes().stream().map(oa -> (AttributeValue)oa).collect(Collectors.toList());
+        for (AttributeValue orderAttribute : orderAttributes) {
+            Attribute attribute = orderAttribute.getAttribute();
+            Object value = attribute.getAttributeType().getValue(orderAttribute);
+            if (value != null) {
+                attributes.put(orderAttribute.getAttribute().getCode(), value);
+            }
+        }
+        Product product = orderProduct.getProductVersion().getProduct();
+        Optional<AccountingArticle> accountingArticle = accountingArticleService.getAccountingArticle(product, attributes);
+        if (!accountingArticle.isPresent())
+            throw new BusinessException("No accounting article found for product code: " + product.getCode() + " and attributes: " + attributes.toString());
+
+        List<InvoiceLine> accounts = invoiceLinesService.findByCommercialOrder(commercialOrder);
+        for(InvoiceLine account : accounts){
+            createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, account.getAmountWithoutTax().negate(), account.getAmountWithTax().negate(), account.getAmountTax().negate(), account.getTaxRate());
+        }
+
+        createInvoiceLine(commercialOrder, accountingArticle.get(), orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
+        invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
+    }
+
+    private AccountingArticle getDefaultAccountingArticle() {
+        String articleCode = ParamBean.getInstance().getProperty("advancePayment.accountingArticleCode", "ACT-STD");
+
+        AccountingArticle accountingArticle = accountingArticleService.findByCode(articleCode);
+        if (accountingArticle == null)
+            throw new EntityDoesNotExistsException(AccountingArticle.class, articleCode);
+        return accountingArticle;
+    }
+
+    private void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, OrderProduct orderProduct, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+        invoiceLinesService.createInvoiceLine(commercialOrder, accountingArticle, orderProduct, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
+    }
+
+    private boolean isPriceRelatedToOneShotChargeTemplateOfTypeOther(OrderPrice price) {
+        return price.getChargeTemplate().getChargeMainType() == ChargeTemplate.ChargeMainTypeEnum.ONESHOT
+                && ((OneShotChargeTemplate) price.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER;
+    }
+
+
+}
+
+	
+	
+	');
+        ]]></sql>
+        
+          </changeSet>
+          
+       <changeSet id="#270_20210222" author="Mbarek-Ay">
+        <addColumn tableName="cpq_media">  
+		<column name="code" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" />
+		</addColumn>
+		 <dropColumn tableName="cpq_media">
+            <column name="product_id"></column>
+            <column name="offer_id"></column>
+            <column name="attribute_id"></column>
+             <column name="service_template_id"></column>
+        </dropColumn>
+
+	<createTable tableName="cpq_offer_template_media">
+		<column name="offer_template_id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="media_id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+	</createTable>
+ <addUniqueConstraint columnNames="offer_template_id,media_id" constraintName="cpq_offer_template_media_pkey" tableName="cpq_offer_template_media" />
+	<addForeignKeyConstraint
+		baseTableName="cpq_offer_template_media"
+		baseColumnNames="offer_template_id"
+		constraintName="cpq_offer_template_media_offer_template_id_fk"
+		referencedTableName="cat_offer_template" referencedColumnNames="id" />
+
+	<addForeignKeyConstraint
+		baseTableName="cpq_offer_template_media" baseColumnNames="media_id"
+		constraintName="cpq_offer_template_media_media_id_fk"
+		referencedTableName="cpq_media" referencedColumnNames="id" />  
+		
+		
+   <createTable tableName="cpq_product_media">
+		<column name="product_id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="media_id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+	</createTable>
+<addUniqueConstraint columnNames="product_id,media_id" constraintName="cpq_product_media_pkey" tableName="cpq_product_media" />
+	<addForeignKeyConstraint
+		baseTableName="cpq_product_media"
+		baseColumnNames="product_id"
+		constraintName="cpq_product_media_product_id_fk"
+		referencedTableName="cpq_product" referencedColumnNames="id" />
+
+	<addForeignKeyConstraint
+		baseTableName="cpq_product_media" baseColumnNames="media_id"
+		constraintName="cpq_product_media_id_fk"
+		referencedTableName="cpq_media" referencedColumnNames="id" />  
+		
+		
+	 <createTable tableName="cpq_attribute_media">
+		<column name="attribute_id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+		<column name="media_id" type="bigint">
+			<constraints nullable="false" />
+		</column>
+	</createTable>
+<addUniqueConstraint columnNames="attribute_id,media_id" constraintName="cpq_attribute_media_pkey" tableName="cpq_attribute_media" />
+	<addForeignKeyConstraint
+		baseTableName="cpq_attribute_media"
+		baseColumnNames="attribute_id"
+		constraintName="cpq_attribute_media_attribute_id_fk"
+		referencedTableName="cpq_attribute" referencedColumnNames="id" />
+
+	<addForeignKeyConstraint
+		baseTableName="cpq_attribute_media" baseColumnNames="media_id"
+		constraintName="cpq_attribute_media_id_fk"
+		referencedTableName="cpq_media" referencedColumnNames="id" /> 	    
+        
+</changeSet>
+        
+        
+        
+  
+    
+    <changeSet id="#20210222_540_269" author="TarikFA.">
+    	<dropColumn tableName="cpq_grouped_attributes">
+    		<column name="product_version_id"></column>
+    	</dropColumn>
+    	
+    	<dropColumn tableName="cpq_attribute">
+    		<column name="grouped_attributes_id"></column>
+    	</dropColumn>
+    	
+	    <createTable tableName="cpq_grouped_attributes_attribute">
+            <column name="grouped_attributes" type="bigint" >
+            	<constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint" >
+            	<constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_grouped_attributes_attribute" constraintName="fk_cpq_grouped_attributes_attribute_attribute_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+        <addForeignKeyConstraint baseColumnNames="grouped_attributes" baseTableName="cpq_grouped_attributes_attribute" constraintName="fk_cpq_grouped_attributes_attribute_groupedattribute_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
+	        
+    </changeSet>
+    
+    <changeSet id="#20210222_540_269" author="TarikFA.">
+    	<dropColumn tableName="cpq_grouped_attributes">
+    		<column name="product_version_id"></column>
+    	</dropColumn>
+    	
+    	<dropColumn tableName="cpq_attribute">
+    		<column name="grouped_attributes_id"></column>
+    	</dropColumn>
+    	
+	    <createTable tableName="cpq_grouped_attributes_attribute">
+            <column name="grouped_attributes" type="bigint" >
+            	<constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint" >
+            	<constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_grouped_attributes_attribute" constraintName="fk_cpq_grouped_attributes_attribute_attribute_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+        <addForeignKeyConstraint baseColumnNames="grouped_attributes" baseTableName="cpq_grouped_attributes_attribute" constraintName="fk_cpq_grouped_attributes_attribute_groupedattribute_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_attributes" />
+	        
+    </changeSet>
+    
+    <changeSet id="#20210123_540_280" author="TarikFA.">
+    
+    	<addColumn tableName="adm_secured_entity">
+    		<column name="disable" type="boolean" defaultValueNumeric="0">
+    			<constraints nullable="false" />
+    		</column>
+    	</addColumn>
+    	
+    	<addColumn tableName="adm_role_secured_entity">
+    		<column name="disable" type="boolean" defaultValueNumeric="0" >
+    			<constraints nullable="false" />
+    		</column>
+    	</addColumn>
+    	
+    </changeSet>
+    
+    
+    <changeSet   id="#20210123_540_281" author="TarikFA.">
+        <addColumn tableName="adm_role">
+            <column name="uuid" type="varchar(60)" defaultValue="" />
+            <column name="cf_values" type="${type.json}" />
+            <column name="cf_values_accum" type="${type.json}" />
+			<column name="created" type="datetime" defaultValueDate="now()">
+				<constraints nullable="false" />
+			</column>
+			<column name="creator" type="varchar(100)" />
+			<column name="updated" type="datetime" />
+			<column name="updater" type="varchar(100)" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}adm_role set uuid = 'role'||id</sql>
+        <addNotNullConstraint tableName="adm_role" columnName="uuid"/>
+    </changeSet>
+
+	<changeSet id="#20210224_5868" author="Mbarek-Ay">
+	<addColumn tableName="cpq_commercial_order">
+	<column name="oneshot_total_amount" type="numeric(23, 12)" />
+	</addColumn>
+	<dropForeignKeyConstraint baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_cpq_quote_offer_id"/>
+		<addForeignKeyConstraint baseColumnNames="cpq_quote_offer_id" baseTableName="cpq_quote_attribute" constraintName="fk_cpq_quote_attribute_quote_offer_id" deferrable="false" initiallyDeferred="false"
+			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
+ </changeSet>
+	
+	<changeSet id="#20210222_907" author="ZBariki">
+		<addColumn tableName="billing_invoice">
+			<column name="has_taxes" type="${type.boolean}" defaultValueNumeric="0"/>
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="has_discounts" type="${type.boolean}" defaultValueNumeric="0"/>
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="has_minimum" type="${type.boolean}" defaultValueNumeric="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="#20210302_540" author="TarikFA.">
+		<dropForeignKeyConstraint baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_product_version_id"/>
+		<addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_product_version_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+	</changeSet>
+	
+	<changeSet id="#20210303_540305" author="TarikFA.">
+		<dropForeignKeyConstraint baseTableName="cat_service_template" constraintName="fk-product-accounting_article"/>
+		<dropColumn tableName="cat_service_template">
+			<column name="accounting_article_id" />
+		</dropColumn>
+		<dropTable tableName="cpq_accounting_article"/>
+		<dropSequence sequenceName="cpq_accounting_article_seq"/>
+	</changeSet>
+	
+
 </databaseChangeLog>

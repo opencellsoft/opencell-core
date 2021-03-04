@@ -8,7 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -18,7 +19,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 
 /**
@@ -28,10 +30,26 @@ import org.meveo.model.cpq.trade.CommercialRuleHeader;
  *
  */
 @Entity
+@CustomFieldEntity(cftCodePrefix = "GroupedAttributes")
 @Table(name = "cpq_grouped_attributes", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_grouped_attributes_seq"), }) 
-public class GroupedAttributes extends BusinessEntity {
+public class GroupedAttributes extends EnableBusinessCFEntity {
+
+	public GroupedAttributes() {
+	}
+
+	
+
+	public GroupedAttributes(GroupedAttributes copy) {
+		this.mandatory = copy.mandatory;
+		this.display = copy.display;
+		this.sequence = copy.sequence;
+		this.code = copy.code;
+		this.description = copy.description;
+	}
+
+
 
 	/**
 	 * 
@@ -39,12 +57,6 @@ public class GroupedAttributes extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
 	 
-	/**
-	 * the attached product
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_version_id", referencedColumnName = "id")
-	private ProductVersion productVersion;
 
 	  /**
      * Mandatory
@@ -68,6 +80,18 @@ public class GroupedAttributes extends BusinessEntity {
     @OneToMany(mappedBy = "targetGroupedAttributes", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
+    
+
+	/**
+	 * list of attributes attached to this product version
+	 */
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+				name = "cpq_grouped_attributes_attribute",
+				joinColumns = @JoinColumn(name = "grouped_attributes", referencedColumnName = "id"),
+				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
+			)
+    private List<Attribute> attributes = new ArrayList<Attribute>();
 
 	/**
 	 * @return the mandatory
@@ -116,23 +140,6 @@ public class GroupedAttributes extends BusinessEntity {
 		this.sequence = sequence;
 	}
 
-
-	/**
-	 * @return the productVersion
-	 */
-	public ProductVersion getProductVersion() {
-		return productVersion;
-	}
-
-
-	/**
-	 * @param productVersion the productVersion to set
-	 */
-	public void setProductVersion(ProductVersion productVersion) {
-		this.productVersion = productVersion;
-	}
-
-
 	/**
 	 * @return the commercialRules
 	 */
@@ -146,6 +153,22 @@ public class GroupedAttributes extends BusinessEntity {
 	 */
 	public void setCommercialRules(List<CommercialRuleHeader> commercialRules) {
 		this.commercialRules = commercialRules;
+	}
+
+
+	/**
+	 * @return the attributes
+	 */
+	public List<Attribute> getAttributes() {
+		return attributes;
+	}
+
+
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(List<Attribute> attributes) {
+		this.attributes = attributes;
 	}
 
 	

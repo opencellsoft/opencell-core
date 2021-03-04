@@ -18,6 +18,13 @@
 
 package org.meveo.api.rest.account.impl;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.meveo.api.account.CustomerAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -35,12 +42,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -86,11 +87,11 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
     }
 
     @Override
-    public GetCustomerAccountResponseDto find(String customerAccountCode, Boolean calculateBalances, CustomFieldInheritanceEnum inheritCF, Boolean withAccountOperations) {
+    public GetCustomerAccountResponseDto find(String customerAccountCode, boolean calculateBalances, CustomFieldInheritanceEnum inheritCF, boolean withAccountOperations, boolean includeBillingAccounts) {
         GetCustomerAccountResponseDto result = new GetCustomerAccountResponseDto();
 
         try {
-            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, calculateBalances, inheritCF, withAccountOperations));
+            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, calculateBalances, inheritCF, withAccountOperations, includeBillingAccounts));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

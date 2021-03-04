@@ -1,18 +1,12 @@
 package org.meveo.admin.job;
 
-import static java.lang.String.format;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
-import static org.meveo.model.billing.BillingRunStatusEnum.INVOICES_GENERRATED;
-import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
-
 import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -25,6 +19,12 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.String.format;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
+import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
 
 @Stateless
 public class InvoicingJobV2Bean extends BaseJobBean {
@@ -58,7 +58,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 validateBRList(billingRuns, result);
                 for (BillingRun billingRun : billingRuns) {
                     billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
-                    updateBRStatus(billingRun);
+                    billingRunService.validateBillingRun(billingRun, BillingRunStatusEnum.INVOICES_GENERATED);
                 }
                 result.setNbItemsCorrectlyProcessed(billingRuns.size());
             }
@@ -84,9 +84,4 @@ public class InvoicingJobV2Bean extends BaseJobBean {
         billingRuns.removeAll(excludedBRs);
     }
 
-    private void updateBRStatus(BillingRun billingRun) {
-        billingRun = billingRunService.refreshOrRetrieve(billingRun);
-        billingRun.setStatus(INVOICES_GENERRATED);
-        billingRunService.update(billingRun);
-    }
 }

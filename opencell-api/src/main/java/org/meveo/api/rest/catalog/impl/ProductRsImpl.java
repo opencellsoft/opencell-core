@@ -25,8 +25,6 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
-import java.util.Set;
-
 public class ProductRsImpl extends BaseRs implements ProductRs {
 
 	@Inject
@@ -42,7 +40,7 @@ public class ProductRsImpl extends BaseRs implements ProductRs {
 			ProductDto response = productApi.create(productDto);
 			result.setId(response.getId());
 			if(response.getCurrentProductVersion() != null)
-				result.setProductVersions(Set.of(response.getCurrentProductVersion()));
+				result.setCurrentProductVersion(response.getCurrentProductVersion());
 			result.setDiscountList(response.getDiscountList());
 			return Response.ok(result).build();
         } catch(MeveoApiException e) {

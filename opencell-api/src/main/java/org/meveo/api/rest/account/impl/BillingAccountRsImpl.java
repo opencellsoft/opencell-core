@@ -85,11 +85,11 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
     }
 
     @Override
-    public GetBillingAccountResponseDto find(String billingAccountCode, CustomFieldInheritanceEnum inheritCF) {
+    public GetBillingAccountResponseDto find(String billingAccountCode, CustomFieldInheritanceEnum inheritCF, boolean includeUserAccounts) {
         GetBillingAccountResponseDto result = new GetBillingAccountResponseDto();
 
         try {
-            result.setBillingAccount(billingAccountApi.find(billingAccountCode, inheritCF));
+            result.setBillingAccount(billingAccountApi.find(billingAccountCode, inheritCF, includeUserAccounts));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

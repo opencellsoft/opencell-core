@@ -16,7 +16,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.AuditableCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.cpq.ProductVersion;
 
 /** 
@@ -25,10 +26,11 @@ import org.meveo.model.cpq.ProductVersion;
  *
  */
 @Entity
-@Table(name = "cpq_order_product", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@Table(name = "cpq_order_product")
+@CustomFieldEntity(cftCodePrefix = "OrderProduct")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_product_seq")})
-public class OrderProduct extends BusinessEntity {
+public class OrderProduct extends AuditableCFEntity {
 
 
 	/**

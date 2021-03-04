@@ -2,6 +2,7 @@ package org.meveo.api.dto.cpq;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,7 +47,7 @@ public class ProductDto extends BaseEntityDto{
 	protected boolean packageFlag=Boolean.FALSE;
     /** The custom fields. */
     protected CustomFieldsDto customFields;
-    protected GetProductVersionResponse currentProductVersion;
+    protected ProductVersionDto currentProductVersion;
     
     @XmlElementWrapper(name = "chargeTemplateCodes")
     @XmlElement(name = "chargeTemplateCodes") 
@@ -60,10 +61,10 @@ public class ProductDto extends BaseEntityDto{
 	protected List<String> discountListCodes=new ArrayList<String>();
     
    
-    /** The medias */
-    @XmlElementWrapper(name = "medias")
-    @XmlElement(name = "medias")
-    protected List<MediaDto> medias;
+	  /** The media codes. */
+    @XmlElementWrapper(name = "mediaCodes")
+    @XmlElement(name = "mediaCodes")
+    protected Set<String> mediaCodes = new HashSet<String>();
     
     
     public ProductDto() {}
@@ -87,7 +88,7 @@ public class ProductDto extends BaseEntityDto{
     	this.packageFlag = p.isPackageFlag();
     	this.discountList = p.getDiscountList().stream()
 				.map(dl -> new DiscountPlanDto(dl, null))
-				.collect(Collectors.toSet());
+				.collect(Collectors.toSet()); 
     }
 	/**
 	 * @return the status
@@ -260,14 +261,14 @@ public class ProductDto extends BaseEntityDto{
 	/**
 	 * @return the currentProductVersion
 	 */
-	public GetProductVersionResponse getCurrentProductVersion() {
+	public ProductVersionDto getCurrentProductVersion() {
 		return currentProductVersion;
 	}
 
 	/**
 	 * @param currentProductVersion the currentProductVersion to set
 	 */
-	public void setCurrentProductVersion(GetProductVersionResponse currentProductVersion) {
+	public void setCurrentProductVersion(ProductVersionDto currentProductVersion) {
 		this.currentProductVersion = currentProductVersion;
 	}
 
@@ -313,20 +314,20 @@ public class ProductDto extends BaseEntityDto{
 		this.commercialRuleCodes = commercialRuleCodes;
 	}
 
+	 
 	/**
-	 * @return the medias
+	 * @return the mediaCodes
 	 */
-	public List<MediaDto> getMedias() {
-		return medias;
+	public Set<String> getMediaCodes() {
+		return mediaCodes;
 	}
 
 	/**
-	 * @param medias the medias to set
+	 * @param mediaCodes the mediaCodes to set
 	 */
-	public void setMedias(List<MediaDto> medias) {
-		this.medias = medias;
+	public void setMediaCodes(Set<String> mediaCodes) {
+		this.mediaCodes = mediaCodes;
 	}
-
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;

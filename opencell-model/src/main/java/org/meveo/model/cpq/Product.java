@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -22,6 +23,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -30,14 +32,25 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.hibernate.proxy.HibernateProxy;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
+import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceCharge;
+import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
+import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
+import org.meveo.model.catalog.ServiceChargeTemplateTermination;
+import org.meveo.model.catalog.ServiceChargeTemplateUsage;
+import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.crm.CustomerBrand;
@@ -57,7 +70,7 @@ import org.meveo.model.crm.CustomerBrand;
 		@NamedQuery(name = "Product.getProductLine", query = "select p from Product p where p.productLine.id=:id"),
 		@NamedQuery(name = "Product.findByCode", query = "select p from Product p where p.code=:code")
 })
-public class Product extends EnableBusinessCFEntity {
+public class Product extends ServiceCharge {
 
 	public Product() {
 	}
@@ -169,13 +182,18 @@ public class Product extends EnableBusinessCFEntity {
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductChargeTemplateMapping> productCharges = new ArrayList<>();
-
+ 	
+	@OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_version_id")
+	private ProductVersion currentVersion;
 	
-	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderBy("id")
-	private List<Media> medias = new ArrayList<>();
-		
-		
+	
+	 /**
+     * list of Media
+     */   
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cpq_product_media", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
+    private List<Media> medias = new ArrayList<Media>();
 
 	/**
 	 * @return the status
@@ -337,6 +355,75 @@ public class Product extends EnableBusinessCFEntity {
 		this.packageFlag = packageFlag;
 	}
 
+	@Override
+	public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
+		if(this.serviceRecurringCharges.isEmpty()){
+			this.serviceRecurringCharges = getProductCharges().stream()
+					.filter(pc -> pc.getChargeTemplate() != null)
+					.map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
+					.filter(charge -> charge instanceof RecurringChargeTemplate)
+					.map(ch -> {
+						ServiceChargeTemplateRecurring serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
+						serviceChargeTemplateRecurring.setChargeTemplate((RecurringChargeTemplate)ch);
+						return serviceChargeTemplateRecurring;
+					})
+					.collect(Collectors.toList());
+		}
+		return serviceRecurringCharges;
+	}
+
+	@Override
+	public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {
+		if(this.serviceUsageCharges.isEmpty()){
+			this.serviceUsageCharges = getProductCharges().stream()
+					.filter(pc -> pc.getChargeTemplate() != null)
+					.map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
+					.filter(charge -> charge instanceof UsageChargeTemplate)
+					.map(ch -> {
+						ServiceChargeTemplateUsage serviceChargeTemplateRecurring = new ServiceChargeTemplateUsage();
+						serviceChargeTemplateRecurring.setChargeTemplate((UsageChargeTemplate)ch);
+						return serviceChargeTemplateRecurring;
+					})
+					.collect(Collectors.toList());
+		}
+		return serviceUsageCharges;
+	}
+
+	@Override
+	public List<ServiceChargeTemplateSubscription> getServiceSubscriptionCharges() {
+		if(this.serviceSubscriptionCharges.isEmpty()){
+			this.serviceSubscriptionCharges = getProductCharges().stream()
+					.filter(pc -> pc.getChargeTemplate() != null)
+					.map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
+					.filter(charge -> charge instanceof OneShotChargeTemplate)
+					.filter(ch -> (((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION) || ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.OTHER)
+					.map(ch -> {
+						ServiceChargeTemplateSubscription serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
+						serviceChargeTemplateSubscription.setChargeTemplate((OneShotChargeTemplate) ch);
+						return serviceChargeTemplateSubscription;
+					})
+					.collect(Collectors.toList());
+		}
+		return this.serviceSubscriptionCharges;
+	}
+
+	@Override
+	public List<ServiceChargeTemplateTermination> getServiceTerminationCharges() {
+		if(this.serviceTerminationCharges.isEmpty()){
+			this.serviceTerminationCharges = getProductCharges().stream()
+					.filter(pc -> pc.getChargeTemplate() != null)
+					.map(pc -> initializeAndUnproxy(pc.getChargeTemplate()))
+					.filter(charge -> charge instanceof OneShotChargeTemplate)
+					.filter(ch -> ((OneShotChargeTemplate) ch).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION)
+					.map(ch -> {
+						ServiceChargeTemplateTermination serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
+						serviceChargeTemplateTermination.setChargeTemplate((OneShotChargeTemplate) ch);
+						return serviceChargeTemplateTermination;
+					})
+					.collect(Collectors.toList());
+		}
+		return this.serviceTerminationCharges;
+	}
 
 	@Override
 	public int hashCode() {
@@ -407,6 +494,23 @@ public class Product extends EnableBusinessCFEntity {
 	public void setProductCharges(List<ProductChargeTemplateMapping> productCharges) {
 		this.productCharges = productCharges;
 	}
+ 
+
+
+	/**
+	 * @return the currentVersion
+	 */
+	public ProductVersion getCurrentVersion() {
+		return currentVersion;
+	}
+
+
+	/**
+	 * @param currentVersion the currentVersion to set
+	 */
+	public void setCurrentVersion(ProductVersion currentVersion) {
+		this.currentVersion = currentVersion;
+	}
 
 
 	/**
@@ -422,6 +526,20 @@ public class Product extends EnableBusinessCFEntity {
 	 */
 	public void setMedias(List<Media> medias) {
 		this.medias = medias;
+	}
+
+	private static <T> T initializeAndUnproxy(T entity) {
+		if (entity == null) {
+			throw new
+					NullPointerException("Entity passed for initialization is null");
+		}
+
+		Hibernate.initialize(entity);
+		if (entity instanceof HibernateProxy) {
+			entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer()
+					.getImplementation();
+		}
+		return entity;
 	}
 	
 	

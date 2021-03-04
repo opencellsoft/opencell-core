@@ -36,7 +36,8 @@ public interface ScriptInterface {
      * @param methodContext Method variables in a form of a map
      * @throws BusinessException business exception.
      */
-    void init(Map<String, Object> methodContext) throws BusinessException;
+    default void init(Map<String, Object> methodContext) throws BusinessException {
+    }
 
     /**
      * Main script method. Can be called multiple times when used with init() and finalize() methods or just once if used without them for a single script execution.
@@ -44,7 +45,8 @@ public interface ScriptInterface {
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=entity to process
      * @throws BusinessException business exception.
      */
-    void execute(Map<String, Object> methodContext) throws BusinessException;
+    default void execute(Map<String, Object> methodContext) throws BusinessException {
+    }
 
     /**
      * Batch processing - method to call at the end of script execution - after execute() is called.
@@ -52,12 +54,15 @@ public interface ScriptInterface {
      * @param methodContext Method variables in a form of a map
      * @throws BusinessException business exception.
      */
-    void terminate(Map<String, Object> methodContext) throws BusinessException;
+    default void terminate(Map<String, Object> methodContext) throws BusinessException {
+    }
 
     /**
      * Get log messages related to script execution (test mode run only)
      * 
      * @return Log messages
      */
-    String getLogMessages();
+    default String getLogMessages() {
+        return null;
+    }
 }

@@ -48,6 +48,7 @@ import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionErrorService;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -73,6 +74,9 @@ public class RecurringRatingJobBean extends BaseJobBean implements Serializable 
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -86,6 +90,7 @@ public class RecurringRatingJobBean extends BaseJobBean implements Serializable 
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
+        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
@@ -118,6 +123,7 @@ public class RecurringRatingJobBean extends BaseJobBean implements Serializable 
             int inputSize = ids.size();
             result.setNbItemsToProcess(inputSize);
             log.info("RecurringRatingJob - charges to rate={}", inputSize);
+            jobExecutionService.initCounterElementsRemaining(result, inputSize);
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
@@ -144,13 +150,13 @@ public class RecurringRatingJobBean extends BaseJobBean implements Serializable 
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
+                    jobExecutionService.registerError(result, cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }
         } catch (Exception e) {
             log.error("Failed to run recurring rating job", e);
-            result.registerError(e.getMessage());
+            jobExecutionService.registerError(result, e.getMessage());
         }
         log.debug("end running RecurringRatingJobBean!");
     }

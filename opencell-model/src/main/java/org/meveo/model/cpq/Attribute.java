@@ -20,6 +20,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -44,22 +46,14 @@ import org.meveo.model.cpq.trade.CommercialRuleHeader;
 @Table(name = "cpq_attribute", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_attribute_seq"), })
+@NamedQueries({
+	@NamedQuery(name = "Attribute.updateParentAttribute", query = "update Attribute set parentAttribute=null where parentAttribute.id=:id")})
 public class Attribute extends EnableBusinessCFEntity{	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5934892816847168643L;
 
-
-
-
-	/**
-	 * the grouped service
-	 */
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "grouped_attributes_id", referencedColumnName = "id")
-	private GroupedAttributes groupedAttributes;
-	
 	  
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
@@ -118,9 +112,13 @@ public class Attribute extends EnableBusinessCFEntity{
     @NotNull
     protected boolean display;
     
-    @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id")
-    private List<Media> medias = new ArrayList<>();
+    
+    /**
+     * list of Media
+     */   
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cpq_attribute_media", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
+    private List<Media> medias = new ArrayList<Media>();
     
     
     @OneToMany(mappedBy = "attribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
@@ -131,7 +129,7 @@ public class Attribute extends EnableBusinessCFEntity{
     @OrderBy("id")
     private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
     
-    @OneToMany(mappedBy = "parentAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parentAttribute", fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
     @OrderBy("id")
     private List<Attribute> assignedAttributes = new ArrayList<>();
     
@@ -144,20 +142,6 @@ public class Attribute extends EnableBusinessCFEntity{
 
 	public Attribute(Long id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the groupedAttributes
-	 */
-	public GroupedAttributes getGroupedAttributes() {
-		return groupedAttributes;
-	}
-
-	/**
-	 * @param groupedAttributes the groupedAttributes to set
-	 */
-	public void setGroupedAttributes(GroupedAttributes groupedAttributes) {
-		this.groupedAttributes = groupedAttributes;
 	}
 
 	/**
@@ -259,20 +243,7 @@ public class Attribute extends EnableBusinessCFEntity{
 	public void setChargeTemplates(Set<ChargeTemplate> chargeTemplates) {
 		this.chargeTemplates = chargeTemplates;
 	}
-
-	/**
-	 * @return the medias
-	 */
-	public List<Media> getMedias() {
-		return medias;
-	}
-
-	/**
-	 * @param medias the medias to set
-	 */
-	public void setMedias(List<Media> medias) {
-		this.medias = medias;
-	}
+ 
 
 	/**
 	 * @return the tags
@@ -342,6 +313,20 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setUnitNbDecimal(int unitNbDecimal) {
 		this.unitNbDecimal = unitNbDecimal;
+	}
+
+	/**
+	 * @return the medias
+	 */
+	public List<Media> getMedias() {
+		return medias;
+	}
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<Media> medias) {
+		this.medias = medias;
 	}
 	
 	

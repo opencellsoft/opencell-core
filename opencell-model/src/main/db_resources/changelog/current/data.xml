@@ -1741,7 +1741,22 @@ public class ValidateBRScript extends Script {
             <column name="permission_id" value="-120"></column>
         </insert>    
 	</changeSet>   
-	 
+	<changeSet id="#5418_20201030" author="Mohammed_ELAZZOUZI">
+	    <insert tableName="adm_role">
+            <column name="id" valueNumeric="-200" />
+            <column name="version" valueNumeric="0" />
+            <column name="role_description" value="API v2 full access" />
+            <column name="role_name" value="APIv2_FULL_ACCESS" />
+        </insert>
+        <insert tableName="adm_user_role">
+            <column name="user_id" valueNumeric="-1" />
+            <column name="role_id" valueNumeric="-200" />
+        </insert>
+        <insert tableName="adm_user_role">
+            <column name="user_id" valueNumeric="-2" />
+            <column name="role_id" valueNumeric="-200" />
+        </insert>
+	</changeSet>
  	<changeSet id="#5303_20200814 - CDR and Mediation" author="AmineTazi">
 		<insert tableName="adm_permission">
             <column name="id" valueNumeric="-121" />
@@ -2096,6 +2111,158 @@ public class ValidateBRScript extends Script {
         </update>
     </changeSet>
 
+	<changeSet id="#5486_remove_CF_for_old_RT_Aggregation" author="Mohammed_ELAZZOUZI">
+		<sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob' and code in('activateAggregation','globalAggregation','aggregateByDay','aggregationLevel','aggregateByOrder','aggregateByParam1','aggregateByParam2','aggregateByParam3','aggregateByExtraParam','aggregateByUnitAmount')</sql>
+	</changeSet>
+
+    <changeSet id="5407_20201030" author="Mohammed_ELAZZOUZI">
+    	<update tableName="billing_billing_run">
+    	<column name="status" value="INVOICES_GENERATED"/>
+    	<where>status='INVOICES_GENERRATED'</where>
+    	</update>
+    </changeSet>
+    <changeSet id="#5610_20201102 - bad dept operation type" author="NabilOUACHI">
+        <update tableName="ar_occ_template">
+            <column name="occ_category" value="CREDIT"></column>
+            <where>code='EXP_WRT'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="#5621_20201119_offer_template_data" author="NabilOUACHI">
+        <insert tableName="adm_notification">
+            <column name="id" valueNumeric="-14"></column>
+            <column name="uuid" value="9c268621-1ea7-4f10-ba00-4e3f03e412b9"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="VERSION_CREATED"></column>
+
+            <column name="class_name_filter" value="org.meveo.model.billing.Subscription"></column>
+            <column name="event_type_filter" value="VERSION_CREATED"></column>
+        </insert>
+        <insert tableName="adm_notification">
+            <column name="id" valueNumeric="-15"></column>
+            <column name="uuid" value="f2e1867d-3608-46bd-a3bd-e2f64a849079"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="VERSION_REMOVED"></column>
+
+            <column name="class_name_filter" value="org.meveo.model.billing.Subscription"></column>
+            <column name="event_type_filter" value="VERSION_REMOVED"></column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="5657_20201201" author="NabilOuachi">
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="SendInvoiceJob_billingRun"/>
+            <column name="applies_to" value="JobInstance_SendInvoiceJob"/>
+            <column name="description" value="Billing Runs"/>
+            <column name="field_type" value="ENTITY"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="versionable" value="0"/>
+            <column name="entity_clazz" value="org.meveo.model.billing.BillingRun"/>
+            <column name="storage_type" value="LIST"/>
+            <column name="gui_position" value=""/>
+            <column name="allow_edit" value="1"/>
+            <column name="hide_on_new" value="0"/>
+            <column name="inh_as_def_value" value="0"/>
+            <column name="cf_protectable" value="0"/>
+        </insert>
+
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="invoiceDateRangeFrom"/>
+            <column name="description" value="From invoice date EL"/>
+            <column name="field_type" value="STRING"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="versionable" value="0"/>
+            <column name="entity_clazz" value="org.meveo.model.billing.BillingRun"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="trigger_end_period_event" value="0"/>
+            <column name="applies_to" value="JobInstance_SendInvoiceJob"/>
+            <column name="allow_edit" value="1"/>
+            <column name="max_value" value="9223372036854775807"/>
+            <column name="hide_on_new" value="0"/>
+            <column name="inh_as_def_value" value="0"/>
+            <column name="cf_protectable" value="0"/>
+        </insert>
+
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueNumeric="-4" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="invoiceDateRangeTo"/>
+            <column name="description" value="To invoice date EL"/>
+            <column name="field_type" value="STRING"/>
+            <column name="value_required" value="0"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="versionable" value="0"/>
+            <column name="entity_clazz" value="org.meveo.model.billing.BillingRun"/>
+            <column name="storage_type" value="SINGLE"/>
+            <column name="trigger_end_period_event" value="0"/>
+            <column name="applies_to" value="JobInstance_SendInvoiceJob"/>
+            <column name="allow_edit" value="1"/>
+            <column name="max_value" value="9223372036854775807"/>
+            <column name="hide_on_new" value="0"/>
+            <column name="inh_as_def_value" value="0"/>
+            <column name="cf_protectable" value="0"/>
+        </insert>
+
+    </changeSet>
+
+    <changeSet id="#5632_20201207_RT_TYPE_DATA" author="NabilOUACHI">
+        <update tableName="billing_rated_transaction">
+            <column name="type" value="MINIMUM"/>
+            <where>code like 'RT_MIN%' and wallet_id is null</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="#5116_10122020" author="AbdelmounaimAkadid">
+     	<insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-30" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="updated" valueDate="now()" />
+            <column name="code" value="APIv2PermissionsSyncJob" />
+            <column name="description" value="APIv2PermissionsSyncJob" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="APIv2PermissionsSyncJob" />
+            <column name="parametres" valueNumeric="null" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="timerentity_id" value="null" />
+            <column name="uuid" value="APIv2PermissionsSyncJob" />
+       	</insert>
+	</changeSet>
+
+	<changeSet id="5743_20201215" author="AmineBENAICHA">
+        <update tableName="meveo_job_instance" >
+            <column name="cf_values"
+                    value='{"PurgeMediationDataJob_edrStatusCf":[ { "listString":[ "AGGREGATED", "MEDIATING", "OPEN", "RATED", "REJECTED" ] } ], "PurgeMediationDataJob_firstTransactionDate":[ { "date":null } ], "PurgeMediationDataJob_woStatusCf":[ { "listString":[ "CANCELED", "OPEN", "RERATED", "RESERVED", "SCHEDULED", "TO_RERATE", "TREATED" ] } ], "PurgeMediationDataJob_rtStatusCf":[ { "listString":[ "BILLED", "CANCELED", "OPEN", "REJECTED", "RERATED" ] } ] }'/>
+            <where>id = -24</where>
+        </update>
+    </changeSet>
+    
+    <changeSet id="5678_20210214" author="anasseh">
+	      <sql><![CDATA[UPDATE ${db.schema.adapted}ar_payment_history set operation_category ='CREDIT' where payment_id is not null ]]> </sql>
+	      <sql><![CDATA[UPDATE ${db.schema.adapted}ar_payment_history set operation_category ='DEBIT' where refund_id is not null ]]> </sql>
+   </changeSet>    
+
+
     <changeSet id="#5592-2021-02-02_41" author="ZBariki">
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq" />
@@ -2222,7 +2389,7 @@ public class ValidateBRScript extends Script {
             <column name="cf_protectable" value="0"/>
         </insert>
     </changeSet>
-    
+
      <changeSet id="#5916_20210128" author="MohammedELAZZOUZI">
        <insert tableName="billing_seq_invoice">
            <column name="id" valueNumeric="-5" />
@@ -2315,4 +2482,176 @@ public class ValidateBRScript extends Script {
             <column name="listvalues_key" value="DATE"/>
         </insert>
     </changeSet>
+
+    <changeSet id="#5951_20210209_data" author="AbdelmounaimAkadid">
+        <insert tableName="billing_tax_class">
+        	<column name="id" value="-3"/>
+            <column name="code" value="NO_TAX"/>
+            <column name="description_i18n" value='{"FRA":"Pas de TVA","ENG":"No VAT"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_class_no_tax" />
+        </insert>
+        <insert tableName="billing_tax_class">
+        	<column name="id" value="-4"/>
+            <column name="code" value="REDUCED"/>
+            <column name="description_i18n" value='{"FRA":"TVA réduite","ENG":"Reduced VAT"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_class_reduced" />
+        </insert>
+        <insert tableName="billing_tax_class">
+        	<column name="id" value="-5"/>
+            <column name="code" value="NORMAL"/>
+            <column name="description_i18n" value='{"FRA":"TVA normale","ENG":"Normal VAT"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_class_normal" />
+        </insert>
+
+        <insert tableName="billing_tax_category">
+        	<column name="id" value="-2"/>
+            <column name="code" value="EXEMPTED"/>
+            <column name="description_i18n" value='{"FRA":"Exempté","ENG":"Exempted"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_category_exempted" />
+        </insert>
+        <insert tableName="billing_tax_category">
+        	<column name="id" value="-3"/>
+            <column name="code" value="REGULAR"/>
+            <column name="description_i18n" value='{"FRA":"Standard","ENG":"Regular"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_category_regular" />
+        </insert>
+
+        <update tableName="billing_tax">
+            <column name="tax_percentage" value="0"/>
+            <column name="accounting_code_id" value="-18"/>
+            <column name="description_i18n" value='{"FRA":"TVA 0%","ENG":"VAT 0%"}'/>
+            <where>code='TAX_00'</where>
+        </update>
+        <insert tableName="billing_tax">
+        	<column name="id" value="-4"/>
+            <column name="code" value="TAX_10"/>
+            <column name="tax_percentage" value="10"/>
+            <column name="accounting_code_id" value="-18"/>
+            <column name="description_i18n" value='{"FRA":"TVA 10%","ENG":"VAT 10%"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_tax_10" />
+        </insert>
+        <insert tableName="billing_tax">
+        	<column name="id" value="-5"/>
+            <column name="code" value="TAX_20"/>
+            <column name="tax_percentage" value="20"/>
+            <column name="accounting_code_id" value="-18"/>
+            <column name="description_i18n" value='{"FRA":"TVA 20%","ENG":"VAT 20%"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_tax_tax_20" />
+        </insert>
+
+        <insert tableName="billing_tax_mapping">
+            <column name="id" value='-1'/>
+            <column name="tax_category_id" value="-2"/>
+            <column name="tax_id" value='-1'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+        </insert>
+		<insert tableName="billing_tax_mapping">
+		    <column name="id" value='-2'/>
+            <column name="tax_class_id" value="-3"/>
+            <column name="tax_id" value='-1'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+        	<column name="id" value='-3'/>
+            <column name="tax_category_id" value="-3"/>
+            <column name="tax_class_id" value="-4"/>
+            <column name="tax_id" value='-4'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+        	<column name="id" value='-4'/>
+            <column name="tax_category_id" value="-3"/>
+            <column name="tax_class_id" value="-5"/>
+            <column name="tax_id" value='-5'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+        </insert>
+
+        <insert tableName="billing_invoice_cat">
+        	<column name="id" value='-3'/>
+            <column name="code" value="ICAT_DEFAULT"/>
+            <column name="description_i18n" value='{"FRA":"Rubrique facture par défaut","ENG":"Default invoice category"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_invoice_cat_icat_default" />
+        </insert>
+        <insert tableName="billing_invoice_sub_cat">
+        	<column name="id" value='-3'/>
+        	<column name="invoice_category_id" value='-3'/>
+        	<column name="version" valueNumeric="0" />
+            <column name="code" value="ISCAT_DEFAULT"/>
+            <column name="description_i18n" value='{"FRA":"Sous-rubrique facture par défaut","ENG":"Default invoice sub-category"}'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_invoice_cat_iscat_default" />
+        </insert>
+
+        <insert tableName="billing_accounting_article">
+        	<column name="id" value='-1'/>
+        	<column name="version" valueNumeric="0" />
+        	<column name="code" value="ADV-STD"/>
+        	<column name="tax_class_id" value="-1"/>
+            <column name="invoice_sub_category_id" value="-3"/>
+            <column name="description_i18n" value='{"FRA":"Acompte","ENG":"Advance payment"}'/>
+            <column name="description" value='Advance payment'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_accounting_article-ADV-STD" />
+        </insert>
+        <insert tableName="billing_accounting_article">
+        	<column name="id" value='-2'/>
+        	<column name="version" valueNumeric="0" />
+        	<column name="code" value="DISC-STD"/>
+            <column name="tax_class_id" value="-5"/>
+            <column name="invoice_sub_category_id" value="-3"/>
+            <column name="description_i18n" value='{"FRA":"Remise de pied de facture","ENG":"Invoice discount"}'/>
+            <column name="description" value='Invoice discount'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_accounting_article-DISC-STD" />
+        </insert>
+        <insert tableName="billing_accounting_article">
+        	<column name="id" value='-3'/>
+        	<column name="version" valueNumeric="0" />
+        	<column name="code" value="ART-STD"/>
+            <column name="tax_class_id" value="-5"/>
+            <column name="invoice_sub_category_id" value="-3"/>
+            <column name="description_i18n" value='{"FRA":"Article standard","ENG":"Standard article"}'/>
+            <column name="description" value='Standard article'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_accounting_article-ART-STD" />
+        </insert>
+        <insert tableName="billing_accounting_article">
+        	<column name="id" value='-4'/>
+        	<column name="version" valueNumeric="0" />
+        	<column name="code" value="MIN-STD"/>
+            <column name="tax_class_id" value="-5"/>
+            <column name="invoice_sub_category_id" value="-3"/>
+            <column name="description_i18n" value='{"FRA":"Complément du minimum de facturation","ENG":"Invoice minimum complement"}'/>
+            <column name="description" value='Invoice minimum complement'/>
+            <column name="created" valueDate="now()" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="uuid" value="billing_accounting_article-MIN-STD" />
+        </insert>
+
+    </changeSet>
+
 </databaseChangeLog>

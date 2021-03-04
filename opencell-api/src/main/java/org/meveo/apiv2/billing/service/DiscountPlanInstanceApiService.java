@@ -59,15 +59,15 @@ public class DiscountPlanInstanceApiService {
 	private DiscountPlanService discountPlanService;
 
 	public String findPaginatedRecords(PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findPaginatedRecords(DiscountPlanInstance.class, searchConfig, genericFields, nestedEntities);
+		return loadService.findPaginatedRecords(true, DiscountPlanInstance.class, searchConfig, genericFields, nestedEntities, 1L);
 	}
 
 	public String findPaginatedDiscountPlanItems(PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findPaginatedRecords(DiscountPlanItem.class, searchConfig, genericFields, nestedEntities);
+		return loadService.findPaginatedRecords(true, DiscountPlanItem.class, searchConfig, genericFields, nestedEntities, 1L);
 	}
 
 	public Optional<String> findById(Long id, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findByClassNameAndId(DiscountPlanInstance.class, id, searchConfig, genericFields, nestedEntities);
+		return loadService.findByClassNameAndId(true, DiscountPlanInstance.class, id, searchConfig, genericFields, nestedEntities, 1L);
 	}
 
 	public Optional<Long> create(IDiscountable discountable, String dto) {

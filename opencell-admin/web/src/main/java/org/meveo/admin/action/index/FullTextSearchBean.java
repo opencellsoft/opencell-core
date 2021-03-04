@@ -24,8 +24,10 @@ import java.util.Map;
 
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
@@ -70,6 +72,14 @@ public class FullTextSearchBean implements Serializable {
 
     /** Search filters. */
     protected Map<String, Object> filters = new HashMap<String, Object>();
+    
+	public FullTextSearchBean() {
+	    HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+	    String uri = request.getRequestURI();
+	    if(uri.contains("/pages/index/")) {
+	    	BaseBean.showDeprecatedWarning();
+	    }
+	}
 
     /**
      * DataModel for primefaces lazy loading datatable component.
@@ -79,7 +89,7 @@ public class FullTextSearchBean implements Serializable {
     public LazyDataModel<Map<String, Object>> getEsDataModel() {
         return getEsDataModel(filters);
     }
-
+    
     public LazyDataModel<Map<String, Object>> getEsDataModel(Map<String, Object> inputFilters) {
         if (esDataModel == null) {
 

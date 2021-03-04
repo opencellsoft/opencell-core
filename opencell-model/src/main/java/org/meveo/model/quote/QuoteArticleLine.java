@@ -19,10 +19,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.cpq.CpqAccountingArticle;
 
 
 /**
@@ -36,7 +34,19 @@ import org.meveo.model.cpq.CpqAccountingArticle;
         @Parameter(name = "sequence_name", value = "cpq_quote_article_line_seq"), })
 public class QuoteArticleLine extends AuditableEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+	public QuoteArticleLine(QuoteArticleLine copy) {
+		this.quoteProduct = copy.quoteProduct;
+		this.billableAccount = copy.billableAccount;
+		this.quoteLot = copy.quoteLot;
+		this.accountingArticle = copy.accountingArticle;
+		this.quantity = copy.quantity;
+		this.serviceQuantity = copy.serviceQuantity;
+	}
+    
+    public QuoteArticleLine() {
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "quote_product_id")
     private QuoteProduct quoteProduct;
 

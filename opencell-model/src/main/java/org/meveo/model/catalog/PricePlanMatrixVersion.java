@@ -45,9 +45,10 @@ import java.util.Set;
         @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq"), })
 @NamedQueries({
         @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", query = "select p from PricePlanMatrixVersion p where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode order by p.pricePlanMatrix.priority asc"),
-        @NamedQuery(name = "PricePlanMatrixVersion.lastVersion", query = "select max(p.currentVersion) from PricePlanMatrixVersion p where p.pricePlanMatrix.code=:pricePlanMatrixCode"),
+        @NamedQuery(name = "PricePlanMatrixVersion.lastVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode order by p.currentVersion desc"),
         @NamedQuery(name = "PricePlanMatrixVersion.getLastPublishedVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode and p.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED order by p.currentVersion desc ")
 })
+// 
 public class PricePlanMatrixVersion extends AuditableEntity {
     
     @Enumerated(EnumType.STRING)
@@ -61,7 +62,6 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     private PricePlanMatrix pricePlanMatrix;
 
     @Column(name = "current_version", nullable = false)
-    @Min(1)
     private int currentVersion;
 
     @Column(name = "label")

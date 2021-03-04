@@ -32,6 +32,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.cpq.MediaDto;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.model.catalog.OfferTemplate;
 
@@ -45,7 +46,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @XmlRootElement(name = "GetOfferTemplateResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JsonIgnoreProperties({"tagCodes"})
+@JsonIgnoreProperties({"tagCodes","mediaCodes"})
 public class GetOfferTemplateResponseDto extends OfferTemplateDto {
 
     /** The Constant serialVersionUID. */
@@ -57,6 +58,10 @@ public class GetOfferTemplateResponseDto extends OfferTemplateDto {
 	@XmlElementWrapper(name = "tags")
     @XmlElement(name = "tags")
     private List<TagDto> tags;
+	
+	@XmlElementWrapper(name = "medias")
+    @XmlElement(name = "medias")
+    private List<MediaDto> medias;
 
     /**
      * Gets the offer template.
@@ -76,7 +81,7 @@ public class GetOfferTemplateResponseDto extends OfferTemplateDto {
         this.offerTemplate = offerTemplate;
     }
     
-    public GetOfferTemplateResponseDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldsDto, boolean asLink, boolean loadTags) {
+    public GetOfferTemplateResponseDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldsDto, boolean asLink, boolean loadTags,boolean loadMedias) {
     	super(offerTemplate, customFieldsDto, asLink);
     	if(loadTags) { 
     		if(offerTemplate.getTags() != null && !offerTemplate.getTags().isEmpty()) { 
@@ -84,9 +89,15 @@ public class GetOfferTemplateResponseDto extends OfferTemplateDto {
     				final TagDto dto = new TagDto(t);
     				return dto;
     			}).collect(Collectors.toList());
-    		}  
-    		
-    		
+    		}   	
+    	} 
+    	if(loadMedias) { 
+    		if(offerTemplate.getMedias() != null && !offerTemplate.getMedias().isEmpty()) { 
+    			medias = offerTemplate.getMedias().stream().map(t -> {
+    				final MediaDto dto = new MediaDto(t);
+    				return dto;
+    			}).collect(Collectors.toList());
+    		}   	
     	} 
     }
 

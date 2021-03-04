@@ -34,9 +34,13 @@ import org.meveo.admin.async.MediationFileProcessing;
 import org.meveo.admin.parse.csv.MEVEOCdrFlatFileReader;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
+import org.meveo.model.bi.FileStatusEnum;
+import org.meveo.model.bi.FlatFile;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.bi.impl.FlatFileService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.ICdrReader;
@@ -66,9 +70,16 @@ public class MediationJobBean {
     @Inject
     private CDRParsingService cdrParserService;
 
+    /** The flat file service. */
+    @Inject
+    private FlatFileService flatFileService;
+
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+    @Inject
+    protected JobExecutionService jobExecutionService;
 
     /** The cdr file name. */
     String cdrFileName;
@@ -118,6 +129,7 @@ public class MediationJobBean {
         log.debug("Processing mediation file  in inputDir={}, file={}", inputDir, file.getAbsolutePath());
 
         String fileName = file.getName();
+        List<String> errors = new ArrayList<>();
 
         File rejectFile = null;
         PrintWriter rejectFileWriter = null;
@@ -174,14 +186,16 @@ public class MediationJobBean {
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
+                    jobExecutionService.registerError(result, cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }
+            errors.addAll(result.getErrors());
 
             if (result.getNbItemsProcessed() == 0) {
                 String errorDescription = "\r\n file " + fileName + " is empty";
                 result.addReport(errorDescription);
+                errors.add(errorDescription);
             }
 
             log.info("Finished processing mediation {}", fileName);
@@ -189,11 +203,22 @@ public class MediationJobBean {
         } catch (Exception e) {
             log.error("Failed to process mediation file {}", fileName, e);
             result.addReport(e.getMessage());
+            errors.add(e.getMessage());
             if (currentFile != null) {
                 FileUtils.moveFileDontOverwrite(rejectDir, currentFile, fileName);
             }
 
         } finally {
+            FlatFile flatFile = flatFileService.getFlatFileByFileName(fileName);
+            if (flatFile != null) {
+                FileStatusEnum status = FileStatusEnum.VALID;
+                if (errors != null && !errors.isEmpty()) {
+                    status = FileStatusEnum.REJECTED;
+                }
+                flatFile.setStatus(status);
+                flatFileService.update(flatFile);
+            }
+
             try {
                 if (cdrReader != null) {
                     cdrReader.close();

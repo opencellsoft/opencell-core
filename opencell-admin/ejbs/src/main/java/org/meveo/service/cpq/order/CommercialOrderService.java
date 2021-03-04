@@ -1,26 +1,7 @@
 package org.meveo.service.cpq.order;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
-
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -37,14 +18,23 @@ import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
-import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.script.Script;
-import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInterface;
+
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Tarik FA.
@@ -64,8 +54,6 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     private ServiceInstanceService serviceInstanceService;
     @Inject
 	private SubscriptionService subscriptionService;
-	@Inject
-	private ScriptInstanceService scriptInstanceService;
     
 	public CommercialOrder duplicate(CommercialOrder entity) {
 		final CommercialOrder duplicate = new CommercialOrder(entity);
@@ -108,43 +96,14 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		}
 		return entity;
 	}
-		
-	public CommercialOrder validateOrder(Long orderId) {
-		CommercialOrder order = findById(orderId);
-		if(order == null)
-			throw new EntityDoesNotExistsException(CommercialOrder.class, orderId);
 
-		if(order.getInvoicingPlan() != null)
-			throw new BusinessException("Order id: " + order.getId() + ", please go throw the validation plan in order to validate it");
+    public CommercialOrder updateWithoutProgressCheck(CommercialOrder entity) throws BusinessException {
+        return super.update(entity);
+    }
 
-
-		return validateOrder(order);
-	}
-
-	public CommercialOrder validateOrder(CommercialOrder order) {
-		ParamBean paramBean = ParamBean.getInstance();
-		String sellerCode = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller().getCode();
-		String quoteScriptCode = paramBean.getProperty("seller." + sellerCode + ".orderValidationScript", "");
-		if (!StringUtils.isBlank(quoteScriptCode)) {
-			ScriptInstance scriptInstance = scriptInstanceService.findByCode(quoteScriptCode);
-			if (scriptInstance != null) {
-				String orderValidationProcess = scriptInstance.getCode();
-				ScriptInterface script = scriptInstanceService.getScriptInstance(orderValidationProcess);
-				Map<String, Object> methodContext = new HashMap<String, Object>();
-				methodContext.put("commercialOrder", order);
-				methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
-				methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
-				if (script != null) {
-					script.execute(methodContext);
-					return (CommercialOrder) methodContext.get(Script.RESULT_VALUE);
-				} else
-					return order;
-			} else
-				return order;
-		}
-
-		if (!CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus())) {
-			return order;
+	public CommercialOrder validateOrder(CommercialOrder order, boolean orderCompleted) {
+		if (!(CommercialOrderEnum.DRAFT.toString().equalsIgnoreCase(order.getStatus()) || CommercialOrderEnum.FINALIZED.toString().equalsIgnoreCase(order.getStatus()))) {
+			throw new BusinessException("Can not validate order with status different then DRAFT or FINALIZED, order id: " + order.getId());
 		}
 
 		List<OrderOffer> validOffers = order.getOffers().stream().filter(o -> !o.getProducts().isEmpty()).collect(Collectors.toList());
@@ -175,10 +134,10 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			subscriptionService.activateInstantiatedService(subscription);
 		}
 
-		order.setStatus(CommercialOrderEnum.VALIDATED.toString());
+		order.setStatus(orderCompleted ? CommercialOrderEnum.COMPLETED.toString() : CommercialOrderEnum.VALIDATED.toString());
 		order.setStatusDate(new Date());
 
-		update(order);
+		updateWithoutProgressCheck(order);
 
 		return order;
 	}
@@ -198,8 +157,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 		AttributeInstance attributeInstance = null;
 		for (OrderAttribute orderAttribute : orderProduct.getOrderAttributes()) {
-				attributeInstance = new AttributeInstance(orderAttribute);
-				attributeInstance.updateAudit(currentUser);
+				attributeInstance = new AttributeInstance(orderAttribute, currentUser);
 				attributeInstance.setServiceInstance(serviceInstance);
 				attributeInstance.setSubscription(subscription);
 				serviceInstance.addAttributeInstance(attributeInstance);

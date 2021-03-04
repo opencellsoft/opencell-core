@@ -19,8 +19,8 @@ package org.meveo.model.billing;
 
 public enum InstanceStatusEnum {
 
-    ACTIVE(1, "accountStatusEnum.active"), INACTIVE(1, "accountStatusEnum.inactive"), CANCELED(2, "accountStatusEnum.canceled"), TERMINATED(3,
-            "accountStatusEnum.terminated"), SUSPENDED(4, "accountStatusEnum.suspended"), CLOSED(4, "accountStatusEnum.closed");
+    ACTIVE(1, "accountStatusEnum.active"), INACTIVE(1, "accountStatusEnum.inactive"), CANCELED(2, "accountStatusEnum.canceled"), TERMINATED(3, "accountStatusEnum.terminated"), SUSPENDED(4,
+            "accountStatusEnum.suspended"), CLOSED(4, "accountStatusEnum.closed");
 
     private Integer id;
 
@@ -55,5 +55,14 @@ public enum InstanceStatusEnum {
             }
         }
         return null;
+    }
+
+    /**
+     * Is this a final status
+     * 
+     * @return True for Canceled, Closed and Terminated statuses
+     */
+    public boolean isFinalStatus() {
+        return this == CANCELED || this == CLOSED || this == TERMINATED;
     }
 }

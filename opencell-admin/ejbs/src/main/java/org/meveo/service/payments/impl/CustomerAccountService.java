@@ -51,6 +51,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.base.AccountService;
 
 /**
@@ -561,7 +562,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
      */
     @Override
     public void create(CustomerAccount entity) throws BusinessException {
-
+        validatePaymentMethod(entity.getPreferredPaymentMethod(), entity.getDDPaymentMethods());
         if (entity.getPreferredPaymentMethod() == null) {
             throw new BusinessException("CustomerAccount does not have a preferred payment method");
         }
@@ -585,9 +586,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     @Override
     public CustomerAccount update(CustomerAccount entity) throws BusinessException {
 
-        if (entity.getPreferredPaymentMethod() == null) {
-            throw new BusinessException("CustomerAccount does not have a preferred payment method");
-        }
+        List<DDPaymentMethod> ddPaymentMethods = entity.getDDPaymentMethods();
+        validatePaymentMethod(entity.getPreferredPaymentMethod(), ddPaymentMethods);
         for (PaymentMethod pm : entity.getPaymentMethods()) {
             pm.updateAudit(currentUser);
         }
@@ -597,7 +597,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
         
         // Register dd payment methods in payment gateway and obtain a token id
-        for (DDPaymentMethod ddPaymentMethod : entity.getDDPaymentMethods()) {
+        for (DDPaymentMethod ddPaymentMethod : ddPaymentMethods) {
         	if(ddPaymentMethod.getTokenId() == null){
         		paymentMethodService.obtainAndSetSepaToken(ddPaymentMethod, entity);
         	}
@@ -606,6 +606,20 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
         entity.ensureOnePreferredPaymentMethod();
         return super.update(entity);
+    }
+
+    private void validatePaymentMethod(PaymentMethod preferredPaymentMethod, List<DDPaymentMethod> ddPaymentMethods) {
+        if (preferredPaymentMethod == null) {
+            throw new BusinessException("CustomerAccount does not have a preferred payment method");
+        }
+        for (DDPaymentMethod ddPaymentMethod : ddPaymentMethods) {
+            if(ddPaymentMethods.stream()
+                    .filter(entry -> entry.getBankCoordinates().getIban().equals(ddPaymentMethod.getBankCoordinates().getIban()))
+                    .limit(2)
+                    .count() > 1){
+                throw new BusinessException("CustomerAccount Could not have two Direct debit payment method with the same iban");
+            }
+        }
     }
 
     /**
@@ -732,5 +746,30 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             throw new BusinessException("The recipient customer account with code : " + toCustomerAccountCode + " is not found");
         }
         transferAccount(fromCustomerAccount, toCustomerAccount, amount);
+	}
+
+	public PaymentMethod getPreferredPaymentMethod(AccountOperation ao, PaymentMethodEnum paymentMethodType) {
+
+		if (ao.getSubscription() != null && ao.getSubscription().getPaymentMethod() != null && ao.getSubscription().getPaymentMethod().getPaymentType() == paymentMethodType) {
+			return ao.getSubscription().getPaymentMethod();
+		}
+		if (ao instanceof RecordedInvoice) {
+			if (((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod() != null
+					&& ((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod().getPaymentType() == paymentMethodType) {
+				return ((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod();
+			}
+		}
+		return ao.getCustomerAccount().getPreferredPaymentMethod();
+	}
+
+    /**
+     * Get a count of customer accounts by a parent customer
+     * 
+     * @param parent Parent customer
+     * @return A number of child customer accounts
+     */
+    public long getCountByParent(Customer parent) {
+
+        return getEntityManager().createNamedQuery("CustomerAccount.getCountByParent", Long.class).setParameter("parent", parent).getSingleResult();
     }
 }

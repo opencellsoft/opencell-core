@@ -31,8 +31,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.UnitGenericWorkflowJobBean;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WorkflowInstance;
@@ -63,6 +65,7 @@ public class GenericWorkflowAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> launchAndForget(Map<Long, List<Object>> wfInstances, GenericWorkflow genericWorkflow, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -76,6 +79,7 @@ public class GenericWorkflowAsync {
             BusinessEntity be = (BusinessEntity)value.get(0);
             WorkflowInstance workflowInstance = (WorkflowInstance)value.get(1);
 			unitGenericWorkflowJobBean.execute(result, be, workflowInstance, genericWorkflow);
+			jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<String>("OK");
     }

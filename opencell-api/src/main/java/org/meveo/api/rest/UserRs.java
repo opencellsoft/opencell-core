@@ -33,9 +33,12 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.UsersDto;
+import org.meveo.api.dto.response.GetCurrentUserResponse;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+
+import io.swagger.v3.oas.annotations.Operation;
 
 /**
  * Web service for managing {@link org.meveo.model.admin.User}. User has a unique username that is use for update, search and remove operation.
@@ -56,6 +59,8 @@ public interface UserRs extends IBaseRs {
      */
     @POST
     @Path("/")
+    @Operation(summary = "Create user",
+    tags = { "User management" })
     ActionStatus create(UserDto postData);
 
     /**
@@ -66,6 +71,8 @@ public interface UserRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+    @Operation(summary = "Update user",
+    tags = { "User management" })
     ActionStatus update(UserDto postData);
 
     /**
@@ -76,6 +83,8 @@ public interface UserRs extends IBaseRs {
      */
     @DELETE
     @Path("/{username}")
+    @Operation(summary = "Remove user with a given username",
+    tags = { "User management" })
     ActionStatus remove(@PathParam("username") String username);
 
     /**
@@ -86,7 +95,18 @@ public interface UserRs extends IBaseRs {
      */
     @GET
     @Path("/")
+    @Operation(summary = "Search user with a given username.",
+    tags = { "User management" })
     GetUserResponse find(@QueryParam("username") String username);
+
+    /**
+     * Get info of currently logged in user
+     * 
+     * @return user
+     */
+    @GET
+    @Path("/current")
+    GetCurrentUserResponse getCurrentUser();
 
     /**
      * Create or update user based on the username.
@@ -96,33 +116,44 @@ public interface UserRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+    @Operation(summary = "Create or update user based on the username.",
+    tags = { "User management" })
     ActionStatus createOrUpdate(UserDto postData);
-    
+
     /**
      * Creates a user in keycloak and core.
+     * 
      * @param postData user to be created externally
      * @return action status
      */
     @POST
     @Path("/external")
+    @Operation(summary = "Creates a user in keycloak and core.",
+    tags = { "User management" })
     ActionStatus createExternalUser(UserDto postData);
 
     /**
      * Updates a user in keycloak and core given a username.
+     * 
      * @param postData user to be updated
      * @return action status
      */
     @PUT
     @Path("/external/")
+    @Operation(summary = "Updates a user in keycloak and core given a username.",
+    tags = { "User management" })
     ActionStatus updateExternalUser(UserDto postData);
 
     /**
      * Deletes a user in keycloak and core given a username.
+     * 
      * @param username the username of the user to be deleted.
      * @return action status
      */
     @DELETE
     @Path("/external/{username}")
+    @Operation(summary = " Deletes a user in keycloak and core given a username.",
+    tags = { "User management" })
     ActionStatus deleteExternalUser(@PathParam("username") String username);
 
     /**
@@ -138,6 +169,8 @@ public interface UserRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+    @Operation(summary = " List users matching a given criteria.",
+    tags = { "User management" })
     UsersDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("userName") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -149,6 +182,8 @@ public interface UserRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+    @Operation(summary = "List users matching a given criteria.",
+    tags = { "User management" })
     UsersDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

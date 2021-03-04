@@ -31,8 +31,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.UnitRecurringRatingJobBean;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -71,6 +73,7 @@ public class RecurringChargeAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, Date maxDate, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -89,6 +92,8 @@ public class RecurringChargeAsync {
             } catch (Exception e) {
                 // Ignore error here - it was caught already
             }
+            
+            jobExecutionService.decCounterElementsRemaining(result);
         }
 
         return new AsyncResult<String>("OK");

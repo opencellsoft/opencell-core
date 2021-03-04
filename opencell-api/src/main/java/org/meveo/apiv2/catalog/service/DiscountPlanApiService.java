@@ -44,15 +44,15 @@ public class DiscountPlanApiService {
 	private GenericApiPersistenceDelegate persistenceDelegate;
 
 	public String findPaginatedRecords(PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findPaginatedRecords(DiscountPlan.class, searchConfig, genericFields, nestedEntities);
+		return loadService.findPaginatedRecords(true, DiscountPlan.class, searchConfig, genericFields, nestedEntities, 1L);
 	}
 
 	public String findPaginatedDiscountPlanItems(PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findPaginatedRecords(DiscountPlanItem.class, searchConfig, genericFields, nestedEntities);
+		return loadService.findPaginatedRecords(true, DiscountPlanItem.class, searchConfig, genericFields, nestedEntities, 1L);
 	}
 
 	public Optional<String> findById(Long id, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findByClassNameAndId(DiscountPlan.class, id, searchConfig, genericFields, nestedEntities);
+		return loadService.findByClassNameAndId(true, DiscountPlan.class, id, searchConfig, genericFields, nestedEntities, 1L);
 	}
 
 	public Optional<Long> create(String dto) {
@@ -91,7 +91,7 @@ public class DiscountPlanApiService {
 	}
 
 	public Optional<String> findDiscountPlanItemById(Long id, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findByClassNameAndId(DiscountPlanItem.class, id, searchConfig, genericFields, nestedEntities);
+		return loadService.findByClassNameAndId(true, DiscountPlanItem.class, id, searchConfig, genericFields, nestedEntities, 1L);
 	}
 
 	public Optional<Long> createItem(String dto) {

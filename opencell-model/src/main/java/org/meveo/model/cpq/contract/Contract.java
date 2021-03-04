@@ -1,7 +1,10 @@
 package org.meveo.model.cpq.contract;
 
+import static javax.persistence.CascadeType.ALL;
+
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -13,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -22,9 +26,11 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.cpq.commercial.OrderPrice;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
@@ -34,6 +40,7 @@ import org.meveo.model.payments.CustomerAccount;
  * @version 10.0
  */
 @Entity
+@CustomFieldEntity(cftCodePrefix = "Contract")
 @Table(name = "cpq_contract", uniqueConstraints = { @UniqueConstraint(columnNames = {"code"})})
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_contract_seq"), })
@@ -42,7 +49,7 @@ import org.meveo.model.payments.CustomerAccount;
 	@NamedQuery(name = "Contract.findCustomerAccount", query = "select c from Contract c left join c.customerAccount cc where cc.code=:codeCustomerAccount"),
 	@NamedQuery(name = "Contract.findCustomer", query = "select c from Contract c left join c.customer cc where cc.code=:codeCustomer")
 })
-public class Contract extends BusinessEntity {
+public class Contract extends EnableBusinessCFEntity {
 
 	public Contract() {
 		this.status = ProductStatusEnum.DRAFT;
@@ -134,6 +141,10 @@ public class Contract extends BusinessEntity {
 	 */
 	@Column(name = "contract_duration")
 	private int contractDuration;
+	
+	@OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
+	private List<ContractItem> contractItems;
+	
 
 	/**
 	 * @return the seller
@@ -313,6 +324,20 @@ public class Contract extends BusinessEntity {
 				&& Objects.equals(endDate, other.endDate) && renewal == other.renewal
 				&& Objects.equals(seller, other.seller) && status == other.status
 				&& Objects.equals(statusDate, other.statusDate);
+	}
+
+	/**
+	 * @return the contractItems
+	 */
+	public List<ContractItem> getContractItems() {
+		return contractItems;
+	}
+
+	/**
+	 * @param contractItems the contractItems to set
+	 */
+	public void setContractItems(List<ContractItem> contractItems) {
+		this.contractItems = contractItems;
 	}
 	
 	

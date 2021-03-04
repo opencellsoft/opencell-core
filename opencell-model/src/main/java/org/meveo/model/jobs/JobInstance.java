@@ -124,7 +124,7 @@ public class JobInstance extends EnableBusinessCFEntity {
     /** The include invoices without amount. */
     @Type(type = "numeric_boolean")
     @Column(name = "exclude_inv_without_amount")
-    private boolean excludeInvoicesWithoutAmount;
+    private boolean excludeInvoicesWithoutAmount = false;
 
     /**
      * Whether a verbose error log will be kept.
@@ -132,6 +132,13 @@ public class JobInstance extends EnableBusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "verbose_report")
     private boolean verboseReport = true;
+
+    /**
+     * Whether a verbose error log will be kept.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "stop_on_error")
+    private boolean stopOnError = false;
 
     /** Code of provider, that job belongs to. */
     @Transient
@@ -430,5 +437,19 @@ public class JobInstance extends EnableBusinessCFEntity {
      */
     public void setVerboseReport(boolean verboseReport) {
         this.verboseReport = verboseReport;
+    }
+
+    /**
+     * @return the stopOnError
+     */
+    public boolean isStopOnError() {
+        return stopOnError;
+    }
+
+    /**
+     * @param stopOnError the stopOnError to set
+     */
+    public void setStopOnError(boolean stopOnError) {
+        this.stopOnError = stopOnError;
     }
 }

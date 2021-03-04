@@ -79,8 +79,25 @@ public class InvoiceConfigurationDto implements Serializable {
     
     /** display wallet operations. */
     private Boolean displayWalletOperations;
+    
+    /** Default invoice sub-category */
+    private String defaultInvoiceSubcategoryCode;
+    
+    /** Default generic accounting article */
+    private String defaultGenericArticleCode;
+    
+    /** Default discount accounting article */
+    private String defaultDiscountArticleCode;
+    
+    /** Default advanced payment accounting article */
+    private String defaultAdvancedPaymentArticleCode;
+    
+    /** Default invoice minimum accounting article */
+    private String defaultInvoiceMinimumArticleCode;
+    
+    
 
-    /**
+	/**
      * Instantiates a new invoice configuration dto.
      */
     public InvoiceConfigurationDto() {
@@ -92,18 +109,23 @@ public class InvoiceConfigurationDto implements Serializable {
      * @param invoiceConfiguration the invoice configuration
      */
     public InvoiceConfigurationDto(InvoiceConfiguration invoiceConfiguration) {
-        displaySubscriptions = invoiceConfiguration.getDisplaySubscriptions();
-        displayServices = invoiceConfiguration.getDisplayServices();
-        displayOffers = invoiceConfiguration.getDisplayOffers();
-        displayEdrs = invoiceConfiguration.getDisplayEdrs();
-        displayProvider = invoiceConfiguration.getDisplayProvider();
-        displayCfAsXML = invoiceConfiguration.getDisplayCfAsXML();
-        displayPricePlans = invoiceConfiguration.getDisplayPricePlans();
-        displayDetail = invoiceConfiguration.getDisplayDetail();
-        displayBillingCycle = invoiceConfiguration.getDisplayBillingCycle();
-        displayOrders = invoiceConfiguration.getDisplayOrders();
+        displaySubscriptions = invoiceConfiguration.isDisplaySubscriptions();
+        displayServices = invoiceConfiguration.isDisplayServices();
+        displayOffers = invoiceConfiguration.isDisplayOffers();
+        displayEdrs = invoiceConfiguration.isDisplayEdrs();
+        displayProvider = invoiceConfiguration.isDisplayProvider();
+        displayCfAsXML = invoiceConfiguration.isDisplayCfAsXML();
+        displayPricePlans = invoiceConfiguration.isDisplayPricePlans();
+        displayDetail = invoiceConfiguration.isDisplayDetail();
+        displayBillingCycle = invoiceConfiguration.isDisplayBillingCycle();
+        displayOrders = invoiceConfiguration.isDisplayOrders();
         currentInvoiceNb = invoiceConfiguration.getCurrentInvoiceNb();
-        displayWalletOperations=invoiceConfiguration.getDisplayWalletOperations();
+        displayWalletOperations=invoiceConfiguration.isDisplayWalletOperations();
+        defaultInvoiceSubcategoryCode = invoiceConfiguration.getDefaultInvoiceSubCategory().getCode();
+        defaultGenericArticleCode = invoiceConfiguration.getDefaultGenericAccountingArticle().getCode();
+        defaultDiscountArticleCode = invoiceConfiguration.getDefaultDiscountAccountingArticle().getCode();
+        defaultAdvancedPaymentArticleCode = invoiceConfiguration.getDefaultAdvancedPaymentAccountingArticle().getCode();
+        defaultInvoiceMinimumArticleCode = invoiceConfiguration.getDefaultInvoiceMinimumAccountingArticle().getCode();
     }
 
     /**
@@ -353,4 +375,45 @@ public class InvoiceConfigurationDto implements Serializable {
                 + ", displayDetail=" + displayDetail + ", displayChargesPeriods=" + displayChargesPeriods + ", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice
                 + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders=" + displayOrders + ",currentInvoiceNb="+currentInvoiceNb+ ",displayWalletOperations="+displayWalletOperations+"]";
     }
+
+	public String getDefaultInvoiceSubcategoryCode() {
+		return defaultInvoiceSubcategoryCode;
+	}
+
+	public void setDefaultInvoiceSubcategoryCode(String defaultInvoiceSubcategoryCode) {
+		this.defaultInvoiceSubcategoryCode = defaultInvoiceSubcategoryCode;
+	}
+
+	public String getDefaultGenericArticleCode() {
+		return defaultGenericArticleCode;
+	}
+
+	public void setDefaultGenericArticleCode(String defaultGenericArticleCode) {
+		this.defaultGenericArticleCode = defaultGenericArticleCode;
+	}
+
+	public String getDefaultDiscountArticleCode() {
+		return defaultDiscountArticleCode;
+	}
+
+	public void setDefaultDiscountArticleCode(String defaultDiscountArticleCode) {
+		this.defaultDiscountArticleCode = defaultDiscountArticleCode;
+	}
+
+	public String getDefaultAdvancedPaymentArticleCode() {
+		return defaultAdvancedPaymentArticleCode;
+	}
+
+	public void setDefaultAdvancedPaymentArticleCode(String defaultAdvancedPaymentArticleCode) {
+		this.defaultAdvancedPaymentArticleCode = defaultAdvancedPaymentArticleCode;
+	}
+
+	public String getDefaultInvoiceMinimumArticleCode() {
+		return defaultInvoiceMinimumArticleCode;
+	}
+
+	public void setDefaultInvoiceMinimumArticleCode(String defaultInvoiceMinimumArticleCode) {
+		this.defaultInvoiceMinimumArticleCode = defaultInvoiceMinimumArticleCode;
+	}
+
 }

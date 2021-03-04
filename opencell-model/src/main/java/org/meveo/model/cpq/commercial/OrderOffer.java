@@ -1,5 +1,7 @@
 package org.meveo.model.cpq.commercial;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -11,10 +13,9 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.AuditableCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.catalog.OfferTemplate;
-
-import java.util.List;
 
 /** 
  * @author Tarik F.
@@ -22,10 +23,11 @@ import java.util.List;
  *
  */
 @Entity
-@Table(name = "cpq_order_offer", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@CustomFieldEntity(cftCodePrefix = "OrderOffer")
+@Table(name = "cpq_order_offer")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_offer_seq")})
-public class OrderOffer extends BusinessEntity {
+public class OrderOffer extends AuditableCFEntity {
 
 
 	/**

@@ -1,6 +1,7 @@
 package org.meveo.api.dto.response.cpq;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
+import org.meveo.api.dto.cpq.MediaDto;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.model.cpq.Product;
@@ -30,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @SuppressWarnings("serial")
 @XmlRootElement(name = "GetProductDtoResponse")
-@JsonIgnoreProperties({ "chargeTemplateCodes","commercialRuleCodes"})
+@JsonIgnoreProperties({ "chargeTemplateCodes","commercialRuleCodes","mediaCodes"})
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetProductDtoResponse extends ProductDto{
 	
@@ -44,6 +46,10 @@ public class GetProductDtoResponse extends ProductDto{
     @XmlElement(name = "commercialRules")
     private Set<CommercialRuleHeaderDTO> commercialHeaderRules;
 	
+	@XmlElementWrapper(name = "medias")
+    @XmlElement(name = "medias")
+    private List<MediaDto> medias;
+	
     /**
      * The status response of the web service response.
      */
@@ -54,10 +60,18 @@ public class GetProductDtoResponse extends ProductDto{
     	processProductVersionAndDiscount(p);
     }
     
-    public GetProductDtoResponse(Product p,Set<ChargeTemplateDto> chargeTemplates) {
+    public GetProductDtoResponse(Product p,Set<ChargeTemplateDto> chargeTemplates,boolean loadMedias) {
     	super(p);
     	processProductVersionAndDiscount(p);
     	this.chargeTemplates=chargeTemplates;
+    	if(loadMedias) { 
+    		if(p.getMedias() != null && !p.getMedias().isEmpty()) { 
+    			medias = p.getMedias().stream().map(t -> {
+    				final MediaDto dto = new MediaDto(t);
+    				return dto;
+    			}).collect(Collectors.toList());
+    		}   	
+    	}
     }
     
     public void processProductVersionAndDiscount(Product p) {
@@ -127,9 +141,20 @@ public class GetProductDtoResponse extends ProductDto{
 		this.chargeTemplates = chargeTemplates;
 	}
 
-	
-	
- 
+
+	/**
+	 * @return the medias
+	 */
+	public List<MediaDto> getMedias() {
+		return medias;
+	}
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<MediaDto> medias) {
+		this.medias = medias;
+	}
 
 	/**
 	 * @return the commercialHeaderRules

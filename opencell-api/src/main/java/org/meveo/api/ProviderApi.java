@@ -58,6 +58,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Country;
@@ -87,6 +88,7 @@ import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
@@ -157,6 +159,9 @@ public class ProviderApi extends BaseApi {
 
     @Inject
     private TitleService titleService;
+    
+    @Inject
+    private AccountingArticleService accountingArticleService;
 
     public ProviderDto find() throws MeveoApiException {
 
@@ -260,7 +265,7 @@ public class ProviderApi extends BaseApi {
         List<Tax> taxes = taxService.list();
         if (taxes != null) {
             for (Tax tax : taxes) {
-                result.getTaxes().getTax().add(new TaxDto(tax, entityToDtoConverter.getCustomFieldsDTO(tax, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+                result.getTaxes().getTax().add(new TaxDto(tax, entityToDtoConverter.getCustomFieldsDTO(tax, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false));
             }
         }
 
@@ -544,6 +549,41 @@ public class ProviderApi extends BaseApi {
             }
             if (invoiceConfigurationDto.getDisplayWalletOperations() != null) {
                 invoiceConfiguration.setDisplayWalletOperations(invoiceConfigurationDto.getDisplayWalletOperations());
+            }
+            if (invoiceConfigurationDto.getDefaultInvoiceSubcategoryCode() != null) {
+            	InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(invoiceConfigurationDto.getDefaultInvoiceSubcategoryCode());
+            	if (invoiceSubCategory == null) {
+                    throw new EntityDoesNotExistsException(InvoiceSubCategory.class.getName(), postData.getInvoiceConfiguration().getDefaultInvoiceSubcategoryCode());
+                }
+                invoiceConfiguration.setDefaultInvoiceSubCategory(invoiceSubCategory);
+            }
+            if (invoiceConfigurationDto.getDefaultGenericArticleCode() != null) {
+            	AccountingArticle genericArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultGenericArticleCode());
+            	if(genericArticle == null) {
+            		throw new EntityDoesNotExistsException(AccountingArticle.class, postData.getInvoiceConfiguration().getDefaultGenericArticleCode());
+            	}
+                invoiceConfiguration.setDefaultGenericAccountingArticle(genericArticle);
+            }
+            if (invoiceConfigurationDto.getDefaultAdvancedPaymentArticleCode() != null) {
+            	AccountingArticle advancedPaymentArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultAdvancedPaymentArticleCode());
+            	if(advancedPaymentArticle == null) {
+            		throw new EntityDoesNotExistsException(AccountingArticle.class.getName(), postData.getInvoiceConfiguration().getDefaultAdvancedPaymentArticleCode());
+            	}
+                invoiceConfiguration.setDefaultAdvancedPaymentAccountingArticle(advancedPaymentArticle);
+            }
+            if (invoiceConfigurationDto.getDefaultInvoiceMinimumArticleCode() != null) {
+            	AccountingArticle invoiceMinimumArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultInvoiceMinimumArticleCode());
+            	if(invoiceMinimumArticle == null) {
+            		throw new EntityDoesNotExistsException(AccountingArticle.class.getName(), postData.getInvoiceConfiguration().getDefaultInvoiceMinimumArticleCode());
+            	}
+                invoiceConfiguration.setDefaultInvoiceMinimumAccountingArticle(invoiceMinimumArticle);
+            }
+            if (invoiceConfigurationDto.getDefaultDiscountArticleCode() != null) {
+            	AccountingArticle discountArticle = accountingArticleService.findByCode(invoiceConfigurationDto.getDefaultDiscountArticleCode());
+            	if(discountArticle == null) {
+            		throw new EntityDoesNotExistsException(AccountingArticle.class.getName(), postData.getInvoiceConfiguration().getDefaultDiscountArticleCode());
+            	}
+                invoiceConfiguration.setDefaultDiscountAccountingArticle(discountArticle);
             }
         }
         return provider;

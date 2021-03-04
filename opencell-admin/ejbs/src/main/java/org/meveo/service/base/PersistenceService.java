@@ -17,14 +17,20 @@
  */
 package org.meveo.service.base;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,9 +48,14 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.metamodel.Attribute;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotFoundException;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -55,7 +66,6 @@ import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
@@ -593,7 +603,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         queryBuilder.addCriterion("code", "like", "%" + wildcode + "%", true);
         return queryBuilder.getQuery(getEntityManager()).getResultList();
     }
-
+    
+    /**
+     * Find entities by code
+     *
+     * @param code to match
+     * @return entity matching code
+     */
+    public BusinessEntity findBusinessEntityByCode(String code) {
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "entity", null);
+        queryBuilder.addCriterion("entity.code", "=", code, true);
+        return (BusinessEntity) queryBuilder.getQuery(getEntityManager()).getSingleResult();
+    }
     /**
      * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)
      */
@@ -601,7 +622,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public List<E> list(PaginationConfiguration config) {
         Map<String, Object> filters = config.getFilters();
-
+		if(isAnEmptyListInFilter(filters)) {
+			return new ArrayList<E>();
+		}
+		
         if (filters != null && filters.containsKey("$FILTER")) {
             Filter filter = (Filter) filters.get("$FILTER");
             FilteredQueryBuilder queryBuilder = (FilteredQueryBuilder) getQuery(config);
@@ -616,10 +640,61 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
+	 * @param filters
+	 * @return
+	 */
+	private boolean isAnEmptyListInFilter(Map<String, Object> filters) {
+		return filters == null ? false : filters.values().stream()
+				.filter(v -> v != null && v instanceof Collection && ((Collection) v).isEmpty()).findAny().isPresent();
+	}
+
+	/**
+     * Used to retrieve related fields of an entity
+     */
+    @SuppressWarnings({ "unchecked" })
+    public Map<String, Object> mapRelatedFields() {
+        final Class<? extends E> productClass = getEntityClass();
+        StringBuilder queryString = new StringBuilder( "from CustomFieldTemplate" );
+        Query query = getEntityManager().createQuery(queryString.toString());
+        List<CustomFieldTemplate> resultsCFTmpl = query.getResultList();
+        Map<String, Object> mapAttributeAndType = new HashMap<>();
+        Set<Attribute<? super E, ?>> setAttributes = ((Session) getEntityManager().getDelegate()).getSessionFactory()
+                .getMetamodel().managedType( getEntityClass() ).getAttributes();
+        for ( Attribute<? super E, ?> att : setAttributes ) {
+            if ( att.getJavaType() != CustomFieldValues.class ) {
+                Map<String,String> mapStringAndType = new HashMap();
+                mapStringAndType.put( "fullQualifiedTypeName", att.getJavaType().toString() );
+                mapStringAndType.put( "shortTypeName", att.getJavaType().getSimpleName() );
+                mapAttributeAndType.put( att.getName(), mapStringAndType);
+            }
+            else {
+                if ( !resultsCFTmpl.isEmpty() ) {
+                    Map<String, Map<String, String>> mapCFValues = new HashMap();
+                    for ( CustomFieldTemplate aCFTmpl : resultsCFTmpl ) {
+                        if ( aCFTmpl.getAppliesTo().equals( productClass.getSimpleName() ) ) {
+                            Map<String,String> mapStringAndType = new HashMap();
+                            mapStringAndType.put( "fullQualifiedTypeName", aCFTmpl.getFieldType().getDataClass().toString() );
+                            mapStringAndType.put( "shortTypeName", aCFTmpl.getFieldType().getDataClass().getSimpleName() );
+                            mapCFValues.put( aCFTmpl.getCode(), mapStringAndType );
+                        }
+                    }
+                    if ( ! mapCFValues.isEmpty() )
+                        mapAttributeAndType.put( att.getName(), mapCFValues );
+                }
+            }
+        }
+        return mapAttributeAndType;
+    }
+
+    /**
      * @see org.meveo.service.base.local.IPersistenceService#count(PaginationConfiguration config)
      */
     @Override
     public long count(PaginationConfiguration config) {
+        Map<String, Object> filters = config.getFilters();
+		if(isAnEmptyListInFilter(filters)) {
+			return 0;
+		} 
         List<String> fetchFields = config.getFetchFields();
         config.setFetchFields(null);
         QueryBuilder queryBuilder = getQuery(config);
@@ -876,13 +951,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public QueryBuilder getQuery(PaginationConfiguration config) {
-
         Map<String, Object> filters = config.getFilters();
-
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields());
-
         if (filters != null && !filters.isEmpty()) {
-
             if (filters.containsKey(SEARCH_FILTER)) {
                 Filter filter = (Filter) filters.get(SEARCH_FILTER);
                 Map<CustomFieldTemplate, Object> parameterMap = (Map<CustomFieldTemplate, Object>) filters.get(SEARCH_FILTER_PARAMETERS);
@@ -1182,6 +1253,63 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             return "boolean";
         } else {
             return "varchar";
+        }
+    }
+    
+    public Object deepCopyObject(Class<E> old) throws Exception {
+   	 	ObjectOutputStream oos = null;
+        ObjectInputStream ois = null;
+        try {
+           ByteArrayOutputStream bos = new ByteArrayOutputStream();
+           oos = new ObjectOutputStream(bos);
+           oos.writeObject(old);
+           oos.flush();               
+           ByteArrayInputStream bin = new ByteArrayInputStream(bos.toByteArray()); 
+           ois = new ObjectInputStream(bin);                  
+           return ois.readObject(); 
+        }
+        catch(Exception e) {
+           System.out.println("Exception in ObjectCloner = " + e);
+           throw(e);
+        }
+        finally {
+           oos.close();
+           ois.close();
+        }
+   }
+    
+    /**
+	 * @param entity
+	 * @param id
+	 * @return
+	 */
+	public IEntity tryToFindByEntityClassAndId(Class<? extends IEntity> entity, Long id) {
+    	if(id==null) {
+    		return null;
+    	}
+        QueryBuilder qb = new QueryBuilder(entity, "entity", null);
+        qb.addCriterion("entity.id", "=", id, true);
+        try {
+			return (IEntity) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with id '"+id+"' found");
+        } catch (NonUniqueResultException e) {
+        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+" with id '"+id+"' found");
+        }
+	}
+
+	public BusinessEntity tryToFindByEntityClassAndCode(Class<? extends BusinessEntity> entity, String code) {
+    	if(code==null) {
+    		return null;
+    	}
+        QueryBuilder qb = new QueryBuilder(entity, "entity", null);
+        qb.addCriterion("entity.code", "=", code, true);
+        try {
+			return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with code '"+code+"' found");
+        } catch (NonUniqueResultException e) {
+        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+" with code '"+code+"' found");
         }
     }
 }

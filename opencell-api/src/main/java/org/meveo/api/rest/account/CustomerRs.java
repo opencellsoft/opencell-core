@@ -35,6 +35,8 @@ import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -67,6 +69,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/")
+    @Operation(summary = "Create a new customer",
+    tags = { "Customer management" })
     ActionStatus create(CustomerDto postData);
 
     /**
@@ -77,6 +81,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+    @Operation(summary = "Update an existing customer",
+    tags = { "Customer management" })
     ActionStatus update(CustomerDto postData);
 
     /**
@@ -84,11 +90,15 @@ public interface CustomerRs extends IBaseRs {
      *
      * @param customerCode The customer's code
      * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @param includeCustomerAccounts True to include customer accounts
      * @return The customer's data
      */
     @GET
     @Path("/")
-    GetCustomerResponseDto find(@QueryParam("customerCode") String customerCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+    @Operation(summary = "Search for a customer with a given code",
+    tags = { "Customer management" })
+    GetCustomerResponseDto find(@QueryParam("customerCode") String customerCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
+                                @QueryParam("includeCustomerAccounts") boolean includeCustomerAccounts);
 
     /**
      * Remove customer with a given code
@@ -98,6 +108,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @DELETE
     @Path("/{customerCode}")
+    @Operation(summary = "Remove customer with a given code",
+    tags = { "Customer management" })
     ActionStatus remove(@PathParam("customerCode") String customerCode);
 
     /**
@@ -132,6 +144,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+    @Operation(summary = "List customers matching a given criteria",
+    tags = { "Customer management" })
     public CustomersResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
@@ -144,6 +158,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+    @Operation(summary = "List customers matching a given criteria",
+    tags = { "Customer management" })
     public CustomersResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -154,6 +170,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/createBrand")
+    @Operation(summary = "Create a new customer brand",
+    tags = { "Customer management" })
     ActionStatus createBrand(CustomerBrandDto postData);
 
     /**
@@ -164,6 +182,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @PUT
     @Path("/updateBrand")
+    @Operation(summary = "Update an existing customer brand",
+    tags = { "Customer management" })
     ActionStatus updateBrand(CustomerBrandDto postData);
 
     /**
@@ -174,6 +194,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdateBrand")
+    @Operation(summary = " Create new or update an existing customer brand",
+    tags = { "Customer management" })
     ActionStatus createOrUpdateBrand(CustomerBrandDto postData);
 
     /**
@@ -184,6 +206,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/createCategory")
+    @Operation(summary = "Create a new customer category",
+    tags = { "Customer management" })
     ActionStatus createCategory(CustomerCategoryDto postData);
 
     /**
@@ -194,6 +218,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @PUT
     @Path("/updateCategory")
+    @Operation(summary = "Update an existing customer category",
+    tags = { "Customer management" })
     ActionStatus updateCategory(CustomerCategoryDto postData);
     
     /**
@@ -204,6 +230,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @GET
     @Path("/category/{categoryCode}")
+    @Operation(summary = "Search for a customer category with a given code",
+    tags = { "Customer management" })
     GetCustomerCategoryResponseDto findCategory(@PathParam("categoryCode") String categoryCode);
 
     /**
@@ -214,6 +242,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdateCategory")
+    @Operation(summary = "Create new or update an existing customer category",
+    tags = { "Customer management" })
     ActionStatus createOrUpdateCategory(CustomerCategoryDto postData);
 
     /**
@@ -224,6 +254,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @DELETE
     @Path("/removeBrand/{brandCode}")
+    @Operation(summary = "Remove existing customer brand with a given brand code",
+    tags = { "Customer management" })
     ActionStatus removeBrand(@PathParam("brandCode") String brandCode);
 
     /**
@@ -234,6 +266,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @DELETE
     @Path("/removeCategory/{categoryCode}")
+    @Operation(summary = "Remove an existing customer category with a given category code",
+    tags = { "Customer management" })
     ActionStatus removeCategory(@PathParam("categoryCode") String categoryCode);
 
     /**
@@ -244,6 +278,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+    @Operation(summary = " Create new or update existing customer",
+    tags = { "Customer management" })
     ActionStatus createOrUpdate(CustomerDto postData);
 
     /**
@@ -256,6 +292,8 @@ public interface CustomerRs extends IBaseRs {
 	 */
     @GET
     @Path("/exportCustomerHierarchy")
+    @Operation(summary = " Exports an account hierarchy given a specific customer",
+    tags = { "Customer management" })
     ActionStatus exportCustomerHierarchy(@QueryParam("customerCode") String customerCode);
     
     /**
@@ -278,6 +316,8 @@ public interface CustomerRs extends IBaseRs {
 	 */
 	@PUT
 	@Path("/customerNumberSequence")
+	 @Operation(summary = " Update the Provider's customer number sequence configuration",
+	    tags = { "Customer management" })
 	ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData);
 	
     /**
@@ -287,6 +327,8 @@ public interface CustomerRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/customerNumberSequence")
+	 @Operation(summary = " Calculates and returns the next value of the mandate number",
+	    tags = { "Customer management" })
 	GenericSequenceValueResponseDto getNextCustomerNumber();
 	
 	/**
@@ -296,6 +338,8 @@ public interface CustomerRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/sequence")
+	 @Operation(summary = "Creates a new customer sequence",
+	    tags = { "Customer management" })
 	ActionStatus createCustomerSequence(CustomerSequenceDto postData);
 	
 	/**
@@ -305,6 +349,8 @@ public interface CustomerRs extends IBaseRs {
 	 */
 	@PUT
 	@Path("/sequence")
+	 @Operation(summary = "Updates a new customer sequence with a given code.",
+	    tags = { "Customer management" })
 	ActionStatus updateCustomerSequence(CustomerSequenceDto postData);
 	
 	/**
@@ -314,6 +360,8 @@ public interface CustomerRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/sequence/{code}/next")
+	 @Operation(summary = "Generates the next customer sequence number",
+	    tags = { "Customer management" })
 	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@PathParam("code") String code);
 
     /**
@@ -325,6 +373,8 @@ public interface CustomerRs extends IBaseRs {
      */
     @GET
     @Path("/filterCountersByPeriod")
+    @Operation(summary = "Filter counters by period date",
+    tags = { "Customer management" })
     GetCountersInstancesResponseDto filterCustomerCountersByPeriod(@QueryParam("customerCode") String customerCode, @QueryParam("date") @RestDateParam Date date);
 
 

@@ -21,7 +21,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.AuditableCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
@@ -44,9 +45,10 @@ import org.meveo.model.order.Order;
 @WorkflowedEntity
 @Entity
 @Table(name = "cpq_commercial_order")
+@CustomFieldEntity(cftCodePrefix = "CommercialOrder")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_commercial_order_seq")})
-public class CommercialOrder extends AuditableEntity {
+public class CommercialOrder extends AuditableCFEntity  {
 
 
 	@Transient
@@ -189,6 +191,17 @@ public class CommercialOrder extends AuditableEntity {
 	@OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
 	private List<OrderOffer> offers;
 
+	
+	@OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
+	private List<OrderLot> orderLots;
+	
+	
+	@OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
+	private List<OrderPrice> orderPrices;
+	
+    @Column(name = "oneshot_total_amount")
+    private BigDecimal oneShotTotalAmount;
+	
 	/**
 	 * @return the seller
 	 */
@@ -567,4 +580,48 @@ public class CommercialOrder extends AuditableEntity {
 	public void addInvoicedRate(BigDecimal rateToBill) {
 		this.rateInvoiced = this.rateInvoiced.intValue() + rateToBill.intValue();
 	}
+
+	/**
+	 * @return the orderLots
+	 */
+	public List<OrderLot> getOrderLots() {
+		return orderLots;
+	}
+
+	/**
+	 * @param orderLots the orderLots to set
+	 */
+	public void setOrderLots(List<OrderLot> orderLots) {
+		this.orderLots = orderLots;
+	}
+
+	/**
+	 * @return the orderPrices
+	 */
+	public List<OrderPrice> getOrderPrices() {
+		return orderPrices;
+	}
+
+	/**
+	 * @param orderPrices the orderPrices to set
+	 */
+	public void setOrderPrices(List<OrderPrice> orderPrices) {
+		this.orderPrices = orderPrices;
+	}
+
+	/**
+	 * @return the oneShotTotalAmount
+	 */
+	public BigDecimal getOneShotTotalAmount() {
+		return oneShotTotalAmount;
+	}
+
+	/**
+	 * @param oneShotTotalAmount the oneShotTotalAmount to set
+	 */
+	public void setOneShotTotalAmount(BigDecimal oneShotTotalAmount) {
+		this.oneShotTotalAmount = oneShotTotalAmount;
+	}
+	
+	
 }

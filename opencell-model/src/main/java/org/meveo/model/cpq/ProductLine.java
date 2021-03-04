@@ -6,7 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -16,7 +15,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.admin.Seller;
 
 /**
@@ -27,13 +27,14 @@ import org.meveo.model.admin.Seller;
  *
  */
 @Entity
+@CustomFieldEntity(cftCodePrefix = "ProductLine")
 @Table(name = "cpq_product_line", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_product_line_seq"), })
 @NamedQueries({
 	@NamedQuery(name = "ProductLine.findByCode", query = "select p from ProductLine p where p.code =:code")
 })
-public class ProductLine extends BusinessEntity {
+public class ProductLine extends BusinessCFEntity  {
 
 	/**
 	 * 

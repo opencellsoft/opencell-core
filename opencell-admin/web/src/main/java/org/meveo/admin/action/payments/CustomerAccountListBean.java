@@ -25,46 +25,63 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
- * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ConversationScoped
 public class CustomerAccountListBean extends BaseBean<CustomerAccount> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link CustomerAccount} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private CustomerAccountService customerAccountService;
+    /**
+     * Injected @{link CustomerAccount} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private CustomerAccountService customerAccountService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public CustomerAccountListBean() {
-		super(CustomerAccount.class);
-	}
+    @Inject
+    private CustomerService customerService;
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<CustomerAccount> getPersistenceService() {
-		return customerAccountService;
-	}
+    private Long parentEntityId;
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public CustomerAccountListBean() {
+        super(CustomerAccount.class);
+    }
 
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<CustomerAccount> getPersistenceService() {
+        return customerAccountService;
+    }
+
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
+
+    public void setParentEntityId(Long parentEntityId) {
+        this.parentEntityId = parentEntityId;
+    }
+
+    public Long getParentEntityId() {
+        return parentEntityId;
+    }
+
+    @Override
+    public void preRenderView() {
+        super.preRenderView();
+        if (parentEntityId != null) {
+            filters.put("customer", customerService.findById(parentEntityId));
+        }
+    }
 }

@@ -22,6 +22,7 @@ import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.CpqOfferDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
+import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.cpq.GroupedAttributeDto;
@@ -32,7 +33,6 @@ import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
-import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
@@ -48,6 +48,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
+import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.cpq.ProductVersion;
@@ -65,6 +66,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.GroupedAttributeService;
+import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.ProductLineService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -126,6 +128,9 @@ public class ProductApi extends BaseApi {
 	@Inject
 	private GroupedAttributeService  groupedAttributeService;
 	
+	 @Inject
+	 private MediaService mediaService;
+	
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 	
 	/**
@@ -142,19 +147,21 @@ public class ProductApi extends BaseApi {
 			productService.create(product);
 			ProductVersionDto currentProductVersion=productDto.getCurrentProductVersion();
 			ProductDto response = new ProductDto(product);
+			ProductVersion productVersion = null;
 			if(currentProductVersion!=null) {
-
-				ProductVersion productVersion = createProductVersion(productDto.getCurrentProductVersion());
+				productVersion = createProductVersion(productDto.getCurrentProductVersion());
 				response.setCurrentProductVersion(new GetProductVersionResponse(productVersion));
 			}else {
-				ProductVersion  productVersion= new ProductVersion();
+				productVersion= new ProductVersion();
 				productVersion.setProduct(product);
 				productVersion.setShortDescription(productDto.getLabel());
 				productVersion.setStatus(VersionStatusEnum.DRAFT);
 				productVersion.setStatusDate(Calendar.getInstance().getTime());
 				productVersionService.create(productVersion);
-				response.setCurrentProductVersion(new GetProductVersionResponse(productVersion));
+				response.setCurrentProductVersion(new ProductVersionDto(productVersion));
 			}
+			product.setCurrentVersion(productVersion);
+			processMedias(productDto, product);
 			return response;
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
@@ -246,6 +253,20 @@ public class ProductApi extends BaseApi {
 			product.setPackageFlag(productDto.isPackageFlag());
 			createProductChargeTemplateMappings(product, productDto.getChargeTemplateCodes());
 			
+			//set current product version 
+			var versions = productVersionService.findLastVersionByCode(productCode);
+			var publishedVersion = versions.stream()
+											.filter(pv -> pv.getStatus().equals(VersionStatusEnum.PUBLISHED))
+												.sorted( (pv1, pv2) -> pv2.getValidity().compareFieldTo(pv1.getValidity())).collect(Collectors.toList());
+			if(publishedVersion.size() >= 1 ) {
+				product.setCurrentVersion(publishedVersion.get(0));
+			}else {
+				var noPublishedVersion = versions.stream()
+						.filter(pv -> pv.getStatus().equals(VersionStatusEnum.DRAFT))
+							.sorted( (pv1, pv2) -> pv2.getAuditable().compareByUpdated(pv1.getAuditable())).collect(Collectors.toList());
+				product.setCurrentVersion(noPublishedVersion.get(0));
+			}
+			processMedias(productDto, product);
 			productService.updateProduct(product);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e);
@@ -295,7 +316,7 @@ public class ProductApi extends BaseApi {
 			chargeTemplateDto=new ChargeTemplateDto(prodcutCharge.getChargeTemplate(),entityToDtoConverter.getCustomFieldsDTO(prodcutCharge.getChargeTemplate()));
 			chargeTemplateDtos.add(chargeTemplateDto); 	
 		}
-			GetProductDtoResponse  result = new GetProductDtoResponse(product,chargeTemplateDtos); 
+			GetProductDtoResponse  result = new GetProductDtoResponse(product,chargeTemplateDtos,true); 
 			return result;
 		}
 
@@ -318,6 +339,7 @@ public class ProductApi extends BaseApi {
 		productVersion.setStatusDate(Calendar.getInstance().getTime());
 		processAttributes(postData,productVersion);
 		processTags(postData, productVersion);
+		processGroupedAttribute(postData, productVersion);
 	}
 
 	private void checkMandatoryFields(ProductVersionDto postData) {
@@ -377,6 +399,7 @@ public class ProductApi extends BaseApi {
 		productVersion.setStatusDate(Calendar.getInstance().getTime());
 		processAttributes(postData,productVersion);
 		processTags(postData, productVersion);
+		processGroupedAttribute(postData, productVersion);
 		try {
 			productVersionService.updateProductVersion(productVersion);
 		} catch (BusinessException e) {
@@ -648,7 +671,19 @@ public class ProductApi extends BaseApi {
 		} 
 		return result;
 	} 
-	
+	private void processGroupedAttribute(ProductVersionDto postData, ProductVersion productVersion) {
+		Set<String> groupedAttributesCodes = postData.getGroupedAttributeCodes();
+		if(groupedAttributesCodes != null && !groupedAttributesCodes.isEmpty()) {
+			List<GroupedAttributes> groupedAttributes = new ArrayList<GroupedAttributes>();
+			for (String groupedCode : groupedAttributesCodes) {
+				GroupedAttributes attributes = loadEntityByCode(groupedAttributeService, groupedCode, GroupedAttributes.class);
+				groupedAttributes.add(attributes);
+			}
+			productVersion.setGroupedAttributes(groupedAttributes);
+		}else {
+			productVersion.setGroupedAttributes(null);
+		}
+	}
 	private void processAttributes(ProductVersionDto postData, ProductVersion productVersion) {
 		Set<String> attributeCodes = postData.getAttributeCodes(); 
 		if(attributeCodes != null && !attributeCodes.isEmpty()){
@@ -661,6 +696,8 @@ public class ProductApi extends BaseApi {
 				attributes.add(attribute);
 			}
 			productVersion.setAttributes(attributes);
+		}else{
+			productVersion.setAttributes(null);
 		}
 	} 
 	
@@ -676,8 +713,27 @@ public class ProductApi extends BaseApi {
 				tags.add(tag);
 			}
 			productVersion.setTags(tags);
+		}else {
+			productVersion.setTags(null);
 		}
 	} 
+	
+	private void processMedias(ProductDto postData, Product product) {
+		Set<String> mediaCodes = postData.getMediaCodes(); 
+		if(mediaCodes != null && !mediaCodes.isEmpty()){
+			List<Media> medias=new ArrayList<Media>();
+			for(String code:mediaCodes) {
+				Media media=mediaService.findByCode(code);
+				if(media == null) { 
+					throw new EntityDoesNotExistsException(Media.class,code);
+				}
+				medias.add(media);
+			}
+			product.setMedias(medias);
+		}else {
+			product.setMedias(null);
+		}
+	}
 	
 	
 	public List<GetProductVersionResponse> findProductVersionByProduct(String productCode)  throws MeveoApiException, BusinessException  { 
@@ -747,7 +803,7 @@ public class ProductApi extends BaseApi {
 		 });
 		 pagingAndFiltering.getFilters().clear();
 		 pagingAndFiltering.getFilters().putAll(filters);
-		 List<String> fields = Arrays.asList("productLine", "brand");
+		 List<String> fields = Arrays.asList("productLine", "brand", "currentVersion");
 		 PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, fields, pagingAndFiltering, Product.class);
 		 Long totalCount = productService.count(paginationConfiguration);
 		 GetListProductsResponseDto result = new GetListProductsResponseDto();

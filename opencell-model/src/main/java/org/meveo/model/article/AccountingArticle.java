@@ -112,6 +112,8 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     }
 
     public Map<String, String> getDescriptionI18n() {
+        if(descriptionI18n == null)
+            descriptionI18n = new HashMap<>();
         return descriptionI18n;
     }
 

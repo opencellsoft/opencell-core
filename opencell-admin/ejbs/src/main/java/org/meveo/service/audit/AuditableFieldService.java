@@ -27,6 +27,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.audit.AuditableFieldHistory;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
 import org.slf4j.Logger;
 
@@ -34,11 +35,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The Fields audit service.
@@ -49,6 +46,8 @@ import java.util.Set;
 
 @Stateless
 public class AuditableFieldService extends PersistenceService<AuditableField> {
+
+    private static final String ASYNC_EXEC_ACTOR = "ASYNC_EXEC";
 
     @Inject
     private Logger log;
@@ -61,6 +60,10 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
 
     @Inject
     private AuditOrigin auditOrigin;
+
+    /** The current user provider. */
+    @Inject
+    private CurrentUserProvider currentUserProvider;
 
     /**
      * check if the field has been modified
@@ -286,7 +289,10 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
      */
     public void createFieldHistory(BaseEntity entity, String fieldName, AuditChangeTypeEnum changeType, String previousState, String currentState) throws BusinessException {
 
-        AuditableField auditableField = new AuditableField(currentUser);
+        AuditableField auditableField = new AuditableField();
+
+        auditableField.setCreated(new Date());
+        auditableField.setActor(currentUser != null && currentUser.getUserName() != null ? currentUser.getUserName() : ASYNC_EXEC_ACTOR);
         auditableField.setEntityClass(ReflectionUtils.getCleanClassName(entity.getClass().getName()));
         auditableField.setEntityId(entity.getId());
         auditableField.setName(fieldName);

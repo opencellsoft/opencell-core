@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="#5532_20201006 - Dunning workflow" author="NabilOuachi">
+
+
+        <sql><![CDATA[
+        INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-25, 0, 0, now(), 'org.meveo.service.script.SimpleDunning', 'Simple Dunning script', 'JAVA', '
+        package org.meveo.service.script;
+
+        import org.apache.commons.beanutils.PropertyUtils;
+        import org.meveo.model.billing.InvoiceStatusEnum;
+        import org.meveo.model.dunning.DunningDocument;
+        import org.meveo.model.dunning.DunningDocumentStatus;
+        import org.meveo.model.generic.wf.GWFTransition;
+        import org.meveo.model.notification.NotificationEventTypeEnum;
+        import org.meveo.model.payments.*;
+        import org.meveo.service.billing.impl.SubscriptionService;
+        import org.meveo.service.notification.DefaultNotificationService;
+        import org.meveo.service.notification.GenericNotificationService;
+        import org.meveo.service.payments.impl.AccountOperationService;
+        import org.meveo.service.payments.impl.CustomerAccountService;
+        import org.meveo.service.payments.impl.DunningDocumentService;
+        import org.slf4j.Logger;
+        import org.slf4j.LoggerFactory;
+
+        import java.math.BigDecimal;
+        import java.math.RoundingMode;
+        import java.util.*;
+
+        import static org.meveo.admin.job.GenericWorkflowJob.IWF_ENTITY;
+        import static org.meveo.admin.job.GenericWorkflowJob.WF_ACTUAL_TRANSITION;
+
+        public class SimpleDunning extends org.meveo.service.script.Script {
+
+            private static final Logger log = LoggerFactory.getLogger(SimpleDunning.class);
+
+            private CustomerAccountService customerAccountService = (CustomerAccountService) getServiceInterface("CustomerAccountService");
+            private AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface("AccountOperationService");
+            private DefaultNotificationService defaultNotificationService = (DefaultNotificationService) getServiceInterface("DefaultNotificationService");
+            private GenericNotificationService genericNotificationService = (GenericNotificationService) getServiceInterface("GenericNotificationService");
+            private DunningDocumentService dunningDocumentService = (DunningDocumentService) getServiceInterface("DunningDocumentService");
+            private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
+
+            @Override
+            public void execute(Map<String, Object> context) {
+                log.info(">>> Method context >>>");
+                context.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry -> {
+                    log.info("{}={}", entry.getKey(), entry.getValue());
+                });
+
+                CustomerAccount customerAccount = (CustomerAccount) context.get(IWF_ENTITY);
+                GWFTransition gwfTransition = (GWFTransition) context.get(WF_ACTUAL_TRANSITION);
+
+                if ("R0".equals(gwfTransition.getFromStatus()) && "R1".equals(gwfTransition.getToStatus())) {
+                    sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R1);
+                } else if ("R1".equals(gwfTransition.getFromStatus()) && "R2".equals(gwfTransition.getToStatus())) {
+                    sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R2);
+                } else if ("R2".equals(gwfTransition.getFromStatus()) && "R3".equals(gwfTransition.getToStatus())) {
+                    customerAccount = updateDunningLevel(customerAccount, DunningLevelEnum.R3);
+                    suspendSubsciptions(customerAccount);
+                    createDunningDocument(customerAccount);
+                } else if ("R3".equals(gwfTransition.getFromStatus()) && "R4".equals(gwfTransition.getToStatus())) {
+                    customerAccount = updateDunningLevel(customerAccount, DunningLevelEnum.R4);
+                    updateAccountOperationsToWritteOff(customerAccount);
+                    markInvoicesAsAbandoned(customerAccount.getAccountOperations());
+                    customerAccount.setStatus(CustomerAccountStatusEnum.CLOSE);
+                    customerAccount.setDateStatus(new Date());
+                    customerAccountService.update(customerAccount);
+                } else if ("R3".equals(gwfTransition.getFromStatus()) && "R0".equals(gwfTransition.getToStatus())) {
+                    customerAccount = sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R0);
+                    activateSubscription(customerAccount);
+                    closeDunningDocuments(customerAccount);
+                } else if ("R0".equals(gwfTransition.getToStatus())) {
+                    sendEmailAndUpdateDunningLevel(customerAccount, DunningLevelEnum.R0);
+                }
+            }
+
+            private void markInvoicesAsAbandoned(List<AccountOperation> accountOperations) {
+                for(AccountOperation accountOperation : accountOperations){
+                    if (accountOperation instanceof RecordedInvoice) {
+                        ((RecordedInvoice) accountOperation).getInvoice().setStatus(InvoiceStatusEnum.ABANDONED);
+                        accountOperationService.update(accountOperation);
+                    }
+                }
+            }
+
+            private void updateAccountOperationsToWritteOff(CustomerAccount customerAccount) {
+                List<AccountOperation> writeOffs = new ArrayList<>();
+                List<AccountOperation> accountOperations = customerAccount.getAccountOperations();
+                for (AccountOperation accountOperation : accountOperations) {
+                    WriteOff writeOff = new WriteOff();
+                    try {
+                        PropertyUtils.copyProperties(writeOff, accountOperation);
+                        writeOff.setId(null);
+                        writeOff.setAccountingWritings(null);
+                        writeOff.setMatchingAmounts(null);
+                        writeOff.setPaymentHistories(null);
+                        writeOff.setInvoices(null);
+                        writeOff.setAuditableFields(null);
+                        if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT)
+                            writeOff.setTransactionCategory(OperationCategoryEnum.CREDIT);
+                        else
+                            writeOff.setTransactionCategory(OperationCategoryEnum.DEBIT);
+                        writeOff.setMatchingStatus(MatchingStatusEnum.L);
+                        accountOperation.setMatchingStatus(MatchingStatusEnum.L);
+                        accountOperationService.create(writeOff);
+                        writeOffs.add(writeOff);
+                    } catch (Exception e) {
+                        log.error("error while copy ao to write off: " + accountOperation);
+                    }
+                }
+                customerAccount.getAccountOperations().addAll(writeOffs);
+            }
+
+            private void closeDunningDocuments(CustomerAccount customerAccount) {
+                for (AccountOperation accountOperation : customerAccount.getAccountOperations()) {
+                    if (accountOperation instanceof RecordedInvoice) {
+                        ((RecordedInvoice) accountOperation).setDunningDocument(null);
+                        ((RecordedInvoice) accountOperation).getInvoice().setStatus(InvoiceStatusEnum.PAID);
+                        accountOperationService.update(accountOperation);
+                    }
+                }
+
+                for(DunningDocument dd : customerAccount.getDunningDocuments()){
+                    dd.setStatus(DunningDocumentStatus.CLOSED);
+                    dunningDocumentService.update(dd);
+                }
+            }
+
+            private void activateSubscription(CustomerAccount customerAccount) {
+                subscriptionService.listByCustomer(customerAccount.getCustomer())
+                        .forEach(sub -> subscriptionService.subscriptionReactivation(sub, new Date()));
+            }
+
+            private void suspendSubsciptions(CustomerAccount customerAccount) {
+                subscriptionService.listByCustomer(customerAccount.getCustomer())
+                        .forEach(sub -> subscriptionService.subscriptionSuspension(sub, new Date()));
+            }
+
+            private CustomerAccount sendEmailAndUpdateDunningLevel(CustomerAccount customerAccount, DunningLevelEnum dunningLevelEnum) {
+                customerAccount = updateDunningLevel(customerAccount, dunningLevelEnum);
+                if (dunningLevelEnum == DunningLevelEnum.R0) {
+                    sendEmail(customerAccount, NotificationEventTypeEnum.TO_R0);
+                } else if (dunningLevelEnum == DunningLevelEnum.R1) {
+                    computeDueBalanceAndSendEmail(customerAccount, NotificationEventTypeEnum.TO_R1);
+                } else if (dunningLevelEnum == DunningLevelEnum.R2) {
+                    computeDueBalanceAndSendEmail(customerAccount, NotificationEventTypeEnum.TO_R2);
+                }
+                return customerAccount;
+            }
+
+            private CustomerAccount updateDunningLevel(CustomerAccount customerAccount, DunningLevelEnum dunningLevelEnum) {
+                customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
+                customerAccount.setDunningLevel(dunningLevelEnum);
+                customerAccount.setPreviousDunningDateLevel(customerAccount.getDateDunningLevel());
+                customerAccount.setDateDunningLevel(new Date());
+                return customerAccountService.update(customerAccount);
+            }
+
+            private void computeDueBalanceAndSendEmail(CustomerAccount customerAccount, NotificationEventTypeEnum notificationEventType) {
+                BigDecimal dueBalance = customerAccountService.customerAccountBalanceDue(customerAccount, new Date());
+                customerAccount.setDueBalance(String.format("%s %s", dueBalance.setScale(2, RoundingMode.HALF_UP).toString(), customerAccount.getTradingCurrency().getCurrencyCode()));
+                sendEmail(customerAccount, notificationEventType);
+            }
+
+            private void sendEmail(CustomerAccount customerAccount, NotificationEventTypeEnum notificationEventType) {
+                genericNotificationService.getApplicableNotifications(notificationEventType, customerAccount)
+                        .forEach(notif -> defaultNotificationService.fireNotification(notif, customerAccount));
+            }
+
+            private void createDunningDocument(CustomerAccount customerAccount) {
+                List<AccountOperation> accountOperations = customerAccount.getAccountOperations();
+                DunningDocument dunningDocument = new DunningDocument();
+                dunningDocument.setCustomerAccount(customerAccount);
+                dunningDocument.setStatus(DunningDocumentStatus.OPEN);
+
+                if (accountOperations != null) {
+                    List<RecordedInvoice> ris = new ArrayList<>();
+                    for (AccountOperation accountOperation : accountOperations) {
+                        if (accountOperation instanceof RecordedInvoice) {
+                            if (accountOperation instanceof RecordedInvoice) {
+                                ((RecordedInvoice) accountOperation).setDunningDocument(dunningDocument);
+                                ((RecordedInvoice) accountOperation).getInvoice().setStatus(InvoiceStatusEnum.DISPUTED);
+                                ris.add((RecordedInvoice) accountOperation);
+                            }
+                        }
+                    }
+                    dunningDocument.setDueInvoices(ris);
+                }
+
+                dunningDocumentService.create(dunningDocument);
+            }
+        }
+        ');
+        ]]></sql>
+
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueNumeric="-10"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="dunningJob_R1TimesUp"></column>
+            <column name="description" value="Days to wait before dunning transition R1 - R2 fires up"></column>
+            <column name="applicable_on_el" value='#{entity.code.equals("WF_Dunning")}'></column>
+            <column name="description_i18n" value='{"FRA":"Nombre de jours à attendre avant le déclenchement de la transition R1 - R2","ENG":"Days to wait before dunning transition R1 - R2 fires up"}'></column>
+            <column name="field_type" value="LONG"></column>
+            <column name="value_required" value="1"></column>
+            <column name="default_value" value="30"></column>
+            <column name="storage_type" value="SINGLE"></column>
+            <column name="applies_to" value="GenericWorkflow"></column>
+            <column name="gui_position" value="tab:Parameters|FRA=Paramètres|ENG=Parameters:1;fieldGroup:Group|FRA=Groupe|ENG=Group:0;field:0"></column>
+            <column name="allow_edit" value="1"></column>
+            <column name="hide_on_new" value="0"></column>
+            <column name="display_format" value="30"></column>
+            <column name="unique_constraint" value="0"></column>
+            <column name="anonymize_gdpr" value="0"></column>
+        </insert>
+
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueNumeric="-11"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="dunningJob_R2TimesUp"></column>
+            <column name="description" value="Days to wait before dunning transition R2 - R3 fires up"></column>
+            <column name="applicable_on_el" value='#{entity.code.equals("WF_Dunning")}'></column>
+            <column name="description_i18n" value='{"FRA":"Nombre de jours à attendre avant le déclenchement de la transition R2 - R3","ENG":"Days to wait before dunning transition R2 - R3 fires up"}'></column>
+            <column name="field_type" value="LONG"></column>
+            <column name="value_required" value="1"></column>
+            <column name="default_value" value="30"></column>
+            <column name="storage_type" value="SINGLE"></column>
+            <column name="applies_to" value="GenericWorkflow"></column>
+            <column name="gui_position" value="tab:Parameters|FRA=Paramètres|ENG=Parameters:2;fieldGroup:Group|FRA=Groupe|ENG=Group:1;field:1"></column>
+            <column name="allow_edit" value="1"></column>
+            <column name="hide_on_new" value="0"></column>
+            <column name="display_format" value="30"></column>
+            <column name="unique_constraint" value="0"></column>
+            <column name="anonymize_gdpr" value="0"></column>
+        </insert>
+
+        <insert tableName="crm_custom_field_tmpl">
+            <column name="id" valueNumeric="-12"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="dunningJob_R3TimesUp"></column>
+            <column name="description" value="Days to wait before dunning transition R3 - R4 fires up"></column>
+            <column name="applicable_on_el" value='#{entity.code.equals("WF_Dunning")}'></column>
+            <column name="description_i18n" value='{"FRA":"Nombre de jours à attendre avant le déclenchement de la transition R3 - R4","ENG":"Days to wait before dunning transition R2 - R3 fires up"}'></column>
+            <column name="field_type" value="LONG"></column>
+            <column name="value_required" value="1"></column>
+            <column name="default_value" value="30"></column>
+            <column name="storage_type" value="SINGLE"></column>
+            <column name="applies_to" value="GenericWorkflow"></column>
+            <column name="gui_position" value="tab:Parameters|FRA=Paramètres|ENG=Parameters:3;fieldGroup:Group|FRA=Groupe|ENG=Group:2;field:2"></column>
+            <column name="allow_edit" value="1"></column>
+            <column name="hide_on_new" value="0"></column>
+            <column name="display_format" value="30"></column>
+            <column name="unique_constraint" value="0"></column>
+            <column name="anonymize_gdpr" value="0"></column>
+        </insert>
+
+        <insert tableName="wf_generic_workflow">
+            <column name="id" valueNumeric="-1"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="WF_Dunning"></column>
+            <column name="description" value="dunning workflow"></column>
+            <column name="target_entity_class" value="org.meveo.model.payments.CustomerAccount"></column>
+            <column name="enable_history" value="1"></column>
+            <column name="init_status" value="R0"></column>
+            <column name="cf_values" value='{"dunningJob_R1TimesUp":[{"long":30}],"dunningJob_R2TimesUp":[{"long":30}],"dunningJob_R3TimesUp":[{"long":30}]}'></column>
+            <column name="uuid" value="934c4821-e56e-44d2-b4a1-4be86f922263"></column>
+        </insert>
+
+        <insert tableName="wf_status">
+            <column name="id" valueNumeric="-1"></column>
+            <column name="version" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="R0"></column>
+            <column name="description" value="No dunning"></column>
+            <column name="uuid" value="7cc6eaf5-8f45-4381-94f5-4c5243a3013d"></column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_status">
+            <column name="id" valueNumeric="-2"></column>
+            <column name="version" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="R1"></column>
+            <column name="description" value="Reminder email sent"></column>
+            <column name="uuid" value="3e82a3d5-a98e-4fb1-a232-68559d118e35"></column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_status">
+            <column name="id" valueNumeric="-3"></column>
+            <column name="version" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="R2"></column>
+            <column name="description" value="Account suspended"></column>
+            <column name="uuid" value="f79944eb-d08d-4520-8ca6-8d11ff256984"></column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_status">
+            <column name="id" valueNumeric="-4"></column>
+            <column name="version" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="R3"></column>
+            <column name="description" value="Dunning file sent to external company"></column>
+            <column name="uuid" value="29303780-37f8-4c94-bd40-979f8f89b41c"></column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_status">
+            <column name="id" valueNumeric="-5"></column>
+            <column name="version" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="R4"></column>
+            <column name="description" value="Dunning file sent to external company"></column>
+            <column name="uuid" value="34b3d2be-1525-11eb-adc1-0242ac120002"></column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+
+        <insert tableName="wf_generic_transition">
+            <column name="id" valueNumeric="-1"></column>
+            <column name="uuid" value="f8ac0942-686b-45d7-9707-1f6cad4f2443"></column>
+            <column name="version" value="0"></column>
+            <column name="from_status" value="R0"></column>
+            <column name="to_status" value="R1"></column>
+            <column name="priority" value="1"></column>
+            <column name="description" value="Some amount is due"></column>
+            <column name="action_script_id" value="-25"></column>
+            <column name="condition_el">
+                <![CDATA[#{entity.dunningLevel == 'R0' && mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now())  > 0}]]>
+            </column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_generic_transition">
+            <column name="id" valueNumeric="-2"></column>
+            <column name="uuid" value="79a9cdac-0dc6-4a96-b402-da4e7310cf69"></column>
+            <column name="version" value="0"></column>
+            <column name="from_status" value="R1"></column>
+            <column name="to_status" value="R0"></column>
+            <column name="priority" value="2"></column>
+            <column name="description" value="All is fine again"></column>
+            <column name="action_script_id" value="-25"></column>
+            <column name="condition_el">
+                <![CDATA[#{entity.dunningLevel == 'R1' && mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now()) <= 0}]]>
+            </column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_generic_transition">
+            <column name="id" valueNumeric="-3"></column>
+            <column name="uuid" value="bbad0d8c-b598-4b64-a36b-072a90802d13"></column>
+            <column name="version" value="0"></column>
+            <column name="from_status" value="R1"></column>
+            <column name="to_status" value="R2"></column>
+            <column name="priority" value="3"></column>
+            <column name="description" value="Time is up"></column>
+            <column name="action_script_id" value="-25"></column>
+            <column name="condition_el">
+                <![CDATA[#{entity.dunningLevel == 'R1' && mv:now().after(mv:addToDate(entity.dateDunningLevel, 5, mv:getCFValue(mv:getBean('GenericWorkflowService').findByCode('WF_Dunning'), 'dunningJob_R1TimesUp')))}]]>
+            </column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_generic_transition">
+            <column name="id" valueNumeric="-4"></column>
+            <column name="uuid" value="7d2ef938-e4bc-415c-aa2d-4f27ad9cfe82"></column>
+            <column name="version" value="0"></column>
+            <column name="from_status" value="R2"></column>
+            <column name="to_status" value="RO"></column>
+            <column name="priority" value="4"></column>
+            <column name="description" value="All is fine again"></column>
+            <column name="action_script_id" value="-25"></column>
+            <column name="condition_el">
+                <![CDATA[#{entity.dunningLevel == 'R2' && mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now()) <= 0}]]>
+            </column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_generic_transition">
+            <column name="id" valueNumeric="-5"></column>
+            <column name="uuid" value="bbae5117c-7947-4738-aab0-b0a6e188a195"></column>
+            <column name="version" value="0"></column>
+            <column name="from_status" value="R2"></column>
+            <column name="to_status" value="R3"></column>
+            <column name="priority" value="5"></column>
+            <column name="description" value="Debt collector is in"></column>
+            <column name="action_script_id" value="-25"></column>
+            <column name="condition_el">
+                <![CDATA[#{entity.dunningLevel == 'R2' && mv:now().after(mv:addToDate(entity.dateDunningLevel, 5, mv:getCFValue(mv:getBean('GenericWorkflowService').findByCode('WF_Dunning'), 'dunningJob_R2TimesUp')))}]]>
+            </column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_generic_transition">
+            <column name="id" valueNumeric="-6"></column>
+            <column name="uuid" value="9a93fb94-1521-11eb-adc1-0242ac120002"></column>
+            <column name="version" value="0"></column>
+            <column name="from_status" value="R3"></column>
+            <column name="to_status" value="R0"></column>
+            <column name="priority" value="6"></column>
+            <column name="description" value="All is fine again"></column>
+            <column name="action_script_id" value="-25"></column>
+            <column name="condition_el">
+                <![CDATA[#{entity.dunningLevel == 'R3' && mv:getBean('CustomerAccountService').customerAccountBalanceDue(entity, mv:now()) <= 0}]]>
+            </column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+        <insert tableName="wf_generic_transition">
+            <column name="id" valueNumeric="-7"></column>
+            <column name="uuid" value="bd912e9c-175f-11eb-adc1-0242ac120002"></column>
+            <column name="version" value="0"></column>
+            <column name="from_status" value="R3"></column>
+            <column name="to_status" value="R4"></column>
+            <column name="priority" value="7"></column>
+            <column name="description" value="Account wil be closed"></column>
+            <column name="action_script_id" value="-25"></column>
+            <column name="condition_el">
+                <![CDATA[#{entity.dunningLevel == 'R3' && mv:now().after(mv:addToDate(entity.dateDunningLevel, 5, mv:getCFValue(mv:getBean('GenericWorkflowService').findByCode('WF_Dunning'), 'dunningJob_R3TimesUp')))}]]>
+            </column>
+            <column name="generic_wf_id" valueNumeric="-1"></column>
+        </insert>
+
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-29"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="WF_Dunning_JOB"></column>
+            <column name="job_category" value="UTILS"></column>
+            <column name="job_template" value="GenericWorkflowJob"></column>
+            <column name="single_node" value="1"></column>
+            <column name="exclude_inv_without_amount" value="0"></column>
+            <column name="exclude_inv_without_amount" value="1"></column>
+            <column name="cf_values" value='{"gwfJob_nbRuns":[{"long":1}], "gwfJob_waitingMillis":[{"long":0}],"gwfJob_generic_wf":[{"entity":{"classname":"org.meveo.model.generic.wf.GenericWorkflow","code":"WF_Dunning"}}]}'></column>
+            <column name="uuid" value="18636982-e611-4b29-b0d2-4314464c94b2"></column>
+        </insert>
+
+
+        <insert tableName="com_message_template">
+            <column name="media" value="EMAIL"></column>
+            <column name="id" valueNumeric="-1"></column>
+            <column name="version" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="code" value="TO_R1_MAIL_TEMPLATE"></column>
+            <column name="type" value="DUNNING"></column>
+            <column name="tag_start" value="#{"></column>
+            <column name="tag_end" value="}"></column>
+            <column name="description" value="to R1 status email template"></column>
+            <column name="subject" value="You have unpaid invoices"></column>
+            <column name="textcontent">
+                <![CDATA[Hi #{event.name.title.description} #{event.name.lastName},
+
+Your account #{event.code} has unpaid invoices for a total of #{event.dueBalance}.
+
+Regards,
+
+Accounting Team
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="EMAIL"></column>
+            <column name="id" valueNumeric="-2"></column>
+            <column name="version" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="code" value="TO_RO_MAIL_TEMPLATE"></column>
+            <column name="type" value="DUNNING"></column>
+            <column name="tag_start" value="#{"></column>
+            <column name="tag_end" value="}"></column>
+            <column name="description" value="to R0 status email template"></column>
+            <column name="subject" value="All invoices have been paid"></column>
+            <column name="textcontent">
+                <![CDATA[Hi #{event.name.title.description} #{event.name.lastName},
+
+All unpaid invoices for your account #{event.code} have been paid.
+Your dunning status has been reset to normal.
+
+Best regards,
+
+Accounting Team
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="EMAIL"></column>
+            <column name="id" valueNumeric="-3"></column>
+            <column name="version" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="code" value="TO_R2_MAIL_TEMPLATE"></column>
+            <column name="type" value="DUNNING"></column>
+            <column name="tag_start" value="#{"></column>
+            <column name="tag_end" value="}"></column>
+            <column name="description" value="to R2 status email template"></column>
+            <column name="subject" value="You still have unpaid invoices"></column>
+            <column name="textcontent">
+                <![CDATA[Hi #{event.name.title.description} #{event.name.lastName},
+
+Your account #{event.code} has unpaid invoices for a total of #{event.dueBalance}, since #{event.previousDunningDateLevel}.
+
+A registered letter with acknowledgement of receipt has been sent to your address:
+#{ event.address.address1 }
+#{ event.address.zipCode } #{ event.address.city }
+
+Regards,
+
+Accounting Team
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="adm_notification">
+            <column name="id" valueNumeric="-11"></column>
+            <column name="uuid" valueNumeric="-11"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="TO_R1_NOTIFICATION"></column>
+
+            <column name="class_name_filter" value="org.meveo.model.payments.CustomerAccount"></column>
+            <column name="event_type_filter" value="TO_R1"></column>
+
+        </insert>
+
+        <insert tableName="adm_notif_email">
+            <column name="id" valueNumeric="-11"></column>
+            <column name="email_from" value="no-reply@opencellsoft.com"></column>
+            <column name="email_to_el" value="#{event.contactInformation.email}"></column>
+            <column name="email_template_id" value="-1"></column>
+        </insert>
+
+        <insert tableName="adm_notification">
+            <column name="id" valueNumeric="-12"></column>
+            <column name="uuid" valueNumeric="-12"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="TO_R0_NOTIFICATION"></column>
+
+            <column name="class_name_filter" value="org.meveo.model.payments.CustomerAccount"></column>
+            <column name="event_type_filter" value="TO_R0"></column>
+
+        </insert>
+
+        <insert tableName="adm_notif_email">
+            <column name="id" valueNumeric="-12"></column>
+            <column name="email_from" value="no-reply@opencellsoft.com"></column>
+            <column name="email_to_el" value="#{event.contactInformation.email}"></column>
+            <column name="email_template_id" value="-2"></column>
+        </insert>
+
+        <insert tableName="adm_notification">
+            <column name="id" valueNumeric="-13"></column>
+            <column name="uuid" valueNumeric="-13"></column>
+            <column name="version" value="0"></column>
+            <column name="disabled" value="0"></column>
+            <column name="created" valueDate="now()"></column>
+            <column name="creator" value="applicationInitializer"></column>
+            <column name="code" value="TO_R2_NOTIFICATION"></column>
+
+            <column name="class_name_filter" value="org.meveo.model.payments.CustomerAccount"></column>
+            <column name="event_type_filter" value="TO_R2"></column>
+
+        </insert>
+
+        <insert tableName="adm_notif_email">
+            <column name="id" valueNumeric="-13"></column>
+            <column name="email_from" value="no-reply@opencellsoft.com"></column>
+            <column name="email_to_el" value="#{event.contactInformation.email}"></column>
+            <column name="email_template_id" value="-3"></column>
+        </insert>
+
+    </changeSet>
+</databaseChangeLog>

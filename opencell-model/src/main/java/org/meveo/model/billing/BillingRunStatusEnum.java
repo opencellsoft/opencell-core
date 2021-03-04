@@ -23,13 +23,20 @@ public enum BillingRunStatusEnum {
     PREINVOICED(2, "BillingRunStatusEnum.preinvoiced"), // the preinvoicing report have been generated
     PREVALIDATED(3, "BillingRunStatusEnum.prevalidated"), // the preinvoicing report have been validated
     CANCELED(4, "BillingRunStatusEnum.cancelled"), // the BR is cancelled, end of the process
-    INVOICES_GENERRATED(5, "BillingRunStatusEnum.invoicesGenerated"), // the invoices and postinvoicing report have been generated
+    INVOICES_GENERATED(5, "BillingRunStatusEnum.invoicesGenerated"), // the invoices and postinvoicing report have been generated
     POSTINVOICED(6, "BillingRunStatusEnum.postinvoiced"), // the invoices and postinvoicing report have been generated
     POSTVALIDATED(7, "BillingRunStatusEnum.postvalidated"), // the postinvoicing report have been validated
     VALIDATED(8, "BillingRunStatusEnum.validated"),// the invoices are assigned an invoice number, end of the process
     CANCELLING(9, "BillingRunStatusEnum.cancelling"),
-    REJECTED(10, "BillingRunStatusEnum.Rejected");// the billing run or some invoices are rejected and need to be validated/cancelled.
-
+    REJECTED(10, "BillingRunStatusEnum.rejected"),// the billing run or some invoices are rejected and need to be validated/cancelled.
+    //NEW STATUS USED ON V2 ONLY:
+    INVOICE_LINES_CREATED(21,"BillingRunStatusEnum.invoiceLinesCreated"),//Pre-invoicing report is based on invoice lines
+    INVOICES_CREATED(22,"BillingRunStatusEnum.invoicesCreated"),//Invoices have been created (but are incomplete)
+    MINIMUM_ADDED(23,"BillingRunStatusEnum.minimumAdded"),//Invoice lines for invoicing minimum have been added
+    THRESHOLD_CHECKED(24,"BillingRunStatusEnum.thresholdChecked"),//Aggregates for invoice discounts have been added
+    DISCOUNT_ADDED(25,"BillingRunStatusEnum.discountAdded"),//Invoicing threshold have been checked
+    TAX_COMPUTED(26,"BillingRunStatusEnum.taxComputed"),//Tax aggregates have been added
+    DRAFT_INVOICES(27,"BillingRunStatusEnum.draftInvoices");//Draft invoices have been created. Postinvoicing report is available
     private Integer id;
     private String label;
 

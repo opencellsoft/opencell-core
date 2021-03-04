@@ -1,6 +1,7 @@
 package org.meveo.api.billing;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.cpq.CommercialOrderApi;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.article.AccountingArticle;
@@ -8,11 +9,12 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.InvoicingPlanItem;
-import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderPrice;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.service.billing.impl.InvoiceLinesService;
@@ -39,6 +41,7 @@ public class OrderAdvancementScript extends ModuleScript {
 
     private OrderPriceService orderPriceService = (OrderPriceService) getServiceInterface(OrderPriceService.class.getSimpleName());
     private CommercialOrderService commercialOrderService = (CommercialOrderService) getServiceInterface(CommercialOrderService.class.getSimpleName());
+    private CommercialOrderApi commercialOrderApi = (CommercialOrderApi) getServiceInterface(CommercialOrderApi.class.getSimpleName());
     private AccountingArticleService accountingArticleService = (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
     private InvoiceLinesService invoiceLinesService = (InvoiceLinesService) getServiceInterface(InvoiceLinesService.class.getSimpleName());
     private InvoiceService invoiceService = (InvoiceService) getServiceInterface(InvoiceService.class.getSimpleName());
@@ -88,10 +91,12 @@ public class OrderAdvancementScript extends ModuleScript {
             OrderProduct orderProduct = pricesToBill.get(0).getOrderArticleLine().getOrderProduct();
 
             if(orderProgress == 100) {
-                generateGlobalInvoice(commercialOrder, orderProgress, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct);
-                commercialOrder.setOrderProgressTmp(orderProgress);
-                commercialOrder.setRateInvoiced(100);
-                commercialOrderService.validateOrder(commercialOrder);
+                if(commercialOrder.getRateInvoiced() < 100) {
+                    generateGlobalInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct);
+                    commercialOrder.setOrderProgressTmp(orderProgress);
+                    commercialOrder.setRateInvoiced(100);
+                }
+                commercialOrderApi.validateOrder(commercialOrder, true);
             } else {
                 List<InvoicingPlanItem> itemsToBill = commercialOrder.getInvoicingPlan().getInvoicingPlanItems().stream()
                         .filter(item -> item.getAdvancement() == orderProgress)
@@ -110,7 +115,7 @@ public class OrderAdvancementScript extends ModuleScript {
                     throw new BusinessException("the invoicing plan rate is grater than remaining rate to invoice");
                 }
                 if(newRateInvoiced.compareTo(BigDecimal.valueOf(100)) == 0){
-                    generateGlobalInvoice(commercialOrder,orderProgress, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct);
+                    generateGlobalInvoice(commercialOrder, nextDay, firstTransactionDate, invoiceDate, defaultAccountingArticle, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate, orderProduct);
                 }else {
                     BigDecimal amountWithoutTaxToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithoutTax);
                     BigDecimal amountWithTaxToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalAmountWithTax);
@@ -128,14 +133,14 @@ public class OrderAdvancementScript extends ModuleScript {
 
     }
 
-    private void generateGlobalInvoice(CommercialOrder commercialOrder, Integer orderProgress, Date nextDay, Date firstTransactionDate, Date invoiceDate, AccountingArticle defaultAccountingArticle, BigDecimal totalAmountWithoutTax, BigDecimal totalAmountWithTax, BigDecimal totalTax, BigDecimal totalTaxRate, OrderProduct orderProduct) {
+    private void generateGlobalInvoice(CommercialOrder commercialOrder, Date nextDay, Date firstTransactionDate, Date invoiceDate, AccountingArticle defaultAccountingArticle, BigDecimal totalAmountWithoutTax, BigDecimal totalAmountWithTax, BigDecimal totalTax, BigDecimal totalTaxRate, OrderProduct orderProduct) {
         Map<String, Object> attributes = new HashMap<String, Object>();
-        List<OrderAttribute> orderAttributes = orderProduct.getOrderAttributes();
-        for (OrderAttribute attributeInstance : orderAttributes) {
-            Attribute attribute = attributeInstance.getAttribute();
-            Object value = attribute.getAttributeType().getValue(attributeInstance);
+        List<AttributeValue> orderAttributes = orderProduct.getOrderAttributes().stream().map(oa -> (AttributeValue)oa).collect(Collectors.toList());
+        for (AttributeValue orderAttribute : orderAttributes) {
+            Attribute attribute = orderAttribute.getAttribute();
+            Object value = attribute.getAttributeType().getValue(orderAttribute);
             if (value != null) {
-                attributes.put(attributeInstance.getAttribute().getCode(), value);
+                attributes.put(orderAttribute.getAttribute().getCode(), value);
             }
         }
         Product product = orderProduct.getProductVersion().getProduct();

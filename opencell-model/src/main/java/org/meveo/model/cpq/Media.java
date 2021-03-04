@@ -6,9 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -18,9 +15,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.cpq.enums.MediaTypeEnum;
 
 /**
@@ -31,17 +27,14 @@ import org.meveo.model.cpq.enums.MediaTypeEnum;
  *
  */
 @Entity
-@Table(name = "cpq_media")
+@CustomFieldEntity(cftCodePrefix = "Media")
+@Table(name = "cpq_media", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_media_seq")})
-@NamedQuery(name = "Media.findByProductAndMediaName", query = "select m from Media m left join  m.product mp where mp.code=:productCode and m.mediaName=:mediaName")
-public class Media extends BaseEntity{
+@NamedQuery(name = "Media.findByMediaName", query = "select m from Media m where m.mediaName=:mediaName")
+public class Media extends BusinessCFEntity{
 
-	public Media(Media copy) {
-		this.offer = copy.offer;
-		this.product = copy.product;
-		this.attribute = copy.attribute;
-		this.serviceTemplate = copy.serviceTemplate;
+	public Media(Media copy) { 
 		this.mediaName = copy.mediaName;
 		this.label = copy.label;
 		this.main = copy.main;
@@ -57,35 +50,7 @@ public class Media extends BaseEntity{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * product code
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "offer_id", referencedColumnName = "id", nullable = true)
-	private OfferTemplate offer;
-	
-	
-	/**
-	 * product code
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_id", referencedColumnName = "id", nullable = true)
-	private Product product;
-	
-	/**
-	 * product code
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "attribute_id", referencedColumnName = "id", nullable = true)
-	private Attribute attribute;
-	
-
-	/**
-	 * product code
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "service_template_id", referencedColumnName = "id", nullable = true)
-	private ServiceTemplate serviceTemplate;
+  
 	
 	/**
 	 * short name of the media
@@ -125,21 +90,7 @@ public class Media extends BaseEntity{
 	@Size(max = 255)
 	private String mediaPath;
 
-	/**
-	 * @return the product
-	 */
-	public Product getProduct() {
-		return product;
-	}
-
-	/**
-	 * @param product the product to set
-	 */
-	public void setProduct(Product product) {
-		this.product = product;
-	}
-
-
+	 
 	/**
 	 * @return the mediaName
 	 */
@@ -210,43 +161,7 @@ public class Media extends BaseEntity{
 		this.mediaPath = mediaPath;
 	}
 
-	public ServiceTemplate getServiceTemplate() {
-		return serviceTemplate;
-	}
-
-	public void setServiceTemplate(ServiceTemplate serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
-	}
-	
-	
-
-	/**
-	 * @return the offer
-	 */
-	public OfferTemplate getOffer() {
-		return offer;
-	}
-
-	/**
-	 * @param offer the offer to set
-	 */
-	public void setOffer(OfferTemplate offer) {
-		this.offer = offer;
-	}
-
-	/**
-	 * @return the attribute
-	 */
-	public Attribute getAttribute() {
-		return attribute;
-	}
-
-	/**
-	 * @param attribute the attribute to set
-	 */
-	public void setAttribute(Attribute attribute) {
-		this.attribute = attribute;
-	}
+	 
 
 	/**
 	 * @param main the main to set
@@ -259,7 +174,7 @@ public class Media extends BaseEntity{
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(label, main, mediaName, mediaPath, mediaType, product);
+		result = prime * result + Objects.hash(label, main, mediaName, mediaPath, mediaType);
 		return result;
 	}
 
@@ -274,8 +189,8 @@ public class Media extends BaseEntity{
 		Media other = (Media) obj;
 		return Objects.equals(label, other.label) && Objects.equals(main, other.main)
 				&& Objects.equals(mediaName, other.mediaName) && Objects.equals(mediaPath, other.mediaPath)
-				&& mediaType == other.mediaType && Objects.equals(product, other.product);
-	}
+				&& mediaType == other.mediaType;
+		}
 	
 	
 

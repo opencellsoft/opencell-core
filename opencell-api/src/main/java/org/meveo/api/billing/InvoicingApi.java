@@ -61,7 +61,7 @@ public class InvoicingApi extends BaseApi {
 
     @Inject
     InvoiceService invoiceService;
-    
+
     @Inject
     BillingCycleService billingCycleService;
 
@@ -118,10 +118,15 @@ public class InvoicingApi extends BaseApi {
             if (billingCycle.getLastTransactionDateEL() != null) {
                 billingRun.setLastTransactionDate(BillingRunService.resolveLastTransactionDate(billingCycle.getLastTransactionDateEL(), billingRun));
             } else if (billingCycle.getLastTransactionDateDelayEL() != null) {
-                billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), BillingRunService.resolveLastTransactionDateDelay(billingCycle.getLastTransactionDateDelayEL(), billingRun)));
+                billingRun.setLastTransactionDate(DateUtils
+                        .addDaysToDate(billingRun.getProcessDate(), BillingRunService.resolveLastTransactionDateDelay(billingCycle.getLastTransactionDateDelayEL(), billingRun)));
             } else {
                 billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), 1));
             }
+        }
+        billingRun.setCollectionDate(dto.getCollectionDate());
+        if (dto.isComputeDatesAtValidation() != null) {
+            billingRun.setComputeDatesAtValidation(dto.isComputeDatesAtValidation());
         }
         billingRunService.create(billingRun);
 
@@ -244,7 +249,7 @@ public class InvoicingApi extends BaseApi {
 	 */
 	public void rebuildInvoice(Long billingRunId, List<Long> invoices) {
 		invoiceService.rebuildInvoices(billingRunId, invoices);
-		
+
 	}
 
 	/**
@@ -253,7 +258,7 @@ public class InvoicingApi extends BaseApi {
 	 */
 	public void rejectInvoice(Long billingRunId, List<Long> invoices) {
 		invoiceService.rejectInvoices(billingRunId, invoices);
-		
+
 	}
 
 	/**
@@ -283,13 +288,13 @@ public class InvoicingApi extends BaseApi {
 
 	/**
 	 * Delete canceled invoices for a given billing run
-	 * 
+	 *
 	 * @param billingRunId
 	 * @param invoices
 	 */
 	public void canceledInvoices(Long billingRunId) {
 		invoiceService.deleteInvoices(billingRunId);
-		
+
 	}
 
 }

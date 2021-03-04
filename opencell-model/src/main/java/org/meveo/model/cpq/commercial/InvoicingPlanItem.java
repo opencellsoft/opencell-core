@@ -13,7 +13,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 
 
 /** 
@@ -22,10 +23,11 @@ import org.meveo.model.BusinessEntity;
  *
  */
 @Entity
+@CustomFieldEntity(cftCodePrefix = "InvoicingPlanItems")
 @Table(name = "cpq_invoicing_plan_item", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_invoicing_plan_item_seq")})
-public class InvoicingPlanItem extends BusinessEntity {
+public class InvoicingPlanItem extends EnableBusinessCFEntity {
 
 	/**
 	 * 

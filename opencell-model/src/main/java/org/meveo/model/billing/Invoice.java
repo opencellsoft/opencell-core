@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -80,11 +81,9 @@ import org.meveo.model.shared.DateUtils;
 @Entity
 @ObservableEntity
 @Table(name = "billing_invoice", uniqueConstraints = @UniqueConstraint(columnNames = { "invoice_number", "invoice_type_id" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
 @CustomFieldEntity(cftCodePrefix = "Invoice")
-@NamedQueries({
-        @NamedQuery(name = "Invoice.validatedByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
+@NamedQueries({ @NamedQuery(name = "Invoice.validatedByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
         @NamedQuery(name = "Invoice.draftByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
         @NamedQuery(name = "Invoice.allByBRNoXml", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
 
@@ -119,7 +118,7 @@ import org.meveo.model.shared.DateUtils;
                         + "FROM Invoice inv where inv.billingRun.id=:billingRunId group by inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id"),
         @NamedQuery(name = "Invoice.deleteByIds", query = "delete from Invoice inv where inv.id IN (:invoicesIds)"),
         @NamedQuery(name = "Invoice.excludePrpaidInvoices", query = "select inv.id from Invoice inv where inv.id IN (:invoicesIds) and inv.prepaid=false"),
-        @NamedQuery(name = "Invoice.countRejectedByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED") 
+        @NamedQuery(name = "Invoice.countRejectedByBillingRun", query = "select count(id) from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED")
 
 })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
@@ -151,7 +150,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      * Invoice aggregates
      */
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
+    private List<InvoiceAgregate> invoiceAgregates = new LinkedList<>();
 
     /**
      * Invoice number
@@ -179,14 +178,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Column(name = "invoice_date")
     private Date invoiceDate;
-    
+
     /**
      * Invoice status
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 25)
     @AuditTarget(type = AuditChangeTypeEnum.STATUS, history = true, notif = true)
-    private InvoiceStatusEnum status;
+    private InvoiceStatusEnum status = InvoiceStatusEnum.NEW;
 
     /**
      * Payment due date
@@ -415,7 +414,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "prepaid", nullable = false)
     @NotNull
     protected boolean prepaid;
-    
+
     /**
      * External reference
      */
@@ -441,56 +440,56 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Column(name = "status_date")
     private Date statusDate;
-    
+
     /**
      * Date when the XML has been produced on a validated invoice.
      */
     @Column(name = "xml_date")
     @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
     private Date xmlDate;
-    
+
     /**
      * Date when the PDf has been produced on a validated invoice.
      */
     @Column(name = "pdf_date")
     @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
     private Date pdfDate;
-    
+
     /**
      * Date when the invoice has been sent for a validated invoice
      */
     @Column(name = "email_sent_date")
     @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
     private Date emailSentDate;
-    
+
     /**
-     * 
+     *
      */
 	@Column(name = "payment_status")
 	@Enumerated(EnumType.STRING)
     @AuditTarget(type = AuditChangeTypeEnum.OTHER, history = true, notif = true)
 	private InvoicePaymentStatusEnum paymentStatus = InvoicePaymentStatusEnum.NONE;
-	
+
     /**
      * Payment status change date
      */
     @Column(name = "payment_status_date")
     private Date paymentStatusDate;
-    
+
     /**
      * Beginning of the billed period (based on billing cycle period whenever possible or min(invoiceLine.valueDate))
      */
     @Column(name = "start_date")
     private Date startDate;
 
-    
+
     /**
      * End of the billed period (based on billing cycle period whenever possible or applied lastTransactionDate or max(invoiceLine.valueDate))
      */
     @Column(name = "end_date")
     private Date endDate;
-    
-     
+
+
     /**
      * Total raw amount from invoice lines.
      *      -Does not include discount.
@@ -498,14 +497,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Column(name = "raw_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal rawAmount= BigDecimal.ZERO;
-    
+
     /**
      * Discount rate to apply (in %).
      * Initialize with discount rate from linked invoice discount plan.
      */
     @Column(name = "discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal discountRate;
-    
+
 	/**
      * Total discount amount with or without tax depending on provider settings.
 	 * Can be inconsistent with discountRate.
@@ -513,7 +512,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Column(name = "discount_amount", nullable = false, precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal discountAmount=BigDecimal.ZERO;
-    
+
     /**
      * Indicates if the invoicing minimum has already been applied
      */
@@ -527,7 +526,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Type(type = "numeric_boolean")
     @Column(name = "is_already_added_discount")
     private boolean isAlreadyAddedDiscount;
-    
+
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
 
@@ -562,13 +561,25 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      */
     @Transient
     private List<RatedTransaction> draftRatedTransactions = new ArrayList<>();
-    
+
     /**
      * Is invoice generated using new invoice process
      */
     @Type(type = "numeric_boolean")
     @Column(name = "new_invoicing_process")
     private boolean newInvoicingProcess = false;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "has_taxes")
+    private boolean hasTaxes;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "has_discounts")
+    private boolean hasDiscounts;
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "has_minimum")
+    private boolean hasMinimum;
 
     /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
@@ -587,6 +598,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
+        if(this.status ==null || this.status==InvoiceStatusEnum.DRAFT) {
+        	this.status=InvoiceStatusEnum.NEW;
+        }
     }
 
     public Date getProductDate() {
@@ -823,7 +837,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setInvoiceAdjustmentCurrentProviderNb(Long invoiceAdjustmentCurrentProviderNb) {
         this.invoiceAdjustmentCurrentProviderNb = invoiceAdjustmentCurrentProviderNb;
     }
-    
+
     public InvoiceStatusEnum getStatus() {
         return status;
     }
@@ -843,7 +857,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     		throw new ValidationException("Not possible to change invoice status from "+this.status+" to "+status) ;
     	}
     }
-    
+
     public void rebuildStatus(InvoiceStatusEnum status) {
     	if(status==InvoiceStatusEnum.DRAFT || status==InvoiceStatusEnum.SUSPECT || status==InvoiceStatusEnum.REJECTED) {
 			setStatusDate(new Date());
@@ -1229,14 +1243,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.prepaid = prepaid;
     }
 
-	public String getExternalRef() {
-		return externalRef;
-	}
+    public String getExternalRef() {
+        return externalRef;
+    }
 
-	public void setExternalRef(String externalRef) {
-		this.externalRef = externalRef;
-	}
-
+    public void setExternalRef(String externalRef) {
+        this.externalRef = externalRef;
+    }
 
     public void setDraftRatedTransactions(List<RatedTransaction> draftRatedTransactions) {
         this.draftRatedTransactions = draftRatedTransactions;
@@ -1397,5 +1410,28 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	public void setNewInvoicingProcess(boolean newInvoicingProcess) {
 		this.newInvoicingProcess = newInvoicingProcess;
 	}
-    
+
+    public boolean isHasTaxes() {
+        return hasTaxes;
+    }
+
+    public void setHasTaxes(boolean hasTaxes) {
+        this.hasTaxes = hasTaxes;
+    }
+
+    public boolean isHasDiscounts() {
+        return hasDiscounts;
+    }
+
+    public void setHasDiscounts(boolean hasDiscounts) {
+        this.hasDiscounts = hasDiscounts;
+    }
+
+    public boolean isHasMinimum() {
+        return hasMinimum;
+    }
+
+    public void setHasMinimum(boolean hasMinimum) {
+        this.hasMinimum = hasMinimum;
+    }
 }

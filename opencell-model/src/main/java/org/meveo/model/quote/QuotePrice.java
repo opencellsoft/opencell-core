@@ -3,6 +3,7 @@ package org.meveo.model.quote;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -31,6 +32,28 @@ import java.math.BigDecimal;
         @Parameter(name = "sequence_name", value = "cpq_quote_price_seq"), })
 @NamedQuery(name="QuotePrice.removeByQuoteVersionAndPriceLevel", query = "delete from QuotePrice qp where qp.quoteVersion = :quoteVersion and qp.priceLevelEnum = :priceLevelEnum")
 public class QuotePrice extends AuditableEntity {
+
+	public QuotePrice() {
+		super();
+	}
+
+	public QuotePrice(QuotePrice copy) {
+		this.quoteArticleLine = copy.quoteArticleLine;
+		this.quoteVersion = copy.quoteVersion;
+		this.priceLevelEnum = copy.priceLevelEnum;
+		this.priceTypeEnum = copy.priceTypeEnum;
+		this.amountWithTax = copy.amountWithTax;
+		this.unitPriceWithoutTax = copy.unitPriceWithoutTax;
+		this.amountWithoutTax = copy.amountWithoutTax;
+		this.amountWithoutTaxWithDiscount = copy.amountWithoutTaxWithDiscount;
+		this.taxAmount = copy.taxAmount;
+		this.taxRate = copy.taxRate;
+		this.priceOverCharged = copy.priceOverCharged;
+		this.currencyCode = copy.currencyCode;
+		this.recurrenceDuration = copy.recurrenceDuration;
+		this.recurrencePeriodicity = copy.recurrencePeriodicity;
+		this.chargeTemplate = copy.chargeTemplate;
+	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "quote_article_line_id")

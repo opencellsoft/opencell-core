@@ -3,6 +3,7 @@ package org.meveo.service.base;
 import org.junit.Before;
 import org.junit.Test;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Invoice;
 
 import java.time.LocalDate;
@@ -110,6 +111,20 @@ public class PersistenceServiceTest {
         assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where " +
                 ":listField1 in elements(a.listField1) " +
                 "Param name:listField1 value:1");
+    }
+
+    @Test
+    public void inner_join_for_is_equal_requests() {
+        QueryBuilder query = new QueryBuilder(Invoice.class, "I", List.of("billingAccount.id"));
+        query.addValueIsEqualToField("a.b.c", "value", false, true);
+        assertThat(query.toString()).contains("inner join fetch I.a a_", "inner join fetch a_");
+    }
+
+    @Test
+    public void inner_join_for_is_list_requests() {
+        QueryBuilder query = new QueryBuilder(Invoice.class, "I", List.of("billingAccount.id"));
+        query.addListFilters("a.b.c", "Value");
+        assertThat(query.toString()).contains("inner join fetch I.a a_", "inner join fetch a_");
     }
 
     @Test
@@ -329,9 +344,15 @@ public class PersistenceServiceTest {
     }
 
     @Test
+    public void equal_string() {
+        filters.put("code", "value");
+        assertThat(getQuery()).isEqualTo("from org.meveo.model.billing.Invoice a left join fetch a.fetchField where lower(a.code) = :a_code Param name:a_code value:value");
+    }
+
+    @Test
     public void test() {
         filters.put("defaultEqualFilter", 1);
-        filters.put("eq equalFilter", 1);
+        filters.put("eq equalFilter", 2);
         filters.put("fromRange fromRangeFilter", 10);
         filters.put("toRange toRangeFilter", 10);
         filters.put("list listFilter", 10);
@@ -363,7 +384,7 @@ public class PersistenceServiceTest {
                 "and a.minmaxRangeFilter2 > :a_minmaxRangeFilter2 " +
                 "and a.fromRangeFilter >= :a_fromRangeFilter " +
                 "and a.equalFilter = :a_equalFilter " +
-                "Param name:a_equalFilter value:1 Param name:a_defaultEqualFilter value:1 Param name:listFilter value:10 Param name:a_toRangeFilter value:10 Param name:a_minmaxRangeFilter2 value:10 Param name:a_minmaxRangeFilter1 value:10 Param name:a_likeCriteriasFilter value:likeword Param name:a_fromRangeFilter value:10 Param name:a_overlapOptionalRangeFilter1 value:10 Param name:a_overlapOptionalRangeFilter2 value:15");
+                "Param name:a_equalFilter value:2 Param name:a_defaultEqualFilter value:1 Param name:listFilter value:10 Param name:a_toRangeFilter value:10 Param name:a_minmaxRangeFilter2 value:10 Param name:a_minmaxRangeFilter1 value:10 Param name:a_likeCriteriasFilter value:likeword Param name:a_fromRangeFilter value:10 Param name:a_overlapOptionalRangeFilter1 value:10 Param name:a_overlapOptionalRangeFilter2 value:15");
     }
 
     private String getQuery() {

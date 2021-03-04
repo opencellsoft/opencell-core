@@ -18,6 +18,8 @@ import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.Set;
 
+import static org.meveo.apiv2.generic.services.PersistenceServiceHelper.getPersistenceService;
+
 @Stateless
 public class GenericResourceImpl implements GenericResource {
     @Inject
@@ -27,7 +29,7 @@ public class GenericResourceImpl implements GenericResource {
     private GenericApiAlteringService genericApiAlteringService;
 
     @Override
-    public Response getAll(String entityName, GenericPagingAndFiltering searchConfig) {
+    public Response getAll(Boolean extractList, String entityName, GenericPagingAndFiltering searchConfig) {
         Set<String> genericFields = null;
         Set<String> nestedEntities = null;
         if(searchConfig != null){
@@ -36,12 +38,12 @@ public class GenericResourceImpl implements GenericResource {
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        return Response.ok().entity(loadService.findPaginatedRecords(entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities))
+        return Response.ok().entity(loadService.findPaginatedRecords(extractList, entityClass, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth()))
                 .links(buildPaginatedResourceLink(entityName)).build();
     }
     
     @Override
-    public Response get(String entityName, Long id, GenericPagingAndFiltering searchConfig) {
+    public Response get(Boolean extractList, String entityName, Long id, GenericPagingAndFiltering searchConfig) {
         Set<String> genericFields = null;
         Set<String> nestedEntities = null;
         if(searchConfig != null){
@@ -50,9 +52,20 @@ public class GenericResourceImpl implements GenericResource {
         }
         Class entityClass = GenericHelper.getEntityClass(entityName);
         GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
-        return loadService.findByClassNameAndId(entityClass, id, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities)
+        return loadService.findByClassNameAndId(extractList, entityClass, id, genericRequestMapper.mapTo(searchConfig), genericFields, nestedEntities, searchConfig.getNestedDepth())
                 .map(fetchedEntity -> Response.ok().entity(fetchedEntity).links(buildSingleResourceLink(entityName, id)).build())
                 .orElseThrow(() -> new NotFoundException("entity " + entityName + " with id "+id+ " not found."));
+    }
+
+    @Override
+    public Response getFullListEntities() {
+        return Response.ok().entity(GenericOpencellRestful.ENTITIES_MAP).type(MediaType.APPLICATION_JSON_TYPE).build();
+    }
+
+    @Override
+    public Response getRelatedFieldsAndTypesOfEntity( String entityName ) {
+        Class entityClass = GenericHelper.getEntityClass(entityName);
+        return Response.ok().entity(getPersistenceService(entityClass).mapRelatedFields()).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
     
     @Override

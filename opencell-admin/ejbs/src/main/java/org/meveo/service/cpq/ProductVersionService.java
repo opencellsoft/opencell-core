@@ -16,6 +16,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -101,19 +102,28 @@ public class ProductVersionService extends
      * <li>error when saving the new version of the product</li>
      *</ul>
      */
-    public ProductVersion duplicate(ProductVersion productVersion, boolean duplicateHierarchy) throws BusinessException{
-    	productVersion = refreshOrRetrieve(productVersion);
-    	
+    
+    private void fetchAllListOfProductVersion(ProductVersion productVersion) {
     	productVersion.getAttributes().size();
     	productVersion.getTags().size();
+    	productVersion.getGroupedAttributes().size();
+    	productVersion.getGroupedAttributes().forEach(ga -> {
+    		ga.getAttributes().size();
+    		ga.getAttributes().forEach(a ->  {
+    			a.getMedias().size();
+    			a.getTags().size();
+    		});
+    		ga.getCommercialRules().size();
+    		ga.getCommercialRules().forEach(cr -> cr.getCommercialRuleItems().size());
+    	});
+    }
+    public ProductVersion duplicate(ProductVersion productVersion, boolean duplicateHierarchy) throws BusinessException{
+    	productVersion = refreshOrRetrieve(productVersion);
+    	fetchAllListOfProductVersion(productVersion);
     	
-    	if(!productVersion.getAttributes().isEmpty()) {
-    		for (Attribute services : productVersion.getAttributes()) {
-    			services.getGroupedAttributes();
-			}
-    	}
     	var serviceTemplateList = new ArrayList<>(productVersion.getAttributes());
     	var tagList = new ArrayList<>(productVersion.getTags());
+    	var groupedAttribute = new ArrayList<GroupedAttributes>(productVersion.getGroupedAttributes());
 
     	detach(productVersion);
     	ProductVersion duplicate = new ProductVersion();
@@ -129,6 +139,7 @@ public class ProductVersionService extends
     	duplicate.setStatusDate(Calendar.getInstance().getTime());
     	duplicate.setTags(new HashSet<>());
     	duplicate.setAttributes(new ArrayList<>());
+    	duplicate.setGroupedAttributes(new ArrayList<GroupedAttributes>());
 
     	// TODO : voir duplicate.getId()
 
@@ -139,7 +150,7 @@ public class ProductVersionService extends
         }
         
     	if(duplicateHierarchy) {
-			catalogHierarchyBuilderService.duplicateProductVersion(duplicate, serviceTemplateList, tagList, duplicate.getId() + "_");
+			catalogHierarchyBuilderService.duplicateProductVersion(duplicate, serviceTemplateList, tagList, groupedAttribute,  duplicate.getId() + "_");
     	}
     	
         return duplicate;

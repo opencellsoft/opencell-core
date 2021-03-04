@@ -26,7 +26,8 @@ public interface GenericResource {
                     @ApiResponse(responseCode="200", description = "paginated results successfully retrieved with hypermedia links"),
                     @ApiResponse(responseCode = "400", description = "bad request when entityName not well formed or entity unrecognized")
     })
-    Response getAll(@Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
+    Response getAll(@Parameter(description = "extractList flag to return or not nested List") @QueryParam("extractList") Boolean extractList,
+                    @Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
                     @Parameter(description = "requestDto carries the wanted fields ex: {genericFields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig);
 
     @POST
@@ -39,7 +40,8 @@ public interface GenericResource {
                     @ApiResponse(responseCode = "404", description = "baseEntityObject not found", content = @Content(schema = @Schema(implementation = ApiException.class))),
                     @ApiResponse(responseCode = "400", description = "bad request when entityName not well formed or entity unrecognized")
     })
-    Response get(@Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
+    Response get(@Parameter(description = "extractList flag to return or not nested List") @QueryParam("extractList") Boolean extractList,
+                 @Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName,
                  @Parameter(description = "The id here is the database primary key of the wanted record", required = true) @PathParam("id") Long id,
                  @Parameter(description = "requestDto carries the wanted fields ex: {fields = [code, description]}", required = true) GenericPagingAndFiltering searchConfig);
 
@@ -91,4 +93,30 @@ public interface GenericResource {
     @GET
     @Path("/version")
     Response getVersions();
+
+    @GET
+    @Path("/entities")
+    @Operation(summary = "This endpoint is used to retrieve the full list of queryable entities",
+            tags = { "Generic" },
+            description = "This endpoint retrieves all possible queryable entities in the database.",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "paginated results successfully retrieved with hypermedia links"),
+                    @ApiResponse(responseCode = "404", description = "the full list of entities not found",
+                            content = @Content(schema = @Schema(implementation = ApiException.class)))
+            })
+    Response getFullListEntities();
+
+    @GET
+    @Path("/entities/{entityName}")
+    @Operation(summary = "This endpoint is used to retrieve the fields and corresponding types of an entity",
+            tags = { "Generic" },
+            description ="You need to specify an entity name. \n\n" +
+                    "Given the entity name, this endpoint returns the list of its fields and corresponding types. " +
+                    "The entity name should not be written in the plural form. For example, *customer*.",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "paginated results successfully retrieved with hypermedia links"),
+                    @ApiResponse(responseCode = "404", description = "the full list of entities not found",
+                            content = @Content(schema = @Schema(implementation = ApiException.class)))
+            })
+    Response getRelatedFieldsAndTypesOfEntity( @Parameter(description = "The entity name", required = true) @PathParam("entityName") String entityName );
 }

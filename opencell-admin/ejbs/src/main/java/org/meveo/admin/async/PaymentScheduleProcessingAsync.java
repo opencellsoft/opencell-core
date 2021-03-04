@@ -30,8 +30,10 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.UnitPaymentScheduleJobBean;
+import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.security.MeveoUser;
@@ -73,6 +75,7 @@ public class PaymentScheduleProcessingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
+    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> launchAndForget(List<PaymentScheduleInstanceItem> paymentScheduleInstanceItems, JobExecutionResultImpl result,  MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
@@ -85,6 +88,7 @@ public class PaymentScheduleProcessingAsync {
             }
             unitPaymentScheduleJobBean.execute(result, item);
 
+            jobExecutionService.decCounterElementsRemaining(result);
         }
         return new AsyncResult<String>("OK");
     }

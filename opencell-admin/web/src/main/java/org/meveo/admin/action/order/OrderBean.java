@@ -44,6 +44,7 @@ import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.audit.AuditChangeTypeEnum;
@@ -60,6 +61,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItem;
@@ -513,8 +515,14 @@ public class OrderBean extends CustomFieldBean<Order> {
                 mainOfferCharacteristics.put(OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE, mainOffering.getCode());
             }
         }
+        OfferItemInfo offerItemInfo;
+        if(orderItemDto != null && orderItemDto.getProduct() != null){
+            offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, mainEntityForCFValues,
+                    toCustomFieldsValues(extractCustomFieldsValues(orderItemDto.getProduct().getProductCharacteristic(), new Subscription())));
+        }else{
+            offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, mainEntityForCFValues);
+        }
 
-        OfferItemInfo offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, mainEntityForCFValues);
         TreeNode mainOfferingNode = new DefaultTreeNode(mainOffering.getClass().getSimpleName(), offerItemInfo, root);
         mainOfferingNode.setExpanded(true);
         offerConfigurations.add(offerItemInfo);
@@ -575,7 +583,12 @@ public class OrderBean extends CustomFieldBean<Order> {
                                 || (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(offerServiceTemplate.getServiceTemplate().getCode()));
                         boolean isSelected = serviceProductMatched != null || isMandatory;
 
-                        offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, isSelected, isMandatory, serviceInstanceEntity);
+                        if(serviceProductMatched != null && serviceProductMatched.getProductCharacteristic() != null){
+                            offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, isSelected, isMandatory, serviceInstanceEntity,
+                                    toCustomFieldsValues(extractCustomFieldsValues(serviceProductMatched.getProductCharacteristic(), new ServiceInstance())));
+                        }else{
+                            offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, isSelected, isMandatory, serviceInstanceEntity);
+                        }
 
                         new DefaultTreeNode(ServiceTemplate.class.getSimpleName(), offerItemInfo, servicesNode);
                         if (offerItemInfo.isSelected()) {
@@ -641,8 +654,14 @@ public class OrderBean extends CustomFieldBean<Order> {
                             productCharacteristics.put(OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE, offerProductTemplate.getProductTemplate().getCode());
                         }
 
-                        offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false,
-                            productProductMatched != null || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), productInstanceEntity);
+                        if(productProductMatched != null && productProductMatched.getProductCharacteristic() != null){
+                            offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false,
+                                productProductMatched != null || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), productInstanceEntity,
+                                    toCustomFieldsValues(extractCustomFieldsValues(productProductMatched.getProductCharacteristic(), new ProductInstance())));
+                        }else{
+                            offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false,
+                                    productProductMatched != null || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), productInstanceEntity);
+                        }
                         new DefaultTreeNode(ProductTemplate.class.getSimpleName(), offerItemInfo, productsNode);
 
                         if (offerItemInfo.isSelected()) {
@@ -659,6 +678,20 @@ public class OrderBean extends CustomFieldBean<Order> {
             }
         }
         return root;
+    }
+
+    private CustomFieldValues toCustomFieldsValues(Map<CustomFieldTemplate, Object> extractCustomFieldsValues) {
+        CustomFieldValues customFieldValues = new CustomFieldValues();
+        extractCustomFieldsValues.keySet().forEach(customFieldTemplate -> {
+            CustomFieldValue customFieldValue = new CustomFieldValue();
+            customFieldValue.setValue(extractCustomFieldsValues.get(customFieldTemplate));
+            if(customFieldTemplate.isVersionable()){
+                customFieldValues.setValue(customFieldTemplate.getCode(), new DatePeriod(), 0, extractCustomFieldsValues.get(customFieldTemplate));
+            }else{
+                customFieldValues.setValue(customFieldTemplate.getCode(), extractCustomFieldsValues.get(customFieldTemplate));
+            }
+        });
+        return customFieldValues;
     }
 
     /**
@@ -912,6 +945,11 @@ public class OrderBean extends CustomFieldBean<Order> {
         if (characteristics == null || characteristics.isEmpty()) {
             return;
         }
+        customFieldDataEntryBean.setCustomFieldValues(extractCustomFieldsValues(characteristics, cfEntity), cfEntity);
+    }
+
+    private Map<CustomFieldTemplate, Object> extractCustomFieldsValues(List<ProductCharacteristic> characteristics, BusinessCFEntity cfEntity) {
+        Map<CustomFieldTemplate, Object> cfValues = new HashMap<>();
 
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(cfEntity);
 
@@ -921,7 +959,7 @@ public class OrderBean extends CustomFieldBean<Order> {
                 cfValues.put(cft, CustomFieldValue.parseValueFromString(cft, characteristic.getValue()));
             }
         }
-        customFieldDataEntryBean.setCustomFieldValues(cfValues, cfEntity);
+        return cfValues;
     }
 
     /**
@@ -946,7 +984,10 @@ public class OrderBean extends CustomFieldBean<Order> {
     private OrderItem cloneOrderItem(OrderItem itemToClone) throws BusinessException {
 
         try {
-            return (OrderItem) BeanUtilsBean.getInstance().cloneBean(itemToClone);
+            OrderItem orderItem = (OrderItem) BeanUtilsBean.getInstance().cloneBean(itemToClone);
+            if(orderItem.getSubscription() != null)
+                orderItem.setSubscription(subscriptionService.refreshOrRetrieve(orderItem.getSubscription()));
+            return orderItem;
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
             log.error("Failed to clone orderItem for edit", e);
             throw new BusinessException(e);

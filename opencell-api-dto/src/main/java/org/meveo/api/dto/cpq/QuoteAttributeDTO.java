@@ -25,7 +25,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.QuoteAttribute;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * DTO to create or update a quote
@@ -45,6 +47,8 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	private Long quoteAttributeId;
     
     private String quoteAttributeCode;
+
+    private List<QuoteAttributeDTO> linkedQuoteAttribute = new ArrayList<>();
     
     private String stringValue;
 
@@ -116,5 +120,13 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 
 	public void setDateValue(Date dateValue) {
 		this.dateValue = dateValue;
+	}
+
+	public List<QuoteAttributeDTO> getLinkedQuoteAttribute() {
+		return linkedQuoteAttribute;
+	}
+
+	public void setLinkedQuoteAttribute(List<QuoteAttributeDTO> linkedQuoteAttribute) {
+		this.linkedQuoteAttribute = linkedQuoteAttribute;
 	}
 }

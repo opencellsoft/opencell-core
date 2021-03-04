@@ -1,7 +1,9 @@
 package org.meveo.api.dto.response.cpq;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -15,6 +17,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
+import org.meveo.api.dto.cpq.MediaDto;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.model.cpq.Attribute;
 
@@ -29,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @SuppressWarnings("serial")
 @XmlRootElement(name = "GetAttributeDtoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JsonIgnoreProperties({ "chargeTemplateCodes","commercialRuleCodes","tagCodes","assignedAttributeCodes"})
+@JsonIgnoreProperties({ "chargeTemplateCodes","commercialRuleCodes","tagCodes","assignedAttributeCodes","mediaCodes"})
 public class GetAttributeDtoResponse extends AttributeDTO{
  
 	@XmlElementWrapper(name = "chargeTemplates")
@@ -49,6 +52,9 @@ public class GetAttributeDtoResponse extends AttributeDTO{
     @XmlElement(name = "assignedAttributes")
     private List<AttributeDTO> assignedAttributes;
 
+	@XmlElementWrapper(name = "medias")
+    @XmlElement(name = "medias")
+    private List<MediaDto> medias=new ArrayList<MediaDto>();
 
     /**
      * The status response of the web service response.
@@ -73,11 +79,19 @@ public class GetAttributeDtoResponse extends AttributeDTO{
         actionStatus = new ActionStatus(status, errorCode, message);
     }
     
-    public GetAttributeDtoResponse(Attribute attribute, Set<ChargeTemplateDto> chargeTemplates, List<TagDto> tags,List<AttributeDTO> assignedAttributes) {
+    public GetAttributeDtoResponse(Attribute attribute, Set<ChargeTemplateDto> chargeTemplates, List<TagDto> tags,List<AttributeDTO> assignedAttributes,boolean loadMedias) {
  		super(attribute);
  		this.chargeTemplates = chargeTemplates;
  		this.tags=tags;
  		this.assignedAttributes=assignedAttributes;
+ 		if(loadMedias) { 
+    		if(attribute.getMedias() != null && !attribute.getMedias().isEmpty()) { 
+    			medias = attribute.getMedias().stream().map(t -> {
+    				final MediaDto dto = new MediaDto(t);
+    				return dto;
+    			}).collect(Collectors.toList());
+    		}   	
+    	}
  	}
     
 

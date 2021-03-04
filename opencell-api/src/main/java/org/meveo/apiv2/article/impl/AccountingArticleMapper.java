@@ -1,6 +1,10 @@
 package org.meveo.apiv2.article.impl;
 
+import java.util.ArrayList;
+
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.apiv2.article.ImmutableAccountingArticle;
+import org.meveo.apiv2.generic.LanguageDescription;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.article.AccountingArticle;
@@ -24,10 +28,12 @@ public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.arti
                 .articleFamily(entity.getArticleFamily() != null ? ImmutableResource.builder().id(entity.getArticleFamily().getId()).build() : null)
                 .analyticCode1(entity.getAnalyticCode1())
                 .analyticCode2(entity.getAnalyticCode2())
-                .analyticCode3(entity.getAnalyticCode3())
+                .analyticCode3(entity.getAnalyticCode3()) 
+                .languageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(entity.getDescriptionI18n()))
                 .build();
     }
 
+    
     @Override
     protected AccountingArticle toEntity(org.meveo.apiv2.article.AccountingArticle resource) {
         TaxClass taxClass = new TaxClass();
@@ -46,6 +52,11 @@ public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.arti
         accountingArticleEntity.setAnalyticCode1(resource.getAnalyticCode1());
         accountingArticleEntity.setAnalyticCode2(resource.getAnalyticCode2());
         accountingArticleEntity.setAnalyticCode3(resource.getAnalyticCode3());
+        if( resource.getLanguageDescriptions()!=null && ! resource.getLanguageDescriptions().isEmpty()) {
+        for(LanguageDescriptionDto languageDescription : resource.getLanguageDescriptions()) {
+        	accountingArticleEntity.getDescriptionI18n().put(languageDescription.getLanguageCode(), languageDescription.getDescription());
+        }
+        }
         return accountingArticleEntity;
     }
 }

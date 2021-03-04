@@ -40,7 +40,6 @@ import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
@@ -50,6 +49,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.cpq.Attribute;
@@ -95,11 +95,11 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 
     /**
      * offer component
-     */  
-    @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) 
+     */
+    @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OfferComponent> offerComponents = new ArrayList<>();
-    
-    
+
+
     /**
      * Expression to determine minimum amount value
      */
@@ -123,7 +123,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_offer_tmpl_discount_plan", joinColumns = @JoinColumn(name = "offer_tmpl_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "discount_plan_id", referencedColumnName = "id"))
-    private List<DiscountPlan> allowedDiscountPlans;
+    private List<DiscountPlan> allowedDiscountPlans = new ArrayList<>();
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
@@ -156,7 +156,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 //    private Map<ChargeTypeEnum, List<ServiceTemplate>> serviceTemplatesByChargeType;
 
     @Transient
-    private List<ProductTemplate> productTemplates;
+    private List<ProductTemplate> productTemplates = new ArrayList<>();
 
     @Transient
     private String transientCode;
@@ -164,16 +164,16 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Type(type = "numeric_boolean")
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
-    
-    
+
+
     /**
      * list of tag attached
-     */   
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_offer_template_tags", joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags = new ArrayList<Tag>();
-    
-    
+
+
 	/**
 	 * list of attributes attached to this offer
 	 */
@@ -181,27 +181,47 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	@JoinTable(
 				name = "cpq_offer_attributes",
 				joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"),
-				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
+				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")
 			)
     private List<Attribute> attributes = new ArrayList<Attribute>();
-	
-	
-    @OneToMany(mappedBy = "offer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id")
-    private List<Media> medias = new ArrayList<>();
-    
+
+
+	/**
+     * list of Media
+     */   
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cpq_offer_template_media", joinColumns = @JoinColumn(name = "offer_template_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
+    private List<Media> medias = new ArrayList<Media>();
+
     @OneToMany(mappedBy = "targetOfferTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
-    
+
     /**
      * date of status : it set automatically when ever the status of offerTemplate is changed
      */
     @Column(name = "status_date", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)   
+    @Temporal(TemporalType.TIMESTAMP)
     private Date statusDate;
-	
-     
+
+
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_offer_change_restricted")
+    private Boolean isOfferChangeRestricted;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name="offer_template_id")
+    private List<OfferTemplate> allowedOffersChange = new ArrayList<>();
+
+
+    /**
+     * Corresponding to minimum invoice AccountingArticle
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_article_id")
+    private AccountingArticle minimumArticle;
+
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
     }
@@ -490,7 +510,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     public void setMinimumChargeTemplate(OneShotChargeTemplate minimumChargeTemplate) {
         this.minimumChargeTemplate = minimumChargeTemplate;
     }
- 
+
 
 
 	/**
@@ -510,7 +530,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	public void setProductTemplates(List<ProductTemplate> productTemplates) {
 		this.productTemplates = productTemplates;
 	}
- 
+
 	/**
 	 * @return the offerComponents
 	 */
@@ -539,6 +559,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
 	}
+ 
 
 	/**
 	 * @return the medias
@@ -587,5 +608,29 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 	    return offerComponents.stream()
                 .filter(off -> off.getProduct() != null)
                 .anyMatch(off -> off.getProduct().getCode().equals(productCode));
+    }
+
+    public Boolean getOfferChangeRestricted() {
+        return isOfferChangeRestricted;
+    }
+
+    public void setOfferChangeRestricted(Boolean offerChangeRestricted) {
+        isOfferChangeRestricted = offerChangeRestricted;
+    }
+
+    public List<OfferTemplate> getAllowedOffersChange() {
+        return allowedOffersChange;
+    }
+
+    public void setAllowedOffersChange(List<OfferTemplate> allowedOffersChange) {
+        this.allowedOffersChange = allowedOffersChange;
+    }
+
+    public AccountingArticle getMinimumArticle() {
+        return minimumArticle;
+    }
+
+    public void setMinimumArticle(AccountingArticle minimumArticle) {
+        this.minimumArticle = minimumArticle;
     }
 }

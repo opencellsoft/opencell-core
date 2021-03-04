@@ -116,8 +116,7 @@ public class EmailNotifier {
 
             List<String> to = new ArrayList<>();
             if (!StringUtils.isBlank(notification.getEmailToEl())) {
-                String result = context.containsKey("EMAIL_TO_LIST") ?
-                        (String)context.get("EMAIL_TO_LIST") : notification.getEmailToEl();
+                String result = context.containsKey("EMAIL_TO_LIST") ? (String)context.get("EMAIL_TO_LIST") : notification.getEmailToEl();
                 for (String mail : result.split(",")) {
                     to.add(mail);
                 }
