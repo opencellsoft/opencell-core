@@ -4147,5 +4147,9 @@ END $$;]]>
         <sql>CREATE INDEX billing_service_instance_st_index on ${db.schema.adapted}billing_service_instance (service_template_id)</sql>
         <sql>CREATE INDEX billing_wallet_operation_sub_index on ${db.schema.adapted}billing_wallet_operation (subscription_id)</sql>
     </changeSet>
+    
+    <changeSet id="#5993_20210304" author="HatimOUDAD">
+        <addUniqueConstraint columnNames="country_code" constraintName="UniqueConstraint_adm__country_code" tableName="adm_country" />
+    </changeSet>
 
 </databaseChangeLog>
