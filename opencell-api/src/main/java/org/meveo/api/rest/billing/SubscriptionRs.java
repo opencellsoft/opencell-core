@@ -372,9 +372,9 @@ public interface SubscriptionRs extends IBaseRs {
      * @param subscriptionValidityDate
      * @return Request processing status
      */
-    @GET
+    @POST
     @Path("/activate")
-    ActionStatus activate(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
+    ActionStatus activate(String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
     
     /**
      * Activate a given Subscription.
