@@ -276,14 +276,23 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/country" ) ) {
-                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/countries",
-                                    ((Path) anAnnotation).value() );
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/countries", ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable a trading country
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/countries\\/" + CODE_REGEX + "\\/enable" ) ,
                                     ((Path) anAnnotation).value() );
 
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/countries\\/" + CODE_REGEX + "\\/disable" ) ,
+                                    ((Path) anAnnotation).value() );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/currency" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/currencies", ((Path) anAnnotation).value() );
+
+                            // Processing for enable and disable a trading currency
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/currencies\\/" + CODE_REGEX + "\\/enable" ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/currencies\\/" + CODE_REGEX + "\\/disable" ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else {
