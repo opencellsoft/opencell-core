@@ -26,6 +26,7 @@ import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
+import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
@@ -2276,10 +2277,10 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityAlreadyExistsException(Subscription.class, postData.getCode());
         }
 
-        return createSubscriptionWithoutCheckOnCodeExistence(postData);
+        return createSubscriptionWithoutCheckOnCodeExistence(postData,null);
     }
 
-    private Subscription createSubscriptionWithoutCheckOnCodeExistence(SubscriptionDto postData) {
+    private Subscription createSubscriptionWithoutCheckOnCodeExistence(SubscriptionDto postData, List<String> cfsToCopy) {
         if (StringUtils.isBlank(postData.getSubscriptionDate())) {
             postData.setSubscriptionDate(new Date());
         }
@@ -2366,7 +2367,20 @@ public class SubscriptionApi extends BaseApi {
 
         // populate customFields
         try {
-            populateCustomFields(postData.getCustomFields(), subscription, true);
+        	CustomFieldsDto cfs = postData.getCustomFields();
+        	List<CustomFieldDto> customFieldDtos =cfs.getCustomField();
+        	List<CustomFieldDto> inheritedCustomFieldDtos =cfs.getInheritedCustomField();
+			if (cfsToCopy != null) {
+				if(customFieldDtos != null) {
+					customFieldDtos = customFieldDtos.stream().filter(x -> cfsToCopy.contains(x.getCode())).collect(Collectors.toList());
+					cfs.setCustomField(customFieldDtos);
+				}
+				if(inheritedCustomFieldDtos != null) {
+					inheritedCustomFieldDtos = inheritedCustomFieldDtos.stream().filter(x -> cfsToCopy.contains(x)).collect(Collectors.toList());
+					cfs.setInheritedCustomField(inheritedCustomFieldDtos);
+				}
+			}
+			populateCustomFields(cfs, subscription, true);
         } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -2499,7 +2513,7 @@ public class SubscriptionApi extends BaseApi {
             existingSubscriptionDto.setCode(subscriptionPatchDto.getNewSubscriptionCode());
         }
 
-        Subscription newSubscription = createSubscriptionWithoutCheckOnCodeExistence(existingSubscriptionDto);
+        Subscription newSubscription = createSubscriptionWithoutCheckOnCodeExistence(existingSubscriptionDto, subscriptionPatchDto.getSubscriptionCustomFieldsToCopy());
 
         for (AccessDto access : existingSubscriptionDto.getAccesses().getAccess()) {
             access.setSubscription(existingSubscriptionDto.getCode());
