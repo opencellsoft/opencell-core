@@ -37,13 +37,54 @@
                         submitPartialProcess=":#{p:component('formDiscountPlan')}">
                         <p:tabView id="tabViewDiscountPlan">
                             <p:tab title="#{messages['commons.information']}">
-                                <hftl:formField id="chargeSelectId" required="true" label="#{messages['discountPlanMatrix.eventCode']}" field="code" />
-                                <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description" />
-                                <hftl:formField label="#{messages['discountPlanItem.startDate']}" field="startDate" />
-                                <hftl:formField label="#{messages['discountPlanItem.endDate']}" field="endDate" />
-                                <hftl:formField label="#{messages['discountPlanItem.defaultDuration']}" field="defaultDuration" />
-                                <hftl:formField label="#{messages['discountPlanItem.durationUnit']}" field="durationUnit" />
-                                <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
+                                <hftl:formField id="chargeSelectId" required="true" label="#{messages['discountPlanMatrix.eventCode']}" field="code"/>
+                                <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" id="description"/>
+                                <hftl:formField label="#{messages['discountPlanItem.startDate']}" field="startDate"/>
+                                <hftl:formField label="#{messages['discountPlanItem.endDate']}" field="endDate"/>
+                                <hftl:formField label="#{messages['discountPlanItem.defaultDuration']}" field="defaultDuration"/>
+                                <hftl:formField label="#{messages['discountPlanItem.durationUnit']}" field="durationUnit"/>
+                                <hftl:formField label="#{messages['discountPlanItem.discountPlanType']}" field="discountPlanType"/>
+                                <hftl:formField label="#{messages['discountPlanItem.status']}" field="status"/>
+                                <hftl:formField label="#{messages['discountPlanItem.statusDate']}" field="statusDate"/>
+                                <hftl:formField label="#{messages['discountPlanItem.initialQuantity']}" field="initialQuantity"/>
+                                <hftl:formField label="#{messages['discountPlanItem.usedQuantity']}" field="usedQuantity"/>
+                                <hftl:formField label="#{messages['discountPlanItem.applicationLimit']}" field="applicationLimit"/>
+                                <hftl:formField label="#{messages['discountPlanItem.applicationFilterEL']}" field="applicationFilterEL" textArea="true" maxlength="2000" rows="1"/>
+                                <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true"/>
+                                <p:fieldset legend="#{messages['discountPlanItem.applicableEntities']}" styleClass="clearLeft">
+                                    <p:outputPanel id="applicableEntitiesPanel">
+                                        <p:dataTable id="applicableEntities" var="entity" resizableColumns="true"
+                                                     value="#{discountPlanBean.entity.applicableEntities}" rows="10" styleClass="custom-grid">
+                                            <hftl:column label="#{messages['applicableEntity.code']}" field="code"/>
+                                            <hftl:column label="#{messages['applicableEntity.entityClass']}" field="entityClass"/>
+                                            <p:column style="width: 5%">
+                                                <p:commandButton action="#{discountPlanBean.deleteApplicableEntity(entity)}" icon="ui-icon-trash"
+                                                                 update="formDiscountPlan:applicableEntitiesPanel:applicableEntities">
+                                                    <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}"
+                                                               icon="ui-icon-alert"/>
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:outputPanel>
+                                </p:fieldset>
+                                <p:fieldset legend="#{messages['discountPlanItem.incompatibleDiscountPlans']}" styleClass="clearLeft">
+                                    <p:outputPanel id="incompatibleDiscountPlansPanel">
+                                        <p:dataTable id="incompatibleDiscountPlans" var="entity" resizableColumns="true"
+                                                     value="#{discountPlanBean.entity.incompatibleDiscountPlans}" rows="10" styleClass="custom-grid">
+                                            <hftl:column label="#{messages['BusinessEntity.description']}" field="description"/>
+                                            <hftl:column label="#{messages['discountPlanItem.startDate']}" field="startDate"/>
+                                            <hftl:column label="#{messages['discountPlanItem.endDate']}" field="endDate"/>
+                                            <hftl:column label="#{messages['discountPlanItem.status']}" field="status"/>
+                                            <p:column style="width: 5%">
+                                                <p:commandButton action="#{discountPlanBean.deleteIncompatibleDiscountPlan(entity)}" icon="ui-icon-trash"
+                                                                 update="formDiscountPlan:incompatibleDiscountPlansPanel:incompatibleDiscountPlans">
+                                                    <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}"
+                                                               icon="ui-icon-alert"/>
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:outputPanel>
+                                </p:fieldset>
                             </p:tab>
                             <hftl:customFields prefix="dp" backingBean="#{discountPlanBean}" messagesId="formDiscountPlan:messages" />
                         </p:tabView>
@@ -97,32 +138,41 @@
                                     <h:panelGroup id="invoiceSubCatPanel">
                                         <hftl:decorateFormField id="invoiceSubCategories" fieldId="invoiceSubCategories" label="#{messages['charge.subCategory']}">
                                             <p:selectOneMenu id="invoiceSubCategories" value="#{discountPlanBean.discountPlanItem.invoiceSubCategory}"
-                                                required="#{discountPlanBean.discountPlanItem.discountPlanItemType eq DiscountPlanItemTypeEnum.FIXED}">
-                                                <f:selectItem itemLabel="" />
-                                                <f:selectItems value="#{discountPlanItemBean.getInvoiceSubCategories(discountPlanBean.discountPlanItem.invoiceCategory)}" var="t" itemLabel="#{t.code}" />
-                                                <hftl:objectConverter />
+                                                             required="#{discountPlanBean.discountPlanItem.discountPlanItemType eq DiscountPlanItemTypeEnum.FIXED}">
+                                                <f:selectItem itemLabel=""/>
+                                                <f:selectItems value="#{discountPlanItemBean.getInvoiceSubCategories(discountPlanBean.discountPlanItem.invoiceCategory)}" var="t"
+                                                               itemLabel="#{t.code}"/>
+                                                <hftl:objectConverter/>
                                             </p:selectOneMenu>
                                         </hftl:decorateFormField>
                                     </h:panelGroup>
 
-                                    <hftl:formField label="#{messages['discountPlanItem.accountingCode']}" field="accountingCode" />
-                                    <hftl:formField newLine="true" label="#{messages['discountPlanItem.type']}" field="discountPlanItemType" listenerUpdate="itemType invoiceSubCatPanel" />
+                                    <hftl:formField label="#{messages['discountPlanItem.accountingCode']}" field="accountingCode"/>
+                                    <hftl:formField newLine="true" label="#{messages['discountPlanItem.type']}" field="discountPlanItemType"
+                                                    listenerUpdate="itemType invoiceSubCatPanel"/>
 
                                     <h:panelGroup id="itemType" styleClass="formFieldGroup">
-                                        <hftl:formField id="discountValuePercentage" label="#{messages['discountPlanItem.discountValue']}" field="discountValue" required="true" minValue="-100"
-                                            maxValue="100" spinner="true" rendered="#{discountPlanBean.discountPlanItem.discountPlanItemType eq DiscountPlanItemTypeEnum.PERCENTAGE}" />
+                                        <hftl:formField id="discountValuePercentage" label="#{messages['discountPlanItem.discountValue']}" field="discountValue" required="true"
+                                                        minValue="-100"
+                                                        maxValue="100" spinner="true"
+                                                        rendered="#{discountPlanBean.discountPlanItem.discountPlanItemType eq DiscountPlanItemTypeEnum.PERCENTAGE}"/>
                                         <hftl:formField id="discountValueFixed" label="#{messages['discountPlanItem.discountValue']}" field="discountValue" required="true"
-                                            rendered="#{discountPlanBean.discountPlanItem.discountPlanItemType eq DiscountPlanItemTypeEnum.FIXED}" />
+                                                        rendered="#{discountPlanBean.discountPlanItem.discountPlanItemType eq DiscountPlanItemTypeEnum.FIXED}"/>
                                     </h:panelGroup>
 
-                                    <hftl:formField newLine="true" label="#{messages['discountPlanItem.expressionEl']}" field="expressionEl" textArea="true" maxlength="2000" rows="1" />
-                                    <hftl:formField label="#{messages['discountPlanItem.expressionElSpark']}" field="expressionElSpark" textArea="true" maxlength="2000" rows="1" />
+                                    <hftl:formField newLine="true" label="#{messages['discountPlanItem.expressionEl']}" field="expressionEl" textArea="true" maxlength="2000"
+                                                    rows="1"/>
+                                    <hftl:formField label="#{messages['discountPlanItem.expressionElSpark']}" field="expressionElSpark" textArea="true" maxlength="2000" rows="1"/>
 
-                                    <hftl:formField label="#{messages['discountPlanItem.discountValueEl']}" field="discountValueEL" textArea="true" maxlength="2000" rows="1" />
-                                    <hftl:formField label="#{messages['discountPlanItem.discountValueElSpark']}" field="discountValueElSpark" textArea="true" maxlength="2000" rows="1" />
+                                    <hftl:formField label="#{messages['discountPlanItem.discountValueEl']}" field="discountValueEL" textArea="true" maxlength="2000" rows="1"/>
+                                    <hftl:formField label="#{messages['discountPlanItem.discountValueElSpark']}" field="discountValueElSpark" textArea="true" maxlength="2000"
+                                                    rows="1"/>
+                                    <hftl:formField label="#{messages['discountPlanItem.allowToNegate']}" field="allowToNegate"/>
+                                    <hftl:formField label="#{messages['discountPlanItem.accountingArticle']}" field="accountingArticle" componentWidth="100"/>
+                                    <hftl:formField label="#{messages['discountPlanItem.articlesToDiscount']}" field="articlesToDiscount" componentWidth="100"/>
 
 
-                                    <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
+                                    <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true"/>
                                 </p:tab>
                                 <hftl:customFields prefix="dpi" backingBean="#{discountPlanItemBean}" entity="#{discountPlanBean.discountPlanItem}" messagesId=":tabView:formDiscountPlanItem:messages" />
                             </p:tabView>
