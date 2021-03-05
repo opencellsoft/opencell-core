@@ -76,6 +76,17 @@ public class ReratingInfo implements Serializable {
     }
 
     /**
+     * @param fromDate Starting which date to re-rate
+     */
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Map<String, Object> getAdditionalCriteria() {
+        return additionalCriteria;
+    }
+
+    /**
      * Re-rate details
      * 
      * @param offerTemplate Offer template
@@ -93,7 +104,7 @@ public class ReratingInfo implements Serializable {
 
         if (additionalCriteria.length > 1) {
             this.additionalCriteria = new HashMap<>();
-            for (int i = 0; i < additionalCriteria.length; i=i+2) {
+            for (int i = 0; i < additionalCriteria.length; i = i + 2) {
                 this.additionalCriteria.put((String) additionalCriteria[i], additionalCriteria[i + 1]);
             }
         }

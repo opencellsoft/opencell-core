@@ -1,6 +1,7 @@
 package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +76,7 @@ public class ReratingService implements Serializable {
      */
 //    @Asynchronous
 //    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void rerate(List<ReratingInfo> reratingInfos, boolean rerateInvoiced) {
+    public void rerate(Collection<ReratingInfo> reratingInfos, boolean rerateInvoiced) {
 
         for (ReratingInfo reratingInfo : reratingInfos) {
             rerate(reratingInfo.getOfferTemplateId(), reratingInfo.getServiceTemplateId(), reratingInfo.getChargeType(), null, reratingInfo.getFromDate(), rerateInvoiced, reratingInfo.getAdditionalCriteria());

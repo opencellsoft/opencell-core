@@ -50,8 +50,8 @@ public class CountryService extends PersistenceService<Country> {
         QueryBuilder qb = new QueryBuilder(Country.class, "c");
         qb.startOrClause();
         qb.addCriterion("countryCode", "=", countryCode, false);
-        qb.addCriterion("description", "=", countryCode, false);
-        qb.addSql("lower(descriptionI18n) = '" + countryCode.toLowerCase() + "'");
+        qb.addCriterion("description", "=", countryCode, true);
+        qb.addSql("lower(descriptionI18n) like '%:\"" + countryCode.toLowerCase() + "\"%'");
         qb.endOrClause();
         
         try {
