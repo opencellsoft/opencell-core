@@ -2140,17 +2140,21 @@ public class SubscriptionApi extends BaseApi {
      * Activates all instantiated services of a given subscription.
      *
      * @param subscriptionCode The subscription code
+     * @param subscriptionValidityDate subscription validity date
      * @throws BusinessException
      * @throws MissingParameterException
      */
-    public void activateSubscription(String subscriptionCode) throws MeveoApiException, BusinessException {
+    public void activateSubscription(String subscriptionCode, Date subscriptionValidityDate) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
         }
 
         handleMissingParameters();
 
-        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, new Date());
+        if (subscriptionValidityDate == null) {
+            subscriptionValidityDate = new Date();
+        }
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
