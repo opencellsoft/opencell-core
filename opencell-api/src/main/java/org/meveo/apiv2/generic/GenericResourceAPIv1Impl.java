@@ -2,10 +2,7 @@ package org.meveo.apiv2.generic;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.api.dto.CountryDto;
-import org.meveo.api.dto.CurrencyDto;
-import org.meveo.api.dto.LanguageDto;
+import org.meveo.api.dto.*;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.billing.ActivateSubscriptionRequestDto;
@@ -115,7 +112,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
                 if ( pathIBaseRS.contains( "oneShotChargeTemplate" ) || pathIBaseRS.contains( "/account/customer" )
                     || pathIBaseRS.contains( "/billing/subscription" ) || pathIBaseRS.contains( "/billing/ratedTransaction" )
-                    || pathIBaseRS.contains( "/billing/wallet" ) || pathIBaseRS.contains( "/catalog/offerTemplate" ) )
+                    || pathIBaseRS.contains( "/billing/wallet" ) || pathIBaseRS.contains( "/catalog/offerTemplate")
+                    || pathIBaseRS.contains( "/user" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
@@ -144,6 +142,11 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             if ( pathIBaseRS.equals("/account/customer/category") ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + FORWARD_SLASH + entityCode);
+            }
+            // special handle for user
+            else if ( pathIBaseRS.equals("/user") ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "username=" + entityCode);
             }
             else {
                 entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
@@ -324,8 +327,10 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 ((LanguageDto) aDto).setCode(entityCode);
             else if ( aDto instanceof CountryDto )
                 ((CountryDto) aDto).setCountryCode(entityCode);
-            else if ( aDto instanceof CurrencyDto)
+            else if ( aDto instanceof CurrencyDto )
                 ((CurrencyDto) aDto).setCode(entityCode);
+            else if ( aDto instanceof UserDto)
+                ((UserDto) aDto).setUsername(entityCode);
 
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_UPDATE );
