@@ -30,10 +30,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
 /**
@@ -107,6 +107,11 @@ public class AttributeDTO extends EnableBusinessDto {
     
     private Integer unitNbDecimal = BaseEntity.NB_DECIMALS;
     
+    protected boolean readOnly = Boolean.FALSE;
+    
+
+    protected CustomFieldsDto customFields;
+    
     public AttributeDTO() {
     }
 
@@ -130,6 +135,7 @@ public class AttributeDTO extends EnableBusinessDto {
         id=attribute.getId();
         mandatory=attribute.isMandatory();
         unitNbDecimal = attribute.getUnitNbDecimal(); 
+        readOnly = attribute.getReadOnly();
         if (attribute.getAssignedAttributes()!=null) {
         	for (Attribute attr:attribute.getAssignedAttributes()) {
         		assignedAttributeCodes.add(attr.getCode());
@@ -385,6 +391,42 @@ public class AttributeDTO extends EnableBusinessDto {
 	 */
 	public void setUnitNbDecimal(Integer unitNbDecimal) {
 		this.unitNbDecimal = unitNbDecimal;
+	}
+
+
+
+	/**
+	 * @return the readOnly
+	 */
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+
+
+	/**
+	 * @param readOnly the readOnly to set
+	 */
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+
+
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 
 

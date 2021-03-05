@@ -3,12 +3,14 @@ package org.meveo.model.billing;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.security.MeveoUser;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -20,6 +22,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Entity
+@Cacheable
+@CustomFieldEntity(cftCodePrefix = "AttributeInstance")
 @Table(name = "cpq_attribute_instance")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_attribute_seq")})

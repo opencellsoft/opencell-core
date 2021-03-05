@@ -3951,5 +3951,82 @@ public class OrderAdvancement extends ModuleScript {
 		<dropSequence sequenceName="cpq_accounting_article_seq"/>
 	</changeSet>
 	
+	<changeSet id="#20210304_540320" author="TarikFA.">
+	
+		<addColumn tableName="cpq_quote_attribute">
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+            <column name="uuid" type="varchar(60)" defaultValue="" />
+		</addColumn>
+		
+        <sql>update ${db.schema.adapted}cpq_quote_attribute set uuid = 'quote_attribute'||id</sql>
+        <addNotNullConstraint tableName="adm_role" columnName="uuid"/>
+		
+		<addColumn tableName="cpq_order_item">
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+            <column name="uuid" type="varchar(60)" defaultValue="" />
+		</addColumn>
+		
+        <sql>update ${db.schema.adapted}cpq_order_item set uuid = 'order_item'||id</sql>
+        <addNotNullConstraint tableName="adm_role" columnName="uuid"/>
+		
+		<addColumn tableName="cpq_attribute_instance">
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+            <column name="uuid" type="varchar(60)" defaultValue="" />
+		</addColumn>
+		
+        <sql>update ${db.schema.adapted}cpq_attribute_instance set uuid = 'attribute_instance'||id</sql>
+        <addNotNullConstraint tableName="adm_role" columnName="uuid"/>
+		
+		<addColumn tableName="ar_payment_token">
+           	<column name="cf_values" type="${type.json}" />
+           	<column name="cf_values_accum" type="${type.json}" />
+            <column name="uuid" type="varchar(60)" defaultValue="" />
+		</addColumn>
+		
+        <sql>update ${db.schema.adapted}ar_payment_token set uuid = 'payment_token'||id</sql>
+        <addNotNullConstraint tableName="adm_role" columnName="uuid"/>
+        
+        <addColumn tableName="cpq_attribute">
+        	<column name="read_only" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+        
+        <addColumn tableName="account_entity">
+        	<column name="address_4" type="varchar(255)" />
+        	<column name="address_5" type="varchar(255)" />
+        </addColumn>
+        
+        <addColumn tableName="com_sender_config">
+        	<column name="address_4" type="varchar(255)" />
+        	<column name="address_5" type="varchar(255)" />
+        </addColumn>
+        
+        <addColumn tableName="crm_provider">
+        	<column name="address_4" type="varchar(255)" />
+        	<column name="address_5" type="varchar(255)" />
+        </addColumn>
+        
+        <addColumn tableName="crm_provider_contact">
+        	<column name="address_4" type="varchar(255)" />
+        	<column name="address_5" type="varchar(255)" />
+        </addColumn>
+        
+        <addColumn tableName="ord_order_item">
+        	<column name="address_4" type="varchar(255)" />
+        	<column name="address_5" type="varchar(255)" />
+        </addColumn>
+        
+		<addColumn tableName="cpq_offer_component">
+			<column name="sequence" type="int4" defaultValueNumeric="0"/>
+        	<column name="mandatory" type="${type.boolean}" defaultValueNumeric="0"/>
+        	<column name="display" type="${type.boolean}" />
+		</addColumn>
+		
+	</changeSet>
+	
+	
+	
 
 </databaseChangeLog>

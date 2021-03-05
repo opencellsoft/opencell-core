@@ -15,32 +15,43 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
-package org.meveo.model.payments;
+package org.meveo.model;
+
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.Type;
 
 /**
- * Payment Method types.
- * 
- * @author Edward P. Legaspi
- * @lastModifiedVersion 9.2.0
+ * Tracks if entity is active or inactive
  */
-public enum PaymentMethodEnum {
+@MappedSuperclass
+public class EnableCFEntity extends AuditableCFEntity implements IEnable {
 
-	CHECK, DIRECTDEBIT, WIRETRANSFER, CARD, PAYPAL, STRIPE, CASH;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * @return label
-	 */
-	public String getLabel() {
-		return this.getClass().getSimpleName() + "." + this.name();
-	}
+    /**
+     * Is entity disabled
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "disabled", nullable = false)
+    @NotNull
+    protected boolean disabled;
 
-	/**
-	 * Is it as simple payment method that does not required any additional
-	 * information.
-	 * 
-	 * @return true/fale
-	 */
-	public boolean isSimple() {
-		return this == CHECK || this == PaymentMethodEnum.WIRETRANSFER || this == PaymentMethodEnum.PAYPAL;
-	}
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public boolean isActive() {
+        return !disabled;
+    }
+
+    public void setActive(boolean active) {
+        setDisabled(!active);
+    }
 }

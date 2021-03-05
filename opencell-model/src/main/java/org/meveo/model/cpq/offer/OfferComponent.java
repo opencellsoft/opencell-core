@@ -1,11 +1,11 @@
 package org.meveo.model.cpq.offer;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -14,11 +14,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Product;
@@ -61,6 +61,26 @@ public class OfferComponent extends BaseEntity {
 			inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")				
 		)
 	private Set<Tag> tagsList = new HashSet<>();
+	
+
+	/**
+	* Mandatory
+	*/
+	@Type(type = "numeric_boolean")
+	@Column(name = "mandatory")
+	private boolean mandatory=Boolean.FALSE;
+    /**
+     * The lower number, the higher the priority is
+     */
+    @Column(name = "sequence", columnDefinition = "int DEFAULT 0")
+    private Integer sequence = 0;
+
+    /*
+     * display 
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "display")
+    protected boolean display = Boolean.TRUE;
 
 	public OfferComponent() {
 		
@@ -141,6 +161,48 @@ public class OfferComponent extends BaseEntity {
 		OfferComponent other = (OfferComponent) obj;
 		return Objects.equals(offerTemplate, other.offerTemplate) && Objects.equals(product, other.product)
 				&& Objects.equals(tagsList, other.tagsList);
+	}
+
+	/**
+	 * @return the mandatory
+	 */
+	public boolean isMandatory() {
+		return mandatory;
+	}
+
+	/**
+	 * @param mandatory the mandatory to set
+	 */
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
+	}
+
+	/**
+	 * @return the display
+	 */
+	public boolean isDisplay() {
+		return display;
+	}
+
+	/**
+	 * @param display the display to set
+	 */
+	public void setDisplay(boolean display) {
+		this.display = display;
+	}
+
+	/**
+	 * @return the sequence
+	 */
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	/**
+	 * @param sequence the sequence to set
+	 */
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 
 	
