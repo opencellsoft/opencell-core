@@ -3,6 +3,9 @@ package org.meveo.apiv2.generic;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CountryDto;
+import org.meveo.api.dto.CurrencyDto;
+import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.billing.ActivateSubscriptionRequestDto;
@@ -311,15 +314,18 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
 
             Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
-            if ( aDto instanceof BusinessEntityDto ) {
+            if ( aDto instanceof BusinessEntityDto )
                 ((BusinessEntityDto) aDto).setCode(entityCode);
-            }
-            else if ( aDto instanceof AccountHierarchyDto) {
+            else if ( aDto instanceof AccountHierarchyDto )
                 ((AccountHierarchyDto) aDto).setCustomerCode(entityCode);
-            }
-            else if ( aDto instanceof AccessDto) {
+            else if ( aDto instanceof AccessDto )
                 ((AccessDto) aDto).setCode(entityCode);
-            }
+            else if ( aDto instanceof LanguageDto )
+                ((LanguageDto) aDto).setCode(entityCode);
+            else if ( aDto instanceof CountryDto )
+                ((CountryDto) aDto).setCountryCode(entityCode);
+            else if ( aDto instanceof CurrencyDto)
+                ((CurrencyDto) aDto).setCode(entityCode);
 
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_UPDATE );

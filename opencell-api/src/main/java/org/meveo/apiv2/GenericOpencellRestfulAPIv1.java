@@ -307,6 +307,16 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/jobInstances\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
                         }
+                        else if ( ((Path) anAnnotation).value().equals( "/language" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/languages", ((Path) anAnnotation).value() );
+
+                            // Processing for enable and disable a language
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/languages\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/languages\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+                        }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
                                     API_VERSION + Inflector.getInstance().pluralize( ((Path) anAnnotation).value() ),
