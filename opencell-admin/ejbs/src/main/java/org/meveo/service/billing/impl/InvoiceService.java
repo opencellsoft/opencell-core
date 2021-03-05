@@ -3499,11 +3499,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private List<DiscountPlanInstance> fromBillingAccount(BillingAccount billingAccount) {
-        return billingAccount.getUsersAccounts().stream()
-                .map(userAccount -> userAccount.getSubscriptions())
-                .map(this::addSubscriptionDiscountPlan)
-                .flatMap(Collection::stream)
-                .collect(toList());
+
+        return new ArrayList<DiscountPlanInstance>();
+        //        return billingAccount.getUsersAccounts().stream()
+        // .map(userAccount -> userAccount.getSubscriptions())
+        // .map(this::addSubscriptionDiscountPlan)
+        // .flatMap(Collection::stream)
+        // .collect(toList());
     }
 
     private List<DiscountPlanInstance> addSubscriptionDiscountPlan(List<Subscription> subscriptions) {
