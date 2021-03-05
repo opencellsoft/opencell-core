@@ -2369,5 +2369,10 @@
 		
 		<dropTable tableName="rating_edr_other_tmp"/>
     </changeSet>
+    
+    <changeSet id="#5978_20210305" author="HatimOUDAD" dbms="postgresql">
+    	<sql>DROP INDEX IF EXISTS billing_wallet_operation_index</sql>
+        <sql>CREATE INDEX edr_index_subscription ON ${db.schema.adapted}billing_rated_transaction (subscription_id)</sql>
+    </changeSet>
 
 </databaseChangeLog>
