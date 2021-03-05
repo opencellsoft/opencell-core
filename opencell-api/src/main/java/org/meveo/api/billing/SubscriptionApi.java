@@ -2364,31 +2364,32 @@ public class SubscriptionApi extends BaseApi {
 
         // populate Electronic Billing Fields
         populateElectronicBillingFields(postData, subscription);
-
+        
+        CustomFieldsDto cfs = postData.getCustomFields();
+    	if(cfs!=null) {
         // populate customFields
-        try {
-        	CustomFieldsDto cfs = postData.getCustomFields();
-        	List<CustomFieldDto> customFieldDtos =cfs.getCustomField();
-        	List<CustomFieldDto> inheritedCustomFieldDtos =cfs.getInheritedCustomField();
-			if (cfsToCopy != null) {
-				if(customFieldDtos != null) {
-					customFieldDtos = customFieldDtos.stream().filter(x -> cfsToCopy.contains(x.getCode())).collect(Collectors.toList());
-					cfs.setCustomField(customFieldDtos);
+	        try {
+	        	List<CustomFieldDto> customFieldDtos =cfs.getCustomField();
+	        	List<CustomFieldDto> inheritedCustomFieldDtos =cfs.getInheritedCustomField();
+				if (cfsToCopy != null) {
+					if(customFieldDtos != null) {
+						customFieldDtos = customFieldDtos.stream().filter(x -> cfsToCopy.contains(x.getCode())).collect(Collectors.toList());
+						cfs.setCustomField(customFieldDtos);
+					}
+					if(inheritedCustomFieldDtos != null) {
+						inheritedCustomFieldDtos = inheritedCustomFieldDtos.stream().filter(x -> cfsToCopy.contains(x)).collect(Collectors.toList());
+						cfs.setInheritedCustomField(inheritedCustomFieldDtos);
+					}
 				}
-				if(inheritedCustomFieldDtos != null) {
-					inheritedCustomFieldDtos = inheritedCustomFieldDtos.stream().filter(x -> cfsToCopy.contains(x)).collect(Collectors.toList());
-					cfs.setInheritedCustomField(inheritedCustomFieldDtos);
-				}
-			}
-			populateCustomFields(cfs, subscription, true);
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
-
+				populateCustomFields(cfs, subscription, true);
+	        } catch (MissingParameterException | InvalidParameterException e) {
+	            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+	            throw e;
+	        } catch (Exception e) {
+	            log.error("Failed to associate custom field instance to an entity", e);
+	            throw e;
+	        }
+    	}
         subscriptionService.create(subscription);
         userAccount.getSubscriptions().add(subscription);
 
