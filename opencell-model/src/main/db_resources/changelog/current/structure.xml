@@ -4152,6 +4152,12 @@ END $$;]]>
         <addUniqueConstraint columnNames="country_code" constraintName="UniqueConstraint_adm__country_code" tableName="adm_country" />
     </changeSet>
 
+    <changeSet id="#5999_20210305" author="AndriusKarpavicius">
+        <sql>CREATE INDEX billing_invoice_br_index on ${db.schema.adapted}billing_invoice (billing_run_id)</sql>
+        <sql>CREATE INDEX billing_invoice_agregate_br_index on ${db.schema.adapted}billing_invoice_agregate (billing_run_id)</sql>
+        <sql>CREATE INDEX rt_br_index ON billing_rated_transaction (billing_run_id) where status='BILLED'</sql>
+    </changeSet>
+    
     <changeSet id="4756_20191104" author="Andrius">
         <!-- <dropColumn tableName="job_execution" columnName="job_done"/>  -->
         <addColumn tableName="job_execution">
