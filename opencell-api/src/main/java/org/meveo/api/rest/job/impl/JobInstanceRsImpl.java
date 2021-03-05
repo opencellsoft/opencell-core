@@ -18,18 +18,20 @@
 
 package org.meveo.api.rest.job.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.job.JobInstanceDto;
+import org.meveo.api.dto.response.job.JobInstanceListResponseDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.job.JobInstanceApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.job.JobInstanceRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * 
@@ -42,6 +44,20 @@ public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
 
     @Inject
     private JobInstanceApi jobInstanceApi;
+
+    @Override
+    public JobInstanceListResponseDto list() {
+        JobInstanceListResponseDto result = new JobInstanceListResponseDto();
+
+        try {
+            result = jobInstanceApi.list(true,
+                    GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
 
     @Override
     public ActionStatus create(JobInstanceDto postData) {
@@ -57,6 +73,18 @@ public class JobInstanceRsImpl extends BaseRs implements JobInstanceRs {
 
     @Override
     public ActionStatus update(JobInstanceDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            jobInstanceApi.update(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus updatePut(JobInstanceDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             jobInstanceApi.update(postData);

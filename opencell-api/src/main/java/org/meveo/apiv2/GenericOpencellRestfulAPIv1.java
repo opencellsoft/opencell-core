@@ -57,6 +57,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
     private static final String ACCOUNT_MANAGEMENT = "/accountManagement";
     private static final String CATALOG = "/catalog";
     private static final String BILLING = "/billing";
+    private static final String ENABLE_SERVICE = "/enable";
+    private static final String DISABLE_SERVICE = "/disable";
 
     // final useful strings
     private static final String FORWARD_SLASH = "/";
@@ -214,10 +216,10 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable an offerTemplate
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/offerTemplates\\/" + CODE_REGEX + "\\/enable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/offerTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/offerTemplates\\/" + CODE_REGEX + "\\/disable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/offerTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/oneShotChargeTemplate" ) ) {
@@ -225,10 +227,10 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable an oneShotChargeTemplate
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/oneShotChargeTemplates\\/" + CODE_REGEX + "\\/enable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/oneShotChargeTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/oneShotChargeTemplates\\/" + CODE_REGEX + "\\/disable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/oneShotChargeTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/recurringChargeTemplate" ) ) {
@@ -236,10 +238,10 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable a recurringChargeTemplate
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/recurringChargeTemplates\\/" + CODE_REGEX + "\\/enable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/recurringChargeTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/recurringChargeTemplates\\/" + CODE_REGEX + "\\/disable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/recurringChargeTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/usageChargeTemplate" ) ) {
@@ -247,10 +249,10 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable a usageChargeTemplate
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/usageChargeTemplates\\/" + CODE_REGEX + "\\/enable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/usageChargeTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/usageChargeTemplates\\/" + CODE_REGEX + "\\/disable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/usageChargeTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/serviceTemplate" ) ) {
@@ -258,10 +260,10 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable a serviceTemplate
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/serviceTemplates\\/" + CODE_REGEX + "\\/enable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/serviceTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/serviceTemplates\\/" + CODE_REGEX + "\\/disable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/serviceTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/pricePlan" ) ) {
@@ -269,30 +271,40 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable a pricePlan
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/pricePlans\\/" + CODE_REGEX + "\\/enable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/pricePlans\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/pricePlans\\/" + CODE_REGEX + "\\/disable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/pricePlans\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/country" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/countries", ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable a trading country
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/countries\\/" + CODE_REGEX + "\\/enable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/countries\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/countries\\/" + CODE_REGEX + "\\/disable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/countries\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/currency" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/currencies", ((Path) anAnnotation).value() );
 
                             // Processing for enable and disable a trading currency
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/currencies\\/" + CODE_REGEX + "\\/enable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/currencies\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/currencies\\/" + CODE_REGEX + "\\/disable" ) ,
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/currencies\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/jobInstance" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobInstances", ((Path) anAnnotation).value() );
+
+                            // Processing for enable and disable a jobInstance
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/jobInstances\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/jobInstances\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
                         }
                         else {

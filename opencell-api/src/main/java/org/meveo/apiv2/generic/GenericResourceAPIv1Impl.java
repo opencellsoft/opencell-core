@@ -36,6 +36,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String METHOD_GET_ALL = "/list";
     private static final String METHOD_GET_ALL_BIS = "/listGetAll";
     private static final String METHOD_CREATE = "/";
+    private static final String METHOD_CREATE_BIS = "/create";
     private static final String METHOD_UPDATE = "/";
     private static final String METHOD_DELETE = "/";
 
@@ -213,8 +214,12 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( postPath ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( postPath );
 
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + METHOD_CREATE );
+            if ( pathIBaseRS.equals( "/jobInstance" ) )
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + METHOD_CREATE_BIS );
+            else
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + METHOD_CREATE );
 
             return Response.temporaryRedirect( redirectURI )
                     .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
