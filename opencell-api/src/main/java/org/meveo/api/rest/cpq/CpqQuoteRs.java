@@ -64,7 +64,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
  * 
  * @author Rachid.AIT
  */
-@Path("/quote")
+@Path("/cpq/quotes")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -78,7 +78,7 @@ public interface CpqQuoteRs {
      * @return Product quote information
      */
     @POST
-    @Path("/{executeQuotation}")
+    @Path("/")
     @Operation(summary = "Create a quote",
     tags = { "Quote management" },
     description ="",
@@ -88,7 +88,7 @@ public interface CpqQuoteRs {
             @ApiResponse(responseCode = "302", description = "The quote already exist", content = @Content(schema = @Schema(implementation = EntityAlreadyExistsException.class))),
             @ApiResponse(responseCode = "404", description = "Applicant account is unknown", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
     })
-    public Response createQuote(@Parameter(description = "Execute quotation (false/true)", required = true) @PathParam("executeQuotation") boolean executeQuotation,@Parameter(description = "Product quote information", required = false) QuoteDTO quote, @Context UriInfo info);
+    public Response createQuote(@Parameter(description = "Product quote information", required = false) QuoteDTO quote, @Context UriInfo info);
 
     /**
      * Get details of a single quote
@@ -115,7 +115,7 @@ public interface CpqQuoteRs {
      * @return A list of quotes matching search criteria
      */
     @POST
-    @Path("/list")
+    @Path("/filtering")
     @Operation(summary = "Get a list of quotes optionally filtered by some criteria",
     tags = { "Quote management" },
     description ="",
@@ -133,7 +133,7 @@ public interface CpqQuoteRs {
      * @return An updated quote information
      */
     @PUT
-    @Path("/{executeQuotation}")
+    @Path("/")
     @Operation(summary = "Modify a quote",
     tags = { "Quote management" },
     description ="",
@@ -142,7 +142,7 @@ public interface CpqQuoteRs {
             @ApiResponse(responseCode = "404", description = "The quote is missing", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class))),
             @ApiResponse(responseCode = "404", description = "Applicant account code is missing", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
     })
-    public Response updateQuote(@Parameter(description = "Execute quotation (false/true)", required = true) @PathParam("executeQuotation") boolean executeQuotation,@Parameter(description = "Product quote information", required = false) QuoteDTO quote, @Context UriInfo info);
+    public Response updateQuote(@Parameter(description = "Product quote information", required = false) QuoteDTO quote, @Context UriInfo info);
     
     
     /**
@@ -154,7 +154,7 @@ public interface CpqQuoteRs {
      * @return An updated quote information
      */
     @PUT
-    @Path("/quoteItem")
+    @Path("/quoteItems")
     @Operation(summary = "Modify a quote item",
     tags = { "Quote management" },
     description ="",
@@ -171,7 +171,7 @@ public interface CpqQuoteRs {
      * @return quote response
      */
     @GET
-    @Path("/quoteItem/{quoteCode}/{quoteVersion}")
+    @Path("/quoteItems/{quoteCode}/quoteVersions/{quoteVersion}")
     @Operation(summary = "Get List of quote offer by quote code and quote version number",
     tags = { "Quote management" },
     description ="",
@@ -209,7 +209,7 @@ public interface CpqQuoteRs {
      * @return Response status
      */
     @POST
-    @Path("/placeOrder/{quoteCode}/{quoteVersion}")
+    @Path("/{quoteCode}/quoteVersions/{quoteVersion}/orderPlacement")
     @Operation(summary = "Place an order based on a quote",
     tags = { "Quote management" },
     description ="",
@@ -227,7 +227,7 @@ public interface CpqQuoteRs {
      * @return Product quote information
      */
     @POST
-    @Path("/quoteItem")
+    @Path("/quoteItems")
     @Operation(summary = "Create a quote item",
     tags = { "Quote management" },
     description ="",
@@ -238,7 +238,7 @@ public interface CpqQuoteRs {
 
     
     @POST
-    @Path("/quoteVersion")
+    @Path("/quoteVersions")
     @Operation(summary = "Create a quote version",
     tags = { "Quote management" },
     description ="",
@@ -251,7 +251,7 @@ public interface CpqQuoteRs {
 
     
     @DELETE
-    @Path("/quoteVersion/{quoteCode}/{quoteVersion}")
+    @Path("/quoteVersions/{quoteCode}/{quoteVersion}")
     @Operation(summary = "Delete a quote version",
     tags = { "Quote management" },
     description ="",
@@ -271,7 +271,7 @@ public interface CpqQuoteRs {
      * @return Response status
      */
     @DELETE
-    @Path("/quoteItem/{quoteItemId}")
+    @Path("/quoteItems/{quoteItemId}")
     @Operation(summary = "Delete a quote item",
     tags = { "Quote management" },
     description ="",
@@ -282,7 +282,7 @@ public interface CpqQuoteRs {
     
     
     @PUT
-    @Path("/{quoteCode}/update/status")
+    @Path("/{quoteCode}/status/{status}")
     @Operation(summary = "this endpoint allow you to update a quote of status",
     tags = { "Quote management" },
     description ="status can not be modified if is already Cancelled or rejected",
@@ -292,12 +292,12 @@ public interface CpqQuoteRs {
             @ApiResponse(responseCode = "400", description = "the status can not be update, because of its current status", content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
     public Response updateQuoteStatus( @PathParam("quoteCode") String quoteCode,
-    							@QueryParam("status") String status
+    							@PathParam("status") String status
     		);
     
 
     @PUT
-    @Path("/{quoteCode}/{currentVersion}/update/status")
+    @Path("/quoteVersions/{quoteCode}/{currentVersion}/status/{status}")
     @Operation(summary = "this endpoint allow you to update a quote version of status",
     tags = { "Quote management" },
     description ="status can not be modified if is already Closed or Published",
@@ -308,18 +308,18 @@ public interface CpqQuoteRs {
     })
     public Response updateQuoteVersionStatus( @PathParam("quoteCode") String quoteCode,
     										@PathParam("currentVersion") int currentVersion,
-    							@QueryParam("status") VersionStatusEnum status
+    							@PathParam("status") VersionStatusEnum status
     		);
     @POST
-    @Path("/duplicate/{quoteCode}/{quoteversion}")
-    @Operation(summary = "this endpoint allow you to duplicate a quote from quote code",
+    @Path("/{quoteCode}/{quoteVersion}/duplication")
+    @Operation(summary = "this endpoint allow you to duplicate a quote and it quote version",
     tags = { "Quote management" },
     description ="duplicate quote and their related entities",
     responses = {
             @ApiResponse(responseCode="200", description = "quote version status is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class))),
             @ApiResponse(responseCode = "404", description = "Quote version doesn't exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
     })
-    public Response duplicateQuote( @Parameter(required = true)	@PathParam("quoteCode") String quoteCode, @Parameter(required = true)	@PathParam("quoteversion") int quoteversion);
+    public Response duplicateQuote( @Parameter(required = true)	@PathParam("quoteCode") String quoteCode, @Parameter(required = true)	@PathParam("quoteVersion") int quoteversion);
     /*
     @GET
     @Path("/quoteItem/{quoteOfferId}")
@@ -333,33 +333,33 @@ public interface CpqQuoteRs {
     
 
     @POST
-    @Path("/quoteQuotation")
+    @Path("/quoteVersions/{quoteCode}/{quoteVersion}/quotation")
     @Operation(summary = "Get quote quotation",
     tags = { "Quotation" },
     description ="",
     responses = {
             @ApiResponse(responseCode="200", description = "quotation is succefully done!",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
     })
-	Response quoteQuotation(@Parameter(description = "quote code", required = false) @QueryParam("quoteCode") String quoteCode, 
-			@Parameter(description = "quote version number", required = false) @QueryParam("quoteVersion") int quoteVersion);
+	Response quoteQuotation(@Parameter(description = "quote code", required = false) @PathParam("quoteCode") String quoteCode,
+			@Parameter(description = "quote version number", required = false) @PathParam("quoteVersion") int quoteVersion);
 
-    @GET
-    @Path("/generateQuoteXml")
+    @POST
+    @Path("/quoteVersions/{quoteCode}/{currentVersion}/xmlGeneration")
     @Operation(summary = "Generate the quote XML and optionnaly quote PDF if generatePdf is True ",
     tags = { "Quotation" },
     description ="",
     responses = {
             @ApiResponse(responseCode="200", description = "quote XML is succefully generated!",content = @Content(schema = @Schema(implementation = GetPdfQuoteResponseDto.class)))
     })
-    GetPdfQuoteResponseDto generateQuoteXml(@QueryParam("quoteCode") String quoteCode, @QueryParam("currentVersion") int currentVersion, @QueryParam("generatePdf") boolean generatePdf);
+    GetPdfQuoteResponseDto generateQuoteXml(@PathParam("quoteCode") String quoteCode, @PathParam("currentVersion") int currentVersion, @QueryParam("generatePdf") boolean generatePdf);
     
     
     
     /**
      * get the quote PDF file. 
      */
-    @GET
-    @Path("/getQuotePDF")
+    @POST
+    @Path("/quoteVersions/{quoteCode}/{currentVersion}/pdfGeneration")
     @Operation(summary = "Get the quote PDF. if generatePdf is true, the PDF is generated and override existing one if already exists",
     tags = { "Quotation" },
     description ="",
@@ -377,7 +377,7 @@ public interface CpqQuoteRs {
      * @return quote response
      */
     @GET
-    @Path("/quoteItem")
+    @Path("/quoteItems")
     @Operation(summary = "Get f quote offer by quote id",
     tags = { "Quote management" },
     description ="",

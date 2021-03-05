@@ -58,7 +58,18 @@ public interface JobRs extends IBaseRs {
      */
     @POST
     @Path("/execute")
+    @Deprecated
     JobExecutionResultResponseDto execute(JobInstanceInfoDto postData);
+
+    /**
+     * Execute a given job instance info
+     *
+     * @param postData job instance info's data
+     * @return request processing status
+     */
+    @POST
+    @Path("/execution")
+    JobExecutionResultResponseDto execution(JobInstanceInfoDto postData);
     
     /**
      * Stop a given job instance info 
@@ -68,6 +79,7 @@ public interface JobRs extends IBaseRs {
      */
     @POST
     @Path("/stop/{jobInstanceCode}")
+    @Deprecated
     ActionStatus stop(@PathParam("jobInstanceCode") String jobInstanceCode);
     
     /**
@@ -79,6 +91,16 @@ public interface JobRs extends IBaseRs {
     @POST
     @Path("/create")
     ActionStatus create(JobInstanceDto postData);
+
+    /**
+     * Create a new job instance
+     *
+     * @param postData The job instance's data
+     * @return request processing status
+     */
+    @POST
+    @Path("/")
+    ActionStatus createV2(JobInstanceDto postData);
 
     /**
      * Update an existing job instance
@@ -98,6 +120,7 @@ public interface JobRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+    @Deprecated
     ActionStatus createOrUpdate(JobInstanceDto postData);
 
     /**
@@ -108,7 +131,18 @@ public interface JobRs extends IBaseRs {
      */
     @GET
     @Path("/")
+    @Deprecated
     JobInstanceResponseDto find(@QueryParam("jobInstanceCode") String jobInstanceCode);
+
+    /**
+     * Find a job instance with a given code
+     *
+     * @param jobInstanceCode string to match the code of JobInstance
+     * @return object containing the matched JobInstance
+     */
+    @GET
+    @Path("/{jobInstanceCode}")
+    JobInstanceResponseDto findV2(@PathParam("jobInstanceCode") String jobInstanceCode);
 
     /**
      * Remove an existing job instance with a given code 
@@ -165,6 +199,7 @@ public interface JobRs extends IBaseRs {
      */
     @POST
     @Path("/timer/createOrUpdate/")
+    @Deprecated
     ActionStatus createOrUpdateTimer(TimerEntityDto postData);
 
     /**
@@ -175,7 +210,18 @@ public interface JobRs extends IBaseRs {
      */
     @GET
     @Path("/timer/")
+    @Deprecated
     TimerEntityResponseDto findTimer(@QueryParam("timerCode") String timerCode);
+
+    /**
+     * Find a timer with a given code
+     *
+     * @param timerCode The timer's code
+     * @return request processing status
+     */
+    @GET
+    @Path("/timers/{timerCode}")
+    TimerEntityResponseDto findTimerV2(@PathParam("timerCode") String timerCode);
 
     /**
      * Remove an existing timer with a given code 
@@ -196,7 +242,19 @@ public interface JobRs extends IBaseRs {
      */
     @GET
     @Path("/jobReport")
+    @Deprecated
     JobExecutionResultResponseDto findJobExecutionResult(@QueryParam("code") String code, @QueryParam("id") Long jobExecutionResultId);
+
+    /**
+     * Find a job execution result.
+     *
+     * @param code string to match the code of the JobInstance
+     * @param jobExecutionResultId a JobExcutionResultId
+     * @return object containing the JobExecutionResultImpl
+     */
+    @GET
+    @Path("{code}/jobExecution/{id}/jobReport")
+    JobExecutionResultResponseDto findJobExecutionResultV2(@PathParam("code") String code, @PathParam("id") Long jobExecutionResultId);
 
     /**
      * Job execution list matching a given criteria

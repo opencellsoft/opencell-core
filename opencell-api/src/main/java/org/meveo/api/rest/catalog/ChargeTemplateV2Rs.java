@@ -16,44 +16,33 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.api.rest.catalog.impl;
+package org.meveo.api.rest.catalog;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
-import org.meveo.api.catalog.GenericChargeTemplateApi;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
-import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.rest.catalog.ChargeTemplateRs;
-import org.meveo.api.rest.catalog.ChargeTemplateV2Rs;
-import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 /**
  * @author Edward P. Legaspi
  **/
-@RequestScoped
-@Interceptors({ WsRestApiInterceptor.class })
-public class ChargeTemplateRsImpl extends BaseRs implements ChargeTemplateRs {
+@Path("/catalog")
+@Tag(name = "ChargeTemplate", description = "@%ChargeTemplate")
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+public interface ChargeTemplateV2Rs extends IBaseRs {
 
-    @Inject
-    private GenericChargeTemplateApi chargeTemplateApi;
 
-    @Override
-    public GetChargeTemplateResponseDto find(String chargeTemplateCode) {
-        GetChargeTemplateResponseDto result = new GetChargeTemplateResponseDto();
 
-        try {
-            result.setChargeTemplate(chargeTemplateApi.find(chargeTemplateCode));
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
-
-        return result;
-    }
-
-    @Override
-    public GetChargeTemplateResponseDto findV2(String chargeTemplateCode) {
-        return find(chargeTemplateCode);
-    }
 }

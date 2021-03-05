@@ -98,6 +98,11 @@ public class UserRsImpl extends BaseRs implements UserRs {
     }
 
     @Override
+    public GetUserResponse findV2(String username) {
+        return find(username);
+    }
+
+    @Override
     public ActionStatus createOrUpdate(UserDto postData) {
         ActionStatus result = new ActionStatus();
 

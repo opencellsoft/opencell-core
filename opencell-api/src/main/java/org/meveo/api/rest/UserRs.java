@@ -89,15 +89,28 @@ public interface UserRs extends IBaseRs {
 
     /**
      * Search user with a given username.
-     * 
+     *
      * @param username user name
      * @return user
      */
     @GET
     @Path("/")
     @Operation(summary = "Search user with a given username.",
-    tags = { "User management" })
+            deprecated = true,
+            tags = { "Deprecated" })
     GetUserResponse find(@QueryParam("username") String username);
+
+    /**
+     * Search user with a given username.
+     *
+     * @param username user name
+     * @return user
+     */
+    @GET
+    @Path("/name/{username}")
+    @Operation(summary = "Search user with a given username.",
+            tags = { "User management" })
+    GetUserResponse findV2(@QueryParam("username") String username);
 
     /**
      * Get info of currently logged in user
