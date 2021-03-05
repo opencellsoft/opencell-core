@@ -71,10 +71,6 @@ public class ReratingInfo implements Serializable {
         return fromDate;
     }
 
-    public Map<String, Object> getAdditionalCriteria() {
-        return additionalCriteria;
-    }
-
     /**
      * @param fromDate Starting which date to re-rate
      */
