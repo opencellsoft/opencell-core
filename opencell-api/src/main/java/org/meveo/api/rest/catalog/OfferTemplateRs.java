@@ -438,6 +438,8 @@ public interface OfferTemplateRs extends IBaseRs {
 	)
     ActionStatus enable(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
 
+
+
     /**
      * Disable a Offer template with a given code
      * 
