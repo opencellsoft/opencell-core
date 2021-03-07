@@ -311,6 +311,9 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
             newDDRequestLotOp.setFilter(ddrequestLotOp.getFilter());
             newDDRequestLotOp.setDdrequestOp(ddrequestLotOp.getDdrequestOp());
 
+            newDDRequestLotOp.setGeneratePaymentLines(ddrequestLotOp.isGeneratePaymentLines());
+            newDDRequestLotOp.setPaymentStatus(ddrequestLotOp.getPaymentStatus());
+            
             this.dDRequestLotOpService.create(newDDRequestLotOp);
         } catch (Exception e) {
             log.error(" error on createNewDdrequestLotOp {} ", e.getMessage(), e);
