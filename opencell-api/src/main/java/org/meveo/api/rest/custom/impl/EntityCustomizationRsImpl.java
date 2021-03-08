@@ -440,7 +440,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
-    public GetCustomFieldTemp rlateReponseDto findFieldV2(String customFieldTemplateCode, String appliesTo) {
+    public GetCustomFieldTemplateReponseDto findFieldV2(String customFieldTemplateCode, String appliesTo) {
         return findField(customFieldTemplateCode, appliesTo);
     }
 
