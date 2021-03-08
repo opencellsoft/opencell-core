@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
@@ -36,6 +37,8 @@ public class ContractDto extends BusinessEntityDto {
     @NotNull
 	private boolean renewal;
 	private int contractDuration;
+	private CustomFieldsDto customFields;
+
     
 	
 	public ContractDto() {}
@@ -176,6 +179,20 @@ public class ContractDto extends BusinessEntityDto {
 	 */
 	public void setAccountCode(String accountCode) {
 		this.accountCode = accountCode;
+	}
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 	
 }

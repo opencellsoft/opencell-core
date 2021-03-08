@@ -41,6 +41,7 @@ public class InvoicingPlanItemDto extends BusinessEntityDto {
 
 	private BigDecimal rateToBill;
 
+	 private CustomFieldsDto customFields;
 	/**
 	 * Instantiates a new invoicingPlanItem dto.
 	 */
@@ -113,5 +114,19 @@ public class InvoicingPlanItemDto extends BusinessEntityDto {
 	 */
 	public InvoicingPlanItemDto(InvoicingPlanItem invoicingPlanItem, CustomFieldsDto customFieldInstances) {
 		super(invoicingPlanItem);
+	}
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 }

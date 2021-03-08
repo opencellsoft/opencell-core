@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteProduct;
@@ -66,6 +67,8 @@ public class QuoteProductDTO extends BaseEntityDto{
     private List<QuoteAttributeDTO> productAttributes=new ArrayList<QuoteAttributeDTO>();
     
     private List<AccountingArticlePricesDTO> accountingArticlePrices = new ArrayList<AccountingArticlePricesDTO>();
+
+	 private CustomFieldsDto customFields;
     
     public QuoteProductDTO() {
     	super();
@@ -221,5 +224,21 @@ public class QuoteProductDTO extends BaseEntityDto{
 	 */
 	public void setQuoteProductId(Long quoteProductId) {
 		this.quoteProductId = quoteProductId;
+	}
+
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 }
