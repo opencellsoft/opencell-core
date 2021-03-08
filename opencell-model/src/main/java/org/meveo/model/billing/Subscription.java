@@ -1125,4 +1125,11 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     public void setMinInvoiceLines(List<InvoiceLine> invoiceLines) {
         this.minInvoiceLines = invoiceLines;
     }
+
+	/**
+	 * @param prestation the prestation to set
+	 */
+	public void setPrestation(String prestation) {
+		this.prestation = prestation;
+	}
 }

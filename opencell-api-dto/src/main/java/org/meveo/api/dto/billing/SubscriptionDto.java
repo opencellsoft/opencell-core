@@ -227,6 +227,8 @@ public class SubscriptionDto extends BusinessEntityDto {
      */
     @XmlElement(name = "paymentMethod")
     private PaymentMethodDto paymentMethod;
+    
+    private String customerService;
 
     /**
      * Instantiates a new subscription dto.
@@ -860,4 +862,18 @@ public class SubscriptionDto extends BusinessEntityDto {
     public void setValidityDate(Date validityDate) {
         this.validityDate = validityDate;
     }
+
+	/**
+	 * @return the customerService
+	 */
+	public String getCustomerService() {
+		return customerService;
+	}
+
+	/**
+	 * @param customerService the customerService to set
+	 */
+	public void setCustomerService(String customerService) {
+		this.customerService = customerService;
+	}
 }
