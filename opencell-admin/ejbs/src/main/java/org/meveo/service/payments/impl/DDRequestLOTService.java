@@ -230,7 +230,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	}
 
 	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT) throws Exception {
-		createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, 1L, 0L, null);
+		createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, true, PaymentStatusEnum.ACCEPTED, 1L, 0L, null);
 	}
 
 	/**
@@ -239,7 +239,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 * @param ddRequestLOT the dd request LOT
 	 * @throws Exception
 	 */
-	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT, Long nbRuns, Long waitingMillis, JobExecutionResultImpl result) throws Exception {
+	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT, Boolean isToMatching, PaymentStatusEnum paymentStatus, Long nbRuns, Long waitingMillis, JobExecutionResultImpl result) throws Exception {
 		ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
 		log.info("createPaymentsForDDRequestLot ddRequestLotId: {}, size:{}", ddRequestLOT.getId(), ddRequestLOT.getDdrequestItems().size());
 		if (ddRequestLOT.isPaymentCreated()) {
@@ -249,7 +249,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		SubListCreator subListCreator = new SubListCreator(ddRequestLOT.getDdrequestItems(), nbRuns.intValue());
 		List<Future<String>> futures = new ArrayList<Future<String>>();
 		while (subListCreator.isHasNext()) {
-			futures.add(sepaDirectDebitAsync.launchAndForgetPaymentCreation((List<DDRequestItem>) subListCreator.getNextWorkSet(), result));
+			futures.add(sepaDirectDebitAsync.launchAndForgetPaymentCreation((List<DDRequestItem>) subListCreator.getNextWorkSet(), isToMatching, paymentStatus, result));
 			try {
 				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {
