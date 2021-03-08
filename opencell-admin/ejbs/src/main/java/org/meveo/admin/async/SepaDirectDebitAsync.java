@@ -43,6 +43,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.DDRequestItemService;
@@ -92,14 +93,14 @@ public class SepaDirectDebitAsync {
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	@Interceptors({ JobMultithreadingHistoryInterceptor.class })
-	public Future<String> launchAndForgetPaymentCreation(List<DDRequestItem> ddRequestItems, JobExecutionResultImpl result) throws BusinessException {
+	public Future<String> launchAndForgetPaymentCreation(List<DDRequestItem> ddRequestItems, boolean isToMatching, PaymentStatusEnum paymentStatus, JobExecutionResultImpl result) throws BusinessException {
 		for (DDRequestItem ddRequestItem : ddRequestItems) {
 
 			if (result != null && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
 				break;
 			}
 			try {
-				unitSSDJobBean.execute(result, ddRequestItem);
+				unitSSDJobBean.execute(result, ddRequestItem, isToMatching, paymentStatus);
 			} catch (Exception e) {
 				Log.warn("Error on launchAndForgetPaymentCreation", e);
 				if(result != null) {

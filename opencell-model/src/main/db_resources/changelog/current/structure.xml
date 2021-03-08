@@ -4151,6 +4151,13 @@ END $$;]]>
     <changeSet id="#5993_20210304" author="HatimOUDAD">
         <addUniqueConstraint columnNames="country_code" constraintName="UniqueConstraint_adm__country_code" tableName="adm_country" />
     </changeSet>
+    
+    <changeSet id="#5863_22122020" author="AbdelmounaimAkadid">
+		<addColumn tableName="ar_ddrequest_lot_op">
+            <column name="generate_payment_lines" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="payment_status" type="varchar(25)" />
+        </addColumn>
+	</changeSet>
 
     <changeSet id="#5999_20210305" author="AndriusKarpavicius">
         <sql>CREATE INDEX billing_invoice_br_index on ${db.schema.adapted}billing_invoice (billing_run_id)</sql>
