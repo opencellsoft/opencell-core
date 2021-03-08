@@ -35,7 +35,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
  * @version 11.0
  * @LastModified 04-01-2021
  */
-@Path("/commercialOrders")
+@Path("/orderManagment/commercialOrders")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface CommercialOrderRs {
