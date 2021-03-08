@@ -30,11 +30,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.async.FlatFileProcessing;
 import org.meveo.admin.async.MediationFileProcessing;
 import org.meveo.admin.parse.csv.MEVEOCdrFlatFileReader;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
-import org.meveo.model.bi.FileStatusEnum;
 import org.meveo.model.bi.FlatFile;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
@@ -74,6 +74,9 @@ public class MediationJobBean {
     @Inject
     private FlatFileService flatFileService;
 
+    @Inject
+    private FlatFileProcessing flatFileProcessing;
+    
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
@@ -134,6 +137,9 @@ public class MediationJobBean {
         File rejectFile = null;
         PrintWriter rejectFileWriter = null;
         PrintWriter outputFileWriter = null;
+        String fileCurrentName = null;
+        String rejectedfileName = fileName + ".rejected";
+        String processedfileName = fileName + ".processed";
 
         File currentFile = null;
         ICdrReader cdrReader = null;
@@ -141,10 +147,10 @@ public class MediationJobBean {
 
         try {
 
-            rejectFile = new File(rejectDir + File.separator + fileName + ".rejected");
+            rejectFile = new File(rejectDir + File.separator + rejectedfileName);
             rejectFileWriter = new PrintWriter(rejectFile);
 
-            File outputFile = new File(outputDir + File.separator + fileName + ".processed");
+            File outputFile = new File(outputDir + File.separator + processedfileName);
             outputFileWriter = new PrintWriter(outputFile);
 
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
@@ -205,18 +211,13 @@ public class MediationJobBean {
             result.addReport(e.getMessage());
             errors.add(e.getMessage());
             if (currentFile != null) {
-                FileUtils.moveFileDontOverwrite(rejectDir, currentFile, fileName);
+                fileCurrentName = FileUtils.moveFileDontOverwrite(rejectDir, currentFile, fileName);
             }
 
         } finally {
             FlatFile flatFile = flatFileService.getFlatFileByFileName(fileName);
             if (flatFile != null) {
-                FileStatusEnum status = FileStatusEnum.VALID;
-                if (errors != null && !errors.isEmpty()) {
-                    status = FileStatusEnum.REJECTED;
-                }
-                flatFile.setStatus(status);
-                flatFileService.update(flatFile);
+                flatFileProcessing.updateFlatFile(fileName, fileCurrentName, rejectedfileName, processedfileName, rejectDir, outputDir, errors, result.getNbItemsCorrectlyProcessed(), result.getNbItemsProcessedWithError(), result.getJobInstance().getCode());
             }
 
             try {

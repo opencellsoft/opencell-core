@@ -488,7 +488,11 @@ public class ReflectionUtils {
                 String iterationFieldName = tokenizer.nextToken();
                 field = getField(iterationClazz, iterationFieldName);
                 if (field != null) {
-                    iterationClazz = field.getType();
+                	if(Collection.class.isAssignableFrom(field.getType())){
+                		iterationClazz = getFieldGenericsType(field);
+                	} else {
+                		iterationClazz = field.getType();
+                	}
                 } else {
                     Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
                     log.error("No field {} in {}", iterationFieldName, iterationClazz);
