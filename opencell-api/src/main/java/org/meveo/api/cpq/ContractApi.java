@@ -30,8 +30,6 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
@@ -109,6 +107,7 @@ public class ContractApi extends BaseApi{
 		contract.setDescription(dto.getDescription());
 		changeAccountLevel(dto, contract);
 		try {
+			populateCustomFields(dto.getCustomFields(), contract, true);
 			contractService.create(contract);
 		}catch(BusinessException e) {
 			throw new MeveoApiException(e);
@@ -188,6 +187,7 @@ public class ContractApi extends BaseApi{
 		
 		
 		try {
+			populateCustomFields(dto.getCustomFields(), contract, false);
 			contractService.update(contract);
 		}catch(BusinessException e) {
 			throw new MeveoApiException(e);
@@ -206,7 +206,9 @@ public class ContractApi extends BaseApi{
 		final Contract contract = contractService.findByCode(contractCode);
 		if(contract == null)
 			throw new EntityDoesNotExistsException(Contract.class, contractCode);
-		return new ContractDto(contract);
+		ContractDto dto = new ContractDto(contract);
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(contract));
+		return dto;
 	}
 	
 	public List<ContractDto> findContractAccountLevel(ContractAccountLevel contractAccountLevel, String accountCode) {
@@ -216,7 +218,13 @@ public class ContractApi extends BaseApi{
 			missingParameters.add("accountCode");
 		handleMissingParameters();
 		return contractService.findByBillingAccountLevel(contractAccountLevel, accountCode)
-													.stream().map(c -> new ContractDto(c)).collect(Collectors.toList());
+													.stream().map(c -> {
+														ContractDto dto = new ContractDto(c);
+														dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(c));
+														return dto;
+													}
+													).collect(Collectors.toList());
+													
 	}
 
 	public void updateStatus(String contractCode, ProductStatusEnum contractStatus){
@@ -295,6 +303,7 @@ public class ContractApi extends BaseApi{
     	item.setDescription(contractItemDto.getDescription());
     	
     	try {
+    		populateCustomFields(contractItemDto.getCustomFields(), item, true);
     		contractItemService.create(item);
     		return item.getId();
     	}catch(BusinessException e) {
@@ -332,6 +341,7 @@ public class ContractApi extends BaseApi{
     	item.setAmountWithoutTax(contractItemDto.getAmountWithoutTax());
     	
     	try {
+    		populateCustomFields(contractItemDto.getCustomFields(), item, false);
     		contractItemService.updateContractItem(item);
     	}catch(BusinessException e) {
     		throw new MeveoApiException(e);
@@ -350,7 +360,9 @@ public class ContractApi extends BaseApi{
     	final ContractItem item = contractItemService.findByCode(contractItemCode);
     	if(item == null)
     		throw new EntityDoesNotExistsException(ContractItem.class, contractItemCode);
-    	return new ContractItemDto(item);
+    	ContractItemDto dto = new ContractItemDto(item);
+    	dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(item));
+    	return dto;
     }
     
 	

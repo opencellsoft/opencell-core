@@ -254,7 +254,7 @@ public class RoleApi extends BaseApi {
 		}
 
         try {
-            populateCustomFields(postData.getCustomFields(), role, true);
+            populateCustomFields(postData.getCustomFields(), role, false);
         } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;

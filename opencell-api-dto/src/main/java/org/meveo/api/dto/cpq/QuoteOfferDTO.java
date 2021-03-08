@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteProduct;
@@ -72,6 +73,8 @@ public class QuoteOfferDTO extends BaseEntityDto{
     
     private List<QuoteAttributeDTO> offerAttributes =new ArrayList<QuoteAttributeDTO>();
     
+    private CustomFieldsDto customFields;
+    
     
 
    
@@ -88,6 +91,7 @@ public class QuoteOfferDTO extends BaseEntityDto{
 		offerCode=quoteOffer.getOfferTemplate().getCode();
 		billableAccountCode=quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount().getCode():null;
 		contractCode=quoteOffer.getContractCode();
+		
 	}
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
 		init(quoteOffer);
@@ -229,6 +233,18 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	 */
 	public void setOfferAttributes(List<QuoteAttributeDTO> offerAttributes) {
 		this.offerAttributes = offerAttributes;
+	}
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 	
 	
