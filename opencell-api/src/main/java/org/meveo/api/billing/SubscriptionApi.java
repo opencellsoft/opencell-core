@@ -411,6 +411,8 @@ public class SubscriptionApi extends BaseApi {
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
+        subscription.setRenewed(postData.isRenewed());
+        subscription.setPrestation(postData.getCustomerService());
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
         	subscription.setSubscribedTillDate(postData.getSubscribedTillDate());
         }
@@ -2402,6 +2404,8 @@ public class SubscriptionApi extends BaseApi {
         subscription.setSeller(seller);
         subscription.setOffer(offerTemplate);
         subscription.setFromValidity(postData.getValidityDate());
+        subscription.setRenewed(postData.isRenewed());
+        subscription.setPrestation(postData.getCustomerService());
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
         	subscription.setSubscribedTillDate(postData.getSubscribedTillDate());
         }
