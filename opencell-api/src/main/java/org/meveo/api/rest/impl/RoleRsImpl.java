@@ -94,6 +94,11 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
     }
 
     @Override
+    public GetRoleResponse findV2(String roleName, boolean includeSecuredEntities) {
+        return find(roleName, includeSecuredEntities);
+    }
+
+    @Override
     public ActionStatus createOrUpdate(RoleDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
@@ -120,6 +125,11 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
     }
 
     @Override
+    public RolesDto listGetV2(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+        return listGet(query, fields, offset, limit, sortBy, sortOrder);
+    }
+
+    @Override
     public RolesDto listPost(PagingAndFiltering pagingAndFiltering) {
 
         RolesDto result = new RolesDto();
@@ -134,6 +144,11 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
     }
 
     @Override
+    public RolesDto listPostV2(PagingAndFiltering pagingAndFiltering) {
+        return listPost(pagingAndFiltering);
+    }
+
+    @Override
     public RolesDto listExternalRoles() {
         RolesDto result = new RolesDto();
 
@@ -145,5 +160,9 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
 
         return result;
     }
-    
+
+    @Override
+    public RolesDto listExternalRolesV2() {
+        return listExternalRoles();
+    }
 }

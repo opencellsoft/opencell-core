@@ -129,8 +129,8 @@ public interface UserRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
-    @Operation(summary = "Create or update user based on the username.",
-    tags = { "User management" })
+    @Operation(summary = "Create or update user based on the username.", deprecated = true,
+    tags = { "Deprecated" })
     ActionStatus createOrUpdate(UserDto postData);
 
     /**
@@ -182,10 +182,29 @@ public interface UserRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    @Operation(summary = " List users matching a given criteria.",
-    tags = { "User management" })
+    @Operation(summary = " List users matching a given criteria.", deprecated = true,
+    tags = { "Deprecated" })
     UsersDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("userName") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+
+    /**
+     * List users matching a given criteria.
+     *
+     * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
+     * @param fields Data retrieval options/fieldnames separated by a comma. Specify "securedEntities" in fields to include the secured entities.
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return A list of users
+     */
+    @GET
+    @Path("/filtering")
+    @Operation(summary = " List users matching a given criteria.",
+            tags = { "User management" })
+    UsersDto listGetV2(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+                     @DefaultValue("userName") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
      * List users matching a given criteria.
@@ -195,8 +214,22 @@ public interface UserRs extends IBaseRs {
      */
     @POST
     @Path("/list")
-    @Operation(summary = "List users matching a given criteria.",
-    tags = { "User management" })
+    @Operation(summary = "List users matching a given criteria.", deprecated = true,
+    tags = { "Deprecated" })
     UsersDto listPost(PagingAndFiltering pagingAndFiltering);
+
+    /**
+     * List users matching a given criteria.
+     *
+     * @param pagingAndFiltering Pagination and filtering criteria. Specify "securedEntities" in fields to include the secured entities.
+     * @return A list of users
+     */
+    @POST
+    @Path("/filtering")
+    @Operation(summary = "List users matching a given criteria.",
+            tags = { "User management" })
+    UsersDto listPostV2(PagingAndFiltering pagingAndFiltering);
+
+
 
 }
