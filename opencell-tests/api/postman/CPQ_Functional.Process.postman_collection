@@ -5637,12 +5637,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/orderManagment/commercialOrders/{{orderTwoNumber}}",
+							"raw": "{{opencell.url}}/orderManagement/commercialOrders/{{orderTwoNumber}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"orderManagment",
+								"orderManagement",
 								"commercialOrders",
 								"{{orderTwoNumber}}"
 							]
