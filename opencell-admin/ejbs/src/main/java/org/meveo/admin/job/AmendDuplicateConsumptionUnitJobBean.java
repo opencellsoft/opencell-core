@@ -84,9 +84,6 @@ public class AmendDuplicateConsumptionUnitJobBean {
                 audit.subId = canceledWO.getSubscription().getId();
                 audit.offerId = canceledWO.getOfferTemplate().getId();
                 audit.originCanceledQT = canceledWO.getQuantity();
-            }
-
-            if (statsActivated) {
                 audit.allOvers = overageWOList.size();
             }
 
