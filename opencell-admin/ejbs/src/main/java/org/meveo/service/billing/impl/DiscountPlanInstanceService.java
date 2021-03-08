@@ -18,7 +18,9 @@
 
 package org.meveo.service.billing.impl;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -247,4 +249,16 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 		entity.getAllDiscountPlanInstances().remove(dpi);
 	}
 
+	public List<Long> getDiscountPlanInstanceToExpire(Date expireDiscountPlanInstanceToDate) {
+		List<Long> ids = getEntityManager().createNamedQuery("discountPlanInstance.getExpired", Long.class).setParameter("date", expireDiscountPlanInstanceToDate)
+				.setParameter("statuses", Arrays.asList(DiscountPlanInstanceStatusEnum.APPLIED, DiscountPlanInstanceStatusEnum.ACTIVE, DiscountPlanStatusEnum.IN_USE))
+				.getResultList();
+		return ids;
+	}
+
+	public List<Long> getDiscountPlanInstanceToActivate(Date activateDiscountPlanInstanceToDate) {
+		List<Long> ids = getEntityManager().createNamedQuery("discountPlanInstance.getToActive", Long.class).setParameter("date", activateDiscountPlanInstanceToDate)
+				.setParameter("statuses", Collections.singletonList(DiscountPlanInstanceStatusEnum.APPLIED)).getResultList();
+		return ids;
+	}
 }

@@ -28,6 +28,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -55,6 +57,10 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @CustomFieldEntity(cftCodePrefix = "DiscountPlanInstance", inheritCFValuesFrom = { "discountPlan" })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_discount_plan_instance_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "discountPlanInstance.getExpired", query = "select d.id from DiscountPlanInstance d where d.endDate is not null and d.endDate<=:date and d.status in (:statuses)"),
+        @NamedQuery(name = "discountPlanInstance.getToActive", query = "select d.id from DiscountPlanInstance d where (d.startDate is not null and d.startDate<=:date or d.startDate is null) and (d.endDate is not null and d.endDate<:date or d.endDate is null) and d.status in (:statuses)") })
+
 public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = -3794502716655922498L;

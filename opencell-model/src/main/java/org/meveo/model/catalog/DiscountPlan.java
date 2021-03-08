@@ -36,6 +36,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -68,6 +70,9 @@ import org.meveo.model.ObservableEntity;
 @Table(name = "cat_discount_plan", uniqueConstraints = { @UniqueConstraint(columnNames = { "code" }) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "cat_discount_plan_seq"), })
+@NamedQueries({
+		@NamedQuery(name = "discountPlan.getExpired", query = "select d.id from DiscountPlan d where d.endDate is not null and d.endDate<=:date and d.status in (:statuses)") })
+
 public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable {
 
 	private static final long serialVersionUID = -2762453947446654646L;

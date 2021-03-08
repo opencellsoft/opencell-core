@@ -21,12 +21,15 @@ package org.meveo.service.catalog.impl;
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.service.base.BusinessService;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -77,4 +80,9 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 
 	}
 
+	public List<Long> getDiscountPlanToExpire(Date expireDiscountPlanToDate) {
+		List<Long> ids = getEntityManager().createNamedQuery("discountPlan.getExpired", Long.class).setParameter("date", expireDiscountPlanToDate)
+				.setParameter("statuses", Arrays.asList(DiscountPlanStatusEnum.ACTIVE, DiscountPlanStatusEnum.IN_USE)).getResultList();
+		return ids;
+	}
 }
