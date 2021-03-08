@@ -1,0 +1,264 @@
+{
+	"id": "4cb1f319-b836-44f8-8cfa-5c6edde17487",
+	"values": [
+		{
+			"key": "NB_Files",
+			"value": "6",
+			"enabled": false
+		},
+		{
+			"key": "NB_cust",
+			"value": "300000",
+			"enabled": false
+		},
+		{
+			"key": "FROM",
+			"value": "1",
+			"enabled": false
+		},
+		{
+			"key": "NB_SUBS",
+			"value": "1",
+			"enabled": false
+		},
+		{
+			"key": "request.label",
+			"value": "Run|code=CRM_CDR_GEN_JOB",
+			"enabled": true
+		},
+		{
+			"key": "request.label.0",
+			"value": "Run",
+			"enabled": true
+		},
+		{
+			"key": "request.label.1",
+			"value": "code=CRM_CDR_GEN_JOB",
+			"enabled": true
+		},
+		{
+			"key": "request.label.2",
+			"value": "CRMCDRScript",
+			"enabled": true
+		},
+		{
+			"key": "timestamp.iso",
+			"value": "2021-03-05T14:11:06.352Z",
+			"enabled": true
+		},
+		{
+			"key": "wait",
+			"value": 0,
+			"enabled": true
+		},
+		{
+			"key": "request.label.3",
+			"value": "Generate Customers and CDR files",
+			"enabled": true
+		},
+		{
+			"key": "code",
+			"value": "CRM_CDR_GEN_JOB",
+			"enabled": true
+		},
+		{
+			"key": "desc",
+			"value": "BOM with BSMs and Services",
+			"enabled": true
+		},
+		{
+			"key": "nextJob",
+			"value": "Acco_Job Copy 6",
+			"enabled": true
+		},
+		{
+			"key": "inc",
+			"value": 1,
+			"enabled": true
+		},
+		{
+			"key": "index",
+			"value": 377,
+			"enabled": true
+		},
+		{
+			"key": "accCode",
+			"value": "445710000",
+			"enabled": true
+		},
+		{
+			"key": "percentage",
+			"value": "0",
+			"enabled": true
+		},
+		{
+			"key": "request.label.4",
+			"value": "FROM",
+			"enabled": true
+		},
+		{
+			"key": "buyer",
+			"value": "US",
+			"enabled": true
+		},
+		{
+			"key": "priority",
+			"value": "10",
+			"enabled": true
+		},
+		{
+			"key": "request.label.5",
+			"value": "NB_cust",
+			"enabled": true
+		},
+		{
+			"key": "tax",
+			"value": "TAX_10",
+			"enabled": true
+		},
+		{
+			"key": "taxCat",
+			"value": "EXEMPTED",
+			"enabled": true
+		},
+		{
+			"key": "taxClass",
+			"value": "NORMAL",
+			"enabled": true
+		},
+		{
+			"key": "name",
+			"value": "Offre Opencell",
+			"enabled": true
+		},
+		{
+			"key": "parent",
+			"value": "OCAT_ROOT",
+			"enabled": true
+		},
+		{
+			"key": "storage",
+			"value": "SINGLE",
+			"enabled": true
+		},
+		{
+			"key": "target",
+			"value": "PR_PRD",
+			"enabled": true
+		},
+		{
+			"key": "type",
+			"value": "STRING",
+			"enabled": true
+		},
+		{
+			"key": "calendar",
+			"value": "CAL_MONTHLY_1ST",
+			"enabled": true
+		},
+		{
+			"key": "offer.services",
+			"value": "{\"serviceTemplate\":{\"code\":\"SE_OSS\",\"customFields\":null},\"mandatory\":false,\"incompatibleServiceTemplate\":[]}\n,{\"serviceTemplate\":{\"code\":\"SE_OST\",\"customFields\":null},\"mandatory\":false,\"incompatibleServiceTemplate\":[]}\n,{\"serviceTemplate\":{\"code\":\"SE_REC_ADV\",\"customFields\":null},\"mandatory\":false,\"incompatibleServiceTemplate\":[]}\n,{\"serviceTemplate\":{\"code\":\"SE_USG_UNIT\",\"customFields\":null},\"mandatory\":false,\"incompatibleServiceTemplate\":[]}",
+			"enabled": true
+		},
+		{
+			"key": "service",
+			"value": "SE_USG_UNIT",
+			"enabled": true
+		},
+		{
+			"key": "offer",
+			"value": "OF_BASIC",
+			"enabled": true
+		},
+		{
+			"key": "account.code",
+			"value": "OPENCELL-02",
+			"enabled": true
+		},
+		{
+			"key": "account.description",
+			"value": "DEMO CLIENT OPENCELL-377",
+			"enabled": true
+		},
+		{
+			"key": "account.firstname",
+			"value": "DEMO",
+			"enabled": true
+		},
+		{
+			"key": "account.lastname",
+			"value": "CLIENT",
+			"enabled": true
+		},
+		{
+			"key": "subscription.code",
+			"value": "OPENCELL-00-SU",
+			"enabled": true
+		},
+		{
+			"key": "subscription.date",
+			"value": "2019-12-15T01:23:45.678Z",
+			"enabled": true
+		},
+		{
+			"key": "path",
+			"value": "/jasper/OPENCELL_DEMO",
+			"enabled": true
+		},
+		{
+			"key": "isVirtual",
+			"value": "false",
+			"enabled": true
+		},
+		{
+			"key": "p1",
+			"value": "UNIT",
+			"enabled": true
+		},
+		{
+			"key": "p2",
+			"value": "PS_SUPPORT",
+			"enabled": true
+		},
+		{
+			"key": "qtt",
+			"value": "10",
+			"enabled": true
+		},
+		{
+			"key": "jobRun.id",
+			"value": "1",
+			"enabled": true
+		},
+		{
+			"key": "invoice.id",
+			"value": 1,
+			"enabled": true
+		},
+		{
+			"key": "invoice.number",
+			"value": "INV_0001",
+			"enabled": true
+		},
+		{
+			"key": "request.label.6",
+			"value": "NB_SUBS",
+			"enabled": true
+		},
+		{
+			"key": "request.label.7",
+			"value": "NB_Files",
+			"enabled": true
+		},
+		{
+			"key": "request.label.8",
+			"value": "",
+			"enabled": true
+		}
+	],
+	"name": "My Workspace Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2021-03-08T08:45:40.914Z",
+	"_postman_exported_using": "Postman/8.0.6"
+}
