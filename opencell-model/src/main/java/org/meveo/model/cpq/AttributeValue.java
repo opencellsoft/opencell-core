@@ -13,10 +13,10 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
-import org.meveo.model.AuditableEntity;
+import org.meveo.model.AuditableCFEntity;
 
 @MappedSuperclass
-public class AttributeValue<T extends AttributeValue> extends AuditableEntity {
+public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity {
 
     /**
 	 * 

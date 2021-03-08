@@ -721,7 +721,7 @@ public class BillingRunDto extends AuditableEntityDto {
      */
     @Hidden
     public void setFromEntity(BillingRun billingRunEntity) {
-        setAuditable(billingRunEntity);
+        setAuditableEntity(billingRunEntity);
         setProcessDate(billingRunEntity.getProcessDate());
         setStatus(billingRunEntity.getStatus());
         setStatusDate(billingRunEntity.getStatusDate());

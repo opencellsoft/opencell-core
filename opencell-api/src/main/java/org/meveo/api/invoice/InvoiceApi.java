@@ -1035,7 +1035,7 @@ public class InvoiceApi extends BaseApi {
 
         InvoiceDto dto = dtoToUpdate == null ? new InvoiceDto() : dtoToUpdate;
 
-        dto.setAuditable(invoice);
+        dto.setAuditableEntity(invoice);
         dto.setInvoiceId(invoice.getId());
         dto.setBillingAccountCode(invoice.getBillingAccount().getCode());
         Subscription subscription = invoice.getSubscription();

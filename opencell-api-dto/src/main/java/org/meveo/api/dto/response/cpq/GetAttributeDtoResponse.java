@@ -1,5 +1,6 @@
 package org.meveo.api.dto.response.cpq;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,7 +54,7 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 
 	@XmlElementWrapper(name = "medias")
     @XmlElement(name = "medias")
-    private List<MediaDto> medias;
+    private List<MediaDto> medias=new ArrayList<MediaDto>();
 
     /**
      * The status response of the web service response.

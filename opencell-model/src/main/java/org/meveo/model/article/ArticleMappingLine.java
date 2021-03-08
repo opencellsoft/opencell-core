@@ -16,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
@@ -40,7 +42,7 @@ public class ArticleMappingLine extends BusinessEntity {
     private AccountingArticle accountingArticle;
 
     @OneToMany(mappedBy = "articleMappingLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AttributeMapping> attributesMapping;
+    private List<AttributeMapping> attributesMapping = new ArrayList<AttributeMapping>();
 
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "offer_template_id")

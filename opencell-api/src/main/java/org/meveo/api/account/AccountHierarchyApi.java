@@ -1853,7 +1853,7 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public void accountEntityToDto(AccountDto dto, AccountEntity account, CustomFieldInheritanceEnum inheritCF) {
-        dto.setAuditable(account);
+        dto.setAuditableEntity(account);
         dto.setExternalRef1(account.getExternalRef1());
         dto.setExternalRef2(account.getExternalRef2());
         dto.setJobTitle(account.getJobTitle());

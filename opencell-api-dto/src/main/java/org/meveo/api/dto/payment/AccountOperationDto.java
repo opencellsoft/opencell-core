@@ -266,7 +266,7 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
             matchingAmountsDto.setMatchingAmount(new ArrayList<>());
             for (MatchingAmount tempMatchingAmount : tempMatchingAmounts) {
                 matchingAmountDto = new MatchingAmountDto();
-                matchingAmountDto.setAuditable(tempMatchingAmount);
+                matchingAmountDto.setAuditableEntity(tempMatchingAmount);
                 if (tempMatchingAmount.getMatchingCode() != null) {
                     matchingAmountDto.setMatchingCode(tempMatchingAmount.getMatchingCode().getCode());
                 }

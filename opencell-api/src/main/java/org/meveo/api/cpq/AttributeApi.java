@@ -92,6 +92,8 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setAllowedValues(postData.getAllowedValues());
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
 		attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
+		attribute.setReadOnly(postData.isReadOnly());
+        populateCustomFields(postData.getCustomFields(), attribute, true);
 		attributeService.create(attribute);
 		processTags(postData,attribute);
 		processAssignedAttributes(postData,attribute);
@@ -127,6 +129,8 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 					medias.add(media);
 				}
 				attribute.setMedias(medias);
+			}else {
+				attribute.getMedias().clear();
 			}
 		}
 	
@@ -143,6 +147,9 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 				assignedAttributes.add(attr);
 			}
 			attribute.getAssignedAttributes().addAll(assignedAttributes);
+		}else{
+			if(!attribute.getAssignedAttributes().isEmpty())
+			attributeService.updateParentAttribute(attribute.getId());
 		}
 	}
 	
@@ -167,6 +174,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		attribute.setSequence(postData.getSequence());
 		attribute.setAllowedValues(postData.getAllowedValues());
 		attribute.setChargeTemplates(chargeTemplateService.getChargeTemplatesByCodes(postData.getChargeTemplateCodes()));
+		attribute.setReadOnly(postData.isReadOnly());
 		if(postData.getUnitNbDecimal() != null) {
 			attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
 		}
@@ -176,6 +184,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 				tagService.update(tag);
 			}
 		}
+        populateCustomFields(postData.getCustomFields(), attribute, true);
 		processTags(postData,attribute);
 		processAssignedAttributes(postData,attribute);
 		processMedias(postData,attribute);

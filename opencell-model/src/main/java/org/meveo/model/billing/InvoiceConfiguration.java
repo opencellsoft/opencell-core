@@ -21,8 +21,11 @@ package org.meveo.model.billing;
 import java.io.Serializable;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -31,6 +34,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
+import org.meveo.model.article.AccountingArticle;
 
 /**
  * Invoicing configuration
@@ -121,6 +125,41 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
      */
     @Column(name = "current_invoice_nb")
     private Long currentInvoiceNb = 0L;
+    
+    /**
+     * Default invoice subcategory
+     */
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "default_invoice_subcategory_id")
+    private InvoiceSubCategory defaultInvoiceSubCategory;
+
+	/**
+     * Default generic accounting article
+     */
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "default_generic_article_id")
+    private AccountingArticle defaultGenericAccountingArticle;
+    
+    /**
+     * Default discount accounting article
+     */
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "default_discount_article_id")
+    private AccountingArticle defaultDiscountAccountingArticle;
+    
+    /**
+     * Default advanced payment accounting article
+     */
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "default_advanced_payment_article_id")
+    private AccountingArticle defaultAdvancedPaymentAccountingArticle;
+    
+    /**
+     * Default advanced payment accounting article
+     */
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "default_invoice_minimum_article_id")
+    private AccountingArticle defaultInvoiceMinimumAccountingArticle;
 
     /**
      * Should wallet operations be displayed in the XML invoice
@@ -208,8 +247,49 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     public void setDisplayBillingCycle(boolean displayBillingCycle) {
         this.displayBillingCycle = displayBillingCycle;
     }
+    
+    
+    public InvoiceSubCategory getDefaultInvoiceSubCategory() {
+		return defaultInvoiceSubCategory;
+	}
 
-    @Override
+	public void setDefaultInvoiceSubCategory(InvoiceSubCategory defaultInvoiceSubCategory) {
+		this.defaultInvoiceSubCategory = defaultInvoiceSubCategory;
+	}
+
+	public AccountingArticle getDefaultGenericAccountingArticle() {
+		return defaultGenericAccountingArticle;
+	}
+
+	public void setDefaultGenericAccountingArticle(AccountingArticle defaultGenericAccountingArticle) {
+		this.defaultGenericAccountingArticle = defaultGenericAccountingArticle;
+	}
+
+	public AccountingArticle getDefaultDiscountAccountingArticle() {
+		return defaultDiscountAccountingArticle;
+	}
+
+	public void setDefaultDiscountAccountingArticle(AccountingArticle defaultDiscountAccountingArticle) {
+		this.defaultDiscountAccountingArticle = defaultDiscountAccountingArticle;
+	}
+
+	public AccountingArticle getDefaultAdvancedPaymentAccountingArticle() {
+		return defaultAdvancedPaymentAccountingArticle;
+	}
+
+	public void setDefaultAdvancedPaymentAccountingArticle(AccountingArticle defaultAdvancedPaymentAccountingArticle) {
+		this.defaultAdvancedPaymentAccountingArticle = defaultAdvancedPaymentAccountingArticle;
+	}
+
+	public AccountingArticle getDefaultInvoiceMinimumAccountingArticle() {
+		return defaultInvoiceMinimumAccountingArticle;
+	}
+
+	public void setDefaultInvoiceMinimumAccountingArticle(AccountingArticle defaultInvoiceMinimumAccountingArticle) {
+		this.defaultInvoiceMinimumAccountingArticle = defaultInvoiceMinimumAccountingArticle;
+	}
+
+	@Override
     public String toString() {
         return "InvoiceConfiguration [displaySubscriptions=" + displaySubscriptions + ", displayServices=" + displayServices + ", displayOffers=" + displayOffers + ", " + "displayPricePlans=" + displayPricePlans
                 + ", displayEdrs=" + displayEdrs + ", displayProvider=" + displayProvider + ", " + "displayDetail=" + displayDetail + ", displayCfAsXML=" + displayCfAsXML + ", displayWalletOperations="

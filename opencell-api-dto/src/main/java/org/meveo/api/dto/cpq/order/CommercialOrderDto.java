@@ -2,6 +2,7 @@ package org.meveo.api.dto.cpq.order;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
@@ -9,6 +10,7 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.cpq.commercial.OrderLot;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -80,6 +82,8 @@ public class CommercialOrderDto extends BaseEntityDto {
 			this.userAccountCode = order.getUserAccount().getCode();
 		if(order.getAccess() != null)
 			this.accessDto = new AccessDto(order.getAccess(), null);
+		if(order.getOrderLots() != null)
+			orderLotCodes = order.getOrderLots().stream().map(OrderLot::getCode).collect(Collectors.toSet());
 	}
 	
 	/**

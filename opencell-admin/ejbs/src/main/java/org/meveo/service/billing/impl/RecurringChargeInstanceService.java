@@ -52,7 +52,9 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
@@ -149,7 +151,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         return qb.getQuery(getEntityManager()).getResultList();
     }
 
-    public RecurringChargeInstance recurringChargeInstanciation(ServiceInstance serviceInstance, ServiceChargeTemplateRecurring serviceChargeTemplateRecurring, boolean isVirtual) throws BusinessException {
+    public RecurringChargeInstance recurringChargeInstanciation(ServiceInstance serviceInstance, ServiceCharge serviceCharge, ServiceChargeTemplateRecurring serviceChargeTemplateRecurring, boolean isVirtual) throws BusinessException {
 
         if (serviceInstance == null) {
             throw new BusinessException("service instance does not exist.");
@@ -178,7 +180,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         RecurringChargeInstance chargeInstance = new RecurringChargeInstance(null, null, recurringChargeTemplate, serviceInstance, InstanceStatusEnum.INACTIVE, recurringChargeTemplate.getCalendar(),
             recurringChargeTemplate.getApplyInAdvance());
 
-        ServiceChargeTemplateRecurring recChTmplServ = serviceInstance.getServiceTemplate().getServiceRecurringChargeByChargeCode(chargeCode);
+        ServiceChargeTemplateRecurring recChTmplServ = serviceCharge.getServiceRecurringChargeByChargeCode(chargeCode);
         // getEntityManager().merge(recChTmplServ); - does not make sence as
         // merge result is what shoudl be used
         List<WalletTemplate> walletTemplates = recChTmplServ.getWalletTemplates();

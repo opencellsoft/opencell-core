@@ -15,6 +15,36 @@
                 <p:menuitem value="#{messages['menu.appConfiguration']}" disabled="true" />
             </p:breadCrumb>
         </h:form>
+        
+        <hftl:entityPopup id="genericAccountingPopup" header="#{messages['defaultArticleConfiguration.genericAccounting']}" updateField=":providerFormId:tabView:genericAccountingId :providerFormId:tabView:genericAccountingId_text"
+	            selection="#{providerBean.entity.invoiceConfiguration.defaultGenericAccountingArticle}" backingBean="#{accountingArticleBean}"
+	            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+	            column2Label="#{messages['businessEntity.description']}" column2="description">
+	    </hftl:entityPopup>
+	    
+	    <hftl:entityPopup id="discountAccountingPopup" header="#{messages['defaultArticleConfiguration.discountAccounting']}" updateField=":providerFormId:tabView:discountAccountingId :providerFormId:tabView:discountAccountingId_text"
+	            selection="#{providerBean.entity.invoiceConfiguration.defaultDiscountAccountingArticle}" backingBean="#{accountingArticleBean}"
+	            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+	            column2Label="#{messages['businessEntity.description']}" column2="description">
+	    </hftl:entityPopup>
+	    
+	    <hftl:entityPopup id="advancedPaymentPopup" header="#{messages['defaultArticleConfiguration.advancedPayment']}" updateField=":providerFormId:tabView:advancedPaymentId :providerFormId:tabView:advancedPaymentId_text"
+	            selection="#{providerBean.entity.invoiceConfiguration.defaultAdvancedPaymentAccountingArticle}" backingBean="#{accountingArticleBean}"
+	            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+	            column2Label="#{messages['businessEntity.description']}" column2="description">
+	    </hftl:entityPopup>
+	    
+	    <hftl:entityPopup id="invoiceMinimumPopup" header="#{messages['defaultArticleConfiguration.invoiceMinimum']}" updateField=":providerFormId:tabView:invoiceMinimumId :providerFormId:tabView:invoiceMinimumId_text"
+	            selection="#{providerBean.entity.invoiceConfiguration.defaultInvoiceMinimumAccountingArticle}" backingBean="#{accountingArticleBean}"
+	            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+	            column2Label="#{messages['businessEntity.description']}" column2="description">
+	    </hftl:entityPopup>
+	    
+	    <hftl:entityPopup id="invoiceSubCategoryPopup" header="#{messages['defaultArticleConfiguration.invoiceSubCategory']}" updateField=":providerFormId:tabView:invoiceSubCategoryId :providerFormId:tabView:invoiceSubCategoryId_text"
+	            selection="#{providerBean.entity.invoiceConfiguration.defaultInvoiceSubCategory}" backingBean="#{invoiceSubCategoryBean}"
+	            searchField1Label="#{messages['businessEntity.code']}" searchField1="code" column1Label="#{messages['businessEntity.code']}" column1="code"
+	            column2Label="#{messages['businessEntity.description']}" column2="description">
+	    </hftl:entityPopup>
 
         <hftl:formPanel formId="providerFormId" ajaxSubmit="true" submitPartialProcess=":providerFormId:tabView" label="#{messages['provider.title']}" backingBean="#{providerBean}"
             showBackButton="false" showDeleteButton="false">
@@ -28,7 +58,6 @@
                     <!-- <hftl:formField id="languageSelectedId" label="#{messages['tradingLanguage.languageCode']}" field="language" valueLabelField="languageCode"
 								popup="true" popupId="languagePopup" required="true" /> -->
 
-                    <hftl:formField label="#{messages['provider.enterprise']}" field="entreprise" id="enterprise" />
 
                     <hftl:formField label="#{messages['provider.rounding']}" field="rounding" id="rounding" newLine="true" />
                     <hftl:formField label="#{messages['provider.rounding.mode']}" field="roundingMode" id="roundingMode"  />
@@ -124,6 +153,28 @@
                     	<hftl:formField label="#{messages['gdprConfiguration.job.deleteMailing']}" field="gdprConfiguration" childField="deleteMailingLife" />
                     	<hftl:formField label="#{messages['gdprConfiguration.job.deleteAoCheckUnpaid']}" field="gdprConfiguration" childField="deleteAoCheckUnpaidLife" />
                     </p:fieldset>
+                    <p:fieldset legend="#{messages['defaultArticleConfiguration.title']}" styleClass="clearLeft">
+                    
+	                    <hftl:formField id="invoiceSubCategoryId" label="#{messages['defaultArticleConfiguration.invoiceSubCategory']}" 
+						                popup="true" popupId="invoiceSubCategoryPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultInvoiceSubCategory">
+						</hftl:formField>
+	                    
+	                    <hftl:formField id="genericAccountingId" label="#{messages['defaultArticleConfiguration.genericAccounting']}" 
+						                popup="true" required="false" popupId="genericAccountingPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultGenericAccountingArticle">
+						</hftl:formField>
+						
+						<hftl:formField id="discountAccountingId" label="#{messages['defaultArticleConfiguration.discountAccounting']}" 
+						                popup="true" required="false" popupId="discountAccountingPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultDiscountAccountingArticle">
+						</hftl:formField>
+						
+						<hftl:formField id="advancedPaymentId" label="#{messages['defaultArticleConfiguration.advancedPayment']}" 
+						                popup="true" required="false" popupId="advancedPaymentPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultAdvancedPaymentAccountingArticle">
+						</hftl:formField>
+						
+						<hftl:formField id="invoiceMinimumId" label="#{messages['defaultArticleConfiguration.invoiceMinimum']}" 
+						                popup="true" required="false" popupId="invoiceMinimumPopup" valueLabelField="code" field="invoiceConfiguration" childField="defaultInvoiceMinimumAccountingArticle">
+						</hftl:formField>
+					</p:fieldset>
 					
                 </p:tab>
 
