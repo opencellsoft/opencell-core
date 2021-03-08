@@ -224,7 +224,7 @@ public class DunningDocumentApi extends BaseApi {
     public DunningDocumentDto dunningDocumentToDto(DunningDocument dunningDocument) {
        
         DunningDocumentDto dto = new DunningDocumentDto();
-        dto.setAuditable(dunningDocument);
+        dto.setAuditableEntity(dunningDocument);
 
         if (dunningDocument.getCustomerAccount() != null) {
             dto.setCustomerAccountCode(dunningDocument.getCustomerAccount().getCode());

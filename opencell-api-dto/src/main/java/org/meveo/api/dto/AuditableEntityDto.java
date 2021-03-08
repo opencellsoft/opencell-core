@@ -63,7 +63,7 @@ public abstract @Hidden class AuditableEntityDto extends BaseEntityDto {
 
     public AuditableEntityDto(AuditableEntity e) {
         super();
-        setAuditable(e);
+        setAuditableEntity(e);
     }
 
     // invoked by Marshaller before marshalling
@@ -74,7 +74,7 @@ public abstract @Hidden class AuditableEntityDto extends BaseEntityDto {
     }
 
     @Schema(hidden = true)
-    public void setAuditable(AuditableEntity e) {
+    public void setAuditableEntity(AuditableEntity e) {
         if (e != null && e.getAuditable() != null) {
             auditable = new AuditableDto(e.getAuditable());
         }
