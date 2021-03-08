@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "4f80ee3e-efd5-4cfc-bfee-b323f9915a2f",
-		"name": "00_OPENCELL_BASECONF_Test",
+		"_postman_id": "357a6f28-7595-405c-a1f9-40cd7e3cd42a",
+		"name": "OPENCELL_PERF_TESTS_SUITE",
 		"description": "# Introduction\r\n\r\nThis configuration file is designed to be a basis for all configurations provided by Opencell.\r\nIt merely contains most common general settings and a catalog of services implementing various rating models.\r\n\r\n# Configuring Opencell\r\n\r\nThere are 2 main ways for configuring ***Opencell***:\r\n* GUI (*Administration GUI* and *Marketing Manager*)\r\n* API (all Opencell configuration and operations can be performed using our extensive API library)\r\n\r\nThe most flexible way is using APIs which currently are available as **Rest** and **Soap**.\r\nThe **Soap** API are deprecated, so will won't mention them anymore.\r\n\r\n## Tools\r\n\r\nAny tools able to send HTTP requests will do.\r\nOne could even just script *curl* calls using shell script.\r\nBut of course, a more user friendly tool will make things easier.\r\n\r\nHere at ***Opencell***, we prefer **Postman** (https://getpostman.com):\r\n* it has a modern, friendly interface\r\n* Sets of API request can be organized into collections, themselves structured into a folder tree.\r\n* Collections can be exported as _JSON_ files or shared with other team members using collaboration features (payed version)\r\n* it allows to uses variables at different levels (collection, environement, global) and to execute *Javascript* scripts before and after executing API calls which allows great flexibility and API response testing.\r\n\r\n\r\n\r\n# Configuration documentation guidelines\r\n\r\nIn order to document our configuration, we make full used of the internal documentation capabilities of the Markdown fields on Postman Objects\r\n\r\n## Default template for *Collection* documentation\r\n\r\n## Default template for *Folder* documentation\r\n\r\n## Default template for *Request* documentation\r\n\r\n\r\n\r\n# Tips & guidelines\r\n\r\nHere follow a few tips for understanding this collection.\r\n\r\n## Collection pre-request script\r\n\r\n```javascript\r\npm.globals.set(\"timestamp.iso\", (new Date()).toISOString());\r\npm.globals.set(\"request.label\", pm.info.requestName);\r\n\r\nvar parts = pm.info.requestName.split(\"|\");\r\n\r\nfor(let i=0; i<parts.length; i++) {\r\n    pm.globals.set(\"request.label.\"+i, parts[i]);\r\n}\r\n```\r\n\r\n## Configuration guidelines\r\n\r\n## Entities\r\n\r\n<entity>_<project_code>_XXX\r\n\r\n### Custom Fields\r\n\r\nCF_<entity>_<project_code>_ XXX\r\n\r\n<entity> will be discarded for inherited\r\n\r\n#### Custom field visibility\r\n\r\nSE_<entity>_<project_code>_<markers>_XXX\r\n\r\n<markers> are used in CFT.applicableOnEl to show CFT on entities\r\n\r\n\r\n## Entity abbreviation\r\n\r\n| code  | entity                        |\r\n|:-----:|:------------------------------|\r\n|   P   | Provider                      |\r\n|   S   | Seller                        |\r\n|   C   | Customer                      |\r\n|  CA   | Customer Account              |\r\n|  BA   | Billing Account               |\r\n|  UA   | User Account                  |\r\n|  SU   | Subscription                  |\r\n|  AP   | Access Point                  |\r\n|  OF   | Offer Template                |\r\n|  SE   | Service Template and Instance |\r\n|  CH   | Charge Template               |\r\n|  PP   | Price Plan                    |\r\n|  CN   | Counter                       |\r\n| ICAT  | Invoice Category              |\r\n| ISCAT | Invoice SubCategory           |\r\n|  CAL  | Calendar                      |\r\n|  BC   | Billing Cycle                 |\r\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -635,29 +635,6 @@
 									"response": []
 								},
 								{
-									"name": "CYC_INV_MT_1",
-									"request": {
-										"method": "DELETE",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"url": {
-											"raw": "{{opencell.url}}/billingCycle/CYC_INV_MT_1",
-											"host": [
-												"{{opencell.url}}"
-											],
-											"path": [
-												"billingCycle",
-												"CYC_INV_MT_1"
-											]
-										}
-									},
-									"response": []
-								},
-								{
 									"name": "CYC_INV_MT_2",
 									"request": {
 										"method": "DELETE",
@@ -675,29 +652,6 @@
 											"path": [
 												"billingCycle",
 												"CYC_INV_MT_2"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "DELETE Monthly calendar",
-									"request": {
-										"method": "DELETE",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"url": {
-											"raw": "{{opencell.url}}/calendar/MONTHLY",
-											"host": [
-												"{{opencell.url}}"
-											],
-											"path": [
-												"calendar",
-												"MONTHLY"
 											]
 										}
 									},
@@ -1272,17 +1226,6 @@
 								},
 								{
 									"name": "custCat|code=CLIENT|taxCat=REGULAR",
-									"event": [
-										{
-											"listen": "prerequest",
-											"script": {
-												"exec": [
-													"postman.setEnvironmentVariable(\"code\", pm.info.iteration);"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
 									"request": {
 										"method": "POST",
 										"header": [
@@ -1293,7 +1236,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{code}}\",\r\n    \"description\": \"Client\",\r\n    \"taxCategoryCode\": \"{{taxCat}}\"\r\n}"
+											"raw": "{\r\n    \"code\": \"{{code}}\",\r\n    \"description\": \"Client\",\r\n    \"taxCategoryCode\": \"{{taxCat}}\"\r\n}\r\n"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/account/customer/createOrUpdateCategory",
@@ -1304,45 +1247,6 @@
 												"account",
 												"customer",
 												"createOrUpdateCategory"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Create Customer Test",
-									"event": [
-										{
-											"listen": "prerequest",
-											"script": {
-												"exec": [
-													"postman.setEnvironmentVariable(\"iter\", pm.info.iteration);"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{iter}}_CUST\",\r\n    \"description\": \"{{baseEntityPrefix}}_CUST\",\r\n    \"externalRef1\": \"EXTREF1\",\r\n    \"externalRef2\": \"EXTREF2\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"firstname\",\r\n        \"lastName\": \"lastname\"\r\n    },\r\n    \"address\": {\r\n        \"address1\": \"adress1\",\r\n        \"address3\": \"adress3\",\r\n        \"zipCode\": \"21000\",\r\n        \"city\": \"Dijon\",\r\n        \"country\": \"France\"\r\n    },\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"customerBrand\": \"DEFAULT\",\r\n    \"seller\": \"OPENCELL\",\r\n    \"contactInformation\": {\r\n        \"email\": \"{{baseEntityPrefix}}@manaty.net\",\r\n        \"phone\": \"+33100000000\",\r\n        \"mobile\": \"+33666666666\"\r\n    }\r\n}"
-										},
-										"url": {
-											"raw": "{{opencell.url}}/account/customer/createOrUpdate",
-											"host": [
-												"{{opencell.url}}"
-											],
-											"path": [
-												"account",
-												"customer",
-												"createOrUpdate"
 											]
 										}
 									},
@@ -2364,7 +2268,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"code\": \"{{code}}\",\n\t\"description\": \"{{desc}}\"\n}"
+											"raw": "{\n\t\"code\": \"WEB\",\n\t\"description\": \"WEB\"\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/channel/createOrUpdate",
@@ -2504,7 +2408,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"Offer category {{code}}\",\n    \"disabled\": false,\n    \"name\": \"{{name}}\",\n    \"offerTemplateCategoryCode\": \"{{parent}}\",\n    \"active\": true\n}"
+											"raw": "{\n    \"code\": \"OCAT_ROOT\",\n    \"description\": \"Offer category OCAT_ROOT\",\n    \"disabled\": false,\n    \"name\": \"root\",\n    \"offerTemplateCategoryCode\": \"\",\n    \"active\": true\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/offerTemplateCategory/createOrUpdate",
@@ -3037,151 +2941,6 @@
 							]
 						},
 						{
-							"name": "Counters",
-							"item": [
-								{
-									"name": "counter|CN_USG_COUNTER_3|Counter 3",
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n  \"code\" : \"{{request.label.1}}\",\r\n  \"description\" : \"{{request.label.2}}\",\r\n  \"calendar\": \"CAL_MONTHLY_1ST\",\r\n  \"unity\": null,\r\n  \"type\": \"USAGE\",\r\n  \"ceiling\": 100,\r\n  \"disabled\": false,\r\n  \"counterLevel\": \"SI\",\r\n  \"ceilingExpressionEl\": null\r\n}"
-										},
-										"url": {
-											"raw": "{{opencell.url}}/catalog/counterTemplate/createOrUpdate",
-											"host": [
-												"{{opencell.url}}"
-											],
-											"path": [
-												"catalog",
-												"counterTemplate",
-												"createOrUpdate"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "counter|CN_USG_COUNTER_4|Counter 4",
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n  \"code\" : \"{{request.label.1}}\",\r\n  \"description\" : \"{{request.label.2}}\",\r\n  \"calendar\": \"CAL_MONTHLY_1ST\",\r\n  \"unity\": null,\r\n  \"type\": \"USAGE\",\r\n  \"ceiling\": 100,\r\n  \"disabled\": false,\r\n  \"counterLevel\": \"SI\",\r\n  \"ceilingExpressionEl\": null\r\n}"
-										},
-										"url": {
-											"raw": "{{opencell.url}}/catalog/counterTemplate/createOrUpdate",
-											"host": [
-												"{{opencell.url}}"
-											],
-											"path": [
-												"catalog",
-												"counterTemplate",
-												"createOrUpdate"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "counter|code=CN_USG_ACCUM_C|type=USAGE|target=CUST|calendar=CAL_MONTHLY_1ST|desc=Accumulates quantities on the Customer",
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"disabled\": false,\n    \"calendar\": \"{{calendar}}\",\n    \"type\": \"{{type}}\",\n    \"ceiling\": 0,\n    \"counterLevel\": \"{{target}}\",\n    \"ceilingExpressionEl\": null,\n    \"accumulator\": true\n}"
-										},
-										"url": {
-											"raw": "{{opencell.url}}/catalog/counterTemplate/createOrUpdate",
-											"host": [
-												"{{opencell.url}}"
-											],
-											"path": [
-												"catalog",
-												"counterTemplate",
-												"createOrUpdate"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "counter|code=CN_EUR_ACCUM_C|type=USAGE_AMOUNT|target=CUST|calendar=CAL_MONTHLY_1ST|desc=Accumulates amounts on the Customer",
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"disabled\": false,\n    \"calendar\": \"{{calendar}}\",\n    \"type\": \"{{type}}\",\n    \"ceiling\": 0,\n    \"counterLevel\": \"{{target}}\",\n    \"ceilingExpressionEl\": null,\n    \"accumulator\": true\n}"
-										},
-										"url": {
-											"raw": "{{opencell.url}}/catalog/counterTemplate/createOrUpdate",
-											"host": [
-												"{{opencell.url}}"
-											],
-											"path": [
-												"catalog",
-												"counterTemplate",
-												"createOrUpdate"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "counter|code=CN_MULTI_ACCUM_C|type=MULTI_VALUE|target=CUST|calendar=CAL_MONTHLY_1ST|desc=Accumulates quantity for Param2 on Customer",
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"disabled\": false,\n    \"calendar\": \"{{calendar}}\",\n    \"type\": \"USAGE\",\n    \"ceiling\": 0,\n    \"counterLevel\": \"{{target}}\",\n    \"ceilingExpressionEl\": null,\n    \"accumulator\": true,\n    \"accumulatorType\": \"{{type}}\",\n    \"filterEl\": \"#{ true }\",\n    \"keyEl\": \"#{ op.parameter2 }\",\n    \"valueEl\": \"#{ op.quantity }\"\n}"
-										},
-										"url": {
-											"raw": "{{opencell.url}}/catalog/counterTemplate/createOrUpdate",
-											"host": [
-												"{{opencell.url}}"
-											],
-											"path": [
-												"catalog",
-												"counterTemplate",
-												"createOrUpdate"
-											]
-										}
-									},
-									"response": []
-								}
-							]
-						},
-						{
 							"name": "Charges",
 							"item": [
 								{
@@ -3369,7 +3128,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"PP_REC_BUILD_RUN_ADV\",\n    \"eventCode\": \"CH_REC_BUILD_RUN_ADV\",\n    \"criteriaEL\": null,\n    \"amountWithoutTax\": 100,\n    \"amountWithoutTaxEL\": \"#{ mv:getInheritedCFValueForDate(serviceInstance,'CF_SE_'.concat(mv:getInheritedCFValueForDate(serviceInstance,'CF_SE_BUILD_RUN_SITUATION', op.operationDate )).concat('_DOUBLE_VERSION'), op.operationDate ) }\"\n}"
+											"raw": "{\n    \"code\": \"PP_REC_BUILD_RUN_ADV\",\n    \"eventCode\": \"CH_REC_BUILD_RUN_ADV\",\n    \"criteriaEL\": null,\n    \"amountWithoutTax\": 10,\n    \"amountWithoutTaxEL\": \"#{ mv:getInheritedCFValueForDate(serviceInstance,'CF_SE_'.concat(mv:getInheritedCFValueForDate(serviceInstance,'CF_SE_BUILD_RUN_SITUATION', op.operationDate )).concat('_DOUBLE_VERSION'), op.operationDate ) }\"\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/pricePlan/createOrUpdate",
@@ -3397,7 +3156,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"PP_OSS\",\n    \"eventCode\": \"CH_OSS\",\n    \"amountWithoutTax\": 100,\n    \"amountWithoutTaxEL\": \"#{ mv:getInheritedCFValue(serviceInstance, 'CF_SE_DOUBLE') }\",\n    \"scriptInstance\": null\n}\n"
+											"raw": "{\n    \"code\": \"PP_OSS\",\n    \"eventCode\": \"CH_OSS\",\n    \"amountWithoutTax\": 10,\n    \"amountWithoutTaxEL\": \"#{ mv:getInheritedCFValue(serviceInstance, 'CF_SE_DOUBLE') }\",\n    \"scriptInstance\": null\n}\n"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/pricePlan/createOrUpdate",
@@ -3425,7 +3184,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"PP_PRD\",\n    \"eventCode\": \"CH_PRD\",\n    \"amountWithoutTax\": 100\n}\n"
+											"raw": "{\n    \"code\": \"PP_PRD\",\n    \"eventCode\": \"CH_PRD\",\n    \"amountWithoutTax\": 10\n}\n"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/pricePlan/createOrUpdate",
@@ -3453,7 +3212,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"PP_OST\",\n    \"eventCode\": \"CH_OST\",\n    \"amountWithoutTax\": 100,\n    \"amountWithoutTaxEL\": \"#{ mv:getInheritedCFValue(serviceInstance, 'CF_SE_DOUBLE') }\",\n    \"scriptInstance\": null\n}\n"
+											"raw": "{\n    \"code\": \"PP_OST\",\n    \"eventCode\": \"CH_OST\",\n    \"amountWithoutTax\": 10,\n    \"amountWithoutTaxEL\": \"#{ mv:getInheritedCFValue(serviceInstance, 'CF_SE_DOUBLE') }\",\n    \"scriptInstance\": null\n}\n"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/pricePlan/createOrUpdate",
@@ -3481,7 +3240,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"PP_USG_UNIT\",\n    \"eventCode\": \"CH_USG_UNIT\",\n    \"amountWithoutTax\": 100,\n    \"amountWithTax\": 1,\n    \"amountWithoutTaxEL\": \"#{ mv:getInheritedCFValue(serviceInstance, 'CF_SE_DOUBLE') }\",\n    \"woDescriptionEL\": null,\n    \"scriptInstance\": \"org.meveo.service.script.rating.LogWalletOperation\"\n}\n"
+											"raw": "{\n    \"code\": \"PP_USG_UNIT\",\n    \"eventCode\": \"CH_USG_UNIT\",\n    \"amountWithoutTax\": 10,\n    \"amountWithTax\": 1,\n    \"amountWithoutTaxEL\": \"#{ mv:getInheritedCFValue(serviceInstance, 'CF_SE_DOUBLE') }\",\n    \"woDescriptionEL\": null\n}\n"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/pricePlan/createOrUpdate",
@@ -3553,7 +3312,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{code}}\",\r\n    \"description\": \"{{desc}}\",\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            { \"code\": \"CF_SE_DOUBLE\", \"doubleValue\": 1000.0 }\r\n        ]\r\n    },\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": true,\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": null,\r\n    \"serviceChargeTemplateSubscriptions\": {\r\n      \"serviceChargeTemplateSubscription\": [\r\n        { \"code\": \"CH_OSS\", \"wallets\": null }\r\n      ]\r\n    },\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}"
+											"raw": "{\r\n    \"code\": \"{{code}}\",\r\n    \"description\": \"{{desc}}\",\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            { \"code\": \"CF_SE_DOUBLE\", \"doubleValue\": 10.0 }\r\n        ]\r\n    },\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": true,\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": null,\r\n    \"serviceChargeTemplateSubscriptions\": {\r\n      \"serviceChargeTemplateSubscription\": [\r\n        { \"code\": \"CH_OSS\", \"wallets\": null }\r\n      ]\r\n    },\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
@@ -3633,7 +3392,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"code\": \"{{code}}\",\r\n    \"description\": \"{{desc}}\",\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            {\r\n                \"code\": \"CF_SE_DOUBLE\",\r\n                \"doubleValue\": 850.0\r\n            },\r\n            {\r\n                \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\r\n                \"valuePeriodStartDate\": \"2010-04-19\",\r\n                \"valuePeriodEndDate\": \"2020-05-19\",\r\n                \"valuePeriodPriority\": 1,\r\n                \"stringValue\": \"BUILD\"\r\n            },\r\n            {\r\n                \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\r\n                \"valuePeriodStartDate\": \"2020-05-20\",\r\n                \"valuePeriodEndDate\": \"2030-05-19\",\r\n                \"valuePeriodPriority\": 2,\r\n                \"stringValue\": \"RUN\"\r\n            },\r\n            {\r\n                \"code\": \"CF_SE_BUILD_DOUBLE_VERSION\",\r\n                \"valuePeriodPriority\": 1,\r\n                \"valuePeriodStartDate\": \"2010-04-19\",\r\n                \"valuePeriodEndDate\": \"2030-04-19\",\r\n                \"doubleValue\": 5000.00\r\n            },\r\n            {\r\n                \"code\": \"CF_SE_RUN_DOUBLE_VERSION\",\r\n                \"valuePeriodPriority\": 1,\r\n                \"valuePeriodStartDate\": \"2010-04-19\",\r\n                \"valuePeriodEndDate\": \"2030-04-19\",\r\n                \"doubleValue\": 8000.00\r\n            }\r\n        ]\r\n    },\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": true,\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": {\r\n        \"serviceChargeTemplateRecurring\": [\r\n            {\r\n                \"code\": \"CH_REC_BUILD_RUN_ADV\",\r\n                \"wallets\": null\r\n            }\r\n        ]\r\n    },\r\n    \"serviceChargeTemplateSubscriptions\": null,\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}"
+											"raw": "{\r\n    \"code\": \"{{code}}\",\r\n    \"description\": \"{{desc}}\",\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            {\r\n                \"code\": \"CF_SE_DOUBLE\",\r\n                \"doubleValue\": 8.5\r\n            },\r\n            {\r\n                \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\r\n                \"valuePeriodStartDate\": \"2010-04-19\",\r\n                \"valuePeriodEndDate\": \"2020-05-19\",\r\n                \"valuePeriodPriority\": 1,\r\n                \"stringValue\": \"BUILD\"\r\n            },\r\n            {\r\n                \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\r\n                \"valuePeriodStartDate\": \"2020-05-20\",\r\n                \"valuePeriodEndDate\": \"2030-05-19\",\r\n                \"valuePeriodPriority\": 2,\r\n                \"stringValue\": \"RUN\"\r\n            },\r\n            {\r\n                \"code\": \"CF_SE_BUILD_DOUBLE_VERSION\",\r\n                \"valuePeriodPriority\": 1,\r\n                \"valuePeriodStartDate\": \"2010-04-19\",\r\n                \"valuePeriodEndDate\": \"2030-04-19\",\r\n                \"doubleValue\": 5.00\r\n            },\r\n            {\r\n                \"code\": \"CF_SE_RUN_DOUBLE_VERSION\",\r\n                \"valuePeriodPriority\": 1,\r\n                \"valuePeriodStartDate\": \"2010-04-19\",\r\n                \"valuePeriodEndDate\": \"2030-04-19\",\r\n                \"doubleValue\": 8.00\r\n            }\r\n        ]\r\n    },\r\n    \"imageBase64\": null,\r\n    \"imagePath\": null,\r\n    \"invoicingCalendar\": null,\r\n    \"longDescription\": null,\r\n    \"mandatory\": true,\r\n    \"serviceChargeTemplateUsages\": null,\r\n    \"serviceChargeTemplateRecurrings\": {\r\n        \"serviceChargeTemplateRecurring\": [\r\n            {\r\n                \"code\": \"CH_REC_BUILD_RUN_ADV\",\r\n                \"wallets\": null\r\n            }\r\n        ]\r\n    },\r\n    \"serviceChargeTemplateSubscriptions\": null,\r\n    \"serviceChargeTemplateTerminations\": null,\r\n    \"somCode\": null\r\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
@@ -3672,7 +3431,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"customFields\": null,\n    \"imageBase64\": null,\n    \"imagePath\": null,\n    \"invoicingCalendar\": null,\n    \"longDescription\": null,\n    \"mandatory\": true,\n    \"serviceChargeTemplateUsages\": {\n        \"serviceChargeTemplateUsage\": [\n            {\n                \"code\": \"CH_USG_UNIT\",\n                \"wallets\": null,\n                \"counterTemplate\": null,\n                \"accumulatorCounterTemplates\": {\n                \t\"counterTemplate\": [\n                \t\t\"CN_USG_ACCUM_C\",\n                        \"CN_MULTI_ACCUM_C\",\n                \t\t\"CN_EUR_ACCUM_C\"\n                \t]\n                }\n            }\n        ]\n    },\n    \"serviceChargeTemplateRecurrings\": null,\n    \"serviceChargeTemplateSubscriptions\": null,\n    \"serviceChargeTemplateTerminations\": null,\n    \"somCode\": null\n}"
+											"raw": "{\n    \"code\": \"{{code}}\",\n    \"description\": \"{{desc}}\",\n    \"customFields\": null,\n    \"imageBase64\": null,\n    \"imagePath\": null,\n    \"invoicingCalendar\": null,\n    \"longDescription\": null,\n    \"mandatory\": true,\n    \"serviceChargeTemplateUsages\": {\n        \"serviceChargeTemplateUsage\": [\n            {\n                \"code\": \"CH_USG_UNIT\",\n                \"wallets\": null,\n                \"counterTemplate\": null,\n                \"accumulatorCounterTemplates\": null\n                \n            }\n        ]\n    },\n    \"serviceChargeTemplateRecurrings\": null,\n    \"serviceChargeTemplateSubscriptions\": null,\n    \"serviceChargeTemplateTerminations\": null,\n    \"somCode\": null\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/serviceTemplate/createOrUpdate",
@@ -3773,7 +3532,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"code\": \"{{code}}\",\n    \"name\": \"{{name}}\",\n    \"description\": \"{{name}} {{code}} {{$timestamp}}\",\n    \"languageDescriptions\": [\n        {\n            \"languageCode\": \"ENG\",\n            \"description\": \"{{name}} {{code}} EN\"\n        },\n        {\n            \"languageCode\": \"FRA\",\n            \"description\": \"{{name}} {{code}} FR\"\n        }\n    ],\n    \"longDescription\": \"{{name}} {{code}} long {{$timestamp}}\",\n    \"longDescriptionsTranslated\": [\n        {\n            \"languageCode\": \"ENG\",\n            \"description\": \"{{name}} {{code}} long EN\"\n        },\n        {\n            \"languageCode\": \"FRA\",\n            \"description\": \"{{name}} {{code}} long FR\"\n        }\n    ],\n    \"disabled\": false,\n    \"lifeCycleStatus\": \"ACTIVE\",\n    \"bomCode\": null,\n    \"offerTemplateCategory\": [\n        {\n            \"code\": \"OCAT_ROOT\"\n        }\n    ],\n    \"channel\": [\n        {\n            \"code\": \"EMAIL\"\n        },\n        {\n            \"code\": \"RETAIL\"\n        },\n        {\n            \"code\": \"WEB\"\n        }\n    ],\n    \"seller\": [\n        \"OPENCELL\",\n        \"SELLER_LVL1\",\n        \"SELLER_LVL2\"\n    ],\n    \"customerCategory\": [\n        {\n            \"code\": \"PROSPECT\"\n        },\n        {\n            \"code\": \"CLIENT\"\n        }\n    ],\n    \"offerProductTemplate\": [\n        {\n            \"productTemplate\": {\n                \"code\": \"PR_PRD\"\n            }\n        }\n    ],\n    \"offerServiceTemplate\": [\n        {{offer.services}}\n    ],\n    \"customFields\": {\n        \"customField\": [\n            {\n                \"code\": \"CF_OF_STRING\",\n                \"stringValue\": \"From OfferTemplate {{code}}\"\n            }\n        ]\n    },\n    \"imagePath\": \".png\",\n    \"imageBase64\": \"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\"\n}"
+											"raw": "{\n    \"code\": \"OF_BASIC\",\n    \"name\": \"{{name}}\",\n    \"description\": \"{{name}} {{code}} {{$timestamp}}\",\n    \"languageDescriptions\": [\n        {\n            \"languageCode\": \"ENG\",\n            \"description\": \"{{name}} OF_BASIC EN\"\n        },\n        {\n            \"languageCode\": \"FRA\",\n            \"description\": \"{{name}} OF_BASIC FR\"\n        }\n    ],\n    \"longDescription\": \"{{name}} OF_BASIC long {{$timestamp}}\",\n    \"longDescriptionsTranslated\": [\n        {\n            \"languageCode\": \"ENG\",\n            \"description\": \"{{name}} OF_BASIC long EN\"\n        },\n        {\n            \"languageCode\": \"FRA\",\n            \"description\": \"{{name}} OF_BASIC long FR\"\n        }\n    ],\n    \"disabled\": false,\n    \"lifeCycleStatus\": \"ACTIVE\",\n    \"bomCode\": null,\n    \"offerTemplateCategory\": [\n        {\n            \"code\": \"OCAT_ROOT\"\n        }\n    ],\n    \"channel\": [\n        {\n            \"code\": \"EMAIL\"\n        },\n        {\n            \"code\": \"RETAIL\"\n        },\n        {\n            \"code\": \"WEB\"\n        }\n    ],\n    \"seller\": [\n        \"OPENCELL\",\n        \"SELLER_LVL1\",\n        \"SELLER_LVL2\"\n    ],\n    \"customerCategory\": [\n        {\n            \"code\": \"PROSPECT\"\n        },\n        {\n            \"code\": \"CLIENT\"\n        }\n    ],\n    \"offerProductTemplate\": [\n        {\n            \"productTemplate\": {\n                \"code\": \"PR_PRD\"\n            }\n        }\n    ],\n    \"offerServiceTemplate\": [\n        {{offer.services}}\n    ],\n    \"customFields\": {\n        \"customField\": [\n            {\n                \"code\": \"CF_OF_STRING\",\n                \"stringValue\": \"From OfferTemplate {{code}}\"\n            }\n        ]\n    },\n    \"imagePath\": \".png\",\n    \"imageBase64\": \"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\"\n}"
 										},
 										"url": {
 											"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
@@ -4279,12 +4038,12 @@
 								{
 									"listen": "prerequest",
 									"script": {
+										"type": "text/javascript",
 										"exec": [
 											"pm.globals.set(\"subscription.code\", pm.globals.get(\"account.code\")+\"-\"+pm.globals.get(\"request.label.0\"));",
 											"pm.globals.set(\"subscription.date\", pm.globals.get(\"request.label.3\"));",
 											""
-										],
-										"type": "text/javascript"
+										]
 									}
 								}
 							],
@@ -4298,7 +4057,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{subscription.code}}{{iter}}\",\r\n    \"description\": \"Souscription {{subscription.code}}\",\r\n    \"userAccount\": \"{{account.code}}\",\r\n    \"offerTemplate\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{request.label.2}}\",\r\n    \"subscriptionDate\": \"{{request.label.3}}\",\r\n    \"terminationDate\": null,\r\n    \"endAgreementDate\": \"2019-01-01\",\r\n    \"status\": null,\r\n    \"terminationReason\": null,\r\n    \"customFields\": null\r\n}\r\n"
+									"raw": "{\r\n    \"code\": \"{{subscription.code}}\",\r\n    \"description\": \"Souscription {{subscription.code}}\",\r\n    \"userAccount\": \"{{account.code}}\",\r\n    \"offerTemplate\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{request.label.2}}\",\r\n    \"subscriptionDate\": \"{{request.label.3}}\",\r\n    \"terminationDate\": null,\r\n    \"endAgreementDate\": \"2019-01-01\",\r\n    \"status\": null,\r\n    \"terminationReason\": null,\r\n    \"customFields\": null\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/billing/subscription/createOrUpdate",
@@ -4634,7 +4393,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "2020-11-16T12:00:00.988Z;1;ACCESS_1;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_2;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_3;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_4;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_5;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_6;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_7;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_8;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_9;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_10;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_11;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_12;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_13;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_14;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_15;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_16;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_17;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_18;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_19;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_20;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_21;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_22;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_23;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_24;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_25;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_26;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_27;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_28;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_29;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_30;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_31;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_32;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_33;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_34;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_35;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_36;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_37;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_38;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_39;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_40;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_41;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_42;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_43;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_44;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_45;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_46;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_47;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_48;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_49;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_50;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_51;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_52;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_53;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_54;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_55;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_56;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_57;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_58;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_59;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_60;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_61;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_62;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_63;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_64;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_65;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_66;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_67;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_68;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_69;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_70;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_71;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_72;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_73;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_74;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_75;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_76;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_77;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_78;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_79;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_80;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_81;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_82;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_83;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_84;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_85;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_86;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_87;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_88;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_89;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_90;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_91;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_92;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_93;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_94;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_95;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_96;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_97;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_98;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_99;UNIT;PS_SUPPORT\r\n2020-11-16T12:00:00.988Z;1;ACCESS_100;UNIT;PS_SUPPORT"
+							"raw": "2020-10-05T00:00:00.000Z;{{qtt}};{{subscription.code}};{{p1}};{{p2}}"
 						},
 						"url": {
 							"raw": "{{opencell.url}}/billing/mediation/chargeCdr?returnWalletOperations=true&isVirtual={{isVirtual}}&rateTriggeredEdr=true&maxDepth=0",
@@ -4901,9 +4660,7 @@
 									"        break;",
 									"}",
 									"",
-									"if(pm.globals.get(\"DoChargeTest\") === 'false'){",
-									"  postman.setNextRequest(null);// add a global variable to permit or not the execution of the collection ",
-									"}"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -4958,63 +4715,101 @@
 			]
 		},
 		{
-			"name": "Test de charges",
+			"name": "Perf_test_jobs",
 			"item": [
 				{
-					"name": "00|Nuage SAS|Nuage SAS",
+					"name": "SCRIPT|CreateAccess|Creates Mail Notification",
 					"event": [
 						{
-							"listen": "prerequest",
+							"listen": "test",
 							"script": {
 								"exec": [
-									"if(pm.globals.get(\"DoChargeTest\") === 'false'){",
-									"  postman.setNextRequest(null);// add a global variable to permit or not the execution of the collection ",
-									"}",
-									"",
-									"var parts = pm.variables.get(\"request.label\").split(\"|\");",
-									"var index = pm.globals.get(\"index\");",
-									"",
-									"var iter = pm.info.iteration;",
-									"var init = pm.variables.get(\"init\");",
-									"//var add = Number(iter)+Number(init);",
-									"postman.setEnvironmentVariable(\"iter\", Number(iter)+Number(init));",
-									"",
-									"if (typeof index === 'undefined') {",
-									"    console.log(\"index global variable is undefined -> setting to \\\"00\\\"\");",
-									"    pm.globals.set(\"index\", \"00\");",
-									"    index = \"00\";",
-									"}",
-									"",
-									"var prefix = pm.variables.get(\"seller.code\") + \"-\";",
-									"var suffix = \" \" + prefix + index;",
-									"",
-									"switch (parts.length) {",
-									"    case 1:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[0] + suffix);",
-									"        pm.globals.set(\"account.firstname\", \"\");",
-									"        pm.globals.set(\"account.lastname\", \"\");",
-									"        break;",
-									"    case 2:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[1] + suffix);",
-									"        pm.globals.set(\"account.firstname\", \"\");",
-									"        pm.globals.set(\"account.lastname\", \"\");",
-									"        break;",
-									"    case 3:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[1] + \" \" + parts[2] + suffix);",
-									"        pm.globals.set(\"account.firstname\", parts[1]);",
-									"        pm.globals.set(\"account.lastname\", parts[2]);",
-									"        break;",
-									"    case 4:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[1] + suffix);",
-									"        pm.globals.set(\"account.firstname\", parts[2]);",
-									"        pm.globals.set(\"account.lastname\", parts[3]);",
-									"        break;",
-									"}",
-									"",
+									"if( pm.response.code == 200 ) { tests[\"is.compiled\"] = JSON.parse(responseBody).compilationErrors.length === 0; }"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<ScriptInstance>\r\n    <code>org.meveo.service.script.MailNotificationScript</code>\r\n    <description>MailNotificationScript</description>\r\n    <type>JAVA</type>\r\n    <script>\r\n        <![CDATA[package org.meveo.service.script;\r\n\r\nimport java.util.Arrays;\r\nimport java.util.Date;\r\nimport java.util.HashMap;\r\nimport java.util.LinkedHashMap;\r\nimport java.util.List;\r\nimport java.util.Map;\r\nimport java.util.Map.Entry;\r\nimport java.util.Set;\r\n\r\nimport javax.persistence.EntityManager;\r\nimport javax.persistence.Query;\r\n\r\nimport org.meveo.admin.exception.BusinessException;\r\nimport org.meveo.service.billing.impl.EdrService;\r\nimport org.meveo.service.communication.impl.EmailSender;\r\nimport org.meveo.util.Version;\r\n\r\nimport java.math.BigDecimal;\r\nimport java.math.BigInteger;\r\n\r\npublic class MailNotificationScript extends Script {\r\n\r\n private EmailSender emailSender = (EmailSender) getServiceInterface(\"EmailSender\");\r\n private EdrService edrService = (EdrService) getServiceInterface(\"EdrService\");\r\n\r\n @Override\r\n public void execute(Map<String, Object> methodContext) throws BusinessException {\r\n\r\n  String jobNativeQuery = \"SELECT meveo_job_instance.code, start_date, ((\"\r\n    + \"DATE_PART('day', end_date\\\\:\\\\:timestamp - start_date\\\\:\\\\:timestamp) * 24 + \"\r\n    + \"DATE_PART('hour', end_date\\\\:\\\\:timestamp - start_date\\\\:\\\\:timestamp)) * 60 + \"\r\n    + \"DATE_PART('minute', end_date\\\\:\\\\:timestamp - start_date\\\\:\\\\:timestamp)) * 60 + \"\r\n    + \"DATE_PART('second', end_date\\\\:\\\\:timestamp - start_date\\\\:\\\\:timestamp) as time_in_seconds, nb_to_process, nb_success, nb_error, nb_warning FROM job_execution, meveo_job_instance \"\r\n    + \"WHERE job_execution.job_instance_id=meveo_job_instance.id AND code in ('Cust_Job','Acco_Job','Subs_Job','M_Job','U_Job','RT_Job','BillingRunJob','Inv_Job','XML_Job','PDF_Job','AO_Job','A_SEPA') order by start_date\";\r\n  \r\n\r\n  String nbBASQL = \"SELECT count (*) FROM billing_billing_account\";\r\n  EntityManager entityManager = edrService.getEntityManager();\r\n\r\n  Query query = entityManager.createNativeQuery(jobNativeQuery);\r\n  List<Object[]> rows = query.getResultList();\r\n  Map<String, Date> jobDateMap = new LinkedHashMap<>();\r\n  Map<String, Double> jobDuration = new LinkedHashMap<>();\r\n  Map<String, BigInteger> jobProcess = new LinkedHashMap<>();   \r\n  Map<String, BigInteger> jobSuccess = new LinkedHashMap<>();\r\n  Map<String, BigInteger> jobErrors = new LinkedHashMap<>();\r\n  Map<String, BigInteger> jobWarnings = new LinkedHashMap<>();\r\n\r\n  Query nbBAQuery = entityManager.createNativeQuery(nbBASQL);\r\n\r\n  BigInteger nbBA = (BigInteger) nbBAQuery.getSingleResult();\r\n   \r\n\r\n  for (Object[] row : rows) {\r\n   try {\r\n    jobDateMap.put((String) row[0], (Date) row[1]);\r\n    jobDuration.put((String) row[0], (Double) row[2]);\r\n    jobProcess.put((String) row[0], (BigInteger) row[3]);\r\n    jobSuccess.put((String) row[0], (BigInteger) row[4]);\r\n    jobErrors.put((String) row[0], (BigInteger) row[5]);\r\n    jobWarnings.put((String) row[0], (BigInteger) row[6]);\r\n   } catch (Exception ex) {\r\n    System.out.println(ex.getMessage());\r\n   }\r\n  }\r\n\r\n \r\n  StringBuilder stringBuilder = new StringBuilder();\r\n  stringBuilder.append(\"<html>\");\r\n  stringBuilder.append(\"<head>\");\r\n  stringBuilder.append(\"<title>Test Perfs Result on \" + nbBA + \" entities </title>\");\r\n  stringBuilder.append(\"</head>\");\r\n  stringBuilder.append(\"<body>\");\r\n  stringBuilder.append(\"<style>table{font-family:Arial,Helvetica,sans-serif;border-collapse:collapse}td,th{border:1px solid #ddd;padding:8px}tr:nth-child(even){background-color:#f2f2f2}tr:hover{background-color:#ddd}th{padding-top:12px;padding-bottom:12px;text-align:left;background-color:#4CAF50;color:#fff}</style>\");\r\n  stringBuilder.append(\"<h2>Jobs Performance tests results on \" + nbBA + \" entities for version : \" + Version.appVersion + \"on {{opencell.base}} </h2>\");\r\n  stringBuilder.append(\"<table>\");\r\n  stringBuilder.append(\"<thead>\");\r\n  stringBuilder.append(\"<tr>\");\r\n  stringBuilder.append(\"<th>JOB</th>\");\r\n  stringBuilder.append(\"<th>START DATE</th>\");\r\n  stringBuilder.append(\"<th>DURATION</th>\");\r\n  stringBuilder.append(\"<th>NB PROCESS</th>\");\r\n  stringBuilder.append(\"<th>NB SUCESS</th>\");\r\n  stringBuilder.append(\"<th>NB ERRORS</th>\");\r\n  stringBuilder.append(\"<th>NB WARNINGS</th>\");\r\n  stringBuilder.append(\"<th>TPS</th>\");\r\n  stringBuilder.append(\"</tr>\");\r\n  stringBuilder.append(\"</thead>\");\r\n  stringBuilder.append(\"<tbody>\");\r\n  Set<Entry<String, Date>> entrySet = jobDateMap.entrySet();\r\n  for (Entry<String, Date> entry : entrySet) {\r\n   stringBuilder.append(\"<tr>\");\r\n   String key = entry.getKey();\r\n   stringBuilder.append(\"<td>\" + key + \"</td>\");\r\n   stringBuilder.append(\"<td>\" + entry.getValue() + \"</td>\");\r\n   stringBuilder.append(\"<td>\" + String.format(\"%1.0f\",jobDuration.get(key)) + \"</td>\");\r\n   stringBuilder.append(\"<td>\" + jobProcess.get(key) + \"</td>\");\r\n   stringBuilder.append(\"<td>\" + jobSuccess.get(key) + \"</td>\");\r\n   stringBuilder.append(\"<td>\" + jobErrors.get(key) + \"</td>\");\r\n   stringBuilder.append(\"<td>\" + jobWarnings.get(key) + \"</td>\");\r\n   stringBuilder.append(\"<td>\" + String.format(\"%1.0f\",(nbBA.doubleValue()/jobDuration.get(key))) + \"</td>\");\r\n   stringBuilder.append(\"<tr>\");\r\n  }\r\n\r\n  stringBuilder.append(\"</tbody>\");\r\n  stringBuilder.append(\"</table>\");\r\n\r\n  stringBuilder.append(\"</br>\");\r\n\r\n  stringBuilder.append(\"<p>Nota : <em>Duration is in second and TPS is number of Treatements Per Second</em></p>\");\r\n\r\n  stringBuilder.append(\"</body>\");\r\n  stringBuilder.append(\"</html>\");\r\n\r\n  Map<String, Object> emailParams = new HashMap<String, Object>();\r\n  emailParams.put(\"JobStartDate\", jobDateMap);\r\n  emailParams.put(\"JobDuration\", jobDateMap);\r\n  emailParams.put(\"nbBA\", nbBA);\r\n\r\n  String from = \"bot@opencellsoft.com\";\r\n  String replyTo = \"no-reply@opencellsoft.com\";\r\n  String to1 = {{EMAIL1}};\r\n  String to2 = \"wassim.drira@opencellsoft.com\";\r\n  String to3 = \"antoine.michea@opencellsoft.com\";\r\n  String to4 = \"franck.valot@opencellsoft.com\";\r\n  String cc = \"mohamedali.hammal@opencellsoft.com\";\r\n\r\n  try {\r\n   emailSender.send(from, Arrays.asList(replyTo), Arrays.asList(to1), cc == null ? null : Arrays.asList(cc),\r\n     null, \"Test Perfs Result\", null, stringBuilder.toString(), null, new Date(), true);\r\n   methodContext.put(Script.RESULT_VALUE, \"Email sent\");\r\n\r\n  } catch (Exception e) {\r\n   e.printStackTrace();\r\n  }\r\n\r\n }\r\n}]]></script>\r\n</ScriptInstance>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/scriptInstance/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"scriptInstance",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SCRIPT|CreateAccess|CRMCDRScript|Generate Customers and CDR files|FROM|NB_cust|NB_SUBS|NB_Files|",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if( pm.response.code == 200 ) { tests[\"is.compiled\"] = JSON.parse(responseBody).compilationErrors.length === 0; }"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<ScriptInstance>\r\n    <code>org.meveo.service.script.CRMCDRScript</code>\r\n    <description>CRMCDRCREATORScript</description>\r\n    <type>JAVA</type>\r\n    <script>\r\n        <![CDATA[package org.meveo.service.script;\r\n\r\nimport java.util.Arrays;\r\nimport java.util.Calendar;\r\nimport java.util.Date;\r\nimport java.util.HashMap;\r\nimport java.util.LinkedHashMap;\r\nimport java.util.List;\r\nimport java.util.Map;\r\nimport java.util.Map.Entry;\r\nimport java.util.Set;\r\nimport java.io.File;\r\nimport java.io.FileWriter;\r\nimport java.text.SimpleDateFormat;\r\n\r\nimport javax.persistence.EntityManager;\r\nimport javax.persistence.Query;\r\n\r\nimport org.meveo.admin.exception.BusinessException;\r\nimport org.meveo.service.billing.impl.EdrService;\r\nimport org.meveo.commons.utils.ParamBean;\r\nimport org.meveo.service.communication.impl.EmailSender;\r\nimport org.meveo.util.Version;\r\nimport java.math.BigDecimal;\r\nimport java.math.BigInteger;\r\n\r\npublic class CRMCDRScript extends Script {\r\n\r\n    /** default folder where stores generated files. */\r\n    private static String pathCRM = \"/imports/customers/input/\"; // Find the correct CRM path to not get the error on the logs \r\n    private static String pathCDR = \"/imports/metering/input/\"; // Find the cdrs path to not get the error on the logs\r\n\r\n    /** number of files to be generated. */\r\n\r\n    private static int nbFiles = {{NB_Files}};\r\n\r\n    private static String CUST_CODE = \"JOB_CA\";\r\n\r\n    private static String CA_CODE = \"JOB_CA\";\r\n\r\n    private static String BA_CODE = \"JOB_CA\";\r\n\r\n    private static String UA_CODE = \"JOB_CA\";\r\n\r\n    private static String SUB_CODE = \"JOB_SU\";\r\n\r\n    private static Boolean CRM_MODE_ONE_FILE = true;\r\n\r\n\r\n    /**\r\n     * @param from\r\n     * @param to\r\n     * @param days number of days\r\n     * @param cdrsPerDay how many CDRs are generated per day\r\n     * @param periodBtwCDRs period between CDRs in the same day in minutes (1 by default)\r\n     */\r\n    private static void genCDR(int from, int to, int days, int cdrsPerDay, int periodBtwCDRs) {\r\n        ParamBean paramBean = ParamBean.getInstance();\t\r\n        String rootDir = paramBean.getProperty(\"providers.rootDir\", \"\");\r\n   \t\tString providerDir = paramBean.getProperty(\"provider.rootDir\", \"\");\r\n        String fileName = \"CDR_\" + from + \"_\" + to + \"Test.csv\";\r\n        String header = \"\";\r\n        Calendar calendar = Calendar.getInstance();\r\n        calendar.set(Calendar.HOUR, 1);\r\n        calendar.set(Calendar.MINUTE, 0);\r\n        calendar.set(Calendar.SECOND, 0);\r\n        calendar.add(Calendar.DATE, -(days + 36)); // @todo -2 au lieu de 0\r\n        if (periodBtwCDRs == 0) {\r\n            periodBtwCDRs = 1;\r\n        }\r\n\r\n        String record = \"\";\r\n        int d = 1;\r\n        int i = 1;\r\n        for (d = 1; d <= days; d++) {\r\n            for ( i = 1; i <= cdrsPerDay; i++) {\r\n                record += formatDateWithPattern(calendar.getTime(), \"yyyy-MM-dd'T'hh:mm:ss.S'Z'\") + \";1;\"+SUB_CODE + \"0_@@_0;UNIT\" + \"\\n\";\r\n                calendar.add(Calendar.MINUTE, periodBtwCDRs);\r\n            }\r\n            calendar.add(Calendar.DATE, 1);\r\n        }\r\n        String footer = \"\";\r\n        writeFile(from, to, header, record, footer, fileName, rootDir+\"/\"+providerDir+pathCDR);\r\n    }\r\n\r\n    private static void genCDR(int from, int to, int days, int cdrsPerDay) {\r\n        genCDR(from, to, days, cdrsPerDay, 1);\r\n    }\r\n\r\n    private static void genCDR(int from, int to, int days) {\r\n        genCDR(from, to, days, 1);\r\n    }\r\n\r\n    public static int randBetween(int start, int end) {\r\n        return start + (int)Math.round(Math.random() * (end - start));\r\n    }\r\n\r\n    private static void genCDR(int from, int to) {\r\n        genCDR(from, to, 1);\r\n    }\r\n\r\n    /**\r\n     * @param from start index\r\n     * @param to end index.\r\n     */\r\n    public static void genCustomerDD(int from, int to) {\r\n        ParamBean paramBean = ParamBean.getInstance();\t\r\n        String rootDir = paramBean.getProperty(\"providers.rootDir\", \"\");\r\n   \t\tString providerDir = paramBean.getProperty(\"provider.rootDir\", \"\");\r\n        String fileName = \"CUSTOMER_\" + from + \"_\" + to + \".xml\";\r\n        String header = \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\" standalone=\\\"yes\\\"?> \\n\" + \"<sellers> \\n\"\r\n                + \"<seller code=\\\"JOB_SELLER@@\\\" description=\\\"JOB_SELLER_@@\\\" tradingCurrencyCode=\\\"EUR\\\" tradingCountryCode=\\\"FR\\\" tradingLanguageCode=\\\"FRA\\\"> \\n\"\r\n                //+ \"<seller code=\\\"JOB_SELLER1\\\" description=\\\"JOB_SELLER_1\\\" tradingCurrencyCode=\\\"EUR\\\" tradingCountryCode=\\\"FR\\\" tradingLanguageCode=\\\"FRA\\\"> \\n\"\r\n                + \"<customers>\\n\";\r\n        String custCode = CUST_CODE + \"0_@@_0\";\r\n\r\n        String record = \"<customer ignoreCheck=\\\"true\\\" code=\\\"\" + custCode + \"\\\" customerCategory=\\\"CLIENT\\\" customerBrand=\\\"DEFAULT\\\"  tradingLanguageCode=\\\"FRA\\\">\\n\"\r\n                + \" <desCustomer>TEST_@@</desCustomer>\\n\" + \" <name>\\n\" + \" <title>MR</title>\\n\" + \" <firstname>CUST_FIRST_NAME0_@@_0</firstname>\\n\"\r\n                + \" <lastName>CUST_LAST_NAME0_@@_0</lastName>\\n\" + \" </name>\\n\" + \" <customerAccounts>\\n\"\r\n                + \" <customerAccount ignoreCheck=\\\"true\\\" creditCategory=\\\"VIP\\\" tradingLanguageCode=\\\"FRA\\\">\\n\"\r\n                + \" <paymentMethod>DIRECTDEBIT</paymentMethod>\\n\"\r\n                + \" <preferred>true</preferred>\\n\"\r\n                + \" <alias>SEPA</alias>\\n\"\r\n                + \" <mandateIdentification>G</mandateIdentification>\\n\"\r\n                + \" <mandateDate>2020-10-10</mandateDate>\\n\"\r\n                + \" <bankCoordinates>\"\r\n                + \" <bankCode>12456</bankCode>\\n\"\r\n                + \" <IBAN>FR123456789123456789</IBAN>\\n\"\r\n                + \" <bankName>Some Bank</bankName>\\n\"\r\n                + \" <BIC>BDNFR123456</BIC>\\n\"\r\n                + \" <accountNumber>...</accountNumber>\\n\"\r\n                + \" </bankCoordinates>\\n\"\r\n                + \" <code>\" + CA_CODE + \"0_@@_0\" + \"</code>\\n\"\r\n                + \" <tradingLanguageCode>FRA</tradingLanguageCode>\\n\" + \" <description>\" + CA_CODE + \"0_@@_0\" + \"</description>\\n\" + \" <name>\\n\" + \" <title>MR</title>\\n\"\r\n                + \" <firstname>JOB_FIRST_NAME0_@@_0</firstname>\\n\" + \" <lastName>JOB_LAST_NAME0_@@_0</lastName>\\n\" + \" <name>JOB_LAST_NAME0_@@_0</name>\\n\" + \" </name>\\n\"\r\n                + \" <tradingCurrencyCode>EUR</tradingCurrencyCode>\\n\" + (CRM_MODE_ONE_FILE ? \"<billingAccounts>\\n\" + getAccounts() + \"</billingAccounts>\" : \"\")\r\n                + \" </customerAccount>\\n\" + \" </customerAccounts>\\n\" + \" </customer>\\n\";\r\n\r\n        String footer = \"</customers>\\n\" + \"</seller>\\n\" + \"</sellers>\";\r\n\r\n        writeFile(from, to, header, record, footer, fileName, rootDir+\"/\"+providerDir+pathCRM);\r\n    }\r\n\r\n\r\n    /**\r\n     * @param from start index\r\n     * @param to end index.\r\n     */\r\n\r\n    public static void genCustomer(int from, int to) {\r\n        ParamBean paramBean = ParamBean.getInstance();\t\r\n        String rootDir = paramBean.getProperty(\"providers.rootDir\", \"\");\r\n   \t\tString providerDir = paramBean.getProperty(\"provider.rootDir\", \"\");\r\n        String fileName = \"CUSTOMER_\" + from + \"_\" + to + \".xml\";\r\n        String header = \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\" standalone=\\\"yes\\\"?> \\n\" + \"<sellers> \\n\"\r\n                + \"<seller code=\\\"JOB_SELLER@@\\\" description=\\\"JOB_SELLER_@@\\\" tradingCurrencyCode=\\\"EUR\\\" tradingCountryCode=\\\"FR\\\" tradingLanguageCode=\\\"FRA\\\"> \\n\"\r\n                + \"<customers>\\n\";\r\n        String custCode = \"JOB_CA\" + \"0_@@_0\";\r\n\r\n        String record = \"<customer ignoreCheck=\\\"true\\\" code=\\\"\" + custCode + \"\\\" customerCategory=\\\"CLIENT\\\" customerBrand=\\\"DEFAULT\\\"  tradingLanguageCode=\\\"FRA\\\">\\n\"\r\n                + \" <desCustomer>TEST_@@</desCustomer>\\n\" + \" <name>\\n\" + \" <title>MR</title>\\n\" + \" <firstname>CUST_FIRST_NAME0_@@_0</firstname>\\n\"\r\n                + \" <lastName>CUST_LAST_NAME0_@@_0</lastName>\\n\" + \" </name>\\n\" + \" <customerAccounts>\\n\"\r\n                + \" <customerAccount ignoreCheck=\\\"true\\\" creditCategory=\\\"VIP\\\" tradingLanguageCode=\\\"FRA\\\">\\n\" + \" <paymentMethods>\\n\" + \" <paymentMethod>\\n\"\r\n                + \" <paymentType>CHECK</paymentType>\\n\" + \"</\" +\r\n                \">\\n\" + \" </paymentMethods>\\n\" + \" <code>\" + CA_CODE + \"0_@@_0\" + \"</code>\\n\"\r\n                + \" <tradingLanguageCode>FRA</tradingLanguageCode>\\n\" + \" <description>\" + CA_CODE + \"0_@@_0\" + \"</description>\\n\" + \" <name>\\n\" + \" <title>MR</title>\\n\"\r\n                + \" <firstname>JOB_FIRST_NAME0_@@_0</firstname>\\n\" + \" <lastName>JOB_LAST_NAME0_@@_0</lastName>\\n\" + \" <name>JOB_LAST_NAME0_@@_0</name>\\n\" + \" </name>\\n\"\r\n                + \" <tradingCurrencyCode>EUR</tradingCurrencyCode>\\n\" + (CRM_MODE_ONE_FILE ? \"<billingAccounts>\\n\" + getAccounts() + \"</billingAccounts>\" : \"\")\r\n                + \" </customerAccount>\\n\" + \" </customerAccounts>\\n\" + \" </customer>\\n\";\r\n\r\n        String footer = \"</customers>\\n\" + \"</seller>\\n\" + \"</sellers>\";\r\n\r\n        writeFile(from, to, header, record, footer, fileName, rootDir+\"/\"+providerDir+pathCRM);\r\n    }\r\n\r\n    /**\r\n     * @param from\r\n     * @param to\r\n     */\r\n    public static void genSub(int from, int to, int NBSubs) {\r\n        ParamBean paramBean = ParamBean.getInstance();\t\r\n        String rootDir = paramBean.getProperty(\"providers.rootDir\", \"\");\r\n   \t\tString providerDir = paramBean.getProperty(\"provider.rootDir\", \"\");\r\n        String fileName = \"SUB_\" + from + \"_\" + to + \".xml\";\r\n        String header = \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\" standalone=\\\"yes\\\"?> \" + \"<subscriptions>\\n\\n\";\r\n        String record = \"\";\r\n        for (int i = 0; i < NBSubs; i++) {\r\n            record = getSubcriptions();\r\n            // writer.write(\"\\n\");\r\n        }\r\n        String footer = \"</subscriptions>\\n\";\r\n\r\n        writeFile(from, to, header, record, footer, fileName, rootDir+\"/\"+providerDir+pathCRM);\r\n    }\r\n\r\n    private static String getSubcriptions() {\r\n        String record = \"\" + \"<subscription code=\\\"\" + SUB_CODE + \"0_@@_0\\\"\" + \" userAccountId=\\\"\" + UA_CODE + \"0_@@_0\\\"\"\r\n                + \" offerCode=\\\"OF_BASIC\\\" sellerCode=\\\"JOB_SELLER@@\\\">\\n\"; // @todo\r\n        // offer\r\n        // changed\r\n        String dateFormat = \"yyyy-MM-dd\";\r\n        // String timeFormat = \"yyyy-MM-dd'T'hh:mm:ssZ\";\r\n        Calendar calendar = Calendar.getInstance();\r\n        calendar.set(Calendar.DAY_OF_MONTH,1);\r\n        calendar.add(Calendar.DATE, -2); // @todo -2 au lieu de -1\r\n        String SubDate = formatDateWithPattern(calendar.getTime(), dateFormat);\r\n        String EndAgDate = formatDateWithPattern(calendar.getTime(), dateFormat);\r\n        String formatDateWithPattern = formatDateWithPattern(calendar.getTime(), dateFormat);\r\n        System.out.println(\" date here is : \" + formatDateWithPattern);\r\n        String subDate = \"<subscriptionDate>01/01/2021</subscriptionDate>\\n\";\r\n        String EndDate = \"<endAgreementDate>01/06/2021</endAgreementDate>\\n\";\r\n        String statusDate = \"<status date=\\\"2021-02-28\\\">ACTIVE</status>\\n\";\r\n        String subCh = \"<subscriptionCharges>\\n\" + \"<code>CH_OSS</code>\\n\" + \"</subscriptionCharges>\\n\";\r\n        String TerCh = \"<terminationCharges>\\n\" + \"<code>CH_OST</code>\\n\" + \"</terminationCharges>\\n\";\r\n        String ReccCh = \"<recurringCharges>\\n\" + \"<code>CH_REC_BUILD_RUN_ADV</code>\\n\" + \"</recurringCharges>\\n\";\r\n        String UsgCh = \"<usageCharges>\\n\" + \"<code>CH_USG_UNIT</code>\\n\" + \"</usageCharges>\\n\";\r\n        record = record + subDate + EndDate + statusDate + \"<description>\" + SUB_CODE + \"0_@@_0\" + \" Description </description>\\n\"\r\n\r\n                + \"<services>\\n\"\r\n\r\n                + \"<serviceInstance code=\\\"SE_OSS\\\">\\n\" + subDate + statusDate + \"<quantity>10.000000000000</quantity>\\n\"+subCh+ \"</serviceInstance>\\n\"\r\n\r\n                + \"<serviceInstance code=\\\"SE_OST\\\">\\n\" + subDate + statusDate + \"<quantity>1.000000000000</quantity>\\n\" +TerCh+ \"</serviceInstance>\\n\"\r\n\r\n                + \"<serviceInstance code=\\\"SE_REC_ADV\\\">\\n\" + subDate + statusDate + \"<quantity>1.000000000000</quantity>\\n\"+ReccCh+ \"</serviceInstance>\\n\"\r\n\r\n                + \"<serviceInstance code=\\\"SE_USG_UNIT\\\">\\n\" + subDate + statusDate + \"<quantity>1.000000000000</quantity>\\n\"+UsgCh+ \"</serviceInstance>\\n\"\r\n\r\n                + \"</services>\\n\"\r\n\r\n                + \"</subscription>\\n\";\r\n\r\n        return record;\r\n\r\n    }\r\n\r\n    /**\r\n     * @param from\r\n     * @param to\r\n     */\r\n    public static void genAccounts(int from, int to) {\r\n        ParamBean paramBean = ParamBean.getInstance();\t\r\n        String rootDir = paramBean.getProperty(\"providers.rootDir\", \"\");\r\n   \t\tString providerDir = paramBean.getProperty(\"provider.rootDir\", \"\");\r\n        String fileName = \"ACCOUNT_\" + from + \"_\" + to + \".xml\";\r\n        String header = \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\" standalone=\\\"yes\\\"?> \\n\" + \"<billingAccounts>\\n\";\r\n        String record = getAccounts();\r\n\r\n        String footer = \"</billingAccounts>\\n\";\r\n\r\n        writeFile(from, to, header, record, footer, fileName, rootDir+\"/\"+providerDir+pathCRM);\r\n\r\n    }\r\n\r\n    /**\r\n     * @return billing count as XML-string\r\n     */\r\n    private static String getAccounts() {\r\n        String record = \"\" + \"<billingAccount customerAccountId=\\\"\" + CA_CODE + \"0_@@_0\\\"\" + \" code=\\\"\" + CA_CODE + \"0_@@_0\\\"\"\r\n                + \" billingCycle=\\\"CYC_INV_MT_1\\\">\"\r\n                + \" <subscriptionDate>01/01/2021</subscriptionDate>\"\r\n                + \" <description>\" + CA_CODE + \"0_@@_0 description\" + \"</description>\"\r\n                +   getName()\r\n                +   getAddress()\r\n                + \" <electronicBilling>true</electronicBilling>\\n\"\r\n                + \" <bankCoordinates>\"\r\n                + \" <accountName>\"+ \"CA_NAME\" + \"0_@@_0\" +\"</accountName>\"\r\n                + \" <bankCode>12456</bankCode>\"\r\n                + \" <IBAN>FR123456789123456789</IBAN>\"\r\n                + \" <bankName>Some Bank</bankName>\"\r\n                + \" <BIC>BDNFR123456</BIC>\"\r\n                + \" <accountNumber>...</accountNumber>\"\r\n                + \" <branchCode>...</branchCode>\"\r\n                + \" <key>\"+ \"CA_key\" + \"0_@@_0\" +\"</key>\"\r\n                + \" </bankCoordinates>\"\r\n                + \" <email>fr.fr@fr.com</email>\"\r\n                + \"<tradingCountryCode>FR</tradingCountryCode>\" + \"<tradingLanguageCode>FRA</tradingLanguageCode>\" + \"<userAccounts>\" + \"<userAccount code=\\\"\"\r\n                + UA_CODE + \"0_@@_0\\\">\"\r\n                + \"<subscriptionDate>01/01/2021</subscriptionDate>\\n\"\r\n                + \"<description>\" + UA_CODE + \"0_@@_0\" + \"</description>\\n\"\r\n                +   getName()\r\n                +   getAddress()\r\n                + (CRM_MODE_ONE_FILE ? \"<subscriptions>\\n\" + getSubcriptions() + \"</subscriptions>\\n\" : \"\") + \"</userAccount>\\n\" + \"</userAccounts>\\n\" + \"</billingAccount>\\n\";\r\n        return record;\r\n    }\r\n\r\n    /**\r\n     * @return Name as XML-string\r\n     */\r\n    private static String getName() {\r\n        String record = \"\" + \"<name>\"\r\n                + \" <title>CIE</title>\"\r\n                + \" <firstName>Nuage SAS</firstName>\"\r\n                + \" <lastName>Nuage SAS</lastName>\"\r\n                +\"</name>\\n\";\r\n        return record;\r\n    }\r\n\r\n    /**\r\n     * @return Adress as XML-string\r\n     */\r\n    private static String getAddress() {\r\n        String record = \"\" + \"<address>\"\r\n                + \" <address1>3 rue passante</address1>\"\r\n                + \" <address2>Batiment A</address2>\"\r\n                + \" <address3>Bureau D48</address3>\"\r\n                + \" <zipCode>75001</zipCode>\"\r\n                + \" <city>PARIS</city>\"\r\n                + \" <country>FR</country>\"\r\n                +\"</address>\\n\";\r\n        return record;\r\n    }\r\n\r\n    /**\r\n     * @param from start index\r\n     * @param to end index\r\n     * @param header header of file's content\r\n     * @param record body of file's content\r\n     * @param footer footer of file's content\r\n     * @param fileName file's name to be generated\r\n     * @param path the path to store generated files\r\n     */\r\n    public static void writeFile(int from, int to, String header, String record, String footer, String fileName, String path) {\r\n\r\n        String[] splits = fileName.split(\"\\\\.\");\r\n        String fName = \"\";\r\n        String extension = \"\";\r\n        if (splits.length == 2) {\r\n            fName = splits[0];\r\n            extension = splits[1];\r\n        }\r\n\r\n        int range = ((to - from) + 1) / nbFiles;\r\n        System.out.println(\" to  : \" + to);\r\n        System.out.println(\" range  : \" + range);\r\n        System.out.println(\" nbFiles  : \" + nbFiles);\r\n        for (int index = 1; index <= nbFiles; index++) {\r\n            // Generate from index\r\n            int startIndex = from + (index - 1) * range; // The start index (ex : start from 1 to 1000, it takes the value 1)\r\n            int endIndex = from + index * range; // The end index (ex : start from 1 to 1000 it takes the value 1000)\r\n            String finalFileName = fName + \"_\" + \"P_\" + index + \".\" + extension;\r\n            File fichier = new File(path + \"/\" + finalFileName);\r\n            try {\r\n                fichier.createNewFile();\r\n                final FileWriter writer = new FileWriter(fichier);\r\n                try {\r\n                    // writer.write(header);\r\n                    writer.write(header.replaceAll(\"@@\", \"\" + index));\r\n                    for (int i = startIndex; i < endIndex; i++) {\r\n                        writer.write(record.replaceAll(\"@@\", \"\" + i));\r\n                        // writer.write(\"\\n\");\r\n                    }\r\n                    writer.write(footer);\r\n                    System.out.println(\"Done for : \" + finalFileName);\r\n                } finally {\r\n                    writer.close();\r\n                }\r\n            } catch (Exception e) {\r\n                System.out.println(\"Impossible de creer le fichier\" + e.getMessage());\r\n            }\r\n        }\r\n\r\n        if (from + (nbFiles * range) <= to) {\r\n            String finalFileName = fName + \"_\" + \"P_\" + (nbFiles + 1) + \".\" + extension;\r\n            File fichier = new File(path + \"/\" + finalFileName);\r\n            try {\r\n                fichier.createNewFile();\r\n                final FileWriter writer = new FileWriter(fichier);\r\n                try {\r\n                    // writer.write(header);\r\n                    writer.write(header.replaceAll(\"@@\", \"\" + (nbFiles + 1)));\r\n                    for (int i = from + nbFiles * range; i <= to; i++) {\r\n                        writer.write(record.replaceAll(\"@@\", \"\" + i));\r\n                        writer.write(\"\\n\");\r\n                    }\r\n                    writer.write(footer);\r\n                    System.out.println(\"Done for : \" + finalFileName);\r\n                } finally {\r\n                    writer.close();\r\n                }\r\n            } catch (Exception e) {\r\n                System.out.println(\"Impossible de creer le fichier\" + e.getMessage());\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * @param value\r\n     * @param pattern\r\n     * @return\r\n     */\r\n    public static String formatDateWithPattern(Date value, String pattern) {\r\n        if (value == null) {\r\n            return \"\";\r\n        }\r\n        String result = null;\r\n        SimpleDateFormat sdf = new SimpleDateFormat(pattern);\r\n\r\n        try {\r\n            result = sdf.format(value);\r\n        } catch (Exception e) {\r\n            System.out.println(\"Error format\" + e.getMessage());\r\n            result = \"\";\r\n        }\r\n\r\n        return result;\r\n    }\r\n\r\n    /**\r\n     * @param args array of input arguments\r\n     * @throws Exception throwing exception if error happens\r\n     */\r\n\r\n    @Override\r\n    public void execute(Map<String, Object> methodContext) throws BusinessException {\r\n        int from = {{FROM}};\r\n        int to = {{NB_cust}};\r\n        int NBsubs = {{NB_SUBS}};\r\n\r\n        int days = 1;\r\n        int cdrsPerDay = 1;\r\n        int periodBtwCDRs = {{CDRs_per_cust}};\r\n\r\n        genCustomerDD(from, to);\r\n        //genCustomer(from, to);\r\n        //genAccounts(from, to);\r\n        //genSub(from, to, NBsubs);\r\n        nbFiles = 1; \r\n        genCDR(from, to, days, cdrsPerDay, periodBtwCDRs);\r\n    }\r\n}]]></script>\r\n</ScriptInstance>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/scriptInstance/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"scriptInstance",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create|code=SendRresults",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
 									""
 								],
 								"type": "text/javascript"
@@ -5031,61 +4826,15 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"crmAccountType\" : \"C_UA\",\r\n  \"crmParentCode\" : \"{{seller.code}}\",\r\n  \"code\" : \"{{account.code}}{{iter}}\",\r\n  \"description\": \"{{account.description}}\",\r\n  \"name\" : {\r\n    \"title\" : \"Cie\",\r\n    \"firstName\" : \"{{account.firstname}}\",\r\n    \"lastName\" : \"{{account.lastname}}\"\r\n  },\r\n  \"subscriptionDate\": \"2010-01-10\",\r\n  \"jobTitle\": \"...\",\r\n  \"vatNo\": \"FR12345678901234\",\r\n  \"registrationNo\": \"12354678901234\",\r\n  \"address\" : {\r\n    \"address1\" : \"3 rue passante\",\r\n    \"address2\" : \"Bâtiment A\",\r\n    \"address3\" : \"Bureau D42\",\r\n    \"zipCode\" : \"75001\",\r\n    \"city\" : \"PARIS\",\r\n    \"country\" : \"FR\"\r\n  },\r\n  \"contactInformation\" : {\r\n    \"email\" : \"{{seller.code}}@exemple.com\",\r\n    \"mobile\" : \"+33123546789\"\r\n  },\r\n  \"email\" : \"fr.fr@fr.com\",\r\n  \"language\" : \"FRA\",\r\n  \"paymentMethod\" : \"CHECK\",\r\n  \"customerCategory\" : \"CLIENT\",\r\n  \"currency\" : \"EUR\",\r\n  \"billingCycle\" : \"BC_MONTHLY_1ST\",\r\n  \"country\" : \"FR\",\r\n  \"electronicBilling\" : \"true\",\r\n  \"customFields\": null\r\n}"
+							"raw": "{\n    \"code\": \"SendRresults\",\n        \"disabled\": false,\n        \"jobCategory\": \"MEDIATION\",\n        \"jobTemplate\": \"ScriptingJob\",\n        \"active\": true,\n        \"customFields\": {\n            \"customField\": [\n                {\n                    \"code\": \"ScriptingJob_script\",\n                    \"description\": \"Script to run\",\n                    \"fieldType\": \"ENTITY\",\n                    \"entityReferenceValue\": {\n                        \"classname\": \"org.meveo.model.scripts.ScriptInstance\",\n                        \"classnameCode\": null,\n                        \"code\": \"org.meveo.service.script.MailNotificationScript\"\n                    },\n                    \"guiPosition\": \"tab:Configuration:0;field:0\"\n                }\n            ]\n        },\n        \"limitToSingleNode\": true,\n        \"verboseReport\": true\n}"
 						},
 						"url": {
-							"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
+							"raw": "{{opencell.url}}/job/createOrUpdate",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"account",
-								"accountHierarchy",
-								"createOrUpdateCRMAccountHierarchy"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "SU|OF_BASIC|OPENCELL|2019-12-15T01:23:45.678Z",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.globals.set(\"subscription.code\", pm.globals.get(\"account.code\")+\"-\"+pm.globals.get(\"request.label.0\"));",
-									"pm.globals.set(\"subscription.date\", pm.globals.get(\"request.label.3\"));",
-									"",
-									"var iter = pm.info.iteration;",
-									"var init = pm.variables.get(\"init\");",
-									"//var add = Number(iter)+Number(init);",
-									"postman.setEnvironmentVariable(\"iter\", Number(iter)+Number(init));"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{subscription.code}}{{iter}}{{name}}\",\r\n    \"description\": \"Souscription {{subscription.code}}{{iter}}{{name}}\",\r\n    \"userAccount\": \"{{account.code}}{{iter}}\",\r\n    \"offerTemplate\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{request.label.2}}\",\r\n    \"subscriptionDate\": \"{{request.label.3}}\",\r\n    \"terminationDate\": null,\r\n    \"endAgreementDate\": \"2020-12-20\",\r\n    \"status\": null,\r\n    \"terminationReason\": null,\r\n    \"customFields\": null\r\n}\r\n"
-						},
-						"url": {
-							"raw": "{{opencell.url}}/billing/subscription/createOrUpdate",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"billing",
-								"subscription",
+								"job",
 								"createOrUpdate"
 							]
 						}
@@ -5093,319 +4842,12 @@
 					"response": []
 				},
 				{
-					"name": "activateServices|SE_OSS|{{subscription.date}}",
+					"name": "DDREQUEST CReation",
 					"event": [
 						{
-							"listen": "prerequest",
+							"listen": "test",
 							"script": {
 								"exec": [
-									"var iter = pm.info.iteration;\r",
-									"var init = pm.variables.get(\"init\");\r",
-									"//var add = Number(iter)+Number(init);\r",
-									"postman.setEnvironmentVariable(\"iter\", Number(iter)+Number(init));"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"subscription\" : \"{{subscription.code}}{{iter}}{{name}}\",\r\n  \"servicesToActivate\" : {\r\n    \"service\" : [ {\r\n        \"code\": \"{{request.label.1}}\",\r\n        \"quantity\": 10,\r\n        \"subscriptionDate\": \"{{request.label.2}}\",\r\n        \"rateUntilDate\": null\r\n    } ]\r\n  }\r\n}"
-						},
-						"url": {
-							"raw": "{{opencell.url}}/billing/subscription/activateServices",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"billing",
-								"subscription",
-								"activateServices"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "activateServices|SE_OST|{{subscription.date}}",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"var iter = pm.info.iteration;\r",
-									"var init = pm.variables.get(\"init\");\r",
-									"//var add = Number(iter)+Number(init);\r",
-									"postman.setEnvironmentVariable(\"iter\", Number(iter)+Number(init));"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"subscription\" : \"{{subscription.code}}{{iter}}{{name}}\",\r\n  \"servicesToActivate\" : {\r\n    \"service\" : [ {\r\n        \"code\": \"{{request.label.1}}\",\r\n        \"quantity\": 1,\r\n        \"subscriptionDate\": \"{{request.label.2}}\",\r\n        \"rateUntilDate\": null,\r\n        \"customFields\": {\r\n            \"customField\": [\r\n                {\r\n                    \"code\": \"CF_SE_DOUBLE\",\r\n                    \"doubleValue\": 100\r\n                }\r\n            ]\r\n        }\r\n    } ]\r\n  }\r\n}"
-						},
-						"url": {
-							"raw": "{{opencell.url}}/billing/subscription/activateServices",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"billing",
-								"subscription",
-								"activateServices"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "activateServices|SE_REC_ADV|{{subscription.date}}",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"var iter = pm.info.iteration;\r",
-									"var init = pm.variables.get(\"init\");\r",
-									"//var add = Number(iter)+Number(init);\r",
-									"postman.setEnvironmentVariable(\"iter\", Number(iter)+Number(init));"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"subscription\": \"{{subscription.code}}{{iter}}{{name}}\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"{{request.label.1}}\",\r\n                \"quantity\": 1,\r\n                \"subscriptionDate\": \"{{request.label.2}}\",\r\n                \"rateUntilDate\": null,\r\n                \"customFields\": {\r\n                    \"customField\": [\r\n                        {\r\n                            \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\r\n                            \"valuePeriodStartDate\": \"2010-04-19\",\r\n                            \"valuePeriodEndDate\": \"2020-05-19\",\r\n                            \"valuePeriodPriority\": 1,\r\n                            \"stringValue\": \"BUILD\"\r\n                        },\r\n                        {\r\n                            \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\r\n                            \"valuePeriodStartDate\": \"2020-05-20\",\r\n                            \"valuePeriodEndDate\": \"2030-05-19\",\r\n                            \"valuePeriodPriority\": 2,\r\n                            \"stringValue\": \"RUN\"\r\n                        },\r\n                        {\r\n                            \"code\": \"CF_SE_BUILD_DOUBLE_VERSION\",\r\n                            \"valuePeriodPriority\": 1,\r\n                            \"valuePeriodStartDate\": \"2010-04-19\",\r\n                            \"valuePeriodEndDate\": \"2030-04-19\",\r\n                            \"doubleValue\": 5000.00\r\n                        },\r\n                        {\r\n                            \"code\": \"CF_SE_RUN_DOUBLE_VERSION\",\r\n                            \"valuePeriodPriority\": 1,\r\n                            \"valuePeriodStartDate\": \"2010-04-19\",\r\n                            \"valuePeriodEndDate\": \"2030-04-19\",\r\n                            \"doubleValue\": 8000.00\r\n                        }\r\n                    ]\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}"
-						},
-						"url": {
-							"raw": "{{opencell.url}}/billing/subscription/activateServices",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"billing",
-								"subscription",
-								"activateServices"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "activateServices|SE_USG_UNIT|{{subscription.date}}",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"var iter = pm.info.iteration;\r",
-									"var init = pm.variables.get(\"init\");\r",
-									"//var add = Number(iter)+Number(init);\r",
-									"postman.setEnvironmentVariable(\"iter\", Number(iter)+Number(init));"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"subscription\" : \"{{subscription.code}}{{iter}}{{name}}\",\r\n  \"servicesToActivate\" : {\r\n    \"service\" : [ {\r\n        \"code\": \"{{request.label.1}}\",\r\n        \"quantity\": 1,\r\n        \"subscriptionDate\": \"{{request.label.2}}\",\r\n        \"rateUntilDate\": null,\r\n        \"customFields\": null\r\n    } ]\r\n  }\r\n}"
-						},
-						"url": {
-							"raw": "{{opencell.url}}/billing/subscription/activateServices",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"billing",
-								"subscription",
-								"activateServices"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "setBillingAccountDiscountPlan|{{account.code}}|DP_GLOBAL_10P",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"code\": \"{{request.label.1}}\",\n    \"description\": \"{{account.description}} [{{$timestamp}}]\",\n\t\"billingCycle\" : \"BC_MONTHLY_1ST\",\n\t\"language\" : \"FRA\",\n\t\"country\" : \"FR\",\n    \"discountPlanForInstantiation\": [\n        {\n            \"code\": \"{{request.label.2}}\",\n            \"startDate\": null,\n            \"endDate\": null,\n            \"defaultDuration\": null,\n            \"durationUnit\": null\n        }\n    ]\n}"
-						},
-						"url": {
-							"raw": "{{opencell.url}}/account/billingAccount",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"account",
-								"billingAccount"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "CF",
-			"item": [
-				{
-					"name": "CF_SE_DOUBLE (template) Copy",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"code\": \"CF_SE_DOUBLE\",\n    \"description\": \"Service Price\",\n    \"fieldType\": \"DOUBLE\",\n    \"appliesTo\": \"ServiceTemplate\",\n    \"defaultValue\": \"850.0\",\n    \"storageType\": \"SINGLE\",\n    \"valueRequired\": false,\n    \"versionable\": false,\n    \"triggerEndPeriodEvent\": false,\n    \"allowEdit\": true,\n    \"hideOnNew\": false,\n    \"cacheValue\": false,\n    \"guiPosition\": \"tab:Configuration:1;fieldGroup:General;field:1\"\n}"
-						},
-						"url": {
-							"raw": "{{opencell.url}}/customFieldTemplate/createOrUpdate",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"customFieldTemplate",
-								"createOrUpdate"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "setBillingAccountDiscountPlan|{{account.code}}|DP_GLOBAL_10P",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"code\": \"{{request.label.1}}\",\n    \"description\": \"{{account.description}} [{{$timestamp}}]\",\n\t\"billingCycle\" : \"BC_MONTHLY_1ST\",\n\t\"language\" : \"FRA\",\n\t\"country\" : \"FR\",\n    \"discountPlanForInstantiation\": [\n        {\n            \"code\": \"{{request.label.2}}\",\n            \"startDate\": null,\n            \"endDate\": null,\n            \"defaultDuration\": null,\n            \"durationUnit\": null\n        }\n    ]\n}"
-						},
-						"url": {
-							"raw": "{{opencell.url}}/account/billingAccount",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"account",
-								"billingAccount"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Test de charges 1 ",
-			"item": [
-				{
-					"name": "00|Nuage SAS|Nuage SAS",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"if(pm.globals.get(\"DoChargeTest\") === 'false'){",
-									"  postman.setNextRequest(null);// add a global variable to permit or not the execution of the collection ",
-									"}",
-									"",
-									"var parts = pm.variables.get(\"request.label\").split(\"|\");",
-									"var index = pm.globals.get(\"index\");",
-									"",
-									"var iter = pm.info.iteration;",
-									"var init = pm.variables.get(\"init\");",
-									"//var add = Number(iter)+Number(init);",
-									"postman.setEnvironmentVariable(\"iter\", Number(iter)+Number(init));",
-									"",
-									"if (typeof index === 'undefined') {",
-									"    console.log(\"index global variable is undefined -> setting to \\\"00\\\"\");",
-									"    pm.globals.set(\"index\", \"00\");",
-									"    index = \"00\";",
-									"}",
-									"",
-									"var prefix = pm.variables.get(\"seller.code\") + \"-\";",
-									"var suffix = \" \" + prefix + index;",
-									"",
-									"switch (parts.length) {",
-									"    case 1:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[0] + suffix);",
-									"        pm.globals.set(\"account.firstname\", \"\");",
-									"        pm.globals.set(\"account.lastname\", \"\");",
-									"        break;",
-									"    case 2:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[1] + suffix);",
-									"        pm.globals.set(\"account.firstname\", \"\");",
-									"        pm.globals.set(\"account.lastname\", \"\");",
-									"        break;",
-									"    case 3:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[1] + \" \" + parts[2] + suffix);",
-									"        pm.globals.set(\"account.firstname\", parts[1]);",
-									"        pm.globals.set(\"account.lastname\", parts[2]);",
-									"        break;",
-									"    case 4:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[1] + suffix);",
-									"        pm.globals.set(\"account.firstname\", parts[2]);",
-									"        pm.globals.set(\"account.lastname\", parts[3]);",
-									"        break;",
-									"}",
-									"",
 									""
 								],
 								"type": "text/javascript"
@@ -5422,168 +4864,28 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"crmAccountType\": \"C_UA\",\r\n    \"crmParentCode\": \"OPENCELL\",\r\n    \"code\": \"OPENCELL-00000005\",\r\n    \"description\": \"OPENCELL 00000005 Description\",\r\n    \"name\": {\r\n        \"title\": \"MR\",\r\n        \"firstName\": \"Nuage SAS\",\r\n        \"lastName\": \"Nuage SAS\"\r\n    },\r\n    \"subscriptionDate\": \"2010-01-10\",\r\n    \"jobTitle\": \"...\",\r\n    \"vatNo\": \"FR12345678901234\",\r\n    \"registrationNo\": \"12354678901234\",\r\n    \"address\": {\r\n        \"address1\": \"3 rue passante\",\r\n        \"address2\": \"Bâtiment A\",\r\n        \"address3\": \"Bureau D42\",\r\n        \"zipCode\": \"75001\",\r\n        \"city\": \"PARIS\",\r\n        \"country\": \"FR\"\r\n    },\r\n    \"contactInformation\": {\r\n        \"email\": \"OPENCELL@exemple.com\",\r\n        \"mobile\": \"+33123546789\"\r\n    },\r\n    \"email\": \"fr.fr@fr.com\",\r\n    \"language\": \"FRA\",\r\n    \"methodOfPayment\": [\r\n        {\r\n            \"paymentMethodType\": \"DIRECTDEBIT\",\r\n            \"disabled\": false,\r\n            \"alias\": \"SEPA\",\r\n            \"preferred\": true,\r\n            \"bankCoordinates\": {\r\n                \"bankCode\": \"12456\",\r\n                \"accountNumber\": \"34589\",\r\n                \"iban\": \"FR123456789123456789\",\r\n                \"bic\": \"BDNFR123456\",\r\n                \"accountOwner\": \"OPENCELL 00 Description\",\r\n                \"bankName\": \"Some bank\",\r\n                \"bankId\": null,\r\n                \"issuerName\": null\r\n            }\r\n        }\r\n    ],\r\n    \"customerCategory\": \"CLIENT\",\r\n    \"currency\": \"EUR\",\r\n    \"billingCycle\": \"BC_MONTHLY_1ST\",\r\n    \"country\": \"FR\",\r\n    \"electronicBilling\": \"true\",\r\n    \"customFields\": null\r\n}"
+							"raw": "{\r\n    \"fromDueDate\": \"2010-03-28T00:00:00Z\",\r\n    \"toDueDate\": \"2026-05-18T00:00:00Z\",\r\n    \"ddrequestOp\": \"CREATE\",\r\n    \"status\": \"WAIT\",\r\n    \"ddRequestBuilderCode\": \"SEPA_STD\"\r\n}"
 						},
 						"url": {
-							"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
+							"raw": "{{opencell.url}}/payment/ddrequestLotOp",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"account",
-								"accountHierarchy",
-								"createOrUpdateCRMAccountHierarchy"
+								"payment",
+								"ddrequestLotOp"
 							]
 						}
 					},
-					"response": [
-						{
-							"name": "00|Nuage SAS|Nuage SAS",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"crmAccountType\" : \"C_UA\",\r\n  \"crmParentCode\" : \"{{seller.code}}\",\r\n  \"code\" : \"{{account.code}}{{iter}}\",\r\n  \"description\": \"{{account.description}}\",\r\n  \"name\" : {\r\n    \"title\" : \"Cie\",\r\n    \"firstName\" : \"{{account.firstname}}\",\r\n    \"lastName\" : \"{{account.lastname}}\"\r\n  },\r\n  \"subscriptionDate\": \"2010-01-10\",\r\n  \"jobTitle\": \"...\",\r\n  \"vatNo\": \"FR12345678901234\",\r\n  \"registrationNo\": \"12354678901234\",\r\n  \"address\" : {\r\n    \"address1\" : \"3 rue passante\",\r\n    \"address2\" : \"Bâtiment A\",\r\n    \"address3\" : \"Bureau D42\",\r\n    \"zipCode\" : \"75001\",\r\n    \"city\" : \"PARIS\",\r\n    \"country\" : \"FR\"\r\n  },\r\n  \"contactInformation\" : {\r\n    \"email\" : \"{{seller.code}}@exemple.com\",\r\n    \"mobile\" : \"+33123546789\"\r\n  },\r\n  \"email\" : \"fr.fr@fr.com\",\r\n  \"language\" : \"FRA\",\r\n  \"paymentMethod\" : \"CHECK\",\r\n  \"customerCategory\" : \"CLIENT\",\r\n  \"currency\" : \"EUR\",\r\n  \"billingCycle\" : \"BC_MONTHLY_1ST\",\r\n  \"country\" : \"FR\",\r\n  \"electronicBilling\" : \"true\",\r\n  \"customFields\": null\r\n}"
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"accountHierarchy",
-										"createOrUpdateCRMAccountHierarchy"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Expires",
-									"value": "0"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, no-store, must-revalidate"
-								},
-								{
-									"key": "Access-Control-Allow-Headers",
-									"value": "Content-Type, Authorization"
-								},
-								{
-									"key": "Pragma",
-									"value": "no-cache"
-								},
-								{
-									"key": "X-Frame-Options",
-									"value": "SAMEORIGIN"
-								},
-								{
-									"key": "Content-Security-Policy",
-									"value": "frame-src 'self'"
-								},
-								{
-									"key": "Date",
-									"value": "Fri, 27 Nov 2020 10:22:34 GMT"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "Access-Control-Allow-Credentials",
-									"value": "true"
-								},
-								{
-									"key": "X-Content-Type-Options",
-									"value": "nosniff"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Content-Length",
-									"value": "33"
-								},
-								{
-									"key": "Access-Control-Allow-Methods",
-									"value": "GET, POST, DELETE, PUT"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"status\": \"SUCCESS\",\n    \"message\": \"\"\n}"
-						}
-					]
+					"response": []
 				},
 				{
-					"name": "Update Customer IBAN",
+					"name": "Create|code=A_SEPA",
 					"event": [
 						{
-							"listen": "prerequest",
+							"listen": "test",
 							"script": {
 								"exec": [
-									"if(pm.globals.get(\"DoChargeTest\") === 'false'){",
-									"  postman.setNextRequest(null);// add a global variable to permit or not the execution of the collection ",
-									"}",
-									"",
-									"var parts = pm.variables.get(\"request.label\").split(\"|\");",
-									"var index = pm.globals.get(\"index\");",
-									"",
-									"var iter = pm.info.iteration;",
-									"var init = pm.variables.get(\"init\");",
-									"//var add = Number(iter)+Number(init);",
-									"postman.setEnvironmentVariable(\"iter\", Number(iter)+Number(init));",
-									"",
-									"if (typeof index === 'undefined') {",
-									"    console.log(\"index global variable is undefined -> setting to \\\"00\\\"\");",
-									"    pm.globals.set(\"index\", \"00\");",
-									"    index = \"00\";",
-									"}",
-									"",
-									"var prefix = pm.variables.get(\"seller.code\") + \"-\";",
-									"var suffix = \" \" + prefix + index;",
-									"",
-									"switch (parts.length) {",
-									"    case 1:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[0] + suffix);",
-									"        pm.globals.set(\"account.firstname\", \"\");",
-									"        pm.globals.set(\"account.lastname\", \"\");",
-									"        break;",
-									"    case 2:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[1] + suffix);",
-									"        pm.globals.set(\"account.firstname\", \"\");",
-									"        pm.globals.set(\"account.lastname\", \"\");",
-									"        break;",
-									"    case 3:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[1] + \" \" + parts[2] + suffix);",
-									"        pm.globals.set(\"account.firstname\", parts[1]);",
-									"        pm.globals.set(\"account.lastname\", parts[2]);",
-									"        break;",
-									"    case 4:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[1] + suffix);",
-									"        pm.globals.set(\"account.firstname\", parts[2]);",
-									"        pm.globals.set(\"account.lastname\", parts[3]);",
-									"        break;",
-									"}",
-									"",
 									""
 								],
 								"type": "text/javascript"
@@ -5600,152 +4902,15 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"crmAccountType\" : \"C_UA\",\r\n  \"crmParentCode\" : \"JOB_SELLER1\",\r\n  \"code\" : \"CUST-01\",\r\n  \"description\": \"CUST 50 Description\",\r\n  \"name\" : {\r\n    \"title\" : \"Cie\",\r\n    \"firstName\" : \"Nuage SAS\",\r\n    \"lastName\" : \"Nuage SAS\"\r\n  },\r\n  \"subscriptionDate\": \"2010-01-10\",\r\n  \"jobTitle\": \"...\",\r\n  \"vatNo\": \"FR12345678901234\",\r\n  \"registrationNo\": \"12354678901234\",\r\n  \"address\" : {\r\n    \"address1\" : \"3 rue passante\",\r\n    \"address2\" : \"Bâtiment A\",\r\n    \"address3\" : \"Bureau D42\",\r\n    \"zipCode\" : \"75001\",\r\n    \"city\" : \"PARIS\",\r\n    \"country\" : \"FR\"\r\n  },\r\n  \"contactInformation\" : {\r\n    \"email\" : \"OPENCELL@exemple.com\",\r\n    \"mobile\" : \"+33123546789\"\r\n  },\r\n  \"email\" : \"fr.fr@fr.com\",\r\n  \"language\" : \"FRA\",\r\n  \"methodOfPayment\": [\r\n        {\r\n            \"paymentMethodType\": \"DIRECTDEBIT\",\r\n            \"preferred\": true,\r\n            \"alias\": \"SEPA\",\r\n            \"mandateIdentification\" : \"G\",\r\n            \"mandateDate\" : \"2020-12-12\",\r\n            \"bankCoordinates\": {\r\n                \"bankCode\": \"12456\",\r\n                \"branchCode\" : \"...\",\r\n                \"key\" : \"...\",\r\n                \"bankId\" : \"...\",\r\n                \"iban\": \"FR123456789123456789\",\r\n                \"bankName\": \"Some bank\",\r\n                \"bic\": \"BDNFR123456\",\r\n                \"accountOwner\": \".\",\r\n                \"accountNumber\": \"...\",\r\n                \"issuerNumber\" : \"...\",\r\n                \"issuerName\" : \"...\",\r\n                \"ics\" : \"...\"\r\n            }   \r\n        }\r\n  ],\r\n  \"customerCategory\" : \"CLIENT\",\r\n  \"currency\" : \"EUR\",\r\n  \"billingCycle\" : \"BC_MONTHLY_1ST\",\r\n  \"country\" : \"FR\",\r\n  \"electronicBilling\" : \"true\",\r\n  \"customFields\": null\r\n}"
+							"raw": "{\n    \"code\": \"A_SEPA\",\n    \"jobCategory\": \"PAYMENT\",\n    \"jobTemplate\": \"SepaDirectDebitJob\",\n    \"customFields\": {\n            \"customField\": [\n                {\n                    \"code\": \"SepaJob_ddRequestBuilder\",\n                    \"description\": \"DDRequest builder\",\n                    \"fieldType\": \"ENTITY\",\n                    \"entityReferenceValue\": {\n                        \"classname\": \"org.meveo.model.payments.DDRequestBuilder\",\n                        \"classnameCode\": null,\n                        \"code\": \"Sepa_STD\"\n                    },\n                    \"guiPosition\": \"tab:Configuration:0;field:2\"\n                }\n            ]\n        },\n    \"followingJob\": \"SendRresults\",\n    \"verboseReport\": true\n}"
 						},
 						"url": {
-							"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
+							"raw": "{{opencell.url}}/job/createOrUpdate",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"account",
-								"accountHierarchy",
-								"createOrUpdateCRMAccountHierarchy"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "00|Nuage SAS|Nuage SAS",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"crmAccountType\" : \"C_UA\",\r\n  \"crmParentCode\" : \"{{seller.code}}\",\r\n  \"code\" : \"{{account.code}}{{iter}}\",\r\n  \"description\": \"{{account.description}}\",\r\n  \"name\" : {\r\n    \"title\" : \"Cie\",\r\n    \"firstName\" : \"{{account.firstname}}\",\r\n    \"lastName\" : \"{{account.lastname}}\"\r\n  },\r\n  \"subscriptionDate\": \"2010-01-10\",\r\n  \"jobTitle\": \"...\",\r\n  \"vatNo\": \"FR12345678901234\",\r\n  \"registrationNo\": \"12354678901234\",\r\n  \"address\" : {\r\n    \"address1\" : \"3 rue passante\",\r\n    \"address2\" : \"Bâtiment A\",\r\n    \"address3\" : \"Bureau D42\",\r\n    \"zipCode\" : \"75001\",\r\n    \"city\" : \"PARIS\",\r\n    \"country\" : \"FR\"\r\n  },\r\n  \"contactInformation\" : {\r\n    \"email\" : \"{{seller.code}}@exemple.com\",\r\n    \"mobile\" : \"+33123546789\"\r\n  },\r\n  \"email\" : \"fr.fr@fr.com\",\r\n  \"language\" : \"FRA\",\r\n  \"paymentMethod\" : \"CHECK\",\r\n  \"customerCategory\" : \"CLIENT\",\r\n  \"currency\" : \"EUR\",\r\n  \"billingCycle\" : \"BC_MONTHLY_1ST\",\r\n  \"country\" : \"FR\",\r\n  \"electronicBilling\" : \"true\",\r\n  \"customFields\": null\r\n}"
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"accountHierarchy",
-										"createOrUpdateCRMAccountHierarchy"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Expires",
-									"value": "0"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, no-store, must-revalidate"
-								},
-								{
-									"key": "Access-Control-Allow-Headers",
-									"value": "Content-Type, Authorization"
-								},
-								{
-									"key": "Pragma",
-									"value": "no-cache"
-								},
-								{
-									"key": "X-Frame-Options",
-									"value": "SAMEORIGIN"
-								},
-								{
-									"key": "Content-Security-Policy",
-									"value": "frame-src 'self'"
-								},
-								{
-									"key": "Date",
-									"value": "Fri, 27 Nov 2020 10:22:34 GMT"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "Access-Control-Allow-Credentials",
-									"value": "true"
-								},
-								{
-									"key": "X-Content-Type-Options",
-									"value": "nosniff"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Content-Length",
-									"value": "33"
-								},
-								{
-									"key": "Access-Control-Allow-Methods",
-									"value": "GET, POST, DELETE, PUT"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"status\": \"SUCCESS\",\n    \"message\": \"\"\n}"
-						}
-					]
-				},
-				{
-					"name": "SU|OF_BASIC|OPENCELL|2019-12-15T01:23:45.678Z",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.globals.set(\"subscription.code\", pm.globals.get(\"account.code\")+\"-\"+pm.globals.get(\"request.label.0\"));",
-									"pm.globals.set(\"subscription.date\", pm.globals.get(\"request.label.3\"));",
-									"",
-									"var iter = pm.info.iteration;",
-									"var init = pm.variables.get(\"init\");",
-									"//var add = Number(iter)+Number(init);",
-									"postman.setEnvironmentVariable(\"iter\", Number(iter)+Number(init));  "
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{subscription.code}}{{iter}}{{name}}\",\r\n    \"description\": \"Souscription {{subscription.code}}{{iter}}{{name}}\",\r\n    \"userAccount\": \"{{account.code}}{{iter}}\",\r\n    \"offerTemplate\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{request.label.2}}\",\r\n    \"subscriptionDate\": \"{{request.label.3}}\",\r\n    \"terminationDate\": null,\r\n    \"endAgreementDate\": \"2020-12-20\",\r\n    \"status\": null,\r\n    \"terminationReason\": null,\r\n    \"customFields\": null\r\n}\r\n"
-						},
-						"url": {
-							"raw": "{{opencell.url}}/billing/subscription/createOrUpdate",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"billing",
-								"subscription",
+								"job",
 								"createOrUpdate"
 							]
 						}
@@ -5753,127 +4918,12 @@
 					"response": []
 				},
 				{
-					"name": "activateServices|SE_OSS|SE_OST|SE_REC_ADV|SE_USG_UNIT|{{subscription.date}}",
+					"name": "Update|code=AO_Job",
 					"event": [
 						{
-							"listen": "prerequest",
+							"listen": "test",
 							"script": {
 								"exec": [
-									"var iter = pm.info.iteration;\r",
-									"var init = pm.variables.get(\"init\");\r",
-									"//var add = Number(iter)+Number(init);\r",
-									"postman.setEnvironmentVariable(\"iter\", Number(iter)+Number(init));"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"subscription\": \"{{subscription.code}}{{iter}}{{name}}\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"{{request.label.1}}\",\r\n                \"quantity\": 10,\r\n                \"subscriptionDate\": \"{{request.label.5}}\",\r\n                \"rateUntilDate\": null\r\n            },\r\n            {\r\n                \"code\": \"{{request.label.2}}\",\r\n                \"quantity\": 1,\r\n                \"subscriptionDate\": \"{{request.label.5}}\",\r\n                \"rateUntilDate\": null,\r\n                \"customFields\": {\r\n                    \"customField\": [\r\n                        {\r\n                            \"code\": \"CF_SE_DOUBLE\",\r\n                            \"doubleValue\": 100\r\n                        }\r\n                    ]\r\n                }\r\n            },\r\n            {\r\n                \"code\": \"{{request.label.3}}\",\r\n                \"quantity\": 1,\r\n                \"subscriptionDate\": \"{{request.label.5}}\",\r\n                \"rateUntilDate\": null,\r\n                \"customFields\": {\r\n                    \"customField\": [\r\n                        {\r\n                            \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\r\n                            \"valuePeriodStartDate\": \"2010-04-19\",\r\n                            \"valuePeriodEndDate\": \"2020-05-19\",\r\n                            \"valuePeriodPriority\": 1,\r\n                            \"stringValue\": \"BUILD\"\r\n                        },\r\n                        {\r\n                            \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\r\n                            \"valuePeriodStartDate\": \"2020-05-20\",\r\n                            \"valuePeriodEndDate\": \"2030-05-19\",\r\n                            \"valuePeriodPriority\": 2,\r\n                            \"stringValue\": \"RUN\"\r\n                        },\r\n                        {\r\n                            \"code\": \"CF_SE_BUILD_DOUBLE_VERSION\",\r\n                            \"valuePeriodPriority\": 1,\r\n                            \"valuePeriodStartDate\": \"2010-04-19\",\r\n                            \"valuePeriodEndDate\": \"2030-04-19\",\r\n                            \"doubleValue\": 5000.00\r\n                        },\r\n                        {\r\n                            \"code\": \"CF_SE_RUN_DOUBLE_VERSION\",\r\n                            \"valuePeriodPriority\": 1,\r\n                            \"valuePeriodStartDate\": \"2010-04-19\",\r\n                            \"valuePeriodEndDate\": \"2030-04-19\",\r\n                            \"doubleValue\": 8000.00\r\n                        }\r\n                    ]\r\n                }\r\n            },\r\n            {\r\n                \"code\": \"{{request.label.4}}\",\r\n                \"quantity\": 1,\r\n                \"subscriptionDate\": \"{{request.label.5}}\",\r\n                \"rateUntilDate\": null,\r\n                \"customFields\": null\r\n            }\r\n        ]\r\n    }\r\n}"
-						},
-						"url": {
-							"raw": "{{opencell.url}}/billing/subscription/activateServices",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"billing",
-								"subscription",
-								"activateServices"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				}
-			]
-		},
-		{
-			"name": "Test de charges manuel",
-			"item": [
-				{
-					"name": "00|Nuage SAS|Nuage SAS",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"if(pm.globals.get(\"DoChargeTest\") === 'false'){",
-									"  postman.setNextRequest(null);// add a global variable to permit or not the execution of the collection ",
-									"}",
-									"",
-									"var parts = pm.variables.get(\"request.label\").split(\"|\");",
-									"var index = pm.globals.get(\"index\");",
-									"",
-									"var iter = pm.info.iteration;",
-									"var init = pm.variables.get(\"init\");",
-									"//var add = Number(iter)+Number(init);",
-									"postman.setEnvironmentVariable(\"iter\", Number(iter)+Number(init));",
-									"",
-									"if (typeof index === 'undefined') {",
-									"    console.log(\"index global variable is undefined -> setting to \\\"00\\\"\");",
-									"    pm.globals.set(\"index\", \"00\");",
-									"    index = \"00\";",
-									"}",
-									"",
-									"var prefix = pm.variables.get(\"seller.code\") + \"-\";",
-									"var suffix = \" \" + prefix + index;",
-									"",
-									"switch (parts.length) {",
-									"    case 1:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[0] + suffix);",
-									"        pm.globals.set(\"account.firstname\", \"\");",
-									"        pm.globals.set(\"account.lastname\", \"\");",
-									"        break;",
-									"    case 2:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[1] + suffix);",
-									"        pm.globals.set(\"account.firstname\", \"\");",
-									"        pm.globals.set(\"account.lastname\", \"\");",
-									"        break;",
-									"    case 3:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[1] + \" \" + parts[2] + suffix);",
-									"        pm.globals.set(\"account.firstname\", parts[1]);",
-									"        pm.globals.set(\"account.lastname\", parts[2]);",
-									"        break;",
-									"    case 4:",
-									"        pm.globals.set(\"account.code\", prefix + parts[0]);",
-									"        pm.globals.set(\"account.description\", parts[1] + suffix);",
-									"        pm.globals.set(\"account.firstname\", parts[2]);",
-									"        pm.globals.set(\"account.lastname\", parts[3]);",
-									"        break;",
-									"}",
-									"",
 									""
 								],
 								"type": "text/javascript"
@@ -5890,152 +4940,15 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"crmAccountType\" : \"C_UA\",\r\n  \"crmParentCode\" : \"{{seller.code}}\",\r\n  \"code\" : \"{{account.code}}{{iter}}\",\r\n  \"description\": \"{{account.description}}\",\r\n  \"name\" : {\r\n    \"title\" : \"Cie\",\r\n    \"firstName\" : \"{{account.firstname}}\",\r\n    \"lastName\" : \"{{account.lastname}}\"\r\n  },\r\n  \"subscriptionDate\": \"2010-01-10\",\r\n  \"jobTitle\": \"...\",\r\n  \"vatNo\": \"FR12345678901234\",\r\n  \"registrationNo\": \"12354678901234\",\r\n  \"address\" : {\r\n    \"address1\" : \"3 rue passante\",\r\n    \"address2\" : \"Bâtiment A\",\r\n    \"address3\" : \"Bureau D42\",\r\n    \"zipCode\" : \"75001\",\r\n    \"city\" : \"PARIS\",\r\n    \"country\" : \"FR\"\r\n  },\r\n  \"contactInformation\" : {\r\n    \"email\" : \"{{seller.code}}@exemple.com\",\r\n    \"mobile\" : \"+33123546789\"\r\n  },\r\n  \"email\" : \"fr.fr@fr.com\",\r\n  \"language\" : \"FRA\",\r\n  \"paymentMethod\" : \"CHECK\",\r\n  \"customerCategory\" : \"CLIENT\",\r\n  \"currency\" : \"EUR\",\r\n  \"billingCycle\" : \"BC_MONTHLY_1ST\",\r\n  \"country\" : \"FR\",\r\n  \"electronicBilling\" : \"true\",\r\n  \"customFields\": null\r\n}"
+							"raw": "{\n    \"code\": \"AO_Job\",\n    \"jobCategory\": \"ACCOUNT_RECEIVABLES\",\n    \"jobTemplate\": \"AccountOperationsGenerationJob\",\n    \"active\": true,\n    \"followingJob\": \"A_SEPA\",\n    \"verboseReport\": true\n}"
 						},
 						"url": {
-							"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
+							"raw": "{{opencell.url}}/job/createOrUpdate",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"account",
-								"accountHierarchy",
-								"createOrUpdateCRMAccountHierarchy"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "00|Nuage SAS|Nuage SAS",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n  \"crmAccountType\" : \"C_UA\",\r\n  \"crmParentCode\" : \"{{seller.code}}\",\r\n  \"code\" : \"{{account.code}}{{iter}}\",\r\n  \"description\": \"{{account.description}}\",\r\n  \"name\" : {\r\n    \"title\" : \"Cie\",\r\n    \"firstName\" : \"{{account.firstname}}\",\r\n    \"lastName\" : \"{{account.lastname}}\"\r\n  },\r\n  \"subscriptionDate\": \"2010-01-10\",\r\n  \"jobTitle\": \"...\",\r\n  \"vatNo\": \"FR12345678901234\",\r\n  \"registrationNo\": \"12354678901234\",\r\n  \"address\" : {\r\n    \"address1\" : \"3 rue passante\",\r\n    \"address2\" : \"Bâtiment A\",\r\n    \"address3\" : \"Bureau D42\",\r\n    \"zipCode\" : \"75001\",\r\n    \"city\" : \"PARIS\",\r\n    \"country\" : \"FR\"\r\n  },\r\n  \"contactInformation\" : {\r\n    \"email\" : \"{{seller.code}}@exemple.com\",\r\n    \"mobile\" : \"+33123546789\"\r\n  },\r\n  \"email\" : \"fr.fr@fr.com\",\r\n  \"language\" : \"FRA\",\r\n  \"paymentMethod\" : \"CHECK\",\r\n  \"customerCategory\" : \"CLIENT\",\r\n  \"currency\" : \"EUR\",\r\n  \"billingCycle\" : \"BC_MONTHLY_1ST\",\r\n  \"country\" : \"FR\",\r\n  \"electronicBilling\" : \"true\",\r\n  \"customFields\": null\r\n}"
-								},
-								"url": {
-									"raw": "{{opencell.url}}/account/accountHierarchy/createOrUpdateCRMAccountHierarchy",
-									"host": [
-										"{{opencell.url}}"
-									],
-									"path": [
-										"account",
-										"accountHierarchy",
-										"createOrUpdateCRMAccountHierarchy"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Expires",
-									"value": "0"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, no-store, must-revalidate"
-								},
-								{
-									"key": "Access-Control-Allow-Headers",
-									"value": "Content-Type, Authorization"
-								},
-								{
-									"key": "Pragma",
-									"value": "no-cache"
-								},
-								{
-									"key": "X-Frame-Options",
-									"value": "SAMEORIGIN"
-								},
-								{
-									"key": "Content-Security-Policy",
-									"value": "frame-src 'self'"
-								},
-								{
-									"key": "Date",
-									"value": "Fri, 27 Nov 2020 10:22:34 GMT"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "Access-Control-Allow-Credentials",
-									"value": "true"
-								},
-								{
-									"key": "X-Content-Type-Options",
-									"value": "nosniff"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Content-Length",
-									"value": "33"
-								},
-								{
-									"key": "Access-Control-Allow-Methods",
-									"value": "GET, POST, DELETE, PUT"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"status\": \"SUCCESS\",\n    \"message\": \"\"\n}"
-						}
-					]
-				},
-				{
-					"name": "SU|OF_BASIC|OPENCELL|2019-12-15T01:23:45.678Z",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.globals.set(\"subscription.code\", pm.globals.get(\"account.code\")+\"-\"+pm.globals.get(\"request.label.0\"));",
-									"pm.globals.set(\"subscription.date\", pm.globals.get(\"request.label.3\"));",
-									"",
-									"var iter = pm.info.iteration;",
-									"var init = pm.variables.get(\"init\");",
-									"//var add = Number(iter)+Number(init);",
-									"postman.setEnvironmentVariable(\"iter\", Number(iter)+Number(init));  "
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{subscription.code}}{{iter}}{{name}}\",\r\n    \"description\": \"Souscription {{subscription.code}}{{iter}}{{name}}\",\r\n    \"userAccount\": \"{{account.code}}{{iter}}\",\r\n    \"offerTemplate\": \"{{request.label.1}}\",\r\n    \"seller\": \"{{request.label.2}}\",\r\n    \"subscriptionDate\": \"{{request.label.3}}\",\r\n    \"terminationDate\": null,\r\n    \"endAgreementDate\": \"2020-12-20\",\r\n    \"status\": null,\r\n    \"terminationReason\": null,\r\n    \"customFields\": null\r\n}\r\n"
-						},
-						"url": {
-							"raw": "{{opencell.url}}/billing/subscription/createOrUpdate",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"billing",
-								"subscription",
+								"job",
 								"createOrUpdate"
 							]
 						}
@@ -6043,16 +4956,13 @@
 					"response": []
 				},
 				{
-					"name": "activateServices|SE_OSS|SE_OST|SE_REC_ADV|SE_USG_UNIT|{{subscription.date}}",
+					"name": "Update|code=PDF_Job",
 					"event": [
 						{
-							"listen": "prerequest",
+							"listen": "test",
 							"script": {
 								"exec": [
-									"var iter = pm.info.iteration;\r",
-									"var init = pm.variables.get(\"init\");\r",
-									"//var add = Number(iter)+Number(init);\r",
-									"postman.setEnvironmentVariable(\"iter\", Number(iter)+Number(init));"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -6068,17 +4978,434 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"subscription\": \"{{subscription.code}}{{iter}}{{name}}\",\r\n    \"servicesToActivate\": {\r\n        \"service\": [\r\n            {\r\n                \"code\": \"{{request.label.1}}\",\r\n                \"quantity\": 10,\r\n                \"subscriptionDate\": \"{{request.label.5}}\",\r\n                \"rateUntilDate\": null\r\n            },\r\n            {\r\n                \"code\": \"{{request.label.2}}\",\r\n                \"quantity\": 1,\r\n                \"subscriptionDate\": \"{{request.label.5}}\",\r\n                \"rateUntilDate\": null,\r\n                \"customFields\": {\r\n                    \"customField\": [\r\n                        {\r\n                            \"code\": \"CF_SE_DOUBLE\",\r\n                            \"doubleValue\": 100\r\n                        }\r\n                    ]\r\n                }\r\n            },\r\n            {\r\n                \"code\": \"{{request.label.3}}\",\r\n                \"quantity\": 1,\r\n                \"subscriptionDate\": \"{{request.label.5}}\",\r\n                \"rateUntilDate\": null,\r\n                \"customFields\": {\r\n                    \"customField\": [\r\n                        {\r\n                            \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\r\n                            \"valuePeriodStartDate\": \"2010-04-19\",\r\n                            \"valuePeriodEndDate\": \"2020-05-19\",\r\n                            \"valuePeriodPriority\": 1,\r\n                            \"stringValue\": \"BUILD\"\r\n                        },\r\n                        {\r\n                            \"code\": \"CF_SE_BUILD_RUN_SITUATION\",\r\n                            \"valuePeriodStartDate\": \"2020-05-20\",\r\n                            \"valuePeriodEndDate\": \"2030-05-19\",\r\n                            \"valuePeriodPriority\": 2,\r\n                            \"stringValue\": \"RUN\"\r\n                        },\r\n                        {\r\n                            \"code\": \"CF_SE_BUILD_DOUBLE_VERSION\",\r\n                            \"valuePeriodPriority\": 1,\r\n                            \"valuePeriodStartDate\": \"2010-04-19\",\r\n                            \"valuePeriodEndDate\": \"2030-04-19\",\r\n                            \"doubleValue\": 5000.00\r\n                        },\r\n                        {\r\n                            \"code\": \"CF_SE_RUN_DOUBLE_VERSION\",\r\n                            \"valuePeriodPriority\": 1,\r\n                            \"valuePeriodStartDate\": \"2010-04-19\",\r\n                            \"valuePeriodEndDate\": \"2030-04-19\",\r\n                            \"doubleValue\": 8000.00\r\n                        }\r\n                    ]\r\n                }\r\n            },\r\n            {\r\n                \"code\": \"{{request.label.4}}\",\r\n                \"quantity\": 1,\r\n                \"subscriptionDate\": \"{{request.label.5}}\",\r\n                \"rateUntilDate\": null,\r\n                \"customFields\": null\r\n            }\r\n        ]\r\n    }\r\n}"
+							"raw": "{\n    \"code\": \"PDF_Job\",\n    \"disabled\": false,\n    \"jobCategory\": \"INVOICING\",\n    \"jobTemplate\": \"PDFInvoiceGenerationJob\",\n    \"active\": true,\n    \"followingJob\": \"AO_Job\",\n    \"verboseReport\": true\n}"
 						},
 						"url": {
-							"raw": "{{opencell.url}}/billing/subscription/activateServices",
+							"raw": "{{opencell.url}}/job/createOrUpdate",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"billing",
-								"subscription",
-								"activateServices"
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=XML_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"XML_Job\",\n    \"jobCategory\": \"INVOICING\",\n    \"jobTemplate\": \"XMLInvoiceGenerationJob\",\n    \"active\": true,\n    \"followingJob\": \"PDF_Job\",\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=Inv_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"Inv_Job\",\n    \"jobCategory\": \"INVOICING\",\n    \"jobTemplate\": \"InvoicingJob\",\n    \"active\": true,\n    \"followingJob\":\"XML_Job\",\n    \"verboseReport\": true\n}\n"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=BillingRunJob",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"BillingRunJob\",\n    \"disabled\": false,\n    \"jobCategory\": \"INVOICING\",\n    \"jobTemplate\": \"BillingRunJob\",\n    \"active\": true,\n    \"customFields\": {\n        \"customField\": [\n            {\n                \"code\": \"BillingRunJob_lastTransactionDate\",\n                \"description\": \"Last Transaction Date\",\n                \"fieldType\": \"DATE\", \n                \"dateValue\": \"2021-01-31T00:00:00Z\",\n                \"guiPosition\": \"tab:Configuration:0;field:0\"\n            },\n            {\n                \"code\": \"BillingRunJob_billingCycle\",\n                \"description\": \"Billing Cycles\",\n                \"fieldType\": \"ENTITY\",\n                \"guiPosition\": \"tab:Configuration:0;field:2\",\n                \"value\": [\n                    {\n                        \"value\": {\n                            \"entityReferenceValue\": {\n                                \"classname\": \"org.meveo.model.billing.BillingCycle\",\n                                \"classnameCode\": null,\n                                \"code\": \"CYC_INV_MT_1\"\n                            }\n                        }\n                    }\n                ]\n            },\n            {\n                \"code\": \"BillingRunJob_invoiceDate\",\n                \"description\": \"invoice Date\",\n                \"fieldType\": \"DATE\",\n                \"dateValue\": \"2021-02-01T00:00:00Z\",\n                \"guiPosition\": \"tab:Configuration:0;field:1\"\n            }\n        ]\n    },\n    \"timerCode\": \"Monthly\",\n    \"followingJob\":\"Inv_Job\",\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=RT_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"RT_Job\",\n    \"disabled\": false,\n    \"jobCategory\": \"INVOICING\",\n    \"jobTemplate\": \"RatedTransactionsJob\",\n    \"active\": true,\n    \"followingJob\": \"BillingRunJob\",\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=U_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"U_Job\",\n    \"jobCategory\": \"RATING\",\n    \"jobTemplate\": \"UsageRatingJob\",\n    \"active\": true,\n    \"limitToSingleNode\": true,\n    \"followingJob\": \"RT_Job\",\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=M_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"code\": \"M_Job\",\n    \"disabled\": false,\n    \"jobCategory\": \"MEDIATION\",\n    \"jobTemplate\": \"MediationJob\",\n    \"limitToSingleNode\": true,\n    \"verboseReport\": true,\n    \"followingJob\": \"U_Job\",\n    \"active\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=Subs_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"Subs_Job\",\n    \"jobCategory\": \"IMPORT_HIERARCHY\",\n    \"jobTemplate\": \"ImportSubscriptionsJob\",\n    \"followingJob\": \"M_Job\",\n    \"active\": true,\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=Acco_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"Acco_Job\",\n    \"disabled\": false,\n    \"jobCategory\": \"IMPORT_HIERARCHY\",\n    \"jobTemplate\": \"ImportAccountsJob\",\n    \"followingJob\": \"Subs_Job\",\n    \"active\": true,\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update|code=Cust_Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"Cust_Job\",\n    \"jobTemplate\": \"ImportCustomersJob\",\n    \"active\": true,\n    \"followingJob\": \"Acco_Job\",\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create|code=CRM_CDR_GEN_JOB",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"CRM_CDR_GEN_JOB\",\n    \"disabled\": false,\n    \"jobCategory\": \"MEDIATION\",\n    \"jobTemplate\": \"ScriptingJob\",\n    \"active\": true,\n    \"customFields\": {\n        \"customField\": [\n            {\n                \"code\": \"ScriptingJob_script\",\n                \"description\": \"Script to run\",\n                \"fieldType\": \"ENTITY\",\n                \"entityReferenceValue\": {\n                    \"classname\": \"org.meveo.model.scripts.ScriptInstance\",\n                    \"classnameCode\": null,\n                    \"code\": \"org.meveo.service.script.CRMCDRScript\"\n                },\n                \"guiPosition\": \"tab:Configuration:0;field:0\"\n            }\n        ]\n    },\n    \"limitToSingleNode\": true,\n    \"followingJob\": \"Cust_Job\",\n    \"verboseReport\": true\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Run|code=CRM_CDR_GEN_JOB",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"CRM_CDR_GEN_JOB\"\n}"
+						},
+						"url": {
+							"raw": "{{opencell.url}}/job/execute",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"job",
+								"execute"
 							]
 						}
 					},
@@ -6211,8 +5538,28 @@
 			"value": "9.4+"
 		},
 		{
-			"key": "DoChargeTest",
-			"value": "true"
+			"key": "NB_cust",
+			"value": "10000"
+		},
+		{
+			"key": "NB_SUBS",
+			"value": "1"
+		},
+		{
+			"key": "CDRs_per_cust",
+			"value": "1"
+		},
+		{
+			"key": "NB_Files",
+			"value": "6"
+		},
+		{
+			"key": "FROM",
+			"value": "1"
+		},
+		{
+			"key": "EMAIL1",
+			"value": "\"mohamedali.hammal@opencellsoft.com\""
 		}
 	]
 }
