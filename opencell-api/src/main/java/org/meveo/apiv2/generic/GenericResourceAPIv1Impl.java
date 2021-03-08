@@ -9,6 +9,8 @@ import org.meveo.api.dto.billing.ActivateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.invoice.CancelInvoiceRequestDto;
+import org.meveo.api.dto.invoice.ValidateInvoiceRequestDto;
 import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
 import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.util.Inflector;
@@ -55,6 +57,9 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String SUSPENSION_SERVICE = "suspension";
     private static final String TERMINATION_SERVICE = "termination";
     private static final String UPDATING_SERVICE = "services";
+    private static final String CANCELLATION_SERVICE = "cancellation";
+    private static final String VALIDATION_SERVICE = "validation";
+    private static final String EMAIL_SENDING_SERVICE = "emailSending";
 
     private static final String API_REST = "api/rest";
 
@@ -113,7 +118,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 if ( pathIBaseRS.contains( "oneShotChargeTemplate" ) || pathIBaseRS.contains( "/account/customer" )
                     || pathIBaseRS.contains( "/billing/subscription" ) || pathIBaseRS.contains( "/billing/ratedTransaction" )
                     || pathIBaseRS.contains( "/billing/wallet" ) || pathIBaseRS.contains( "/catalog/offerTemplate")
-                    || pathIBaseRS.contains( "/user" ) )
+                    || pathIBaseRS.contains( "/user" ) || pathIBaseRS.contains( "/invoice" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
@@ -307,6 +312,34 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
                 return AuthenticationFilter.httpClient.target( redirectURI ).request()
                         .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
+            }
+            // Handle the special endpoint: cancel an existing invoice
+            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(CANCELLATION_SERVICE) ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS );
+                CancelInvoiceRequestDto aDto = new CancelInvoiceRequestDto();
+                aDto.setInvoiceId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+
+                return AuthenticationFilter.httpClient.target( redirectURI ).request()
+                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
+            }
+            // Handle the special endpoint: validate an existing invoice
+            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(VALIDATION_SERVICE) ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS );
+                ValidateInvoiceRequestDto aDto = new ValidateInvoiceRequestDto();
+                aDto.setInvoiceId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+
+                return AuthenticationFilter.httpClient.target( redirectURI ).request()
+                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
+            }
+            // Handle the special endpoint: send an existing invoice by email
+            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(EMAIL_SENDING_SERVICE) ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS );
+
+                return AuthenticationFilter.httpClient.target( redirectURI ).request()
+                        .put( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
             }
         }
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( pathUpdateAnEntity ) ) {

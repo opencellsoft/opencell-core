@@ -317,6 +317,25 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/languages\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
                         }
+                        else if ( ((Path) anAnnotation).value().equals( "/invoice" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices",
+                                    ((Path) anAnnotation).value() );
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices/pdfInvoices",
+                                    ((Path) anAnnotation).value() + "/fetchPdfInvoice" );
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices/xmlInvoices",
+                                    ((Path) anAnnotation).value() + "/fetchXMLInvoice" );
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices/generation",
+                                    ((Path) anAnnotation).value() + "/generateInvoice" );
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices/emailSending",
+                                    ((Path) anAnnotation).value() + "/sendByEmail" );
+
+                            // Processing for different services of invoice: cancellation, validation
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/invoices\\/" + CODE_REGEX + "\\/cancellation" ) ,
+                                    ((Path) anAnnotation).value() + "/cancel" );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/invoices\\/" + CODE_REGEX + "\\/validation" ) ,
+                                    ((Path) anAnnotation).value() + "/validate" );
+                        }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
                                     API_VERSION + Inflector.getInstance().pluralize( ((Path) anAnnotation).value() ),
