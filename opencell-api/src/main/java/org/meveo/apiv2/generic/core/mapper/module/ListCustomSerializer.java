@@ -63,10 +63,13 @@ class ListCustomSerializer extends StdSerializer<Collection> implements GenericS
             } else {
                 gen.writeStartArray(collectionIEntity.size());
                 for (IEntity iEntity : collectionIEntity) {
-                    gen.writeStartObject();
-                    gen.writeFieldName("id");
-                    gen.writeNumber((Long) iEntity.getId());
-                    gen.writeEndObject();
+                    final Long id = (Long) iEntity.getId();
+                    if(id!=null) {
+                    	gen.writeStartObject();
+                        gen.writeFieldName("id");
+                    	gen.writeNumber(id);
+                    	gen.writeEndObject();
+                    }
                 }
                 gen.writeEndArray();
             }

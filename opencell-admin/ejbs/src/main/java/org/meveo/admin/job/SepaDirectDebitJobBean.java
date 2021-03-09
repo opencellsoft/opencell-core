@@ -51,6 +51,7 @@ import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentOrRefundEnum;
+import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
@@ -182,6 +183,13 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 				if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
 					break;
 				}
+				boolean isToMatching = false;
+				if(ddrequestLotOp.getPaymentStatus() == null) {
+				    ddrequestLotOp.setPaymentStatus(PaymentStatusEnum.ACCEPTED);
+				}
+				if(ddrequestLotOp.getPaymentStatus() == PaymentStatusEnum.ACCEPTED) {
+					isToMatching = true;
+				}
 				try {
 					DateRangeScript dateRangeScript = this.getDueDateRangeScript(ddrequestLotOp);
 					if (dateRangeScript != null) { // computing custom due date range :
@@ -198,16 +206,20 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 							dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider);
 							log.info("end generateDDRquestLotFile");
 							result.addReport(ddRequestLOT.getRejectedCause());
-							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns, waitingMillis, result);
-							log.info("end createPaymentsOrRefundsForDDRequestLot");
-							if (isEmpty(ddRequestLOT.getRejectedCause())) {
-								jobExecutionService.registerSucces(result);
-							}
+							if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
+                                dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);
+                                log.info("end createPaymentsOrRefundsForDDRequestLot");
+                                if (isEmpty(ddRequestLOT.getRejectedCause())) {
+                                    jobExecutionService.registerSucces(result);
+                                }
+                            }
 						}
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.PAYMENT) {
-						dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddrequestLotOp.getDdrequestLOT(), nbRuns, waitingMillis, result);
-						jobExecutionService.registerSucces(result);
+                        if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {					    
+                            dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddrequestLotOp.getDdrequestLOT(), isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);
+    						jobExecutionService.registerSucces(result);
+                        }
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.FILE) {
 						dDRequestLOTService.generateDDRquestLotFile(ddrequestLotOp.getDdrequestLOT(), ddRequestBuilderInterface, appProvider);
@@ -314,6 +326,9 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
             newDDRequestLotOp.setFilter(ddrequestLotOp.getFilter());
             newDDRequestLotOp.setDdrequestOp(ddrequestLotOp.getDdrequestOp());
 
+            newDDRequestLotOp.setGeneratePaymentLines(ddrequestLotOp.isGeneratePaymentLines());
+            newDDRequestLotOp.setPaymentStatus(ddrequestLotOp.getPaymentStatus());
+            
             this.dDRequestLotOpService.create(newDDRequestLotOp);
         } catch (Exception e) {
             log.error(" error on createNewDdrequestLotOp {} ", e.getMessage(), e);
