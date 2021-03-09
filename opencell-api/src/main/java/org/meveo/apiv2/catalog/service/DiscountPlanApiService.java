@@ -19,9 +19,11 @@ import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -42,6 +44,11 @@ public class DiscountPlanApiService {
 
 	@Inject
 	private GenericApiPersistenceDelegate persistenceDelegate;
+
+	@PostConstruct
+	public void configure() {
+		genericApiAlteringService.addForbiddenFieldsToUpdate(Collections.singletonList("usedQuantity"));
+	}
 
 	public String findPaginatedRecords(PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
 		return loadService.findPaginatedRecords(true, DiscountPlan.class, searchConfig, genericFields, nestedEntities, 1L);

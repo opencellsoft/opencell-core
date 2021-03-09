@@ -248,17 +248,24 @@ public class GenericApiAlteringService {
 
     private Object getConvertedType(CustomFieldTypeEnum fieldType, Object value) {
         switch (fieldType){
-            case DATE:
-                return new Date((Long) value);
-            case ENTITY:
-                Map<String, String> entityRefDto = (Map<String, String>) value;
-                EntityReferenceDto entityReferenceDto = new EntityReferenceDto();
-                entityReferenceDto.setClassname(entityRefDto.get("classname"));
-                entityReferenceDto.setCode(entityRefDto.get("code"));
-                return entityReferenceDto;
-            default:
-                return value;
+        case DATE:
+            return new Date((Long) value);
+        case ENTITY:
+            Map<String, String> entityRefDto = (Map<String, String>) value;
+            EntityReferenceDto entityReferenceDto = new EntityReferenceDto();
+            entityReferenceDto.setClassname(entityRefDto.get("classname"));
+            entityReferenceDto.setCode(entityRefDto.get("code"));
+            return entityReferenceDto;
+        default:
+            return value;
         }
+    }
+
+    public void addForbiddenFieldsToUpdate(List<String> fields) {
+        if (forbiddenFieldsToUpdate == null) {
+            forbiddenFieldsToUpdate = new ArrayList<>();
+        }
+        forbiddenFieldsToUpdate.addAll(fields);
     }
 
 }

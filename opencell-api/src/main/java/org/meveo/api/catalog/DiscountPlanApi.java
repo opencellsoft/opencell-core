@@ -83,9 +83,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         }
         discountPlan.setDiscountPlanType(postData.getDiscountPlanType());
         discountPlan.setStatus(postData.getStatus());
-        discountPlan.setStatusDate(postData.getStatusDate());
         discountPlan.setInitialQuantity(postData.getInitialQuantity());
-        discountPlan.setUsedQuantity(postData.getUsedQuantity());
         discountPlan.setApplicationLimit(postData.getApplicationLimit());
         discountPlan.setApplicationFilterEL(postData.getApplicationFilterEL());
         discountPlan.setIncompatibleDiscountPlans(getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans()));
@@ -168,9 +166,6 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         }
         if (postData.getInitialQuantity() != null) {
             discountPlan.setInitialQuantity(postData.getInitialQuantity());
-        }
-        if (postData.getUsedQuantity() != null) {
-            discountPlan.setUsedQuantity(postData.getUsedQuantity());
         }
         if (postData.getApplicationLimit() != null) {
             discountPlan.setApplicationLimit(postData.getApplicationLimit());
