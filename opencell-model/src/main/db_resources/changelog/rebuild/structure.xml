@@ -194,8 +194,6 @@
         <createSequence sequenceName="document_category_seq" startValue="1"/>
         <createSequence sequenceName="job_execution_error_seq" startValue="1"/>
         <createSequence sequenceName="bi_data_collector_seq" startValue="1" />
-        <createSequence sequenceName="wf_generic_action_seq" startValue="1" />
-        <createSequence sequenceName="generic_sequence_seq" startValue="1" />
         <createSequence sequenceName="meveo_metrics_config_seq" />
     </changeSet>
 
@@ -2944,7 +2942,6 @@
             <column name="creator" type="varchar(100)" />
             <column name="created" type="datetime" />
             <column name="updater" type="varchar(100)" />
-            <column name="updated" type="datetime" />
             <column name="tax_class_id" type="bigint" />
             <column name="input_quantity" type="numeric(23, 12)" />
             <column name="raw_amount_without_tax" type="numeric(23, 12)" />
@@ -6941,7 +6938,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_billing_seq_invoice" />
             </column>
             <column name="sequence_size" type="int4" />
-            <column name="current_number" type="bigint" />
+            <column name="current_invoice_nb" type="bigint" />
             <column name="version" type="int4" defaultValueNumeric="0" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
@@ -7508,6 +7505,8 @@
             </column>
             <column name="entity_class" type="varchar(255)" />
             <column name="code_el" type="varchar(255)" />
+            <column name="sequence_size" type="int4" />
+            <column name="sequence_current_value" type="bigint" defaultValueNumeric="0" />
             <column name="version" type="int4" />
             <column name="created" type="datetime">
                 <constraints nullable="false" />
@@ -7515,8 +7514,6 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="format_el" type="varchar(2000)"/>
-            <column name="sequence_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-394">
@@ -8103,46 +8100,6 @@
             <column name="parameters" type="text" />
         </createTable>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-425">           
-    	<createTable tableName="wf_generic_action" >
-            <column name="id" type="bigint">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="wf_generic_action_pk"/>
-            </column>
-            <column name="version" type="int4" />
-            <column name="description" type="varchar(255)" />
-            <column name="uuid" type="varchar(255)" />
-            <column name="priority" type="int4" />
-            <column name="condition_el" type="varchar(2000)" />
-            <column name="value_el" type="varchar(2000)" />
-            <column name="type" type="varchar(255)" />
-            <column name="log_level" type="varchar(255)" />
-            <column name="field_to_update" type="varchar(255)" />
-            <column name="is_asynchronous" type="${type.boolean}" defaultValueNumeric="0"/>
-            <column name="action_script_id" type="bigint" />
-            <column name="notification_id" type="bigint" />
-            <column name="transition_id" type="bigint" />
-        </createTable>
-    </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-426">           
-    	<createTable tableName="generic_sequence" >
-            <column name="id" type="bigint">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="generic_sequence_pk"/>
-            </column>
-            <column name="version" type="int4" />
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
-            <column name="updated" type="datetime" />
-            <column name="creator" type="varchar(100)" />
-            <column name="updater" type="varchar(100)" />
-            <column name="code" type="varchar(255)" />
-            <column name="description" type="varchar(255)" />
-            <column name="sequence_type" type="varchar(255)" />
-            <column name="sequence_size" type="int" />
-            <column name="current_number" type="bigint" />
-            <column name="sequence_pattern" type="varchar(255)" />
-        </createTable>
-    </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-tbl-427">           
     	<createTable tableName="ar_accounting_writing_acc_operations">
             <column name="accounting_writing_id" type="bigint" />
@@ -8487,10 +8444,6 @@
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-536">
     	<addUniqueConstraint tableName="ar_payment_token" columnNames="customer_account_id, iban" constraintName="customer_account_id_iban_unique"/>
-    </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-537">
-    	<addUniqueConstraint columnNames="uuid" constraintName="uk_wf_generic_action_uuid" deferrable="false" disabled="false"
-                             initiallyDeferred="false" tableName="wf_generic_action" />
     </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-538">
     	<addUniqueConstraint columnNames="country_code" constraintName="UniqueConstraint_adm__country_code" tableName="adm_country" />
@@ -10586,21 +10539,6 @@
 				                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 				                 referencedColumnNames="id" referencedTableName="ar_payment_history"/>
     </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1367">          
-        <addForeignKeyConstraint baseColumnNames="transition_id" baseTableName="wf_generic_action" constraintName="fk_wf_generic_action_transition_id"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="wf_generic_transition" />
-    </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1368">          
-        <addForeignKeyConstraint baseColumnNames="notification_id" baseTableName="wf_generic_action"
-                                 constraintName="fk_wf_generic_action_notification_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_notification" />
-    </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1369">          
-        <addForeignKeyConstraint baseColumnNames="action_script_id" baseTableName="wf_generic_action" constraintName="fk_wf_generic_action_script_id"
-                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="meveo_script_instance" />
-    </changeSet>
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1370">          
         <addForeignKeyConstraint baseColumnNames="next_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_next_billing_run"
               					 referencedColumnNames="id" referencedTableName="billing_billing_run"/>
@@ -10612,12 +10550,6 @@
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1372">          
         <addForeignKeyConstraint baseColumnNames="invoice_validation_script_id" baseTableName="billing_invoice_type" constraintName="fk_billing_invoice_type_invoice_validation_script"
               					 referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
-    </changeSet>
-    <changeSet author="AbdelmounaimAkadid" id="rebuild-str-fk-1373">          
-        <addForeignKeyConstraint baseColumnNames="sequence_id" baseTableName="adm_custom_generic_entity_code"
-                                 constraintName="fk_dm_custom_generic_entity_code_sequence_id" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="generic_sequence" />
     </changeSet>
     <!-- end fk -->
 
