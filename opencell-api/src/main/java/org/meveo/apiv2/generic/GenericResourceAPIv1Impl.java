@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.meveo.api.dto.*;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
-import org.meveo.api.dto.billing.ActivateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.billing.*;
 import org.meveo.api.dto.invoice.CancelInvoiceRequestDto;
 import org.meveo.api.dto.invoice.ValidateInvoiceRequestDto;
 import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
@@ -317,8 +314,15 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(CANCELLATION_SERVICE) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS );
-                CancelInvoiceRequestDto aDto = new CancelInvoiceRequestDto();
-                aDto.setInvoiceId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+System.out.println( "pathIBaseRS : " + pathIBaseRS );
+                Class entityDtoClass = GenericOpencellRestfulAPIv1.MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.get( pathIBaseRS );
+System.out.println( "entityDtoClass : " + entityDtoClass.toString() );
+                Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
+
+                if ( aDto instanceof CancelInvoiceRequestDto )
+                    ((CancelInvoiceRequestDto) aDto).setInvoiceId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+                else if ( aDto instanceof CancelBillingRunRequestDto)
+                    ((CancelBillingRunRequestDto) aDto).setBillingRunId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
 
                 return AuthenticationFilter.httpClient.target( redirectURI ).request()
                         .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
@@ -327,8 +331,14 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(VALIDATION_SERVICE) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS );
-                ValidateInvoiceRequestDto aDto = new ValidateInvoiceRequestDto();
-                aDto.setInvoiceId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+                Class entityDtoClass = GenericOpencellRestfulAPIv1.MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.get( pathIBaseRS );
+System.out.println( "entityDtoClass : " + entityDtoClass.toString() );
+                Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
+
+                if ( aDto instanceof ValidateInvoiceRequestDto )
+                    ((ValidateInvoiceRequestDto) aDto).setInvoiceId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+                else if ( aDto instanceof ValidateBillingRunRequestDto )
+                    ((ValidateBillingRunRequestDto) aDto).setBillingRunId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
 
                 return AuthenticationFilter.httpClient.target( redirectURI ).request()
                         .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
@@ -362,7 +372,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 ((CountryDto) aDto).setCountryCode(entityCode);
             else if ( aDto instanceof CurrencyDto )
                 ((CurrencyDto) aDto).setCode(entityCode);
-            else if ( aDto instanceof UserDto)
+            else if ( aDto instanceof UserDto )
                 ((UserDto) aDto).setUsername(entityCode);
 
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
