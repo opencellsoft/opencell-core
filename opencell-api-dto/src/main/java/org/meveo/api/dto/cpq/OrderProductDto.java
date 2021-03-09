@@ -36,7 +36,7 @@ import org.meveo.model.cpq.commercial.OrderProduct;
  * @author Mbarek-Ay
  * @lastModiedVersion 11.0 
  */
-@XmlRootElement(name = "QuoteProductDTO")
+@XmlRootElement(name = "OrderProductDto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OrderProductDto extends BaseEntityDto{
 
@@ -53,9 +53,7 @@ public class OrderProductDto extends BaseEntityDto{
      
     private String orderLotCode;
     
-    private Long orderOfferId;
- 
-    private int quoteVersion;
+    private Long orderOfferId; 
     
     private Integer productVersion;
     
@@ -77,6 +75,7 @@ public class OrderProductDto extends BaseEntityDto{
 	}
 	
 	public void init(OrderProduct orderProduct) {
+		orderProductId=orderProduct.getId();
 		orderLotCode=orderProduct.getOrderServiceCommercial()!=null?orderProduct.getOrderServiceCommercial().getCode():null;
 		commercialOrderId=orderProduct.getOrder()!=null?orderProduct.getOrder().getId():null;
 		productCode=orderProduct.getProductVersion().getProduct().getCode();
@@ -158,22 +157,6 @@ public class OrderProductDto extends BaseEntityDto{
 	 */
 	public void setOrderOfferId(Long orderOfferId) {
 		this.orderOfferId = orderOfferId;
-	}
-
-
-	/**
-	 * @return the quoteVersion
-	 */
-	public int getQuoteVersion() {
-		return quoteVersion;
-	}
-
-
-	/**
-	 * @param quoteVersion the quoteVersion to set
-	 */
-	public void setQuoteVersion(int quoteVersion) {
-		this.quoteVersion = quoteVersion;
 	}
 
 

@@ -35,7 +35,7 @@ import org.meveo.model.cpq.commercial.OrderAttribute;
  * @author Mbarek-Ay
  * @lastModiedVersion 11.0 
  */
-@XmlRootElement(name = "OrderAttributeDTO")
+@XmlRootElement(name = "OrderAttributeDto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OrderAttributeDto extends BaseEntityDto{
 
@@ -45,12 +45,16 @@ public class OrderAttributeDto extends BaseEntityDto{
 	private static final long serialVersionUID = 8115890992793236496L;
 	
 	private Long orderCommercialId;
-    
+	private String orderAttributeCode;
+    private Long orderAttributeId;
     private String orderLotCode;
     private Long orderProductId;
+    private Long orderOfferId;
+    
     private String accessPoint;
+   
 
-    private List<OrderAttributeDto> linkedQuoteAttribute = new ArrayList<>();
+    private List<OrderAttributeDto> linkedOrderAttribute = new ArrayList<>();
     
     private String stringValue;
 
@@ -65,9 +69,12 @@ public class OrderAttributeDto extends BaseEntityDto{
 
 	public OrderAttributeDto(OrderAttribute orderAttribute) {
 		super();
+		orderAttributeId=orderAttribute.getId();
+		orderAttributeCode=orderAttribute.getAttribute()!=null?orderAttribute.getAttribute().getCode():null;
 		orderCommercialId=orderAttribute.getCommercialOrder()!=null?orderAttribute.getCommercialOrder().getId():null;
 	    orderLotCode=orderAttribute.getOrderLot()!=null?orderAttribute.getOrderLot().getCode():null;
 	    orderProductId=orderAttribute.getOrderProduct()!=null?orderAttribute.getOrderProduct().getId():null;
+	    orderOfferId=orderAttribute.getOrderOffer()!=null?orderAttribute.getOrderOffer().getId():null;
 	    accessPoint=orderAttribute.getAccessPoint();
 		stringValue =orderAttribute.getStringValue();
 		dateValue =orderAttribute.getDateValue();
@@ -132,18 +139,20 @@ public class OrderAttributeDto extends BaseEntityDto{
 		this.accessPoint = accessPoint;
 	}
 
+ 
+
 	/**
-	 * @return the linkedQuoteAttribute
+	 * @return the linkedOrderAttribute
 	 */
-	public List<OrderAttributeDto> getLinkedQuoteAttribute() {
-		return linkedQuoteAttribute;
+	public List<OrderAttributeDto> getLinkedOrderAttribute() {
+		return linkedOrderAttribute;
 	}
 
 	/**
-	 * @param linkedQuoteAttribute the linkedQuoteAttribute to set
+	 * @param linkedOrderAttribute the linkedOrderAttribute to set
 	 */
-	public void setLinkedQuoteAttribute(List<OrderAttributeDto> linkedQuoteAttribute) {
-		this.linkedQuoteAttribute = linkedQuoteAttribute;
+	public void setLinkedOrderAttribute(List<OrderAttributeDto> linkedOrderAttribute) {
+		this.linkedOrderAttribute = linkedOrderAttribute;
 	}
 
 	/**
@@ -188,5 +197,52 @@ public class OrderAttributeDto extends BaseEntityDto{
 		this.dateValue = dateValue;
 	}
 
+	/**
+	 * @return the orderAttributeCode
+	 */
+	public String getOrderAttributeCode() {
+		return orderAttributeCode;
+	}
+
+	/**
+	 * @param orderAttributeCode the orderAttributeCode to set
+	 */
+	public void setOrderAttributeCode(String orderAttributeCode) {
+		this.orderAttributeCode = orderAttributeCode;
+	}
+
+	/**
+	 * @return the orderOfferId
+	 */
+	public Long getOrderOfferId() {
+		return orderOfferId;
+	}
+
+	/**
+	 * @param orderOfferId the orderOfferId to set
+	 */
+	public void setOrderOfferId(Long orderOfferId) {
+		this.orderOfferId = orderOfferId;
+	}
+
+	/**
+	 * @return the orderAttributeId
+	 */
+	public Long getOrderAttributeId() {
+		return orderAttributeId;
+	}
+
+	/**
+	 * @param orderAttributeId the orderAttributeId to set
+	 */
+	public void setOrderAttributeId(Long orderAttributeId) {
+		this.orderAttributeId = orderAttributeId;
+	}
+
+	
+	
+  
+
+	
 	 
 }

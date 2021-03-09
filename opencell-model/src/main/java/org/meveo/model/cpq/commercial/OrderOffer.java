@@ -47,12 +47,12 @@ public class OrderOffer extends AuditableCFEntity {
 	@NotNull
 	private OfferTemplate offerTemplate;
 
-	@OneToMany(mappedBy = "orderOffer", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "orderOffer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderProduct> products=new ArrayList<OrderProduct>();
 
-	@OneToMany(mappedBy = "quoteOffer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "orderOffer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-	private List<OrderAttribute> OrderAttributes = new ArrayList<OrderAttribute>();
+	private List<OrderAttribute> orderAttributes = new ArrayList<OrderAttribute>();
 	/**
 	 * @return the order
 	 */
@@ -88,4 +88,20 @@ public class OrderOffer extends AuditableCFEntity {
 	public void setProducts(List<OrderProduct> products) {
 		this.products = products;
 	}
+
+	/**
+	 * @return the orderAttributes
+	 */
+	public List<OrderAttribute> getOrderAttributes() {
+		return orderAttributes;
+	}
+
+	/**
+	 * @param orderAttributes the orderAttributes to set
+	 */
+	public void setOrderAttributes(List<OrderAttribute> orderAttributes) {
+		this.orderAttributes = orderAttributes;
+	}
+	
+	
 }
