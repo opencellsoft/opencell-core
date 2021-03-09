@@ -447,10 +447,7 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
 	}
 
 	/**
-	 * @param object
 	 * @param invoiceSubCategory
-	 * @param object2
-	 * @param object3
 	 * @return
 	 */
 	public List<InvoiceLine> findOpenILbySubCat(InvoiceSubCategory invoiceSubCategory) {
