@@ -7,6 +7,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.meveo.api.dto.billing.*;
 import org.meveo.api.dto.invoice.CancelInvoiceRequestDto;
+import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.invoice.ValidateInvoiceRequestDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.apiv2.document.DocumentResourceImpl;
@@ -338,8 +339,11 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() + "/fetchXMLInvoice" );
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices/generation",
                                     ((Path) anAnnotation).value() + "/generateInvoice" );
+
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices/emailSending",
                                     ((Path) anAnnotation).value() + "/sendByEmail" );
+
+                            MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/sendByEmail", InvoiceDto.class );
 
                             // Processing for different services of invoice: cancellation, validation
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/invoices\\/" + CODE_REGEX + "\\/cancellation" ) ,

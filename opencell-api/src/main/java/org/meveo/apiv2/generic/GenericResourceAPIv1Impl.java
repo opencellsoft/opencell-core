@@ -50,13 +50,6 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     // static final string for services
     private static final String ENABLE_SERVICE = "enable";
     private static final String DISABLE_SERVICE = "disable";
-    private static final String ACTIVATION_SERVICE = "activation";
-    private static final String SUSPENSION_SERVICE = "suspension";
-    private static final String TERMINATION_SERVICE = "termination";
-    private static final String UPDATING_SERVICE = "services";
-    private static final String CANCELLATION_SERVICE = "cancellation";
-    private static final String VALIDATION_SERVICE = "validation";
-    private static final String EMAIL_SENDING_SERVICE = "emailSending";
 
     private static final String API_REST = "api/rest";
 
@@ -225,6 +218,9 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             if ( pathIBaseRS.equals( "/jobInstance" ) )
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + METHOD_CREATE_BIS );
+            else if ( pathIBaseRS.equals( "/invoice/sendByEmail" ) )
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS );
             else
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + METHOD_CREATE );
@@ -270,87 +266,32 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( putPath ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( putPath );
 
-            // Handle the special endpoint: activation of a subscription
-            if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(ACTIVATION_SERVICE) ) {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS );
-                ActivateSubscriptionRequestDto aDto = new ActivateSubscriptionRequestDto();
-                aDto.setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
+            // Handle the special endpoint, such as: activation, suspension, termination, update services of a subscription,
+            // cancel/validate an existing invoice, cancel/validate a billing run, send an existing invoice by email
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                    + API_REST + pathIBaseRS );
+            Class entityDtoClass = GenericOpencellRestfulAPIv1.MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.get( pathIBaseRS );
+            Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
 
-                return AuthenticationFilter.httpClient.target( redirectURI ).request()
-                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
-            }
-            // Handle the special endpoint: suspension of a subscription
-            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(SUSPENSION_SERVICE) ) {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS );
-                OperationSubscriptionRequestDto aDto = new OperationSubscriptionRequestDto();
-                aDto.setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
-
-                return AuthenticationFilter.httpClient.target( redirectURI ).request()
-                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
-            }
-            // Handle the special endpoint: termination of a subscription
-            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(TERMINATION_SERVICE) ) {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS );
-                Object aDto = new ObjectMapper().readValue( jsonDto, TerminateSubscriptionRequestDto.class );
+            if ( aDto instanceof ActivateSubscriptionRequestDto )
+                ((ActivateSubscriptionRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
+            else if ( aDto instanceof OperationSubscriptionRequestDto )
+                ((OperationSubscriptionRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
+            else if ( aDto instanceof TerminateSubscriptionRequestDto )
                 ((TerminateSubscriptionRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
-
-                return AuthenticationFilter.httpClient.target( redirectURI ).request()
-                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
-            }
-            // Handle the special endpoint: update existing services of a subscription
-            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(UPDATING_SERVICE) ) {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS );
-                Object aDto = new ObjectMapper().readValue( jsonDto, UpdateServicesRequestDto.class );
+            else if ( aDto instanceof UpdateServicesRequestDto )
                 ((UpdateServicesRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
+            else if ( aDto instanceof CancelInvoiceRequestDto )
+                ((CancelInvoiceRequestDto) aDto).setInvoiceId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+            else if ( aDto instanceof CancelBillingRunRequestDto )
+                ((CancelBillingRunRequestDto) aDto).setBillingRunId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+            else if ( aDto instanceof ValidateInvoiceRequestDto )
+                ((ValidateInvoiceRequestDto) aDto).setInvoiceId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+            else if ( aDto instanceof ValidateBillingRunRequestDto )
+                ((ValidateBillingRunRequestDto) aDto).setBillingRunId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
 
-                return AuthenticationFilter.httpClient.target( redirectURI ).request()
-                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
-            }
-            // Handle the special endpoint: cancel an existing invoice
-            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(CANCELLATION_SERVICE) ) {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS );
-System.out.println( "pathIBaseRS : " + pathIBaseRS );
-                Class entityDtoClass = GenericOpencellRestfulAPIv1.MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.get( pathIBaseRS );
-System.out.println( "entityDtoClass : " + entityDtoClass.toString() );
-                Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
-
-                if ( aDto instanceof CancelInvoiceRequestDto )
-                    ((CancelInvoiceRequestDto) aDto).setInvoiceId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
-                else if ( aDto instanceof CancelBillingRunRequestDto)
-                    ((CancelBillingRunRequestDto) aDto).setBillingRunId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
-
-                return AuthenticationFilter.httpClient.target( redirectURI ).request()
-                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
-            }
-            // Handle the special endpoint: validate an existing invoice
-            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(VALIDATION_SERVICE) ) {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS );
-                Class entityDtoClass = GenericOpencellRestfulAPIv1.MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.get( pathIBaseRS );
-System.out.println( "entityDtoClass : " + entityDtoClass.toString() );
-                Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
-
-                if ( aDto instanceof ValidateInvoiceRequestDto )
-                    ((ValidateInvoiceRequestDto) aDto).setInvoiceId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
-                else if ( aDto instanceof ValidateBillingRunRequestDto )
-                    ((ValidateBillingRunRequestDto) aDto).setBillingRunId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
-
-                return AuthenticationFilter.httpClient.target( redirectURI ).request()
-                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
-            }
-            // Handle the special endpoint: send an existing invoice by email
-            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(EMAIL_SENDING_SERVICE) ) {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS );
-
-                return AuthenticationFilter.httpClient.target( redirectURI ).request()
-                        .put( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) );
-            }
+            return AuthenticationFilter.httpClient.target( redirectURI ).request()
+                    .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
         }
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( pathUpdateAnEntity ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( pathUpdateAnEntity );
