@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -2456,7 +2455,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	private List<Invoice> extractInvalidInvoiceList(Long billingRunId, List<Long> invoiceIds, List<InvoiceStatusEnum> statusList) throws BusinessException {
-	return extractInvalidInvoiceList(billingRunId, invoiceIds, statusList, new ArrayList<InvoiceStatusEnum>());
+		return extractInvalidInvoiceList(billingRunId, invoiceIds, statusList, new ArrayList<InvoiceStatusEnum>());
 	}
 
 	private List<Invoice> extractInvalidInvoiceList(Long billingRunId, List<Long> invoiceIds, List<InvoiceStatusEnum> statusList, List<InvoiceStatusEnum> aditionalStatus) throws BusinessException {
@@ -2473,7 +2472,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			return br != null ? findInvoicesByStatusAndBR(billingRunId, statusList) : new ArrayList<Invoice>();
 		}
 		for (Long invoiceId : invoiceIds) {
-			Invoice invoice = invoiceService.findById(invoiceId);
+			Invoice invoice = findById(invoiceId);
 			if (invoice == null) {
 				throw new ActionForbiddenException("Invoice with ID " + invoiceId + " does not exist ");
 			} else if (br!= null && invoice.getBillingRun() != br) {
@@ -4096,6 +4095,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private void putTaxInvoiceAgregate(BillingAccount billingAccount, Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isEnterprise, Auditable auditable, Invoice invoice,
             SubCategoryInvoiceAgregate invoiceAgregateSubcat, int invoiceRounding, RoundingModeEnum invoiceRoundingMode) {
+    	if(invoiceAgregateSubcat.getAmountsByTax()!=null)
         for (Map.Entry<Tax, SubcategoryInvoiceAgregateAmount> amountByTax : invoiceAgregateSubcat.getAmountsByTax().entrySet()) {
             if (BigDecimal.ZERO.compareTo(amountByTax.getValue().getAmount(!isEnterprise)) != 0) {
                 Tax tax = amountByTax.getKey();
@@ -5359,7 +5359,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isEnterprise, Auditable auditable,
 			int invoiceRounding, RoundingModeEnum invoiceRoundingMode) {
 	        List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
-            invoiceAgregateSubcat.setItemNumber(invoiceAgregateSubcat.getRatedtransactionsToAssociate().size());
+            invoiceAgregateSubcat.setItemNumber(invoiceAgregateSubcat.getInvoiceLinesToAssociate().size());
             putTaxInvoiceAgregate(billingAccount, taxInvoiceAgregateMap, isEnterprise, auditable, invoice, invoiceAgregateSubcat, invoiceRounding, invoiceRoundingMode);
             invoiceLines = invoiceAgregateSubcat.getInvoiceLinesToAssociate();
 
@@ -5495,34 +5495,34 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
 	/**
-	 * @param invoice
+	 * @param toUpdate
 	 * @param input
 	 * @return
 	 */
-	public Invoice update(Invoice invoice, Invoice input) {
-		final InvoiceStatusEnum status = invoice.getStatus();
+	public Invoice update(Invoice toUpdate, Invoice input) {
+		final InvoiceStatusEnum status = toUpdate.getStatus();
 		if(!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status))) {
-			throw new BusinessApiException("Can only update invoices in statuses DRAFT/SUSPECT/REJECTED");
+			throw new BusinessException("Can only update invoices in statuses DRAFT/SUSPECT/REJECTED");
 		}
 		if(input.getComment()!=null) {
-			invoice.setComment(input.getComment());
+			toUpdate.setComment(input.getComment());
 		}
 		if(input.getExternalRef()!=null) {
-			invoice.setExternalRef(input.getExternalRef());
+			toUpdate.setExternalRef(input.getExternalRef());
 		}
 		if(input.getInvoiceDate()!=null) {
-			invoice.setInvoiceDate(input.getInvoiceDate());
+			toUpdate.setInvoiceDate(input.getInvoiceDate());
 		}
 		if(input.getDueDate()!=null) {
-			invoice.setDueDate(input.getDueDate());
+			toUpdate.setDueDate(input.getDueDate());
 		}
 		if(input.getPaymentMethod()!=null) {
-			invoice.setPaymentMethod(input.getPaymentMethod());
+			toUpdate.setPaymentMethod(input.getPaymentMethod());
 		}
 		if(input.getCfValues()!=null) {
-			invoice.setCfValues(input.getCfValues());
+			toUpdate.setCfValues(input.getCfValues());
 		}
-		return super.update(invoice);
+		return update(toUpdate);
 	}
     
 }
