@@ -2,6 +2,7 @@ package org.meveo.model.cpq;
 
 import java.util.Objects;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,10 +13,13 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteProduct;
 
 @Entity
+@Cacheable
+@CustomFieldEntity(cftCodePrefix = "QuoteAttribute")
 @Table(name = "cpq_quote_attribute")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_attribute_seq")})

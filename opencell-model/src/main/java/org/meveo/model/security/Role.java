@@ -51,6 +51,9 @@ import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IReferenceEntity;
+import org.meveo.model.ReferenceIdentifierCode;
+import org.meveo.model.ReferenceIdentifierDescription;
 import org.meveo.model.admin.SecuredEntity;
 
 /**
@@ -64,6 +67,8 @@ import org.meveo.model.admin.SecuredEntity;
 @Cacheable
 @CustomFieldEntity(cftCodePrefix = "Role")
 @ExportIdentifier({ "name" })
+@ReferenceIdentifierCode("name")
+@ReferenceIdentifierDescription("description")
 @Table(name = "adm_role")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "adm_role_seq"), })
@@ -71,7 +76,7 @@ import org.meveo.model.admin.SecuredEntity;
         @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
 				@NamedQuery(name = "Role.getRolesWithSecuredEntities", query = "Select r from Role r LEFT JOIN r.securedEntities Where r.name IN (:currentUserRoles) And size(r.securedEntities) > 0", hints = {
 				        @QueryHint(name = "org.hibernate.cacheable", value = "true")})})
-public class Role extends AuditableCFEntity {
+public class Role extends AuditableCFEntity implements IReferenceEntity {
 
     private static final long serialVersionUID = -2309961042891712685L;
 
@@ -239,5 +244,20 @@ public class Role extends AuditableCFEntity {
 	 */
 	public void setSecuredEntities(List<SecuredEntity> securedEntities) {
 		this.securedEntities = securedEntities;
+	}
+
+	@Override
+	public String getReferenceCode() {
+		return getName();
+	}
+
+	@Override
+	public void setReferenceCode(Object value) {
+		setName(value.toString());
+	}
+
+	@Override
+	public String getReferenceDescription() {
+		return getDescription();
 	}
 }

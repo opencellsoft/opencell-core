@@ -71,8 +71,8 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 		if (invoicingPlanItem != null) {
 			throw new EntityAlreadyExistsException(InvoicingPlanItem.class, invoicingPlanItemCode);
 		}
-
-		invoicingPlanItemService.create(dtoToEntity(postData, new InvoicingPlanItem()));
+		
+		invoicingPlanItemService.create(dtoToEntity(postData, new InvoicingPlanItem(), true));
 
 		return invoicingPlanItem;
 	}
@@ -97,14 +97,14 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 		if (invoicingPlanItem == null) {
 			throw new EntityDoesNotExistsException(InvoicingPlanItem.class, invoicingPlanItemCode);
 		}
-		dtoToEntity(postData, invoicingPlanItem);
+		dtoToEntity(postData, invoicingPlanItem, false);
 
 		invoicingPlanItem = invoicingPlanItemService.update(invoicingPlanItem);
 
 		return invoicingPlanItem;
 	}
 
-	private InvoicingPlanItem dtoToEntity(InvoicingPlanItemDto postData, InvoicingPlanItem invoicingPlanItem) {
+	private InvoicingPlanItem dtoToEntity(InvoicingPlanItemDto postData, InvoicingPlanItem invoicingPlanItem, boolean isNewEntity) {
 		final String billingPlanCode = postData.getBillingPlanCode();
 
 		if (!StringUtils.isBlank(billingPlanCode)) {
@@ -125,6 +125,7 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 		if (postData.getRateToBill() != null) {
 			invoicingPlanItem.setRateToBill(postData.getRateToBill());
 		}
+		populateCustomFields(postData.getCustomFields(), invoicingPlanItem, isNewEntity);
 		return invoicingPlanItem;
 	}
 

@@ -27,6 +27,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.User;
+import org.meveo.model.security.Role;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
@@ -81,11 +83,13 @@ public class CustomFieldTemplateBeaTest {
 
     private static List<String> getAllBusinessEntityClassNames() {
         Reflections reflections = new Reflections("org.meveo.model");
-        return reflections.getSubTypesOf(BusinessEntity.class).stream()
-                .filter(businessEntity -> !Modifier.isAbstract(businessEntity.getModifiers()))
-                .map(businessEntity -> new CustomizedEntity(businessEntity))
-                .map(customizedEntity -> customizedEntity.getClassnameToDisplay())
-                .collect(Collectors.toList());
+        List<String> list = reflections.getSubTypesOf(BusinessEntity.class).stream()
+		                .filter(businessEntity -> !Modifier.isAbstract(businessEntity.getModifiers()))
+		                .map(businessEntity -> new CustomizedEntity(businessEntity))
+		                .map(customizedEntity -> customizedEntity.getClassnameToDisplay())
+		                .collect(Collectors.toList());
+        list.addAll(List.of(User.class.getName(), Role.class.getName()));
+        return list;
     }
 
     private static List<CustomizedEntity> getJobsCustomizedEntity() {

@@ -56,7 +56,7 @@ public class TagRsImpl extends BaseRs implements TagRs {
 				if (e instanceof MeveoApiException) {
 					exp = (MeveoApiException) e;
 				} else {
-					exp = new BusinessApiException("This tag can not be deleted, technical error");
+					exp = new BusinessApiException("The tag can not be deleted because attached to other entities");
 				}
 				return errorResponse(exp, result.getActionStatus());
 	        }

@@ -44,8 +44,11 @@ public class MediaApi extends BaseApi {
 		media.setMediaType(mediaDto.getMediaType());
 		media.setMain(mediaDto.isMain());
 		media.setMediaPath(mediaDto.getMediaPath());
+		populateCustomFields(mediaDto.getCustomFields(), media, true);
 		mediaService.create(media);
-		return new MediaDto(media);
+		MediaDto result = new MediaDto(media);
+		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(media));
+		return result;
 	}
 	
 	public MediaDto updateMedia(MediaDto mediaDto) {
@@ -67,8 +70,11 @@ public class MediaApi extends BaseApi {
 			media.setMain(mediaDto.isMain());
 		if(!Strings.isEmpty(mediaDto.getMediaPath()))
 			media.setMediaPath(mediaDto.getMediaPath());
+		populateCustomFields(mediaDto.getCustomFields(), media, true);
 		mediaService.update(media);
-		return new MediaDto(media);
+		MediaDto result = new MediaDto(media);
+		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(media));
+		return result;
 	}
  
 	
@@ -94,7 +100,7 @@ public class MediaApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Media.class, code);
 		}
 		result = new MediaDto(media);
-
+		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(media));
 		return result;
 	}
 	  

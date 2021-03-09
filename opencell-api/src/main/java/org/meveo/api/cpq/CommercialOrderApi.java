@@ -188,6 +188,7 @@ public class CommercialOrderApi extends BaseApi {
 		order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
 		order.setCustomerServiceDuration(orderDto.getCustomerServiceDuration());
 		order.setExternalReference(orderDto.getExternalReference());
+		populateCustomFields(orderDto.getCustomFields(), order, true);
 		if(!Strings.isEmpty(orderDto.getOrderParentCode())) {
 			final Order orderParent = orderService.findByCode(orderDto.getOrderParentCode());
 			if(orderParent == null)
@@ -197,7 +198,9 @@ public class CommercialOrderApi extends BaseApi {
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		processAttributes(orderDto, order);
 		commercialOrderService.create(order);
-		return new CommercialOrderDto(order);
+		CommercialOrderDto dto = new CommercialOrderDto(order);
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order));
+		return dto;
 	}
 
 	public CommercialOrderDto updateUserAccount(Long commercialOrderId, String userAccountCode){
@@ -324,9 +327,12 @@ public class CommercialOrderApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Order.class, orderDto.getOrderParentCode());
 			order.setOrderParent(orderParent);
 		}
+		populateCustomFields(orderDto.getCustomFields(), order, true);
 		processAttributes(orderDto, order);
 		commercialOrderService.update(order);
-		return new CommercialOrderDto(order);
+		CommercialOrderDto dto = new CommercialOrderDto(order);
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order));
+		return dto;
 	}
 	
 	public void delete(Long orderId) {
@@ -437,7 +443,9 @@ public class CommercialOrderApi extends BaseApi {
 		CommercialOrder commercialOrder =  commercialOrderService.findByOrderNumer(orderNumber);
 		if(commercialOrder == null)
 			throw new EntityDoesNotExistsException("No Commercial order found for order number = " + orderNumber);
-		return new CommercialOrderDto(commercialOrder);
+		CommercialOrderDto dto = new CommercialOrderDto(commercialOrder);
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(commercialOrder));
+		return dto;
 	}
 	
 	private void checkParam(CommercialOrderDto order) {

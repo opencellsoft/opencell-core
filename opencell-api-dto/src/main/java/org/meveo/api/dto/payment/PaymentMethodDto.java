@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEnableDto;
 import org.meveo.api.dto.IEntityDto;
 import org.meveo.api.dto.account.BankCoordinatesDto;
@@ -187,6 +188,9 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
      */
     @XmlTransient
     private String customerCode;
+    
+
+    protected CustomFieldsDto customFields;
 
     /**
      * Default constructor.
@@ -883,4 +887,18 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
                 + ", owner=" + owner + ", monthExpiration=" + monthExpiration + ", yearExpiration=" + yearExpiration + ", tokenId=" + tokenId + ", cardNumber="
                 + CardPaymentMethod.hideCardNumber(cardNumber) + ", issueNumber=" + issueNumber + ", userId=" + userId + ", referenceDocumentCode=" + referenceDocumentCode + "]";
     }
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
 }

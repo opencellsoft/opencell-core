@@ -15,32 +15,34 @@
  * For more information on the GNU Affero General Public License, please consult
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
-package org.meveo.model.payments;
+
+package org.meveo.api.rest.catalog;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
+import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 /**
- * Payment Method types.
- * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 9.2.0
- */
-public enum PaymentMethodEnum {
+ **/
+@Path("/catalog")
+@Tag(name = "ChargeTemplate", description = "@%ChargeTemplate")
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+public interface ChargeTemplateV2Rs extends IBaseRs {
 
-	CHECK, DIRECTDEBIT, WIRETRANSFER, CARD, PAYPAL, STRIPE, CASH;
 
-	/**
-	 * @return label
-	 */
-	public String getLabel() {
-		return this.getClass().getSimpleName() + "." + this.name();
-	}
 
-	/**
-	 * Is it as simple payment method that does not required any additional
-	 * information.
-	 * 
-	 * @return true/fale
-	 */
-	public boolean isSimple() {
-		return this == CHECK || this == PaymentMethodEnum.WIRETRANSFER || this == PaymentMethodEnum.PAYPAL;
-	}
 }

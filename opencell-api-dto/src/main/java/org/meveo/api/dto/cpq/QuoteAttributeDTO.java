@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.QuoteAttribute;
 
 import java.util.ArrayList;
@@ -55,6 +56,8 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	private Double doubleValue;
 
 	private Date dateValue;
+
+    private CustomFieldsDto customFields;
 
 	/**
 	 * @return the quoteAttributeCode
@@ -128,5 +131,19 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 
 	public void setLinkedQuoteAttribute(List<QuoteAttributeDTO> linkedQuoteAttribute) {
 		this.linkedQuoteAttribute = linkedQuoteAttribute;
+	}
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 }

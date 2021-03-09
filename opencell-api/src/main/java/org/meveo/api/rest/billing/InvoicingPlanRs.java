@@ -37,7 +37,7 @@ import org.meveo.api.dto.response.billing.InvoicingPlanResponseDto;
 import org.meveo.api.dto.response.billing.InvoicingPlansResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
-@Path("/billing/invoicingPlan")
+@Path("/billing/invoicingPlans")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface InvoicingPlanRs extends IBaseRs {

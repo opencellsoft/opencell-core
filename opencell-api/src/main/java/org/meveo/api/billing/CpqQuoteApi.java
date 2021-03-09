@@ -243,7 +243,9 @@ public class CpqQuoteApi extends BaseApi {
         cpqQuote.setQuoteDate(quote.getQuoteDate());
 
         cpqQuote.setOrderInvoiceType(invoiceTypeService.getDefaultQuote());
+        
         try {
+            populateCustomFields(quote.getCustomFields(), cpqQuote, true);
             cpqQuoteService.create(cpqQuote);
             quoteVersionService.create(populateNewQuoteVersion(quote.getQuoteVersion(), cpqQuote));
         }catch(BusinessApiException e) {
@@ -303,6 +305,7 @@ public class CpqQuoteApi extends BaseApi {
 				quoteProduct.setProductVersion(productVersion);
 				quoteProduct.setQuantity(quoteProductDTO.getQuantity());
 				quoteProduct.setQuoteOffre(quoteOffer);
+				populateCustomFields(quoteProductDTO.getCustomFields(), quoteProduct, true);
 				quoteProductService.create(quoteProduct);
 				newPopulateQuoteAttribute(quoteProductDTO.getProductAttributes(), quoteProduct);
 				quoteOffer.getQuoteProduct().add(quoteProduct);
@@ -456,10 +459,6 @@ public class CpqQuoteApi extends BaseApi {
         if(quote == null)
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
 
-		/*QuoteValidationTemp temp = new QuoteValidationTemp();
-		Map<String, Object> methodContext = new HashMap<String, Object>();
-		methodContext.put("cpqQuote", quote);
-		temp.execute(methodContext );*/
         return populateToDto(quote,true,true,true);
     }
 
@@ -508,6 +507,7 @@ public class CpqQuoteApi extends BaseApi {
             quote.setBillableAccount(quote.getApplicantAccount());
 
         try {
+            populateCustomFields(quoteDto.getCustomFields(), quote, false);
             cpqQuoteService.update(quote);
             QuoteVersionDto quoteVersionDto = quoteDto.getQuoteVersion();
             if(quoteVersionDto != null) {
@@ -619,6 +619,7 @@ public class CpqQuoteApi extends BaseApi {
         dto.setDescription(quote.getDescription());
         dto.setCode(quote.getCode());
         dto.setQuoteNumber(quote.getQuoteNumber());
+        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(quote));
         return dto;
     }
 
@@ -660,6 +661,7 @@ public class CpqQuoteApi extends BaseApi {
         if (!Strings.isEmpty(quoteOfferDto.getQuoteLotCode()))
             quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDto.getQuoteLotCode()));
 //		quoteOffer.setSequence(quoteOfferDto.gets); // no sequence found in quoteOfferDto
+        populateCustomFields(quoteOfferDto.getCustomFields(), quoteOffer, true);
         quoteOfferService.create(quoteOffer);
         quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
         newPopulateProduct(quoteOfferDto.getProducts(), quoteOffer);
@@ -703,6 +705,7 @@ public class CpqQuoteApi extends BaseApi {
             quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDTO.getQuoteLotCode()));
         processQuoteProduct(quoteOfferDTO, quoteOffer);
         processQuoteAttribute(quoteOfferDTO, quoteOffer);
+        populateCustomFields(quoteOfferDTO.getCustomFields(), quoteOffer, false);
         quoteOfferService.update(quoteOffer);
 
         return quoteOfferDTO;
@@ -796,8 +799,11 @@ public class CpqQuoteApi extends BaseApi {
         q.setProductVersion(productVersion);
         q.setQuantity(quoteProductDTO.getQuantity());
         q.setQuoteOffre(quoteOffer);
-        if(isNew)
+        if(isNew) {
+        	populateCustomFields(quoteProductDTO.getCustomFields(), q, true);
             quoteProductService.create(q);
+        }else
+        	populateCustomFields(quoteProductDTO.getCustomFields(), q, false);
         processQuoteProduct(quoteProductDTO, q);
         return q;
     }
@@ -1254,7 +1260,9 @@ public class CpqQuoteApi extends BaseApi {
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException("No Quote verion found for quote code= " + quoteCode + " and version = " + version);
         return quoteOfferService.findByQuoteVersion(quoteVersion).stream().map(qo -> {
-            return new QuoteOfferDTO(qo);
+        	QuoteOfferDTO dto = new QuoteOfferDTO(qo);
+        	dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(qo));
+        	return dto;
         }).collect(Collectors.toList());
     }
     
@@ -1262,7 +1270,9 @@ public class CpqQuoteApi extends BaseApi {
     	QuoteOffer offer = quoteOfferService.findById(quoteItemId);
     	if(offer == null)
     		throw new EntityDoesNotExistsException(QuoteOffer.class, quoteItemId);
-    	return new QuoteOfferDTO(offer, true, true,true);
+    	QuoteOfferDTO dto = new QuoteOfferDTO(offer, true, true,true);
+    	dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(offer));
+    	return dto;
     }
     
     public byte[] generateQuotePDF(String quoteCode, int currentVersion,boolean generatePdfIfNotExist)

@@ -71,6 +71,7 @@ public class InvoicingPlanApi extends BaseCrudApi<InvoicingPlan, InvoicingPlanDt
 		invoicingPlan = new InvoicingPlan();
 		invoicingPlan.setCode(invoicingPlanCode);
 		invoicingPlan.setDescription(postData.getDescription());
+		populateCustomFields(postData.getCustomFields(), invoicingPlan, true);
 
 		invoicingPlanService.create(invoicingPlan);
 
@@ -98,7 +99,7 @@ public class InvoicingPlanApi extends BaseCrudApi<InvoicingPlan, InvoicingPlanDt
 		}
 
 		dtoToEntity(postData, invoicingPlan);
-
+		populateCustomFields(postData.getCustomFields(), invoicingPlan, false);
 		invoicingPlan = invoicingPlanService.update(invoicingPlan);
 
 		return invoicingPlan;

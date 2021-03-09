@@ -40,7 +40,7 @@ import org.meveo.model.cpq.enums.ProductStatusEnum;
  * @version 10.0
  *
  */
-@Path("/cpq/contract")
+@Path("/cpq/contracts")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface ContractRs extends IBaseRs {
@@ -119,8 +119,8 @@ public interface ContractRs extends IBaseRs {
 
 	@GET
 	@Path("/")
-    @Operation(summary = "This endpoint allows to find a Contract by ContractCode and contractAccountLevel parameters",
-    description ="Find a Contract type by contractCode and contractAccountLevel parameters",
+    @Operation(summary = "This endpoint allows to find a Contract by accountCode and contractAccountLevel parameters",
+    description ="Find a Contract type by accountCode and contractAccountLevel parameters",
     tags = { "Contract" },
     responses = {
             @ApiResponse(responseCode="200", description = "The Contract successfully retrieved",
@@ -146,7 +146,7 @@ public interface ContractRs extends IBaseRs {
 
 
 	@POST
-	@Path("/list")
+	@Path("/filtering")
 	@Operation(summary = "This endpoint allows to find list of contract with filters and paging",
     description ="Find a list of contract by filtrering on its property",
     tags = { "Contract" },
@@ -160,7 +160,7 @@ public interface ContractRs extends IBaseRs {
 	
 
 	@POST
-	@Path("/contractLine")
+	@Path("/contractLines")
     @Operation(summary = "This endpoint allows to create new contract Line",
     tags = { "Contract" },
     description ="Creating a new contract Line",
@@ -178,7 +178,7 @@ public interface ContractRs extends IBaseRs {
 	
 
 	@PUT
-	@Path("/contractLine")
+	@Path("/contractLines")
     @Operation(summary = "This endpoint allows to create new contract Line",
     tags = { "Contract" },
     description ="Creating a new contract Line",
@@ -193,7 +193,7 @@ public interface ContractRs extends IBaseRs {
 	Response updateContractLine(@Parameter(description = "contract Line dto for a new insertion", required = true) ContractItemDto contractItemDto);
 	
 	@DELETE
-	@Path("/contractLine/{contractCode}")
+	@Path("/contractLines/{contractCode}")
     @Operation(summary = "This endpoint allows to  delete an existing Contract item",
     description ="Deleting an existing Contract with its code",
     tags = { "Contract" },
@@ -208,7 +208,7 @@ public interface ContractRs extends IBaseRs {
 	Response deleteContractLine(@Parameter(description = "contract item code to be deleted", required = true) @PathParam("contractCode") String contractItemCode);
 	
 	@GET
-	@Path("/contractLine")
+	@Path("/contractLines/{contractItemCode}")
     @Operation(summary = "This endpoint allows to find a Contract item by contractItemCode parameters",
     description ="Find a Contract item type by contractItemCode parameters",
     tags = { "Contract" },
@@ -218,6 +218,6 @@ public interface ContractRs extends IBaseRs {
             @ApiResponse(responseCode = "412", description = "contractItemCode is missing",
     		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
     })
-	Response getContractLines(@Parameter(description = "contract item code", required = true) @QueryParam("contractItemCode")  String contractItemCode);
+	Response getContractLine(@Parameter(description = "contract item code", required = true) @PathParam("contractItemCode")  String contractItemCode);
 	
 }

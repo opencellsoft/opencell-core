@@ -98,6 +98,11 @@ public class UserRsImpl extends BaseRs implements UserRs {
     }
 
     @Override
+    public GetUserResponse findV2(String username) {
+        return find(username);
+    }
+
+    @Override
     public ActionStatus createOrUpdate(UserDto postData) {
         ActionStatus result = new ActionStatus();
 
@@ -124,6 +129,11 @@ public class UserRsImpl extends BaseRs implements UserRs {
     }
 
     @Override
+    public UsersDto listGetV2(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+        return listGet(query, fields, offset, limit, sortBy, sortOrder);
+    }
+
+    @Override
     public UsersDto listPost(PagingAndFiltering pagingAndFiltering) {
 
         UsersDto result = new UsersDto();
@@ -135,6 +145,11 @@ public class UserRsImpl extends BaseRs implements UserRs {
         }
 
         return result;
+    }
+
+    @Override
+    public UsersDto listPostV2(PagingAndFiltering pagingAndFiltering) {
+        return listPost(pagingAndFiltering);
     }
 
     @Override

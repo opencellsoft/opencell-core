@@ -26,6 +26,7 @@ import org.meveo.api.catalog.GenericChargeTemplateApi;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.ChargeTemplateRs;
+import org.meveo.api.rest.catalog.ChargeTemplateV2Rs;
 import org.meveo.api.rest.impl.BaseRs;
 
 /**
@@ -49,5 +50,10 @@ public class ChargeTemplateRsImpl extends BaseRs implements ChargeTemplateRs {
         }
 
         return result;
+    }
+
+    @Override
+    public GetChargeTemplateResponseDto findV2(String chargeTemplateCode) {
+        return find(chargeTemplateCode);
     }
 }
