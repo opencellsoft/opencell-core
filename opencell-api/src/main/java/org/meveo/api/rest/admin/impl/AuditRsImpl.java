@@ -41,7 +41,7 @@ public class AuditRsImpl extends BaseRs implements AuditRs {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
 
         return result;

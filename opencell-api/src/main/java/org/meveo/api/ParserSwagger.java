@@ -1,7 +1,18 @@
 package org.meveo.api;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -13,6 +24,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 public class ParserSwagger {
 
     private static ParserSwagger parsing = new ParserSwagger();
+    private static final Logger log = LoggerFactory.getLogger(ParserSwagger.class);
 
  
     public static void main(String[] args) throws Exception {
@@ -46,7 +58,7 @@ public class ParserSwagger {
                 try {
                     returnListFilesPath.add(file.getCanonicalPath());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("error = {}", e);
                 }
             }
         }
@@ -391,7 +403,7 @@ public class ParserSwagger {
             writer.close();
             lnr.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
         File realName = new File(filePath);
         if (realName.delete()) {

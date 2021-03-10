@@ -41,6 +41,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.LoggerFactory;
+
 
 
 /**
@@ -72,6 +74,8 @@ import javax.xml.transform.stream.StreamResult;
 })
 @XmlRootElement(name = "billingAccounts")
 public class BillingAccounts {
+	
+	private static final org.slf4j.Logger log = LoggerFactory.getLogger(BillingAccounts.class);
 
     @XmlElement(required = true)
     protected Errors errors;
@@ -181,7 +185,7 @@ public class BillingAccounts {
 			});
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 
 	}

@@ -10,8 +10,12 @@ import org.junit.Test;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.billing.impl.RatingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RatingServiceTest {
+	
+	private static final Logger log = LoggerFactory.getLogger(RatingServiceTest.class);
 
     @Test
     public void testCalculateAmmounts() {
@@ -82,7 +86,7 @@ public class RatingServiceTest {
 
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
 
     }

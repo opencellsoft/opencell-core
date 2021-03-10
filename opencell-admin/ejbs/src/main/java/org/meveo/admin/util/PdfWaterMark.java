@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
@@ -18,6 +19,8 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 
 public class PdfWaterMark {
+	
+	private static final org.slf4j.Logger log = LoggerFactory.getLogger(PdfWaterMark.class);
 
     public static void add(String pdfFileName, String text, String imagePath) {
         PdfReader reader = null;
@@ -50,7 +53,7 @@ public class PdfWaterMark {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
         } finally {
             if (over != null) {
                 over.closePath();

@@ -76,7 +76,7 @@ public class ProductTemplateListBean extends ProductTemplateBean {
                 outputStream.write(chunk, 0, bytesRead);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
             return null;
         }
 

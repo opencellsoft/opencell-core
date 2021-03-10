@@ -13,8 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.admin.exception.BusinessException;
+import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
-import org.tmf.dsmapi.quote.ProductQuoteItem;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class ProductOrderItem implements Serializable {
 
     private static final long serialVersionUID = 2224931518265750159L;
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(ProductOrderItem.class);
     private String id;
     private String action;
     private String state;
@@ -42,7 +43,7 @@ public class ProductOrderItem implements Serializable {
 			
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 	}
 	

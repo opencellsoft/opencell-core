@@ -82,10 +82,10 @@ public class EmailService extends PersistenceService<Email> {
 
 	            Transport.send(msg);
 	        } catch(AddressException  e){
-				e.printStackTrace();
+				log.error("error = {}", e);
 				throw new BusinessException("invalid email address",e);
 	        } catch (MessagingException e) {
-				e.printStackTrace();
+				log.error("error = {}", e);
 				throw new BusinessException("error sending email",e);
 			}
 	}
@@ -142,7 +142,7 @@ public class EmailService extends PersistenceService<Email> {
 			log.debug("sent email");
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("error = {}", e);
 			throw new BusinessException("Error: " + e.getMessage() + " when send email to " + to);
 		}
 		log.info("successfully sendEmail!");
