@@ -568,7 +568,7 @@ public class DateUtils {
                         try {
                             result = sdf.parse(year + "-" + month + "-" + day);
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            LOG.error("error = {}", e);
                         }
                     }
                 }

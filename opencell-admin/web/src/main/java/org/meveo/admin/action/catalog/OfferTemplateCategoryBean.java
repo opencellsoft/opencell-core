@@ -476,7 +476,7 @@ public class OfferTemplateCategoryBean extends CustomFieldBean<OfferTemplateCate
             InputStream inStream = new ByteArrayInputStream(baos.toByteArray());
             return new DefaultStreamedContent(inStream, "text/csv", "offerTemplateCategories.csv");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
 
         return null;

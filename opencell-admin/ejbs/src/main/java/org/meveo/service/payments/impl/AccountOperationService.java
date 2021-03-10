@@ -222,7 +222,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             return (List<AccountOperation>) query.getResultList();
 
         } catch (NoResultException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
             return null;
         }
     }

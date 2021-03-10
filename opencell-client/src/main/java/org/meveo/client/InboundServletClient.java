@@ -7,10 +7,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Edward P. Legaspi
  **/
 public class InboundServletClient {
+	
+	private static final Logger log = LoggerFactory.getLogger(InboundServletClient.class);
 
 	public static void main(String args[]) {
 		new InboundServletClient().callClient();
@@ -52,10 +57,10 @@ public class InboundServletClient {
 
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("error = {}", e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 	}
 

@@ -1,5 +1,21 @@
 package org.meveo.apiv2.services.generic;
 
+import static org.meveo.apiv2.ValidationUtils.checkEntityClass;
+import static org.meveo.apiv2.ValidationUtils.checkEntityName;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.persistence.Entity;
+
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.hibernate.collection.internal.PersistentBag;
 import org.meveo.api.BaseApi;
@@ -10,7 +26,6 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EntityReferenceDto;
 import org.meveo.apiv2.services.generic.JsonGenericApiMapper.JsonGenericMapper;
 import org.meveo.commons.utils.EjbUtils;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -20,14 +35,6 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.Entity;
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.meveo.apiv2.ValidationUtils.checkEntityClass;
-import static org.meveo.apiv2.ValidationUtils.checkEntityName;
 
 public class GenericApiAlteringService extends GenericApiService {
     private static final Logger logger = LoggerFactory.getLogger(GenericApiAlteringService.class);
@@ -120,7 +127,7 @@ public class GenericApiAlteringService extends GenericApiService {
                 return list;
             }
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        	logger.error("error = {}", e);
         }
         return listOfEntities;
     }

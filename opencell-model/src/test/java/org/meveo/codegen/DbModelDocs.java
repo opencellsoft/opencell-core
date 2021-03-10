@@ -33,6 +33,8 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.io.FileUtils;
 import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -67,6 +69,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 public class DbModelDocs {
 
     private static FieldVisitor fieldVisitor;
+    private static final Logger log = LoggerFactory.getLogger(DbModelDocs.class);
 
     public static void main(String[] args) {
 
@@ -152,14 +155,14 @@ public class DbModelDocs {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
 
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("error = {}", e);
                 }
             }
         }

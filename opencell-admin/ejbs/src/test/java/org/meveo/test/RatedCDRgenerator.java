@@ -5,11 +5,15 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class RatedCDRgenerator implements Runnable {
 
 	String fileName;
 	long nbRecords, shift;
 	long startTime;
+	private static final Logger log = LoggerFactory.getLogger(RatedCDRgenerator.class);
 
 	public RatedCDRgenerator(String fileName, long nbRecords, long shift,
 			long time) {
@@ -38,7 +42,7 @@ public class RatedCDRgenerator implements Runnable {
 				out.println(sb.toString());
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			log.error("error = {}", e);
 		} finally {
 			if (out != null) {
 				out.close();
