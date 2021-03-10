@@ -18,63 +18,27 @@
 
 package org.meveo.api.catalog;
 
-import static java.util.Optional.ofNullable;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.billing.SubscriptionApi;
-import org.meveo.api.dto.catalog.BaseServiceChargeTemplateDto;
-import org.meveo.api.dto.catalog.ServiceChargeTemplateRecurringDto;
-import org.meveo.api.dto.catalog.ServiceChargeTemplateSubscriptionDto;
-import org.meveo.api.dto.catalog.ServiceChargeTemplateTerminationDto;
-import org.meveo.api.dto.catalog.ServiceTemplateDto;
-import org.meveo.api.dto.catalog.ServiceUsageChargeTemplateDto;
+import org.meveo.api.dto.catalog.*;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidImageData;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.*;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.BusinessServiceModel;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplate;
-import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
-import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
-import org.meveo.model.catalog.ServiceChargeTemplateTermination;
-import org.meveo.model.catalog.ServiceChargeTemplateUsage;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.catalog.*;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.WalletTemplateService;
-import org.meveo.service.catalog.impl.BusinessServiceModelService;
-import org.meveo.service.catalog.impl.CalendarService;
-import org.meveo.service.catalog.impl.CounterTemplateService;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
-import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
-import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
-import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
-import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
-import org.meveo.service.catalog.impl.UsageChargeTemplateService;
-import org.primefaces.model.SortOrder;
+import org.meveo.service.catalog.impl.*;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Edward P. Legaspi
@@ -583,7 +547,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
             sortBy = pagingAndFiltering.getSortBy();
         }
 
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, ServiceTemplate.class);
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, pagingAndFiltering.getMultiSortOrder(), null, pagingAndFiltering, ServiceTemplate.class);
 
         Long totalCount = serviceTemplateService.count(paginationConfiguration);
 

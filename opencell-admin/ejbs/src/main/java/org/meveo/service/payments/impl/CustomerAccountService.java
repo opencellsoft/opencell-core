@@ -32,6 +32,7 @@ import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -545,6 +546,25 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     @SuppressWarnings("unchecked")
     public List<CustomerAccount> listByCustomer(Customer customer) {
         QueryBuilder qb = new QueryBuilder(CustomerAccount.class, "c");
+        qb.addCriterionEntity("customer", customer);
+
+        try {
+            return (List<CustomerAccount>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            log.warn("failed to get customerAccount list by customer", e);
+            return null;
+        }
+    }
+
+    /**
+     * List customerAccounts by customer with paginationConfiguration
+     *
+     * @param customer the customer
+     * @return the list
+     */
+    @SuppressWarnings("unchecked")
+    public List<CustomerAccount> listByCustomer(Customer customer, PaginationConfiguration config) {
+        QueryBuilder qb = getQuery(config);
         qb.addCriterionEntity("customer", customer);
 
         try {
