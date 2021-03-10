@@ -181,13 +181,13 @@ public class FlatFileProcessing {
 
         mainLoop: while (true) {
 
-            if (i % JobSpeedEnum.SLOW.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
+            if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
                 break;
             }
 
             try {
                 // Record progress
-                if (i > 0 && i % JobSpeedEnum.SLOW.getUpdateNb() == 0) {
+                if (i > 0 && i % JobSpeedEnum.NORMAL.getUpdateNb() == 0) {
                     jobExecutionResultService.persistResult(jobExecutionResult);
                 }
             } catch (EJBTransactionRolledbackException e) {
