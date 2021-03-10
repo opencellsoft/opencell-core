@@ -16,6 +16,7 @@ import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
 import org.meveo.apiv2.ordering.resource.orderitem.OrderItemResourceImpl;
 import org.meveo.apiv2.ordering.resource.product.ProductResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.util.Inflector;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 
@@ -31,6 +32,12 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+/**
+ * This class is used to construct the HashMap for URL Redirection at deployment
+ *
+ * @author Thang Nguyen
+ */
 
 @ApplicationPath(GenericOpencellRestfulAPIv1.API_VERSION)
 public class GenericOpencellRestfulAPIv1 extends Application {
@@ -79,7 +86,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                 .collect(Collectors.toSet());
         if(GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")){
             resources.add(GenericApiLoggingFilter.class);
-            log.info("generic api requests logging is enabled, to disable logging for generic api request, put {} to false", GENERIC_API_REQUEST_LOGGING_CONFIG_KEY);
+            log.info("api requests logging is enabled, to disable logging for api request, put {} to false", GENERIC_API_REQUEST_LOGGING_CONFIG_KEY);
         }
         log.info("Opencell OpenAPI definition is accessible in /api/rest/v2/openapi.{type:json|yaml}");
         return resources;
@@ -267,8 +274,20 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/catalog\\/pricePlans\\/" + CODE_REGEX + "\\/disable" ) ,
                                     ((Path) anAnnotation).value() );
                         }
+                        else if ( ((Path) anAnnotation).value().equals( "/country" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/countries",
+                                    ((Path) anAnnotation).value() );
+
+                            // Processing for enable and disable a trading country
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/countries\\/" + CODE_REGEX + "\\/enable" ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( "\\/v1\\/countries\\/" + CODE_REGEX + "\\/disable" ) ,
+                                    ((Path) anAnnotation).value() );
+                        }
                         else {
-                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ((Path) anAnnotation).value() + "s",
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
+                                    API_VERSION + Inflector.getInstance().pluralize( ((Path) anAnnotation).value() ),
                                     ((Path) anAnnotation).value() );
                         }
                     }
