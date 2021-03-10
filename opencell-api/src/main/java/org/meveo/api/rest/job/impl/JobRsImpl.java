@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.job.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.job.JobExecutionResultDto;
@@ -37,7 +33,12 @@ import org.meveo.api.job.TimerEntityApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.job.JobRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Edward P. Legaspi
@@ -228,6 +229,17 @@ public class JobRsImpl extends BaseRs implements JobRs {
                                                Integer limit, String sortBy, SortOrder sortOrder) {
         try {
             return jobApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            JobExecutionResultsResponseDto result = new JobExecutionResultsResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
+        }
+    }
+
+    @Override
+    public JobExecutionResultsResponseDto list() {
+        try {
+            return jobApi.list( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
         } catch (Exception e) {
             JobExecutionResultsResponseDto result = new JobExecutionResultsResponseDto();
             processException(e, result.getActionStatus());

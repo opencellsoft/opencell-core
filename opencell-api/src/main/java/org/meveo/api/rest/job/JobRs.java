@@ -18,18 +18,6 @@
 
 package org.meveo.api.rest.job;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
@@ -38,6 +26,9 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.job.*;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * @author Edward P. Legaspi
@@ -215,6 +206,15 @@ public interface JobRs extends IBaseRs {
                                         @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
                                         @DefaultValue("id") @QueryParam("sortBy") String sortBy,
                                         @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List jobExecutions matching a given criteria
+     *
+     * @return List of jobExecutions
+     */
+    @GET
+    @Path("/jobReport/listGetAll")
+    JobExecutionResultsResponseDto list();
 
     /**
      * Job execution list matching a given criteria

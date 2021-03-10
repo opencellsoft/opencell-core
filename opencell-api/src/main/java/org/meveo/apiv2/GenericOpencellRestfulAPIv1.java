@@ -371,6 +371,15 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/validateBillingRun", ValidateBillingRunRequestDto.class );
                         }
+                        else if ( ((Path) anAnnotation).value().equals( "/job" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobs", ((Path) anAnnotation).value() );
+
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobs/execution", ((Path) anAnnotation).value() + "/execute" );
+
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobs/jobReports", ((Path) anAnnotation).value() + "/jobReport" );
+
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobs/timers", ((Path) anAnnotation).value() + "/timer" );
+                        }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
                                     API_VERSION + Inflector.getInstance().pluralize( ((Path) anAnnotation).value() ),
