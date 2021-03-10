@@ -1,7 +1,6 @@
 package org.meveo.apiv2.billing;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.Null;
 
 import org.immutables.value.Value;
 

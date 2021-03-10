@@ -36,6 +36,7 @@ public interface Invoice extends Resource {
 	@Nullable
 	Date getInvoiceDate();
 
+	@Nullable
 	InvoiceStatusEnum getStatus();
 
 	@Nullable

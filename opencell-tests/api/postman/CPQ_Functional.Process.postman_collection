@@ -4853,6 +4853,60 @@
 					"response": []
 				},
 				{
+					"name": "Generate Quote PDF",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"setTimeout(function(){}, 15000);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/cpq/quotes/quoteVersions/{{quoteCode}}/{{QuoteVersion}}/pdfGeneration?generatePdf=true",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"quotes",
+								"quoteVersions",
+								"{{quoteCode}}",
+								"{{QuoteVersion}}",
+								"pdfGeneration"
+							],
+							"query": [
+								{
+									"key": "generatePdf",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Read Quote Product",
 					"request": {
 						"method": "POST",
@@ -5530,7 +5584,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									""
+									"setTimeout(function(){}, 15000);"
 								],
 								"type": "text/javascript"
 							}

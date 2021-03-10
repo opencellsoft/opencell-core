@@ -1,14 +1,16 @@
 package org.meveo.model.cpq.commercial;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -45,9 +47,12 @@ public class OrderOffer extends AuditableCFEntity {
 	@NotNull
 	private OfferTemplate offerTemplate;
 
-	@OneToMany(mappedBy = "orderOffer", fetch = FetchType.LAZY)
-	private List<OrderProduct> products;
+	@OneToMany(mappedBy = "orderOffer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<OrderProduct> products=new ArrayList<OrderProduct>();
 
+	@OneToMany(mappedBy = "orderOffer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+	private List<OrderAttribute> orderAttributes = new ArrayList<OrderAttribute>();
 	/**
 	 * @return the order
 	 */
@@ -83,4 +88,20 @@ public class OrderOffer extends AuditableCFEntity {
 	public void setProducts(List<OrderProduct> products) {
 		this.products = products;
 	}
+
+	/**
+	 * @return the orderAttributes
+	 */
+	public List<OrderAttribute> getOrderAttributes() {
+		return orderAttributes;
+	}
+
+	/**
+	 * @param orderAttributes the orderAttributes to set
+	 */
+	public void setOrderAttributes(List<OrderAttribute> orderAttributes) {
+		this.orderAttributes = orderAttributes;
+	}
+	
+	
 }

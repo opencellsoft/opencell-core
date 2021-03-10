@@ -4026,6 +4026,13 @@ public class OrderAdvancement extends ModuleScript {
 		
 	</changeSet>
 	
+     <changeSet id="#20200304-321" author="Mbarek-Ay">
+		<addColumn tableName="cpq_order_item">
+			<column name="cpq_order_offer_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="cpq_order_offer_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_cpq_order_offer_id" deferrable="false" initiallyDeferred="false"
+			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
+	  </changeSet>
 	
 	
 
