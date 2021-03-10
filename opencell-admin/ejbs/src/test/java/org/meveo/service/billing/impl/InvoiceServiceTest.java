@@ -1,38 +1,55 @@
 package org.meveo.service.billing.impl;
 
+import static java.math.RoundingMode.HALF_UP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.apiv2.billing.ImmutableBasicInvoice;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.RatedTransaction;
@@ -61,21 +78,27 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 import org.meveo.util.ApplicationProvider;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InvoiceServiceTest {
-
+	@Spy
     @InjectMocks
     private InvoiceService invoiceService;
+    
+    @Mock
+    private BillingRunService billingRunService;
 
     @Mock
     private RatedTransactionService ratedTransactionService;
-
+    
     @Mock
     private EntityManager entityManager;
 
@@ -98,7 +121,12 @@ public class InvoiceServiceTest {
 
     @Mock
     private ParamBeanFactory paramBeanFactory;
-
+    
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
+    
+    private Random random = new Random();
+    
     @Before
     public void setUp() {
         when(ratedTransactionService.listRTsToInvoice(any(), any(), any(), any(), anyInt())).thenAnswer(new Answer<List<RatedTransaction>>() {
@@ -612,137 +640,351 @@ public class InvoiceServiceTest {
         SubCategoryInvoiceAgregate subAggr11 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(0);
         assertThat(subAggr11.getInvoiceSubCategory().getCode()).isEqualTo("subCat11");
         assertThat(subAggr11.getRatedtransactionsToAssociate().size()).isEqualTo(4);
-        assertThat(subAggr11.getAmountWithoutTax()).isEqualTo(new BigDecimal(400.03d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(subAggr11.getAmountWithTax()).isEqualTo(new BigDecimal(460.03d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(subAggr11.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(subAggr11.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(200.02d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr11.getAmountsByTax().get(tax10).getAmountWithTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(220.022d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr11.getAmountsByTax().get(tax10).getAmountTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(20.002d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr11.getAmountsByTax().get(tax20).getAmountWithoutTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(200.006d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr11.getAmountsByTax().get(tax20).getAmountWithTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(240.0072d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr11.getAmountsByTax().get(tax20).getAmountTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(40.0012d).setScale(6, RoundingMode.HALF_UP));
+        assertThat(subAggr11.getAmountWithoutTax()).isEqualTo(new BigDecimal(400.03d).setScale(2, HALF_UP));
+        assertThat(subAggr11.getAmountWithTax()).isEqualTo(new BigDecimal(460.03d).setScale(2, HALF_UP));
+        assertThat(subAggr11.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, HALF_UP));
+        assertThat(subAggr11.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(200.02d).setScale(6, HALF_UP));
+        assertThat(subAggr11.getAmountsByTax().get(tax10).getAmountWithTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(220.022d).setScale(6, HALF_UP));
+        assertThat(subAggr11.getAmountsByTax().get(tax10).getAmountTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(20.002d).setScale(6, HALF_UP));
+        assertThat(subAggr11.getAmountsByTax().get(tax20).getAmountWithoutTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(200.006d).setScale(6, HALF_UP));
+        assertThat(subAggr11.getAmountsByTax().get(tax20).getAmountWithTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(240.0072d).setScale(6, HALF_UP));
+        assertThat(subAggr11.getAmountsByTax().get(tax20).getAmountTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(40.0012d).setScale(6, HALF_UP));
 
         SubCategoryInvoiceAgregate subAggr12 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(1);
         assertThat(subAggr12.getInvoiceSubCategory().getCode()).isEqualTo("subCat12");
         assertThat(subAggr12.getRatedtransactionsToAssociate().size()).isEqualTo(4);
-        assertThat(subAggr12.getAmountWithoutTax()).isEqualTo(new BigDecimal(400.03d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(subAggr12.getAmountWithTax()).isEqualTo(new BigDecimal(460.03d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(subAggr12.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(subAggr12.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(200.02d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr12.getAmountsByTax().get(tax10).getAmountWithTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(220.022d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr12.getAmountsByTax().get(tax10).getAmountTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(20.002d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr12.getAmountsByTax().get(tax20).getAmountWithoutTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(200.006d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr12.getAmountsByTax().get(tax20).getAmountWithTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(240.0072d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr12.getAmountsByTax().get(tax20).getAmountTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(40.0012d).setScale(6, RoundingMode.HALF_UP));
+        assertThat(subAggr12.getAmountWithoutTax()).isEqualTo(new BigDecimal(400.03d).setScale(2, HALF_UP));
+        assertThat(subAggr12.getAmountWithTax()).isEqualTo(new BigDecimal(460.03d).setScale(2, HALF_UP));
+        assertThat(subAggr12.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, HALF_UP));
+        assertThat(subAggr12.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(200.02d).setScale(6, HALF_UP));
+        assertThat(subAggr12.getAmountsByTax().get(tax10).getAmountWithTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(220.022d).setScale(6, HALF_UP));
+        assertThat(subAggr12.getAmountsByTax().get(tax10).getAmountTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(20.002d).setScale(6, HALF_UP));
+        assertThat(subAggr12.getAmountsByTax().get(tax20).getAmountWithoutTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(200.006d).setScale(6, HALF_UP));
+        assertThat(subAggr12.getAmountsByTax().get(tax20).getAmountWithTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(240.0072d).setScale(6, HALF_UP));
+        assertThat(subAggr12.getAmountsByTax().get(tax20).getAmountTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(40.0012d).setScale(6, HALF_UP));
 
         SubCategoryInvoiceAgregate subAggr21 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(2);
         assertThat(subAggr21.getInvoiceSubCategory().getCode()).isEqualTo("subCat21");
         assertThat(subAggr21.getRatedtransactionsToAssociate().size()).isEqualTo(4);
-        assertThat(subAggr21.getAmountWithoutTax()).isEqualTo(new BigDecimal(400.03d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(subAggr21.getAmountWithTax()).isEqualTo(new BigDecimal(460.03d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(subAggr21.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(subAggr21.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(200.02d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr21.getAmountsByTax().get(tax10).getAmountWithTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(220.022d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr21.getAmountsByTax().get(tax10).getAmountTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(20.002d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr21.getAmountsByTax().get(tax20).getAmountWithoutTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(200.006d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr21.getAmountsByTax().get(tax20).getAmountWithTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(240.0072d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr21.getAmountsByTax().get(tax20).getAmountTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(40.0012d).setScale(6, RoundingMode.HALF_UP));
+        assertThat(subAggr21.getAmountWithoutTax()).isEqualTo(new BigDecimal(400.03d).setScale(2, HALF_UP));
+        assertThat(subAggr21.getAmountWithTax()).isEqualTo(new BigDecimal(460.03d).setScale(2, HALF_UP));
+        assertThat(subAggr21.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, HALF_UP));
+        assertThat(subAggr21.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(200.02d).setScale(6, HALF_UP));
+        assertThat(subAggr21.getAmountsByTax().get(tax10).getAmountWithTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(220.022d).setScale(6, HALF_UP));
+        assertThat(subAggr21.getAmountsByTax().get(tax10).getAmountTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(20.002d).setScale(6, HALF_UP));
+        assertThat(subAggr21.getAmountsByTax().get(tax20).getAmountWithoutTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(200.006d).setScale(6, HALF_UP));
+        assertThat(subAggr21.getAmountsByTax().get(tax20).getAmountWithTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(240.0072d).setScale(6, HALF_UP));
+        assertThat(subAggr21.getAmountsByTax().get(tax20).getAmountTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(40.0012d).setScale(6, HALF_UP));
 
         SubCategoryInvoiceAgregate subAggr22 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(3);
         assertThat(subAggr22.getInvoiceSubCategory().getCode()).isEqualTo("subCat22");
         assertThat(subAggr22.getRatedtransactionsToAssociate().size()).isEqualTo(4);
-        assertThat(subAggr22.getAmountWithoutTax()).isEqualTo(new BigDecimal(400.03d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(subAggr22.getAmountWithTax()).isEqualTo(new BigDecimal(460.03d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(subAggr22.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(subAggr22.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(200.02d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr22.getAmountsByTax().get(tax10).getAmountWithTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(220.022d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr22.getAmountsByTax().get(tax10).getAmountTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(20.002d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr22.getAmountsByTax().get(tax20).getAmountWithoutTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(200.006d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr22.getAmountsByTax().get(tax20).getAmountWithTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(240.0072d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(subAggr22.getAmountsByTax().get(tax20).getAmountTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(40.0012d).setScale(6, RoundingMode.HALF_UP));
+        assertThat(subAggr22.getAmountWithoutTax()).isEqualTo(new BigDecimal(400.03d).setScale(2, HALF_UP));
+        assertThat(subAggr22.getAmountWithTax()).isEqualTo(new BigDecimal(460.03d).setScale(2, HALF_UP));
+        assertThat(subAggr22.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, HALF_UP));
+        assertThat(subAggr22.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(200.02d).setScale(6, HALF_UP));
+        assertThat(subAggr22.getAmountsByTax().get(tax10).getAmountWithTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(220.022d).setScale(6, HALF_UP));
+        assertThat(subAggr22.getAmountsByTax().get(tax10).getAmountTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(20.002d).setScale(6, HALF_UP));
+        assertThat(subAggr22.getAmountsByTax().get(tax20).getAmountWithoutTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(200.006d).setScale(6, HALF_UP));
+        assertThat(subAggr22.getAmountsByTax().get(tax20).getAmountWithTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(240.0072d).setScale(6, HALF_UP));
+        assertThat(subAggr22.getAmountsByTax().get(tax20).getAmountTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(40.0012d).setScale(6, HALF_UP));
 
         CategoryInvoiceAgregate catAggr1 = (CategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(4);
         assertThat(catAggr1.getInvoiceCategory().getCode()).isEqualTo("cat1");
         assertThat(catAggr1.getSubCategoryInvoiceAgregates().size()).isEqualTo(2);
-        assertThat(catAggr1.getAmountWithoutTax()).isEqualTo(new BigDecimal(800.06d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(catAggr1.getAmountWithTax()).isEqualTo(new BigDecimal(920.06d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(catAggr1.getAmountTax()).isEqualTo(new BigDecimal(120.00d).setScale(2, RoundingMode.HALF_UP));
+        assertThat(catAggr1.getAmountWithoutTax()).isEqualTo(new BigDecimal(800.06d).setScale(2, HALF_UP));
+        assertThat(catAggr1.getAmountWithTax()).isEqualTo(new BigDecimal(920.06d).setScale(2, HALF_UP));
+        assertThat(catAggr1.getAmountTax()).isEqualTo(new BigDecimal(120.00d).setScale(2, HALF_UP));
 
         CategoryInvoiceAgregate catAggr2 = (CategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(5);
         assertThat(catAggr2.getInvoiceCategory().getCode()).isEqualTo("cat2");
         assertThat(catAggr2.getSubCategoryInvoiceAgregates().size()).isEqualTo(2);
-        assertThat(catAggr2.getAmountWithoutTax()).isEqualTo(new BigDecimal(800.06d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(catAggr2.getAmountWithTax()).isEqualTo(new BigDecimal(920.06d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(catAggr2.getAmountTax()).isEqualTo(new BigDecimal(120.00d).setScale(2, RoundingMode.HALF_UP));
+        assertThat(catAggr2.getAmountWithoutTax()).isEqualTo(new BigDecimal(800.06d).setScale(2, HALF_UP));
+        assertThat(catAggr2.getAmountWithTax()).isEqualTo(new BigDecimal(920.06d).setScale(2, HALF_UP));
+        assertThat(catAggr2.getAmountTax()).isEqualTo(new BigDecimal(120.00d).setScale(2, HALF_UP));
 
         SubCategoryInvoiceAgregate descAggr11 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(6);
         assertThat(descAggr11.isDiscountAggregate()).isTrue();
         assertThat(descAggr11.getInvoiceSubCategory().getCode()).isEqualTo("subCat11");
         assertThat(descAggr11.getRatedtransactionsToAssociate().size()).isEqualTo(0);
-        assertThat(descAggr11.getAmountWithoutTax()).isEqualTo(new BigDecimal(-13.05d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(descAggr11.getAmountWithTax()).isEqualTo(new BigDecimal(-14.36d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(descAggr11.getAmountTax()).isEqualTo(new BigDecimal(-1.31d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(descAggr11.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-13.05d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(descAggr11.getAmountsByTax().get(tax10).getAmountWithTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-14.355d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(descAggr11.getAmountsByTax().get(tax10).getAmountTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-1.305d).setScale(6, RoundingMode.HALF_UP));
+        assertThat(descAggr11.getAmountWithoutTax()).isEqualTo(new BigDecimal(-13.05d).setScale(2, HALF_UP));
+        assertThat(descAggr11.getAmountWithTax()).isEqualTo(new BigDecimal(-14.36d).setScale(2, HALF_UP));
+        assertThat(descAggr11.getAmountTax()).isEqualTo(new BigDecimal(-1.31d).setScale(2, HALF_UP));
+        assertThat(descAggr11.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-13.05d).setScale(6, HALF_UP));
+        assertThat(descAggr11.getAmountsByTax().get(tax10).getAmountWithTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-14.355d).setScale(6, HALF_UP));
+        assertThat(descAggr11.getAmountsByTax().get(tax10).getAmountTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-1.305d).setScale(6, HALF_UP));
           assertThat(descAggr11.getAmountsByTax().containsKey(tax20)).isFalse();
 
         SubCategoryInvoiceAgregate descAggr12 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(9);
         assertThat(descAggr12.isDiscountAggregate()).isTrue();
         assertThat(descAggr12.getInvoiceSubCategory().getCode()).isEqualTo("subCat12");
         assertThat(descAggr12.getRatedtransactionsToAssociate().size()).isEqualTo(0);
-        assertThat(descAggr12.getAmountWithoutTax()).isEqualTo(new BigDecimal(-28.0).setScale(2, RoundingMode.HALF_UP));
-        assertThat(descAggr12.getAmountWithTax()).isEqualTo(new BigDecimal(-32.2d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(descAggr12.getAmountTax()).isEqualTo(new BigDecimal(-4.2d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(descAggr12.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-14.00d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(descAggr12.getAmountsByTax().get(tax10).getAmountWithTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-15.4d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(descAggr12.getAmountsByTax().get(tax10).getAmountTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-1.4d).setScale(6, RoundingMode.HALF_UP));
+        assertThat(descAggr12.getAmountWithoutTax()).isEqualTo(new BigDecimal(-28.0).setScale(2, HALF_UP));
+        assertThat(descAggr12.getAmountWithTax()).isEqualTo(new BigDecimal(-32.2d).setScale(2, HALF_UP));
+        assertThat(descAggr12.getAmountTax()).isEqualTo(new BigDecimal(-4.2d).setScale(2, HALF_UP));
+        assertThat(descAggr12.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-14.00d).setScale(6, HALF_UP));
+        assertThat(descAggr12.getAmountsByTax().get(tax10).getAmountWithTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-15.4d).setScale(6, HALF_UP));
+        assertThat(descAggr12.getAmountsByTax().get(tax10).getAmountTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-1.4d).setScale(6, HALF_UP));
 
-        assertThat(descAggr12.getAmountsByTax().get(tax20).getAmountWithoutTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-14.00d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(descAggr12.getAmountsByTax().get(tax20).getAmountWithTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-16.8d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(descAggr12.getAmountsByTax().get(tax20).getAmountTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-2.8d).setScale(6, RoundingMode.HALF_UP));
+        assertThat(descAggr12.getAmountsByTax().get(tax20).getAmountWithoutTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-14.00d).setScale(6, HALF_UP));
+        assertThat(descAggr12.getAmountsByTax().get(tax20).getAmountWithTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-16.8d).setScale(6, HALF_UP));
+        assertThat(descAggr12.getAmountsByTax().get(tax20).getAmountTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-2.8d).setScale(6, HALF_UP));
 
         SubCategoryInvoiceAgregate descAggr21 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(10);
         assertThat(descAggr21.isDiscountAggregate()).isTrue();
         assertThat(descAggr21.getInvoiceSubCategory().getCode()).isEqualTo("subCat21");
         assertThat(descAggr21.getRatedtransactionsToAssociate().size()).isEqualTo(0);
-        assertThat(descAggr21.getAmountWithoutTax()).isEqualTo(new BigDecimal(-300d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(descAggr21.getAmountWithTax()).isEqualTo(new BigDecimal(-340.00d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(descAggr21.getAmountTax()).isEqualTo(new BigDecimal(-40.00d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(descAggr21.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-200.02d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(descAggr21.getAmountsByTax().get(tax10).getAmountWithTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-220.022d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(descAggr21.getAmountsByTax().get(tax10).getAmountTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-20.002d).setScale(6, RoundingMode.HALF_UP));
+        assertThat(descAggr21.getAmountWithoutTax()).isEqualTo(new BigDecimal(-300d).setScale(2, HALF_UP));
+        assertThat(descAggr21.getAmountWithTax()).isEqualTo(new BigDecimal(-340.00d).setScale(2, HALF_UP));
+        assertThat(descAggr21.getAmountTax()).isEqualTo(new BigDecimal(-40.00d).setScale(2, HALF_UP));
+        assertThat(descAggr21.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-200.02d).setScale(6, HALF_UP));
+        assertThat(descAggr21.getAmountsByTax().get(tax10).getAmountWithTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-220.022d).setScale(6, HALF_UP));
+        assertThat(descAggr21.getAmountsByTax().get(tax10).getAmountTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-20.002d).setScale(6, HALF_UP));
 
-        assertThat(descAggr21.getAmountsByTax().get(tax20).getAmountWithoutTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-99.98d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(descAggr21.getAmountsByTax().get(tax20).getAmountWithTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-119.976d).setScale(6, RoundingMode.HALF_UP));
-        assertThat(descAggr21.getAmountsByTax().get(tax20).getAmountTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(-19.996d).setScale(6, RoundingMode.HALF_UP));
+        assertThat(descAggr21.getAmountsByTax().get(tax20).getAmountWithoutTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-99.98d).setScale(6, HALF_UP));
+        assertThat(descAggr21.getAmountsByTax().get(tax20).getAmountWithTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-119.976d).setScale(6, HALF_UP));
+        assertThat(descAggr21.getAmountsByTax().get(tax20).getAmountTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(-19.996d).setScale(6, HALF_UP));
 
         SubCategoryInvoiceAgregate descAggr22 = (SubCategoryInvoiceAgregate) invoice.getInvoiceAgregates().get(11);
         assertThat(descAggr22.isDiscountAggregate()).isTrue();
         assertThat(descAggr22.getInvoiceSubCategory().getCode()).isEqualTo("subCat22");
         assertThat(descAggr22.getRatedtransactionsToAssociate().size()).isEqualTo(0);
-        assertThat(descAggr22.getAmountWithoutTax()).isEqualTo(new BigDecimal(300d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(descAggr22.getAmountWithTax()).isEqualTo(new BigDecimal(330.00d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(descAggr22.getAmountTax()).isEqualTo(new BigDecimal(30.00d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(descAggr22.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, RoundingMode.HALF_UP)).isEqualTo(new BigDecimal(300.00d).setScale(6, RoundingMode.HALF_UP));
+        assertThat(descAggr22.getAmountWithoutTax()).isEqualTo(new BigDecimal(300d).setScale(2, HALF_UP));
+        assertThat(descAggr22.getAmountWithTax()).isEqualTo(new BigDecimal(330.00d).setScale(2, HALF_UP));
+        assertThat(descAggr22.getAmountTax()).isEqualTo(new BigDecimal(30.00d).setScale(2, HALF_UP));
+        assertThat(descAggr22.getAmountsByTax().get(tax10).getAmountWithoutTax().setScale(6, HALF_UP)).isEqualTo(new BigDecimal(300.00d).setScale(6, HALF_UP));
         assertThat(descAggr22.getAmountsByTax().get(tax20)).isNull();
 
         TaxInvoiceAgregate taxAggr10 = (TaxInvoiceAgregate) invoice.getInvoiceAgregates().get(7);
         assertThat(taxAggr10.getTax().getCode()).isEqualTo("tax10");
         assertThat(taxAggr10.getTaxPercent()).isEqualTo(tax10.getPercent());
-        assertThat(taxAggr10.getAmountWithoutTax()).isEqualTo(new BigDecimal(873.01d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(taxAggr10.getAmountWithTax()).isEqualTo(new BigDecimal(960.31d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(taxAggr10.getAmountTax()).isEqualTo(new BigDecimal(87.30d).setScale(2, RoundingMode.HALF_UP));
+        assertThat(taxAggr10.getAmountWithoutTax()).isEqualTo(new BigDecimal(873.01d).setScale(2, HALF_UP));
+        assertThat(taxAggr10.getAmountWithTax()).isEqualTo(new BigDecimal(960.31d).setScale(2, HALF_UP));
+        assertThat(taxAggr10.getAmountTax()).isEqualTo(new BigDecimal(87.30d).setScale(2, HALF_UP));
 
         TaxInvoiceAgregate taxAggr20 = (TaxInvoiceAgregate) invoice.getInvoiceAgregates().get(8);
         assertThat(taxAggr20.getTax().getCode()).isEqualTo("tax20");
         assertThat(taxAggr20.getTaxPercent()).isEqualTo(tax20.getPercent());
-        assertThat(taxAggr20.getAmountWithoutTax()).isEqualTo(new BigDecimal(686.04d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(taxAggr20.getAmountWithTax()).isEqualTo(new BigDecimal(823.25d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(taxAggr20.getAmountTax()).isEqualTo(new BigDecimal(137.21d).setScale(2, RoundingMode.HALF_UP));
+        assertThat(taxAggr20.getAmountWithoutTax()).isEqualTo(new BigDecimal(686.04d).setScale(2, HALF_UP));
+        assertThat(taxAggr20.getAmountWithTax()).isEqualTo(new BigDecimal(823.25d).setScale(2, HALF_UP));
+        assertThat(taxAggr20.getAmountTax()).isEqualTo(new BigDecimal(137.21d).setScale(2, HALF_UP));
 
-        assertThat(invoice.getAmountWithoutTax()).isEqualTo(new BigDecimal(1559.05d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(invoice.getAmountWithTax()).isEqualTo(new BigDecimal(1783.56d).setScale(2, RoundingMode.HALF_UP));
-        assertThat(invoice.getAmountTax()).isEqualTo(new BigDecimal(224.51d).setScale(2, RoundingMode.HALF_UP));
+        assertThat(invoice.getAmountWithoutTax()).isEqualTo(new BigDecimal(1559.05d).setScale(2, HALF_UP));
+        assertThat(invoice.getAmountWithTax()).isEqualTo(new BigDecimal(1783.56d).setScale(2, HALF_UP));
+        assertThat(invoice.getAmountTax()).isEqualTo(new BigDecimal(224.51d).setScale(2, HALF_UP));
     }
+    
+    @Test
+	public void test_validate_invoice() {
+		Map<InvoiceStatusEnum, InvoiceStatusEnum> validationStatus = new HashMap<InvoiceStatusEnum, InvoiceStatusEnum>() {
+			{
+				put(InvoiceStatusEnum.VALIDATED, InvoiceStatusEnum.VALIDATED);
+				put(InvoiceStatusEnum.CANCELED, InvoiceStatusEnum.CANCELED);
+				put(InvoiceStatusEnum.DRAFT, InvoiceStatusEnum.DRAFT);
+				put(InvoiceStatusEnum.NEW, InvoiceStatusEnum.NEW);
+				put(InvoiceStatusEnum.REJECTED, InvoiceStatusEnum.DRAFT);
+				put(InvoiceStatusEnum.SUSPECT, InvoiceStatusEnum.DRAFT);
+			}
+		};
+		for (InvoiceStatusEnum status : InvoiceStatusEnum.values()) {
+			Invoice invoice = new Invoice();
+			invoice.setStatus(status);
+			invoiceService.validateInvoice(invoice, false);
+			assertThat(invoice.getStatus() == validationStatus.get(status)).isTrue();
+		}
+	}
+    
+    @Test
+	public void test_reject_invoice() {
+		Map<InvoiceStatusEnum, Boolean> rejectEligibilityMap = new HashMap<InvoiceStatusEnum, Boolean>() {
+			{
+				put(InvoiceStatusEnum.VALIDATED, false);
+				put(InvoiceStatusEnum.CANCELED, false);
+				put(InvoiceStatusEnum.DRAFT, true);
+				put(InvoiceStatusEnum.NEW, false);
+				put(InvoiceStatusEnum.REJECTED, false);
+				put(InvoiceStatusEnum.SUSPECT, true);
+			}
+		};
+		for (InvoiceStatusEnum status : InvoiceStatusEnum.values()) {
+			Invoice invoice = new Invoice();
+			invoice.setStatus(status);
+			if(rejectEligibilityMap.get(status)) {
+				invoiceService.rejectInvoice(invoice);
+				verify(invoiceService, times(1)).rejectInvoice(invoice);
+			} else {
+				exception.expect(BusinessException.class);
+				exception.expectMessage("Can only reject invoices in statuses DRAFT/SUSPECT. current invoice status is :");
+				invoiceService.rejectInvoice(invoice);
+				verify(invoiceService, times(0)).rejectInvoice(invoice);
+			}
+		}
+	}
+    
+    @Test
+	public void test_move_invoice() {
+    	BillingRun br1 = new BillingRun();
+    	long id1 = Long.valueOf(1);
+    	BillingRun br2 = new BillingRun();
+    	long id2 = Long.valueOf(1);
+		br1.setId(id1);
+		br1.setStatus(BillingRunStatusEnum.POSTINVOICED);
+		br2.setId(id2);
+		
+    	Invoice invoice = new Invoice();
+    	invoice.setId(id1);
+    	invoice.rebuildStatus(InvoiceStatusEnum.REJECTED);
+    	invoice.setBillingRun(br1);
+    	when(billingRunService.findById(id1)).thenReturn(br1);
+    	when(billingRunService.findOrCreateNextBR(id1)).thenReturn(br2);
+    	when(invoiceService.findById(id1)).thenReturn(invoice);
+    	TypedQuery query = mock(TypedQuery.class);
+    	when(invoiceService.getEntityManager().createNamedQuery("Invoice.moveToBRByIds")).thenReturn(query);
+    	when(query.setParameter(ArgumentMatchers.anyString(), any())).thenReturn(query);
+    	final List<Long> invoices = Arrays.asList(id1);
+		invoiceService.moveInvoices(id1, invoices);
+    	verify(query, times(1)).executeUpdate();
+    	verify(query, times(1)).setParameter("billingRun", br2);
+    	verify(query, times(1)).setParameter("invoiceIds", invoices);
+	}
+    
+    @Test
+	public void test_update_invoice_eligibilities() {
+		Map<InvoiceStatusEnum, Boolean> updateEligibilityMap = new HashMap<InvoiceStatusEnum, Boolean>() {
+			{
+				put(InvoiceStatusEnum.VALIDATED, false);
+				put(InvoiceStatusEnum.CANCELED, false);
+				put(InvoiceStatusEnum.DRAFT, true);
+				put(InvoiceStatusEnum.NEW, false);
+				put(InvoiceStatusEnum.REJECTED, true);
+				put(InvoiceStatusEnum.SUSPECT, true);
+			}
+		};
+		
+		for (InvoiceStatusEnum status : InvoiceStatusEnum.values()) {
+			Invoice invoice = new Invoice();
+			invoice.setStatus(status);
+			Invoice input = invoice;
+			try {
+				input = instantiateRandomObject(Invoice.class, true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			Mockito.doReturn(invoice).when(invoiceService).update(invoice);
+			if(updateEligibilityMap.get(status)) {
+				invoiceService.update(invoice, input);
+				verify(invoiceService, times(1)).update(invoice);
+			} else {
+				exception.expect(BusinessException.class);
+				exception.expectMessage("Can only update invoices in statuses DRAFT/SUSPECT/REJECTED");
+				invoiceService.update(invoice, input);
+				verify(invoiceService, times(0)).update(invoice);
+			}
+		}
+	}
+    
+    @Test
+	public void test_create_advance_payment_invoice() throws Exception {
+    	/*
+    	ImmutableBasicInvoice inputInvoice = instantiateRandomObject(ImmutableBasicInvoice.class, false);
+    	Order order = instantiateRandomObject(Order.class, true);
+    	BillingAccount billingAccount  = instantiateRandomObject(BillingAccount.class, true);
+    	AccountingArticle accountingArticle  = instantiateRandomObject(AccountingArticle.class, true);
+    	InvoiceType advType = instantiateRandomObject(InvoiceType.class, true);
+    	advType.setCode("ADV");
+    	
+    	when(invoiceService.tryToFindByEntityClassAndCode(Order.class, inputInvoice.getOrderCode())).thenReturn(order);
+    	when(invoiceService.tryToFindByEntityClassAndCode(BillingAccount.class, inputInvoice.getBillingAccountCode())).thenReturn(billingAccount);
+    	when(invoiceService.tryToFindByEntityClassAndCode(AccountingArticle.class, inputInvoice.getArticleCode())).thenReturn(accountingArticle);
+    	when(invoiceService.tryToFindByEntityClassAndCode(InvoiceType.class, "ADV")).thenReturn(advType);
+    	
+    	invoiceService.createAdvancePaymentInvoice(inputInvoice);
+    	*/
+    	//TODO MEL
+    }
+    
+    @Test
+	public void test_update_invoice_properties() throws Exception {
+		Invoice invoice = new Invoice();
+		invoice.setStatus(InvoiceStatusEnum.DRAFT);
+		Invoice input = null;
+		try {
+			input = instantiateRandomObject(Invoice.class, true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Mockito.doReturn(invoice).when(invoiceService).update(invoice);
+		invoiceService.update(invoice, input);
+		verify(invoiceService, times(1)).update(invoice);
+		assertObjectWasUpdated(invoice, input, Arrays.asList("comment","externalRef","invoiceDate","dueDate","paymentMethod","cfValues"), null, false, false);
+	}
+    
+    
+	public <T> void assertObjectWasUpdated(T old, T newOne, List<String> fieldsToCheckUpdated,
+			List<String> fieldsToCheckNotUpdated, boolean checkTheRestUpdated, boolean checkTheRestNotUpdated) throws Exception {
+		Class clazz = old.getClass();
+		boolean checkUpdated = fieldsToCheckUpdated != null && !fieldsToCheckUpdated.isEmpty();
+		boolean checkNotUpdated = fieldsToCheckNotUpdated != null && !fieldsToCheckNotUpdated.isEmpty();
+		for (Field field : clazz.getDeclaredFields()) {
+			if (!java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+				field.setAccessible(true);
+				final String name = field.getName();
+				if (checkTheRestUpdated || (checkUpdated && fieldsToCheckUpdated.contains(name))) {
+					assertThat(compare(old, newOne, field)).isTrue();
+				} else if (checkTheRestNotUpdated || (checkNotUpdated && fieldsToCheckNotUpdated.contains(name))) {
+					assertThat(compare(old, newOne, field)).isFalse();
+				}
+			}
+		}
+	}
+
+	private <T> boolean compare(T old, T newOne, Field field) throws IllegalAccessException {
+		final Object oldValue = field.get(old);
+		final Object newValue = field.get(newOne);
+		if (oldValue == null) {
+			return newValue == null;
+		}
+		return oldValue.equals(newValue);
+	}
+    
+    public <T> T instantiateRandomObject(Class<T> clazz, boolean onlyBasicFields) throws Exception {
+        T instance = clazz.newInstance();
+        for(Field field: clazz.getDeclaredFields()) {
+        	if (!java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+	            field.setAccessible(true);
+	            Object value = getRandomValueForField(field, onlyBasicFields);
+	            field.set(instance, value);
+        	}
+        }
+        return instance;
+    }
+ 
+	private Object getRandomValueForField(Field field, boolean onlyBasicFields) throws Exception {
+		Class<?> type = field.getType();
+		if (type.isEnum()) {
+			Object[] enumValues = type.getEnumConstants();
+			return enumValues[random.nextInt(enumValues.length)];
+		} else if (type.equals(Integer.TYPE) || type.equals(Integer.class)) {
+			return random.nextInt();
+		} else if (type.equals(Long.TYPE) || type.equals(Long.class)) {
+			return random.nextLong();
+		} else if (type.equals(Double.TYPE) || type.equals(Double.class)) {
+			return random.nextDouble();
+		} else if (type.equals(Float.TYPE) || type.equals(Float.class)) {
+			return random.nextFloat();
+		} else if (type.equals(Boolean.TYPE) || type.equals(Boolean.class)) {
+			return random.nextBoolean();
+		} else if (type.equals(String.class)) {
+			return UUID.randomUUID().toString();
+		} else if (type.equals(BigInteger.class)) {
+			return BigInteger.valueOf(random.nextInt());
+		} else if (type.equals(BigDecimal.class)) {
+			return BigDecimal.valueOf(random.nextInt());
+		} else if (type.equals(Date.class)) {
+			return new Date();
+		} else if(!onlyBasicFields) {
+			return instantiateRandomObject(type, onlyBasicFields);
+		}
+		return null;
+	}
 }
