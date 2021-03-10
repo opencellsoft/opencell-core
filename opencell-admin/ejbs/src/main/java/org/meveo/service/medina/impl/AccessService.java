@@ -17,20 +17,20 @@
  */
 package org.meveo.service.medina.impl;
 
-import java.util.Date;
-import java.util.List;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.mediation.Access;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.base.PersistenceService;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import java.util.Date;
+import java.util.List;
 
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.mediation.Access;
-import org.meveo.model.shared.DateUtils;
-import org.meveo.service.base.PersistenceService;
-import static  org.meveo.model.shared.DateUtils.isPeriodsOverlap;
+import static org.meveo.model.shared.DateUtils.isPeriodsOverlap;
 
 @Stateless
 public class AccessService extends PersistenceService<Access> {
@@ -120,8 +120,28 @@ public class AccessService extends PersistenceService<Access> {
     }
 
     /**
+     * List accesss by subscription with paginationConfiguration
+     *
+     * @param subscription the billing account
+     * @param config paginationConfiguration
+     * @return the list of userAccounts
+     */
+    @SuppressWarnings("unchecked")
+    public List<Access> listBySubscription(Subscription subscription, PaginationConfiguration config) {
+        QueryBuilder qb = getQuery(config);
+        qb.addCriterionEntity("subscription", subscription);
+
+        try {
+            return (List<Access>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            log.warn("failed to get list Access by subscription", e);
+            return null;
+        }
+    }
+
+    /**
      * Get a count of access points by a parent subscription
-     * 
+     *
      * @param parent Parent subscription
      * @return A number of child access points
      */

@@ -32,22 +32,17 @@ import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.billing.*;
-import org.meveo.api.security.config.annotation.FilterProperty;
-import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.RateSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.EntityNotAllowedException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.exception.*;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.commons.utils.ParamBean;
@@ -72,20 +67,10 @@ import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionRenewal;
+import org.meveo.model.billing.*;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalTermTypeEnum;
-import org.meveo.model.billing.SubscriptionStatusEnum;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
-import org.meveo.model.catalog.ProductTemplate;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.catalog.*;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.crm.Customer;
@@ -96,26 +81,8 @@ import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.billing.impl.BillingCycleService;
-import org.meveo.service.billing.impl.ChargeInstanceService;
-import org.meveo.service.billing.impl.DiscountPlanInstanceService;
-import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.InvoiceTypeService;
-import org.meveo.service.billing.impl.OneShotChargeInstanceService;
-import org.meveo.service.billing.impl.ProductInstanceService;
-import org.meveo.service.billing.impl.RecurringChargeInstanceService;
-import org.meveo.service.billing.impl.ServiceInstanceService;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.TerminationReasonService;
-import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.billing.impl.WalletTemplateService;
-import org.meveo.service.catalog.impl.CalendarService;
-import org.meveo.service.catalog.impl.DiscountPlanService;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.meveo.service.catalog.impl.ProductTemplateService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.billing.impl.*;
+import org.meveo.service.catalog.impl.*;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
@@ -129,6 +96,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityNotFoundException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -1323,6 +1291,43 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
+    /**
+     * List subscriptions
+     *
+     * @param mergedCF truf if merging inherited CF
+     * @param pagingAndFiltering paging and filtering.
+     * @return instance of SubscriptionsListDto which contains list of Subscription DTO
+     * @throws MeveoApiException meveo api exception
+     */
+    public SubscriptionsListResponseDto listGetAll(Boolean mergedCF, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+        boolean merge = mergedCF != null && mergedCF;
+        return listGetAll(pagingAndFiltering, CustomFieldInheritanceEnum.getInheritCF(true, merge));
+    }
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "subscriptions.subscription", itemPropertiesToFilter = {@FilterProperty(property = "seller", entityClass = Seller.class),
+            @FilterProperty(property = "userAccount", entityClass = UserAccount.class)}, totalRecords = "subscriptions.listSize")
+    public SubscriptionsListResponseDto listGetAll(PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
+        String sortBy = DEFAULT_SORT_ORDER_ID;
+        if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
+            sortBy = pagingAndFiltering.getSortBy();
+        }
+        PaginationConfiguration paginationConfiguration =
+                toPaginationConfiguration(sortBy, pagingAndFiltering.getMultiSortOrder(), null, pagingAndFiltering, Subscription.class);
+        Long totalCount = subscriptionService.count(paginationConfiguration);
+        SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+        if (totalCount > 0) {
+            List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
+            if (subscriptions != null) {
+                for (Subscription subscription : subscriptions) {
+                    result.getSubscriptions().getSubscription().add(subscriptionToDto(subscription, inheritCF));
+                }
+            }
+        }
+        return result;
+    }
+
 
     /**
      * Find subscription by code
@@ -2454,7 +2459,7 @@ public class SubscriptionApi extends BaseApi {
 
         // populate Electronic Billing Fields
         populateElectronicBillingFields(postData, subscription);
-        
+
         CustomFieldsDto cfs = postData.getCustomFields();
     	if(cfs!=null) {
         // populate customFields

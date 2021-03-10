@@ -18,15 +18,15 @@
 
 package org.meveo.api;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CountryDto;
+import org.meveo.api.dto.TradingCountriesDto;
+import org.meveo.api.dto.TradingCountryDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.Country;
@@ -38,6 +38,10 @@ import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.LanguageService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingCountryService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -62,6 +66,20 @@ public class CountryApi extends BaseApi {
 
     @Inject
     private LanguageService languageService;
+
+    public TradingCountriesDto list() {
+        TradingCountriesDto result = new TradingCountriesDto();
+
+        List<TradingCountry> countries =
+                tradingCountryService.list(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
+        if (countries != null) {
+            for (TradingCountry country : countries) {
+                result.getCountry().add(new TradingCountryDto(country));
+            }
+        }
+
+        return result;
+    }
 
     public void create(CountryDto postData) throws MeveoApiException, BusinessException {
 

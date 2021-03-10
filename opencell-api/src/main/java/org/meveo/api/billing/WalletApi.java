@@ -18,43 +18,17 @@
 
 package org.meveo.api.billing;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.billing.AmountsDto;
-import org.meveo.api.dto.billing.FindWalletOperationsDto;
-import org.meveo.api.dto.billing.WalletBalanceDto;
-import org.meveo.api.dto.billing.WalletOperationDto;
-import org.meveo.api.dto.billing.WalletReservationDto;
-import org.meveo.api.dto.billing.WalletTemplateDto;
-import org.meveo.api.dto.billing.WoRatedTransactionDto;
+import org.meveo.api.dto.billing.*;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.*;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.Reservation;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
@@ -63,21 +37,18 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.ChargeInstanceService;
-import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.ReservationService;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.billing.impl.WalletReservationService;
-import org.meveo.service.billing.impl.WalletService;
-import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.primefaces.model.SortOrder;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Wallet operation and balance related API
@@ -616,6 +587,43 @@ public class WalletApi extends BaseApi {
         }
 
         PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, null, pagingAndFiltering, WalletOperation.class);
+
+        Long totalCount = walletOperationService.count(paginationConfig);
+
+        FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
+        result.setPaging(pagingAndFiltering);
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        if (totalCount > 0) {
+            List<WalletOperation> walletOperations = walletOperationService.list(paginationConfig);
+            for (WalletOperation wo : walletOperations) {
+                WalletOperationDto woDto = new WalletOperationDto(wo, entityToDtoConverter.getCustomFieldsDTO(wo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+                if (includeRatedTransactions) {
+                    RatedTransaction rt = this.ratedTransactionService.findByWalletOperationId(wo.getId());
+                    if (rt != null) {
+                        woDto.setRatedTransaction(new WoRatedTransactionDto(rt));
+                    }
+                }
+                result.getWalletOperations().add(woDto);
+            }
+        }
+
+        return result;
+    }
+
+    public FindWalletOperationsResponseDto listGetAll(FindWalletOperationsDto postData, PagingAndFiltering pagingAndFiltering, Boolean includeRatedTransactions)
+            throws MeveoApiException {
+
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+
+        if (postData != null) {
+            this.completeFilteringByPostedData(postData, pagingAndFiltering);
+        }
+
+        PaginationConfiguration paginationConfig =
+                toPaginationConfiguration(pagingAndFiltering.getSortBy(), pagingAndFiltering.getMultiSortOrder(), null, pagingAndFiltering, WalletOperation.class);
 
         Long totalCount = walletOperationService.count(paginationConfig);
 
