@@ -54,6 +54,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.VersionCreated;
 import org.meveo.event.qualifier.VersionRemoved;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -492,6 +493,9 @@ public class SubscriptionApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+//        checkOverLapPeriod(subscription.getValidity(), postData.getCode());
+        
         subscription = subscriptionService.update(subscription);
         // ignoring postData.getEndAgreementDate() if subscription.getAutoEndOfEngagement is true
         if (subscription.getAutoEndOfEngagement() == null || !subscription.getAutoEndOfEngagement()) {
@@ -2353,7 +2357,7 @@ public class SubscriptionApi extends BaseApi {
     }
 
     private Subscription createSubscription(SubscriptionDto postData) throws MeveoApiException, BusinessException {
-        if (subscriptionService.findByCode(postData.getCode()) != null) {
+        if (subscriptionService.findByCodeAndValidityDate(postData.getCode(), postData.getValidityDate()) != null) {
             throw new EntityAlreadyExistsException(Subscription.class, postData.getCode());
         }
 
@@ -2406,6 +2410,9 @@ public class SubscriptionApi extends BaseApi {
         subscription.setFromValidity(postData.getValidityDate());
         subscription.setRenewed(postData.isRenewed());
         subscription.setPrestation(postData.getCustomerService());
+        
+//        checkOverLapPeriod(subscription.getValidity(), postData.getCode());
+        
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
         	subscription.setSubscribedTillDate(postData.getSubscribedTillDate());
         }
@@ -2468,7 +2475,7 @@ public class SubscriptionApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-
+        
         subscriptionService.create(subscription);
         userAccount.getSubscriptions().add(subscription);
 
@@ -2509,6 +2516,16 @@ public class SubscriptionApi extends BaseApi {
         }
         return subscription;
     }
+    
+   /* private void checkOverLapPeriod(DatePeriod validity, String subscriptionCode) {
+    	List<Subscription> subscriptions = subscriptionService.findListByCode(subscriptionCode);
+    	for(Subscription sub: subscriptions) {
+    		boolean isOverLap = validity.isCorrespondsToPeriod(sub.getValidity().getFrom(), sub.getValidity().getTo(), false);
+    		if(isOverLap) {
+    			throw new MeveoApiException("Current validity ("+ validity.toString("dd/MM/yyyy") +") date is overlap with validity ("+ sub.getValidity().toString("dd/MM/yyyy") +")");
+    		}
+    	}
+    }*/
 
     private void setMinimumAmountElSubscription(SubscriptionDto postData, Subscription subscription, OfferTemplate offerTemplate) {
         subscription.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
