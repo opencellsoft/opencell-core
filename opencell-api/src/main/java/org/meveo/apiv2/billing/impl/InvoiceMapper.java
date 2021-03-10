@@ -27,6 +27,7 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 				.subscription(buildById(entity.getSubscription())).order(buildById(entity.getOrder()))
 				.xmlFilename(entity.getXmlFilename()).pdfFilename(entity.getPdfFilename())
 				.paymentMethod(buildById(entity.getPaymentMethod())).dueBalance(entity.getDueBalance())
+				.paymentMethodType(entity.getPaymentMethodType().name())
 				.externalRef(entity.getExternalRef()).rejectReason(entity.getRejectReason()).initialCollectionDate(entity.getInitialCollectionDate())
 				.statusDate(entity.getStatusDate()).xmlDate(entity.getXmlDate()).pdfDate(entity.getPdfDate())
 				.emailSentDate(entity.getEmailSentDate()).paymentStatusDate(entity.getPaymentStatusDate())

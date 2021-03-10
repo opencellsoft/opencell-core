@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableInvoice.class)
 public interface Invoice extends Resource {
 
+	@Nullable
 	String getBillingAccountCode();
 
 	@Nullable
@@ -57,7 +58,7 @@ public interface Invoice extends Resource {
 	BigDecimal getNetToPay();
 
 	@Nullable
-	Resource getPaymentMethodType();
+	String getPaymentMethodType();
 
 	@Nullable
 	String getIban();
@@ -84,6 +85,7 @@ public interface Invoice extends Resource {
 	@Nullable
 	Resource getAdjustedInvoice();
 
+	@Nullable
 	String getInvoiceTypeCode();
 
 	@Nullable
@@ -121,6 +123,7 @@ public interface Invoice extends Resource {
 	@JsonProperty("dontSend")
 	Boolean isDontSend();
 
+	@Nullable
 	String getSellerCode();
 
 	@Nullable

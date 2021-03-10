@@ -115,7 +115,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.activateServices(postData);
+            subscriptionApi.activateServices(postData,true);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -377,6 +377,17 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
 
     @Override
     public ActionStatus subscribeAndActivateServices(SubscriptionAndServicesToActivateRequestDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            subscriptionApi.subscribeAndActivateServices(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+    
+    @Override
+    public ActionStatus subscribeAndInstantiateServices(SubscriptionAndServicesToActivateRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             subscriptionApi.subscribeAndActivateServices(postData);
