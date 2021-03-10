@@ -3326,7 +3326,7 @@
 	
 			<changeSet id="#222_20210219" author="Mbarek-Ay">
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-26, 0, 0, now(), 'org.meveo.api.billing.QuoteValidation', 'QuoteValidation', 'JAVA', '
-        package org.meveo.api.billing;
+                package org.meveo.api.billing;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -3353,6 +3353,8 @@ import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.cpq.QuoteVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
@@ -3364,9 +3366,11 @@ import org.meveo.service.cpq.order.OrderPriceService;
 import org.meveo.service.cpq.order.OrderProductService;
 import org.meveo.service.cpq.order.OrderTypeService;
 import org.meveo.service.cpq.order.QuotePriceService;
+import org.meveo.service.crm.impl.CurrentUserProducer;
 import org.meveo.service.script.module.ModuleScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 @SuppressWarnings("serial")
 public class QuoteValidation extends ModuleScript {
@@ -3384,7 +3388,8 @@ public class QuoteValidation extends ModuleScript {
     private OrderPriceService orderPriceService = (OrderPriceService) getServiceInterface(OrderPriceService.class.getSimpleName());
     private QuotePriceService quotePriceService = (QuotePriceService) getServiceInterface(QuotePriceService.class.getSimpleName());
     private OrderTypeService orderTypeService = (OrderTypeService) getServiceInterface(OrderTypeService.class.getSimpleName());
-    
+    private MeveoUser currentUser = ((CurrentUserProducer) getServiceInterface(CurrentUserProducer.class.getSimpleName())).getCurrentUser();
+
 	
 	@Override
 	public void execute(Map<String, Object> methodContext) throws BusinessException {
@@ -3495,15 +3500,11 @@ public class QuoteValidation extends ModuleScript {
 	}
 	
 	private void processOrderAttribute(QuoteAttribute quoteAttribute, CommercialOrder commercialOrder, OrderLot orderLot, OrderProduct orderProduct) {
-		OrderAttribute orderAttribute = new OrderAttribute();
-		orderAttribute.setOrderCode(commercialOrder);
+		OrderAttribute orderAttribute = new OrderAttribute(quoteAttribute, currentUser);
+		orderAttribute.setCommercialOrder(commercialOrder);
 		orderAttribute.setOrderLot(orderLot);
 		orderAttribute.setOrderProduct(orderProduct);
 		orderAttribute.setAccessPoint(null);
-		orderAttribute.setAttribute(quoteAttribute.getAttribute());
-		orderAttribute.setStringValue(quoteAttribute.getStringValue());
-		orderAttribute.setDateValue(quoteAttribute.getDateValue());
-		orderAttribute.setDoubleValue(quoteAttribute.getDoubleValue());
 		orderAttributeService.create(orderAttribute);
 	}
 	
@@ -3554,6 +3555,7 @@ public class QuoteValidation extends ModuleScript {
 	}
 	
 }
+
 	
 	
 	');
@@ -4026,7 +4028,7 @@ public class OrderAdvancement extends ModuleScript {
 		
 	</changeSet>
 	
-     <changeSet id="#20200304-321" author="Mbarek-Ay">
+     <changeSet id="#20210304-312" author="Mbarek-Ay">
 		<addColumn tableName="cpq_order_item">
 			<column name="cpq_order_offer_id" type="bigint"/>
 		</addColumn>
