@@ -2394,6 +2394,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public void rejectInvoice(Invoice invoice) {
+		InvoiceStatusEnum status= invoice.getStatus();
+		if(!(InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status))) {
+			throw new BusinessException("Can only reject invoices in statuses DRAFT/SUSPECT. current invoice status is :"+status.name()) ;
+		}
 		invoice.setStatus(InvoiceStatusEnum.REJECTED);
 	}
 
@@ -4626,51 +4630,31 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public Invoice createAdvancePaymentInvoice(BasicInvoice resource) {
-		Invoice invoice = new Invoice();
-		InvoiceLine line = new InvoiceLine();
-		Order order = null;
-		BillingAccount billingAccount = null;
-
-		final String orderCode = resource.getOrderCode();
 		final String billingAccountCode = resource.getBillingAccountCode();
 		final String articleCode = resource.getArticleCode() != null ? resource.getArticleCode() : "ADV-STD";
 		final BigDecimal amountWithTax = resource.getAmountWithTax();
 		final Date invoiceDate = resource.getInvoiceDate() != null ? resource.getInvoiceDate() : new Date();
-		if (orderCode != null) {
-			order = orderService.findByCode(orderCode);
-			if (order == null) {
-				throw new EntityNotFoundException("No Order found with code " + orderCode);
-			}
-			invoice.setOrder(order);
-			line.setOrderNumber(order.getOrderNumber());
-		}
 
-		if (billingAccountCode != null) {
-			billingAccount = billingAccountService.findByCode(billingAccountCode);
-			if (billingAccount == null) {
-				throw new EntityNotFoundException("No billingAccount found with code " + billingAccountCode);
-			}
-			invoice.setBillingAccount(billingAccount);
-			line.setBillingAccount(billingAccount);
-		}
-		if (articleCode != null) {
-			AccountingArticle accountingArticle = accountingArticleService.findByCode(articleCode);
-			if (accountingArticle == null) {
-				throw new EntityNotFoundException("No accountingArticle found with code " + articleCode);
-			}
-			line.setAccountingArticle(accountingArticle);
-			// line.setTaxRate(accountingArticle.);
-		}
-		line.setQuantity(BigDecimal.ONE);
-		line.setAmountWithTax(amountWithTax);
-		line.setRawAmount(amountWithTax);
-		line.setAmountWithoutTax(amountWithTax);
-		line.setAmountTax(BigDecimal.ZERO);
-		line.setUnitPrice(amountWithTax);
-		line.setDiscountAmount(BigDecimal.ZERO);
-		line.setLabel(resource.getLabel());
+		Order order = (Order)tryToFindByEntityClassAndCode(Order.class, resource.getOrderCode());
+		BillingAccount billingAccount = (BillingAccount)tryToFindByEntityClassAndCode(BillingAccount.class, billingAccountCode);
+		AccountingArticle accountingArticle = (AccountingArticle)tryToFindByEntityClassAndCode(AccountingArticle.class, articleCode);
+		InvoiceType advType = (InvoiceType)tryToFindByEntityClassAndCode(InvoiceType.class, "ADV");
 
+		Invoice invoice = initAdvancePaymentInvoice(amountWithTax, invoiceDate, order, billingAccount, advType);
+		initInvoiceLineForAdvancePayment(resource, amountWithTax, order, billingAccount, accountingArticle, invoice);
+		
+		serviceSingleton.assignInvoiceNumber(invoice);
+		postCreate(invoice);
+		return invoice;
+	}
 
+	private Invoice initAdvancePaymentInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order,
+			BillingAccount billingAccount, InvoiceType advType) {
+		Invoice invoice = new Invoice();
+		invoice.setInvoiceType(advType);
+		invoice.setBillingAccount(billingAccount);
+		invoice.setOrder(order);
+		
 		invoice.setPaymentStatus(InvoicePaymentStatusEnum.NONE);
 		invoice.setStartDate(invoiceDate);
 		invoice.setAmountWithTax(amountWithTax);
@@ -4680,17 +4664,31 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		invoice.setDiscountAmount(BigDecimal.ZERO);
 		invoice.setInvoiceDate(invoiceDate);
 		invoice.setNetToPay(amountWithTax);
-
 		Date dueDate = calculateDueDate(invoice, billingAccount.getBillingCycle(), billingAccount,
 				billingAccount.getCustomerAccount(), order);
 		invoice.setDueDate(dueDate);
 		invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
 		invoice.setStatus(InvoiceStatusEnum.VALIDATED);
-		InvoiceType advType = invoiceTypeService.findByCode("ADV");
-		invoice.setInvoiceType(advType);
-		serviceSingleton.assignInvoiceNumber(invoice);
-		postCreate(invoice);
 		return invoice;
+	}
+
+	private InvoiceLine initInvoiceLineForAdvancePayment(BasicInvoice resource, final BigDecimal amountWithTax, Order order,
+			BillingAccount billingAccount, AccountingArticle accountingArticle, Invoice invoice) {
+		InvoiceLine line = new InvoiceLine();
+		line.setInvoice(invoice);
+		line.setBillingAccount(billingAccount);
+		line.setAccountingArticle(accountingArticle);
+		line.setOrderNumber(order.getOrderNumber());
+		
+		line.setQuantity(BigDecimal.ONE);
+		line.setAmountWithTax(amountWithTax);
+		line.setRawAmount(amountWithTax);
+		line.setAmountWithoutTax(amountWithTax);
+		line.setAmountTax(BigDecimal.ZERO);
+		line.setUnitPrice(amountWithTax);
+		line.setDiscountAmount(BigDecimal.ZERO);
+		line.setLabel(resource.getLabel());
+		return line;
 	}
 
 	/**
