@@ -17,6 +17,8 @@
  */
 package org.meveo.model.billing;
 
+import static javax.persistence.FetchType.LAZY;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,6 +64,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
@@ -580,6 +583,13 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Type(type = "numeric_boolean")
     @Column(name = "has_minimum")
     private boolean hasMinimum;
+    
+    /**
+	 * discountPlan attached to the invoice
+	 */
+    @ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
+	private DiscountPlan discountPlan;
 
     /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
@@ -1437,4 +1447,20 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void setHasMinimum(boolean hasMinimum) {
         this.hasMinimum = hasMinimum;
     }
+
+	/**
+	 * @return the discountPlan
+	 */
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+	/**
+	 * @param discountPlan the discountPlan to set
+	 */
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
+    
+    
 }

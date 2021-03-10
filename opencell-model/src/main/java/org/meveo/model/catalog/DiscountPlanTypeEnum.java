@@ -21,7 +21,7 @@ package org.meveo.model.catalog;
 public enum DiscountPlanTypeEnum {
 
     QUOTE(1, "disountPlanTypeEnum.quote"), OFFER(2, "disountPlanTypeEnum.offer"), PRODUCT(3, "disountPlanTypeEnum.product"), 
-    INVOICE(4, "disountPlanTypeEnum.invoice"), INVOICE_LINE(5, "disountPlanTypeEnum.invoiceLine");
+    INVOICE(4, "disountPlanTypeEnum.invoice"), INVOICE_LINE(5, "disountPlanTypeEnum.invoiceLine"), CODE_PROMO(5, "disountPlanTypeEnum.codePromo");
     private Integer id;
     private String label;
 
