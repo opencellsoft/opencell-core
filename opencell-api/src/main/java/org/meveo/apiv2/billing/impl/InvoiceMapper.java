@@ -1,5 +1,6 @@
 package org.meveo.apiv2.billing.impl;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
@@ -45,8 +46,12 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 
 	@Override
 	protected Invoice toEntity(org.meveo.apiv2.billing.Invoice resource) {
-		Invoice invoice = new Invoice();
-
+		Invoice invoice=null;
+		try {
+			invoice = initEntity(resource, new Invoice());
+		} catch (Exception e) {
+			throw new BusinessException(e);
+		}
 		if (resource.getBillingRun() != null) {
 			BillingRun billingRun = new BillingRun();
 			billingRun.setId(resource.getBillingRun().getId());
