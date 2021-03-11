@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 
@@ -25,6 +26,7 @@ public class GroupedAttributeDto {
 	private boolean selectable=Boolean.TRUE;  
 	private boolean ruled=Boolean.FALSE;
 	 private List<String> commercialRuleCodes=new ArrayList<String>();
+	 private CustomFieldsDto customFields;
 	
 	public GroupedAttributeDto() {
 		
@@ -201,6 +203,20 @@ public class GroupedAttributeDto {
 	 */
 	public void setAttributeCodes(Set<String> attributeCodes) {
 		this.attributeCodes = attributeCodes;
+	}
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 
 	

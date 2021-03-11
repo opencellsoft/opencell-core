@@ -13,11 +13,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
+import org.meveo.api.dto.cpq.order.OrderOfferDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
-import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
+import org.meveo.api.dto.response.cpq.GetOrderOfferDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -158,4 +160,65 @@ public interface CommercialOrderRs {
 					@ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 			})
 	public Response orderValidationProcess(@Parameter(required = true) @PathParam("orderId") Long orderId);
+	
+	
+	@POST
+	@Path("orderOffer/create")
+	@Operation(summary = "This endpoint allows to create new order offer",
+	tags = { "Order management" },
+	description ="Creating a new order offer",
+	responses = {
+			@ApiResponse(responseCode="200", description = "the order offer successfully added",
+					content = @Content(schema = @Schema(implementation = GetOrderOfferDtoResponse.class))),
+			@ApiResponse(responseCode = "412", description = "missing required paramter for order offer required",
+			content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
+
+	})
+
+	Response createOrderOffer(	@Parameter( name = "orderOfferDto",
+	description = "order offer dto for a new insertion")OrderOfferDto orderOfferDto);
+
+
+	@PUT
+	@Path("orderOffer/update")
+	@Operation(summary = "This endpoint allows to update an existing order offer",
+	description ="Updating an existing order offer",
+	tags = { "Order management" },
+	responses = {
+			@ApiResponse(responseCode="200", description = "the order offer successfully updated",
+					content = @Content(schema = @Schema(implementation = GetOrderOfferDtoResponse.class))),
+			@ApiResponse(responseCode = "412", description = "missing required paramter for order offer.The required",
+			content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
+	})
+	Response updateOrderOffer(@Parameter(description = "order offer dto for updating an existing order offer", required = true) OrderOfferDto orderOffer);
+
+
+	@DELETE
+	@Path("orderOffer/{id}")
+	@Operation(summary = "This endpoint allows to  delete an existing order offer",
+	description ="Deleting an existing order offer with its id",
+	tags = { "Order management" },
+	responses = {
+			@ApiResponse(responseCode="200", description = "The order offer successfully deleted",
+					content = @Content(schema = @Schema(implementation = GetOrderOfferDtoResponse.class))),
+			@ApiResponse(responseCode = "400", description = "No order offer found for the id parameter", 
+			content = @Content(schema = @Schema(implementation = BusinessException.class)))
+	})
+	Response deleteOrderOffer(@Parameter(description = "contain the code of order offer te be deleted by its id", required = true) @PathParam("id") Long id);
+
+
+	@GET
+	@Path("orderOffer/{id}")
+	@Operation(summary = "Get order offer matching the given order id",
+	tags = { "Order management" },
+	description ="Get order offer matching the given order id",
+	responses = {
+			@ApiResponse(responseCode="200", description = "The order type is succefully retrieved",content = @Content(schema = @Schema(implementation = GetOrderOfferDtoResponse.class))),
+			@ApiResponse(responseCode = "404", description = "Order offer Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+	})
+	public Response findOrderOffer(@Parameter(required = true) @PathParam("id") Long id);
 }
+	
+	
+	
+

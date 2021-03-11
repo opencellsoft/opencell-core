@@ -54,6 +54,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.VersionCreated;
 import org.meveo.event.qualifier.VersionRemoved;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -492,6 +493,9 @@ public class SubscriptionApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
+
+//        checkOverLapPeriod(subscription.getValidity(), postData.getCode());
+        
         subscription = subscriptionService.update(subscription);
         // ignoring postData.getEndAgreementDate() if subscription.getAutoEndOfEngagement is true
         if (subscription.getAutoEndOfEngagement() == null || !subscription.getAutoEndOfEngagement()) {
@@ -565,7 +569,7 @@ public class SubscriptionApi extends BaseApi {
      * @throws MeveoApiException Meveo api exception
      * @throws BusinessException Business exception
      */
-    public void activateServices(ActivateServicesRequestDto activateServicesDto) throws MeveoApiException, BusinessException {
+    public void activateServices(ActivateServicesRequestDto activateServicesDto,boolean activateServices) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(activateServicesDto.getSubscription())) {
             missingParameters.add("subscription");
@@ -585,10 +589,10 @@ public class SubscriptionApi extends BaseApi {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
         }
 
-        activateServices(activateServicesDto.getServicesToActivateDto(), subscription, activateServicesDto.getOrderNumber(), activateServicesDto.getOrderItemId(), activateServicesDto.getOrderItemAction());
+        activateServices(activateServicesDto.getServicesToActivateDto(), subscription, activateServicesDto.getOrderNumber(), activateServicesDto.getOrderItemId(), activateServicesDto.getOrderItemAction(),activateServices);
     }
 
-    private void activateServices(ServicesToActivateDto servicesToActivate, Subscription subscription, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction) {
+    private void activateServices(ServicesToActivateDto servicesToActivate, Subscription subscription, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction,boolean activateServices) {
         List<ServiceTemplate> serviceToActivate = new ArrayList<>();
         List<ServiceToActivateDto> servicesToActivateDto = new ArrayList<>();
         getServiceToActivate(servicesToActivate.getService(), serviceToActivate, servicesToActivateDto);
@@ -781,16 +785,17 @@ public class SubscriptionApi extends BaseApi {
                 }
             }
         }
+        if(activateServices) {
+        	// activate services
+        	for (ServiceInstance serviceInstance : serviceInstances) {
 
-        // activate services
-        for (ServiceInstance serviceInstance : serviceInstances) {
-
-            try {
-                serviceInstanceService.serviceActivation(serviceInstance);
-            } catch (BusinessException e) {
-                log.error("Failed to activate a service {}/{} on subscription {}", serviceInstance.getId(), serviceInstance.getCode(), subscription.getCode(), e);
-                throw e;
-            }
+        		try {
+        			serviceInstanceService.serviceActivation(serviceInstance);
+        		} catch (BusinessException e) {
+        			log.error("Failed to activate a service {}/{} on subscription {}", serviceInstance.getId(), serviceInstance.getCode(), subscription.getCode(), e);
+        			throw e;
+        		}
+        	}
         }
     }
 
@@ -1675,7 +1680,7 @@ public class SubscriptionApi extends BaseApi {
             }
 
             if (activateServicesDto.getServicesToActivateDto().getService() != null && !activateServicesDto.getServicesToActivateDto().getService().isEmpty()) {
-                activateServices(activateServicesDto);
+                activateServices(activateServicesDto,true);
             }
 
             // Update services
@@ -2327,13 +2332,30 @@ public class SubscriptionApi extends BaseApi {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void subscribeAndActivateServices(SubscriptionAndServicesToActivateRequestDto postData) throws MeveoApiException, BusinessException {
+    	ActivateServicesRequestDto activateServicesRequestDto = subscribe(postData);
+        this.activateServices(activateServicesRequestDto,true);
+    }
+    /**
+     * Create a subscription and instanciate services in a single transaction
+     *
+     * @param postData
+     * @throws MeveoApiException
+     * @throws BusinessException
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void subscribeAndInstantiateServices(SubscriptionAndServicesToActivateRequestDto postData) throws MeveoApiException, BusinessException {
+        ActivateServicesRequestDto activateServicesRequestDto = subscribe(postData);
+        this.activateServices(activateServicesRequestDto,false);
+    }
+    
+    private ActivateServicesRequestDto subscribe(SubscriptionAndServicesToActivateRequestDto postData) throws MeveoApiException, BusinessException {
         ActivateServicesRequestDto activateServicesRequestDto = new ActivateServicesRequestDto();
         activateServicesRequestDto.setServicesToActivateDto(postData.getServicesToActivateDto());
         activateServicesRequestDto.setSubscription(postData.getCode());
         activateServicesRequestDto.setSubscriptionValidityDate(postData.getValidityDate());
-
         this.create(postData);
-        this.activateServices(activateServicesRequestDto);
+    	return activateServicesRequestDto;
     }
 
     private Subscription createSubscription(SubscriptionDto postData, boolean extraValidtion) throws MeveoApiException, BusinessException {
@@ -2353,7 +2375,7 @@ public class SubscriptionApi extends BaseApi {
     }
 
     private Subscription createSubscription(SubscriptionDto postData) throws MeveoApiException, BusinessException {
-        if (subscriptionService.findByCode(postData.getCode()) != null) {
+        if (subscriptionService.findByCodeAndValidityDate(postData.getCode(), postData.getValidityDate()) != null) {
             throw new EntityAlreadyExistsException(Subscription.class, postData.getCode());
         }
 
@@ -2406,6 +2428,9 @@ public class SubscriptionApi extends BaseApi {
         subscription.setFromValidity(postData.getValidityDate());
         subscription.setRenewed(postData.isRenewed());
         subscription.setPrestation(postData.getCustomerService());
+        
+//        checkOverLapPeriod(subscription.getValidity(), postData.getCode());
+        
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
         	subscription.setSubscribedTillDate(postData.getSubscribedTillDate());
         }
@@ -2468,7 +2493,7 @@ public class SubscriptionApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-
+        
         subscriptionService.create(subscription);
         userAccount.getSubscriptions().add(subscription);
 
@@ -2509,6 +2534,16 @@ public class SubscriptionApi extends BaseApi {
         }
         return subscription;
     }
+    
+   /* private void checkOverLapPeriod(DatePeriod validity, String subscriptionCode) {
+    	List<Subscription> subscriptions = subscriptionService.findListByCode(subscriptionCode);
+    	for(Subscription sub: subscriptions) {
+    		boolean isOverLap = validity.isCorrespondsToPeriod(sub.getValidity().getFrom(), sub.getValidity().getTo(), false);
+    		if(isOverLap) {
+    			throw new MeveoApiException("Current validity ("+ validity.toString("dd/MM/yyyy") +") date is overlap with validity ("+ sub.getValidity().toString("dd/MM/yyyy") +")");
+    		}
+    	}
+    }*/
 
     private void setMinimumAmountElSubscription(SubscriptionDto postData, Subscription subscription, OfferTemplate offerTemplate) {
         subscription.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
@@ -2614,7 +2649,7 @@ public class SubscriptionApi extends BaseApi {
                     .getService()
                     .stream()
                     .forEach(s -> s.setSubscriptionDate(effectiveDate));
-            activateServices(subscriptionPatchDto.getServicesToActivate(), newSubscription, null, null, null);
+            activateServices(subscriptionPatchDto.getServicesToActivate(), newSubscription, null, null, null,true);
         }
 
         versionCreatedEvent.fire(newSubscription);

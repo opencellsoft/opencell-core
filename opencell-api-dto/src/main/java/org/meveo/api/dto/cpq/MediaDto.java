@@ -3,6 +3,7 @@ package org.meveo.api.dto.cpq;
 import javax.validation.constraints.NotNull;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.enums.MediaTypeEnum;
 
@@ -34,6 +35,8 @@ public class MediaDto extends BaseEntityDto{
 	@NotNull
 	private MediaTypeEnum mediaType;
 	private String mediaPath;
+
+	 private CustomFieldsDto customFields;
 	
 	public MediaDto() {
 		
@@ -160,6 +163,20 @@ public class MediaDto extends BaseEntityDto{
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 
 	

@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,6 +24,7 @@ import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.security.MeveoUser;
 
 /** 
@@ -45,11 +47,12 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_id")
-	private CommercialOrder orderCode;
+	private CommercialOrder commercialOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_lot_id")
 	private OrderLot orderLot;
+	
 	
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -60,9 +63,15 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 	@Column(name = "access_point", length = 20)
 	@Size(max = 20)
 	private String accessPoint;
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "cpq_order_offer_id",referencedColumnName = "id")
+	private OrderOffer  orderOffer;
 
 	public OrderAttribute() {
 	}
+	
+	
 
 	public OrderAttribute(QuoteAttribute quoteAttribute, MeveoUser currentUser) {
 		attribute=quoteAttribute.getAttribute();
@@ -80,20 +89,37 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 				.collect(Collectors.toList());
 	}
 
+ 
+
+	public void update(OrderAttribute other) {
+		this.orderOffer = other.orderOffer;
+		this.stringValue = other.stringValue;
+		this.doubleValue = other.doubleValue;
+		this.dateValue = other.dateValue;
+		this.accessPoint=other.accessPoint;
+		this.commercialOrder=other.commercialOrder;
+		this.orderLot=other.orderLot;
+		this.attribute = other.attribute;
+		this.auditable = other.auditable;
+		this.orderProduct = other.orderProduct;  
+		this.version = other.version;
+		this.id=other.id;
+		
+	} 
+	
 	/**
-	 * @return the orderCode
+	 * @return the commercialOrder
 	 */
-	public CommercialOrder getOrderCode() {
-		return orderCode;
+	public CommercialOrder getCommercialOrder() {
+		return commercialOrder;
 	}
 
 	/**
-	 * @param orderCode the orderCode to set
+	 * @param commercialOrder the commercialOrder to set
 	 */
-	public void setOrderCode(CommercialOrder orderCode) {
-		this.orderCode = orderCode;
+	public void setCommercialOrder(CommercialOrder commercialOrder) {
+		this.commercialOrder = commercialOrder;
 	}
-
 
 	/**
 	 * @return the orderProduct
@@ -137,6 +163,20 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 	public void setOrderLot(OrderLot orderLot) {
 		this.orderLot = orderLot;
 	}
+	 
+	/**
+	 * @return the orderOffer
+	 */
+	public OrderOffer getOrderOffer() {
+		return orderOffer;
+	}
+
+	/**
+	 * @param orderOffer the orderOffer to set
+	 */
+	public void setOrderOffer(OrderOffer orderOffer) {
+		this.orderOffer = orderOffer;
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -144,14 +184,15 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 		if (o == null || getClass() != o.getClass()) return false;
 		if (!super.equals(o)) return false;
 		OrderAttribute that = (OrderAttribute) o;
-		return Objects.equals(orderCode, that.orderCode) &&
+		return Objects.equals(commercialOrder, that.commercialOrder) &&
 				Objects.equals(orderLot, that.orderLot) &&
 				Objects.equals(orderProduct, that.orderProduct) &&
-				Objects.equals(accessPoint, that.accessPoint);
+				Objects.equals(accessPoint, that.accessPoint) && 
+				Objects.equals(orderOffer, that.orderOffer);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), orderCode, orderLot, orderProduct, accessPoint);
+		return Objects.hash(super.hashCode(), commercialOrder, orderLot, orderProduct, accessPoint);
 	}
 }

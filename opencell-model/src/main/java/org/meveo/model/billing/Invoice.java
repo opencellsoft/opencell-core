@@ -850,6 +850,9 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     }
 
     public void setStatus(InvoiceStatusEnum status) {
+    	if(status == this.status) {
+    		return;
+    	}
     	if(status!=null && status.getPreviousStats().contains(this.status)) {
 	        this.status = status;
 	        setStatusDate(new Date());

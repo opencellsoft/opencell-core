@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.ProductLine;
 
 /**
@@ -25,6 +26,7 @@ public class ProductLineDto extends BusinessEntityDto{
 	private String sellerCode;
 	private String longDescription;
 	private String parentLineCode;
+    private CustomFieldsDto customFields;
 	
 	
 	public ProductLineDto(String codeProductLine, String description, String sellerCode, String longDescription,
@@ -131,6 +133,20 @@ public class ProductLineDto extends BusinessEntityDto{
 	public String toString() {
 		return "ProductLineDto [code=" + code + ", label=" + description + ", sellerCode=" + sellerCode + ", longDescription="
 				+ longDescription + ", parentLineCode=" + parentLineCode + "]";
+	}
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 	
 	

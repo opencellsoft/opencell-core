@@ -1,5 +1,6 @@
 package org.meveo.apiv2.billing.impl;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
@@ -27,6 +28,7 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 				.subscription(buildById(entity.getSubscription())).order(buildById(entity.getOrder()))
 				.xmlFilename(entity.getXmlFilename()).pdfFilename(entity.getPdfFilename())
 				.paymentMethod(buildById(entity.getPaymentMethod())).dueBalance(entity.getDueBalance())
+				.paymentMethodType(entity.getPaymentMethodType().name())
 				.externalRef(entity.getExternalRef()).rejectReason(entity.getRejectReason()).initialCollectionDate(entity.getInitialCollectionDate())
 				.statusDate(entity.getStatusDate()).xmlDate(entity.getXmlDate()).pdfDate(entity.getPdfDate())
 				.emailSentDate(entity.getEmailSentDate()).paymentStatusDate(entity.getPaymentStatusDate())
@@ -44,8 +46,12 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 
 	@Override
 	protected Invoice toEntity(org.meveo.apiv2.billing.Invoice resource) {
-		Invoice invoice = new Invoice();
-
+		Invoice invoice=null;
+		try {
+			invoice = initEntity(resource, new Invoice());
+		} catch (Exception e) {
+			throw new BusinessException(e);
+		}
 		if (resource.getBillingRun() != null) {
 			BillingRun billingRun = new BillingRun();
 			billingRun.setId(resource.getBillingRun().getId());

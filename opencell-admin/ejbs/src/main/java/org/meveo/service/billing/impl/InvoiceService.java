@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -2395,6 +2394,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public void rejectInvoice(Invoice invoice) {
+		InvoiceStatusEnum status= invoice.getStatus();
+		if(!(InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status))) {
+			throw new BusinessException("Can only reject invoices in statuses DRAFT/SUSPECT. current invoice status is :"+status.name()) ;
+		}
 		invoice.setStatus(InvoiceStatusEnum.REJECTED);
 	}
 
@@ -2456,7 +2459,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	private List<Invoice> extractInvalidInvoiceList(Long billingRunId, List<Long> invoiceIds, List<InvoiceStatusEnum> statusList) throws BusinessException {
-	return extractInvalidInvoiceList(billingRunId, invoiceIds, statusList, new ArrayList<InvoiceStatusEnum>());
+		return extractInvalidInvoiceList(billingRunId, invoiceIds, statusList, new ArrayList<InvoiceStatusEnum>());
 	}
 
 	private List<Invoice> extractInvalidInvoiceList(Long billingRunId, List<Long> invoiceIds, List<InvoiceStatusEnum> statusList, List<InvoiceStatusEnum> aditionalStatus) throws BusinessException {
@@ -2473,7 +2476,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			return br != null ? findInvoicesByStatusAndBR(billingRunId, statusList) : new ArrayList<Invoice>();
 		}
 		for (Long invoiceId : invoiceIds) {
-			Invoice invoice = invoiceService.findById(invoiceId);
+			Invoice invoice = findById(invoiceId);
 			if (invoice == null) {
 				throw new ActionForbiddenException("Invoice with ID " + invoiceId + " does not exist ");
 			} else if (br!= null && invoice.getBillingRun() != br) {
@@ -4096,6 +4099,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private void putTaxInvoiceAgregate(BillingAccount billingAccount, Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isEnterprise, Auditable auditable, Invoice invoice,
             SubCategoryInvoiceAgregate invoiceAgregateSubcat, int invoiceRounding, RoundingModeEnum invoiceRoundingMode) {
+    	if(invoiceAgregateSubcat.getAmountsByTax()!=null)
         for (Map.Entry<Tax, SubcategoryInvoiceAgregateAmount> amountByTax : invoiceAgregateSubcat.getAmountsByTax().entrySet()) {
             if (BigDecimal.ZERO.compareTo(amountByTax.getValue().getAmount(!isEnterprise)) != 0) {
                 Tax tax = amountByTax.getKey();
@@ -4626,51 +4630,31 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	}
 
 	public Invoice createAdvancePaymentInvoice(BasicInvoice resource) {
-		Invoice invoice = new Invoice();
-		InvoiceLine line = new InvoiceLine();
-		Order order = null;
-		BillingAccount billingAccount = null;
-
-		final String orderCode = resource.getOrderCode();
 		final String billingAccountCode = resource.getBillingAccountCode();
 		final String articleCode = resource.getArticleCode() != null ? resource.getArticleCode() : "ADV-STD";
 		final BigDecimal amountWithTax = resource.getAmountWithTax();
 		final Date invoiceDate = resource.getInvoiceDate() != null ? resource.getInvoiceDate() : new Date();
-		if (orderCode != null) {
-			order = orderService.findByCode(orderCode);
-			if (order == null) {
-				throw new EntityNotFoundException("No Order found with code " + orderCode);
-			}
-			invoice.setOrder(order);
-			line.setOrderNumber(order.getOrderNumber());
-		}
 
-		if (billingAccountCode != null) {
-			billingAccount = billingAccountService.findByCode(billingAccountCode);
-			if (billingAccount == null) {
-				throw new EntityNotFoundException("No billingAccount found with code " + billingAccountCode);
-			}
-			invoice.setBillingAccount(billingAccount);
-			line.setBillingAccount(billingAccount);
-		}
-		if (articleCode != null) {
-			AccountingArticle accountingArticle = accountingArticleService.findByCode(articleCode);
-			if (accountingArticle == null) {
-				throw new EntityNotFoundException("No accountingArticle found with code " + articleCode);
-			}
-			line.setAccountingArticle(accountingArticle);
-			// line.setTaxRate(accountingArticle.);
-		}
-		line.setQuantity(BigDecimal.ONE);
-		line.setAmountWithTax(amountWithTax);
-		line.setRawAmount(amountWithTax);
-		line.setAmountWithoutTax(amountWithTax);
-		line.setAmountTax(BigDecimal.ZERO);
-		line.setUnitPrice(amountWithTax);
-		line.setDiscountAmount(BigDecimal.ZERO);
-		line.setLabel(resource.getLabel());
+		Order order = (Order)tryToFindByEntityClassAndCode(Order.class, resource.getOrderCode());
+		BillingAccount billingAccount = (BillingAccount)tryToFindByEntityClassAndCode(BillingAccount.class, billingAccountCode);
+		AccountingArticle accountingArticle = (AccountingArticle)tryToFindByEntityClassAndCode(AccountingArticle.class, articleCode);
+		InvoiceType advType = (InvoiceType)tryToFindByEntityClassAndCode(InvoiceType.class, "ADV");
 
+		Invoice invoice = initAdvancePaymentInvoice(amountWithTax, invoiceDate, order, billingAccount, advType);
+		initInvoiceLineForAdvancePayment(resource, amountWithTax, order, billingAccount, accountingArticle, invoice);
+		
+		serviceSingleton.assignInvoiceNumber(invoice);
+		postCreate(invoice);
+		return invoice;
+	}
 
+	private Invoice initAdvancePaymentInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order,
+			BillingAccount billingAccount, InvoiceType advType) {
+		Invoice invoice = new Invoice();
+		invoice.setInvoiceType(advType);
+		invoice.setBillingAccount(billingAccount);
+		invoice.setOrder(order);
+		
 		invoice.setPaymentStatus(InvoicePaymentStatusEnum.NONE);
 		invoice.setStartDate(invoiceDate);
 		invoice.setAmountWithTax(amountWithTax);
@@ -4680,17 +4664,31 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		invoice.setDiscountAmount(BigDecimal.ZERO);
 		invoice.setInvoiceDate(invoiceDate);
 		invoice.setNetToPay(amountWithTax);
-
 		Date dueDate = calculateDueDate(invoice, billingAccount.getBillingCycle(), billingAccount,
 				billingAccount.getCustomerAccount(), order);
 		invoice.setDueDate(dueDate);
 		invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
 		invoice.setStatus(InvoiceStatusEnum.VALIDATED);
-		InvoiceType advType = invoiceTypeService.findByCode("ADV");
-		invoice.setInvoiceType(advType);
-		serviceSingleton.assignInvoiceNumber(invoice);
-		postCreate(invoice);
 		return invoice;
+	}
+
+	private InvoiceLine initInvoiceLineForAdvancePayment(BasicInvoice resource, final BigDecimal amountWithTax, Order order,
+			BillingAccount billingAccount, AccountingArticle accountingArticle, Invoice invoice) {
+		InvoiceLine line = new InvoiceLine();
+		line.setInvoice(invoice);
+		line.setBillingAccount(billingAccount);
+		line.setAccountingArticle(accountingArticle);
+		line.setOrderNumber(order.getOrderNumber());
+		
+		line.setQuantity(BigDecimal.ONE);
+		line.setAmountWithTax(amountWithTax);
+		line.setRawAmount(amountWithTax);
+		line.setAmountWithoutTax(amountWithTax);
+		line.setAmountTax(BigDecimal.ZERO);
+		line.setUnitPrice(amountWithTax);
+		line.setDiscountAmount(BigDecimal.ZERO);
+		line.setLabel(resource.getLabel());
+		return line;
 	}
 
 	/**
@@ -5359,7 +5357,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isEnterprise, Auditable auditable,
 			int invoiceRounding, RoundingModeEnum invoiceRoundingMode) {
 	        List<InvoiceLine> invoiceLines = new ArrayList<InvoiceLine>();
-            invoiceAgregateSubcat.setItemNumber(invoiceAgregateSubcat.getRatedtransactionsToAssociate().size());
+            invoiceAgregateSubcat.setItemNumber(invoiceAgregateSubcat.getInvoiceLinesToAssociate().size());
             putTaxInvoiceAgregate(billingAccount, taxInvoiceAgregateMap, isEnterprise, auditable, invoice, invoiceAgregateSubcat, invoiceRounding, invoiceRoundingMode);
             invoiceLines = invoiceAgregateSubcat.getInvoiceLinesToAssociate();
 
@@ -5495,34 +5493,34 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
 	/**
-	 * @param invoice
+	 * @param toUpdate
 	 * @param input
 	 * @return
 	 */
-	public Invoice update(Invoice invoice, Invoice input) {
-		final InvoiceStatusEnum status = invoice.getStatus();
+	public Invoice update(Invoice toUpdate, Invoice input) {
+		final InvoiceStatusEnum status = toUpdate.getStatus();
 		if(!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status))) {
-			throw new BusinessApiException("Can only update invoices in statuses DRAFT/SUSPECT/REJECTED");
+			throw new BusinessException("Can only update invoices in statuses DRAFT/SUSPECT/REJECTED");
 		}
 		if(input.getComment()!=null) {
-			invoice.setComment(input.getComment());
+			toUpdate.setComment(input.getComment());
 		}
 		if(input.getExternalRef()!=null) {
-			invoice.setExternalRef(input.getExternalRef());
+			toUpdate.setExternalRef(input.getExternalRef());
 		}
 		if(input.getInvoiceDate()!=null) {
-			invoice.setInvoiceDate(input.getInvoiceDate());
+			toUpdate.setInvoiceDate(input.getInvoiceDate());
 		}
 		if(input.getDueDate()!=null) {
-			invoice.setDueDate(input.getDueDate());
+			toUpdate.setDueDate(input.getDueDate());
 		}
 		if(input.getPaymentMethod()!=null) {
-			invoice.setPaymentMethod(input.getPaymentMethod());
+			toUpdate.setPaymentMethod(input.getPaymentMethod());
 		}
 		if(input.getCfValues()!=null) {
-			invoice.setCfValues(input.getCfValues());
+			toUpdate.setCfValues(input.getCfValues());
 		}
-		return super.update(invoice);
+		return update(toUpdate);
 	}
     
 }
