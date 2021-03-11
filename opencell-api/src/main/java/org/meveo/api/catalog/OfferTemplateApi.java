@@ -106,11 +106,9 @@ import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.MediaService;
-import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
-import org.meveo.service.cpq.TagTypeService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.SortOrder;
@@ -167,12 +165,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     
     @Inject
     private ProductService productService;
-    
-    @Inject
-    private OfferComponentService offerComponentService;
-
-    @Inject
-    private TagTypeService tagTypeService;
     
     @Inject
     private ProductVersionService productVersionService;
@@ -263,10 +255,6 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-        processMedias(postData, offerTemplate);
-        processAttributes(postData, offerTemplate);
-        processTags(postData, offerTemplate);
-        
         offerTemplate = offerTemplateService.update(offerTemplate);
 
         return offerTemplate;
@@ -439,8 +427,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     private void processAllowedDiscountPlans(OfferTemplateDto postData, OfferTemplate offerTemplate) {
         List<DiscountPlanDto> allowedDiscountPlans = postData.getAllowedDiscountPlans();
+        offerTemplate.getAllowedDiscountPlans().clear();
         if(allowedDiscountPlans != null && !allowedDiscountPlans.isEmpty()){
-            offerTemplate.setAllowedDiscountPlans(allowedDiscountPlans
+            offerTemplate.getAllowedDiscountPlans().addAll(allowedDiscountPlans
                     .stream()
                     .map(discountPlanDto -> discountPlanService.findByCode(discountPlanDto.getCode()))
                     .collect(Collectors.toList()));
@@ -539,8 +528,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             OfferComponent offerComponent = null;
             boolean hasOfferComponentDtos = offerProductDtos != null && !offerProductDtos.isEmpty();
             var productCodes = new HashSet<String>();
+        	offerTemplate.getOfferComponents().clear();
             if(hasOfferComponentDtos) {
-            	offerTemplate.getOfferComponents().clear();
 	            for (OfferProductsDto offerProductDto : offerProductDtos) {
 	            	if(offerProductDto.getProduct() == null || !productCodes.add(offerProductDto.getProduct().getCode())) continue;
 	            	offerComponent = getOfferComponentFromDto(offerProductDto);
@@ -631,6 +620,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
         OfferComponent offerComponent = new OfferComponent(); 
         offerComponent.setProduct(product);  
+        offerComponent.setSequence(offerComponentDto.getSequence());
+        offerComponent.setMandatory(offerComponentDto.isMandatory());
+        offerComponent.setDisplay(offerComponentDto.isDisplay());
         return offerComponent;
     }
 
@@ -773,6 +765,10 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         					}  	
         				}
         				offerProductsDto.setProduct(productDTO);
+        				offerProductsDto.setMandatory(offerComponent.isMandatory());
+        				offerProductsDto.setSequence(offerComponent.getSequence());
+        				offerProductsDto.setDisplay(offerComponent.isDisplay());
+        				
         				offerProducts.add(offerProductsDto);
         			} 
 

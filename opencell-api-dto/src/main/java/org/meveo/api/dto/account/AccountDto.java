@@ -150,7 +150,7 @@ public abstract class AccountDto extends BusinessEntityDto {
      * @param customFieldInstances the custom field instances
      */
     public void initFromEntity(AccountEntity account, CustomFieldsDto customFieldInstances) {
-        setAuditable(account);
+        setAuditableEntity(account);
         setExternalRef1(account.getExternalRef1());
         setExternalRef2(account.getExternalRef2());
         if (account.getName() != null) {

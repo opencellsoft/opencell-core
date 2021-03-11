@@ -146,7 +146,7 @@ public class TagApi extends BaseApi {
 			tagService.remove(tag);
 		} catch (Exception e) {
 			log.error(e.getMessage(),e);
-			throw new BusinessApiException("This tag can not be deleted");
+			throw new BusinessApiException("The tag can not be deleted because attached to other entities");
 		}
 		
 	}

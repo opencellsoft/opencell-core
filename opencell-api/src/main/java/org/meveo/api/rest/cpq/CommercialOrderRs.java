@@ -35,7 +35,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
  * @version 11.0
  * @LastModified 04-01-2021
  */
-@Path("/commercialOrder")
+@Path("/orderManagement/commercialOrders")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface CommercialOrderRs {
@@ -65,7 +65,7 @@ public interface CommercialOrderRs {
 	public Response update(CommercialOrderDto orderDto);
 
 	@PATCH
-	@Path("/{commercialOrderId}/userAccount/{userAccountCode}")
+	@Path("/{commercialOrderId}/userAccounts/{userAccountCode}")
 	@Operation(summary = "update commercial order user account",
 			tags = { "Order management" },
 			description ="",
@@ -77,7 +77,7 @@ public interface CommercialOrderRs {
 	Response updateUserAccount(@Parameter(required = true) @PathParam("commercialOrderId") Long commercialOrderId, @Parameter(required = true) @PathParam("userAccountCode") String userAccountCode);
 
 	@PATCH
-	@Path("/{commercialOrderId}/invoicingPlan/{invoicingPlanCode}")
+	@Path("/{commercialOrderId}/invoicingPlans/{invoicingPlanCode}")
 	@Operation(summary = "update commercial order invoicing plan",
 			tags = { "Order management" },
 			description ="",
@@ -102,7 +102,7 @@ public interface CommercialOrderRs {
 	
 
 	@PATCH
-	@Path("/{orderId}/status/update")
+	@Path("/{orderId}/status/{statusTarget}")
 	@Operation(summary = "update status for order",
 	    tags = { "Order management" },
 	    description ="",
@@ -111,11 +111,11 @@ public interface CommercialOrderRs {
 	            @ApiResponse(responseCode = "412", description = "id of order is missing", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 	            @ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 	    })
-	public Response updateStatus(@Parameter(required = true) @PathParam("orderId") Long orderId, @Parameter(required = true) @QueryParam("statusTarget") String statusTarget);
+	public Response updateStatus(@Parameter(required = true) @PathParam("orderId") Long orderId, @Parameter(required = true) @PathParam("statusTarget") String statusTarget);
 	
 
 	@POST
-	@Path("/duplicate/{orderId}")
+	@Path("{orderId}/duplication")
 	@Operation(summary = "duplicate an order",
 	    tags = { "Order management" },
 	    description ="",
@@ -149,7 +149,7 @@ public interface CommercialOrderRs {
     public Response findByOrderNumber(@Parameter(required = true) @PathParam("orderNumber") String orderNumber);
 
 	@POST
-	@Path("/validateOrder/{orderId}")
+	@Path("/{orderId}/orderValidation")
 	@Operation(summary = "Launch the order validation process",
 			tags = { "Order management" },
 			description ="Launch the order validation process",

@@ -30,6 +30,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -40,7 +41,7 @@ import org.meveo.api.rest.IBaseRs;
 /**
  * @author Edward P. Legaspi
  **/
-@Path("/catalog/chargeTemplate")
+@Path("/catalog")
 @Tag(name = "ChargeTemplate", description = "@%ChargeTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -54,12 +55,13 @@ public interface ChargeTemplateRs extends IBaseRs {
      * @return A charge template
      */
     @GET
-    @Path("/")
+    @Path("/chargeTemplate")
 	@Operation(
 			summary=" Search for a charge template with a given code   ",
 			tags = { "ChargeTemplates" },
 			description=" Search for a charge template with a given code   ",
 			operationId="    GET_ChargeTemplate_search",
+			deprecated = true,
 			responses= {
 				@ApiResponse(description=" A charge template ",
 						content=@Content(
@@ -69,6 +71,31 @@ public interface ChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
+	@Deprecated
     GetChargeTemplateResponseDto find(@QueryParam("chargeTemplateCode") String chargeTemplateCode);
+
+	/**
+	 * Search for a charge template with a given code
+	 *
+	 * @param chargeTemplateCode The charge template's code
+	 * @return A charge template
+	 */
+	@GET
+	@Path("/chargeTemplates/{chargeTemplateCode}")
+	@Operation(
+			summary=" Search for a charge template with a given code   ",
+			tags = { "ChargeTemplates" },
+			description=" Search for a charge template with a given code   ",
+			operationId="    GET_ChargeTemplate_search",
+			responses= {
+					@ApiResponse(description=" A charge template ",
+							content=@Content(
+									schema=@Schema(
+											implementation= GetChargeTemplateResponseDto.class
+									)
+							)
+					)}
+	)
+	GetChargeTemplateResponseDto findV2(@PathParam("chargeTemplateCode") String chargeTemplateCode);
 
 }

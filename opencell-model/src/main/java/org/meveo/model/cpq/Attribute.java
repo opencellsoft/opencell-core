@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -20,6 +21,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -30,6 +33,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
@@ -41,9 +45,13 @@ import org.meveo.model.cpq.trade.CommercialRuleHeader;
  *
  */
 @Entity
+@Cacheable
+@CustomFieldEntity(cftCodePrefix = "Attribute")
 @Table(name = "cpq_attribute", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_attribute_seq"), })
+@NamedQueries({
+	@NamedQuery(name = "Attribute.updateParentAttribute", query = "update Attribute set parentAttribute=null where parentAttribute.id=:id")})
 public class Attribute extends EnableBusinessCFEntity{	
 	/**
 	 * 
@@ -131,6 +139,11 @@ public class Attribute extends EnableBusinessCFEntity{
     
     @Column(name = "unit_nb_decimal")
     protected int unitNbDecimal = BaseEntity.NB_DECIMALS;
+
+
+	@Type(type = "numeric_boolean")
+    @Column(name = "read_only")
+    protected Boolean readOnly = Boolean.FALSE;
 
     public Attribute(){
 
@@ -323,6 +336,20 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setMedias(List<Media> medias) {
 		this.medias = medias;
+	}
+
+	/**
+	 * @return the readOnly
+	 */
+	public Boolean getReadOnly() {
+		return readOnly;
+	}
+
+	/**
+	 * @param readOnly the readOnly to set
+	 */
+	public void setReadOnly(Boolean readOnly) {
+		this.readOnly = readOnly;
 	}
 	
 	

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,6 +18,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
@@ -29,6 +31,8 @@ import org.meveo.security.MeveoUser;
  *
  */
 @Entity
+@Cacheable
+@CustomFieldEntity(cftCodePrefix = "OrderAttribute")
 @Table(name = "cpq_order_item", uniqueConstraints = @UniqueConstraint(columnNames = { "id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_item_seq")})
