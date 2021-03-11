@@ -18,12 +18,12 @@
 
 package org.meveo.api.dto.response.account;
 
+import org.meveo.api.dto.account.BillingAccountsDto;
+import org.meveo.api.dto.response.SearchResponse;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.account.BillingAccountsDto;
-import org.meveo.api.dto.response.BaseResponse;
 
 /**
  * The Class BillingAccountsResponseDto.
@@ -32,7 +32,7 @@ import org.meveo.api.dto.response.BaseResponse;
  */
 @XmlRootElement(name = "BillingAccountsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BillingAccountsResponseDto extends BaseResponse {
+public class BillingAccountsResponseDto extends SearchResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 583740580596077812L;

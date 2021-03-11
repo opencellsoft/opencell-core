@@ -18,12 +18,6 @@
 
 package org.meveo.api.account;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -33,12 +27,18 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.medina.impl.AccessService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -205,7 +205,7 @@ public class AccessApi extends BaseApi {
         }
 
         AccessesDto result = new AccessesDto();
-        List<Access> accesses = accessService.listBySubscription(subscription);
+        List<Access> accesses = accessService.listBySubscription(subscription, GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         if (accesses != null) {
             for (Access ac : accesses) {
                 result.getAccess().add(new AccessDto(ac, entityToDtoConverter.getCustomFieldsDTO(ac, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));

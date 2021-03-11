@@ -18,25 +18,17 @@
 
 package org.meveo.api.rest.catalog;
 
-import java.util.Date;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
+import org.meveo.api.dto.response.OneShotChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.Date;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.OneShotChargeTemplate}.
@@ -93,6 +85,15 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
     @Path("/list")
     OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(@QueryParam("languageCode") String languageCode, @QueryParam("countryCode") String countryCode,
             @QueryParam("currencyCode") String currencyCode, @QueryParam("sellerCode") String sellerCode, @QueryParam("date") @RestDateParam Date date);
+
+    /**
+     * Return the list of oneShotChargeTemplates.
+     *
+     * @return list of oneShotChargeTemplates
+     */
+    @GET
+    @Path("/listGetAll")
+    OneShotChargeTemplateResponseDto list();
 
     /**
      * Remove one shot charge tesmplate with a given code.

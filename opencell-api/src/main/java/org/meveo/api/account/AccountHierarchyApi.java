@@ -561,7 +561,7 @@ public class AccountHierarchyApi extends BaseApi {
         sellerApi.createOrUpdate(sellerDto);
 
         CustomerDto customerDto = null;
-        String customerCode = customerCodeOrId; 
+        String customerCode = customerCodeOrId;
         if (postData.getUsePrefix() != null && postData.getUsePrefix()) {
             customerCode = CUSTOMER_PREFIX + StringUtils.normalizeHierarchyCode(customerCodeOrId);
         }
@@ -582,8 +582,8 @@ public class AccountHierarchyApi extends BaseApi {
         if (postData.getCustomerCheckThreshold() != null) {
             customerDto.setCheckThreshold(postData.getCustomerCheckThreshold());
         }
-        
-        
+
+
         String customerBrandCode = StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode());
         if (!StringUtils.isBlank(customerBrandCode)) {
             findOrCreateCustomerBrand(customerBrandCode);
@@ -610,7 +610,7 @@ public class AccountHierarchyApi extends BaseApi {
         contactInformation.setEmail(postData.getEmail());
         contactInformation.setPhone(postData.getPhoneNumber());
 
-        NameDto name = customerDto.getName();
+        NameDto name = customerDto.getName() != null ? customerDto.getName() : new NameDto();
         if (!StringUtils.isBlank(postData.getTitleCode()) && !StringUtils.isBlank(titleService.findByCode(postData.getTitleCode()))) {
             name.setTitle(StringUtils.normalizeHierarchyCode(postData.getTitleCode()));
         }
