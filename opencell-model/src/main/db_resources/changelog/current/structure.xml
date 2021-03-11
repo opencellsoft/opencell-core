@@ -3851,5 +3851,9 @@ END $$;]]>
     			defaultValueNumeric="0" />
 		</addColumn>
     </changeSet>
+    
+    <changeSet id="#5993_20210304" author="HatimOUDAD">
+        <addUniqueConstraint columnNames="country_code" constraintName="UniqueConstraint_adm__country_code" tableName="adm_country" />
+    </changeSet>
 
 </databaseChangeLog>
