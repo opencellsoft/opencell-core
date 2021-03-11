@@ -110,12 +110,12 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                     VERSION_INFO.add(versionInfo);
                 } catch (ParseException | IOException e) {
                     log.warn(e.toString());
-                    e.printStackTrace();
+                    log.error("error = {}", e);
                 }
             });
         } catch (IOException e) {
             log.warn("There was a problem loading version information");
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
     }
 

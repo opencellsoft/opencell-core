@@ -1,16 +1,5 @@
 package org.meveo.service.document;
 
-import org.assertj.core.util.VisibleForTesting;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.model.document.Document;
-import org.meveo.model.document.DocumentCategory;
-import org.meveo.service.base.ValueExpressionWrapper;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,6 +8,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+
+import org.assertj.core.util.VisibleForTesting;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.document.Document;
+import org.meveo.model.document.DocumentCategory;
+import org.meveo.service.base.ValueExpressionWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Stateless
 public class DocumentFileService {
 
@@ -26,6 +29,7 @@ public class DocumentFileService {
     private ParamBeanFactory paramBeanFactory;
     private static String DOCUMENT_ROOT_DIR;
     private static String RELATIVE_PATH_EL;
+    private static final Logger log = LoggerFactory.getLogger(DocumentFileService.class);
 
     @PostConstruct
     @VisibleForTesting
@@ -45,7 +49,7 @@ public class DocumentFileService {
             }
             Files.write(Path.of(getFileLocationPath+ File.separator + documentEntity.getFileName()), decodedFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
             throw new BadRequestException("there was an issue during file creation!");
         }
     }
@@ -58,7 +62,7 @@ public class DocumentFileService {
             }
             return Files.readAllBytes(Path.of(fileFullPath));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
             throw new BadRequestException("there was an issue during file reading!");
         }
     }
@@ -71,7 +75,7 @@ public class DocumentFileService {
             }
             Files.delete(Path.of(fileFullPath));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
             throw new BadRequestException("there was an issue during file delete!");
         }
     }
