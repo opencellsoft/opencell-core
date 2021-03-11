@@ -71,18 +71,18 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
      */
     @Override
     public Response getAllEntitiesOrGetAnEntity() throws URISyntaxException, JsonProcessingException {
-        String pathGetAll = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
+        String getAllPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
 
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
         StringBuilder suffixPathBuilder = new StringBuilder();
         for (int i = 0; i < segmentsOfPathAPIv2.size() - 1; i++ )
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
-        String pathGetAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder.toString();
+        String getAnEntityPath = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder.toString();
 
         URI redirectURI;
 
-        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( pathGetAll ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( pathGetAll );
+        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( getAllPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getAllPath );
             if ( pathIBaseRS.equals( "/billing/wallet/operation" ) )
                 entityClassName = "WalletOperation";
             else if ( pathIBaseRS.equals( "/catalog/pricePlan" ) )
@@ -131,8 +131,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             }
             return Response.temporaryRedirect( redirectURI ).build();
         }
-        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( pathGetAnEntity ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( pathGetAnEntity );
+        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( getAnEntityPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getAnEntityPath );
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
 
             // special handle for customerCategory
@@ -162,8 +162,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             }
             return Response.temporaryRedirect( redirectURI ).build();
         }
-        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( pathGetAll ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( pathGetAll );
+        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( getAllPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( getAllPath );
             queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
 
             String originalPattern = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.getPattern().toString();
@@ -174,7 +174,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 aSmallPattern = originalPattern.substring( 0,
                         indexCodeRegex + GenericOpencellRestfulAPIv1.CODE_REGEX.length() );
 
-                Matcher matcher = Pattern.compile( aSmallPattern ).matcher( pathGetAll );
+                Matcher matcher = Pattern.compile( aSmallPattern ).matcher( getAllPath );
                 // get the first occurrence matching smallStringPattern
                 if ( matcher.find() ) {
                     smallString = matcher.group(0);
@@ -194,10 +194,10 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
             // If smallString differs from the string getPath, the request is to retrieve all entities, so we add paging and filtering
             // Otherwise, if smallString is exactly the string getPath, the request is to retrieve a particular entity
-            if ( ! smallString.equals( pathGetAll ) ) {
+            if ( ! smallString.equals( getAllPath ) ) {
                 queryParamsMap = uriInfo.getQueryParameters();
                 GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
-                entityClassName = pathGetAll.split( FORWARD_SLASH )[ pathGetAll.split( FORWARD_SLASH ).length - 1 ];
+                entityClassName = getAllPath.split( FORWARD_SLASH )[ getAllPath.split( FORWARD_SLASH ).length - 1 ];
                 Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize( entityClassName ) );
                 GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
             }
@@ -223,7 +223,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     + queryParamsMap.get( aKey ).get(0).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED )
                     + PAIR_QUERY_PARAM_SEPARATOR );
         }
-System.out.println( "postPath : " + postPath );
+
         if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( postPath ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( postPath );
 
@@ -316,7 +316,6 @@ System.out.println( "postPath : " + postPath );
 
             Class entityDtoClass = GenericHelper.getEntityDtoClass( entityClassName.toLowerCase() + DTO_SUFFIX );
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
-System.out.println( "entityDtoClass : " + entityDtoClass.toString() );
             Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
             if ( aDto instanceof BusinessEntityDto )
                 ((BusinessEntityDto) aDto).setCode(entityCode);
@@ -335,7 +334,7 @@ System.out.println( "entityDtoClass : " + entityDtoClass.toString() );
 
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_UPDATE );
-System.out.println( "redirectURI PUT : " + redirectURI.toString() );
+
             return AuthenticationFilter.httpClient.target( redirectURI ).request()
                     .put( Entity.entity( aDto, MediaType.APPLICATION_JSON ) );
         }
