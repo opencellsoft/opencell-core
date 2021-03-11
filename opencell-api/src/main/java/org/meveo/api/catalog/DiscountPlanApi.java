@@ -19,6 +19,7 @@
 package org.meveo.api.catalog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -137,6 +138,9 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (!discountPlan.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
             throw new BusinessException("only DRAFT discount plans can be updated");
         }
+        if (!(postData.getStatus().equals(DiscountPlanStatusEnum.ACTIVE) || postData.getStatus().equals(DiscountPlanStatusEnum.DRAFT))) {
+            throw new BusinessException("only ACTIVE status can be accepted to update a discount plan");
+        }
 
         final String description = postData.getDescription();
         if (description != null) {
@@ -160,6 +164,10 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
             } else {
                 discountPlan.setDurationUnit(postData.getDurationUnit());
             }
+        }
+        if (postData.getStatus() != null) {
+            discountPlan.setStatus(postData.getStatus());
+            discountPlan.setStatusDate(new Date());
         }
         if (postData.getDiscountPlanType() != null) {
             discountPlan.setDiscountPlanType(postData.getDiscountPlanType());
@@ -286,7 +294,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (entity.getStatus().equals(DiscountPlanStatusEnum.DRAFT) || entity.getStatus().equals(DiscountPlanStatusEnum.ACTIVE)) {
             discountPlanService.remove(entity);
         } else {
-            new BusinessException("only DRAFT and ACTIVE discount plans can be removed");
+            throw new BusinessException("only DRAFT and ACTIVE discount plans can be removed");
         }
     }
 }

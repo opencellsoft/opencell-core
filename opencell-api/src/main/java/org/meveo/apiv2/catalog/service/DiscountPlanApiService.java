@@ -83,6 +83,9 @@ public class DiscountPlanApiService {
 		}
 		JsonGenericMapper jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().build();
 		genericApiAlteringService.refreshEntityWithDotFields(jsonGenericMapper.readValue(dto, Map.class), entity, jsonGenericMapper.parseFromJson(dto, entity.getClass()));
+		if (!entity.getStatus().equals(DiscountPlanStatusEnum.ACTIVE) || !entity.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
+			throw new BusinessException("only ACTIVE status can be accepted");
+		}
 		IEntity updatedEntity = persistenceDelegate.update(DiscountPlan.class, entity);
 		return Optional.ofNullable((Long) updatedEntity.getId());
 	}
