@@ -45,10 +45,10 @@ public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
     @Override
     public BillingCyclesResponseDto list() {
         BillingCyclesResponseDto result = new BillingCyclesResponseDto();
+        result.setPaging( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
 
         try {
-            result = new BillingCyclesResponseDto(
-                    billingCycleApi.search( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() ) );
+            result.setBillingCycles( billingCycleApi.list() );
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
