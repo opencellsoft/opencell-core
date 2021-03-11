@@ -184,7 +184,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
     private AccountingArticle accountingArticle;
 	
 	  /**
-     * list of tag attached
+     * list of accountingArticle attached
      */   
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "discount_plan_item_articles", joinColumns = @JoinColumn(name = "discount_plan_item_id"), inverseJoinColumns = @JoinColumn(name = "accounting_article_id"))
