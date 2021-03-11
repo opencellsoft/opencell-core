@@ -18,9 +18,21 @@
 
 package org.meveo.api;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MdSwaggerModification {
+	
+	private static final Logger log = LoggerFactory.getLogger(MdSwaggerModification.class);
 
 
     public static void main(String[] args) throws Exception {
@@ -48,7 +60,7 @@ public class MdSwaggerModification {
             }
         } catch (Exception e) {
             System.out.println("File not found");
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
     }
 
