@@ -19,12 +19,16 @@
 package org.meveo.api.dto.catalog;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
@@ -78,6 +82,9 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     private String accountingCode;
 
     /**
+ 
+
+    /**
      * Expression to determine if discount applies
      */
     private String expressionEl;
@@ -110,6 +117,18 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      */
 	private String discountValueElSpark;
 	
+	
+    /** The accountingArticle */
+    @XmlElementWrapper(name = "accountingArticleCodes")
+    @XmlElement(name = "accountingArticleCodes")
+    protected Set<String> accountingArticleCodes = new HashSet<String>();
+	
+	/**
+     * pricePlanMatrix code
+     */
+	 @NotNull
+	 private String pricePlanMatrixCode;
+	
 	/** The custom fields. */
     @XmlElement(required = false)
     private CustomFieldsDto customFields;
@@ -130,7 +149,7 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.code = discountPlanItem.getCode();
         this.discountPlanCode = discountPlanItem.getDiscountPlan().getCode();
         this.invoiceCategoryCode = discountPlanItem.getInvoiceCategory() != null ? discountPlanItem.getInvoiceCategory().getCode() : null;
-        this.invoiceSubCategoryCode = discountPlanItem.getInvoiceSubCategory() != null ? discountPlanItem.getInvoiceSubCategory().getCode() : null;
+        this.invoiceSubCategoryCode = discountPlanItem.getInvoiceSubCategory() != null ? discountPlanItem.getInvoiceSubCategory().getCode() : null; 
         this.accountingCode = discountPlanItem.getAccountingCode();
         this.expressionEl = discountPlanItem.getExpressionEl();
         this.expressionElSpark = discountPlanItem.getExpressionElSpark();
@@ -139,6 +158,11 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 		this.discountValue = discountPlanItem.getDiscountValue();
 		this.discountValueEL = discountPlanItem.getDiscountValueEL();
 		this.discountValueElSpark = discountPlanItem.getDiscountValueElSpark();
+		this.pricePlanMatrixCode=discountPlanItem.getPricePlanMatrix()!=null?discountPlanItem.getPricePlanMatrix().getCode():null;
+		 this.accountingArticleCodes = discountPlanItem.getTargetAccountingArticle()
+                 .stream()
+                 .map(accountingArticle -> accountingArticle.getCode())
+                 .collect(Collectors.toSet());
 		
 		customFields = customFieldInstances;
     }
@@ -214,7 +238,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     public void setInvoiceSubCategoryCode(String invoiceSubCategoryCode) {
         this.invoiceSubCategoryCode = invoiceSubCategoryCode;
     }
-
     /**
      * Gets the accounting code.
      *
@@ -234,8 +257,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     }
 
     /**
-     * @return Expression to determine if discount applies
-     */
     public String getExpressionEl() {
         return expressionEl;
     }
@@ -366,4 +387,28 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
+
+	public String getPricePlanMatrixCode() {
+		return pricePlanMatrixCode;
+	}
+
+	public void setPricePlanMatrixCode(String pricePlanMatrixCode) {
+		this.pricePlanMatrixCode = pricePlanMatrixCode;
+	}
+
+	public Set<String> getAccountingArticleCodes() {
+		return accountingArticleCodes;
+	}
+
+	public void setAccountingArticleCodes(Set<String> accountingArticleCodes) {
+		this.accountingArticleCodes = accountingArticleCodes;
+	}
+
+	public String getExpressionEl() {
+		return expressionEl;
+	}
+	
+	
+	
+	
 }
