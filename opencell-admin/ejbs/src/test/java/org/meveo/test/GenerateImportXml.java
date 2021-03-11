@@ -43,6 +43,8 @@ import org.meveo.model.jaxb.subscription.Status;
 import org.meveo.model.jaxb.subscription.Subscription;
 import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.shared.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author R.AITYAAZZA
@@ -70,6 +72,7 @@ public class GenerateImportXml {
 
 	/***********************************************************************/
 
+	private static final Logger log = LoggerFactory.getLogger(GenerateImportXml.class);
 	/**
 	 * @param args an array of string argument for the program
 	 */
@@ -237,7 +240,7 @@ public class GenerateImportXml {
 
 			System.out.println("Import completed successfully.");
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 	}
 
