@@ -41,6 +41,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.admin.exception.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.Attachment;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
@@ -105,12 +107,13 @@ public class ProductQuoteItem implements Serializable {
     private static Marshaller mar;
     
     private static JAXBContext jaxbCxt;
+    private static final Logger log = LoggerFactory.getLogger(ProductQuoteItem.class);
 	static {
 		try {
 			jaxbCxt = JAXBContext.newInstance(ProductQuoteItem.class);
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 	}
 

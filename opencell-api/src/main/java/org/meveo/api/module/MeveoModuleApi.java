@@ -95,6 +95,8 @@ import org.meveo.service.script.ScriptUtils;
 import org.meveo.service.script.module.ModuleScriptInterface;
 import org.meveo.service.script.module.ModuleScriptService;
 import org.primefaces.model.SortOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
@@ -144,12 +146,13 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     private ProductTemplateService productTemplateService;
 
     private static JAXBContext jaxbCxt;
+    private static final Logger log = LoggerFactory.getLogger(MeveoModuleApi.class);
     static {
         try {
             jaxbCxt = JAXBContext.newInstance(MeveoModuleDto.class);
         } catch (JAXBException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
     }
 
