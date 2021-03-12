@@ -108,7 +108,7 @@ public class GenericApiAlteringService {
                     } else if(updatedField.getType().isAssignableFrom(Set.class)){
                         newValue = getReadyToBeSavedListEntities(fetchedEntity, updatedField, (Set<? extends IEntity>) newValue);
                     } else if(updatedField.getType().isAnnotationPresent(Entity.class)){
-                        newValue = fetchEntityById(newValue.getClass(), ((IEntity) newValue).getId());
+                        newValue = fetchEntityById(updatedField.getType(), ((IEntity) newValue).getId());
                     }
                     else if(readValueMap.get(fieldName) instanceof Map) {
                         refreshEntityWithDotFields((Map<String, Object>) readValueMap.get(fieldName), newValue, newValue);
