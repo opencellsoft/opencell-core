@@ -295,7 +295,7 @@ public class UserAccountApi extends AccountEntityApi {
             terminationReason = subscriptionTerminationReasonService.findByCodeReason(postData.getTerminationReason());
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
         if (terminationReason == null) {
             throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, postData.getTerminationReason());

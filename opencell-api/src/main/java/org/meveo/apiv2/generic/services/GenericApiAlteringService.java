@@ -146,7 +146,7 @@ public class GenericApiAlteringService {
                 return set;
             }
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            logger.error("error = {}", e);
         }
         return newValue instanceof List ? listOfEntities.collect(Collectors.toList()) : listOfEntities.collect(Collectors.toSet());
     }

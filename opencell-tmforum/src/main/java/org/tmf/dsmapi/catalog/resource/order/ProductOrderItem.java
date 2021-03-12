@@ -32,6 +32,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -54,6 +56,8 @@ public class ProductOrderItem implements Serializable {
     
     private static JAXBContext jaxbCxt;
     
+    private static final Logger log = LoggerFactory.getLogger(ProductOrderItem.class);
+    
 	static {
 		try {
 			
@@ -61,7 +65,7 @@ public class ProductOrderItem implements Serializable {
 			
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 	}
 	
