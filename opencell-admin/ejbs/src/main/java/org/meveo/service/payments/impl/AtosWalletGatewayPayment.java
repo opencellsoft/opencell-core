@@ -422,4 +422,22 @@ public class AtosWalletGatewayPayment implements GatewayPaymentInterface {
 
         return customerAccountService;
     }
+
+    @Override
+    public String createSepaDirectDebitToken(CustomerAccount customerAccount, String alias, String accountHolderName, String iban) throws BusinessException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void createMandate(CustomerAccount customerAccount, String iban, String mandateReference) throws BusinessException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void approveSepaDDMandate(String token, Date signatureDate) throws BusinessException {
+        // TODO Auto-generated method stub
+        
+    }
 }

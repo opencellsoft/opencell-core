@@ -233,18 +233,6 @@ public interface PaymentRs extends IBaseRs {
     PaymentMethodTokensDto listGetAll();
 
     /**
-     * List Payment Methods matching a customer account
-     *
-     * @param customerAccountCode customer account code.
-     * @param offset Pagination - from record number
-     * @param limit Pagination - number of records to retrieve
-     * @return An payment method list
-     */
-    @GET
-    @Path("/paymentMethod/findByCustomerAccount")
-    public PaymentMethodTokensDto findPaymentMethodByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit);
-
-    /**
      * List Payment Methods matching a given criteria
      *
      * @param pagingAndFiltering Pagination and filtering criteria

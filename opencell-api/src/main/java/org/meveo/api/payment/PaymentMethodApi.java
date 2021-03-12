@@ -32,6 +32,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
+import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -221,36 +222,6 @@ public class PaymentMethodApi extends BaseApi {
                 result.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
             }
         }
-        return result;
-    }
-    
-    /**
-     * List By Customer Account Code.
-     * 
-     * @param customerAccountCode customerAccountCode
-     * @return the payment method tokens dto
-     * @throws MeveoApiException the meveo api exception
-     */
-    public PaymentMethodTokensDto listByCustomerAccountCode(String customerAccountCode, Integer firstRow, Integer numberOfRows) throws MeveoApiException {
-        
-        if (StringUtils.isBlank(customerAccountCode)) {
-            missingParameters.add("customerAccountCode");
-            handleMissingParameters();
-        }
-        
-        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
-        if (customerAccount == null) {
-            throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
-        }
-
-        PaymentMethodTokensDto result = new PaymentMethodTokensDto();
-        List<PaymentMethod> paymentMethods = paymentMethodService.listByCustomerAccount(customerAccount, firstRow, numberOfRows);
-        if (paymentMethods != null) {
-            for (PaymentMethod paymentMethod : paymentMethods) {
-                result.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
-            }
-        }
-
         return result;
     }
 
