@@ -18,29 +18,22 @@
 
 package org.meveo.api.catalog;
 
-import java.util.Arrays;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.*;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.CalendarService;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
-import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
-import org.meveo.service.finance.RevenueRecognitionRuleService;
-import org.meveo.service.tax.TaxClassService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.function.BiFunction;
 
 /**
  * @author Edward P. Legaspi
@@ -204,5 +197,10 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         RecurringChargeTemplateDto result = new RecurringChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
         return result;
+    }
+
+    @Override
+    protected BiFunction<RecurringChargeTemplate, CustomFieldsDto, RecurringChargeTemplateDto> getEntityToDtoFunction() {
+        return RecurringChargeTemplateDto::new;
     }
 }

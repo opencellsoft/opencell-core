@@ -18,23 +18,11 @@
 
 package org.meveo.api.catalog;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.*;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Amounts;
@@ -47,6 +35,15 @@ import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.RealtimeChargingService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.function.BiFunction;
 
 @Stateless
 public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTemplate, OneShotChargeTemplateDto> {
@@ -208,5 +205,10 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
         }
 
         return oneShotChargeTemplatesWPrice;
+    }
+
+    @Override
+    protected BiFunction<OneShotChargeTemplate, CustomFieldsDto, OneShotChargeTemplateDto> getEntityToDtoFunction() {
+        return OneShotChargeTemplateDto::new;
     }
 }

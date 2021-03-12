@@ -18,34 +18,6 @@
 
 package org.meveo.api;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.ejb.EJB;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.exception.ConstraintViolationException;
@@ -53,14 +25,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.dto.AuditableEntityDto;
-import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.api.dto.CustomEntityInstanceDto;
-import org.meveo.api.dto.CustomFieldDto;
-import org.meveo.api.dto.CustomFieldValueDto;
-import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.api.dto.*;
 import org.meveo.api.dto.audit.AuditableFieldDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
@@ -83,6 +48,9 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.CustomGenericEntityCode;
+import org.meveo.api.exception.*;
+import org.meveo.commons.utils.*;
+import org.meveo.model.*;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -102,11 +70,7 @@ import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.audit.AuditableFieldService;
-import org.meveo.service.base.BusinessEntityService;
-import org.meveo.service.base.BusinessService;
-import org.meveo.service.base.NativePersistenceService;
-import org.meveo.service.base.PersistenceService;
-import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.base.*;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -115,6 +79,23 @@ import org.meveo.util.ApplicationProvider;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.nio.file.AccessDeniedException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Edward P. Legaspi
@@ -1178,7 +1159,7 @@ public abstract class BaseApi {
 
     /**
      * Convert pagination and filtering DTO to a pagination configuration used in services.
-     * 
+     *
      * @param defaultSortBy A default value to sortBy
      * @param defaultSortOrder A default sort order
      * @param fetchFields Fields to fetch
@@ -1201,6 +1182,32 @@ public abstract class BaseApi {
             pagingAndFiltering.setFilters(convertFilters(cet.isStoreAsTable() ? null : CustomEntityInstance.class, pagingAndFiltering.getFilters(), cfts));
         }
         PaginationConfiguration paginationConfig = initPaginationConfiguration(defaultSortBy, defaultSortOrder, fetchFields, pagingAndFiltering);
+        return paginationConfig;
+    }
+
+    /**
+     * Convert pagination and filtering DTO to a pagination configuration used in services.
+     *
+     * @param defaultSortBy A default value to sortBy
+     * @param defaultSortOrder A default sort order
+     * @param fetchFields Fields to fetch
+     * @param pagingAndFiltering Paging and filtering criteria
+     * @param targetClass class which is used for pagination.
+     * @return Pagination configuration
+     * @throws InvalidParameterException invalid parameter exception.
+     */
+    @SuppressWarnings("rawtypes")
+    protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, String defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering, Class targetClass)
+            throws InvalidParameterException {
+
+        if (pagingAndFiltering != null && targetClass != null) {
+            Map<String, CustomFieldTemplate> cfts = null;
+            if (ICustomFieldEntity.class.isAssignableFrom(targetClass)) {
+                cfts = customFieldTemplateService.findByAppliesTo(targetClass.getSimpleName());
+            }
+            pagingAndFiltering.setFilters(convertFilters(targetClass, pagingAndFiltering.getFilters(), cfts));
+        }
+        PaginationConfiguration paginationConfig = initPaginationConfigurationMultiSort(defaultSortBy, defaultSortOrder, fetchFields, pagingAndFiltering);
         return paginationConfig;
     }
 
@@ -1242,6 +1249,25 @@ public abstract class BaseApi {
         return new PaginationConfiguration(pagingAndFiltering != null ? pagingAndFiltering.getOffset() : null, limit, pagingAndFiltering != null ? pagingAndFiltering.getFilters() : null,
             pagingAndFiltering != null ? pagingAndFiltering.getFullTextFilter() : null, fetchFields, pagingAndFiltering != null && pagingAndFiltering.getSortBy() != null ? pagingAndFiltering.getSortBy() : defaultSortBy,
             pagingAndFiltering != null && pagingAndFiltering.getSortOrder() != null ? SortOrder.valueOf(pagingAndFiltering.getSortOrder().name()) : defaultSortOrder);
+    }
+
+    private PaginationConfiguration initPaginationConfigurationMultiSort(String defaultSortBy, String defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
+        Integer limit = paramBean.getPropertyAsInteger("api.list.defaultLimit", limitDefaultValue);
+        if (pagingAndFiltering != null) {
+            if (pagingAndFiltering.getLimit() != null) {
+                limit = pagingAndFiltering.getLimit();
+            } else {
+                pagingAndFiltering.setLimit(limit);
+            }
+        }
+
+        // Commented out as regular API and customTable API has a different meaning of fields parameter - in customTableApi it will return only those fields, whereas in regularAPI
+        // it will consider as fields to join with.
+        // fetchFields = fetchFields!=null? fetchFields: pagingAndFiltering!=null && pagingAndFiltering.getFields() != null ?
+        // Arrays.asList(pagingAndFiltering.getFields().split(",")) : null;
+        return new PaginationConfiguration(pagingAndFiltering != null ? pagingAndFiltering.getOffset() : null, limit, pagingAndFiltering != null ? pagingAndFiltering.getFilters() : null,
+                pagingAndFiltering != null ? pagingAndFiltering.getFullTextFilter() : null, fetchFields, pagingAndFiltering != null && pagingAndFiltering.getSortBy() != null ? pagingAndFiltering.getSortBy() : defaultSortBy,
+                pagingAndFiltering != null && pagingAndFiltering.getMultiSortOrder() != null ? pagingAndFiltering.getMultiSortOrder() : defaultSortOrder);
     }
 
     /**
