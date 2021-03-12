@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -49,6 +52,7 @@ public class ParserSwagger {
     public static final String PARAM_KEY = "param";
     public static final String PARAMETER_DESCRIPTION = "@Parameter(description=\"";
     private static ParserSwagger parsing = new ParserSwagger();
+    private static final Logger log = LoggerFactory.getLogger(ParserSwagger.class);
 
  
     public static void main(String[] args) throws Exception {
@@ -83,7 +87,7 @@ public class ParserSwagger {
                 try {
                     returnListFilesPath.add(file.getCanonicalPath());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("error = {}", e);
                 }
             }
         }
@@ -421,7 +425,7 @@ public class ParserSwagger {
             writer.close();
             lnr.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
         } finally {
             Objects.requireNonNull(lnr).close();
         }

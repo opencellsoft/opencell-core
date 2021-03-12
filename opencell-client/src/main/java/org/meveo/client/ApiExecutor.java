@@ -30,8 +30,12 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApiExecutor {
+	
+	private static final Logger log = LoggerFactory.getLogger(ApiExecutor.class);
 
     /**
      * 
@@ -65,7 +69,7 @@ public class ApiExecutor {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 		return null;
 	}
@@ -98,7 +102,7 @@ public class ApiExecutor {
 			return response;
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			log.error("error = {}", e);
 
 		}
 		return null;
@@ -129,7 +133,7 @@ public class ApiExecutor {
 			return response;
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			log.error("error = {}", e);
 
 		}
 		return null;
