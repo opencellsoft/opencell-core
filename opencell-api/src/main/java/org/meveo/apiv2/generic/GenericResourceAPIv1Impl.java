@@ -71,7 +71,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
      */
     @Override
     public Response getAllEntitiesOrGetAnEntity() throws URISyntaxException, JsonProcessingException {
-        String getAllPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
+        String aGetPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
 
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
         StringBuilder suffixPathBuilder = new StringBuilder();
@@ -81,8 +81,9 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
         URI redirectURI;
 
-        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( getAllPath ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getAllPath );
+        // to get all entities
+        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( aGetPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( aGetPath );
             if ( pathIBaseRS.equals( "/billing/wallet/operation" ) )
                 entityClassName = "WalletOperation";
             else if ( pathIBaseRS.equals( "/catalog/pricePlan" ) )
@@ -122,7 +123,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             else {
                 if ( pathIBaseRS.contains( "oneShotChargeTemplate" ) || pathIBaseRS.contains( "/account/customer" )
                     || pathIBaseRS.contains( "/billing/subscription" ) || pathIBaseRS.contains( "/billing/ratedTransaction" )
-                    || pathIBaseRS.contains( "/billing/wallet" ) || pathIBaseRS.contains( "/catalog/offerTemplate" ) )
+                    || pathIBaseRS.contains( "/billing/wallet" ) || pathIBaseRS.contains( "/catalog/offerTemplate" )
+                    || pathIBaseRS.contains( "/user" ) || pathIBaseRS.contains( "/invoice" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
@@ -162,48 +164,58 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             }
             return Response.temporaryRedirect( redirectURI ).build();
         }
-        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( getAllPath ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( getAllPath );
+        // to handle get requests containing regular expressions
+        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( aGetPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( aGetPath );
             queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
 
             String originalPattern = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.getPattern().toString();
             int indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX );
             String aSmallPattern;
             String smallString = null;
-            while ( indexCodeRegex >= 0 ) {
-                aSmallPattern = originalPattern.substring( 0,
-                        indexCodeRegex + GenericOpencellRestfulAPIv1.CODE_REGEX.length() );
 
-                Matcher matcher = Pattern.compile( aSmallPattern ).matcher( getAllPath );
-                // get the first occurrence matching smallStringPattern
-                if ( matcher.find() ) {
-                    smallString = matcher.group(0);
+            if ( indexCodeRegex >= 0 ) {
+                while ( indexCodeRegex >= 0 ) {
+                    aSmallPattern = originalPattern.substring( 0,
+                            indexCodeRegex + GenericOpencellRestfulAPIv1.CODE_REGEX.length() );
 
-                    String[] matches = Pattern.compile( GenericOpencellRestfulAPIv1.CODE_REGEX )
-                            .matcher( smallString )
-                            .results()
-                            .map(MatchResult::group)
-                            .toArray(String[]::new);
+                    Matcher matcher = Pattern.compile( aSmallPattern ).matcher( aGetPath );
+                    // get the first occurrence matching smallStringPattern
+                    if ( matcher.find() ) {
+                        smallString = matcher.group(0);
 
-                    queryParams.append( Inflector.getInstance().singularize( matches[matches.length - 2] ) + "Code="
-                            + matches[matches.length - 1] + PAIR_QUERY_PARAM_SEPARATOR );
+                        String[] matches = Pattern.compile( GenericOpencellRestfulAPIv1.CODE_REGEX )
+                                .matcher( smallString )
+                                .results()
+                                .map(MatchResult::group)
+                                .toArray(String[]::new);
+
+                        queryParams.append( Inflector.getInstance().singularize( matches[matches.length - 2] ) + "Code="
+                                + matches[matches.length - 1] + PAIR_QUERY_PARAM_SEPARATOR );
+                    }
+
+                    indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX, indexCodeRegex + 1 );
                 }
 
-                indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX, indexCodeRegex + 1 );
-            }
+                // If smallString differs from the string aGetPath, the request is to retrieve all entities, so we add paging and filtering
+                // Otherwise, if smallString is exactly the string aGetPath, the request is to retrieve a particular entity
+                if ( ! smallString.equals( aGetPath ) ) {
+                    queryParamsMap = uriInfo.getQueryParameters();
+                    GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
+                    entityClassName = aGetPath.split( FORWARD_SLASH )[ aGetPath.split( FORWARD_SLASH ).length - 1 ];
+                    Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize( entityClassName ) );
+                    GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
+                }
 
-            // If smallString differs from the string getPath, the request is to retrieve all entities, so we add paging and filtering
-            // Otherwise, if smallString is exactly the string getPath, the request is to retrieve a particular entity
-            if ( ! smallString.equals( getAllPath ) ) {
-                queryParamsMap = uriInfo.getQueryParameters();
-                GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
-                entityClassName = getAllPath.split( FORWARD_SLASH )[ getAllPath.split( FORWARD_SLASH ).length - 1 ];
-                Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize( entityClassName ) );
-                GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + queryParams.substring( 0, queryParams.length() - 1 ) );
             }
+            else {
+                queryParams.append( uriInfo.getRequestUri().getQuery() );
 
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + queryParams.substring( 0, queryParams.length() - 1 ) );
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + queryParams );
+            }
 
             return Response.temporaryRedirect( redirectURI ).build();
         }
