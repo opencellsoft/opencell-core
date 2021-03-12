@@ -774,10 +774,10 @@ public class CommercialOrderApi extends BaseApi {
             throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", orderProduct.getProductVersion().getProduct().getCode() , orderProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
         }
         CommercialOrder commercialOrder =null;
-    	if(!StringUtils.isBlank(orderAttributeDTO.getOrderCommercialId())) {
-         commercialOrder = commercialOrderService.findById(orderAttributeDTO.getOrderCommercialId());
+    	if(!StringUtils.isBlank(orderAttributeDTO.getCommercialOrderId())) {
+         commercialOrder = commercialOrderService.findById(orderAttributeDTO.getCommercialOrderId());
 		if (commercialOrder == null) {
-			throw new EntityDoesNotExistsException(CommercialOrder.class, orderAttributeDTO.getOrderCommercialId());
+			throw new EntityDoesNotExistsException(CommercialOrder.class, orderAttributeDTO.getCommercialOrderId());
 		}
     	}
 		OrderLot orderLot=null;

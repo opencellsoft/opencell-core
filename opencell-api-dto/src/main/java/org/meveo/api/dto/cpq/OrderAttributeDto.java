@@ -44,7 +44,7 @@ public class OrderAttributeDto extends BaseEntityDto{
 	 */
 	private static final long serialVersionUID = 8115890992793236496L;
 	
-	private Long orderCommercialId;
+	private Long commercialOrderId;
 	private String orderAttributeCode;
     private Long orderAttributeId;
     private String orderLotCode;
@@ -71,7 +71,7 @@ public class OrderAttributeDto extends BaseEntityDto{
 		super();
 		orderAttributeId=orderAttribute.getId();
 		orderAttributeCode=orderAttribute.getAttribute()!=null?orderAttribute.getAttribute().getCode():null;
-		orderCommercialId=orderAttribute.getCommercialOrder()!=null?orderAttribute.getCommercialOrder().getId():null;
+		commercialOrderId=orderAttribute.getCommercialOrder()!=null?orderAttribute.getCommercialOrder().getId():null;
 	    orderLotCode=orderAttribute.getOrderLot()!=null?orderAttribute.getOrderLot().getCode():null;
 	    orderProductId=orderAttribute.getOrderProduct()!=null?orderAttribute.getOrderProduct().getId():null;
 	    orderOfferId=orderAttribute.getOrderOffer()!=null?orderAttribute.getOrderOffer().getId():null;
@@ -81,18 +81,14 @@ public class OrderAttributeDto extends BaseEntityDto{
 		doubleValue =orderAttribute.getDoubleValue();
 	}
 
-	/**
-	 * @return the orderCommercialId
-	 */
-	public Long getOrderCommercialId() {
-		return orderCommercialId;
+
+
+	public Long getCommercialOrderId() {
+		return commercialOrderId;
 	}
 
-	/**
-	 * @param orderCommercialId the orderCommercialId to set
-	 */
-	public void setOrderCommercialId(Long orderCommercialId) {
-		this.orderCommercialId = orderCommercialId;
+	public void setCommercialOrderId(Long commercialOrderId) {
+		this.commercialOrderId = commercialOrderId;
 	}
 
 	/**
