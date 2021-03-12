@@ -58,7 +58,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
@@ -5497,7 +5496,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	 * @param input
 	 * @return
 	 */
-	public Invoice update(Invoice toUpdate, Invoice input) {
+	public Invoice update(Invoice toUpdate, Invoice input, org.meveo.apiv2.billing.Invoice invoiceRessource) {
 		final InvoiceStatusEnum status = toUpdate.getStatus();
 		if(!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status))) {
 			throw new BusinessException("Can only update invoices in statuses DRAFT/SUSPECT/REJECTED");
@@ -5514,8 +5513,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if(input.getDueDate()!=null) {
 			toUpdate.setDueDate(input.getDueDate());
 		}
-		if(input.getPaymentMethod()!=null) {
-			toUpdate.setPaymentMethod(input.getPaymentMethod());
+		if(invoiceRessource.getPaymentMethod()!=null) {
+			final Long pmId = invoiceRessource.getPaymentMethod().getId();
+			PaymentMethod pm = (PaymentMethod)tryToFindByEntityClassAndId(PaymentMethod.class, pmId);
+			toUpdate.setPaymentMethod(pm);
 		}
 		if(input.getCfValues()!=null) {
 			toUpdate.setCfValues(input.getCfValues());

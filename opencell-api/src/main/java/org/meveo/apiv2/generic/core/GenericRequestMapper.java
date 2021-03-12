@@ -46,10 +46,6 @@ public class GenericRequestMapper {
                 .map(s -> getFetchList(s))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-        for(String filter : genericPagingAndFiltering.getFilters().keySet()) {
-        	filter = filter.replaceAll(".* ", "");
-        	sortByFetchList.addAll(getFetchList(filter));
-        }
 		return sortByFetchList;
     }
     
