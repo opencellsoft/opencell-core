@@ -1362,6 +1362,7 @@ public class QueryBuilder {
             Object defaultOrder = orderings[1];
             String[] fields = orderings[0].toString().split(", ");
             for (String field : fields){
+            	String currentAlias = alias;
                 String[] fieldAndOrder = field.split(" ");
             	boolean ascending = defaultOrder == SortOrder.ASCENDING;
                 if(fieldAndOrder.length > 1) {
@@ -1369,10 +1370,10 @@ public class QueryBuilder {
                 	ascending = fieldAndOrder[1].toLowerCase().equals("asc");
                 }
                 if(field.contains(".")) {
-            		alias = getJoinAlias(alias, field.substring(0,field.lastIndexOf(".")));
+            		currentAlias = getJoinAlias(alias, field.substring(0,field.lastIndexOf(".")));
             		field =field.substring(field.lastIndexOf(".")+1);
             	}
-				addOrderCriterion(((alias != null) ? (alias + ".") : "") + field, ascending);
+				addOrderCriterion(((currentAlias != null) ? (currentAlias + ".") : "") + field, ascending);
             }
         }
     }
