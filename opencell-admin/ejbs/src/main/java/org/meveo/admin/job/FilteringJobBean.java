@@ -31,6 +31,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 
 import org.meveo.admin.async.FiltringJobAsync;
@@ -164,6 +165,10 @@ public class FilteringJobBean extends BaseJobBean {
             }
 
             List<? extends IEntity> filtredEntities = filterService.filteredListAsObjects(filter, sqlParams);
+
+            EntityManager em = filterService.getEntityManager();            
+            filtredEntities.stream().forEach(x -> em.detach(x));
+            
             int nbItemsToProcess = filtredEntities == null ? 0 : filtredEntities.size();
             result.setNbItemsToProcess(nbItemsToProcess);
             List<Future<String>> futures = new ArrayList<Future<String>>();
