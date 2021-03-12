@@ -42,6 +42,8 @@ import org.meveo.model.filter.OrCompositeFilterCondition;
 import org.meveo.model.filter.OrderCondition;
 import org.meveo.model.filter.PrimitiveFilterCondition;
 import org.meveo.model.filter.Projector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
@@ -51,6 +53,8 @@ import com.thoughtworks.xstream.mapper.ClassAliasingMapper;
  * @author Edward P. Legaspi
  **/
 public class FilterXmlGenerator {
+	
+	private static final Logger log = LoggerFactory.getLogger(FilterXmlGenerator.class);
 
 	public static void main(String[] args) {
 		try {
@@ -103,7 +107,7 @@ public class FilterXmlGenerator {
 			XStream xStream = getXStream();
 			return xStream.toXML(filter);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 
 		return "";
@@ -148,7 +152,7 @@ public class FilterXmlGenerator {
 			XStream xStream = getXStream();
 			return xStream.toXML(filter);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 
 		return "";
@@ -179,7 +183,7 @@ public class FilterXmlGenerator {
 			Filter filter = (Filter) xStream.fromXML(input);
 			System.out.println(filter);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 	}
 
@@ -250,7 +254,7 @@ public class FilterXmlGenerator {
 			XStream xStream = getXStream();
 			return xStream.toXML(filter);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 
 		return "";
@@ -310,7 +314,7 @@ public class FilterXmlGenerator {
 			XStream xStream = getXStream();
 			System.out.println(xStream.toXML(filter));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 	}
 

@@ -1,20 +1,23 @@
 package org.meveo.apiv2.generic.core.filter.filtermapper;
 
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.Function;
+
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.core.filter.FactoryFilterMapper;
 import org.meveo.apiv2.generic.core.filter.FilterMapper;
 import org.meveo.model.BaseEntity;
 import org.meveo.service.base.PersistenceService;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.function.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ObjectMapper extends FilterMapper {
     private final Class<?> type;
     private final Function<Class, PersistenceService> serviceFunction;
+    private static final Logger log = LoggerFactory.getLogger(ObjectMapper.class);
 
     public ObjectMapper(String property, Object value, Class<?> type, Function<Class, PersistenceService> serviceFunction) {
         super(property, value);
@@ -37,7 +40,7 @@ public class ObjectMapper extends FilterMapper {
                             try {
                                 FieldUtils.writeField(targetInstanceHolder, entry.getKey().replaceFirst("[a-zA-Z]* ",""), entry.getValue(), true);
                             } catch (IllegalAccessException e) {
-                                e.printStackTrace();
+                                log.error("error = {}", e);
                             }
                         });
                 target = targetInstanceHolder;
@@ -50,7 +53,7 @@ public class ObjectMapper extends FilterMapper {
             }
 
         } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
         return target;
     }

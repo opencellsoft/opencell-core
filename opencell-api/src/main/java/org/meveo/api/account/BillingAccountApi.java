@@ -18,18 +18,6 @@
 
 package org.meveo.api.account;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.persistence.EntityNotFoundException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -40,30 +28,14 @@ import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.exception.BusinessApiException;
-import org.meveo.api.exception.DeleteReferencedEntityException;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.*;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.BeanUtils;
-import org.meveo.model.billing.BankCoordinates;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.ThresholdOptionsEnum;
-import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
@@ -75,14 +47,7 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.tax.TaxCategory;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingCycleService;
-import org.meveo.service.billing.impl.DiscountPlanInstanceService;
-import org.meveo.service.billing.impl.InvoiceTypeService;
-import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.TradingCountryService;
-import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.EmailTemplateService;
@@ -92,6 +57,17 @@ import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 import org.meveo.service.tax.TaxCategoryService;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author Edward P. Legaspi
@@ -582,7 +558,7 @@ public class BillingAccountApi extends AccountEntityApi {
         }
 
         BillingAccountsDto result = new BillingAccountsDto();
-        List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
+        List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount, GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         if (billingAccounts != null) {
             for (BillingAccount ba : billingAccounts) {
                 BillingAccountDto billingAccountDto = accountHierarchyApi.billingAccountToDto(ba);
@@ -631,7 +607,7 @@ public class BillingAccountApi extends AccountEntityApi {
         try {
             terminationReason = subscriptionTerminationReasonService.findByCodeReason(postData.getTerminationReason());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
         if (terminationReason == null) {
             throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, postData.getTerminationReason());

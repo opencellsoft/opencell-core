@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.catalog.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.catalog.UsageChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -32,6 +28,11 @@ import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.UsageChargeTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Edward P. Legaspi
@@ -139,6 +140,20 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
 
         try {
             result = new UsageChargeTemplateResponseDto(usageChargeTemplateApi.search(pagingAndFiltering));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public UsageChargeTemplateResponseDto listGet() {
+
+        UsageChargeTemplateResponseDto result = new UsageChargeTemplateResponseDto();
+
+        try {
+            result = new UsageChargeTemplateResponseDto( usageChargeTemplateApi.search(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering()) );
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
