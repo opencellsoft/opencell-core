@@ -333,10 +333,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/invoice" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices",
                                     ((Path) anAnnotation).value() );
-                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices/pdfInvoices",
-                                    ((Path) anAnnotation).value() + "/fetchPdfInvoice" );
-                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices/xmlInvoices",
-                                    ((Path) anAnnotation).value() + "/fetchXMLInvoice" );
+
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices/generation",
                                     ((Path) anAnnotation).value() + "/generateInvoice" );
 

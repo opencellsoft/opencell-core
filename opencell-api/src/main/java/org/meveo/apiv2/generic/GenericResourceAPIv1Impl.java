@@ -157,6 +157,11 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "code=" + entityCode);
             }
+            // special handle for invoice
+            else if ( pathIBaseRS.equals("/invoice") ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode);
+            }
             else {
                 entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
@@ -219,8 +224,22 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
             return Response.temporaryRedirect( redirectURI ).build();
         }
+        else {
+            if ( aGetPath.matches( "/v1/invoices/pdfInvoices/" + GenericOpencellRestfulAPIv1.CODE_REGEX ) ) {
+                entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + "/invoice/getPdfInvoice" + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode );
+                return Response.temporaryRedirect( redirectURI ).build();
+            }
+            else if ( aGetPath.matches( "/v1/invoices/xmlInvoices/" + GenericOpencellRestfulAPIv1.CODE_REGEX ) ) {
+                entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + "/invoice/getXMLInvoice" + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode );
+                return Response.temporaryRedirect( redirectURI ).build();
+            }
 
-        return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
     @Override
@@ -273,8 +292,22 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             return Response.temporaryRedirect( redirectURI )
                     .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
         }
+        else {
+            if ( postPath.equals( "/v1/invoices/pdfInvoices" ) ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + "/invoice/fetchPdfInvoice" );
+                return Response.temporaryRedirect( redirectURI )
+                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
+            }
+            else if ( postPath.equals( "/v1/invoices/xmlInvoices" ) ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + "/invoice/fetchXMLInvoice" );
+                return Response.temporaryRedirect( redirectURI )
+                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
+            }
 
-        return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
     @Override
