@@ -8,6 +8,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.order.Order;
+import org.meveo.model.payments.PaymentMethod;
 
 public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoice, Invoice> {
 
@@ -57,12 +58,6 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 			billingRun.setId(resource.getBillingRun().getId());
 			invoice.setBillingRun(billingRun);
 		}
-
-		invoice.setDiscountRate(resource.getDiscountRate());
-		invoice.setAmountWithTax(resource.getAmountWithTax());
-
-		invoice.setStartDate(resource.getStartDate());
-		invoice.setEndDate(resource.getEndDate());
 
 		if (resource.getOrder() != null) {
 			Order order = new Order();
