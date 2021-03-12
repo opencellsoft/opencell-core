@@ -32,7 +32,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.RatingService;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 
 /**
  * Job implementation to rerate wallet operations
@@ -55,7 +54,7 @@ public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::rerate, null, null, JobSpeedEnum.SLOW);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::rerate, null, null);
     }
 
     /**

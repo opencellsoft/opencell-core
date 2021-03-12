@@ -4171,5 +4171,12 @@ END $$;]]>
             <column name="job_status" type="varchar(14)"/>
         </addColumn>
     </changeSet>    
+        
+    <changeSet id="4756_20210311" author="Andrius">
+    	<addColumn tableName="meveo_job_instance">
+    		<column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
+    	</addColumn>
+    	<sql>update ${db.schema.adapted}job_execution set job_launcher='TRIGGER' where job_launcher='TRIGER'</sql>
+    </changeSet>
     
 </databaseChangeLog>

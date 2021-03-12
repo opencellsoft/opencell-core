@@ -41,7 +41,6 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 
 /**
  * Job implementation to apply recurring charges for next billing cycle
@@ -64,7 +63,7 @@ public class RecurringRatingJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createRecurringCharges, null, null, JobSpeedEnum.NORMAL);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createRecurringCharges, null, null);
         rateUntilDate = null;
     }
 

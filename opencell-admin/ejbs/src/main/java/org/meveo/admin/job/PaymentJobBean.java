@@ -51,7 +51,6 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
@@ -144,7 +143,7 @@ public class PaymentJobBean extends IteratorBasedJobBean<PaymentItem> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createPaymentOrPayout, null, null, JobSpeedEnum.NORMAL);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createPaymentOrPayout, null, null);
         operationCategory = null;
         paymentMethodType = null;
         paymentOrRefundEnum = PaymentOrRefundEnum.PAYMENT;

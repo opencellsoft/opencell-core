@@ -42,7 +42,6 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.generic.wf.GenericWorkflowService;
 import org.meveo.service.generic.wf.WorkflowInstanceService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 
 /**
  * Job implementation to execute the transition script on each workflowed entity instance.
@@ -71,7 +70,7 @@ public class GenericWorkflowJobBean extends IteratorBasedJobBean<Object[]> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::executeWorkflow, null, null, JobSpeedEnum.NORMAL);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::executeWorkflow, null, null);
         genericWf = null;
     }
 

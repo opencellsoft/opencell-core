@@ -29,6 +29,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 
 import org.meveo.admin.async.SynchronizedIterator;
@@ -40,7 +41,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.filter.FilterService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
@@ -83,7 +83,7 @@ public class FilteringJobBean extends IteratorBasedJobBean<IEntity> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::applyScriptOnEntity, null, this::finalizeScript, JobSpeedEnum.NORMAL);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::applyScriptOnEntity, null, this::finalizeScript);
 
         scriptInterface = null;
         scriptContext = null;
@@ -160,6 +160,10 @@ public class FilteringJobBean extends IteratorBasedJobBean<IEntity> {
         }
 
         List filtredEntities = filterService.filteredListAsObjects(filter, sqlParams);
+
+        EntityManager em = filterService.getEntityManager();
+        
+        filtredEntities.stream().forEach(x -> em.detach(x));
 
         return Optional.of(new SynchronizedIterator<IEntity>(filtredEntities));
     }

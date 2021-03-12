@@ -39,7 +39,6 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
@@ -74,7 +73,7 @@ public class AccountOperationsGenerationJobBean extends IteratorBasedJobBean<Lon
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createAccountOperations, null, null, JobSpeedEnum.NORMAL);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createAccountOperations, null, null);
         script = null;
     }
 

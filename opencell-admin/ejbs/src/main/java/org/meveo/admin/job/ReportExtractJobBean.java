@@ -40,7 +40,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.finance.ReportExtractService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.service.script.finance.ReportExtractScript;
 
 /**
@@ -65,7 +64,7 @@ public class ReportExtractJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::runReport, null, null, JobSpeedEnum.FAST);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::runReport, null, null);
         startDate = null;
         endDate = null;
     }

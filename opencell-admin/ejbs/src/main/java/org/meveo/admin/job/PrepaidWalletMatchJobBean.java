@@ -34,7 +34,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.WalletService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 
 /**
  * Job implementation to match prepaid wallets
@@ -57,7 +56,7 @@ public class PrepaidWalletMatchJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::matchPrepaidWallet, null, null, JobSpeedEnum.NORMAL);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::matchPrepaidWallet, null, null);
     }
 
     /**

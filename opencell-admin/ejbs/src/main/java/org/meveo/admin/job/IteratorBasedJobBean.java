@@ -23,7 +23,6 @@ import org.meveo.model.IEntity;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 
 /**
  * Implements job logic to iterate over data and process one item at a time, checking if job is still running and update job progress in DB periodically
@@ -56,11 +55,10 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * @param processSingleItemFunction A function to process a single item. Will be executed in its own transaction
      * @param hasMoreFunction A function to determine if the are more data to process even though this job run has completed. Optional.
      * @param finalizeFunction A function to finalize data to process. Optional.
-     * @param jobSpeed Job execution speed to check if job is still running and update job progress in DB
      */
     @SuppressWarnings("rawtypes")
     protected void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance, Function<JobExecutionResultImpl, Optional<Iterator<T>>> initFunction,
-            BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, Predicate<JobInstance> hasMoreFunction, Consumer<JobExecutionResultImpl> finalizeFunction, JobSpeedEnum jobSpeed) {
+            BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, Predicate<JobInstance> hasMoreFunction, Consumer<JobExecutionResultImpl> finalizeFunction) {
 
         jobExecutionErrorService.purgeJobErrors(jobExecutionResult.getJobInstance());
 
@@ -94,8 +92,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         List<Future> futures = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
 
-        int checkJobStatusEveryNr = jobSpeed.getCheckNb();
-        int updateJobStatusEveryNr = nbThreads.longValue() > 3 ? jobSpeed.getUpdateNb() * nbThreads.intValue() / 2 : jobSpeed.getUpdateNb();
+        int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
+        int updateJobStatusEveryNr = nbThreads.longValue() > 3 ? jobInstance.getJobSpeed().getUpdateNb() * nbThreads.intValue() / 2 : jobInstance.getJobSpeed().getUpdateNb();
 
         boolean isNewTx = isProcessItemInNewTx();
 

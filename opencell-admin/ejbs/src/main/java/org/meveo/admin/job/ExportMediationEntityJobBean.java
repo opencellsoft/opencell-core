@@ -49,13 +49,13 @@ import org.meveo.model.jaxb.mediation.RatedTransactions;
 import org.meveo.model.jaxb.mediation.WalletOperations;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.job.JobExecutionService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 
 /**
  * The Class ExportMediationEntityJob bean to export EDR, WO and RTx as XML file.
@@ -113,14 +113,14 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
             List<EDRStatusEnum> edrStatus = getTargetStatusList(jobInstance, EDRStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_EDR_STATUS_CF);
             if (!edrStatus.isEmpty()) {
                 log.info("==> Start exporting EDR ");
-                nbItems = exportEDR(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, edrStatus, exportParentDir, exportFileName);
+                nbItems = exportEDR(jobInstance, firstTransactionDate, lastTransactionDate, maxResult, edrStatus, exportParentDir, exportFileName);
                 log.info("{} EDRs exported in total", nbItems);
                 report += "EDRs : " + nbItems;
             }
             List<WalletOperationStatusEnum> woStatus = getTargetStatusList(jobInstance, WalletOperationStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_WO_STATUS_CF);
             if (!woStatus.isEmpty()) {
                 log.info("==> Start exporting wallet operation ");
-                long woCount = exportWalletOperation(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, woStatus, exportParentDir, exportFileName);
+                long woCount = exportWalletOperation(jobInstance, firstTransactionDate, lastTransactionDate, maxResult, woStatus, exportParentDir, exportFileName);
                 log.info("{} WOs exported in total", woCount);
                 nbItems += woCount;
                 report += " WOs : " + woCount;
@@ -128,7 +128,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
             List<RatedTransactionStatusEnum> rtStatusList = getTargetStatusList(jobInstance, RatedTransactionStatusEnum.class, EXPORT_MEDIATION_ENTITY_JOB_RT_STATUS_CF);
             if (!rtStatusList.isEmpty()) {
                 log.info("==> Start exporting rated transaction ");
-                long rtCount = exportRatedTransaction(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, rtStatusList, exportParentDir, exportFileName);
+                long rtCount = exportRatedTransaction(jobInstance, firstTransactionDate, lastTransactionDate, maxResult, rtStatusList, exportParentDir, exportFileName);
                 log.info("{} RTs exported in total", rtCount);
                 nbItems += rtCount;
                 report += " RTs : " + rtCount;
@@ -144,7 +144,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     }
 
     /**
-     * @param jobInstanceId a job instance id
+     * @param jobInstance a job instance
      * @param firstTransactionDate a first transaction date
      * @param lastTransactionDate a last transaction date
      * @param maxResult a number of rows to fetch
@@ -154,7 +154,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
      * @return number of items
      * @throws JAXBException
      */
-    private int exportEDR(Long jobInstanceId, Date firstTransactionDate, Date lastTransactionDate, int maxResult, List<EDRStatusEnum> formattedStatus, String exportParentDir, String exportFileName) throws JAXBException {
+    private int exportEDR(JobInstance jobInstance, Date firstTransactionDate, Date lastTransactionDate, int maxResult, List<EDRStatusEnum> formattedStatus, String exportParentDir, String exportFileName) throws JAXBException {
         int nbItems = 0;
         long lastId = 0L;
         boolean moreToProcess = true;
@@ -164,7 +164,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
             if (!edrList.isEmpty()) {
                 int size = edrList.size();
                 lastId = edrList.get(size - 1).getId();
-                EDRs edrs = edrsToDto(edrList, jobInstanceId);
+                EDRs edrs = edrsToDto(edrList, jobInstance);
 
                 String exportDir = exportParentDir + "edr" + File.separator;
                 File dir = new File(exportDir);
@@ -185,7 +185,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     }
 
     /**
-     * @param jobInstanceId a job instance id
+     * @param jobInstance a job instance
      * @param firstTransactionDate a first transaction date
      * @param lastTransactionDate a last transaction date
      * @param maxResult a number of rows to fetch
@@ -195,13 +195,13 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
      * @return
      * @throws JAXBException
      */
-    private long exportWalletOperation(long jobInstanceId, Date firstTransactionDate, Date lastTransactionDate, int maxResult, List<WalletOperationStatusEnum> formattedStatus, String exportParentDir,
+    private long exportWalletOperation(JobInstance jobInstance, Date firstTransactionDate, Date lastTransactionDate, int maxResult, List<WalletOperationStatusEnum> formattedStatus, String exportParentDir,
             String exportFileName) throws JAXBException {
         int nbItems = 0;
         long lastId = 0L;
         boolean moreToProcess;
         do {
-            PaginationResult paginationResult = exportMediationEntityJobBeanNewTx.exportWalletOperationPerPage(jobInstanceId, firstTransactionDate, lastTransactionDate, maxResult, lastId, formattedStatus,
+            PaginationResult paginationResult = exportMediationEntityJobBeanNewTx.exportWalletOperationPerPage(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, lastId, formattedStatus,
                 exportParentDir, exportFileName);
             lastId = paginationResult.getLastId();
             nbItems += paginationResult.getNbItems();
@@ -211,7 +211,7 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
     }
 
     /**
-     * @param jobInstanceId a job instance id
+     * @param jobInstance a job instance
      * @param firstTransactionDate a first transaction date
      * @param lastTransactionDate a last transaction date
      * @param exportFileName
@@ -220,13 +220,13 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
      * @return a number of processed items
      * @throws JAXBException an exception
      */
-    private long exportRatedTransaction(long jobInstanceId, Date firstTransactionDate, Date lastTransactionDate, int maxResult, List<RatedTransactionStatusEnum> formattedStatus, String exportParentDir,
+    private long exportRatedTransaction(JobInstance jobInstance, Date firstTransactionDate, Date lastTransactionDate, int maxResult, List<RatedTransactionStatusEnum> formattedStatus, String exportParentDir,
             String exportFileName) throws JAXBException {
         int nbItems = 0;
         long lastId = 0L;
         boolean moreToProcess;
         do {
-            PaginationResult paginationResult = exportMediationEntityJobBeanNewTx.exportRatedTransactionPerPage(jobInstanceId, firstTransactionDate, lastTransactionDate, maxResult, lastId, formattedStatus,
+            PaginationResult paginationResult = exportMediationEntityJobBeanNewTx.exportRatedTransactionPerPage(jobInstance.getId(), firstTransactionDate, lastTransactionDate, maxResult, lastId, formattedStatus,
                 exportParentDir, exportFileName);
             lastId = paginationResult.getLastId();
             nbItems += paginationResult.getNbItems();
@@ -240,12 +240,15 @@ public class ExportMediationEntityJobBean extends BaseJobBean {
      * @param jobInstanceId
      * @return
      */
-    private EDRs edrsToDto(List<EDR> edrs, Long jobInstanceId) {
+    private EDRs edrsToDto(List<EDR> edrs, JobInstance jobInstance) {
         EDRs dto = new EDRs();
         if (edrs != null) {
+            
+            int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
+            
             int i = 0;
             for (EDR edr : edrs) {
-                if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobInstanceId)) {
+                if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
                     break;
                 }
                 dto.getEdrs().add(edrToDto(edr));

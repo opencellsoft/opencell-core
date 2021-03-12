@@ -19,7 +19,6 @@ import org.meveo.service.billing.impl.AggregatedWalletOperation;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -46,7 +45,7 @@ public class RatedTransactionsAggregatedJobBean extends IteratorBasedJobBean<Agg
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWosToAggregatedRt, null, null, JobSpeedEnum.SLOW);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWosToAggregatedRt, null, null);
 
         invoicingDate = null;
     }

@@ -23,7 +23,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.catalog.impl.CalendarService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 
 /**
  * Job implementation to handle service instance renewal or termination once service instance expires, fire handles renewal notice events
@@ -47,7 +46,7 @@ public class ServiceStatusJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::updateServiceStatus, null, null, JobSpeedEnum.FAST);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::updateServiceStatus, null, null);
     }
 
     /**

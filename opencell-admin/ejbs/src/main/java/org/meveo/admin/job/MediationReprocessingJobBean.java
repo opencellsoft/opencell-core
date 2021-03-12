@@ -41,7 +41,6 @@ import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
@@ -119,8 +118,8 @@ public class MediationReprocessingJobBean extends BaseJobBean {
             List<Future> futures = new ArrayList<>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
 
-            int checkJobStatusEveryNr = JobSpeedEnum.FAST.getCheckNb();
-            int updateJobStatusEveryNr = nbRuns.longValue() > 3 ? JobSpeedEnum.FAST.getUpdateNb() * nbRuns.intValue() / 2 : JobSpeedEnum.FAST.getUpdateNb();
+            int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
+            int updateJobStatusEveryNr = nbRuns.longValue() > 3 ? jobInstance.getJobSpeed().getUpdateNb() * nbRuns.intValue() / 2 : jobInstance.getJobSpeed().getUpdateNb();
 
             ICdrReader cdrReaderFinal = cdrReader;
             ICdrParser cdrParserFinal = cdrParser;

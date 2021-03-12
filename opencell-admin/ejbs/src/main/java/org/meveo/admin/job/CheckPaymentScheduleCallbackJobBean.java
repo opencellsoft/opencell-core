@@ -31,7 +31,6 @@ import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceItemService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
@@ -55,7 +54,7 @@ public class CheckPaymentScheduleCallbackJobBean extends IteratorBasedJobBean<Lo
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::checkPaymentStatus, null, null, JobSpeedEnum.NORMAL);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::checkPaymentStatus, null, null);
     }
 
     /**

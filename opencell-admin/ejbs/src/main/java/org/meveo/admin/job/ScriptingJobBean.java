@@ -37,7 +37,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
@@ -66,7 +65,7 @@ public class ScriptingJobBean extends IteratorBasedJobBean<ScriptInterface> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::executeScript, null, this::finalizeScript, JobSpeedEnum.SLOW);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::executeScript, null, this::finalizeScript);
         context = null;
         script = null;
     }

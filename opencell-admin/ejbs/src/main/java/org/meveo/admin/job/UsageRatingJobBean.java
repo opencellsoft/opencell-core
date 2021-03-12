@@ -29,12 +29,10 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.UsageRatingService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 
 @Stateless
 public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
@@ -58,7 +56,7 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::rateEDR, this::hasMore, null, JobSpeedEnum.FAST);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::rateEDR, this::hasMore, null);
 
         rateUntilDate = null;
         ratingGroup = null;

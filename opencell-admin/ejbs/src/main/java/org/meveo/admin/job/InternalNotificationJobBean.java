@@ -41,7 +41,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.notification.Notification;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.service.notification.GenericNotificationService;
 import org.meveo.service.script.ScriptInstanceService;
 
@@ -84,7 +83,7 @@ public class InternalNotificationJobBean extends IteratorBasedJobBean<Object> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::executeNotification, null, null, JobSpeedEnum.NORMAL);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::executeNotification, null, null);
         notification = null;
     }
 

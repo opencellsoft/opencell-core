@@ -45,10 +45,11 @@ import org.meveo.model.jaxb.account.UserAccount;
 import org.meveo.model.jaxb.account.UserAccounts;
 import org.meveo.model.jaxb.customer.CustomFields;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.job.JobExecutionService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -94,7 +95,7 @@ public class ExportAccountsJobBean {
 
         String timestamp = sdf.format(new Date());
         List<org.meveo.model.billing.BillingAccount> bas = billingAccountService.list();
-        billingAccounts = billingAccountsToDto(bas, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance().getId());
+        billingAccounts = billingAccountsToDto(bas, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance());
         int nbItems = billingAccounts.getBillingAccount() != null ? billingAccounts.getBillingAccount().size() : 0;
         result.setNbItemsToProcess(nbItems);
         try {
@@ -119,14 +120,16 @@ public class ExportAccountsJobBean {
         }
     }
 
-    private BillingAccounts billingAccountsToDto(List<org.meveo.model.billing.BillingAccount> bas, String dateFormat, Long jobInstanceId) {
+    private BillingAccounts billingAccountsToDto(List<org.meveo.model.billing.BillingAccount> bas, String dateFormat, JobInstance jobInstance) {
         BillingAccounts dto = new BillingAccounts();
         int i = 0;
+        int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
+        
         for (org.meveo.model.billing.BillingAccount ba : bas) {
-            if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobInstanceId)) {
+            if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
                 break;
             }
-            BillingAccount billingAcc = billingAccountToDto(ba, dateFormat, jobInstanceId);
+            BillingAccount billingAcc = billingAccountToDto(ba, dateFormat, jobInstance.getId());
             dto.getBillingAccount().add(billingAcc);
             i++;
         }

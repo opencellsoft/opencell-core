@@ -47,7 +47,6 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.job.JobExecutionService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -147,8 +146,11 @@ public class ImportCatalogJobBean {
                         }
                     }
                     result.setNbItemsToProcess(rowsObj.length - 1);
+                    
+                    int checkJobStatusEveryNr = result.getJobInstance().getJobSpeed().getCheckNb();
+                    
                     for (int rowIndex = 1; rowIndex < rowsObj.length; rowIndex++) {         
-                        if (rowIndex % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
+                        if (rowIndex % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                             break;
                         }
                         Row row = (Row) rowsObj[rowIndex];

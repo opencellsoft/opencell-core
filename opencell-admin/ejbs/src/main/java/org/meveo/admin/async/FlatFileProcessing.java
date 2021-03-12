@@ -45,13 +45,13 @@ import org.meveo.model.bi.FileStatusEnum;
 import org.meveo.model.bi.FlatFile;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.bi.impl.FlatFileService;
 import org.meveo.service.job.JobExecutionResultService;
 import org.meveo.service.job.JobExecutionService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInterface;
 import org.meveo.util.ApplicationProvider;
@@ -179,15 +179,16 @@ public class FlatFileProcessing {
         RecordContext recordContext = null;
         Boolean scannedAllRecords = false;
 
+        JobSpeedEnum jobSpeed = jobExecutionResult.getJobInstance().getJobSpeed();
         mainLoop: while (true) {
 
-            if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
+            if (i % jobSpeed.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
                 break;
             }
 
             try {
                 // Record progress
-                if (i > 0 && i % JobSpeedEnum.NORMAL.getUpdateNb() == 0) {
+                if (i > 0 && i % jobSpeed.getUpdateNb() == 0) {
                     jobExecutionResultService.persistResult(jobExecutionResult);
                 }
             } catch (EJBTransactionRolledbackException e) {

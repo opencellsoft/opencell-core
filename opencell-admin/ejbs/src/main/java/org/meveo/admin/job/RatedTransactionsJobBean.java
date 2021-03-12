@@ -37,7 +37,6 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 
 /**
  * A job implementation to convert Open Wallet operations to Rated transactions
@@ -67,7 +66,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWoToRT, this::hasMore, null, JobSpeedEnum.FAST);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWoToRT, this::hasMore, null);
     }
 
     /**

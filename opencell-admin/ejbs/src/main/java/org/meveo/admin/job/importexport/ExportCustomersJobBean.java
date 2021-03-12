@@ -46,9 +46,9 @@ import org.meveo.model.jaxb.customer.CustomerAccounts;
 import org.meveo.model.jaxb.customer.Customers;
 import org.meveo.model.jaxb.customer.Sellers;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.job.JobExecutionService;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -96,9 +96,12 @@ public class ExportCustomersJobBean {
         sellers = new Sellers(sellersInDB);// ,param.getProperty("connectorCRM.dateFormat",
                                            // "yyyy-MM-dd"));
         int i = 0;
+        
+        int checkJobStatusEveryNr = result.getJobInstance().getJobSpeed().getCheckNb();
+        
         for (org.meveo.model.jaxb.customer.Seller seller : sellers.getSeller()) {
             
-            if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
+            if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
             List<Customer> customers = customerService.listBySellerCode(seller.getCode());

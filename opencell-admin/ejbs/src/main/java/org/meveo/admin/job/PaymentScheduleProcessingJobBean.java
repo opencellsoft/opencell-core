@@ -32,7 +32,6 @@ import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
-import org.meveo.service.job.JobExecutionService.JobSpeedEnum;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceItemService;
 
 /**
@@ -52,7 +51,7 @@ public class PaymentScheduleProcessingJobBean extends IteratorBasedJobBean<Payme
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::processPaymentSchedule, null, null, JobSpeedEnum.NORMAL);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::processPaymentSchedule, null, null);
 
     }
 
