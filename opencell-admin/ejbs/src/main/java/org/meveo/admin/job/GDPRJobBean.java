@@ -18,7 +18,10 @@
 
 package org.meveo.admin.job;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -26,6 +29,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.async.GDPRJobAsync;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -73,7 +78,7 @@ public class GDPRJobBean extends BaseJobBean {
 
 	@Inject
 	private SubscriptionService subscriptionService;
-	
+
 	@Inject
     private RatedTransactionService ratedTransactionService;
 
@@ -85,73 +90,100 @@ public class GDPRJobBean extends BaseJobBean {
 
 	@Inject
 	private AccountOperationService accountOperationService;
-	
+
 	@Inject
 	private CustomerService customerService;
 
+	@Inject
+	private GDPRJobAsync gdprJobAsync;
+
 	@JpaAmpNewTx
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void execute(JobExecutionResultImpl result, String parameter) {
 
-		Provider provider = providerService.findById(appProvider.getId());
-		GdprConfiguration gdprConfiguration = provider.getGdprConfigurationNullSafe();
-		
+		GdprConfiguration gdprConfiguration = providerService.getEntityManager()
+				.createQuery("Select p.gdprConfiguration From Provider p Where p.id=:providerId", GdprConfiguration.class)
+				.setParameter("providerId", appProvider.getId())
+				.getSingleResult();
+
+		List<Future<int[]>> futures = new ArrayList<>();
 		try {
-		    int nbItemsToProcess = 0;
-		    
 			if (gdprConfiguration.isDeleteSubscription()) {
-				List<Subscription> inactiveSubscriptions = subscriptionService.listInactiveSubscriptions(gdprConfiguration.getInactiveSubscriptionLife());
+				List<Subscription> inactiveSubscriptions = subscriptionService.listInactiveSubscriptions(gdprConfiguration.getInactiveOrderLife());
 				log.debug("Found {} inactive subscriptions", inactiveSubscriptions.size());
-				nbItemsToProcess += inactiveSubscriptions.size();
-				bulkSubscriptionDelete(inactiveSubscriptions, result);
+				if (!inactiveSubscriptions.isEmpty()) {
+					futures.add(gdprJobAsync.subscriptionBulkDelete(inactiveSubscriptions));
+				}
 			}
 
 			if (gdprConfiguration.isDeleteOrder()) {
 				List<Order> inactiveOrders = orderService.listInactiveOrders(gdprConfiguration.getInactiveOrderLife());
 				log.debug("Found {} inactive orders", inactiveOrders.size());
-				nbItemsToProcess += inactiveOrders.size();
-				bulkOrderDelete(inactiveOrders, result);
+				if (!inactiveOrders.isEmpty()) {
+					futures.add(gdprJobAsync.orderBulkDelete(inactiveOrders));
+				}
 			}
 
 			if (gdprConfiguration.isDeleteInvoice()) {
 				List<Invoice> inactiveInvoices = invoiceService.listInactiveInvoice(gdprConfiguration.getInvoiceLife());
 				log.debug("Found {} inactive invoices", inactiveInvoices.size());
-				nbItemsToProcess += inactiveInvoices.size();
-				bulkInvoiceDelete(inactiveInvoices, result);
+				if (!inactiveInvoices.isEmpty()) {
+					futures.add(gdprJobAsync.invoiceBulkDelete(inactiveInvoices));
+				}
 			}
 
 			if (gdprConfiguration.isDeleteAccounting()) {
 				List<AccountOperation> inactiveAccountOps = accountOperationService.listInactiveAccountOperations(gdprConfiguration.getAccountingLife());
 				log.debug("Found {} inactive accountOperations", inactiveAccountOps.size());
-				nbItemsToProcess += inactiveAccountOps.size();
-				bulkAODelete(inactiveAccountOps, result);
+				if (!inactiveAccountOps.isEmpty()) {
+					futures.add(gdprJobAsync.accountOperationBulkDelete(inactiveAccountOps));
+				}
 			}
 
 			if (gdprConfiguration.isDeleteAoCheckUnpaidLife()) {
 				List<AccountOperation> unpaidAccountOperations = accountOperationService.listUnpaidAccountOperations(gdprConfiguration.getAoCheckUnpaidLife());
 				log.debug("Found {} unpaid accountOperations", unpaidAccountOperations.size());
-				nbItemsToProcess += unpaidAccountOperations.size();
-				bulkAODelete(unpaidAccountOperations, result);
+				if (!unpaidAccountOperations.isEmpty()) {
+					futures.add(gdprJobAsync.accountOperationBulkDelete(unpaidAccountOperations));
+				}
 			}
 
 			if(gdprConfiguration.isDeleteCustomerProspect()) {
 				List<Customer> oldCustomerProspects = customerService.listInactiveProspect(gdprConfiguration.getCustomerProspectLife());
 				log.debug("Found {} old customer prospects", oldCustomerProspects.size());
-				nbItemsToProcess += oldCustomerProspects.size();
-				bulkProspectDelete(oldCustomerProspects, result);
+				if (!oldCustomerProspects.isEmpty()) {
+					futures.add(gdprJobAsync.contactBulkDelete(oldCustomerProspects));
+				}
 			}
-			
-			result.registerSucces();
-			result.setNbItemsToProcess(nbItemsToProcess);
+
+			for (Future<int[]> future: futures) {
+				try {
+					int[] asyncResult = future.get();
+					result.addNbItemsCorrectlyProcessed(asyncResult[0]);
+					result.addNbItemsProcessedWithError(asyncResult[1]);
+				} catch (InterruptedException e) {
+					// It was cancelled from outside - no interest
+				} catch (ExecutionException e) {
+					Throwable cause = e.getCause();
+					if(result != null) {
+						result.registerError(cause.getMessage());
+						result.addReport(cause.getMessage());
+					}
+					log.error("Failed to execute async method", cause);
+				}
+			}
+			if (result.getNbItemsProcessedWithError() > 0) {
+				result.addReport("Many items are treated with errors. Please check logs for more details");
+			}
+			// TODO: check for mailing
 			
 		} catch (Exception e) {
 			log.error("Failed to run GDPR data erasure job", e);
-			result.addReport(e.getMessage());
 			result.registerError(e.getMessage());
 		}
 	}
-	
+
 	/**
      * Bulk delete prospects.
      *
@@ -170,7 +202,7 @@ public class GDPRJobBean extends BaseJobBean {
             }
         }
     }
-    
+
     /**
      * Bulk delete accountOperations.
      *
@@ -189,7 +221,7 @@ public class GDPRJobBean extends BaseJobBean {
             }
         }
     }
-    
+
     /**
      * Bulk delete invoices.
      *
@@ -209,7 +241,7 @@ public class GDPRJobBean extends BaseJobBean {
             }
         }
     }
-    
+
     /**
      * Bulk delete orders.
      *
@@ -228,7 +260,7 @@ public class GDPRJobBean extends BaseJobBean {
             }
         }
     }
-    
+
     /**
      * Bulk delete subscriptions.
      *
