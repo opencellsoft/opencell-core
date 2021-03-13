@@ -44,6 +44,7 @@ import org.meveo.model.dwh.GdprConfiguration;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
@@ -93,6 +94,9 @@ public class GDPRJobBean extends BaseJobBean {
 
 	@Inject
 	private CustomerService customerService;
+
+	@Inject
+	private GDPRJobAsync gdprJobAsync;
 
 	@Inject
 	private GDPRJobAsync gdprJobAsync;
