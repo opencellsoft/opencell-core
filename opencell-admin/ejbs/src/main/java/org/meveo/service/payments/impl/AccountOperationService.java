@@ -264,18 +264,6 @@ public class AccountOperationService extends PersistenceService<AccountOperation
     }
 
     /**
-     * Bulk delete.
-     *
-     * @param inactiveAccountOps the inactive account ops
-     * @throws BusinessException the business exception
-     */
-    public void bulkDelete(List<AccountOperation> inactiveAccountOps) throws BusinessException {
-        for (AccountOperation e : inactiveAccountOps) {
-            remove(e);
-        }
-    }
-
-    /**
      * Count unmatched AOs by CA.
      * 
      * @param customerAccount Customer Account.
