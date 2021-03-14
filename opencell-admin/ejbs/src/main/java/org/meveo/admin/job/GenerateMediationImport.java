@@ -35,7 +35,7 @@ public class GenerateMediationImport {
 	private Logger log;
 
 	public GenerateMediationImport() {
-		System.out.println("start creating mediation file...");
+		log.info("start creating mediation file...");
 		outputFile = outputFile + ACCESS_NAME + "_" + MAX_ROW + ".csv";
 		PrintWriter out = null;
 		int count = 0;
@@ -76,6 +76,6 @@ public class GenerateMediationImport {
 			}
 		}
 
-		System.out.println("DONE. " + count + " created.");
+		log.info("DONE. " + count + " created.");
 	}
 }

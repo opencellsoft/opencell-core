@@ -59,7 +59,7 @@ public class GenerateImportXml {
 	 * @param args an array of string argument for the program
 	 */
 	public static void main(String[] args) {
-		System.out.println("Start import...");
+		
 		
 		try {
 			Sellers sellers = new Sellers();
@@ -220,7 +220,7 @@ public class GenerateImportXml {
 			JAXBUtils.marshaller(billingAccounts, new File(accountsFile));
 			JAXBUtils.marshaller(subscriptions, new File(subscriptionsFile));
 
-			System.out.println("Import completed successfully.");
+			log.info("Import completed successfully.");
 		} catch (Exception e) {
 			log.error("error = {}", e);
 		}

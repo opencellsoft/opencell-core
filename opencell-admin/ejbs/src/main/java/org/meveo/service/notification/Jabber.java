@@ -61,15 +61,14 @@ public class Jabber {
         try {
             // establish connection between client and server.
             connection.connect();
-            System.out.println("Connected to " + connection.getHost());
             // call base class function to get login
             connection.login(username, password);
 
-            System.out.println(connection.isAuthenticated());
+           
 
             Presence presence = new Presence(Presence.Type.available);
             connection.sendPacket(presence);
-            System.out.println("presence is ............" + presence.toXML());
+            log.info("presence is ............" + presence.toXML());
 
         } catch (Exception e) {
             log.error("connection failed", e);
@@ -92,10 +91,10 @@ public class Jabber {
      * @throws XMPPException exception
      */
     public void sendMessage(String message, String to) throws XMPPException {
-        System.out.println("Message is ......." + message);
+    	log.info("Message is ......." + message);
         // Chat chat = connection.getChatManager().createChat(to, new Jabber());
 
-        System.out.println("Chat obj is ........" + chat);
+        log.info("Chat obj is ........" + chat);
     }
 
     /**
@@ -106,10 +105,10 @@ public class Jabber {
         roster.setSubscriptionMode(Roster.SubscriptionMode.manual);
         Collection<RosterEntry> entries = roster.getEntries();
 
-        System.out.println("\n\n" + entries.size() + " buddy(ies):");
+        log.info("\n\n" + entries.size() + " buddy(ies):");
         for (RosterEntry r : entries) {
-            System.out.println(r.getUser());
-            System.out.println(r.getName());
+        	log.info(r.getUser());
+        	log.info(r.getName());
         }
     }
 
@@ -119,7 +118,7 @@ public class Jabber {
      */
     public void processMessage(Chat chat, Message message) {
         if (message.getType() == Message.Type.chat) {
-            System.out.println(chat.getParticipant() + " says: " + message.getBody());
+            log.info(chat.getParticipant() + " says: " + message.getBody());
         }
     }
 }
