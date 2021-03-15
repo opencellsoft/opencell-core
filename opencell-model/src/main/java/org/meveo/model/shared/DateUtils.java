@@ -59,6 +59,7 @@ public class DateUtils {
     public static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ssXXX";
     private static final String START_DATE_DELIMITER = "[";
     private static final String END_DATE_DELIMITER = "]";
+    private static final Logger log = LoggerFactory.getLogger(DateUtils.class);
 
     public static synchronized Date getCurrentDateWithUniqueSeconds() {
         long current = System.currentTimeMillis();
@@ -668,7 +669,7 @@ public class DateUtils {
                         try {
                             result = sdf.parse(year + "-" + month + "-" + day);
                         } catch (ParseException e) {
-                            e.printStackTrace();
+                            log.error("error = {}", e);
                         }
                     }
                 }
@@ -871,7 +872,6 @@ public class DateUtils {
             cal.set(Calendar.MILLISECOND, 0);
             return cal.getTime();
         } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(DateUtils.class);
             log.error(" error on truncateTime : [{}] ", e.getMessage());
             return date;
         }
@@ -887,7 +887,6 @@ public class DateUtils {
             return formatDateWithPattern(date, toFormat);
 
         } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(DateUtils.class);
             log.error(" error on changeFormat : [{}] ", e.getMessage());
             return dateValue;
         }

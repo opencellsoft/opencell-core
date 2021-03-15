@@ -1,18 +1,34 @@
 package org.meveo.apiv2.generic.core.filter;
 
-import org.meveo.apiv2.generic.core.filter.filtermapper.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
+import org.meveo.apiv2.generic.core.filter.filtermapper.AuditableMapper;
+import org.meveo.apiv2.generic.core.filter.filtermapper.CustomFieldMapper;
+import org.meveo.apiv2.generic.core.filter.filtermapper.DateMapper;
+import org.meveo.apiv2.generic.core.filter.filtermapper.DefaultMapper;
+import org.meveo.apiv2.generic.core.filter.filtermapper.EnumMapper;
+import org.meveo.apiv2.generic.core.filter.filtermapper.NumberMapper;
+import org.meveo.apiv2.generic.core.filter.filtermapper.ObjectMapper;
+import org.meveo.apiv2.generic.core.filter.filtermapper.ReferenceMapper;
+import org.meveo.apiv2.generic.core.filter.filtermapper.TypeClassMapper;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.BaseEntity;
 import org.meveo.service.base.PersistenceService;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.function.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public interface FactoryMapper {
+	static final Logger log = LoggerFactory.getLogger(FactoryMapper.class);
     Set<String> simpleField = new HashSet<>(Arrays.asList("id", "type_class", "cfValues"));
     default FilterMapper create(String property, Object value, Class clazz, Function<Class, PersistenceService> entityManagerResolver) {
         if(simpleField.contains(property) || clazz != null && clazz.getSimpleName().equalsIgnoreCase(property)){
@@ -31,7 +47,7 @@ public interface FactoryMapper {
                 return resolveFilterMapperType(property.substring(property.lastIndexOf(".")+1), value, field.getType(), entityManagerResolver);
             }
         } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
             throw new IllegalArgumentException("Invalid argument : " + property);
         }
         return null;

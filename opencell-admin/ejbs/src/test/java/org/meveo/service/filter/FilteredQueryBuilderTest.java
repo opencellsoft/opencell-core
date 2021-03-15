@@ -45,6 +45,8 @@ import org.meveo.model.filter.NativeFilterCondition;
 import org.meveo.model.filter.OrCompositeFilterCondition;
 import org.meveo.model.filter.OrderCondition;
 import org.meveo.model.filter.PrimitiveFilterCondition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
@@ -54,6 +56,7 @@ public class FilteredQueryBuilderTest extends BaseFilterTest {
 
 	@Inject
 	private FilterService filterService;
+	private static final Logger log = LoggerFactory.getLogger(FilteredQueryBuilderTest.class);
 
 	@Deployment
 	public static Archive<?> createTestArchive() {
@@ -165,7 +168,7 @@ public class FilteredQueryBuilderTest extends BaseFilterTest {
 
 			Assert.assertNotNull(result);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 	}
 }

@@ -622,7 +622,7 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         try {
             paymentUrl = paymentMethodApi.getHostedCheckoutUrl(hostedCheckoutInput);
         } catch (BusinessException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
         PaymentHostedCheckoutResponseDto paymentHostedCheckoutResponseDto = new PaymentHostedCheckoutResponseDto(
                 paymentUrl, customerAccountCode, returnUrl);

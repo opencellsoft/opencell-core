@@ -40,6 +40,9 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 
 /**
@@ -77,6 +80,7 @@ public class Sellers {
     @XmlElement(required = true)
     protected Warnings warnings;
     protected List<Seller> seller;
+    private static final Logger log = LoggerFactory.getLogger(Sellers.class);
 
     public Sellers() {
     }
@@ -187,7 +191,7 @@ public class Sellers {
 			});
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 
 	}
