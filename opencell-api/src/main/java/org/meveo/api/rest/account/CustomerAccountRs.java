@@ -18,6 +18,7 @@
 
 package org.meveo.api.rest.account;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
@@ -64,6 +65,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @POST
     @Path("/")
+    @Operation(summary = "Create a customer account",
+            tags = { "Customer account management" })
     ActionStatus create(CustomerAccountDto postData);
 
     /**
@@ -74,6 +77,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+    @Operation(summary = "Update a customer account",
+            tags = { "Customer account management" })
     ActionStatus update(CustomerAccountDto postData);
 
     /**
@@ -88,9 +93,29 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @GET
     @Path("/")
+    @Operation(summary = "Get a customer account", deprecated = true,
+            tags = { "Deprecated" })
     GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") boolean calculateBalances,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF, @QueryParam("withAccountOperations") boolean withAccountOperations,
             @QueryParam("includeBillingAccounts") boolean includeBillingAccounts);
+
+    /**
+     * Search for a customer account with a given code.
+     *
+     * @param customerAccountCode The customer account's code
+     * @param calculateBalances True if needs to calculate balances
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @param withAccountOperations True if needs to get account operations
+     * @param includeBillingAccounts True to include billing accounts
+     * @return customer account
+     */
+    @GET
+    @Path("/{customerAccountCode}")
+    @Operation(summary = "Get a customer account",
+            tags = { "Customer account management" })
+    GetCustomerAccountResponseDto findV2(@PathParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") boolean calculateBalances,
+                                       @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF, @QueryParam("withAccountOperations") boolean withAccountOperations,
+                                       @QueryParam("includeBillingAccounts") boolean includeBillingAccounts);
 
     /**
      * Remove customerAccount with a given code.
@@ -100,6 +125,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @DELETE
     @Path("/{customerAccountCode}")
+    @Operation(summary = "Delete a customer account",
+            tags = { "Customer account management" })
     ActionStatus remove(@PathParam("customerAccountCode") String customerAccountCode);
 
     /**
@@ -110,6 +137,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+    @Operation(summary = "Create a customer account",
+            tags = { "Customer account management" })
     CustomerAccountsResponseDto listByCustomer(@QueryParam("customerCode") String customerCode);
 
     /**
