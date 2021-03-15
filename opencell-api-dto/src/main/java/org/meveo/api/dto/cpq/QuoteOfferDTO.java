@@ -75,6 +75,9 @@ public class QuoteOfferDTO extends BaseEntityDto{
     
     private CustomFieldsDto customFields;
     
+    /** Discount plan code */
+	private String discountPlanCode;
+    
     
 
    
@@ -91,6 +94,7 @@ public class QuoteOfferDTO extends BaseEntityDto{
 		offerCode=quoteOffer.getOfferTemplate().getCode();
 		billableAccountCode=quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount().getCode():null;
 		contractCode=quoteOffer.getContractCode();
+		discountPlanCode=quoteOffer.getDiscountPlan()!=null?quoteOffer.getDiscountPlan().getCode():null;
 		
 	}
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
@@ -245,6 +249,18 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	 */
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+	/**
+	 * @return the discountPlanCode
+	 */
+	public String getDiscountPlanCode() {
+		return discountPlanCode;
+	}
+	/**
+	 * @param discountPlanCode the discountPlanCode to set
+	 */
+	public void setDiscountPlanCode(String discountPlanCode) {
+		this.discountPlanCode = discountPlanCode;
 	}
 	
 	

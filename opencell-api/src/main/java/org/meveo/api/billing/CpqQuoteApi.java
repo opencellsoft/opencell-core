@@ -103,6 +103,7 @@ import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.AttributeService;
@@ -190,6 +191,10 @@ public class CpqQuoteApi extends BaseApi {
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
+    
+    
+    @Inject
+    private DiscountPlanService discountPlanService;
 
     @Inject
     private QuoteMapper quoteMapper;
@@ -233,6 +238,9 @@ public class CpqQuoteApi extends BaseApi {
 
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
         cpqQuote.setSendDate(quote.getSendDate());
+        if(!Strings.isEmpty(quote.getDiscountPlanCode())) {
+            cpqQuote.setDiscountPlan(discountPlanService.findByCode(quote.getDiscountPlanCode()));
+        }
 
         cpqQuote.setQuoteLotDateBegin(quote.getQuoteLotDateBegin());
         cpqQuote.setQuoteLotDuration(quote.getQuoteLotDuration());
@@ -661,6 +669,9 @@ public class CpqQuoteApi extends BaseApi {
         if (!Strings.isEmpty(quoteOfferDto.getQuoteLotCode()))
             quoteOffer.setQuoteLot(quoteLotService.findByCode(quoteOfferDto.getQuoteLotCode()));
 //		quoteOffer.setSequence(quoteOfferDto.gets); // no sequence found in quoteOfferDto
+        if(!Strings.isEmpty(quoteOfferDto.getDiscountPlanCode())) {
+        	quoteOffer.setDiscountPlan(discountPlanService.findByCode(quoteOfferDto.getDiscountPlanCode()));
+        }
         populateCustomFields(quoteOfferDto.getCustomFields(), quoteOffer, true);
         quoteOfferService.create(quoteOffer);
         quoteOfferDto.setQuoteOfferId(quoteOffer.getId());
