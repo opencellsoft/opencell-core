@@ -137,9 +137,21 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    @Operation(summary = "Create a customer account",
-            tags = { "Customer account management" })
+    @Operation(summary = "List CustomerAccount filtered by customerCode", deprecated = true,
+            tags = { "Deprecated" })
     CustomerAccountsResponseDto listByCustomer(@QueryParam("customerCode") String customerCode);
+
+    /**
+     * List CustomerAccount filtered by customerCode.
+     *
+     * @param customerCode The customer account's code
+     * @return list of customer account by customer.
+     */
+    @GET
+    @Path("/customer/{customerCode}")
+    @Operation(summary = "List CustomerAccount filtered by customerCode",
+            tags = { "Customer account management" })
+    CustomerAccountsResponseDto listByCustomerV2(@QueryParam("customerCode") String customerCode);
 
     /**
      * Create a new credit category.
@@ -149,6 +161,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @POST
     @Path("/creditCategory")
+    @Operation(summary = "Create a credit category",
+            tags = { "Customer account management" })
     ActionStatus createCreditCategory(CreditCategoryDto postData);
 
     /**
@@ -159,6 +173,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @DELETE
     @Path("/creditCategory/{creditCategoryCode}")
+    @Operation(summary = "delete a credit category",
+            tags = { "Customer account management" })
     ActionStatus removeCreditCategory(@PathParam("creditCategoryCode") String creditCategoryCode);
 
     /**
@@ -169,6 +185,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+    @Operation(summary = "Create or update a customer account", deprecated = true,
+            tags = { "Deprecated" })
     ActionStatus createOrUpdate(CustomerAccountDto postData);
 
     /**
@@ -179,6 +197,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @POST
     @Path("/transferAccount")
+    @Operation(summary = "Transfer an amount from one customer to another",
+            tags = { "Customer account management" })
     ActionStatus transferAccount(TransferCustomerAccountDto transferCustomerAccountDto);
 
     /**
@@ -190,6 +210,21 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @GET
     @Path("/filterCountersByPeriod")
+    @Operation(summary = "Filter counters by period date.", deprecated = true,
+            tags = { "Deprecated" })
     GetCountersInstancesResponseDto filterCustomerAccountCountersByPeriod(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("date") @RestDateParam Date date);
+
+    /**
+     * Filter counters by period date.
+     *
+     * @param customerAccountCode The customer account's code
+     * @param date The date corresponding to the period
+     * @return counter instances.
+     */
+    @GET
+    @Path("/{customerAccountCode}/filterCountersByPeriod")
+    @Operation(summary = "Filter counters by period date.",
+            tags = { "Customer account management" })
+    GetCountersInstancesResponseDto filterCustomerAccountCountersByPeriodV2(@PathParam("customerAccountCode") String customerAccountCode, @QueryParam("date") @RestDateParam Date date);
 
 }
