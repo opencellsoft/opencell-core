@@ -397,14 +397,14 @@ public interface SubscriptionRs extends IBaseRs {
     
     
     /**
-     * Create a subscription and instanciate services in a single transaction.
+     * Create a subscription and instanciate product in a single transaction.
      * 
-     * @param postData Subscription and services to activate data
+     * @param postData Subscription and products to i
      * @return Request processing status
      */
     @POST
-    @Path("/subscribeAndInstantiateServices")
-    ActionStatus subscribeAndInstantiateServices(SubscriptionAndServicesToActivateRequestDto postData);
+    @Path("/subscribeAndInstantiateProducts")
+    ActionStatus subscribeAndInstantiateProducts(SubscriptionAndProductsToInstantiateDto postData);
 
     @PATCH
     @Path("/{code}/offer")

@@ -109,7 +109,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.activateServices(postData,true);
+            subscriptionApi.activateServices(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -471,10 +471,10 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
     
     @Override
-    public ActionStatus subscribeAndInstantiateServices(SubscriptionAndServicesToActivateRequestDto postData) {
+    public ActionStatus subscribeAndInstantiateProducts(SubscriptionAndProductsToInstantiateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            subscriptionApi.subscribeAndInstantiateServices(postData);
+            subscriptionApi.subscribeAndInstantiateProducts(postData);
         } catch (Exception e) {
             processException(e, result);
         }

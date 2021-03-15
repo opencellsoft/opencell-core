@@ -4035,6 +4035,12 @@ public class OrderAdvancement extends ModuleScript {
 		<addForeignKeyConstraint baseColumnNames="cpq_order_offer_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_cpq_order_offer_id" deferrable="false" initiallyDeferred="false"
 			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
 	  </changeSet>
+	  
+	   <changeSet id="#20210315-329" author="Mbarek-Ay">
+	<dropForeignKeyConstraint baseTableName="billing_service_instance" constraintName="fk_cpq_quote_version_serviceInstance_id"/>
+		<addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="billing_service_instance" constraintName="fk_cpq_product_version_serviceInstance_id" deferrable="false" initiallyDeferred="false"
+									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+	  </changeSet>
 	
 	
 

@@ -115,7 +115,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.activateServices(postData,true);
+            subscriptionApi.activateServices(postData);
         } catch (Exception e) {
             processException(e, result);
         }
