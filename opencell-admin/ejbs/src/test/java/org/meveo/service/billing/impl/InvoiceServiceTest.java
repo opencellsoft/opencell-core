@@ -11,7 +11,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -33,19 +35,46 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.apiv2.billing.ImmutableBasicInvoice;
+import org.meveo.apiv2.billing.ImmutableInvoice;
+import org.meveo.apiv2.models.Resource;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.*;
-import org.meveo.model.cpq.commercial.InvoiceLine;
-import org.meveo.model.crm.Customer;
+import org.meveo.model.billing.AccountingCode;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.InvoiceLinesGroup;
+import org.meveo.model.billing.InvoicePaymentStatusEnum;
+import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionGroup;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
@@ -104,6 +133,9 @@ public class InvoiceServiceTest {
 
     @Mock
     private InvoiceLinesService invoiceLinesService;
+    
+    @Mock
+    private ServiceSingleton serviceSingleton;
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();
@@ -856,7 +888,7 @@ public class InvoiceServiceTest {
 				put(InvoiceStatusEnum.SUSPECT, true);
 			}
 		};
-		
+		final ImmutableInvoice invoiceResource = ImmutableInvoice.builder().build();
 		for (InvoiceStatusEnum status : InvoiceStatusEnum.values()) {
 			Invoice invoice = new Invoice();
 			invoice.setStatus(status);
@@ -868,12 +900,13 @@ public class InvoiceServiceTest {
 			}
 			Mockito.doReturn(invoice).when(invoiceService).update(invoice);
 			if(updateEligibilityMap.get(status)) {
-				invoiceService.update(invoice, input);
+				
+				invoiceService.update(invoice, input, invoiceResource);
 				verify(invoiceService, times(1)).update(invoice);
 			} else {
 				exception.expect(BusinessException.class);
 				exception.expectMessage("Can only update invoices in statuses DRAFT/SUSPECT/REJECTED");
-				invoiceService.update(invoice, input);
+				invoiceService.update(invoice, input, invoiceResource);
 				verify(invoiceService, times(0)).update(invoice);
 			}
 		}
@@ -881,22 +914,46 @@ public class InvoiceServiceTest {
     
     @Test
 	public void test_create_advance_payment_invoice() throws Exception {
-    	/*
     	ImmutableBasicInvoice inputInvoice = instantiateRandomObject(ImmutableBasicInvoice.class, false);
     	Order order = instantiateRandomObject(Order.class, true);
     	BillingAccount billingAccount  = instantiateRandomObject(BillingAccount.class, true);
+    	
     	AccountingArticle accountingArticle  = instantiateRandomObject(AccountingArticle.class, true);
     	InvoiceType advType = instantiateRandomObject(InvoiceType.class, true);
     	advType.setCode("ADV");
+    	CustomerAccount ca  = instantiateRandomObject(CustomerAccount.class, true);
+    	Customer c  = instantiateRandomObject(Customer.class, true);
+    	ca.setCustomer(c);
+    	BillingCycle bc  = instantiateRandomObject(BillingCycle.class, true);
+    	billingAccount.setBillingCycle(bc);
+    	billingAccount.setCustomerAccount(ca);
     	
-    	when(invoiceService.tryToFindByEntityClassAndCode(Order.class, inputInvoice.getOrderCode())).thenReturn(order);
-    	when(invoiceService.tryToFindByEntityClassAndCode(BillingAccount.class, inputInvoice.getBillingAccountCode())).thenReturn(billingAccount);
-    	when(invoiceService.tryToFindByEntityClassAndCode(AccountingArticle.class, inputInvoice.getArticleCode())).thenReturn(accountingArticle);
-    	when(invoiceService.tryToFindByEntityClassAndCode(InvoiceType.class, "ADV")).thenReturn(advType);
+    	Mockito.doReturn(order).when(invoiceService).tryToFindByEntityClassAndCode(Order.class, inputInvoice.getOrderCode());
+    	Mockito.doReturn(billingAccount).when(invoiceService).tryToFindByEntityClassAndCode(BillingAccount.class, inputInvoice.getBillingAccountCode());
+    	Mockito.doReturn(accountingArticle).when(invoiceService).tryToFindByEntityClassAndCode(AccountingArticle.class, inputInvoice.getArticleCode());
+    	Mockito.doReturn(advType).when(invoiceService).tryToFindByEntityClassAndCode(InvoiceType.class, "ADV");
+    	Mockito.doNothing().when(invoiceService).postCreate(any());
+    	final Invoice advancePaymentInvoice = invoiceService.createAdvancePaymentInvoice(inputInvoice);
     	
-    	invoiceService.createAdvancePaymentInvoice(inputInvoice);
-    	*/
-    	//TODO MEL
+    	BigDecimal amountWithTax = inputInvoice.getAmountWithTax();
+    	Date invoiceDate = inputInvoice.getInvoiceDate();
+    	
+    	assertThat(advancePaymentInvoice.getAmountTax()).isEqualTo(BigDecimal.ZERO);
+		assertThat(advancePaymentInvoice.getInvoiceType()).isEqualTo(advType);
+		assertThat(advancePaymentInvoice.getBillingAccount()).isEqualTo(billingAccount);
+		assertThat(advancePaymentInvoice.getOrder()).isEqualTo(order);
+		assertThat(advancePaymentInvoice.getPaymentStatus()).isEqualTo(InvoicePaymentStatusEnum.NONE);
+		assertThat(advancePaymentInvoice.getStartDate()).isEqualTo(invoiceDate);
+		assertThat(advancePaymentInvoice.getAmountWithTax()).isEqualTo(amountWithTax);
+		assertThat(advancePaymentInvoice.getRawAmount()).isEqualTo(amountWithTax);
+		assertThat(advancePaymentInvoice.getAmountWithoutTax()).isEqualTo(amountWithTax);
+		assertThat(advancePaymentInvoice.getAmountTax()).isEqualTo(BigDecimal.ZERO);
+		assertThat(advancePaymentInvoice.getDiscountAmount()).isEqualTo(BigDecimal.ZERO);
+		assertThat(advancePaymentInvoice.getInvoiceDate()).isEqualTo(invoiceDate);
+		assertThat(advancePaymentInvoice.getNetToPay()).isEqualTo(amountWithTax);
+		assertThat(advancePaymentInvoice.getStatus()).isEqualTo(InvoiceStatusEnum.VALIDATED);
+    	 
+    	//TODO
     }
     
     @Test
@@ -910,7 +967,8 @@ public class InvoiceServiceTest {
 			e.printStackTrace();
 		}
 		Mockito.doReturn(invoice).when(invoiceService).update(invoice);
-		invoiceService.update(invoice, input);
+		final ImmutableInvoice invoiceResource = ImmutableInvoice.builder().build();
+		invoiceService.update(invoice, input, invoiceResource);
 		verify(invoiceService, times(1)).update(invoice);
 		assertObjectWasUpdated(invoice, input, Arrays.asList("comment","externalRef","invoiceDate","dueDate","paymentMethod","cfValues"), null, false, false);
 	}
@@ -943,18 +1001,6 @@ public class InvoiceServiceTest {
 		return oldValue.equals(newValue);
 	}
     
-    public <T> T instantiateRandomObject(Class<T> clazz, boolean onlyBasicFields) throws Exception {
-        T instance = clazz.newInstance();
-        for(Field field: clazz.getDeclaredFields()) {
-        	if (!java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
-	            field.setAccessible(true);
-	            Object value = getRandomValueForField(field, onlyBasicFields);
-	            field.set(instance, value);
-        	}
-        }
-        return instance;
-    }
-
     @Test
     public void test_getInvoiceLines_EntityToInvoice_BillingAccount() {
         BillingAccount ba = mock(BillingAccount.class);
@@ -1201,6 +1247,43 @@ public class InvoiceServiceTest {
         assertThat(subAggr11.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, HALF_UP));
     }
 
+	public <T> T instantiateRandomObject(Class<T> clazz, boolean onlyBasicFields) throws Exception {
+		T instance = null;
+		if(Resource.class.isAssignableFrom(clazz)) {
+			Method builderMethod = clazz.getMethod("builder");
+			Object builder = builderMethod.invoke(null);
+			final Class builderClass = builder.getClass();
+			final Method build = builderClass.getMethod("build");
+			
+			for (Field field : clazz.getDeclaredFields()) {
+				final String name = field.getName();
+				if (!java.lang.reflect.Modifier.isStatic(field.getModifiers()) && name!="id" && name!="links" && !name.endsWith("EL")) {
+					Method accessor = builderClass.getMethod(name, field.getType());
+					Object value = getRandomValueForField(field, onlyBasicFields);
+					accessor.invoke(builder, value);
+				}
+			}
+			instance =  (T)build.invoke(builder);
+		} else {
+			final Constructor<T>[] constructors = (Constructor<T>[]) clazz.getConstructors();
+			if(constructors!=null && constructors.length>0) {
+				final Constructor<T> constructor = constructors[0];
+				Object[] cargs = new Object[constructor.getParameterCount()];
+				instance = constructor.newInstance(cargs);
+				for (Field field : clazz.getDeclaredFields()) {
+					if (!java.lang.reflect.Modifier.isStatic(field.getModifiers()) && !field.getName().endsWith("EL")) {
+						field.setAccessible(true);
+						Object value = getRandomValueForField(field, onlyBasicFields);
+						field.set(instance, value);
+					}
+				}
+			} else {
+				System.out.println("WARNING: NO CONSTRUCTOR FOR "+clazz);
+			}
+		}
+		return instance;
+	}
+ 
 	private Object getRandomValueForField(Field field, boolean onlyBasicFields) throws Exception {
 		Class<?> type = field.getType();
 		if (type.isEnum()) {
@@ -1229,4 +1312,5 @@ public class InvoiceServiceTest {
 		}
 		return null;
 	}
+	
 }
