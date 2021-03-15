@@ -90,7 +90,7 @@ public class RecurringChargeAsync {
                 unitRecurringRatingJobBean.execute(result, id, maxDate);
 
             } catch (Exception e) {
-                // Ignore error here - it was caught already
+                log.error("Failed to rate charge instance {}", id, e);
             }
             
             jobExecutionService.decCounterElementsRemaining(result);
