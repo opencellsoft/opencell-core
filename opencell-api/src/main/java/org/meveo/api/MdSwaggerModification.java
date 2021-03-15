@@ -49,7 +49,6 @@ public class MdSwaggerModification {
             writer.close();
             lnr.close();
         } catch (Exception e) {
-            System.out.println("File not found");
             log.error("error = {}", e);
         }
     }
@@ -69,7 +68,7 @@ public class MdSwaggerModification {
 
         } catch (FileNotFoundException e1) {
             //e1.printStackTrace();
-            System.out.println("File Not Found for "+nameFile);
+            log.error("File Not Found for "+nameFile);
             returnline="    @%"+nameFile;
 
         } catch (IOException e1) {
@@ -92,7 +91,7 @@ public class MdSwaggerModification {
 
         } catch (FileNotFoundException e1) {
             //e1.printStackTrace();
-            System.out.println("File not Found for "+nameFile);
+            log.error("File not Found for "+nameFile);
             returnline="    @%"+nameFile;
 
         } catch (IOException e1) {

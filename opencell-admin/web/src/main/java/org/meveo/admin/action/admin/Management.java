@@ -217,7 +217,6 @@ public class Management implements Serializable {
             oos.writeObject("init");
             oos.writeObject(application);
             String text = (String) ois.readObject();
-            System.out.println(text);
             close();
 
         } catch (Exception e) {

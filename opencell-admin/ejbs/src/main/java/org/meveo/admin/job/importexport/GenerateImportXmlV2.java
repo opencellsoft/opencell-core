@@ -22,6 +22,8 @@ import org.meveo.model.jaxb.subscription.Status;
 import org.meveo.model.jaxb.subscription.Subscription;
 import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.shared.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GenerateImportXmlV2 {
 
@@ -55,6 +57,8 @@ public class GenerateImportXmlV2 {
 	private static String paymentMethod = "CHECK";
 
 	/***********************************************************************/
+	
+	private static final Logger log = LoggerFactory.getLogger(GenerateImportXmlV2.class);
 
 	/**
 	 * @param args argurments
@@ -64,15 +68,15 @@ public class GenerateImportXmlV2 {
 	}
 
 	public GenerateImportXmlV2() {
-		System.out.println("import START");
+		
 
 		generateCustomers();
 
-		System.out.println("Import DONE.");
+		
 	}
 
 	private void generateCustomers() {
-		System.out.println("Preparing to import " + MAX_SELLERS + " sellers...");
+		log.info("Preparing to import " + MAX_SELLERS + " sellers...");
 
 		try {
 
@@ -91,7 +95,6 @@ public class GenerateImportXmlV2 {
 
 			int accessCtr = 0;
 			for (int i = 0; i < MAX_SELLERS; i++) {
-				System.out.println("processing seller # " + i);
 
 				Seller seller = new Seller();
 				seller.setCode("JOB_SELLER" + i);
@@ -202,7 +205,7 @@ public class GenerateImportXmlV2 {
 			JAXBUtils.marshaller(subscriptions, new File(subscriptionsFile));
 
 		} catch (Exception e) {
-			System.out.println("ERROR: " + e.getMessage());
+			log.error("ERROR: " + e.getMessage());
 		}
 	}
 }
