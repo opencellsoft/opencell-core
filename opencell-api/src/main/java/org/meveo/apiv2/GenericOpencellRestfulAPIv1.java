@@ -62,6 +62,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
     private static final String ACCOUNT_MANAGEMENT = "/accountManagement";
     private static final String CATALOG = "/catalog";
     private static final String BILLING = "/billing";
+    private static final String STOP_SERVICE = "/stop";
     private static final String ENABLE_SERVICE = "/enable";
     private static final String DISABLE_SERVICE = "/disable";
 
@@ -376,6 +377,11 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobs/jobReports", ((Path) anAnnotation).value() + "/jobReport" );
 
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobs/timers", ((Path) anAnnotation).value() + "/timer" );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/jobs\\/" + CODE_REGEX + STOP_SERVICE ) ,
+                                    ((Path) anAnnotation).value() + "/stop" );
+
+                            MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/stop", null );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/PdfInvoice" ) ) {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "/pdfInvoices" ), ((Path) anAnnotation).value() );

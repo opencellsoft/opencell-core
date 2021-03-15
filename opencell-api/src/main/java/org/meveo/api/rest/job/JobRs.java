@@ -60,6 +60,16 @@ public interface JobRs extends IBaseRs {
     @POST
     @Path("/stop/{jobInstanceCode}")
     ActionStatus stop(@PathParam("jobInstanceCode") String jobInstanceCode);
+
+    /**
+     * Stop a given job instance info for put endpoint
+     *
+     * @param jobInstanceCode job instance code
+     * @return request processing status
+     */
+    @PUT
+    @Path("/stop/{jobInstanceCode}")
+    ActionStatus stopForPut(@PathParam("jobInstanceCode") String jobInstanceCode);
     
     /**
      * Create a new job instance

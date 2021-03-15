@@ -73,12 +73,23 @@ public class JobRsImpl extends BaseRs implements JobRs {
 
         return result;
     }
-    
+
     @Override
     public ActionStatus stop(String jobInstanceCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-             jobApi.stopJob(jobInstanceCode);           
+             jobApi.stopJob(jobInstanceCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus stopForPut(String jobInstanceCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            jobApi.stopJob(jobInstanceCode);
         } catch (Exception e) {
             processException(e, result);
         }
