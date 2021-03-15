@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -795,5 +797,13 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 
     public String getDueBalance() {
         return dueBalance;
+    }
+
+    public void setDDPaymentMethods(Set<DDPaymentMethod> ddPaymentMethods) {
+        List<PaymentMethod> ddPaymentMethodsToRemove = paymentMethods.stream()
+                .filter(pm -> pm instanceof DDPaymentMethod)
+                .collect(Collectors.toList());
+        ddPaymentMethods.removeAll(ddPaymentMethodsToRemove);
+        ddPaymentMethods.addAll(ddPaymentMethods);
     }
 }

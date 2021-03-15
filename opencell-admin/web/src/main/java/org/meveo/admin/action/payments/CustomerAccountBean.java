@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -458,6 +459,15 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
                 String error = paymentMethodService.validateBankCoordinates(ddPaymentMethod, entity.getCustomer(), false);
                 if (!StringUtils.isBlank(error)) {
                     throw new BusinessException(error);
+                }
+                Optional<DDPaymentMethod> existingDDPaymentMethod = entity.getDDPaymentMethods()
+                        .stream()
+                        .filter(ddpm -> ddpm.getBankCoordinates().getIban().equals(((DDPaymentMethod) selectedPaymentMethod).getBankCoordinates().getIban()))
+                        .findFirst();
+                if(existingDDPaymentMethod.isPresent()){
+                    DDPaymentMethod existing = existingDDPaymentMethod.get();
+                    existing.copyFrom((DDPaymentMethod)selectedPaymentMethod);
+                    selectedPaymentMethod = existing;
                 }
             }
 

@@ -134,4 +134,17 @@ public class DDPaymentMethod extends PaymentMethod {
 				+ ",  mandateIdentification=" + getMandateIdentification() + ", mandateDate=" + getMandateDate() + "]";
 	}
 
+	public void copyFrom(DDPaymentMethod ddpaymentMethod) {
+		setBankCoordinates(ddpaymentMethod.getBankCoordinates());
+		setAlias(ddpaymentMethod.getAlias());
+		setDisabled(ddpaymentMethod.isDisabled());
+		setInfo1(ddpaymentMethod.getInfo1());
+		setInfo2(ddpaymentMethod.getInfo2());
+		setInfo3(ddpaymentMethod.getInfo3());
+		setInfo4(ddpaymentMethod.getInfo4());
+		setInfo5(ddpaymentMethod.getInfo5());
+		setUserId(ddpaymentMethod.getUserId());
+		setReferenceDocument(ddpaymentMethod.getReferenceDocument());
+		setTokenId(ddpaymentMethod.getTokenId());
+	}
 }

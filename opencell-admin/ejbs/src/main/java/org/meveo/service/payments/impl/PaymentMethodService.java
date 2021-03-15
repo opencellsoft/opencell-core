@@ -19,7 +19,6 @@ package org.meveo.service.payments.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
@@ -94,21 +93,10 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             CustomerAccount customerAccount = ddpaymentMethod.getCustomerAccount();
 
             String iban = ddpaymentMethod.getBankCoordinates().getIban();
-            Optional<DDPaymentMethod> optionalOfExistingDDPaymentMethod = findExistingDDPMwithIban(customerAccount, iban);
+            Optional<DDPaymentMethod> optionalOfExistingDDPaymentMethod = findExistingDDPMwithIban(customerAccount, iban, ddpaymentMethod.getId());
             if (optionalOfExistingDDPaymentMethod.isPresent()) {
                 DDPaymentMethod existingDdPaymentMethod = optionalOfExistingDDPaymentMethod.get();
-                existingDdPaymentMethod.setBankCoordinates(ddpaymentMethod.getBankCoordinates());
-                existingDdPaymentMethod.setAlias(ddpaymentMethod.getAlias());
-                existingDdPaymentMethod.setPreferred(ddpaymentMethod.isPreferred());
-                existingDdPaymentMethod.setDisabled(ddpaymentMethod.isDisabled());
-                existingDdPaymentMethod.setInfo1(ddpaymentMethod.getInfo1());
-                existingDdPaymentMethod.setInfo2(ddpaymentMethod.getInfo2());
-                existingDdPaymentMethod.setInfo3(ddpaymentMethod.getInfo3());
-                existingDdPaymentMethod.setInfo4(ddpaymentMethod.getInfo4());
-                existingDdPaymentMethod.setInfo5(ddpaymentMethod.getInfo5());
-                existingDdPaymentMethod.setUserId(ddpaymentMethod.getUserId());
-                existingDdPaymentMethod.setReferenceDocument(ddpaymentMethod.getReferenceDocument());
-                existingDdPaymentMethod.setTokenId(ddpaymentMethod.getTokenId());
+                existingDdPaymentMethod.copyFrom(ddpaymentMethod);
                 super.update(existingDdPaymentMethod);
                 markOtherPpmAsNotPreferred(existingDdPaymentMethod);
                 return;
@@ -130,10 +118,10 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
     }
 
-    private Optional<DDPaymentMethod> findExistingDDPMwithIban(CustomerAccount customerAccount, String iban) {
+    private Optional<DDPaymentMethod> findExistingDDPMwithIban(CustomerAccount customerAccount, String iban, Long ddPaymentMethodId) {
         return customerAccount.getDDPaymentMethods()
                         .stream()
-                        .filter(ddPm -> ddPm.getBankCoordinates().getIban().equals(iban))
+                        .filter(ddPm -> ddPaymentMethodId != ddPm.getId() && ddPm.getBankCoordinates().getIban().equals(iban))
                         .findFirst();
     }
 
@@ -144,22 +132,11 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             CustomerAccount customerAccount = ddpaymentMethod.getCustomerAccount();
 
             String iban = ddpaymentMethod.getBankCoordinates().getIban();
-            Optional<DDPaymentMethod> optionalOfExistingDDPaymentMethod = findExistingDDPMwithIban(customerAccount, iban);
+            Optional<DDPaymentMethod> optionalOfExistingDDPaymentMethod = findExistingDDPMwithIban(customerAccount, iban, ddpaymentMethod.getId());
             if (optionalOfExistingDDPaymentMethod.isPresent()) {
                 DDPaymentMethod existingDdPaymentMethod = optionalOfExistingDDPaymentMethod.get();
-                existingDdPaymentMethod.setBankCoordinates(ddpaymentMethod.getBankCoordinates());
-                existingDdPaymentMethod.setAlias(ddpaymentMethod.getAlias());
-                existingDdPaymentMethod.setPreferred(ddpaymentMethod.isPreferred());
-                existingDdPaymentMethod.setDisabled(ddpaymentMethod.isDisabled());
-                existingDdPaymentMethod.setInfo1(ddpaymentMethod.getInfo1());
-                existingDdPaymentMethod.setInfo2(ddpaymentMethod.getInfo2());
-                existingDdPaymentMethod.setInfo3(ddpaymentMethod.getInfo3());
-                existingDdPaymentMethod.setInfo4(ddpaymentMethod.getInfo4());
-                existingDdPaymentMethod.setInfo5(ddpaymentMethod.getInfo5());
-                existingDdPaymentMethod.setUserId(ddpaymentMethod.getUserId());
-                existingDdPaymentMethod.setReferenceDocument(ddpaymentMethod.getReferenceDocument());
-                existingDdPaymentMethod.setTokenId(ddpaymentMethod.getTokenId());
-                super.update(existingDdPaymentMethod);
+                existingDdPaymentMethod.copyFrom(ddpaymentMethod);
+                existingDdPaymentMethod = (DDPaymentMethod) super.update(existingDdPaymentMethod);
                 markOtherPpmAsNotPreferred(existingDdPaymentMethod);
                 return existingDdPaymentMethod;
             }
