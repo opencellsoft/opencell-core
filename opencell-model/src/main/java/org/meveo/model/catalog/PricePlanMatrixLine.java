@@ -100,25 +100,21 @@ public class PricePlanMatrixLine extends AuditableEntity {
                 .allMatch(v -> v.match(attributeValues));
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result
-				+ Objects.hash(description, pricePlanMatrixVersion, pricetWithoutTax, priority);
-		return result;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PricePlanMatrixLine)) return false;
+        if (!super.equals(o)) return false;
+        PricePlanMatrixLine that = (PricePlanMatrixLine) o;
+        return Objects.equals(getPricePlanMatrixVersion(), that.getPricePlanMatrixVersion()) &&
+                Objects.equals(getDescription(), that.getDescription()) &&
+                Objects.equals(getPricetWithoutTax(), that.getPricetWithoutTax()) &&
+                Objects.equals(getPricePlanMatrixValues(), that.getPricePlanMatrixValues()) &&
+                Objects.equals(getPriority(), that.getPriority());
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
-		PricePlanMatrixLine other = (PricePlanMatrixLine) obj;
-		return Objects.equals(description, other.description)
-				&& Objects.equals(pricePlanMatrixVersion, other.pricePlanMatrixVersion)
-				&& Objects.equals(pricetWithoutTax, other.pricetWithoutTax) && Objects.equals(priority, other.priority);
-	}
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getPricePlanMatrixVersion(), getDescription(), getPricetWithoutTax(), getPricePlanMatrixValues(), getPriority());
+    }
 }

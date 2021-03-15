@@ -1,6 +1,7 @@
 package org.meveo.model.catalog;
 
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -73,7 +74,7 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     private Boolean isRange;
 
     @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PricePlanMatrixValue> pricePlanMatrixValues;
+    private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
 
     public PricePlanMatrixVersion getPricePlanMatrixVersion() {
         return pricePlanMatrixVersion;
