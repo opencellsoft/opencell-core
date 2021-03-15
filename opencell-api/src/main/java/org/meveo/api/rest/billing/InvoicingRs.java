@@ -18,19 +18,18 @@
 
 package org.meveo.api.rest.billing;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.billing.CancelBillingRunRequestDto;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
+import org.meveo.api.dto.billing.ValidateBillingRunRequestDto;
 import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
 import org.meveo.api.dto.response.billing.GetBillingRunInfoResponseDto;
 import org.meveo.api.dto.response.billing.GetPostInvoicingReportsResponseDto;
 import org.meveo.api.dto.response.billing.GetPreInvoicingReportsResponseDto;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 @Path("/billing/invoicing")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -101,6 +100,16 @@ public interface InvoicingRs extends IBaseRs {
     ActionStatus validateBillingRun(Long billingRunId);
 
     /**
+     * Validate a billing run based on billingRun id.
+     *
+     * @param billingRunId The billing run id
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/validateBillingRun")
+    ActionStatus validateBillingRun(ValidateBillingRunRequestDto billingRunId);
+
+    /**
      * Cancels a billing run. Sets RatedTransaction.status associated to billing run to OPEN. Remove aggregates and invoice associated to the billing run. Set
      * billingAccount.billingRun to null.
      * 
@@ -110,5 +119,15 @@ public interface InvoicingRs extends IBaseRs {
     @POST
     @Path("/cancelBillingRun")
     ActionStatus cancelBillingRun(Long billingRunId);
+
+    /**
+     * Cancel a billing run based on billingRun id.
+     *
+     * @param putData CancelBillingRunRequestDto
+     * @return action status.
+     */
+    @PUT
+    @Path("/cancelBillingRun")
+    ActionStatus cancelBillingRun(CancelBillingRunRequestDto putData);
 
 }
