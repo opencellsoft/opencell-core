@@ -742,7 +742,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         entity = subscriptionService.refreshOrRetrieve(entity);
         selectedServiceInstance = entity.getServiceInstances().get(entity.getServiceInstances().indexOf(selectedServiceInstance));
 
-        serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, terminationReason, entity.getOrderNumber());
+        serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, terminationReason, null);
 
         subscriptionService.refresh(entity);
 
@@ -765,7 +765,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         log.debug("selected subscriptionTerminationReason={}, terminationDate={}, subscriptionId={}, status={}", terminationReason, terminationDate, entity.getCode(), entity.getStatus());
 
-        subscriptionService.terminateSubscription(entity, terminationDate, terminationReason, entity.getOrderNumber());
+        subscriptionService.terminateSubscription(entity, terminationDate, terminationReason, null);
 
         terminationReason = null;
         terminationDate = null;

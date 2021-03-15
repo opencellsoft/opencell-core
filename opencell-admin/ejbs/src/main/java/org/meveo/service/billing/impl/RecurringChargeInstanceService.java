@@ -473,7 +473,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         log.debug("Will apply reimbursment for charge {} for period {} - {}", chargeInstance.getId(), chargeInstance.getChargeToDateOnTermination(), chargeInstance.getChargedToDate());
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, orderNumber, false);
 
         if (chargeWasUpdated || !wos.isEmpty()) {
             chargeInstance = updateNoCheck(chargeInstance);
