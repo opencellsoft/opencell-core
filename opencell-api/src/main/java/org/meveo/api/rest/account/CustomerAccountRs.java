@@ -125,8 +125,7 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @DELETE
     @Path("/{customerAccountCode}")
-    @Operation(summary = "Delete a customer account",
-            tags = { "Customer account management" })
+    @Operation(summary = "Delete a customer account", tags = { "Customer account management" })
     ActionStatus remove(@PathParam("customerAccountCode") String customerAccountCode);
 
     /**

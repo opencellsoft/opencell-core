@@ -32,6 +32,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
@@ -58,6 +59,7 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @POST
     @Path("/")
+    @Operation(summary = "Create a new billing account", tags = { "Billing account management" })
     ActionStatus create(BillingAccountDto postData);
 
     /**
@@ -68,6 +70,7 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+    @Operation(summary = "Update existing billing account", tags = { "Billing account management" })
     ActionStatus update(BillingAccountDto postData);
 
     /**
@@ -80,6 +83,7 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @GET
     @Path("/")
+    @Operation(summary = "Search for a billing account with a given code", tags = { "Billing account management" })
     GetBillingAccountResponseDto find(@QueryParam("billingAccountCode") String billingAccountCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
             @QueryParam("includeUserAccounts") boolean includeUserAccounts);
 
@@ -91,6 +95,7 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @DELETE
     @Path("/{billingAccountCode}")
+    @Operation(summary = "Remove a billing account with a Billing Account Code", tags = { "Billing account management" })
     ActionStatus remove(@PathParam("billingAccountCode") String billingAccountCode);
 
     /**
@@ -101,6 +106,7 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+    @Operation(summary = "Delete a customer account", tags = { "Billing account management" })
     BillingAccountsResponseDto listByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode);
 
     /**
@@ -111,6 +117,7 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+    @Operation(summary = "Delete a customer account", tags = { "Billing account management" })
     ActionStatus createOrUpdate(BillingAccountDto postData);
 
     /**
@@ -122,5 +129,6 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @GET
     @Path("/filterCountersByPeriod")
+    @Operation(summary = "Delete a customer account", tags = { "Billing account management" })
     GetCountersInstancesResponseDto filterBillingAccountCountersByPeriod(@QueryParam("billingAccountCode") String billingAccountCode, @QueryParam("date") @RestDateParam Date date);
 }
