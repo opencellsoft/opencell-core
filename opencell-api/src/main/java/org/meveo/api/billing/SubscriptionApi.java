@@ -997,7 +997,7 @@ public class SubscriptionApi extends BaseApi {
             oneShotChargeInstanceService
                     .oneShotChargeApplication(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
-                            postData.getCriteria3(), postData.getDescription(), subscription.getOrderNumber(), oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION);
+                            postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION);
 
         } catch (RatingException e) {
             log.trace("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getRejectionReason());
@@ -1109,8 +1109,7 @@ public class SubscriptionApi extends BaseApi {
         }
 
         try {
-            subscriptionService.terminateSubscription(subscription, postData.getTerminationDate(), subscriptionTerminationReason,
-                    ChargeInstance.NO_ORDER_NUMBER.equals(orderNumber) ? subscription.getOrderNumber() : orderNumber, postData.getOrderItemId(), postData.getOrderItemAction());
+            subscriptionService.terminateSubscription(subscription, postData.getTerminationDate(), subscriptionTerminationReason, orderNumber, postData.getOrderItemId(), postData.getOrderItemAction());
         } catch (BusinessException e) {
             log.error("error while setting subscription termination", e);
             throw new MeveoApiException(e.getMessage());
@@ -2594,7 +2593,7 @@ public class SubscriptionApi extends BaseApi {
             existingSubscriptionDto.setOfferTemplate(subscriptionPatchDto.getOfferTemplate());
         }
 
-        subscriptionService.terminateSubscription(existingSubscription, effectiveDate, subscriptionTerminationReason, existingSubscription.getOrderNumber());
+        subscriptionService.terminateSubscription(existingSubscription, effectiveDate, subscriptionTerminationReason, null);
 
 
         existingSubscriptionDto.setValidityDate(effectiveDate);
@@ -2672,7 +2671,7 @@ public class SubscriptionApi extends BaseApi {
                 .findFirst()
                 .get();
 
-        subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getValidity().getFrom(), subscriptionTerminationReason, actualSubscription.getOrderNumber());
+        subscriptionService.terminateSubscription(actualSubscription, actualSubscription.getValidity().getFrom(), subscriptionTerminationReason, null);
 
         lastSubscription.setToValidity(null);
         subscriptionService.subscriptionReactivation(lastSubscription, lastSubscription.getSubscriptionDate());
