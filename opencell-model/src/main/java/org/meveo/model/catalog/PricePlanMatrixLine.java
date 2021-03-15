@@ -49,7 +49,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
     private BigDecimal pricetWithoutTax;
 
     @OneToMany(mappedBy = "pricePlanMatrixLine", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PricePlanMatrixValue> pricePlanMatrixValues;
+    private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
 
     @Column(name = "priority")
     @NotNull
@@ -80,7 +80,7 @@ public class PricePlanMatrixLine extends AuditableEntity {
     }
 
     public Set<PricePlanMatrixValue> getPricePlanMatrixValues() {
-        return pricePlanMatrixValues == null ? new HashSet<>() : pricePlanMatrixValues;
+        return pricePlanMatrixValues;
     }
 
     public void setPricePlanMatrixValues(Set<PricePlanMatrixValue> pricePlanMatrixValues) {
@@ -109,12 +109,11 @@ public class PricePlanMatrixLine extends AuditableEntity {
         return Objects.equals(getPricePlanMatrixVersion(), that.getPricePlanMatrixVersion()) &&
                 Objects.equals(getDescription(), that.getDescription()) &&
                 Objects.equals(getPricetWithoutTax(), that.getPricetWithoutTax()) &&
-                Objects.equals(getPricePlanMatrixValues(), that.getPricePlanMatrixValues()) &&
                 Objects.equals(getPriority(), that.getPriority());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getPricePlanMatrixVersion(), getDescription(), getPricetWithoutTax(), getPricePlanMatrixValues(), getPriority());
+        return Objects.hash(super.hashCode(), getPricePlanMatrixVersion(), getDescription(), getPricetWithoutTax(), getPriority());
     }
 }

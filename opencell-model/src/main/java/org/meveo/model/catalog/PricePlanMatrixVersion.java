@@ -31,6 +31,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -97,10 +98,10 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     private String amountWithTaxEL;
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PricePlanMatrixLine> lines;
+    private Set<PricePlanMatrixLine> lines = new HashSet<>();
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PricePlanMatrixColumn> columns;
+    private Set<PricePlanMatrixColumn> columns = new HashSet<>();
     
     /**
      * The lower number, the higher the priority is
