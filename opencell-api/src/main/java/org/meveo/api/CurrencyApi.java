@@ -18,21 +18,24 @@
 
 package org.meveo.api;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.CurrenciesDto;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -46,6 +49,20 @@ public class CurrencyApi extends BaseApi {
 
     @Inject
     private TradingCurrencyService tradingCurrencyService;
+
+    public CurrenciesDto list() {
+        CurrenciesDto result = new CurrenciesDto();
+
+        List<TradingCurrency> currencies =
+                tradingCurrencyService.list(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
+        if (currencies != null) {
+            for (TradingCurrency country : currencies) {
+                result.getCurrency().add(new CurrencyDto(country));
+            }
+        }
+
+        return result;
+    }
 
     public void create(CurrencyDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
