@@ -139,6 +139,33 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
     @Override
     public PaymentMethod update(PaymentMethod entity) throws BusinessException {
+        if (paymentMethod instanceof DDPaymentMethod) {
+            DDPaymentMethod ddpaymentMethod = (DDPaymentMethod) paymentMethod;
+            CustomerAccount customerAccount = ddpaymentMethod.getCustomerAccount();
+
+            String iban = ddpaymentMethod.getBankCoordinates().getIban();
+            Optional<DDPaymentMethod> optionalOfExistingDDPaymentMethod = findExistingDDPMwithIban(customerAccount, iban);
+            if (optionalOfExistingDDPaymentMethod.isPresent()) {
+                DDPaymentMethod existingDdPaymentMethod = optionalOfExistingDDPaymentMethod.get();
+                existingDdPaymentMethod.setBankCoordinates(ddpaymentMethod.getBankCoordinates());
+                existingDdPaymentMethod.setAlias(ddpaymentMethod.getAlias());
+                existingDdPaymentMethod.setPreferred(ddpaymentMethod.isPreferred());
+                existingDdPaymentMethod.setDisabled(ddpaymentMethod.isDisabled());
+                existingDdPaymentMethod.setInfo1(ddpaymentMethod.getInfo1());
+                existingDdPaymentMethod.setInfo2(ddpaymentMethod.getInfo2());
+                existingDdPaymentMethod.setInfo3(ddpaymentMethod.getInfo3());
+                existingDdPaymentMethod.setInfo4(ddpaymentMethod.getInfo4());
+                existingDdPaymentMethod.setInfo5(ddpaymentMethod.getInfo5());
+                existingDdPaymentMethod.setUserId(ddpaymentMethod.getUserId());
+                existingDdPaymentMethod.setReferenceDocument(ddpaymentMethod.getReferenceDocument());
+                existingDdPaymentMethod.setTokenId(ddpaymentMethod.getTokenId());
+                super.update(existingDdPaymentMethod);
+                markOtherPpmAsNotPreferred(existingDdPaymentMethod);
+                return existingDdPaymentMethod;
+            }
+        }
+
+
         if (entity.isPreferred()) {
             if (entity instanceof CardPaymentMethod) {
                 if (!((CardPaymentMethod) entity).isValidForDate(new Date())) {
