@@ -83,9 +83,23 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    @Operation(summary = "Search for a billing account with a given code", tags = { "Billing account management" })
+    @Operation(summary = "Search for a billing account with a given code", tags = { "Deprecated" }, deprecated = true)
     GetBillingAccountResponseDto find(@QueryParam("billingAccountCode") String billingAccountCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
             @QueryParam("includeUserAccounts") boolean includeUserAccounts);
+
+    /**
+     * Search for a billing account with a given code.
+     *
+     * @param billingAccountCode Billing account code
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @param includeUserAccounts True to include user accounts
+     * @return Billing account
+     */
+    @GET
+    @Path("/{billingAccountCode}")
+    @Operation(summary = "Search for a billing account with a given code", tags = { "Billing account management" })
+    GetBillingAccountResponseDto findV2(@PathParam("billingAccountCode") String billingAccountCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
+                                      @QueryParam("includeUserAccounts") boolean includeUserAccounts);
 
     /**
      * Remove a billing account with a Billing Account Code.
@@ -106,8 +120,19 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    @Operation(summary = "Delete a customer account", tags = { "Billing account management" })
+    @Operation(summary = "List BillingAccount filter by customerAccountCode", tags = { "Deprecated" }, deprecated = true)
     BillingAccountsResponseDto listByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode);
+
+    /**
+     * List BillingAccount filter by customerAccountCode.
+     *
+     * @param customerAccountCode Customer account code
+     * @return list of billing account
+     */
+    @GET
+    @Path("/customerAccounts/{customerAccountCode}")
+    @Operation(summary = "List BillingAccount filter by customerAccountCode", tags = { "Billing account management" })
+    BillingAccountsResponseDto listByCustomerAccountV2(@PathParam("customerAccountCode") String customerAccountCode);
 
     /**
      * Create or update Billing Account based on code.
@@ -117,7 +142,7 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
-    @Operation(summary = "Delete a customer account", tags = { "Billing account management" })
+    @Operation(summary = "Create or update Billing Account based on cod", tags = { "Deprecated" }, deprecated = true)
     ActionStatus createOrUpdate(BillingAccountDto postData);
 
     /**
@@ -129,6 +154,19 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @GET
     @Path("/filterCountersByPeriod")
-    @Operation(summary = "Delete a customer account", tags = { "Billing account management" })
+    @Operation(summary = "filter counters by period date", tags = { "Deprecated" }, deprecated = true)
     GetCountersInstancesResponseDto filterBillingAccountCountersByPeriod(@QueryParam("billingAccountCode") String billingAccountCode, @QueryParam("date") @RestDateParam Date date);
+
+
+    /**
+     * filter counters by period date.
+     *
+     * @param billingAccountCode Billing account code
+     * @param date Date
+     * @return list of counter instances.
+     */
+    @GET
+    @Path("/{billingAccountCode}/filterCountersByPeriod")
+    @Operation(summary = "filter counters by period date", tags = { "Billing account management" })
+    GetCountersInstancesResponseDto filterBillingAccountCountersByPeriodV2(@PathParam("billingAccountCode") String billingAccountCode, @QueryParam("date") @RestDateParam Date date);
 }
