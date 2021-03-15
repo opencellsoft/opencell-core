@@ -139,8 +139,8 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
     @Override
     public PaymentMethod update(PaymentMethod entity) throws BusinessException {
-        if (paymentMethod instanceof DDPaymentMethod) {
-            DDPaymentMethod ddpaymentMethod = (DDPaymentMethod) paymentMethod;
+        if (entity instanceof DDPaymentMethod) {
+            DDPaymentMethod ddpaymentMethod = (DDPaymentMethod) entity;
             CustomerAccount customerAccount = ddpaymentMethod.getCustomerAccount();
 
             String iban = ddpaymentMethod.getBankCoordinates().getIban();
