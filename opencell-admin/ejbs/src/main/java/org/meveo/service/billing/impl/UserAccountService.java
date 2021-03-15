@@ -72,7 +72,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 		List<Subscription> subscriptions = userAccount.getSubscriptions();
 		for (Subscription subscription : subscriptions) {		
-			subscriptionService.terminateSubscription(subscription, terminationDate, terminationReason, subscription.getOrderNumber());
+			subscriptionService.terminateSubscription(subscription, terminationDate, terminationReason, null);
 		}
 		userAccount.setTerminationReason(terminationReason);
 		userAccount.setTerminationDate(terminationDate);

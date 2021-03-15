@@ -142,8 +142,10 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                         if (itemId != null) {
                             jobExecutionErrorService.registerJobError(jobExecutionResult.getJobInstance(), itemId, e);
                             globalI = jobExecutionResult.registerError(itemId, e.getMessage());
+                            log.error("Failed to process item {}", itemId, e);
                         } else {
                             globalI = jobExecutionResult.registerError(e.getMessage());
+                            log.error("Failed to process item", e);
                         }
                     }
 

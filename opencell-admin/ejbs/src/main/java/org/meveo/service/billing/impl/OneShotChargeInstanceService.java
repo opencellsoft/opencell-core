@@ -190,16 +190,16 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @param amoutWithoutTax Amount without tax to override
      * @param amoutWithTax Amount with tax to override
      * @param quantity Quantity to charge
-     * @param orderNumber Order number
+     * @param orderNumberOverride Order number to override. If not provided, a value from subscription will be used. A value of ChargeInstance.NO_ORDER_NUMBER will set a value to null.
      * @param applyCharge True if wallet operation should be created
      * @return One shot charge instance
      * @throws BusinessException General business exception
      * @throws RatingException Rating related exception
      */
     public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargetemplate, String walletCode, Date chargeDate, BigDecimal amoutWithoutTax, BigDecimal amoutWithTax,
-            BigDecimal quantity, String orderNumber, boolean applyCharge) throws BusinessException, RatingException {
+            BigDecimal quantity, String orderNumberOverride, boolean applyCharge) throws BusinessException, RatingException {
 
-        return oneShotChargeApplication(subscription, null, chargetemplate, walletCode, chargeDate, amoutWithoutTax, amoutWithTax, quantity, null, null, null, null, orderNumber, null, applyCharge,
+        return oneShotChargeApplication(subscription, null, chargetemplate, walletCode, chargeDate, amoutWithoutTax, amoutWithTax, quantity, null, null, null, null, orderNumberOverride, null, applyCharge,
             ChargeApplicationModeEnum.SUBSCRIPTION);
     }
 
@@ -218,7 +218,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @param criteria2 Criteria parameter value
      * @param criteria3 Criteria parameter value
      * @param description Description to override. Optional
-     * @param orderNumber Order number
+     * @param orderNumberOverride Order number to override. If not provided, a value from serviceInstance or subscription will be used. A value of ChargeInstance.NO_ORDER_NUMBER will set a value to null.
      * @param cfValues Custom field values
      * @param applyCharge True if wallet operation should be created
      * @param chargeMode Charge mode
@@ -227,7 +227,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @throws RatingException Rating related exception
      */
     public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, ServiceInstance serviceInstance, OneShotChargeTemplate chargeTemplate, String walletCode, Date chargeDate, BigDecimal amoutWithoutTax,
-            BigDecimal amoutWithTax, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumber, CustomFieldValues cfValues, boolean applyCharge,
+            BigDecimal amoutWithTax, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumberOverride, CustomFieldValues cfValues, boolean applyCharge,
             ChargeApplicationModeEnum chargeMode) throws BusinessException, RatingException {
 
         if (quantity == null) {
@@ -243,19 +243,19 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
         if (serviceInstance != null) {
             if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION) {
-                oneShotChargeInstance = new SubscriptionChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, serviceInstance, chargeTemplate);
+                oneShotChargeInstance = new SubscriptionChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumberOverride, serviceInstance, chargeTemplate);
             } else if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION) {
-                oneShotChargeInstance = new TerminationChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, serviceInstance, chargeTemplate);
+                oneShotChargeInstance = new TerminationChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumberOverride, serviceInstance, chargeTemplate);
             } else {
-                oneShotChargeInstance = new OneShotChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, serviceInstance, chargeTemplate);
+                oneShotChargeInstance = new OneShotChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumberOverride, serviceInstance, chargeTemplate);
             }
         } else {
             if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION) {
-                oneShotChargeInstance = new SubscriptionChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, subscription, chargeTemplate);
+                oneShotChargeInstance = new SubscriptionChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumberOverride, subscription, chargeTemplate);
             } else if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION) {
-                oneShotChargeInstance = new TerminationChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, subscription, chargeTemplate);
+                oneShotChargeInstance = new TerminationChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumberOverride, subscription, chargeTemplate);
             } else {
-                oneShotChargeInstance = new OneShotChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, subscription, chargeTemplate);
+                oneShotChargeInstance = new OneShotChargeInstance(description, chargeDate, amoutWithoutTax, amoutWithTax, quantity, orderNumberOverride, subscription, chargeTemplate);
             }
         }
 
@@ -290,7 +290,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         }
 
         if (applyCharge) {
-            walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, chargeDate, false, subscription.getOrderNumber(), chargeMode);
+            walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, chargeDate, false, orderNumberOverride, chargeMode);
             oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
         }
         return oneShotChargeInstance;
@@ -302,7 +302,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @param oneShotChargeInstance A charge to apply
      * @param chargeDate Charge date
      * @param quantity Quantity to apply
-     * @param orderNumberOverride Order number to override
+     * @param orderNumberOverride Order number to override. If not provided, a value from existing chargeInstance will be used. A value of ChargeInstance.NO_ORDER_NUMBER will set a value to null in Wallet operation..
      * @throws BusinessException General business exception
      * @throws RatingException Rating related exception
      */
@@ -316,7 +316,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @param oneShotChargeInstance A charge to apply
      * @param chargeDate Charge date
      * @param quantity Quantity to apply
-     * @param orderNumberOverride Order number to override
+     * @param orderNumberOverride Order number to override. If not provided, a value from existing chargeInstance will be used. A value of ChargeInstance.NO_ORDER_NUMBER will set a value to null in Wallet operation.
      * @param chargeMode Charge mode
      * @throws BusinessException General business exception
      * @throws RatingException Rating related exception
