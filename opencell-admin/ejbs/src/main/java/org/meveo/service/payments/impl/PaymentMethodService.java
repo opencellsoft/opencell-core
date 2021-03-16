@@ -19,6 +19,7 @@ package org.meveo.service.payments.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -87,26 +88,81 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     @Override
     public void create(PaymentMethod paymentMethod) throws BusinessException {
 
-        if (paymentMethod instanceof CardPaymentMethod) {
+        if (paymentMethod instanceof DDPaymentMethod) {
+            DDPaymentMethod ddpaymentMethod = (DDPaymentMethod) paymentMethod;
+            CustomerAccount customerAccount = ddpaymentMethod.getCustomerAccount();
+
+            String iban = ddpaymentMethod.getBankCoordinates().getIban();
+            Optional<DDPaymentMethod> optionalOfExistingDDPaymentMethod = findExistingDDPMwithIban(customerAccount, iban, ddpaymentMethod.getId());
+            if (optionalOfExistingDDPaymentMethod.isPresent()) {
+                DDPaymentMethod existingDdPaymentMethod = optionalOfExistingDDPaymentMethod.get();
+                existingDdPaymentMethod.copyFrom(ddpaymentMethod);
+                super.update(existingDdPaymentMethod);
+                markOtherPpmAsNotPreferred(existingDdPaymentMethod);
+                return;
+            }else if (automaticMandateCreation) {
+                PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
+                if (paymentGateway != null) {
+                    createMandate(ddpaymentMethod);
+                }
+            }
+        } else if (paymentMethod instanceof CardPaymentMethod) {
             CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;
             if (!cardPayment.isValidForDate(new Date())) {
                 throw new BusinessException("Cant add expired card");
             }
             obtainAndSetCardToken(cardPayment, cardPayment.getCustomerAccount());
-        } else if (paymentMethod instanceof DDPaymentMethod && automaticMandateCreation) {
-            DDPaymentMethod ddpaymentMethod = (DDPaymentMethod) paymentMethod;
-            CustomerAccount customerAccount = ddpaymentMethod.getCustomerAccount();
-            PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
-            if (paymentGateway != null) {
-                createMandate(ddpaymentMethod);
-            }
         }
         super.create(paymentMethod);
+        markOtherPpmAsNotPreferred(paymentMethod);
 
+    }
+
+    private Optional<DDPaymentMethod> findExistingDDPMwithIban(CustomerAccount customerAccount, String iban, Long ddPaymentMethodId) {
+        return customerAccount.getDDPaymentMethods()
+                        .stream()
+                        .filter(ddPm -> ddPaymentMethodId != ddPm.getId() && ddPm.getBankCoordinates().getIban().equals(iban))
+                        .findFirst();
+    }
+
+    @Override
+    public PaymentMethod update(PaymentMethod entity) throws BusinessException {
+        if (entity instanceof DDPaymentMethod) {
+            DDPaymentMethod ddpaymentMethod = (DDPaymentMethod) entity;
+            CustomerAccount customerAccount = ddpaymentMethod.getCustomerAccount();
+
+            String iban = ddpaymentMethod.getBankCoordinates().getIban();
+            Optional<DDPaymentMethod> optionalOfExistingDDPaymentMethod = findExistingDDPMwithIban(customerAccount, iban, ddpaymentMethod.getId());
+            if (optionalOfExistingDDPaymentMethod.isPresent()) {
+                DDPaymentMethod existingDdPaymentMethod = optionalOfExistingDDPaymentMethod.get();
+                existingDdPaymentMethod.copyFrom(ddpaymentMethod);
+                existingDdPaymentMethod = (DDPaymentMethod) super.update(existingDdPaymentMethod);
+                markOtherPpmAsNotPreferred(existingDdPaymentMethod);
+                return existingDdPaymentMethod;
+            }
+        }
+
+
+        if (entity.isPreferred()) {
+            if (entity instanceof CardPaymentMethod) {
+                if (!((CardPaymentMethod) entity).isValidForDate(new Date())) {
+                    throw new BusinessException("Cant mark expired card as preferred");
+                }
+            }
+        }
+        PaymentMethod paymentMethod = super.update(entity);
+
+        // Mark other payment methods as not preferred
+        markOtherPpmAsNotPreferred(paymentMethod);
+
+        return paymentMethod;
+    }
+
+    private void markOtherPpmAsNotPreferred(PaymentMethod paymentMethod) {
         // Mark other payment methods as not preferred
         if (paymentMethod.isPreferred()) {
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+                    .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
         }
     }
 
@@ -223,28 +279,6 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         }
         return result;
     }
-
-
-    @Override
-    public PaymentMethod update(PaymentMethod entity) throws BusinessException {
-        if (entity.isPreferred()) {
-            if (entity instanceof CardPaymentMethod) {
-                if (!((CardPaymentMethod) entity).isValidForDate(new Date())) {
-                    throw new BusinessException("Cant mark expired card as preferred");
-                }
-            }
-        }
-        PaymentMethod paymentMethod = super.update(entity);
-
-        // Mark other payment methods as not preferred
-        if (paymentMethod.isPreferred()) {
-            getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
-        }
-
-        return paymentMethod;
-    }
-
 
     @Override
     public void remove(PaymentMethod paymentMethod) throws BusinessException {
