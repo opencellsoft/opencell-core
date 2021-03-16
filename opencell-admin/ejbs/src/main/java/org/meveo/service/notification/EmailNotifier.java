@@ -88,8 +88,8 @@ public class EmailNotifier {
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
      */
-    public void sendEmail(EmailNotification notification, Object entityOrEvent, Map<String, Object> context, MeveoUser lastCurrentUser) {
-
+    public boolean sendEmail(EmailNotification notification, Object entityOrEvent, Map<String, Object> context, MeveoUser lastCurrentUser) {
+        boolean isSent = false;
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         try {
@@ -99,7 +99,12 @@ public class EmailNotifier {
                 userMap = new HashMap<>();
             }
             userMap.put("event", entityOrEvent);
-            userMap.put("context", context);
+                    
+            for (Map.Entry<String, Object> entry : context.entrySet()) {
+                log.trace("key:"+entry.getKey()+"  value:"+entry.getValue());
+                userMap.put(entry.getKey(), entry.getValue());
+            }
+            
             log.debug("event[{}], context[{}]", entityOrEvent, context);
 
             String body = null;
@@ -115,22 +120,27 @@ public class EmailNotifier {
             }
 
             List<String> to = new ArrayList<>();
-            if (!StringUtils.isBlank(notification.getEmailToEl())) {
-                String result = context.containsKey("EMAIL_TO_LIST") ? (String)context.get("EMAIL_TO_LIST") : notification.getEmailToEl();
-                for (String mail : result.split(",")) {
-                    to.add(mail);
-                }
+            to.add((String) ValueExpressionWrapper.evaluateExpression(notification.getEmailToEl(), userMap, String.class));
+           
+            String result = context.containsKey("EMAIL_TO_LIST") ? (String)context.get("EMAIL_TO_LIST") : "" ;
+            for (String mail : result.split(",")) {
+            	if(!StringUtils.isBlank(mail)) {
+            		to.add(mail);
+            	}
             }
+            
             if (notification.getEmails() != null) {
                 to.addAll(notification.getEmails());
             }
 
             String emailFrom = context.containsKey("EMAIL_FROM") ? (String)context.get("EMAIL_FROM") :
-                    ValueExpressionWrapper.evaluateExpression(notification.getEmailFrom(), userMap, String.class);
+                    ValueExpressionWrapper.evaluateExpression(notification.getEmailFrom(), userMap, String.class);           
             emailSender.send(emailFrom, asList(emailFrom), to, subject, body, htmlBody);
+            isSent = true;
             if (notification.isSaveSuccessfulNotifications()) {
                 notificationHistoryService.create(notification, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);
             }
+           
         } catch (Exception e) {
             try {
                 log.error("Error occured when sending email", e);
@@ -140,5 +150,6 @@ public class EmailNotifier {
                 log.error("Failed to create notification history", e2);
             }
         }
+        return isSent;
     }
 }
