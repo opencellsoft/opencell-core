@@ -135,36 +135,51 @@ public class DefaultNotificationService {
      * @throws BusinessException exception when script fails to run
      */
     private Map<String, Object> executeScript(ScriptInstance scriptInstance, Object entityOrEvent, Map<String, String> params, Map<String, Object> context) throws BusinessException {
-        log.debug("execute notification script: {}", scriptInstance.getCode());
+        return executeScript(scriptInstance, entityOrEvent, params, context, true, true, true);
 
-        try {
-
-            context.put(Script.CONTEXT_ENTITY_OR_EVENT, entityOrEvent);
-
-            Map<Object, Object> elContext = new HashMap<>();
-            elContext.put("event", entityOrEvent);
-            elContext.put("manager", manager);
-
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                context.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression(entry.getValue(), elContext, Object.class));
-            }
-
-            if (scriptInstance.getReuse()) {
-                return scriptInstanceService.executeCached(entityOrEvent, scriptInstance.getCode(), context);
-
-            } else {
-                return scriptInstanceService.executeWInitAndFinalize(entityOrEvent, scriptInstance.getCode(), context);
-            }
-
-        } catch (Exception e) {
-            log.error("failed script {} execution", scriptInstance.getCode(), e);
-            if (e instanceof BusinessException) {
-                throw e;
-            } else {
-                throw new BusinessException(e);
-            }
-        }
     }
+
+	/**
+	 * Executes a given script instance creating a context from the given parameter.
+	 * 
+	 * @param scriptInstance the ScriptInstance
+	 * @param entityOrEvent  entity or event
+	 * @param params         map of parameters
+	 * @param context        map of context
+	 * @throws BusinessException exception when script fails to run
+	 */
+	private Map<String, Object> executeScript(ScriptInstance scriptInstance, Object entityOrEvent, Map<String, String> params, Map<String, Object> context, boolean isToInit,
+			boolean isToExecute, boolean isToTerminate) throws BusinessException {
+		log.debug("execute notification script: {}", scriptInstance.getCode());
+
+		try {
+
+			context.put(Script.CONTEXT_ENTITY_OR_EVENT, entityOrEvent);
+
+			Map<Object, Object> elContext = new HashMap<>();
+			elContext.put("event", entityOrEvent);
+			elContext.put("manager", manager);
+
+			for (Map.Entry<String, String> entry : params.entrySet()) {
+				context.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression(entry.getValue(), elContext, Object.class));
+			}
+
+			if (scriptInstance.getReuse()) {
+				return scriptInstanceService.executeCached(entityOrEvent, scriptInstance.getCode(), context);
+
+			} else {
+				return scriptInstanceService.execute(entityOrEvent, scriptInstance.getCode(), context, isToInit, isToExecute, isToTerminate);
+			}
+
+		} catch (Exception e) {
+			log.error("failed script {} execution", scriptInstance.getCode(), e);
+			if (e instanceof BusinessException) {
+				throw e;
+			} else {
+				throw new BusinessException(e);
+			}
+		}
+	}
 
     /**
      * Fires a CDR notification. It will execute the script linked to Notification with CDR as parameter if present.
@@ -272,9 +287,11 @@ public class DefaultNotificationService {
                 addParamsTo(context, emailNotification.getParams(), userMap);
                 if(notif.getScriptInstance() != null) {
                     // script context overwrite
-                    context.putAll(executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context));
+                    context.putAll(executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context,false,true,false));
                 }
-                emailNotifier.sendEmail(emailNotification, entityOrEvent, context, lastCurrentUser);
+               if( emailNotifier.sendEmail(emailNotification, entityOrEvent, context, lastCurrentUser)) {
+            	   executeScript(notif.getScriptInstance(), entityOrEvent, notif.getParams(), context,false,false,true);
+               }
 
             } else if (notif instanceof WebHook) {
                 MeveoUser lastCurrentUser = currentUser.unProxy();
