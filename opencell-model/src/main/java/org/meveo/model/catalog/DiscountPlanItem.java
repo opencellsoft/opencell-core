@@ -170,15 +170,6 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	@Column(name = "priorty")
 	private Long priority;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "accounting_article_id")
-	private AccountingArticle accountingArticle;
-	/**
-	 * A list of reference to articles that will benefit from the discount.
-	 */
-	@JoinTable(name = "cat_discount_plan_item_acc_articles", joinColumns = @JoinColumn(name = "discount_plan_item_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "accounting_article_id", referencedColumnName = "id"))
-	@OneToMany(fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
-	private List<AccountingArticle> articlesToDiscount;
 	/**
 	 * If true, then allows to negate the amount of affected invoice lines.
 	 * If fase, then amount for the discount line produce by the discount plan item cannot exceed the amount of discounted lines.
@@ -387,28 +378,6 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 */
 	public void setPriority(Long priority) {
 		this.priority = priority;
-	}
-
-	/**
-	 * @return the accountingArticle
-	 */
-	public AccountingArticle getAccountingArticle() {
-		return accountingArticle;
-	}
-
-	/**
-	 * @param accountingArticle the accountingArticle to set
-	 */
-	public void setAccountingArticle(AccountingArticle accountingArticle) {
-		this.accountingArticle = accountingArticle;
-	}
-
-	public List<AccountingArticle> getArticlesToDiscount() {
-		return articlesToDiscount;
-	}
-
-	public void setArticlesToDiscount(List<AccountingArticle> articlesToDiscount) {
-		this.articlesToDiscount = articlesToDiscount;
 	}
 
 	public boolean isAllowToNegate() {
