@@ -113,12 +113,18 @@ public class GDPRJobBean extends BaseJobBean {
 		GdprConfiguration gdprConfiguration = providerService.getEntityManager()
 				.createQuery("Select p.gdprConfiguration From Provider p Where p.id=:providerId", GdprConfiguration.class)
 				.setParameter("providerId", appProvider.getId())
-				.getSingleResult();
+				.getResultList().stream().findFirst().orElse(null);
+
+		if (gdprConfiguration == null) {
+			log.warn("No GDPR Config found for provider[id={}]," +
+					"so no items will be processed!", appProvider.getId() );
+			return;
+		}
 
 		List<Future<int[]>> futures = new ArrayList<>();
 		try {
 			if (gdprConfiguration.isDeleteSubscription()) {
-				List<Subscription> inactiveSubscriptions = subscriptionService.listInactiveSubscriptions(gdprConfiguration.getInactiveOrderLife());
+				List<Subscription> inactiveSubscriptions = subscriptionService.listInactiveSubscriptions(gdprConfiguration.getInactiveSubscriptionLife());
 				log.debug("Found {} inactive subscriptions", inactiveSubscriptions.size());
 				if (!inactiveSubscriptions.isEmpty()) {
 					futures.add(gdprJobAsync.subscriptionBulkDelete(inactiveSubscriptions));
