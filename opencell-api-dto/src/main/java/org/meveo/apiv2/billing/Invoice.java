@@ -10,6 +10,7 @@ import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -58,7 +59,7 @@ public interface Invoice extends Resource {
 	BigDecimal getNetToPay();
 
 	@Nullable
-	String getPaymentMethodType();
+	PaymentMethodEnum getPaymentMethodType();
 
 	@Nullable
 	String getIban();
