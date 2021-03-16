@@ -192,7 +192,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
     
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "pricePlanMatrix_id", nullable = true, referencedColumnName = "id") 
+	@JoinColumn(name = "price_plan_matrix_id", nullable = true, referencedColumnName = "id") 
     private PricePlanMatrix pricePlanMatrix;
 
 	public DiscountPlan getDiscountPlan() {

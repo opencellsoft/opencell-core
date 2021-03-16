@@ -4085,9 +4085,20 @@ public class OrderAdvancement extends ModuleScript {
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
 
 	        <addForeignKeyConstraint baseColumnNames="discount_id" baseTableName="cpq_product_discount_plan" constraintName="fk_cpq_product_discount_plan_discount_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" /> 
+	            
 	  </changeSet>
 	
+	  <changeSet id="#20210316-356-2" author="Mbarek-Ay">
+	   <dropColumn tableName="cat_discount_plan_item">
+            <column name="pricePlanMatrix_id"></column>
+        </dropColumn>
+        <addColumn tableName="cat_discount_plan_item">
+			<column name="price_plan_matrix_id" type="bigint" />
+	  </addColumn>
+	  <addForeignKeyConstraint baseColumnNames="price_plan_matrix_id" baseTableName="cat_discount_plan_item" constraintName="fk_cat_discount_plan_item_price_plan_matrix_id" deferrable="false" initiallyDeferred="false"
+			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" /> 
+	</changeSet>
 	
 
 </databaseChangeLog>
