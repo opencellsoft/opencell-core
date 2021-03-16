@@ -3,6 +3,7 @@ package org.meveo.model.cpq.trade;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -124,6 +125,26 @@ public class CommercialRuleItem extends BaseEntity {
 	 */
 	public void setCommercialRuleLines(List<CommercialRuleLine> commercialRuleLines) {
 		this.commercialRuleLines = commercialRuleLines;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(getCommercialRuleHeader(), getCommercialRuleLines(), operator, ruleItemEl);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		CommercialRuleItem other = (CommercialRuleItem) obj;
+		return Objects.equals(getCommercialRuleHeader(), other.getCommercialRuleHeader())
+				&& Objects.equals(getCommercialRuleLines(), other.getCommercialRuleLines()) && operator == other.operator
+				&& Objects.equals(ruleItemEl, other.ruleItemEl);
 	}
 
 	

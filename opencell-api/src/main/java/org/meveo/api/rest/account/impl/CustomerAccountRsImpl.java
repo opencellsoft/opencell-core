@@ -100,6 +100,11 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
     }
 
     @Override
+    public GetCustomerAccountResponseDto findV2(String customerAccountCode, boolean calculateBalances, CustomFieldInheritanceEnum inheritCF, boolean withAccountOperations, boolean includeBillingAccounts) {
+        return findV2(customerAccountCode, calculateBalances, inheritCF, withAccountOperations, includeBillingAccounts);
+    }
+
+    @Override
     public ActionStatus remove(String customerAccountCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -123,6 +128,11 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         }
 
         return result;
+    }
+
+    @Override
+    public CustomerAccountsResponseDto listByCustomerV2(String customerCode) {
+        return listByCustomerV2(customerCode);
     }
 
     @Override
@@ -196,4 +206,8 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
         return result;
     }
 
+    @Override
+    public GetCountersInstancesResponseDto filterCustomerAccountCountersByPeriodV2(String customerAccountCode, Date date) {
+        return filterCustomerAccountCountersByPeriod(customerAccountCode, date);
+    }
 }
