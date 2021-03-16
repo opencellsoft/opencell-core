@@ -1,8 +1,6 @@
 package org.meveo.api.dto.cpq;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -12,7 +10,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
-import org.meveo.model.cpq.offer.OfferComponent;
 
 /**
  * 
@@ -41,6 +38,10 @@ public class OfferProductsDto extends BaseEntityDto {
     private Integer sequence=0;
     
     private boolean ruled=Boolean.FALSE;
+    
+	private boolean mandatory=Boolean.FALSE;
+	
+	private boolean display = Boolean.TRUE;
     
     /**
      * Instantiates a new Offer Component dto.
@@ -151,6 +152,42 @@ public class OfferProductsDto extends BaseEntityDto {
 	 */
 	public void setRuled(boolean ruled) {
 		this.ruled = ruled;
+	}
+
+
+
+	/**
+	 * @return the mandatory
+	 */
+	public boolean isMandatory() {
+		return mandatory;
+	}
+
+
+
+	/**
+	 * @param mandatory the mandatory to set
+	 */
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
+	}
+
+
+
+	/**
+	 * @return the display
+	 */
+	public boolean isDisplay() {
+		return display;
+	}
+
+
+
+	/**
+	 * @param display the display to set
+	 */
+	public void setDisplay(boolean display) {
+		this.display = display;
 	}
 
 	

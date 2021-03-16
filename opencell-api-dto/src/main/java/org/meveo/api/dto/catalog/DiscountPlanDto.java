@@ -87,6 +87,10 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	@XmlElement(name = "discountPlanItem")
 	private List<DiscountPlanItemDto> discountPlanItems;
 
+
+    /** expressionEl */
+    private String expressionEl;
+
 	/**
 	 * Type of the discount plan. Defines on which entity the discount plan can be applied.
 	 */
@@ -173,6 +177,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 		endDate = discountPlan.getEndDate();
 		defaultDuration = discountPlan.getDefaultDuration();
 		durationUnit = discountPlan.getDurationUnit();
+		expressionEl=discountPlan.getExpressionEl();
 		customFields = customFieldInstances;
 		status = discountPlan.getStatus();
 		statusDate = discountPlan.getStatusDate();
@@ -247,6 +252,16 @@ public class DiscountPlanDto extends EnableBusinessDto {
 
 	public void setDiscountPlanItems(List<DiscountPlanItemDto> discountPlanItems) {
 		this.discountPlanItems = discountPlanItems;
+	}
+
+
+
+	public String getExpressionEl() {
+		return expressionEl;
+	}
+
+	public void setExpressionEl(String expressionEl) {
+		this.expressionEl = expressionEl;
 	}
 
 	public static DiscountPlan copyFromDto(DiscountPlanDto source, DiscountPlan target) {

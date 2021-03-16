@@ -19,6 +19,8 @@
 package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,6 +31,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -49,6 +53,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 import static javax.persistence.CascadeType.ALL;
@@ -160,15 +165,32 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	@Column(name = "cf_values", columnDefinition = "text")
 	protected CustomFieldValues cfValues;
 
-	/**
-	 * Accumulated custom field values in JSON format
-	 */
-	@Type(type = "cfjson")
-	@Column(name = "cf_values_accum", columnDefinition = "text")
-	protected CustomFieldValues cfAccumulatedValues;
+    /**
+     * Accumulated custom field values in JSON format
+     */
+    @Type(type = "cfjson")
+    @Column(name = "cf_values_accum", columnDefinition = "text")
+    protected CustomFieldValues cfAccumulatedValues;
+    
+    @Column(name = "priorty")
+    private Long priority;
+    
+    
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "accounting_article_id")
+    private AccountingArticle accountingArticle;
 
-	@Column(name = "priorty")
-	private Long priority;
+	  /**
+     * list of accountingArticle attached
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "discount_plan_item_articles", joinColumns = @JoinColumn(name = "discount_plan_item_id"), inverseJoinColumns = @JoinColumn(name = "accounting_article_id"))
+    private Set<AccountingArticle> targetAccountingArticle = new HashSet<AccountingArticle>();
+
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "pricePlanMatrix_id", nullable = true, referencedColumnName = "id")
+    private PricePlanMatrix pricePlanMatrix;
 
 	/**
 	 * If true, then allows to negate the amount of affected invoice lines.
@@ -387,4 +409,36 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	public void setAllowToNegate(boolean allowToNegate) {
 		this.allowToNegate = allowToNegate;
 	}
+
+
+
+	/**
+	 * @return the targetAccountingArticle
+	 */
+	public Set<AccountingArticle> getTargetAccountingArticle() {
+		return targetAccountingArticle;
+	}
+
+	/**
+	 * @param targetAccountingArticle the targetAccountingArticle to set
+	 */
+	public void setTargetAccountingArticle(Set<AccountingArticle> targetAccountingArticle) {
+		this.targetAccountingArticle = targetAccountingArticle;
+	}
+
+	/**
+	 * @return the pricePlanMatrix
+	 */
+	public PricePlanMatrix getPricePlanMatrix() {
+		return pricePlanMatrix;
+	}
+
+	/**
+	 * @param pricePlanMatrix the pricePlanMatrix to set
+	 */
+	public void setPricePlanMatrix(PricePlanMatrix pricePlanMatrix) {
+		this.pricePlanMatrix = pricePlanMatrix;
+	}
+
+
 }

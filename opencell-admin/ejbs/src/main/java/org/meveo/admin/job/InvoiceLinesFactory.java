@@ -44,6 +44,7 @@ public class InvoiceLinesFactory {
     		(ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName());
     private OrderLotService orderLotService = 
     		(OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
+
     public InvoiceLine create(Map<String, Object> record, AggregationConfiguration configuration) {
         InvoiceLine invoiceLine = initInvoiceLine(record);
         if(configuration.getAggregationOption() == NO_AGGREGATION) {

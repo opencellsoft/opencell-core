@@ -62,8 +62,11 @@ public class GroupedAttributesApi extends BaseApi{
 		groupedAttribute.setDisabled(groupedAttributeDto.isDisabled());
 		List<Attribute> attributes = new ArrayList<Attribute>();
 		attributes = addToGroup(groupedAttribute, groupedAttributeDto.getAttributeCodes(), true);
+		populateCustomFields(groupedAttributeDto.getCustomFields(), groupedAttribute, true);
 		groupedAttributeService.create(groupedAttribute);
-		return new GroupedAttributeDto(groupedAttribute, attributes);
+		GroupedAttributeDto dto = new GroupedAttributeDto(groupedAttribute, attributes);
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(groupedAttribute));
+		return dto;
 	}
 	
 	/**
@@ -82,6 +85,7 @@ public class GroupedAttributesApi extends BaseApi{
 		groupedAttribute.setDisplay(groupedAttributeDto.isDisplay());
 		groupedAttribute.setMandatory(groupedAttributeDto.isMandatory());
 		groupedAttribute.setDisabled(groupedAttributeDto.isDisabled());
+		populateCustomFields(groupedAttributeDto.getCustomFields(), groupedAttribute, false);
 		groupedAttributeService.update(groupedAttribute);
 	}
 	
@@ -106,7 +110,9 @@ public class GroupedAttributesApi extends BaseApi{
 		if(groupedAttribute == null) {
 			throw new EntityDoesNotExistsException(GroupedAttributes.class, code);
 		}
-		return new GroupedAttributeDto(groupedAttribute, groupedAttribute.getAttributes());
+		GroupedAttributeDto dto = new GroupedAttributeDto(groupedAttribute, groupedAttribute.getAttributes());
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(groupedAttribute));
+		return dto;
 	}
 	
 	private void checkParams(GroupedAttributeDto groupedAttributeDto) {

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -17,8 +18,11 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.dto.cpq.ProductVersionDto;
+import org.meveo.api.dto.cpq.OrderAttributeDto;
+import org.meveo.api.dto.cpq.OrderProductDto;
+import org.meveo.api.dto.cpq.QuoteProductDTO;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
+import org.meveo.api.dto.cpq.order.OrderOfferDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
 import org.meveo.api.exception.BusinessApiException;
@@ -29,16 +33,22 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
+import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderLot;
+import org.meveo.model.cpq.commercial.OrderOffer;
+import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.OrderType;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.order.Order;
+import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -46,11 +56,17 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
+import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.InvoicingPlanService;
+import org.meveo.service.cpq.order.OrderAttributeService;
 import org.meveo.service.cpq.order.OrderLotService;
+import org.meveo.service.cpq.order.OrderOfferService;
+import org.meveo.service.cpq.order.OrderProductService;
 import org.meveo.service.cpq.order.OrderTypeService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderService;
@@ -58,6 +74,7 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.primefaces.model.SortOrder;
+import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 
 
 /**
@@ -84,6 +101,22 @@ public class CommercialOrderApi extends BaseApi {
     @Inject private ServiceSingleton serviceSingleton;
 	@Inject private ScriptInstanceService scriptInstanceService;
 	@Inject private OrderLotService orderLotService;
+	@Inject 
+	private OrderOfferService orderOfferService; 
+	@Inject 
+	private OfferTemplateService offerTemplateService;
+	
+	@Inject 
+	private ProductVersionService productVersionService;
+	
+	@Inject 
+	private OrderProductService orderProductService;
+	
+	@Inject 
+	private OrderAttributeService orderAttributeService;
+	
+	@Inject 
+	private AttributeService attributeService;
 	
 	public CommercialOrderDto create(CommercialOrderDto orderDto) {
 		checkParam(orderDto);
@@ -155,6 +188,7 @@ public class CommercialOrderApi extends BaseApi {
 		order.setCustomerServiceBegin(orderDto.getCustomerServiceBegin());
 		order.setCustomerServiceDuration(orderDto.getCustomerServiceDuration());
 		order.setExternalReference(orderDto.getExternalReference());
+		populateCustomFields(orderDto.getCustomFields(), order, true);
 		if(!Strings.isEmpty(orderDto.getOrderParentCode())) {
 			final Order orderParent = orderService.findByCode(orderDto.getOrderParentCode());
 			if(orderParent == null)
@@ -164,7 +198,9 @@ public class CommercialOrderApi extends BaseApi {
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		processAttributes(orderDto, order);
 		commercialOrderService.create(order);
-		return new CommercialOrderDto(order);
+		CommercialOrderDto dto = new CommercialOrderDto(order);
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order));
+		return dto;
 	}
 
 	public CommercialOrderDto updateUserAccount(Long commercialOrderId, String userAccountCode){
@@ -291,9 +327,12 @@ public class CommercialOrderApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Order.class, orderDto.getOrderParentCode());
 			order.setOrderParent(orderParent);
 		}
+		populateCustomFields(orderDto.getCustomFields(), order, true);
 		processAttributes(orderDto, order);
 		commercialOrderService.update(order);
-		return new CommercialOrderDto(order);
+		CommercialOrderDto dto = new CommercialOrderDto(order);
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order));
+		return dto;
 	}
 	
 	public void delete(Long orderId) {
@@ -404,7 +443,9 @@ public class CommercialOrderApi extends BaseApi {
 		CommercialOrder commercialOrder =  commercialOrderService.findByOrderNumer(orderNumber);
 		if(commercialOrder == null)
 			throw new EntityDoesNotExistsException("No Commercial order found for order number = " + orderNumber);
-		return new CommercialOrderDto(commercialOrder);
+		CommercialOrderDto dto = new CommercialOrderDto(commercialOrder);
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(commercialOrder));
+		return dto;
 	}
 	
 	private void checkParam(CommercialOrderDto order) {
@@ -466,4 +507,330 @@ public class CommercialOrderApi extends BaseApi {
 			commercialOrder.setOrderLots(orderLotList);
 		}
 	} 
+	
+	
+	public OrderOfferDto createOrderOffer(OrderOfferDto orderOfferDto) throws MeveoApiException, BusinessException {
+
+		if (orderOfferDto.getCommercialOrderId()==null) {
+			missingParameters.add("commercialOrderId");
+		}
+		if (StringUtils.isBlank(orderOfferDto.getOfferTemplateCode())) {
+			missingParameters.add("offerTemplateCode");
+		}
+		handleMissingParametersAndValidate(orderOfferDto);
+
+		CommercialOrder commercialOrder = commercialOrderService.findById(orderOfferDto.getCommercialOrderId());
+
+		if ( commercialOrder== null) {
+			throw new EntityDoesNotExistsException(CommercialOrder.class, orderOfferDto.getCommercialOrderId());
+		}
+
+		OfferTemplate offerTemplate = offerTemplateService.findByCode(orderOfferDto.getOfferTemplateCode());
+		if (offerTemplate == null) {
+			throw new EntityDoesNotExistsException(OfferTemplate.class, orderOfferDto.getOfferTemplateCode());
+		}
+		OrderOffer orderOffer = new OrderOffer();
+		orderOffer.setOrder(commercialOrder);
+		orderOffer.setOfferTemplate(offerTemplate);
+		orderOfferService.create(orderOffer);
+		orderOfferDto.setOrderOfferId(orderOffer.getId());
+		createOrderProduct(orderOfferDto.getOrderProducts(),orderOffer);
+		createOrderAttribute(orderOfferDto.getOrderAttributes(),null,orderOffer);
+		return orderOfferDto;
+	}
+	
+	public OrderOfferDto updateOrderOffer(OrderOfferDto orderOfferDto) throws MeveoApiException, BusinessException { 
+    	if (orderOfferDto.getOrderOfferId()==null) {
+    		missingParameters.add("orderOfferId");
+    	}
+    	OrderOffer orderOffer = orderOfferService.findById(orderOfferDto.getOrderOfferId());
+    	if (orderOffer == null) {
+    		throw new EntityDoesNotExistsException(OrderOffer.class, orderOfferDto.getOrderOfferId());
+    	}
+    	CommercialOrder commercialOrder=null;
+    	if(orderOfferDto.getCommercialOrderId()!=null) {
+    	 commercialOrder = commercialOrderService.findById(orderOfferDto.getCommercialOrderId());
+
+    	if ( commercialOrder== null) {
+    		throw new EntityDoesNotExistsException(CommercialOrder.class, orderOfferDto.getCommercialOrderId());
+    	}
+    	}
+    	OfferTemplate offerTemplate=null;
+    	if(!StringUtils.isBlank(orderOfferDto.getOfferTemplateCode())) {
+    		 offerTemplate = offerTemplateService.findByCode(orderOfferDto.getOfferTemplateCode());
+        	if (offerTemplate == null) {
+        		throw new EntityDoesNotExistsException(OfferTemplate.class, orderOfferDto.getOfferTemplateCode());
+        	}	
+    	}
+    	 
+    	orderOffer.setOrder(commercialOrder);
+    	orderOffer.setOfferTemplate(offerTemplate);
+    	processOrderProductFromOffer(orderOfferDto, orderOffer); 
+        processOrderAttribute(orderOfferDto,  orderOffer);
+    	orderOfferService.update(orderOffer); 
+    	return orderOfferDto;
+    }
+	
+	private void processOrderProductFromOffer(OrderOfferDto orderOfferDTO, OrderOffer orderOffer) {
+        List<OrderProductDto> orderProductDtos = orderOfferDTO.getOrderProducts(); 
+        var existencOrderProducts = orderOffer.getProducts();
+        var hasExistingOrders = existencOrderProducts != null && !existencOrderProducts.isEmpty();
+        if (orderProductDtos != null && !orderProductDtos.isEmpty()) {
+            var newOrderProducts = new ArrayList<OrderProduct>();
+            OrderProduct orderProduct = null; 
+            for (OrderProductDto orderProductDto : orderProductDtos) {
+                orderProduct = getOrderProductFromDto(orderProductDto, orderOffer);
+                newOrderProducts.add(orderProduct); 
+            }
+            if (!hasExistingOrders) {
+                orderOffer.getProducts().addAll(newOrderProducts);
+            } else {
+                existencOrderProducts.retainAll(newOrderProducts);
+                for (OrderProduct qpNew : newOrderProducts) {
+                    int index = existencOrderProducts.indexOf(qpNew);
+                    if (index >= 0) {
+                        OrderProduct old = existencOrderProducts.get(index);
+                        old.update(qpNew);
+                    } else {
+                        existencOrderProducts.add(qpNew);
+                    }
+                }
+            }
+        } else if (hasExistingOrders) {
+            orderOffer.getProducts().removeAll(existencOrderProducts);
+        }
+    }
+	 private void processOrderProduct(OrderProductDto orderProductDTO, OrderProduct q) {
+	        var orderAttributeDtos = orderProductDTO.getOrderAttributes();
+	        var hasOrderProductDtos = orderAttributeDtos != null && !orderAttributeDtos.isEmpty();
+
+	        var existencOrderProducts = q.getOrderAttributes();
+	        var hasExistingOrders = existencOrderProducts != null && !existencOrderProducts.isEmpty();
+
+	        if(hasOrderProductDtos) {
+	            var newOrderProducts = new ArrayList<OrderAttribute>();
+	            OrderAttribute orderAttribute = null;
+	            for (OrderAttributeDto orderAttributeDTO : orderAttributeDtos) {
+	                orderAttribute = getOrderAttributeFromDto(orderAttributeDTO, q,null);
+	                newOrderProducts.add(orderAttribute);
+	            }
+	            if(!hasExistingOrders) {
+	                q.getOrderAttributes().addAll(newOrderProducts);
+	            }else {
+	                existencOrderProducts.retainAll(newOrderProducts);
+	                for (OrderAttribute qpNew : newOrderProducts) {
+	                    int index = existencOrderProducts.indexOf(qpNew);
+	                    if(index >= 0) {
+	                    	OrderAttribute old = existencOrderProducts.get(index);
+	                        old.update(qpNew);
+	                    }else {
+	                        existencOrderProducts.add(qpNew);
+	                    }
+	                }
+	            }
+	        }else if(hasExistingOrders){
+	            q.getOrderAttributes().removeAll(existencOrderProducts);
+	        }
+	    }
+	 
+	 private OrderAttribute getOrderAttributeFromDto(OrderAttributeDto orderAttributeDTO, OrderProduct orderProduct,OrderOffer orderOffer) {
+  
+		 OrderAttribute orderAttribute = null;
+		 if(orderAttributeDTO.getOrderAttributeId() != null) {
+			 orderAttribute = orderAttributeService.findById(orderAttributeDTO.getOrderAttributeId());
+		 } 
+		 if(orderAttribute == null) { 
+			 orderAttribute= populateOrderAttribute(orderAttributeDTO, orderProduct, null, orderOffer);
+			 orderAttributeService.create(orderAttribute);
+		 }
+		 if(orderProduct.getId() != orderAttribute.getOrderProduct().getId()) {
+		  throw new MeveoApiException("order Attribute is already attached to : " + orderAttribute.getOrderProduct().getId());  
+		 }
+		 return orderAttribute;
+	 }
+    
+    private void processOrderAttribute(OrderOfferDto orderOfferDTO, OrderOffer orderOffer) { 
+        var orderAttributeDtos = orderOfferDTO.getOrderAttributes();   
+        var existencOrderAttributes = orderOffer.getOrderAttributes();
+        var hasExistingOrders = existencOrderAttributes != null && !existencOrderAttributes.isEmpty();
+
+        if (orderAttributeDtos != null && !orderAttributeDtos.isEmpty()) {
+            var newOrderAttributes = new ArrayList<OrderAttribute>();
+            OrderAttribute orderAttribute = null; 
+            for (OrderAttributeDto orderAttributeDto : orderAttributeDtos) {
+                orderAttribute = getOrderAttributeFromDto(orderAttributeDto, null,orderOffer);
+                newOrderAttributes.add(orderAttribute); 
+            }
+            if (!hasExistingOrders) {
+                orderOffer.getOrderAttributes().addAll(newOrderAttributes);
+            } else {
+                existencOrderAttributes.retainAll(newOrderAttributes);
+                for (OrderAttribute qpNew : newOrderAttributes) {
+                    int index = existencOrderAttributes.indexOf(qpNew);
+                    if (index >= 0) {
+                        OrderAttribute old = existencOrderAttributes.get(index);
+                        old.update(qpNew);
+                    } else {
+                        existencOrderAttributes.add(qpNew);
+                    }
+                }
+            }
+        } else if (hasExistingOrders) {
+            orderOffer.getOrderAttributes().removeAll(existencOrderAttributes);
+        }
+    }
+  
+	
+    private OrderProduct getOrderProductFromDto(OrderProductDto orderProductDTO, OrderOffer orderOffer) { 
+    	 if (orderProductDTO.getOrderProductId()==null) {
+             missingParameters.add("orderProductId");
+         handleMissingParameters();
+         }
+            OrderProduct orderProduct = orderProductService.findById(orderProductDTO.getOrderProductId());  
+        if (orderProduct == null) {  
+        	orderProduct= populateOrderProduct(orderProductDTO, orderOffer,orderProduct);
+        	orderProductService.create(orderProduct);
+        }else {
+        	orderProduct= populateOrderProduct(orderProductDTO, orderOffer,orderProduct);
+        }
+        	processOrderProduct( orderProductDTO, orderProduct); 
+        
+        return orderProduct;
+        
+    }
+     
+    public OrderProduct populateOrderProduct(OrderProductDto orderProductDto,OrderOffer orderOffer,OrderProduct orderProduct) {
+    	CommercialOrder commercialOrder =null;
+    	if(!StringUtils.isBlank(orderProductDto.getCommercialOrderId())) {
+         commercialOrder = commercialOrderService.findById(orderProductDto.getCommercialOrderId());
+		if (commercialOrder == null) {
+			throw new EntityDoesNotExistsException(CommercialOrder.class, orderProductDto.getCommercialOrderId());
+		}
+    	}
+		OrderLot orderLot=null;
+		if(!StringUtils.isBlank(orderProductDto.getOrderLotCode())) {
+		 orderLot=orderLotService.findByCode(orderProductDto.getOrderLotCode());
+		if(orderLot == null) { 
+			throw new EntityDoesNotExistsException(OrderLot.class,orderProductDto.getOrderLotCode());
+		}
+		}
+		ProductVersion productVersion =null;
+		if(!StringUtils.isBlank(orderProductDto.getProductCode())&&!StringUtils.isBlank(orderProductDto.getProductVersion()) ) {
+		 productVersion = productVersionService.findByProductAndVersion(orderProductDto.getProductCode(), orderProductDto.getProductVersion());
+		if(productVersion == null) {
+			throw new EntityDoesNotExistsException(ProductVersion.class, orderProductDto.getProductCode() +","+ orderProductDto.getProductVersion());
+		}
+		} 
+		if(orderProduct==null) {
+			orderProduct=new OrderProduct();
+		}
+		orderProduct.setOrder(commercialOrder);
+		orderProduct.setOrderServiceCommercial(orderLot);
+		orderProduct.setProductVersion(productVersion);
+		orderProduct.setOrderOffer(orderOffer); 
+		orderProduct.setQuantity(orderProductDto.getQuantity()); 
+		orderProduct.updateAudit(currentUser); 
+		return orderProduct;
+    }
+    
+	private void createOrderProduct(List<OrderProductDto> orderProductDtos, OrderOffer orderOffer) {
+		if(orderProductDtos != null && !orderProductDtos.isEmpty()) { 
+			for (OrderProductDto orderProductDto : orderProductDtos) {  
+				OrderProduct orderProduct=populateOrderProduct(orderProductDto,orderOffer,null);  
+				orderProductService.create(orderProduct);
+				//create order attributes linked to orderProduct
+				createOrderAttribute(orderProductDto.getOrderAttributes(), orderProduct,orderOffer);
+				orderOffer.getProducts().add(orderProduct); 
+			}
+		}
+	}
+	
+	
+	private void createOrderAttribute(List<OrderAttributeDto> orderAttributeDtos, OrderProduct orderProduct,OrderOffer orderOffer) {
+        if (orderAttributeDtos != null && !orderAttributeDtos.isEmpty()) {
+        	if(orderProduct!=null) {
+        		orderProduct.getOrderAttributes().clear(); 
+        		}
+            orderAttributeDtos.stream()
+                    .map(orderAttributeDTO -> populateOrderAttribute(orderAttributeDTO, orderProduct, orderProduct!=null?orderProduct.getProductVersion().getAttributes():null,orderOffer))
+                    .collect(Collectors.toList())
+                    .forEach(orderAttribute -> orderAttributeService.create(orderAttribute));
+        }
+    }
+	
+    private OrderAttribute populateOrderAttribute(OrderAttributeDto orderAttributeDTO, OrderProduct  orderProduct, List<Attribute> productAttributes,OrderOffer orderOffer) {
+        if (Strings.isEmpty( orderAttributeDTO.getOrderAttributeCode())) {
+            missingParameters.add("orderAttributeCode");
+        handleMissingParameters();
+        }
+        Attribute attribute=null;
+        if(!StringUtils.isBlank(orderAttributeDTO.getOrderAttributeCode())) {
+         attribute = attributeService.findByCode(orderAttributeDTO.getOrderAttributeCode());
+        if (attribute == null) {
+            throw new EntityDoesNotExistsException(Attribute.class, orderAttributeDTO.getOrderAttributeCode());
+        }
+        }
+        if(productAttributes != null && !productAttributes.contains(attribute) && orderProduct!=null){
+            throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", orderProduct.getProductVersion().getProduct().getCode() , orderProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
+        }
+        CommercialOrder commercialOrder =null;
+    	if(!StringUtils.isBlank(orderAttributeDTO.getCommercialOrderId())) {
+         commercialOrder = commercialOrderService.findById(orderAttributeDTO.getCommercialOrderId());
+		if (commercialOrder == null) {
+			throw new EntityDoesNotExistsException(CommercialOrder.class, orderAttributeDTO.getCommercialOrderId());
+		}
+    	}
+		OrderLot orderLot=null;
+		if(!StringUtils.isBlank(orderAttributeDTO.getOrderLotCode())) {
+		 orderLot=orderLotService.findByCode(orderAttributeDTO.getOrderLotCode());
+		if(orderLot == null) { 
+			throw new EntityDoesNotExistsException(OrderLot.class,orderAttributeDTO.getOrderLotCode());
+		}
+		} 
+        OrderAttribute orderAttribute = new OrderAttribute();
+        orderAttribute.setAttribute(attribute);
+        orderAttribute.setCommercialOrder(commercialOrder);
+		orderAttribute.setOrderLot(orderLot);
+        orderAttribute.setStringValue(orderAttributeDTO.getStringValue());
+        orderAttribute.setDoubleValue(orderAttributeDTO.getDoubleValue());
+        orderAttribute.setDateValue(orderAttributeDTO.getDateValue());
+        orderAttribute.updateAudit(currentUser);
+        if(orderProduct!=null ) {
+            orderProduct.getOrderAttributes().add(orderAttribute);
+            orderAttribute.setOrderProduct(orderProduct);
+        }
+        if(orderOffer!=null) {
+        orderAttribute.setOrderOffer(orderOffer);
+        }
+        if(!orderAttributeDTO.getLinkedOrderAttribute().isEmpty()){
+            List<OrderAttribute> linkedOrderAttributes = orderAttributeDTO.getLinkedOrderAttribute()
+                    .stream()
+                    .map(dto -> {
+                        OrderAttribute linkedAttribute = populateOrderAttribute(dto, orderProduct, productAttributes,orderOffer);
+                        linkedAttribute.setParentAttributeValue(orderAttribute);
+                        return linkedAttribute;
+                    })
+                    .collect(Collectors.toList());
+            orderAttribute.setAssignedAttributeValue(linkedOrderAttributes);
+        }
+        return orderAttribute;
+    }
+   
+    public void removeOrderOffer(Long id) throws MeveoApiException, BusinessException { 
+    	OrderOffer orderOffer = orderOfferService.findById(id);
+    	if (orderOffer == null) {
+    		throw new EntityDoesNotExistsException(ProductOrder.class, id);
+    	} 
+    	orderOfferService.remove(orderOffer);
+
+    }
+    
+	public OrderOfferDto findOrderOffer(Long id) {
+		if(id==null)
+			missingParameters.add("id");
+	    OrderOffer orderOffer = orderOfferService.findById(id);
+		if(orderOffer == null)
+			throw new EntityDoesNotExistsException(OrderOffer.class, id);
+		return new OrderOfferDto(orderOffer, true,true,true);
+	}
 }

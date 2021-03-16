@@ -35,6 +35,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -43,6 +46,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -53,6 +58,7 @@ import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.cpq.Product;
 
 /**
  * Discount plan
@@ -134,6 +140,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "discount_plan_type", length = 50)
 	private DiscountPlanTypeEnum discountPlanType;
+
 
 	/**
 	 * Status of the discount plan:
@@ -238,6 +245,14 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		}
 	}
 	
+
+	/**
+	 * Expression to determine if discount applies
+	 */
+	@Column(name = "expression_el", length = 2000)
+	@Size(max = 2000)
+	private String expressionEl;
+
 	public DiscountPlan() {}
 	
 	public DiscountPlan(DiscountPlan dp) {
@@ -418,4 +433,21 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	public void setIncompatibleDiscountPlans(List<DiscountPlan> incompatibleDiscountPlans) {
 		this.incompatibleDiscountPlans = incompatibleDiscountPlans;
 	}
+
+	/**
+	 * @return the expressionEl
+	 */
+	public String getExpressionEl() {
+		return expressionEl;
+	}
+
+	/**
+	 * @param expressionEl the expressionEl to set
+	 */
+	public void setExpressionEl(String expressionEl) {
+		this.expressionEl = expressionEl;
+	}
+
+
+
 }

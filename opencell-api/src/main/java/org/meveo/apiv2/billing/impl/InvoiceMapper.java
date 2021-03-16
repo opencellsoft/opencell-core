@@ -1,5 +1,6 @@
 package org.meveo.apiv2.billing.impl;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
@@ -11,31 +12,20 @@ import org.meveo.model.order.Order;
 public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoice, Invoice> {
 
 	@Override
-	protected org.meveo.apiv2.billing.Invoice toResource(Invoice entity) {
-
-		return ImmutableInvoice.builder().billingRun(buildById(entity.getBillingRun())).recordedInvoice(buildById(entity.getRecordedInvoice()))
-				.status(entity.getStatus()).paymentStatus(entity.getPaymentStatus())
-				.invoiceNumber(entity.getInvoiceNumber()).productDate(entity.getProductDate())
-				.invoiceDate(entity.getInvoiceDate()).dueDate(entity.getDueDate()).amount(entity.getAmount())
-				.discount(entity.getDiscount()).amountWithoutTax(entity.getAmountWithoutTax())
-				.amountTax(entity.getAmountTax()).amountWithTax(entity.getAmountWithTax())
-				.netToPay(entity.getNetToPay()).iban(entity.getIban()).alias(entity.getAlias())
-				.tradingCurrency(buildById(entity.getTradingCurrency()))
-				.tradingCountry(buildById(entity.getTradingCountry()))
-				.tradingLanguage(buildById(entity.getTradingLanguage())).comment(entity.getComment())
-				.quote(buildById(entity.getQuote()))
-				.subscription(buildById(entity.getSubscription())).order(buildById(entity.getOrder()))
-				.xmlFilename(entity.getXmlFilename()).pdfFilename(entity.getPdfFilename())
-				.paymentMethod(buildById(entity.getPaymentMethod())).dueBalance(entity.getDueBalance())
-				.externalRef(entity.getExternalRef()).rejectReason(entity.getRejectReason()).initialCollectionDate(entity.getInitialCollectionDate())
-				.statusDate(entity.getStatusDate()).xmlDate(entity.getXmlDate()).pdfDate(entity.getPdfDate())
-				.emailSentDate(entity.getEmailSentDate()).paymentStatusDate(entity.getPaymentStatusDate())
-				.startDate(entity.getStartDate()).endDate(entity.getEndDate()).rawAmount(entity.getRawAmount())
-				.discountRate(entity.getDiscountRate()).discountAmount(entity.getDiscountAmount())
-				.invoiceAdjustmentCurrentSellerNb(entity.getInvoiceAdjustmentCurrentSellerNb())
-				.invoiceAdjustmentCurrentProviderNb(entity.getInvoiceAdjustmentCurrentProviderNb())
-				.previousInvoiceNumber(entity.getPreviousInvoiceNumber()).draft(entity.getDraft())
-				.description(entity.getDescription()).build();
+	public org.meveo.apiv2.billing.Invoice toResource(Invoice entity) {
+		try {
+			ImmutableInvoice resource = (ImmutableInvoice) initResource(ImmutableInvoice.class, entity);
+			return ImmutableInvoice.builder().from(resource).id(entity.getId())
+					.billingRun(buildById(entity.getBillingRun()))
+					.recordedInvoice(buildById(entity.getRecordedInvoice()))
+					.tradingCurrency(buildById(entity.getTradingCurrency()))
+					.tradingCountry(buildById(entity.getTradingCountry()))
+					.tradingLanguage(buildById(entity.getTradingLanguage())).quote(buildById(entity.getQuote()))
+					.paymentMethod(buildById(entity.getPaymentMethod()))
+					.subscription(buildById(entity.getSubscription())).order(buildById(entity.getOrder())).build();
+		} catch (Exception e) {
+			throw new BusinessException(e);
+		}
 	}
 
 	private ImmutableResource buildById(BaseEntity entity) {
@@ -43,27 +33,25 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 	}
 
 	@Override
-	protected Invoice toEntity(org.meveo.apiv2.billing.Invoice resource) {
-		Invoice invoice = new Invoice();
+	public Invoice toEntity(org.meveo.apiv2.billing.Invoice resource) {
+		try {
+			Invoice invoice = initEntity(resource, new Invoice());
+			invoice.setId(resource.getId());
+			if (resource.getBillingRun() != null) {
+				BillingRun billingRun = new BillingRun();
+				billingRun.setId(resource.getBillingRun().getId());
+				invoice.setBillingRun(billingRun);
+			}
 
-		if (resource.getBillingRun() != null) {
-			BillingRun billingRun = new BillingRun();
-			billingRun.setId(resource.getBillingRun().getId());
-			invoice.setBillingRun(billingRun);
+			if (resource.getOrder() != null) {
+				Order order = new Order();
+				order.setId(resource.getOrder().getId());
+				invoice.setOrder(order);
+			}
+
+			return invoice;
+		} catch (Exception e) {
+			throw new BusinessException(e);
 		}
-
-		invoice.setDiscountRate(resource.getDiscountRate());
-		invoice.setAmountWithTax(resource.getAmountWithTax());
-
-		invoice.setStartDate(resource.getStartDate());
-		invoice.setEndDate(resource.getEndDate());
-
-		if (resource.getOrder() != null) {
-			Order order = new Order();
-			order.setId(resource.getOrder().getId());
-			invoice.setOrder(order);
-		}
-
-		return invoice;
 	}
 }

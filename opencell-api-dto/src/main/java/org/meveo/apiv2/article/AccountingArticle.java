@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import org.immutables.value.Value;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.apiv2.models.Resource;
 
@@ -46,7 +47,8 @@ public interface AccountingArticle extends Resource {
     @Nullable
     List<LanguageDescriptionDto> getLanguageDescriptions();
 
-    //CustomFieldsDto getCustomFields();
+    @Nullable
+    CustomFieldsDto getCustomFields();
 
 
 

@@ -9,6 +9,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.catalog.Calendar;
 import org.meveo.model.payments.PaymentMethod;
 
 import java.io.IOException;
@@ -46,6 +47,7 @@ public class GenericModule extends SimpleModule {
         addSerializer(Collection.class, new ListCustomSerializer(nestedEntities, sharedEntityToSerialize, nestedDepth));
         addDeserializer(ChargeInstance.class, new ChargeInstanceDeserializer());
         addDeserializer(PaymentMethod.class, new PaymentDeserializer());
+        addDeserializer(Calendar.class, new CalendarDeserializer());
         addKeyDeserializer(Tax.class, new KeyDeserializer() {
             @Override
             public Object deserializeKey(String key, DeserializationContext ctxt)

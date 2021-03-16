@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -304,7 +305,7 @@ public class InvoiceDto extends AuditableEntityDto {
      * End of the billed period (based on billing cycle period whenever possible or applied lastTransactionDate or max(invoiceLine.valueDate))
      */
     protected Date endDate;
-
+     
 
     /**
      * Total raw amount from invoice lines.
@@ -337,6 +338,12 @@ public class InvoiceDto extends AuditableEntityDto {
      * Indicates if the invoice discounts have already been applied
      */
     protected boolean isAlreadyAddedDiscount;
+    
+    /**
+     * Discount plan code
+     */
+    @XmlElement
+    private String discountPlanCode;
 
     public List<String> getPaymentIncidents() {
         return paymentIncidents;
@@ -1164,4 +1171,14 @@ public class InvoiceDto extends AuditableEntityDto {
     public void setInitialCollectionDate(Date intialCollectionDate) {
         this.initialCollectionDate = intialCollectionDate;
     }
+
+	public String getDiscountPlanCode() {
+		return discountPlanCode;
+	}
+
+	public void setDiscountPlanCode(String discountPlanCode) {
+		this.discountPlanCode = discountPlanCode;
+	}
+    
+    
 }

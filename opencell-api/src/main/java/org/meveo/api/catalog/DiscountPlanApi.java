@@ -78,6 +78,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         }
         discountPlan.setStartDate(postData.getStartDate());
         discountPlan.setEndDate(postData.getEndDate());
+        discountPlan.setExpressionEl(postData.getExpressionEl());
         discountPlan.setDefaultDuration(postData.getDefaultDuration());
         if (postData.getDurationUnit() != null) {
             discountPlan.setDurationUnit(postData.getDurationUnit());
@@ -149,18 +150,22 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 
         discountPlan.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 
-        if (postData.getStartDate() != null) {
-            discountPlan.setStartDate(postData.getStartDate());
+        if(!StringUtils.isBlank(postData.getExpressionEl())){
+        	discountPlan.setExpressionEl(postData.getExpressionEl());
         }
-        if (postData.getEndDate() != null) {
-            discountPlan.setEndDate(postData.getEndDate());
-        }
-        if (postData.getDefaultDuration() != null) {
-            discountPlan.setDefaultDuration(postData.getDefaultDuration());
-        }
-        if (postData.getDurationUnit() != null) {
-            if (StringUtils.isBlank(postData.getDurationUnit())) {
-                discountPlan.setDurationUnit(DurationPeriodUnitEnum.DAY);
+
+		if (postData.getStartDate() != null) {
+			discountPlan.setStartDate(postData.getStartDate());
+		} 
+		if (postData.getEndDate() != null) {
+			discountPlan.setEndDate(postData.getEndDate());
+		} 
+		if (postData.getDefaultDuration() != null) {
+			discountPlan.setDefaultDuration(postData.getDefaultDuration());
+		} 
+		if (postData.getDurationUnit() != null) {
+		    if (StringUtils.isBlank(postData.getDurationUnit())) {
+		        discountPlan.setDurationUnit(DurationPeriodUnitEnum.DAY);  
             } else {
                 discountPlan.setDurationUnit(postData.getDurationUnit());
             }

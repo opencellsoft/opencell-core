@@ -13,11 +13,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
+import org.meveo.api.dto.cpq.order.OrderOfferDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.GetCommercialOrderDtoResponse;
 import org.meveo.api.dto.response.cpq.GetListCommercialOrderDtoResponse;
-import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
+import org.meveo.api.dto.response.cpq.GetOrderOfferDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteDtoResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -35,7 +37,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
  * @version 11.0
  * @LastModified 04-01-2021
  */
-@Path("/commercialOrder")
+@Path("/orderManagement/commercialOrders")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface CommercialOrderRs {
@@ -65,7 +67,7 @@ public interface CommercialOrderRs {
 	public Response update(CommercialOrderDto orderDto);
 
 	@PATCH
-	@Path("/{commercialOrderId}/userAccount/{userAccountCode}")
+	@Path("/{commercialOrderId}/userAccounts/{userAccountCode}")
 	@Operation(summary = "update commercial order user account",
 			tags = { "Order management" },
 			description ="",
@@ -77,7 +79,7 @@ public interface CommercialOrderRs {
 	Response updateUserAccount(@Parameter(required = true) @PathParam("commercialOrderId") Long commercialOrderId, @Parameter(required = true) @PathParam("userAccountCode") String userAccountCode);
 
 	@PATCH
-	@Path("/{commercialOrderId}/invoicingPlan/{invoicingPlanCode}")
+	@Path("/{commercialOrderId}/invoicingPlans/{invoicingPlanCode}")
 	@Operation(summary = "update commercial order invoicing plan",
 			tags = { "Order management" },
 			description ="",
@@ -102,7 +104,7 @@ public interface CommercialOrderRs {
 	
 
 	@PATCH
-	@Path("/{orderId}/status/update")
+	@Path("/{orderId}/status/{statusTarget}")
 	@Operation(summary = "update status for order",
 	    tags = { "Order management" },
 	    description ="",
@@ -111,11 +113,11 @@ public interface CommercialOrderRs {
 	            @ApiResponse(responseCode = "412", description = "id of order is missing", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 	            @ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 	    })
-	public Response updateStatus(@Parameter(required = true) @PathParam("orderId") Long orderId, @Parameter(required = true) @QueryParam("statusTarget") String statusTarget);
+	public Response updateStatus(@Parameter(required = true) @PathParam("orderId") Long orderId, @Parameter(required = true) @PathParam("statusTarget") String statusTarget);
 	
 
 	@POST
-	@Path("/duplicate/{orderId}")
+	@Path("{orderId}/duplication")
 	@Operation(summary = "duplicate an order",
 	    tags = { "Order management" },
 	    description ="",
@@ -149,7 +151,7 @@ public interface CommercialOrderRs {
     public Response findByOrderNumber(@Parameter(required = true) @PathParam("orderNumber") String orderNumber);
 
 	@POST
-	@Path("/validateOrder/{orderId}")
+	@Path("/{orderId}/orderValidation")
 	@Operation(summary = "Launch the order validation process",
 			tags = { "Order management" },
 			description ="Launch the order validation process",
@@ -158,4 +160,65 @@ public interface CommercialOrderRs {
 					@ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 			})
 	public Response orderValidationProcess(@Parameter(required = true) @PathParam("orderId") Long orderId);
+	
+	
+	@POST
+	@Path("orderOffer/create")
+	@Operation(summary = "This endpoint allows to create new order offer",
+	tags = { "Order management" },
+	description ="Creating a new order offer",
+	responses = {
+			@ApiResponse(responseCode="200", description = "the order offer successfully added",
+					content = @Content(schema = @Schema(implementation = GetOrderOfferDtoResponse.class))),
+			@ApiResponse(responseCode = "412", description = "missing required paramter for order offer required",
+			content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
+
+	})
+
+	Response createOrderOffer(	@Parameter( name = "orderOfferDto",
+	description = "order offer dto for a new insertion")OrderOfferDto orderOfferDto);
+
+
+	@PUT
+	@Path("orderOffer/update")
+	@Operation(summary = "This endpoint allows to update an existing order offer",
+	description ="Updating an existing order offer",
+	tags = { "Order management" },
+	responses = {
+			@ApiResponse(responseCode="200", description = "the order offer successfully updated",
+					content = @Content(schema = @Schema(implementation = GetOrderOfferDtoResponse.class))),
+			@ApiResponse(responseCode = "412", description = "missing required paramter for order offer.The required",
+			content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
+	})
+	Response updateOrderOffer(@Parameter(description = "order offer dto for updating an existing order offer", required = true) OrderOfferDto orderOffer);
+
+
+	@DELETE
+	@Path("orderOffer/{id}")
+	@Operation(summary = "This endpoint allows to  delete an existing order offer",
+	description ="Deleting an existing order offer with its id",
+	tags = { "Order management" },
+	responses = {
+			@ApiResponse(responseCode="200", description = "The order offer successfully deleted",
+					content = @Content(schema = @Schema(implementation = GetOrderOfferDtoResponse.class))),
+			@ApiResponse(responseCode = "400", description = "No order offer found for the id parameter", 
+			content = @Content(schema = @Schema(implementation = BusinessException.class)))
+	})
+	Response deleteOrderOffer(@Parameter(description = "contain the code of order offer te be deleted by its id", required = true) @PathParam("id") Long id);
+
+
+	@GET
+	@Path("orderOffer/{id}")
+	@Operation(summary = "Get order offer matching the given order id",
+	tags = { "Order management" },
+	description ="Get order offer matching the given order id",
+	responses = {
+			@ApiResponse(responseCode="200", description = "The order type is succefully retrieved",content = @Content(schema = @Schema(implementation = GetOrderOfferDtoResponse.class))),
+			@ApiResponse(responseCode = "404", description = "Order offer Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+	})
+	public Response findOrderOffer(@Parameter(required = true) @PathParam("id") Long id);
 }
+	
+	
+	
+

@@ -18,6 +18,7 @@
 package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -149,7 +150,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     private OfferTemplate offerTemplate;
 
     @OneToMany(mappedBy = "pricePlanMatrix", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PricePlanMatrixVersion> versions;
+    private List<PricePlanMatrixVersion> versions = new ArrayList<>();
 
     /**
      * Filtering criteria - subscription date range - start date

@@ -88,7 +88,11 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
             pricePlanMatrixVersionService.create(pricePlanMatrixVersion);
         } else {
             populatePricePlanMatrixVersion(pricePlanMatrixVersion, pricePlanMatrixVersionDto, pricePlanMatrixVersionDto.getStatusEnum(), pricePlanMatrixVersionDto.getStatusDate());
-            pricePlanMatrixVersionService.updatePricePlanMatrixVersion(pricePlanMatrixVersion);
+            try {
+            	pricePlanMatrixVersionService.updatePricePlanMatrixVersion(pricePlanMatrixVersion);
+            }catch(BusinessException e) {
+            	throw new MeveoApiException(e.getMessage());
+            }
         }
         pricePlanMatrixService.update(pricePlanMatrixVersion.getPricePlanMatrix());
 

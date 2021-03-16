@@ -45,6 +45,7 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.admin.User;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
@@ -52,6 +53,7 @@ import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEn
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.security.Role;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -212,11 +214,13 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
                 .filter(businessEntity -> !Modifier.isAbstract(businessEntity.getModifiers()))
                 .map(businessEntity -> new CustomizedEntity(businessEntity))
                 .collect(Collectors.toSet());
+        Set<CustomizedEntity> noBusinessEntities = Set.of( new CustomizedEntity(User.class), new CustomizedEntity(Role.class) );
 
         allClassName.addAll(customizedBusinessEntities);
         allClassName.addAll(customizedEntityService.getCustomizedEntities("", true, true, false, null, null));
         allClassName.addAll(customEntityTemplateService.listCustomTableTemplates().stream().map(i -> new CustomizedEntity(i.getName(), CustomEntityTemplate.class)).collect(
                 Collectors.toList()));
+        allClassName.addAll(noBusinessEntities);
         return allClassName;
     }
 

@@ -57,7 +57,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 
 	@Override
-	public Response createQuote(boolean executeQuotation, QuoteDTO quote, UriInfo info) {
+	public Response createQuote(QuoteDTO quote, UriInfo info) {
 		 GetQuoteDtoResponse getQuoteDtoResponse = new GetQuoteDtoResponse();
 		 try {
 			 getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.createQuote(quote));
@@ -110,7 +110,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 
 
 	@Override
-	public Response updateQuote(boolean executeQuotation, QuoteDTO quote, UriInfo info) {
+	public Response updateQuote(QuoteDTO quote, UriInfo info) {
 		 GetQuoteDtoResponse getQuoteDtoResponse = new GetQuoteDtoResponse();
 		 try {
 			 getQuoteDtoResponse.setQuoteDto(cpqQuoteApi.updateQuote(quote));

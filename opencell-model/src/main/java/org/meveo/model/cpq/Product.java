@@ -33,16 +33,16 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.proxy.HibernateProxy;
-import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceCharge;
@@ -53,6 +53,8 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
+import org.meveo.model.cpq.trade.CommercialRuleLine;
 import org.meveo.model.crm.CustomerBrand;
 
 /**
@@ -179,15 +181,27 @@ public class Product extends ServiceCharge {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) 
     private List<OfferComponent> offerComponents = new ArrayList<>();
 
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductChargeTemplateMapping> productCharges = new ArrayList<>();
  	
 	@OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_version_id")
 	private ProductVersion currentVersion;
+
+	@OneToMany(mappedBy = "sourceProduct",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<CommercialRuleLine> commercialRuleLines = new ArrayList<CommercialRuleLine>();
+
+	@OneToMany(mappedBy = "targetProduct",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<CommercialRuleHeader> commercialRuleHeader = new ArrayList<CommercialRuleHeader>();
+
+
+	@OneToMany(mappedBy = "product",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<ArticleMappingLine> articleMappingLines = new ArrayList<ArticleMappingLine>();
 	
-	
+
+
+	@OneToMany(mappedBy = "product",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<PricePlanMatrixColumn> pricePlanMatrixColumns = new ArrayList<PricePlanMatrixColumn>();
 	 /**
      * list of Media
      */   
@@ -541,6 +555,53 @@ public class Product extends ServiceCharge {
 		}
 		return entity;
 	}
-	
+
+
+	/**
+	 * @return the commercialRuleLines
+	 */
+	public List<CommercialRuleLine> getCommercialRuleLines() {
+		return commercialRuleLines;
+	}
+
+
+	/**
+	 * @param commercialRuleLines the commercialRuleLines to set
+	 */
+	public void setCommercialRuleLines(List<CommercialRuleLine> commercialRuleLines) {
+		this.commercialRuleLines = commercialRuleLines;
+	}
+
+
+	/**
+	 * @return the commercialRuleHeader
+	 */
+	public List<CommercialRuleHeader> getCommercialRuleHeader() {
+		return commercialRuleHeader;
+	}
+
+
+	/**
+	 * @param commercialRuleHeader the commercialRuleHeader to set
+	 */
+	public void setCommercialRuleHeader(List<CommercialRuleHeader> commercialRuleHeader) {
+		this.commercialRuleHeader = commercialRuleHeader;
+	}
+
+
+	/**
+	 * @return the articleMappingLines
+	 */
+	public List<ArticleMappingLine> getArticleMappingLines() {
+		return articleMappingLines;
+	}
+
+
+	/**
+	 * @return the pricePlanMatrixColumns
+	 */
+	public List<PricePlanMatrixColumn> getPricePlanMatrixColumns() {
+		return pricePlanMatrixColumns;
+	}
 	
 }
