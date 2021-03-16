@@ -68,8 +68,7 @@ public class AmountValidator implements Validator {
          */
 
         UIInput accountNumberField = (UIInput) context.getViewRoot().findComponent("#{rich:clientId('amountWithoutTax')}");
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa" + accountNumberField);
-
+        
         BigDecimal amountWithoutTax = (BigDecimal) component.getAttributes().get(amountWithoutTaxID);
         BigDecimal amount2 = (BigDecimal) value;
         ChargeTemplate chargeTemplate = (ChargeTemplate) component.getAttributes().get(chargeTemplateID);

@@ -23,10 +23,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CSVUtils {
 
 	private static final char DEFAULT_SEPARATOR = ',';
 	private static final char DEFAULT_QUOTE = '"';
+	
+	private static final Logger log = LoggerFactory.getLogger(CSVUtils.class);
 
 	public static void main(String[] args) throws Exception {
 
@@ -35,7 +40,7 @@ public class CSVUtils {
 		try (Scanner scanner = new Scanner(new File(csvFile))) {
 			while (scanner.hasNext()) {
 				List<String> line = parseLine(scanner.nextLine());
-				System.out.println(
+				log.info(
 						"Country [id= " + line.get(0) + ", code= " + line.get(1) + " , name=" + line.get(2) + "]");
 			}
 		}

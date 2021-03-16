@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.meveo.model.catalog.OfferTemplateCategory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.MappingIterator;
@@ -39,6 +41,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 public class CsvTest {
 
 	private final String FILE_NAME = "offerTemplateCategory.csv";
+	private static final Logger log = LoggerFactory.getLogger(CsvTest.class);
 
 	public static void main(String args[]) {
 		try {
@@ -46,7 +49,7 @@ public class CsvTest {
 			app.testCsvRead();
 			app.testCsvWrite();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 	}
 

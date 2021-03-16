@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 import com.ingenico.connect.gateway.sdk.java.ApiException;
 import com.ingenico.connect.gateway.sdk.java.Client;
 import com.ingenico.connect.gateway.sdk.java.CommunicatorConfiguration;
-import com.ingenico.connect.gateway.sdk.java.DeclinedPaymentException;
 import com.ingenico.connect.gateway.sdk.java.Factory;
 import com.ingenico.connect.gateway.sdk.java.Marshaller;
 import com.ingenico.connect.gateway.sdk.java.defaultimpl.DefaultMarshaller;
@@ -65,6 +64,8 @@ import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentRequest
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.PaymentResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardPaymentMethodSpecificInput;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardPaymentMethodSpecificInputBase;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardRecurrenceDetails;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Customer;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Order;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.OrderReferences;
@@ -453,8 +454,17 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         cardPaymentMethodSpecificInput.setToken(cardPaymentMethod.getTokenId());
         cardPaymentMethodSpecificInput.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", "changeIt"));
         cardPaymentMethodSpecificInput.setIsRecurring(Boolean.TRUE);
-        cardPaymentMethodSpecificInput.setRecurringPaymentSequenceIndicator("recurring");
-        cardPaymentMethodSpecificInput.setAuthorizationMode(getAuthorizationMode());
+
+        cardPaymentMethodSpecificInput.setAuthorizationMode(getAuthorizationMode());        
+
+        cardPaymentMethodSpecificInput.setUnscheduledCardOnFileRequestor(paramBean().getProperty("ingenico.CreatePayment.UnscheduledCardOnFileRequestor", "MIT"));
+        cardPaymentMethodSpecificInput.setUnscheduledCardOnFileSequenceIndicator(paramBean().getProperty("ingenico.CreatePayment.UnscheduledCardOnFileSequenceIndicator", "SUBSEQUENT"));
+        
+        CardRecurrenceDetails cardRecurrenceDetails = new CardRecurrenceDetails();					
+		cardRecurrenceDetails.setRecurringPaymentSequenceIndicator( paramBean().getProperty("ingenico.CreatePayment.RecurringPaymentSequenceIndicator", "NULL"));			
+		cardPaymentMethodSpecificInput.setRecurring(cardRecurrenceDetails);
+		
+		
         return cardPaymentMethodSpecificInput;
     }
 
@@ -593,6 +603,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			hostedCheckoutSpecificInput.setLocale(hostedCheckoutInput.getLocale());
 			hostedCheckoutSpecificInput.setVariant(hostedCheckoutInput.getVariant());
 			hostedCheckoutSpecificInput.setReturnUrl(returnUrl);
+			hostedCheckoutSpecificInput.setIsRecurring(false);
 
 			AmountOfMoney amountOfMoney = new AmountOfMoney();
 			amountOfMoney.setAmount(Long.valueOf(hostedCheckoutInput.getAmount()));
@@ -612,16 +623,24 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			order.setCustomer(customer);
 			order.setReferences(orderReferences);
 
-			CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
-			cardPaymentMethodSpecificInput.setAuthorizationMode(hostedCheckoutInput.getAuthorizationMode());
-			cardPaymentMethodSpecificInput.setTokenize(true);
-			cardPaymentMethodSpecificInput.setSkipAuthentication(hostedCheckoutInput.isSkipAuthentication());
-			cardPaymentMethodSpecificInput.setIsRecurring(true);
-			cardPaymentMethodSpecificInput.setReturnUrl(hostedCheckoutInput.getReturnUrl());
+			CardPaymentMethodSpecificInputBase cardPaymentMethodSpecificInputBase = new CardPaymentMethodSpecificInputBase();
+			cardPaymentMethodSpecificInputBase.setRequiresApproval(true);
+			cardPaymentMethodSpecificInputBase.setAuthorizationMode(hostedCheckoutInput.getAuthorizationMode());
+			cardPaymentMethodSpecificInputBase.setTokenize(true);
+			cardPaymentMethodSpecificInputBase.setSkipAuthentication(hostedCheckoutInput.isSkipAuthentication());
 
+
+			CardRecurrenceDetails cardRecurrenceDetails = new CardRecurrenceDetails();					
+			cardRecurrenceDetails.setRecurringPaymentSequenceIndicator( paramBean().getProperty("ingenico.HostedCheckout.RecurringPaymentSequenceIndicator", "NULL"));			
+			cardPaymentMethodSpecificInputBase.setRecurring(cardRecurrenceDetails);
+
+			cardPaymentMethodSpecificInputBase.setUnscheduledCardOnFileRequestor(paramBean().getProperty("ingenico.HostedCheckout.UnscheduledCardOnFileRequestor", "CIT"));
+			cardPaymentMethodSpecificInputBase.setUnscheduledCardOnFileSequenceIndicator( paramBean().getProperty("ingenico.HostedCheckout.UnscheduledCardOnFileSequenceIndicator", "FIRST"));
+
+			
 			CreateHostedCheckoutRequest body = new CreateHostedCheckoutRequest();
 			body.setHostedCheckoutSpecificInput(hostedCheckoutSpecificInput);
-			body.setCardPaymentMethodSpecificInput(cardPaymentMethodSpecificInput);
+			body.setCardPaymentMethodSpecificInput(cardPaymentMethodSpecificInputBase);
 			body.setOrder(order);
 			getClient();
 			log.info("REQUEST:"+marshaller.marshal(body));
