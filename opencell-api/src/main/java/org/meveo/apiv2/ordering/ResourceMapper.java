@@ -48,7 +48,7 @@ public abstract class ResourceMapper<T extends Resource, E extends BaseEntity> {
                 .build() : ImmutableResource.builder().build();
     }
     
-	protected E initEntity(T resource, E entity) throws Exception {
+	public E initEntity(T resource, E entity) throws Exception {
 
 		final Class<? extends Resource> ressourceClass = resource.getClass();
 		final Class<? extends BaseEntity> entityClass = entity.getClass();
@@ -68,7 +68,7 @@ public abstract class ResourceMapper<T extends Resource, E extends BaseEntity> {
 		return entity;
 	}
 	
-	protected T initResource(Class<T> resourceClass, E entity) throws Exception {
+	public T initResource(Class<? extends T> resourceClass, E entity) throws Exception {
 
 		final Class<? extends BaseEntity> entityClass = entity.getClass();
 		
