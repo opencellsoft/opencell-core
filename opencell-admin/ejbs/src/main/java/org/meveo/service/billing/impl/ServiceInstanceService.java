@@ -230,7 +230,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws BusinessException business exception
      */
     public void serviceInstanciation(ServiceInstance serviceInstance, String descriptionOverride) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-        serviceInstanciation(serviceInstance, descriptionOverride, null, null, false);
+        if(serviceInstance.getServiceTemplate() != null)
+            serviceInstanciation(serviceInstance, descriptionOverride, null, null, false);
+        else
+            cpqServiceInstanciation(serviceInstance, serviceInstance.getProductVersion().getProduct(), null, null, true);
     }
 
     // validate service is in offer service list
@@ -579,7 +582,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throws BusinessException {
 
         // Execute termination script
-        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+        if (serviceInstance.getServiceTemplate() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
             serviceModelScriptService.terminateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), terminationDate, terminationReason);
         }
 
@@ -681,11 +684,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             }
         }
 
-        PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleTemplateService.findByServiceTemplate(serviceInstance.getServiceTemplate());
-        if (paymentScheduleTemplate != null && serviceInstance.getPsInstances() != null && !serviceInstance.getPsInstances().isEmpty()) {
-            paymentScheduleInstanceService.terminate(serviceInstance, terminationDate);
+        if(serviceInstance.getServiceTemplate() != null) {
+            PaymentScheduleTemplate paymentScheduleTemplate = paymentScheduleTemplateService.findByServiceTemplate(serviceInstance.getServiceTemplate());
+            if (paymentScheduleTemplate != null && serviceInstance.getPsInstances() != null && !serviceInstance.getPsInstances().isEmpty()) {
+                paymentScheduleInstanceService.terminate(serviceInstance, terminationDate);
+            }
         }
-
         serviceInstance = update(serviceInstance);
 
         return serviceInstance;
@@ -781,7 +785,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectServiceInstanceException("service instance is not active. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
         }
 
-        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+        if (serviceInstance.getServiceTemplate() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
             serviceModelScriptService.suspendServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), suspensionDate);
         }
 
@@ -822,7 +826,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (subscription == null) {
             throw new IncorrectSusbcriptionException("service Instance does not have subscrption . serviceCode=" + serviceInstance.getCode());
         }
-        ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
+        String description = serviceInstance.getServiceTemplate() != null ? serviceInstance.getServiceTemplate().getDescription() : serviceInstance.getProductVersion().getProduct().getDescription();
         if (serviceInstance.getStatus() != InstanceStatusEnum.SUSPENDED && !reactivateTerminatedCharges) {
             throw new IncorrectServiceInstanceException("service instance is not suspended. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
         }
@@ -830,7 +834,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
         serviceInstance.setSubscriptionDate(reactivationDate);
-        serviceInstance.setDescription(serviceTemplate.getDescription());
+        serviceInstance.setDescription(description);
         serviceInstance.setTerminationDate(null);
 
         if (reactivateSuspendedCharges) {
@@ -844,7 +848,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         update(serviceInstance);
 
-        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+        if (serviceInstance.getServiceTemplate() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
             serviceModelScriptService.reactivateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), reactivationDate);
         }
     }

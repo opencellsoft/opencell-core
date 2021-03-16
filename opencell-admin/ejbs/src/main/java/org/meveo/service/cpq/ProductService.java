@@ -8,9 +8,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -21,7 +20,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.cpq.Product;
@@ -65,6 +63,8 @@ public class ProductService extends BusinessService<Product> {
 	
 	@Inject
 	private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
+	@Inject private PricePlanMatrixColumnService pricePlanMatrixColumnService;
+	@Inject private ArticleMappingLineService articleMappingLineService;
     /**
      * check if the product has any product line 
      * @param idProductLine
@@ -309,7 +309,14 @@ public class ProductService extends BusinessService<Product> {
 		remove(product); 
 	}
 
-	@Inject private PricePlanMatrixColumnService pricePlanMatrixColumnService;
-	@Inject private ArticleMappingLineService articleMappingLineService;
-
+	public Optional<ProductVersion> getCurrentPublishedVersion(String code, Date date) {
+		Product product = findByCode(code);
+		if(product == null)
+			return Optional.empty();
+		return product.getProductVersions()
+				.stream()
+				.filter(pv -> VersionStatusEnum.PUBLISHED.equals(pv.getStatus()))
+				.filter(pv -> pv.getValidity().isCorrespondsToPeriod(date))
+				.findFirst();
+	}
 }

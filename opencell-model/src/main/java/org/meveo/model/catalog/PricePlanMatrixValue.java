@@ -154,22 +154,22 @@ public class PricePlanMatrixValue extends BaseEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof PricePlanMatrixValue)) return false;
+        if (!super.equals(o)) return false;
         PricePlanMatrixValue that = (PricePlanMatrixValue) o;
-        return Objects.equals(pricePlanMatrixColumn, that.pricePlanMatrixColumn) &&
-                Objects.equals(pricePlanMatrixLine, that.pricePlanMatrixLine) &&
-                Objects.equals(longValue, that.longValue) &&
-                Objects.equals(doubleValue, that.doubleValue) &&
-                Objects.equals(stringValue, that.stringValue) &&
-                Objects.equals(dateValue, that.dateValue) &&
-                Objects.equals(fromDateValue, that.fromDateValue) &&
-                Objects.equals(toDateValue, that.toDateValue) &&
-                Objects.equals(fromDoubleValue, that.fromDoubleValue) &&
-                Objects.equals(toDoubleValue, that.toDoubleValue);
+        return Objects.equals(getPricePlanMatrixLine(), that.getPricePlanMatrixLine()) &&
+                Objects.equals(getLongValue(), that.getLongValue()) &&
+                Objects.equals(getDoubleValue(), that.getDoubleValue()) &&
+                Objects.equals(getStringValue(), that.getStringValue()) &&
+                Objects.equals(getDateValue(), that.getDateValue()) &&
+                Objects.equals(getFromDateValue(), that.getFromDateValue()) &&
+                Objects.equals(getToDateValue(), that.getToDateValue()) &&
+                Objects.equals(getFromDoubleValue(), that.getFromDoubleValue()) &&
+                Objects.equals(getToDoubleValue(), that.getToDoubleValue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), pricePlanMatrixColumn, pricePlanMatrixLine, longValue, doubleValue, stringValue, dateValue, fromDateValue, toDateValue, fromDoubleValue, toDoubleValue);
+        return Objects.hash(super.hashCode(), getPricePlanMatrixLine(), getLongValue(), getDoubleValue(), getStringValue(), getDateValue(), getFromDateValue(), getToDateValue(), getFromDoubleValue(), getToDoubleValue());
     }
 }
