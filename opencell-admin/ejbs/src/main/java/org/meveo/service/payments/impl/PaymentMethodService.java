@@ -98,6 +98,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
                 DDPaymentMethod existingDdPaymentMethod = optionalOfExistingDDPaymentMethod.get();
                 existingDdPaymentMethod.copyFrom(ddpaymentMethod);
                 super.update(existingDdPaymentMethod);
+                paymentMethod.setId(existingDdPaymentMethod.getId());
                 markOtherPpmAsNotPreferred(existingDdPaymentMethod);
                 return;
             }else if (automaticMandateCreation) {
