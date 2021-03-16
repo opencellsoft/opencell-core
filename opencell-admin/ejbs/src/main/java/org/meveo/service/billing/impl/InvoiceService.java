@@ -17,7 +17,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
@@ -35,19 +34,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -109,35 +97,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.ApplyMinimumModeEnum;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.InvoiceModeEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.InvoiceTypeSellerSequence;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
-import org.meveo.model.billing.MinAmountForAccounts;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionGroup;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.ReferenceDateEnum;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
@@ -3305,11 +3265,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Determine which discount plan items apply to this invoice
         List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
-        if (subscription == null && billingAccount != null) {
-            List<DiscountPlanInstance> discountPlanInstances = fromBillingAccount(billingAccount);
-            List<DiscountPlanItem> result = getApplicableDiscountPlanItems(billingAccount, discountPlanInstances, invoice, customerAccount);
-            ofNullable(result).ifPresent(discountPlans -> subscriptionApplicableDiscountPlanItems.addAll(discountPlans));
-        }
 
         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
             subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
@@ -3363,6 +3318,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
         
         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
+        }
+
+        if(subscription == null && billingAccount != null) {
+            List<Long> ids = findSubscriptionIds(billingAccount.getUsersAccounts());
+            if(ids != null && !ids.isEmpty()) {
+                Optional.ofNullable(findSubscriptionDPs(ids))
+                        .ifPresent(discountPlans ->
+                                subscriptionApplicableDiscountPlanItems.addAll(
+                                        getApplicableDiscountPlanItems(billingAccount, discountPlans, invoice, customerAccount)));
+            }
         }
 
         // Construct discount and tax aggregates
@@ -3498,21 +3463,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		invoice.setNetToPay(amountWithTax.add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
     }
 
-    private List<DiscountPlanInstance> fromBillingAccount(BillingAccount billingAccount) {
-        return billingAccount.getUsersAccounts().stream()
-                .map(userAccount -> userAccount.getSubscriptions())
-                .map(this::addSubscriptionDiscountPlan)
-                .flatMap(Collection::stream)
-                .collect(toList());
-    }
-
-    private List<DiscountPlanInstance> addSubscriptionDiscountPlan(List<Subscription> subscriptions) {
-        return subscriptions.stream()
-                .map(Subscription::getDiscountPlanInstances)
-                .flatMap(Collection::stream)
-                .collect(toList());
-    }
-
     private SubCategoryInvoiceAgregate getDiscountAggregates(BillingAccount billingAccount, Invoice invoice, boolean isEnterprise, int rounding, RoundingModeEnum roundingMode, int invoiceRounding,
             RoundingModeEnum invoiceRoundingMode, SubCategoryInvoiceAgregate scAggregate, Map<Tax, BigDecimal> amountsByTax, CategoryInvoiceAgregate cAggregate, DiscountPlanItem discountPlanItem)
             throws BusinessException {
@@ -3637,6 +3587,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
         return applicableDiscountPlanItems;
+    }
+
+    private List<DiscountPlanInstance> findSubscriptionDPs(List<Long> subscriptionIds) {
+        if (!subscriptionIds.isEmpty()) {
+            String query = "from DiscountPlanInstance dp where dp.subscription.id in :subscriptionIds";
+            return getEntityManager().createQuery(query, DiscountPlanInstance.class)
+                    .setParameter("subscriptionIds", subscriptionIds)
+                    .getResultList();
+        }
+        return null;
+    }
+
+    private List<Long> findSubscriptionIds(List<UserAccount> userAccounts) {
+        if(!userAccounts.isEmpty()) {
+            String query = "select sub.id from Subscription sub where sub.userAccount in :userAccounts and sub.status = :status";
+            return getEntityManager().createQuery(query, Long.class)
+                    .setParameter("userAccounts", userAccounts)
+                    .setParameter("status", SubscriptionStatusEnum.ACTIVE)
+                    .getResultList();
+        }
+        return Collections.emptyList();
     }
 
     /**
