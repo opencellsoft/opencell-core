@@ -97,6 +97,11 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
     }
 
     @Override
+    public GetUserAccountResponseDto findV2(String userAccountCode, boolean includeSubscriptions, CustomFieldInheritanceEnum inheritCF) {
+        return find(userAccountCode, includeSubscriptions, inheritCF);
+    }
+
+    @Override
     public ActionStatus remove(String userAccountCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -120,6 +125,11 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         }
 
         return result;
+    }
+
+    @Override
+    public UserAccountsResponseDto listByBillingAccountV2(String billingAccountCode) {
+        return listByBillingAccount(billingAccountCode);
     }
 
     @Override
@@ -152,6 +162,11 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
         }
 
         return result;
+    }
+
+    @Override
+    public GetCountersInstancesResponseDto filterUserAccountCountersByPeriodV2(String userAccountCode, Date date) {
+        return filterUserAccountCountersByPeriod(userAccountCode, date);
     }
 
     @Override
