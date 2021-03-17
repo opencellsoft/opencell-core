@@ -3326,7 +3326,8 @@
 	
 			<changeSet id="#222_20210219" author="Mbarek-Ay">
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-26, 0, 0, now(), 'org.meveo.api.billing.QuoteValidation', 'QuoteValidation', 'JAVA', '
-                package org.meveo.api.billing;
+package org.meveo.api.billing;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -3370,7 +3371,6 @@ import org.meveo.service.crm.impl.CurrentUserProducer;
 import org.meveo.service.script.module.ModuleScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 @SuppressWarnings("serial")
 public class QuoteValidation extends ModuleScript {
@@ -3446,7 +3446,7 @@ public class QuoteValidation extends ModuleScript {
 		order.setOrderDate(now);
 		order.setCustomerServiceDuration(cpqQuote.getQuoteLotDuration());
 		order.setExternalReference(null);
-		order.setInvoicingPlan(null); //TODO: how to map invoice plan
+		order.setInvoicingPlan(quoteVersion.getInvoicingPlan());
 		order.setOrderType(createOrderTypeTemp()); //TODO: how to map order type
 		order.setOrderProgress(0);
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
@@ -3472,6 +3472,7 @@ public class QuoteValidation extends ModuleScript {
 		OrderOffer offer = new OrderOffer();
 		offer.setOrder(order);
 		offer.setOfferTemplate(quoteOffer.getOfferTemplate()); 
+		offer.setDiscountPlan(quoteOffer.getDiscountPlan());
 		orderOfferService.create(offer);
 		return offer;
 	}
@@ -3482,6 +3483,7 @@ public class QuoteValidation extends ModuleScript {
 		orderProduct.setOrderServiceCommercial(orderLot);
 		orderProduct.setProductVersion(product.getProductVersion());
 		orderProduct.setQuantity(product.getQuantity());
+		orderProduct.setDiscountPlan(product.getDiscountPlan());
 		orderProduct.setOrderOffer(orderOffer);  
 		
 		orderProductService.create(orderProduct);
@@ -3556,8 +3558,6 @@ public class QuoteValidation extends ModuleScript {
 	
 }
 
-	
-	
 	');
         ]]></sql>
         
