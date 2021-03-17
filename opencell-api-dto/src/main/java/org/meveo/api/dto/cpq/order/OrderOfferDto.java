@@ -22,6 +22,9 @@ public class OrderOfferDto extends BaseEntityDto {
     /** The offer template code. */ 
     private String offerTemplateCode;
     
+    /** The discountPlan code. */ 
+    private String discountPlanCode;
+    
     private List<OrderProductDto> orderProducts = new ArrayList<OrderProductDto>();
      
     private List<OrderAttributeDto> orderAttributes =new ArrayList<OrderAttributeDto>();
@@ -145,7 +148,20 @@ public class OrderOfferDto extends BaseEntityDto {
 	public void setOrderAttributes(List<OrderAttributeDto> orderAttributes) {
 		this.orderAttributes = orderAttributes;
 	}
+
+
+
+	public String getDiscountPlanCode() {
+		return discountPlanCode;
+	}
+
+
+
+	public void setDiscountPlanCode(String discountPlanCode) {
+		this.discountPlanCode = discountPlanCode;
+	}
  
+	
 	
 
 

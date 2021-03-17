@@ -4100,5 +4100,26 @@ public class OrderAdvancement extends ModuleScript {
 			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" /> 
 	</changeSet>
 	
+	
+	    <changeSet id="#2020317-342" author="Mbarek-Ay">
+		<addColumn tableName="cpq_order_product">
+			<column name="discount_plan_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_discount_plan_id" deferrable="false" initiallyDeferred="false"
+			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+		
+		<addColumn tableName="cpq_order_offer">
+			<column name="discount_plan_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_discount_plan_id" deferrable="false" initiallyDeferred="false"
+			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />	     
+	   
+	  
+	  <addColumn tableName="cpq_quote_version">
+			<column name="invoicing_plan_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="invoicing_plan_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_invoicing_plan_id" deferrable="false" initiallyDeferred="false"
+			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoicing_plan" />	     
+	  </changeSet>
 
 </databaseChangeLog>

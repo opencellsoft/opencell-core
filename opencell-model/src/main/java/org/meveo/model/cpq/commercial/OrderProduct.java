@@ -1,5 +1,7 @@
 package org.meveo.model.cpq.commercial;
 
+import static javax.persistence.FetchType.LAZY;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,16 +15,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.ProductVersion;
-import org.meveo.model.cpq.offer.QuoteOffer;
-import org.meveo.model.quote.QuoteProduct;
 
 /** 
  * @author Tarik F.
@@ -67,7 +67,12 @@ public class OrderProduct extends AuditableCFEntity {
 	@OneToMany(mappedBy = "orderProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderAttribute> orderAttributes=new ArrayList<OrderAttribute>();
 
-
+	/**
+	 * discountPlan attached to this orderProduct
+	 */
+    @ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
+	private DiscountPlan discountPlan;
 	
 	
 	public void update(OrderProduct other) {
@@ -78,6 +83,7 @@ public class OrderProduct extends AuditableCFEntity {
 		this.quantity = other.quantity;
 		this.productVersion = other.productVersion;
 		this.orderAttributes = other.orderAttributes;
+        this.discountPlan=other.getDiscountPlan();
     }
 	
 	/**
@@ -166,12 +172,22 @@ public class OrderProduct extends AuditableCFEntity {
 		this.orderAttributes = orderAttributes;
 	}
 	
+	
+	
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
-				+ Objects.hash(productVersion, quantity, order, orderOffer, orderServiceCommercial,quantity);
+				+ Objects.hash(productVersion, quantity, order, orderOffer, orderServiceCommercial,quantity,discountPlan);
 		return result;
 	}
 	@Override
@@ -183,7 +199,7 @@ public class OrderProduct extends AuditableCFEntity {
 		OrderProduct other = (OrderProduct) obj;
 		return  Objects.equals(productVersion, other.productVersion) && Objects.equals(quantity, other.quantity)
 				&& Objects.equals(order, other.order)
-				&& Objects.equals(orderOffer, other.orderOffer) && Objects.equals(orderServiceCommercial, other.orderServiceCommercial);
+				&& Objects.equals(orderOffer, other.orderOffer) && Objects.equals(orderServiceCommercial, other.orderServiceCommercial)  && Objects.equals(discountPlan, other.discountPlan);
 	} 
 	
 	

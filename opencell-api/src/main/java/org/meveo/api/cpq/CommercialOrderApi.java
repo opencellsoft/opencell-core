@@ -20,7 +20,6 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.cpq.OrderAttributeDto;
 import org.meveo.api.dto.cpq.OrderProductDto;
-import org.meveo.api.dto.cpq.QuoteProductDTO;
 import org.meveo.api.dto.cpq.order.CommercialOrderDto;
 import org.meveo.api.dto.cpq.order.OrderOfferDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -33,6 +32,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
@@ -46,9 +46,7 @@ import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.OrderType;
 import org.meveo.model.cpq.contract.Contract;
-import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.order.Order;
-import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -56,6 +54,7 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ContractService;
@@ -117,6 +116,9 @@ public class CommercialOrderApi extends BaseApi {
 	
 	@Inject 
 	private AttributeService attributeService;
+	
+	@Inject
+	private DiscountPlanService discountPlanService;
 	
 	public CommercialOrderDto create(CommercialOrderDto orderDto) {
 		checkParam(orderDto);
@@ -529,9 +531,17 @@ public class CommercialOrderApi extends BaseApi {
 		if (offerTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, orderOfferDto.getOfferTemplateCode());
 		}
+		DiscountPlan discountPlan=null;
+		if(!StringUtils.isBlank(orderOfferDto.getDiscountPlanCode())) {
+		 discountPlan = discountPlanService.findByCode(orderOfferDto.getDiscountPlanCode());	
+		if (discountPlan == null)
+			throw new EntityDoesNotExistsException(DiscountPlan.class, orderOfferDto.getDiscountPlanCode());	
+		}
+		
 		OrderOffer orderOffer = new OrderOffer();
 		orderOffer.setOrder(commercialOrder);
 		orderOffer.setOfferTemplate(offerTemplate);
+		orderOffer.setDiscountPlan(discountPlan);
 		orderOfferService.create(orderOffer);
 		orderOfferDto.setOrderOfferId(orderOffer.getId());
 		createOrderProduct(orderOfferDto.getOrderProducts(),orderOffer);
@@ -562,9 +572,16 @@ public class CommercialOrderApi extends BaseApi {
         		throw new EntityDoesNotExistsException(OfferTemplate.class, orderOfferDto.getOfferTemplateCode());
         	}	
     	}
+    	DiscountPlan discountPlan=null;
+		if(!StringUtils.isBlank(orderOfferDto.getDiscountPlanCode())) {
+		 discountPlan = discountPlanService.findByCode(orderOfferDto.getDiscountPlanCode());	
+		if (discountPlan == null)
+			throw new EntityDoesNotExistsException(DiscountPlan.class, orderOfferDto.getDiscountPlanCode());	
+		}
     	 
     	orderOffer.setOrder(commercialOrder);
     	orderOffer.setOfferTemplate(offerTemplate);
+    	orderOffer.setDiscountPlan(discountPlan);
     	processOrderProductFromOffer(orderOfferDto, orderOffer); 
         processOrderAttribute(orderOfferDto,  orderOffer);
     	orderOfferService.update(orderOffer); 
@@ -721,12 +738,21 @@ public class CommercialOrderApi extends BaseApi {
 			throw new EntityDoesNotExistsException(ProductVersion.class, orderProductDto.getProductCode() +","+ orderProductDto.getProductVersion());
 		}
 		} 
+		
+		DiscountPlan discountPlan=null;
+		if(!StringUtils.isBlank(orderProductDto.getDiscountPlanCode())) {
+		 discountPlan = discountPlanService.findByCode(orderProductDto.getDiscountPlanCode());	
+		if (discountPlan == null)
+			throw new EntityDoesNotExistsException(DiscountPlan.class, orderProductDto.getDiscountPlanCode());	
+		}
+		
 		if(orderProduct==null) {
 			orderProduct=new OrderProduct();
 		}
 		orderProduct.setOrder(commercialOrder);
 		orderProduct.setOrderServiceCommercial(orderLot);
 		orderProduct.setProductVersion(productVersion);
+		orderProduct.setDiscountPlan(discountPlan);
 		orderProduct.setOrderOffer(orderOffer); 
 		orderProduct.setQuantity(orderProductDto.getQuantity()); 
 		orderProduct.updateAudit(currentUser); 
