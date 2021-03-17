@@ -11588,23 +11588,69 @@ public class KPICustomerPerOfferReporting extends ReportExtractScript {
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-adm_custom_generic_entity_code">
+    	<insert tableName="generic_sequence">
+            <column name="id" valueNumeric="-1" />
+            <column name="created" valueDate="2018-10-02 12:09:00.913" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="code" value="order_quote_sequence" />
+            <column name="description" value="Order and Quote" />
+            <column name="sequence_type" value="UUID" />
+        </insert>
+        <insert tableName="generic_sequence">
+            <column name="id" valueNumeric="-2" />
+            <column name="created" valueDate="2018-10-02 12:09:00.913" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="code" value="seller_sequence" />
+            <column name="description" value="Seller sequence" />
+            <column name="sequence_type" value="SEQUENCE" />
+            <column name="sequence_size" valueNumeric="9" />
+            <column name="current_number" valueNumeric="0" />
+        </insert>
+        <insert tableName="generic_sequence">
+            <column name="id" valueNumeric="-3" />
+            <column name="created" valueDate="2018-10-02 12:09:00.913" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="code" value="customer_sequence" />
+            <column name="description" value="Customer sequence" />
+            <column name="sequence_type" value="SEQUENCE" />
+            <column name="sequence_size" valueNumeric="5" />
+            <column name="current_number" valueNumeric="0" />
+        </insert>
+   
         <insert tableName="adm_custom_generic_entity_code">
-            <column name="id" valueNumeric="1" />
+            <column name="id" valueNumeric="-1" />
             <column name="created" valueDate="2018-10-02 12:09:00.913" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
             <column name="entity_class" value="Customer" />
-            <column name="code_el" value="CUST_#{entity.customerCategory.code}_#{sequenceNextValue}" />
-            <column name="sequence_size" valueNumeric="5" />
+            <column name="sequence_id" valueNumeric="-3" />
         </insert>
         <insert tableName="adm_custom_generic_entity_code">
-            <column name="id" valueNumeric="2" />
+            <column name="id" valueNumeric="-2" />
             <column name="created" valueDate="2018-10-02 12:12:09.935" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
-            <column name="entity_class" value="Subscription" />
-            <column name="code_el" value="SU_#{entity.userAccount.code}_#{sequenceNextValue}" />
-            <column name="sequence_size" valueNumeric="9" />
+            <column name="entity_class" value="Quote" />
+            <column name="sequence_id" valueNumeric="-1" />
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueNumeric="-3" />
+            <column name="created" valueDate="2018-10-02 12:12:09.936" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="entity_class" value="Order" />
+            <column name="sequence_id" valueNumeric="-1" />
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueNumeric="-4" />
+            <column name="created" valueDate="2018-10-02 12:12:09.937" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="entity_class" value="Seller" />
+            <column name="sequence_id" valueNumeric="-2" />
         </insert>
     </changeSet>
 
