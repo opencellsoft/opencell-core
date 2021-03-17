@@ -59,7 +59,7 @@ public class ParserSwagger {
         String parentpath = System.getProperty("user.dir");
         //Be careful of the parentpath the next line mus be present if you work on jenkins. Otherwise if you are working locally the next line should be in comment 
         parentpath=parentpath+File.separator+"opencell-api";
-        System.out.println("Adding annotations to file:"+parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest");
+        log.info("Adding annotations to file:"+parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest");
         String[] allPathFiles = parsing.pathRetriever(parentpath+File.separator+"src"+File.separator+"main"+File.separator+"java"+File.separator+"org"+File.separator+"meveo"+File.separator+"api"+File.separator+"rest",
                 RS_JAVA);
         parsing.processCreation(allPathFiles);
@@ -235,7 +235,7 @@ public class ParserSwagger {
             urlEnd="\n\t\t\toperationId=\""+urlEnd+"\",";
         }
         else{urlEnd="";
-            System.out.println("ERROR");}
+            log.error("ERROR");}
         String operationString = "\t@Operation(\n\t\t\tsummary=\"" +
                 summary +
                 "\",\n\t\t\tdescription=\"" +
@@ -279,7 +279,7 @@ public class ParserSwagger {
         className = className.replaceAll(RS_JAVA, "");
         try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filePathTemp)))) {
             lnr = new BufferedReader(new FileReader(filePath));
-            System.out.println("[INFO] Adding annotation to " + className);
+            log.info("[INFO] Adding annotation to " + className);
             //The case if the annotation are not present in the file
             while ((str = lnr.readLine()) != null && !annotationHere) {
                 //This line for retrieving the return value for the next return and threfore find it when it arrive
