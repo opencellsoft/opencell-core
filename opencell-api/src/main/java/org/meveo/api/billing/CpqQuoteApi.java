@@ -67,13 +67,17 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.Attribute;
@@ -87,6 +91,7 @@ import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
@@ -1305,6 +1310,31 @@ public class CpqQuoteApi extends BaseApi {
         }
         return cpqQuoteService.getQuotePdf(quote);
 
+    }
+    
+    private boolean isDiscountPlanApplicable(BillingAccount billingAccount,DiscountPlan discountPlan, QuoteOffer quoteOffer, Date quoteDate) {
+    	if(discountPlan.isActive() && discountPlan.isEffective(quoteDate)) {
+    		if(discountPlanService.matchDiscountPlanExpression(discountPlan.getExpressionEl(), null, billingAccount, null, quoteOffer.getOfferTemplate(), null, null)) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount,DiscountPlan discountPlan, QuoteOffer quoteOffer, Date quoteDate)
+            throws BusinessException {
+        List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
+        if (isDiscountPlanApplicable(billingAccount, discountPlan, quoteOffer, quoteDate)) {
+         
+                List<DiscountPlanItem> discountPlanItems = discountPlan.getDiscountPlanItems();
+                for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+                    if (discountPlanItem.isActive() && discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), null, billingAccount, null, quoteOffer.getOfferTemplate(), null, null)) {
+                        applicableDiscountPlanItems.add(discountPlanItem);
+                    }
+                }
+            
+        }
+        return applicableDiscountPlanItems;
     }
 
 }
