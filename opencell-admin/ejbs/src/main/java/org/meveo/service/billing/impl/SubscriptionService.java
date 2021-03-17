@@ -744,14 +744,16 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         // check if selected available services are part of incompatible services of subscribed service's
         for (ServiceInstance subscribedService : serviceInstances) {
-            OfferServiceTemplate offerServiceTemplateSubscribedService = getOfferServiceTemplate(subscribedService.getServiceTemplate().getCode(), offerTemplate);
-            // list of incompatible services of an element of current subscribed service's
-            List<ServiceTemplate> serviceTemplateSubscribedServiceIncompatibles = offerServiceTemplateSubscribedService.getIncompatibleServices();
+            if(subscribedService.getServiceTemplate() != null) {
+                OfferServiceTemplate offerServiceTemplateSubscribedService = getOfferServiceTemplate(subscribedService.getServiceTemplate().getCode(), offerTemplate);
+                // list of incompatible services of an element of current subscribed service's
+                List<ServiceTemplate> serviceTemplateSubscribedServiceIncompatibles = offerServiceTemplateSubscribedService.getIncompatibleServices();
 
-            for (ServiceTemplate serviceTemplateSelectedItem : selectedItemsAsList) {
-                for (ServiceTemplate serviceTemplateSubscribedServiceIncompatible : serviceTemplateSubscribedServiceIncompatibles) {
-                    if (serviceTemplateSelectedItem.getCode().equals(serviceTemplateSubscribedServiceIncompatible.getCode())) {
-                        throw new BusinessException("Services Incompatibility between " + serviceTemplateSelectedItem.getCode() + " and " + subscribedService.getCode());
+                for (ServiceTemplate serviceTemplateSelectedItem : selectedItemsAsList) {
+                    for (ServiceTemplate serviceTemplateSubscribedServiceIncompatible : serviceTemplateSubscribedServiceIncompatibles) {
+                        if (serviceTemplateSelectedItem.getCode().equals(serviceTemplateSubscribedServiceIncompatible.getCode())) {
+                            throw new BusinessException("Services Incompatibility between " + serviceTemplateSelectedItem.getCode() + " and " + subscribedService.getCode());
+                        }
                     }
                 }
             }
