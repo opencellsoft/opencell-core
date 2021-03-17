@@ -272,10 +272,12 @@ public class CpqQuoteApi extends BaseApi {
 		quoteVersion.setStatusDate(Calendar.getInstance().getTime());
 		quoteVersion.setQuoteVersion(1);
 		quoteVersion.setStatus(VersionStatusEnum.DRAFT);
-		quoteVersion.setBillingPlanCode(quoteVersionDto.getBillingPlanCode());
-		quoteVersion.setStartDate(quoteVersionDto.getStartDate());
-		quoteVersion.setEndDate(quoteVersionDto.getEndDate());
-		quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
+		if(quoteVersionDto != null) {
+			quoteVersion.setBillingPlanCode(quoteVersionDto.getBillingPlanCode());
+			quoteVersion.setStartDate(quoteVersionDto.getStartDate());
+			quoteVersion.setEndDate(quoteVersionDto.getEndDate());
+			quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
+		}
 		quoteVersion.setQuote(cpqQuote);
 		return quoteVersion;
 	}
@@ -283,13 +285,10 @@ public class CpqQuoteApi extends BaseApi {
 	public GetQuoteVersionDtoResponse createQuoteVersion(QuoteVersionDto quoteVersionDto) {
 		if(Strings.isEmpty(quoteVersionDto.getQuoteCode()))
 			missingParameters.add("quoteCode");
-		if(quoteVersionDto.getCurrentVersion() <= 0)
-			throw new MeveoApiException("current version must be greater than 0");
 		final CpqQuote quote = cpqQuoteService.findByCode(quoteVersionDto.getQuoteCode());
 		if(quote == null)
 			throw new EntityDoesNotExistsException(CpqQuote.class, quoteVersionDto.getQuoteCode());
 		final QuoteVersion quoteVersion = populateNewQuoteVersion(quoteVersionDto, quote);
-		quoteVersion.setQuoteVersion(quoteVersionDto.getCurrentVersion());
 		try {
 			quoteVersionService.create(quoteVersion);
 		}catch(BusinessApiException e) {

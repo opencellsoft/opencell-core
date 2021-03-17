@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -85,6 +86,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.RateSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.EntityNotAllowedException;
@@ -127,16 +129,19 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
@@ -676,7 +681,7 @@ public class SubscriptionApi extends BaseApi {
 
             // Update instantiated service with info
             if (serviceInstance != null) {
-                log.debug("Found already instantiated service {} of {} for subscription {} quantity {}", serviceInstance.getId(), serviceInstance.getServiceTemplate().getCode(), subscription.getCode(),
+                log.debug("Found already instantiated service {} of {} for subscription {} quantity {}", serviceInstance.getId(), serviceInstance.getServiceCharge().getCode(), subscription.getCode(),
                         serviceInstance.getQuantity());
                 if (serviceToActivateDto.getOverrideCode() != null) {
                     serviceInstance.setCode(serviceToActivateDto.getOverrideCode());
@@ -718,24 +723,34 @@ public class SubscriptionApi extends BaseApi {
 
                 // Instantiate if it was not instantiated earlier
             } else if (serviceInstance == null) {
+                Optional<ProductVersion> productVersion = null;
                 ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode());
                 if (serviceTemplate == null) {
-                    throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
+                    productVersion = productService.getCurrentPublishedVersion(serviceToActivateDto.getCode(), serviceToActivateDto.getSubscriptionDate() != null ? serviceToActivateDto.getSubscriptionDate() : new Date());
+                    if(productVersion.isEmpty()){
+                        throw new BusinessApiException("No service template or valid product version found for code: " + serviceToActivateDto.getCode());
+                    }
                 }
 
-                log.debug("Will instantiate as part of activation service {} for subscription {} quantity {}", serviceTemplate.getCode(), subscription.getCode(), serviceToActivateDto.getQuantity());
+                ServiceCharge serviceCharge = serviceTemplate != null ? serviceTemplate : productVersion.get().getProduct();
+
+                log.debug("Will instantiate as part of activation service {} for subscription {} quantity {}", serviceCharge.getCode(), subscription.getCode(), serviceToActivateDto.getQuantity());
 
                 serviceInstance = new ServiceInstance();
-                serviceInstance.setCode(serviceTemplate.getCode());
+                serviceInstance.setCode(serviceCharge.getCode());
                 if (serviceToActivateDto.getOverrideCode() != null) {
                     serviceInstance.setCode(serviceToActivateDto.getOverrideCode());
                 }
                 if (!StringUtils.isBlank(serviceToActivateDto.getDescription())) {
                     serviceInstance.setDescription(serviceToActivateDto.getDescription());
                 } else {
-                    serviceInstance.setDescription(serviceTemplate.getDescription());
+                    serviceInstance.setDescription(serviceCharge.getDescription());
                 }
-                serviceInstance.setServiceTemplate(serviceTemplate);
+                if(serviceTemplate != null) {
+                    serviceInstance.setServiceTemplate(serviceTemplate);
+                }else {
+                    serviceInstance.setProductVersion(productVersion.get());
+                }
                 serviceInstance.setSubscription(subscription);
                 serviceInstance.setRateUntilDate(serviceToActivateDto.getRateUntilDate());
                 if (serviceToActivateDto.getSubscriptionDate() == null) {
@@ -841,21 +856,29 @@ public class SubscriptionApi extends BaseApi {
             if (serviceToActivateDto.getQuantity() == null) {
                 throw new MissingParameterException("quantity for service " + serviceToActivateDto.getCode());
             }
+            Optional<ProductVersion> productVersion = null;
             ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode());
             if (serviceTemplate == null) {
-                throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
+                Date validityDate = serviceToActivateDto.getSubscriptionDate() != null ? serviceToActivateDto.getSubscriptionDate() : new Date();
+                productVersion = productService.getCurrentPublishedVersion(serviceToActivateDto.getCode(), validityDate);
+                if(productVersion.isEmpty()) {
+                    throw new BusinessApiException("No service template or valid product version found for code: " + serviceToActivateDto.getCode());
+                }
+                serviceToActivateDto.setProductVersion(productVersion.get());
+            } else {
+                serviceToActivate.add(serviceTemplate);
+                serviceToActivateDto.setServiceTemplate(serviceTemplate);
             }
-
-            serviceToActivateDto.setServiceTemplate(serviceTemplate);
             servicesToActivateDto.add(serviceToActivateDto);
-            serviceToActivate.add(serviceTemplate);
         }
     }
 
     private void setMinimumAmountElServiceInstance(ServiceToActivateDto serviceToActivateDto, ServiceInstance serviceInstance, ServiceTemplate serviceTemplate) {
-        serviceInstance.setMinimumAmountEl(serviceTemplate.getMinimumAmountEl());
-        serviceInstance.setMinimumLabelEl(serviceTemplate.getMinimumLabelEl());
-        serviceInstance.setMinimumInvoiceSubCategory(serviceTemplate.getMinimumInvoiceSubCategory());
+        if(serviceTemplate != null) {
+            serviceInstance.setMinimumAmountEl(serviceTemplate.getMinimumAmountEl());
+            serviceInstance.setMinimumLabelEl(serviceTemplate.getMinimumLabelEl());
+            serviceInstance.setMinimumInvoiceSubCategory(serviceTemplate.getMinimumInvoiceSubCategory());
+        }
 
         if (!StringUtils.isBlank(serviceToActivateDto.getMinimumAmountEl())) {
             serviceInstance.setMinimumAmountEl(serviceToActivateDto.getMinimumAmountEl());
@@ -908,24 +931,24 @@ public class SubscriptionApi extends BaseApi {
     }
 
     private void instantiateServiceForSubscription(ServiceToInstantiateDto serviceToInstantiateDto, Subscription subscription, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction) {
-        ServiceTemplate serviceTemplate = serviceToInstantiateDto.getServiceTemplate();
+        ServiceCharge serviceCharge = serviceToInstantiateDto.getServiceCharge();
 
         ServiceInstance serviceInstance = null;
 
         if (paramBean.isServiceMultiInstantiation()) {
-            List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription, InstanceStatusEnum.INACTIVE);
+            List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceCharge.getCode(), subscription, InstanceStatusEnum.INACTIVE);
             if (!subscriptionServiceInstances.isEmpty()) {
                 throw new MeveoApiException("ServiceInstance with code=" + serviceToInstantiateDto.getCode() + " is already instanciated.");
             }
 
         } else {
-            List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription, InstanceStatusEnum.INACTIVE,
+            List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceCharge.getCode(), subscription, InstanceStatusEnum.INACTIVE,
                     InstanceStatusEnum.ACTIVE);
             if (!subscriptionServiceInstances.isEmpty()) {
                 throw new MeveoApiException("ServiceInstance with code=" + serviceToInstantiateDto.getCode() + " is already instanciated or activated.");
             }
         }
-        log.debug("Will instantiate service {} for subscription {} quantity {}", serviceTemplate.getCode(), subscription.getCode(), serviceToInstantiateDto.getQuantity());
+        log.debug("Will instantiate service {} for subscription {} quantity {}", serviceCharge.getCode(), subscription.getCode(), serviceToInstantiateDto.getQuantity());
 
         org.meveo.model.catalog.Calendar calendarPS = null;
         if (!StringUtils.isBlank(serviceToInstantiateDto.getCalendarPSCode())) {
@@ -937,10 +960,14 @@ public class SubscriptionApi extends BaseApi {
         serviceInstance = new ServiceInstance();
         serviceInstance.setCode(serviceToInstantiateDto.getOverrideCode());
         if (StringUtils.isBlank(serviceInstance.getCode())) {
-            serviceInstance.setCode(serviceTemplate.getCode());
+            serviceInstance.setCode(serviceCharge.getCode());
         }
-        serviceInstance.setDescription(serviceTemplate.getDescription());
-        serviceInstance.setServiceTemplate(serviceTemplate);
+        serviceInstance.setDescription(serviceCharge.getDescription());
+        if(serviceToInstantiateDto.getServiceTemplate() != null) {
+            serviceInstance.setServiceTemplate(serviceToInstantiateDto.getServiceTemplate());
+        } else {
+            serviceInstance.setProductVersion(serviceToInstantiateDto.getProductVersion());
+        }
         serviceInstance.setSubscription(subscription);
         serviceInstance.setRateUntilDate(serviceToInstantiateDto.getRateUntilDate());
         serviceInstance.setQuantity(serviceToInstantiateDto.getQuantity());
@@ -991,14 +1018,21 @@ public class SubscriptionApi extends BaseApi {
             if (serviceToInstantiateDto.getQuantity() == null) {
                 throw new MissingParameterException("quantity for service " + serviceToInstantiateDto.getCode());
             }
+            Optional<ProductVersion> productVersion = null;
             ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToInstantiateDto.getCode());
             if (serviceTemplate == null) {
-                throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToInstantiateDto.getCode());
+                Date validityDate = subscription.getSubscriptionDate() != null ? subscription.getSubscriptionDate() : new Date();
+                productVersion = productService.getCurrentPublishedVersion(serviceToInstantiateDto.getCode(), validityDate);
+                if(productVersion.isEmpty()) {
+                    throw new BusinessApiException("No service template or valid product version found for code: " + serviceToInstantiateDto.getCode());
+                }
+            }else {
+                serviceToInstantiates.add(serviceTemplate);
             }
 
             serviceToInstantiateDto.setServiceTemplate(serviceTemplate);
+            serviceToInstantiateDto.setProductVersion(productVersion.get());
             serviceToInstantiateDtos.add(serviceToInstantiateDto);
-            serviceToInstantiates.add(serviceTemplate);
         }
 
         subscriptionService.checkCompatibilityOfferServices(subscription, serviceToInstantiates);
