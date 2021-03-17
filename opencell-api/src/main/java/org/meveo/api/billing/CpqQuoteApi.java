@@ -267,10 +267,12 @@ public class CpqQuoteApi extends BaseApi {
 		quoteVersion.setStatusDate(Calendar.getInstance().getTime());
 		quoteVersion.setQuoteVersion(1);
 		quoteVersion.setStatus(VersionStatusEnum.DRAFT);
-		quoteVersion.setBillingPlanCode(quoteVersionDto.getBillingPlanCode());
-		quoteVersion.setStartDate(quoteVersionDto.getStartDate());
-		quoteVersion.setEndDate(quoteVersionDto.getEndDate());
-		quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
+		if(quoteVersionDto != null) {
+			quoteVersion.setBillingPlanCode(quoteVersionDto.getBillingPlanCode());
+			quoteVersion.setStartDate(quoteVersionDto.getStartDate());
+			quoteVersion.setEndDate(quoteVersionDto.getEndDate());
+			quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
+		}
 		quoteVersion.setQuote(cpqQuote);
 		return quoteVersion;
 	}
