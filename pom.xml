@@ -21,7 +21,7 @@
         <!-- Env set to dev, so that profile dev would be the default and also env value is used in copy some files for a specific configuration (e.g. import.sql) -->
         <env>dev</env>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.ingenico-connect-sdk>5.25.0</version.ingenico-connect-sdk>
+        <version.ingenico-connect-sdk>6.19.0</version.ingenico-connect-sdk>
         <version.paypal-sdk>LATEST</version.paypal-sdk>
         <version.keycloak>7.0.0</version.keycloak>
         <version.pdfbox>2.0.17</version.pdfbox>

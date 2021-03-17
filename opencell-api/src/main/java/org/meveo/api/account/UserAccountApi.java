@@ -37,6 +37,7 @@ import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.account.UserAccountsDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
+import org.meveo.api.exception.*;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -48,8 +49,11 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.*;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
@@ -64,6 +68,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -72,6 +77,14 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -320,7 +333,7 @@ public class UserAccountApi extends AccountEntityApi {
         }
 
         UserAccountsDto result = new UserAccountsDto();
-        List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
+        List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount, GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         if (userAccounts != null) {
             for (UserAccount ua : userAccounts) {
                 result.getUserAccount().add(accountHierarchyApi.userAccountToDto(ua));
@@ -356,7 +369,7 @@ public class UserAccountApi extends AccountEntityApi {
             terminationReason = subscriptionTerminationReasonService.findByCodeReason(postData.getTerminationReason());
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
         if (terminationReason == null) {
             throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, postData.getTerminationReason());

@@ -196,7 +196,7 @@ public class PasswordCheck {
         } else {
             strVerdict = "very strong";
         }
-        System.out.println(strVerdict + " - " + intScore + "\n" + strLog);
+        
         // Does it meet the password policy?
         try {
             int min = Integer.parseInt(PASSWORD_MIN_LENGTH);

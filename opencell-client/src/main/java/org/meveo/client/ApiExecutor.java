@@ -30,8 +30,12 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApiExecutor {
+	
+	private static final Logger log = LoggerFactory.getLogger(ApiExecutor.class);
 
     /**
      * 
@@ -65,7 +69,7 @@ public class ApiExecutor {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 		return null;
 	}
@@ -74,7 +78,7 @@ public class ApiExecutor {
 			AuthentificationModeEnum authMode ,ProxyInfos proxyInfos,String tlsVersion) {
 		try {
 			
-			System.out.println("uri.toASCIIString:"+uri.toASCIIString());
+			log.info("uri.toASCIIString:"+uri.toASCIIString());
 			HttpPost theRequest = new HttpPost(uri);
 			if (cotentType != null) {
 				theRequest.setHeader("Content-Type", cotentType.getValue());
@@ -93,12 +97,12 @@ public class ApiExecutor {
 			}
 			HttpResponse response = MeveoConnectionFactory.getClient(proxyInfos,tlsVersion).execute(theRequest);			
 			if(response != null){
-				System.out.println("executePost code :" + response.getStatusLine().getStatusCode());
+				log.info("executePost code :" + response.getStatusLine().getStatusCode());
 			}
 			return response;
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			log.error("error = {}", e);
 
 		}
 		return null;
@@ -107,7 +111,7 @@ public class ApiExecutor {
 	private HttpResponse executeGet(URI uri, String userName, String password, CommonContentTypeEnum cotentType, Map<String, String> headers, Map<String, String> params, 
 			AuthentificationModeEnum authMode,ProxyInfos proxyInfos,String tlsVersion) {
 		try {			
-			System.out.println("uri.toASCIIString:"+uri.toASCIIString());
+			log.info("uri.toASCIIString:"+uri.toASCIIString());
 			HttpGet theRequest = new HttpGet(uri);
 			if (cotentType != null) {
 				theRequest.setHeader("Content-Type", cotentType.getValue());
@@ -123,13 +127,13 @@ public class ApiExecutor {
 
 			HttpResponse response = MeveoConnectionFactory.getClient(proxyInfos,tlsVersion).execute(theRequest);
 			if(response != null){
-				System.out.println("executeGet code :" + response.getStatusLine().getStatusCode());
+				log.info("executeGet code :" + response.getStatusLine().getStatusCode());
 			}
 			
 			return response;
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			log.error("error = {}", e);
 
 		}
 		return null;

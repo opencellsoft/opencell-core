@@ -19,6 +19,7 @@ package org.meveo.service.payments.impl;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -115,7 +116,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         List<CustomerAccount> failedImports = new ArrayList<CustomerAccount>();
         return failedImports;
     }
-    
+
     /**
      * Compute occ amount.
      *
@@ -147,15 +148,15 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             MatchingStatusEnum... status) throws Exception {
         QueryBuilder queryBuilder = new QueryBuilder("select sum(unMatchingAmount) from AccountOperation");
         queryBuilder.addCriterionEnum("transactionCategory", operationCategoryEnum);
-        
+
         addCriterionifFutureAndDue(isFuture, isDue, to, queryBuilder);
-        
+
         queryBuilder.addCriterionEntity("customerAccount", customerAccount);
         addCriterionStatuses(queryBuilder, status);
         Query query = queryBuilder.getQuery(getEntityManager());
         return (BigDecimal) query.getSingleResult();
     }
-    
+
     BigDecimal computeCreditDebitBalances(CustomerAccount customerAccount, boolean isFuture, boolean isDue, Date to, MatchingStatusEnum... status) {
         QueryBuilder queryBuilder = getQueryBuilder("select sum(case when ao.transactionCategory = 'DEBIT' then ao.unMatchingAmount else (-1 * ao.unMatchingAmount) end) from AccountOperation as ao");
 
@@ -166,11 +167,11 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         Query query = queryBuilder.getQuery(getEntityManager());
         return (BigDecimal) Optional.ofNullable(query.getSingleResult()).orElse(BigDecimal.ZERO);
     }
-    
+
     QueryBuilder getQueryBuilder(String sql) {
         return new QueryBuilder(sql);
     }
-    
+
     private void addCriterionStatuses(QueryBuilder queryBuilder, MatchingStatusEnum[] status) {
         if (status.length == 1) {
             queryBuilder.addCriterionEnum("matchingStatus", status[0]);
@@ -182,14 +183,14 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             queryBuilder.endOrClause();
         }
     }
-    
+
     private void addCriterionifFutureAndDue(boolean isFuture, boolean isDue, Date to, QueryBuilder queryBuilder) {
         if (!isFuture) {
             String field = isDue ? "dueDate" : "transactionDate";
             queryBuilder.addCriterion(field, "<=", to, false);
         }
     }
-    
+
     /**
      * Compute balance.
      *
@@ -205,7 +206,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     }
 
     /**
-     * Computes a balance given a customerAccount. 
+     * Computes a balance given a customerAccount.
      * to and isDue parameters are ignored when isFuture is true.
      *
      * @param customerAccount account of the customer
@@ -653,6 +654,25 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
     }
 
+    /**
+     * List customerAccounts by customer with paginationConfiguration
+     *
+     * @param customer the customer
+     * @return the list
+     */
+    @SuppressWarnings("unchecked")
+    public List<CustomerAccount> listByCustomer(Customer customer, PaginationConfiguration config) {
+        QueryBuilder qb = getQuery(config);
+        qb.addCriterionEntity("customer", customer);
+
+        try {
+            return (List<CustomerAccount>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            log.warn("failed to get customerAccount list by customer", e);
+            return null;
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.meveo.service.base.PersistenceService#create(org.meveo.model.IEntity)
      */
@@ -737,11 +757,11 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
 
     }
-    
+
     /**
      *  Compute  credit balnce.
      *
-     * @param customerAccount the customer account 
+     * @param customerAccount the customer account
      * @param isDue if true will compare with the due date else operationn date
      * @param to include AOs until this date
      * @param dunningExclusion if true the litigation AOs will not be included
@@ -773,7 +793,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     /**
      * Computes the future dueBalance or the dueBalance at the invoice due date.
-     * The total due is a snapshot at invoice generation time of the due balance (not exigible) before invoice calculation+invoice amount. 
+     * The total due is a snapshot at invoice generation time of the due balance (not exigible) before invoice calculation+invoice amount.
      *
      * @param customerAccount Account of the Customer
      * @return computed due balance of a customer account
@@ -783,7 +803,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 		return computeBalance(customerAccount, null, true, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
 	}
 
-    
+
     /**
      * Return list customerAccount ids for payment.
      *
@@ -801,7 +821,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             return null;
         }
     }
-    
+
     /**
      * Return list customerAccount ids for refund.
      *

@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.account.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.account.AccessApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -31,7 +27,11 @@ import org.meveo.api.dto.response.account.GetAccessResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.AccessRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import java.util.Date;
 
 /**
@@ -99,6 +99,7 @@ public class AccessRsImpl extends BaseRs implements AccessRs {
     @Override
     public AccessesResponseDto listBySubscription(String subscriptionCode) {
         AccessesResponseDto result = new AccessesResponseDto();
+        result.setPaging( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
 
         try {
             result.setAccesses(accessApi.listBySubscription(subscriptionCode));

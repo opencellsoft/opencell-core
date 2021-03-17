@@ -18,16 +18,11 @@
 
 package org.meveo.api;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BillingCycleDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.dto.BillingCyclesDto;
+import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
@@ -40,6 +35,10 @@ import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.script.ScriptInstanceService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -60,6 +59,19 @@ public class BillingCycleApi extends BaseApi {
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
+
+    public BillingCyclesDto list() {
+        BillingCyclesDto result = new BillingCyclesDto();
+
+        List<BillingCycle> billingCycles = billingCycleService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (billingCycles != null) {
+            for (BillingCycle billingCycle : billingCycles) {
+                result.getBillingCycle().add(new BillingCycleDto(billingCycle, entityToDtoConverter.getCustomFieldsDTO(billingCycle, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+        }
+
+        return result;
+    }
 
     @SuppressWarnings("checkstyle:WhitespaceAround")
     public void create(BillingCycleDto postData) throws MeveoApiException, BusinessException {

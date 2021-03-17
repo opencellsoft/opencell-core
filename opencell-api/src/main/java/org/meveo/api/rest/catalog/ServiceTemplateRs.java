@@ -18,18 +18,6 @@
 
 package org.meveo.api.rest.catalog;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -37,6 +25,9 @@ import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.ServiceTemplate}.
@@ -132,4 +123,13 @@ public interface ServiceTemplateRs extends IBaseRs {
     @GET
     @Path("/list")
     GetListServiceTemplateResponseDto list(PagingAndFiltering pagingAndFiltering);
+
+    /**
+     * Gets a service template list.
+     *
+     * @return Return serviceTemplate list
+     */
+    @GET
+    @Path("/list")
+    GetListServiceTemplateResponseDto listGet();
 }

@@ -31,23 +31,24 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.AccountStatusEnum;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
 import org.meveo.service.base.ValueExpressionWrapper;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * The Class BillingAccountService.
@@ -283,7 +284,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                 } else {
                 	qb.addCriterionDateRangeToTruncatedToDay("nextInvoiceDate", endDate, false, false);
                 }
-                
+
             }
 
             qb.addOrderCriterionAsIs("id", true);
@@ -295,26 +296,26 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
         return null;
     }
-    
+
     public List<BillingAccount> findNotProcessedBillingAccounts(BillingRun billingRun) {
         try {
         	Date startDate = billingRun.getStartDate();
         	Date endDate = billingRun.getEndDate();
-        	
+
         	if(endDate==null) {
         		endDate=new Date();
         	}
-            
+
             QueryBuilder qb = new QueryBuilder(BillingAccount.class, "b", null);
             qb.addCriterionEntity("b.billingCycle.id", billingRun.getBillingCycle().getId());
             qb.addSql("((b.billingRun.id is null) OR (b.billingRun.id<> :billingRunId))");
             qb.addCriterionDateRangeToTruncatedToDay("b.nextInvoiceDate", endDate, false, true);
-            
+
             if (startDate != null) {
                 qb.addCriterionDateRangeFromTruncatedToDay("b.nextInvoiceDate", startDate);
             }
 
-            
+
             return (List<BillingAccount>) qb.getQuery(getEntityManager()).setParameter("billingRunId", billingRun.getId()).getResultList();
         } catch (Exception ex) {
             log.error("failed to find billing accounts", ex);
@@ -372,6 +373,25 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         QueryBuilder qb = new QueryBuilder(BillingAccount.class, "c");
         qb.addCriterionEntity("customerAccount", customerAccount);
         qb.addOrderCriterionAsIs("c.id", true);
+        try {
+            return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting list by customer account", e);
+            return null;
+        }
+    }
+
+    /**
+     * List billingAccounts by customer account with paginationConfiguration
+     *
+     * @param customerAccount the customer account
+     * @return the list of billingAccounts
+     */
+    @SuppressWarnings("unchecked")
+    public List<BillingAccount> listByCustomerAccount(CustomerAccount customerAccount, PaginationConfiguration config) {
+        QueryBuilder qb = getQuery(config);
+        qb.addCriterionEntity("customerAccount", customerAccount);
+
         try {
             return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {
@@ -456,5 +476,5 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public void terminateDiscountPlan(BillingAccount entity, DiscountPlanInstance dpi) throws BusinessException {
         discountPlanInstanceService.terminateDiscountPlan(entity, dpi);
     }
-    
+
 }

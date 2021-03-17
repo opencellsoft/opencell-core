@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.account.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.billing.RatedTransactionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -31,6 +27,11 @@ import org.meveo.api.dto.response.billing.RatedTransactionListResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.RatedTransactionRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * RatedTransactionRsImpl : Default implementation of Rated Transaction REST services.
@@ -55,6 +56,17 @@ public class RatedTransactionRsImpl extends BaseRs implements RatedTransactionRs
             }
 
             return ratedTransactionApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            RatedTransactionListResponseDto result = new RatedTransactionListResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
+        }
+    }
+
+    @Override
+    public RatedTransactionListResponseDto list() {
+        try {
+            return ratedTransactionApi.listGetAll( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
         } catch (Exception e) {
             RatedTransactionListResponseDto result = new RatedTransactionListResponseDto();
             processException(e, result.getActionStatus());

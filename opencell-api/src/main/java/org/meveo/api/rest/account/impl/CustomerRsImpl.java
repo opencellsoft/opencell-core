@@ -38,6 +38,7 @@ import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.CustomerRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.Customer;
@@ -46,6 +47,13 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.util.Date;
+import java.util.List;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -61,7 +69,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 
     @Inject
     private CustomerApi customerApi;
-    
+
     @Inject
     private CustomerSequenceApi customerSequenceApi;
 
@@ -144,6 +152,17 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
+    public CustomersResponseDto list() {
+        try {
+            return customerApi.listGetAll(null, GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
+        } catch (Exception e) {
+            CustomersResponseDto result = new CustomersResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
+        }
+    }
+
+    @Override
     public CustomersResponseDto listPost(PagingAndFiltering pagingAndFiltering) {
         try {
             return customerApi.list(null, pagingAndFiltering);
@@ -203,7 +222,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 
         return result;
     }
-    
+
     /**
      * Find customer category by customer category code
      * 
