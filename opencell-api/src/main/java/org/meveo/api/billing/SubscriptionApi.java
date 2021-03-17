@@ -681,7 +681,7 @@ public class SubscriptionApi extends BaseApi {
 
             // Update instantiated service with info
             if (serviceInstance != null) {
-                log.debug("Found already instantiated service {} of {} for subscription {} quantity {}", serviceInstance.getId(), serviceInstance.getServiceTemplate().getCode(), subscription.getCode(),
+                log.debug("Found already instantiated service {} of {} for subscription {} quantity {}", serviceInstance.getId(), serviceInstance.getServiceCharge().getCode(), subscription.getCode(),
                         serviceInstance.getQuantity());
                 if (serviceToActivateDto.getOverrideCode() != null) {
                     serviceInstance.setCode(serviceToActivateDto.getOverrideCode());
@@ -723,24 +723,34 @@ public class SubscriptionApi extends BaseApi {
 
                 // Instantiate if it was not instantiated earlier
             } else if (serviceInstance == null) {
+                Optional<ProductVersion> productVersion = null;
                 ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode());
                 if (serviceTemplate == null) {
-                    throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
+                    productVersion = productService.getCurrentPublishedVersion(serviceToActivateDto.getCode(), serviceToActivateDto.getSubscriptionDate() != null ? serviceToActivateDto.getSubscriptionDate() : new Date());
+                    if(productVersion.isEmpty()){
+                        throw new BusinessApiException("No service template or valid product version found for code: " + serviceToActivateDto.getCode());
+                    }
                 }
 
-                log.debug("Will instantiate as part of activation service {} for subscription {} quantity {}", serviceTemplate.getCode(), subscription.getCode(), serviceToActivateDto.getQuantity());
+                ServiceCharge serviceCharge = serviceTemplate != null ? serviceTemplate : productVersion.get().getProduct();
+
+                log.debug("Will instantiate as part of activation service {} for subscription {} quantity {}", serviceCharge.getCode(), subscription.getCode(), serviceToActivateDto.getQuantity());
 
                 serviceInstance = new ServiceInstance();
-                serviceInstance.setCode(serviceTemplate.getCode());
+                serviceInstance.setCode(serviceCharge.getCode());
                 if (serviceToActivateDto.getOverrideCode() != null) {
                     serviceInstance.setCode(serviceToActivateDto.getOverrideCode());
                 }
                 if (!StringUtils.isBlank(serviceToActivateDto.getDescription())) {
                     serviceInstance.setDescription(serviceToActivateDto.getDescription());
                 } else {
-                    serviceInstance.setDescription(serviceTemplate.getDescription());
+                    serviceInstance.setDescription(serviceCharge.getDescription());
                 }
-                serviceInstance.setServiceTemplate(serviceTemplate);
+                if(serviceTemplate != null) {
+                    serviceInstance.setServiceTemplate(serviceTemplate);
+                }else {
+                    serviceInstance.setProductVersion(productVersion.get());
+                }
                 serviceInstance.setSubscription(subscription);
                 serviceInstance.setRateUntilDate(serviceToActivateDto.getRateUntilDate());
                 if (serviceToActivateDto.getSubscriptionDate() == null) {
@@ -846,21 +856,29 @@ public class SubscriptionApi extends BaseApi {
             if (serviceToActivateDto.getQuantity() == null) {
                 throw new MissingParameterException("quantity for service " + serviceToActivateDto.getCode());
             }
+            Optional<ProductVersion> productVersion = null;
             ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode());
             if (serviceTemplate == null) {
-                throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
+                Date validityDate = serviceToActivateDto.getSubscriptionDate() != null ? serviceToActivateDto.getSubscriptionDate() : new Date();
+                productVersion = productService.getCurrentPublishedVersion(serviceToActivateDto.getCode(), validityDate);
+                if(productVersion.isEmpty()) {
+                    throw new BusinessApiException("No service template or valid product version found for code: " + serviceToActivateDto.getCode());
+                }
+                serviceToActivateDto.setProductVersion(productVersion.get());
+            } else {
+                serviceToActivate.add(serviceTemplate);
+                serviceToActivateDto.setServiceTemplate(serviceTemplate);
             }
-
-            serviceToActivateDto.setServiceTemplate(serviceTemplate);
             servicesToActivateDto.add(serviceToActivateDto);
-            serviceToActivate.add(serviceTemplate);
         }
     }
 
     private void setMinimumAmountElServiceInstance(ServiceToActivateDto serviceToActivateDto, ServiceInstance serviceInstance, ServiceTemplate serviceTemplate) {
-        serviceInstance.setMinimumAmountEl(serviceTemplate.getMinimumAmountEl());
-        serviceInstance.setMinimumLabelEl(serviceTemplate.getMinimumLabelEl());
-        serviceInstance.setMinimumInvoiceSubCategory(serviceTemplate.getMinimumInvoiceSubCategory());
+        if(serviceTemplate != null) {
+            serviceInstance.setMinimumAmountEl(serviceTemplate.getMinimumAmountEl());
+            serviceInstance.setMinimumLabelEl(serviceTemplate.getMinimumLabelEl());
+            serviceInstance.setMinimumInvoiceSubCategory(serviceTemplate.getMinimumInvoiceSubCategory());
+        }
 
         if (!StringUtils.isBlank(serviceToActivateDto.getMinimumAmountEl())) {
             serviceInstance.setMinimumAmountEl(serviceToActivateDto.getMinimumAmountEl());
@@ -1006,7 +1024,7 @@ public class SubscriptionApi extends BaseApi {
                 Date validityDate = subscription.getSubscriptionDate() != null ? subscription.getSubscriptionDate() : new Date();
                 productVersion = productService.getCurrentPublishedVersion(serviceToInstantiateDto.getCode(), validityDate);
                 if(productVersion.isEmpty()) {
-                    throw new BusinessApiException("No service template or product version found for code: " + serviceToInstantiateDto.getCode());
+                    throw new BusinessApiException("No service template or valid product version found for code: " + serviceToInstantiateDto.getCode());
                 }
             }else {
                 serviceToInstantiates.add(serviceTemplate);

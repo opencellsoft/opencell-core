@@ -35,6 +35,7 @@ import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.order.OrderHistory;
@@ -1242,5 +1243,9 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 
     public void setMinimumArticle(AccountingArticle minimumArticle) {
         this.minimumArticle = minimumArticle;
+    }
+
+    public ServiceCharge getServiceCharge() {
+        return serviceTemplate != null ? serviceTemplate : productVersion.getProduct();
     }
 }

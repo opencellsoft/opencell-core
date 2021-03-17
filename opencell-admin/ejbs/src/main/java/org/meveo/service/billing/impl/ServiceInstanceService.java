@@ -233,7 +233,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if(serviceInstance.getServiceTemplate() != null)
             serviceInstanciation(serviceInstance, descriptionOverride, null, null, false);
         else
-            cpqServiceInstanciation(serviceInstance, serviceInstance.getProductVersion().getProduct(), null, null, true);
+            cpqServiceInstanciation(serviceInstance, serviceInstance.getProductVersion().getProduct(), null, null, false);
     }
 
     // validate service is in offer service list
