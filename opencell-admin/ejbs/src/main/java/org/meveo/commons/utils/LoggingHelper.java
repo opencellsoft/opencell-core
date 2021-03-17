@@ -39,6 +39,8 @@ import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.apache.logging.log4j.core.filter.MarkerFilter;
 import org.apache.logging.log4j.core.net.SocketAddress;
 import org.apache.logging.log4j.nosql.appender.cassandra.CassandraAppender;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LoggingHelper {
 
@@ -47,6 +49,7 @@ public class LoggingHelper {
 
     public static final Marker APP_MARKER = MarkerManager.getMarker(APP_MARKER_NAME);
     public static final Marker FUNC_MARKER = MarkerManager.getMarker(FUNC_MARKER_NAME);
+    private static final Logger log = LoggerFactory.getLogger(LoggingHelper.class);
 
     public static void buildLog() {
         try {
@@ -85,7 +88,7 @@ public class LoggingHelper {
             ctx.updateLoggers();
 
         } catch (Exception e) {
-            System.out.println("FAILED TO CONFIGURE LOG4J2 " + e.getMessage());
+            log.error("FAILED TO CONFIGURE LOG4J2 " + e.getMessage());
         }
     }
 
@@ -117,7 +120,7 @@ public class LoggingHelper {
             cassandraAppender.start();
 
         } catch (Exception e) {
-            System.out.println("CassandraAppender build fail " + e.getLocalizedMessage());
+            log.error("CassandraAppender build fail " + e.getLocalizedMessage());
         }
         return cassandraAppender;
     }

@@ -49,6 +49,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.meveo.commons.utils.ParamBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PasswordCheck {
 
@@ -58,6 +60,7 @@ public class PasswordCheck {
     private String PASSWORD_NUMERIC;
     private String PASSWORD_SPECIAL;
     private String PASSWORD_STRENGTH;
+    private static final Logger log = LoggerFactory.getLogger(PasswordCheck.class);
 
     public PasswordCheck() {
         ParamBean param = ParamBean.getInstance("meveo.properties");
@@ -196,7 +199,7 @@ public class PasswordCheck {
         } else {
             strVerdict = "very strong";
         }
-        System.out.println(strVerdict + " - " + intScore + "\n" + strLog);
+        log.info(strVerdict + " - " + intScore + "\n" + strLog);
         // Does it meet the password policy?
         try {
             int min = Integer.parseInt(PASSWORD_MIN_LENGTH);
