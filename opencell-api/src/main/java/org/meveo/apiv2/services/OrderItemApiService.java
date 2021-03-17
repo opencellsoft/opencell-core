@@ -1,5 +1,17 @@
 package org.meveo.apiv2.services;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.model.billing.ProductInstance;
@@ -13,7 +25,6 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItem;
 import org.meveo.service.admin.impl.SellerService;
-
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
@@ -23,13 +34,9 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrderItem;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class OrderItemApiService implements ApiService<OrderItem> {
     private List<String> fetchFields;
@@ -66,6 +73,8 @@ public class OrderItemApiService implements ApiService<OrderItem> {
 
     @Inject
     private BillingAccountService billingAccountService;
+    
+    private static final Logger log = LoggerFactory.getLogger(OrderItemApiService.class);
 
     @PostConstruct
     public void initService(){
@@ -214,7 +223,7 @@ public class OrderItemApiService implements ApiService<OrderItem> {
                                 serviceInstanceService.serviceInstanciation(serviceInstance1);
                                 managedServiceInstances.add(serviceInstance1);
                             } catch (BusinessException e) {
-                                e.printStackTrace();
+                                log.error("error = {}", e);
                             }
                         }
                     }

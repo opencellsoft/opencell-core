@@ -7,17 +7,22 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Edward P. Legaspi
  **/
 public class InboundServletClient {
+	
+	private static final Logger log = LoggerFactory.getLogger(InboundServletClient.class);
 
 	public static void main(String args[]) {
 		new InboundServletClient().callClient();
 	}
 
 	public void callClient() {
-		System.out.println("calling inboud servlet...");
+		log.info("calling inbound servlet...");
 		URL inboundServlet = null;
 		try {
 			inboundServlet = new URL("http://192.168.0.120:8080/meveo/inbound/demo/");
@@ -47,15 +52,15 @@ public class InboundServletClient {
 			wr.close();
 
 			int responseCode = servletConnection.getResponseCode();
-			System.out.println("\nSending 'POST' request to URL : " + inboundServlet.getPath());
-			System.out.println("Response Code : " + responseCode);
+			log.info("\nSending 'POST' request to URL : " + inboundServlet.getPath());
+			log.info("Response Code : " + responseCode);
 
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("error = {}", e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 	}
 

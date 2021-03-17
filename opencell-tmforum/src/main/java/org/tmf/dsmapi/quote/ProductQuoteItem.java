@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.PdfWaterMark;
+import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.Attachment;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
@@ -85,6 +87,7 @@ public class ProductQuoteItem implements Serializable {
     
     private static Unmarshaller m ;
     private static Marshaller mar;
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(ProductQuoteItem.class);
     
     private static JAXBContext jaxbCxt;
 	static {
@@ -92,7 +95,7 @@ public class ProductQuoteItem implements Serializable {
 			jaxbCxt = JAXBContext.newInstance(ProductQuoteItem.class);
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 	}
 

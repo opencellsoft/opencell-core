@@ -10,11 +10,15 @@ import org.meveo.audit.logging.dto.ClassAndMethods;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
  **/
 public class GenericTest {
+	
+	private static final Logger log = LoggerFactory.getLogger(GenericTest.class);
 
 	public static void main(String args[]) {
 		new GenericTest();
@@ -25,7 +29,7 @@ public class GenericTest {
 			writeLogConfig();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 	}
 

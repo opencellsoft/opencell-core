@@ -2117,7 +2117,7 @@ public class SubscriptionApi extends BaseApi {
             OneShotChargeInstance oneShotChargeInstance = oneShotChargeInstanceService.findByCodeAndSubsription(oneShotChargeCode, subscription.getId());
             oneShotChargeInstanceService.terminateOneShotChargeInstance(oneShotChargeInstance);
         } catch (BusinessException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
     }
 

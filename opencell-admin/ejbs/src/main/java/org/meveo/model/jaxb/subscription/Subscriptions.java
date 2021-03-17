@@ -41,6 +41,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.LoggerFactory;
+
 
 
 /**
@@ -78,6 +80,7 @@ public class Subscriptions {
     @XmlElement(required = true)
     protected Warnings warnings;
     protected List<Subscription> subscription = new ArrayList<Subscription>();
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Subscriptions.class);
 
     public Subscriptions(){}
     
@@ -177,7 +180,7 @@ public class Subscriptions {
 			});
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("error = {}", e);
 		}
 
 	}

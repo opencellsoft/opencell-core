@@ -17,12 +17,15 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.meveo.commons.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 
 public class MeveoConnectionFactory {
 
 	private static final PoolingHttpClientConnectionManager connPool;
+	private static final Logger log = LoggerFactory.getLogger(MeveoConnectionFactory.class);
 
 	static {
 		connPool = new PoolingHttpClientConnectionManager();
@@ -54,7 +57,6 @@ public class MeveoConnectionFactory {
 				}						
 			}
 			if(!StringUtils.isBlank(tlsVersion)){
-				System.out.println("tlsversion:"+tlsVersion);
 				 try{
 
 					SSLConnectionSocketFactory f = new SSLConnectionSocketFactory(
@@ -68,7 +70,7 @@ public class MeveoConnectionFactory {
 					    .build();
 					
 				 }catch (Exception e) {
-					e.printStackTrace();
+					log.error("error = {}", e);
 				}
 			}else{
 				httpClient = httpClientBuilder.build();

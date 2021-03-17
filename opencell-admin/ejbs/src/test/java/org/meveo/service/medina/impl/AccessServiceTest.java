@@ -1,5 +1,20 @@
 package org.meveo.service.medina.impl;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,18 +22,8 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccessServiceTest {
@@ -29,6 +34,8 @@ public class AccessServiceTest {
     EntityManager entityManager;
     @Mock
     Query query;
+    
+    private static final Logger log = LoggerFactory.getLogger(AccessServiceTest.class);
 
     @Before
     public void setUp() throws Exception {
@@ -251,7 +258,7 @@ public class AccessServiceTest {
                 return new SimpleDateFormat("dd/MM/yyyy").parse(date);
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
         return null;
     }

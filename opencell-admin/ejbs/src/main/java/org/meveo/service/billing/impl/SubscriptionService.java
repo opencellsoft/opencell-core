@@ -438,12 +438,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
         return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
     }
 
-    public void bulkDelete(List<Subscription> inactiveSubscriptions) throws BusinessException {
-        for (Subscription e : inactiveSubscriptions) {
-            remove(e);
-        }
-    }
-
     public void cancelSubscriptionRenewal(Subscription entity) throws BusinessException {
         entity.setSubscribedTillDate(null);
         entity.setSubscriptionTerminationReason(null);
