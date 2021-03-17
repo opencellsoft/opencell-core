@@ -180,7 +180,7 @@ public class QuoteVersionService extends PersistenceService<QuoteVersion>   {
 		
 		final QuoteVersion duplicate = new QuoteVersion();
 		
-		duplicate.setBillingPlanCode(q.getBillingPlanCode());
+		duplicate.setInvoicingPlan(q.getInvoicingPlan());
 		duplicate.setEndDate(q.getEndDate());
 		duplicate.setId(q.getId());
 		duplicate.setQuote(q.getQuote());

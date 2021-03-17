@@ -55,6 +55,8 @@ public class OrderProductDto extends BaseEntityDto{
     
     private Long orderOfferId; 
     
+    private String discountPlanCode;
+    
     private Integer productVersion;
     
     private String productCode;
@@ -81,6 +83,7 @@ public class OrderProductDto extends BaseEntityDto{
 		productCode=orderProduct.getProductVersion().getProduct().getCode();
 		productVersion=orderProduct.getProductVersion().getCurrentVersion();
 		quantity=orderProduct.getQuantity();
+		discountPlanCode=orderProduct.getDiscountPlan()!=null?orderProduct.getDiscountPlan().getCode():null;
 	}
 	
 	public OrderProductDto(OrderProduct orderProduct, boolean loadAttributes) {
@@ -222,6 +225,18 @@ public class OrderProductDto extends BaseEntityDto{
 	public void setOrderAttributes(List<OrderAttributeDto> orderAttributes) {
 		this.orderAttributes = orderAttributes;
 	}
+
+
+	public String getDiscountPlanCode() {
+		return discountPlanCode;
+	}
+
+
+	public void setDiscountPlanCode(String discountPlanCode) {
+		this.discountPlanCode = discountPlanCode;
+	}
+	
+	
 
 	
 }
