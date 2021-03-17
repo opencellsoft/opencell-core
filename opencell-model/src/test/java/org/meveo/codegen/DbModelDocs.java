@@ -94,7 +94,7 @@ public class DbModelDocs {
         String modelDir = args[0];
         String outputDir = args[1];
 
-        System.out.println("Will parse " + modelDir + " and write db documentation to " + outputDir);
+        log.info("Will parse " + modelDir + " and write db documentation to " + outputDir);
 
         TypeSolver reflectionTypeSolver = new ReflectionTypeSolver();
         TypeSolver javaParserTypeSolver = new JavaParserTypeSolver(new File(modelDir));
@@ -207,7 +207,7 @@ public class DbModelDocs {
 
                 // Inspect parent classes and add fields if applicable
                 for (ClassOrInterfaceType extendsFromType : cd.getExtendedTypes()) {
-                    // System.out.println(dbTable.classname + " extends " + extendsFromType.getNameAsString());
+                    
                     ResolvedReferenceType resolvedSuperClass = extendsFromType.resolve();
 
                     // Need to check if parent entity has fields in a separate or same table
@@ -235,12 +235,12 @@ public class DbModelDocs {
                                 fieldVisitor.visit(fd, dbTable);
                             }
                         } catch (Exception e) {
-                            System.out.println("Failed to resolve parent class fields for " + extendsFromType);
-                            e.printStackTrace(System.out);
+                            log.error("Failed to resolve parent class fields for " + extendsFromType);
+                            
                         }
 
                     } catch (Exception e) {
-                        System.out.println("Failed to resolve super class " + extendsFromType);
+                        log.error("Failed to resolve super class " + extendsFromType);
                     }
                 }
 
@@ -248,15 +248,14 @@ public class DbModelDocs {
                     dbTable.setComment(cd.getComment().get().toString());
                 }
 
-                // System.out.println("-----------------------------------------------------------");
-                // System.out.println(dbTable);
+                
 
                 // Supplements a parent table with inheritance.SINGLE type of inheritance. Fields will be added to parent table in later iteration.
             } else if (cd.isAnnotationPresent("DiscriminatorValue")) {
 
                 // Inspect parent classes and add fields if applicable
                 for (ClassOrInterfaceType extendsFromType : cd.getExtendedTypes()) {
-                    // System.out.println(dbTable.classname + " extends " + extendsFromType.getNameAsString());
+                    
                     ResolvedReferenceType resolvedSuperClass = extendsFromType.resolve();
 
                     // Find a parent class that has fields in the same table
@@ -539,8 +538,7 @@ public class DbModelDocs {
                         dbTable.addUniqueFields(embeddedTable.fields);
 
                     } catch (Exception e) {
-                        // System.out.println("Failed to resolve fields for " + vd.getType() + " " + vd.getType().getClass());
-                        // e.printStackTrace(System.out);
+                        
                         if (dbTable.failedEmbeddedTypes == null) {
                             dbTable.failedEmbeddedTypes = new ArrayList<>();
                         }
@@ -570,7 +568,7 @@ public class DbModelDocs {
                     dbField.nullable = false;
                 }
 
-                // System.out.println("Field: " + fd);
+                
 
                 dbField.setFieldname(variableName);
                 if (dbField.dbFieldType == null) {
@@ -599,13 +597,13 @@ public class DbModelDocs {
 
                 dbTable.fields.add(dbField);
 
-                // System.out.println(dbField);
+                
 
             } catch (
 
             Exception e) {
-                System.out.println("Failed to process " + dbTable.classname + " field " + fd.toString());
-                e.printStackTrace(System.out);
+                log.error("Failed to process " + dbTable.classname + " field " + fd.toString());
+              
                 throw e;
             }
         }
@@ -761,7 +759,6 @@ public class DbModelDocs {
                 for (DBField dbField : fields) {
 
                     if (dbField.dbFieldname == null) {
-                        System.out.println("DbTable/field is null " + this.classname + "/" + this.tablename + "\n" + dbField);
                         throw new Exception("DbTable/field is null " + this.classname + "/" + this.tablename + " " + dbField);
                     }
                     if (dbField.dbFieldname.equals(dbFieldToAdd.dbFieldname)) {
