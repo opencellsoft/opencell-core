@@ -387,10 +387,22 @@ public class InvoicingAsync {
         return new AsyncResult<Boolean>(allOk);
     }
 
+    /**
+     * Creates the aggregates and invoice async using invoiceLines. One entity at a time in a separate transaction.
+     *
+     * @param entities the entity objects
+     * @param billingRun the billing run
+     * @param jobInstanceId the job instance id
+     * @param minAmountForAccounts Check if min amount is enabled in any account level
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     * @return the future
+     */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> createAggregatesAndInvoiceAsyncWithIL(List<? extends IBillableEntity> entities,
-                                                                BillingRun billingRun, Long jobInstanceId, MinAmountForAccounts minAmountForAccounts,
+                                                                BillingRun billingRun, Long jobInstanceId,
+                                                                MinAmountForAccounts minAmountForAccounts,
                                                                 MeveoUser lastCurrentUser, boolean automaticInvoiceCheck) {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
         for (IBillableEntity entityToInvoice : entities) {

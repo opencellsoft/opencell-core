@@ -6,7 +6,14 @@ import static java.util.Arrays.stream;
 
 public class AggregationConfiguration {
 
+    /**
+     * Is application running in B2B or B2C mode.
+     */
     private boolean enterprise;
+
+    /**
+     * InvoiceLine Aggregation types
+     */
     private AggregationOption aggregationOption;
 
     public AggregationConfiguration(boolean enterprise, AggregationOption aggregationOption) {
