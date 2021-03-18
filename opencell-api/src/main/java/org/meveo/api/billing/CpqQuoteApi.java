@@ -265,6 +265,8 @@ public class CpqQuoteApi extends BaseApi {
         }catch(BusinessApiException e) {
             throw new MeveoApiException(e);
         }
+        quote.setStatusDate(cpqQuote.getStatusDate());
+        quote.setId(cpqQuote.getId());
         return quote;
 	}
 	

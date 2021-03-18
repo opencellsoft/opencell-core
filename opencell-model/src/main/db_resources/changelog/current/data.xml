@@ -2640,18 +2640,46 @@ public class ValidateBRScript extends Script {
             <column name="uuid" value="billing_accounting_article-ART-STD" />
         </insert>
         <insert tableName="billing_accounting_article">
-        	<column name="id" value='-4'/>
-        	<column name="version" valueNumeric="0" />
-        	<column name="code" value="MIN-STD"/>
+            <column name="id" value='-4'/>
+            <column name="version" valueNumeric="0"/>
+            <column name="code" value="MIN-STD"/>
             <column name="tax_class_id" value="-5"/>
             <column name="invoice_sub_category_id" value="-3"/>
             <column name="description_i18n" value='{"FRA":"Complément du minimum de facturation","ENG":"Invoice minimum complement"}'/>
             <column name="description" value='Invoice minimum complement'/>
-            <column name="created" valueDate="now()" />
-            <column name="creator" value="applicationInitializer" />
-            <column name="uuid" value="billing_accounting_article-MIN-STD" />
+            <column name="created" valueDate="now()"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="uuid" value="billing_accounting_article-MIN-STD"/>
         </insert>
 
+    </changeSet>
+    <changeSet id="#5946_08032021" author="KhalidHORRI">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-31"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="2021-03-08 00:04:19.913"/>
+            <column name="job_category" value="UTILS"/>
+            <column name="job_template" value="DiscountPlanStatusJob"/>
+            <column name="code" value="DiscountPlanStatusJob"/>
+            <column name="creator" value="OPENCELL.ADMIN"/>
+            <column name="timerentity_id" valueNumeric="-3"/>
+            <column name="uuid" value="Discount_Plan_Status_Job"/>
+            <column name="cf_values" value='{"waitingMillis":[{"long":0}],"nbRuns":[{"long":-1}]}'/>
+        </insert>
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-32"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="2021-03-08 00:04:19.913"/>
+            <column name="job_category" value="UTILS"/>
+            <column name="job_template" value="DiscountPlanInstanceStatusJob"/>
+            <column name="code" value="DiscountPlanInstanceStatusJob"/>
+            <column name="creator" value="OPENCELL.ADMIN"/>
+            <column name="timerentity_id" valueNumeric="-3"/>
+            <column name="uuid" value="Discount_Plan_Instance_Status_Job"/>
+            <column name="cf_values" value='{"waitingMillis":[{"long":0}],"nbRuns":[{"long":-1}]}'/>
+        </insert>
     </changeSet>
 
 </databaseChangeLog>

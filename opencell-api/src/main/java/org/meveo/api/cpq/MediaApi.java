@@ -70,7 +70,7 @@ public class MediaApi extends BaseApi {
 			media.setMain(mediaDto.isMain());
 		if(!Strings.isEmpty(mediaDto.getMediaPath()))
 			media.setMediaPath(mediaDto.getMediaPath());
-		populateCustomFields(mediaDto.getCustomFields(), media, true);
+		populateCustomFields(mediaDto.getCustomFields(), media, false);
 		mediaService.update(media);
 		MediaDto result = new MediaDto(media);
 		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(media));
