@@ -649,6 +649,8 @@ public class CpqQuoteApi extends BaseApi {
         dto.setCode(quote.getCode());
         dto.setQuoteNumber(quote.getQuoteNumber());
         dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(quote));
+        dto.setId(quote.getId());
+        dto.setStatusDate(quote.getStatusDate());
         return dto;
     }
 
