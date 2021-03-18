@@ -74,6 +74,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.PaymentS
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.PersonalName;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentMethodSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentProduct771SpecificInput;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.ThreeDSecureBase;
 import com.ingenico.connect.gateway.sdk.java.domain.payout.CreatePayoutRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.payout.PayoutResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payout.definitions.CardPayoutMethodSpecificInput;
@@ -442,13 +443,22 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         return cardPaymentMethodSpecificInput;
     }
 
+    
+    private CardPaymentMethodSpecificInput getCardTokenInput(CardPaymentMethod cardPaymentMethod) {
+    	if("true".equals(paramBean().getProperty("ingenico.CreatePayment.use3DSecure", "false"))) {
+    		return getCardTokenInput3dSecure(cardPaymentMethod);
+    	}
+    	return getCardTokenInputDefault(cardPaymentMethod);
+        
+    }
+    
     /**
      * Gets the card token input.
      *
      * @param cardPaymentMethod the card payment method
      * @return the card token input
      */
-    private CardPaymentMethodSpecificInput getCardTokenInput(CardPaymentMethod cardPaymentMethod) {
+    private CardPaymentMethodSpecificInput getCardTokenInput3dSecure(CardPaymentMethod cardPaymentMethod) {
         ParamBean paramBean = paramBean();
         CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
         cardPaymentMethodSpecificInput.setToken(cardPaymentMethod.getTokenId());
@@ -465,6 +475,17 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 		cardPaymentMethodSpecificInput.setRecurring(cardRecurrenceDetails);
 		
 		
+        return cardPaymentMethodSpecificInput;
+    }
+    
+    private CardPaymentMethodSpecificInput getCardTokenInputDefault(CardPaymentMethod cardPaymentMethod) {
+        ParamBean paramBean = paramBean();
+        CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
+        cardPaymentMethodSpecificInput.setToken(cardPaymentMethod.getTokenId());
+        cardPaymentMethodSpecificInput.setReturnUrl(paramBean.getProperty("ingenico.urlReturnPayment", "changeIt"));
+        cardPaymentMethodSpecificInput.setIsRecurring(Boolean.TRUE);
+        cardPaymentMethodSpecificInput.setRecurringPaymentSequenceIndicator("recurring");
+        cardPaymentMethodSpecificInput.setAuthorizationMode(getAuthorizationMode());
         return cardPaymentMethodSpecificInput;
     }
 
@@ -626,9 +647,11 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 			CardPaymentMethodSpecificInputBase cardPaymentMethodSpecificInputBase = new CardPaymentMethodSpecificInputBase();
 			cardPaymentMethodSpecificInputBase.setRequiresApproval(true);
 			cardPaymentMethodSpecificInputBase.setAuthorizationMode(hostedCheckoutInput.getAuthorizationMode());
-			cardPaymentMethodSpecificInputBase.setTokenize(true);
-			cardPaymentMethodSpecificInputBase.setSkipAuthentication(hostedCheckoutInput.isSkipAuthentication());
+			cardPaymentMethodSpecificInputBase.setTokenize(true);			
 
+			ThreeDSecureBase threeDSecure = new ThreeDSecureBase();
+			threeDSecure.setSkipAuthentication(hostedCheckoutInput.isSkipAuthentication());
+			cardPaymentMethodSpecificInputBase.setThreeDSecure(threeDSecure);
 
 			CardRecurrenceDetails cardRecurrenceDetails = new CardRecurrenceDetails();					
 			cardRecurrenceDetails.setRecurringPaymentSequenceIndicator( paramBean().getProperty("ingenico.HostedCheckout.RecurringPaymentSequenceIndicator", "NULL"));			

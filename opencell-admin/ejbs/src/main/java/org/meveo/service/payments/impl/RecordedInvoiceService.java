@@ -401,12 +401,17 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             throw new ImportInvoiceException("Cant find customerAccount");
         }
 
-        if (netToPay != null && netToPay.compareTo(BigDecimal.ZERO) < 0) {
+        if (amountWithTax != null && amountWithTax.compareTo(BigDecimal.ZERO) < 0) {
             if (occTemplate == null) {
                 throw new ImportInvoiceException("Cant find negative OccTemplate");
-            }
-            netToPay = netToPay.abs();
+            }           
         }
+        
+
+        if (netToPay != null) {
+        	netToPay = netToPay.abs();
+        }
+        
         if (amountWithoutTax != null) {
             amountWithoutTax = amountWithoutTax.abs();
         }
