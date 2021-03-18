@@ -85,12 +85,6 @@ public class Tag extends BusinessEntity {
 	private String filterEl;
 	
 	
-	/**
-	 * seller associated to the entity
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "attribute_id",referencedColumnName = "id")
-	private Attribute attribute;
 	
  
 	public String getName() {
@@ -160,23 +154,5 @@ public class Tag extends BusinessEntity {
 	public void setSeller(Seller seller) {
 		this.seller = seller;
 	}
-
-	/**
-	 * @return the attribute
-	 */
-	public Attribute getAttribute() {
-		return attribute;
-	}
-
-	/**
-	 * @param attribute the attribute to set
-	 */
-	public void setAttribute(Attribute attribute) {
-		this.attribute = attribute;
-	}
-	
-	
- 
- 
 	
 }

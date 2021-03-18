@@ -37,12 +37,12 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.proxy.HibernateProxy;
+import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
-import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceCharge;
@@ -65,6 +65,7 @@ import org.meveo.model.crm.CustomerBrand;
  *
  */
 @Entity
+@CustomFieldEntity(cftCodePrefix = "Product")
 @Table(name = "cpq_product", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_product_seq"), })

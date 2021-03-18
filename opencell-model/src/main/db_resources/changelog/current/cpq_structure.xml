@@ -4028,6 +4028,7 @@ public class OrderAdvancement extends ModuleScript {
 		
 	</changeSet>
 	
+
      <changeSet id="#20210304-312" author="Mbarek-Ay">
 		<addColumn tableName="cpq_order_item">
 			<column name="cpq_order_offer_id" type="bigint"/>
@@ -4092,9 +4093,31 @@ public class OrderAdvancement extends ModuleScript {
 	  <addForeignKeyConstraint baseColumnNames="price_plan_matrix_id" baseTableName="cat_discount_plan_item" constraintName="fk_cat_discount_plan_item_price_plan_matrix_id" deferrable="false" initiallyDeferred="false"
 			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" /> 
 	</changeSet>
+
+	<changeSet id="#20210317_M540_16" author="TarikFA.">
+		<dropColumn tableName="cpq_tag">
+			<column name="attribute_id" />
+		</dropColumn>
+		
+		<createTable tableName="cpq_attribute_tag">
+            <column name="tag_id" type="bigint" >
+            	<constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint" >
+            	<constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addPrimaryKey columnNames="tag_id,attribute_id" tableName="cpq_attribute_tag"/>
+        
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_attribute_tag" constraintName="fk_cpq_attribute_tag_attribute_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_attribute_tag" constraintName="fk_cpq_attribute_tag_tag_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+            
+	</changeSet>
 	
-	
-	    <changeSet id="#2020317-342" author="Mbarek-Ay">
+	<changeSet id="#2020317-342" author="Mbarek-Ay">
 		<addColumn tableName="cpq_order_product">
 			<column name="discount_plan_id" type="bigint"/>
 		</addColumn>
