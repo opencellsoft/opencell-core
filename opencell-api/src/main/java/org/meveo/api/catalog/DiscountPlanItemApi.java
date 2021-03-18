@@ -299,12 +299,13 @@ public class DiscountPlanItemApi extends BaseApi {
             }
             discountPlanItem.setInvoiceSubCategory(invoiceSubCategory);
         }
-
+        if (!StringUtils.isBlank(source.getPricePlanMatrixCode())) {
         PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(source.getPricePlanMatrixCode());
         if (pricePlanMatrix == null)
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, source.getPricePlanMatrixCode());
         discountPlanItem.setPricePlanMatrix(pricePlanMatrix);
-
+        }
+        
         processAccountingArticles(source,discountPlanItem);
 
         if (source.getExpressionEl() != null) {

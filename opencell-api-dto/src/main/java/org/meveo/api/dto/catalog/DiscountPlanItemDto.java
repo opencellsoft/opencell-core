@@ -130,7 +130,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 	/**
      * pricePlanMatrix code
      */
-	 @NotNull
 	 private String pricePlanMatrixCode;
 
 	/** The custom fields. */
