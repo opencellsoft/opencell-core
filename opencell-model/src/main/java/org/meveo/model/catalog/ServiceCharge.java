@@ -40,7 +40,7 @@ public abstract class ServiceCharge extends EnableBusinessCFEntity {
 
     public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
         ServiceChargeTemplateRecurring result = null;
-        for (ServiceChargeTemplateRecurring sctr : serviceRecurringCharges) {
+        for (ServiceChargeTemplateRecurring sctr : getServiceRecurringCharges()) {
             if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
                 result = sctr;
                 break;
@@ -59,7 +59,7 @@ public abstract class ServiceCharge extends EnableBusinessCFEntity {
 
     public ServiceChargeTemplateSubscription getServiceChargeTemplateSubscriptionByChargeCode(String chargeCode) {
         ServiceChargeTemplateSubscription result = null;
-        for (ServiceChargeTemplateSubscription sctr : serviceSubscriptionCharges) {
+        for (ServiceChargeTemplateSubscription sctr : getServiceSubscriptionCharges()) {
             if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
                 result = sctr;
                 break;
@@ -78,7 +78,7 @@ public abstract class ServiceCharge extends EnableBusinessCFEntity {
 
     public ServiceChargeTemplateTermination getServiceChargeTemplateTerminationByChargeCode(String chargeCode) {
         ServiceChargeTemplateTermination result = null;
-        for (ServiceChargeTemplateTermination sctr : serviceTerminationCharges) {
+        for (ServiceChargeTemplateTermination sctr : getServiceTerminationCharges()) {
             if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
                 result = sctr;
                 break;
@@ -97,7 +97,7 @@ public abstract class ServiceCharge extends EnableBusinessCFEntity {
 
     public ServiceChargeTemplateUsage getServiceChargeTemplateUsageByChargeCode(String chargeCode) {
         ServiceChargeTemplateUsage result = null;
-        for (ServiceChargeTemplateUsage sctr : serviceUsageCharges) {
+        for (ServiceChargeTemplateUsage sctr : getServiceUsageCharges()) {
             if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
                 result = sctr;
                 break;

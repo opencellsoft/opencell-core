@@ -18,6 +18,7 @@
 
 package org.meveo.api.rest.account;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
@@ -64,6 +65,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @POST
     @Path("/")
+    @Operation(summary = "Create a customer account",
+            tags = { "Customer account management" })
     ActionStatus create(CustomerAccountDto postData);
 
     /**
@@ -74,6 +77,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+    @Operation(summary = "Update a customer account",
+            tags = { "Customer account management" })
     ActionStatus update(CustomerAccountDto postData);
 
     /**
@@ -88,9 +93,29 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @GET
     @Path("/")
+    @Operation(summary = "Get a customer account", deprecated = true,
+            tags = { "Deprecated" })
     GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") boolean calculateBalances,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF, @QueryParam("withAccountOperations") boolean withAccountOperations,
             @QueryParam("includeBillingAccounts") boolean includeBillingAccounts);
+
+    /**
+     * Search for a customer account with a given code.
+     *
+     * @param customerAccountCode The customer account's code
+     * @param calculateBalances True if needs to calculate balances
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @param withAccountOperations True if needs to get account operations
+     * @param includeBillingAccounts True to include billing accounts
+     * @return customer account
+     */
+    @GET
+    @Path("/{customerAccountCode}")
+    @Operation(summary = "Get a customer account",
+            tags = { "Customer account management" })
+    GetCustomerAccountResponseDto findV2(@PathParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") boolean calculateBalances,
+                                       @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF, @QueryParam("withAccountOperations") boolean withAccountOperations,
+                                       @QueryParam("includeBillingAccounts") boolean includeBillingAccounts);
 
     /**
      * Remove customerAccount with a given code.
@@ -100,6 +125,7 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @DELETE
     @Path("/{customerAccountCode}")
+    @Operation(summary = "Delete a customer account", tags = { "Customer account management" })
     ActionStatus remove(@PathParam("customerAccountCode") String customerAccountCode);
 
     /**
@@ -110,7 +136,21 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+    @Operation(summary = "List CustomerAccount filtered by customerCode", deprecated = true,
+            tags = { "Deprecated" })
     CustomerAccountsResponseDto listByCustomer(@QueryParam("customerCode") String customerCode);
+
+    /**
+     * List CustomerAccount filtered by customerCode.
+     *
+     * @param customerCode The customer account's code
+     * @return list of customer account by customer.
+     */
+    @GET
+    @Path("/customers/{customerCode}")
+    @Operation(summary = "List CustomerAccount filtered by customerCode",
+            tags = { "Customer account management" })
+    CustomerAccountsResponseDto listByCustomerV2(@QueryParam("customerCode") String customerCode);
 
     /**
      * Create a new credit category.
@@ -120,6 +160,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @POST
     @Path("/creditCategory")
+    @Operation(summary = "Create a credit category",
+            tags = { "Customer account management" })
     ActionStatus createCreditCategory(CreditCategoryDto postData);
 
     /**
@@ -130,6 +172,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @DELETE
     @Path("/creditCategory/{creditCategoryCode}")
+    @Operation(summary = "delete a credit category",
+            tags = { "Customer account management" })
     ActionStatus removeCreditCategory(@PathParam("creditCategoryCode") String creditCategoryCode);
 
     /**
@@ -140,6 +184,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+    @Operation(summary = "Create or update a customer account", deprecated = true,
+            tags = { "Deprecated" })
     ActionStatus createOrUpdate(CustomerAccountDto postData);
 
     /**
@@ -150,6 +196,8 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @POST
     @Path("/transferAccount")
+    @Operation(summary = "Transfer an amount from one customer to another",
+            tags = { "Customer account management" })
     ActionStatus transferAccount(TransferCustomerAccountDto transferCustomerAccountDto);
 
     /**
@@ -161,6 +209,21 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @GET
     @Path("/filterCountersByPeriod")
+    @Operation(summary = "Filter counters by period date.", deprecated = true,
+            tags = { "Deprecated" })
     GetCountersInstancesResponseDto filterCustomerAccountCountersByPeriod(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("date") @RestDateParam Date date);
+
+    /**
+     * Filter counters by period date.
+     *
+     * @param customerAccountCode The customer account's code
+     * @param date The date corresponding to the period
+     * @return counter instances.
+     */
+    @GET
+    @Path("/{customerAccountCode}/filterCountersByPeriod")
+    @Operation(summary = "Filter counters by period date.",
+            tags = { "Customer account management" })
+    GetCountersInstancesResponseDto filterCustomerAccountCountersByPeriodV2(@PathParam("customerAccountCode") String customerAccountCode, @QueryParam("date") @RestDateParam Date date);
 
 }

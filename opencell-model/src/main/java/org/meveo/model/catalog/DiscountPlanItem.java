@@ -190,7 +190,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "price_plan_matrix_id", nullable = true, referencedColumnName = "id")
-	private PricePlanMatrix pricePlanMatrix;
+    private PricePlanMatrix pricePlanMatrix;
 
 	/**
 	 * If true, then allows to negate the amount of affected invoice lines.

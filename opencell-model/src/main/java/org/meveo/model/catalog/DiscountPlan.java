@@ -447,6 +447,26 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	public void setExpressionEl(String expressionEl) {
 		this.expressionEl = expressionEl;
 	}
+	
+    /**
+     * Check if a date is within this Discount's effective date. Exclusive of the endDate. If startDate is null, it returns true. If startDate is not null and endDate is null,
+     * endDate is computed from the given duration.
+     *
+     * @param date the given date
+     * @return returns true if this DiscountItem is to be applied
+     */
+    public boolean isEffective(Date date) {
+        if (startDate == null && endDate == null) {
+            return true;
+        }
+        if (startDate != null && endDate == null) {
+            return date.compareTo(startDate) >= 0;
+        }
+        if (startDate == null) {
+            return date.before(endDate);
+        }
+        return (date.compareTo(startDate) >= 0) && (date.before(endDate));
+    }
 
 
 

@@ -32,6 +32,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
@@ -59,6 +60,7 @@ public interface UserAccountRs extends IBaseRs {
      */
     @POST
     @Path("/")
+    @Operation(summary = "Create a new user account", tags = { "User account management" })
     ActionStatus create(UserAccountDto postData);
 
     /**
@@ -69,6 +71,7 @@ public interface UserAccountRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+    @Operation(summary = "Update an existing user account", tags = { "User account management" })
     ActionStatus update(UserAccountDto postData);
 
     /**
@@ -81,8 +84,23 @@ public interface UserAccountRs extends IBaseRs {
      */
     @GET
     @Path("/")
+    @Operation(summary = "Search for a user account with a given code", tags = { "Deprecated" }, deprecated = true)
     GetUserAccountResponseDto find(@QueryParam("userAccountCode") String userAccountCode, @DefaultValue("false") @QueryParam("includeSubscriptions") boolean includeSubscriptions,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+
+    /**
+     * Search for a user account with a given code.
+     *
+     * @param userAccountCode user account code
+     * @param includeSubscriptions True to include subscriptions
+     * @param inheritCF Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE.
+     * @return found user account if exist
+     */
+    @GET
+    @Path("/{userAccountCode}")
+    @Operation(summary = "Search for a user account with a given code", tags = { "User account management" })
+    GetUserAccountResponseDto findV2(@PathParam("userAccountCode") String userAccountCode, @DefaultValue("false") @QueryParam("includeSubscriptions") boolean includeSubscriptions,
+                                   @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * Remove an existing user account with a given code.
@@ -92,6 +110,7 @@ public interface UserAccountRs extends IBaseRs {
      */
     @DELETE
     @Path("/{userAccountCode}")
+    @Operation(summary = "Remove an existing user account with a given code", tags = { "User account management" })
     ActionStatus remove(@PathParam("userAccountCode") String userAccountCode);
 
     /**
@@ -102,7 +121,19 @@ public interface UserAccountRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+    @Operation(summary = "List user accounts filtered by a billing account's code", tags = { "Deprecated" }, deprecated = true)
     UserAccountsResponseDto listByBillingAccount(@QueryParam("billingAccountCode") String billingAccountCode);
+
+    /**
+     * List user accounts filtered by a billing account's code.
+     *
+     * @param billingAccountCode The user billing account's code
+     * @return list of user accounts.
+     */
+    @GET
+    @Path("/billingAccounts/{billingAccountCode}")
+    @Operation(summary = "List user accounts filtered by a billing account's code", tags = { "User account management" })
+    UserAccountsResponseDto listByBillingAccountV2(@QueryParam("billingAccountCode") String billingAccountCode);
 
     /**
      * Create new or update an existing user account.
@@ -111,6 +142,7 @@ public interface UserAccountRs extends IBaseRs {
      * @return Request processing status
      */
     @POST
+    @Operation(summary = "Create new or update an existing user account", tags = { "Deprecated" }, deprecated = true)
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(UserAccountDto postData);
 
@@ -123,7 +155,20 @@ public interface UserAccountRs extends IBaseRs {
      */
     @GET
     @Path("/filterCountersByPeriod")
+    @Operation(summary = "Filter counters by period date", tags = { "User account management" })
     GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(@QueryParam("userAccountCode") String userAccountCode, @QueryParam("date") @RestDateParam Date date);
+
+    /**
+     * Filter counters by period date.
+     *
+     * @param userAccountCode The user account's code
+     * @param date The date corresponding to the period
+     * @return counter instances.
+     */
+    @GET
+    @Path("/{userAccountCode}/filterCountersByPeriod")
+    @Operation(summary = "Filter counters by period date", tags = { "User account management" })
+    GetCountersInstancesResponseDto filterUserAccountCountersByPeriodV2(@PathParam("userAccountCode") String userAccountCode, @QueryParam("date") @RestDateParam Date date);
 
     /**
      * Apply a product on a user account.
@@ -133,5 +178,6 @@ public interface UserAccountRs extends IBaseRs {
      */
     @POST
     @Path("/applyProduct")
+    @Operation(summary = "Filter counters by period date", tags = { "User account management" })
     ActionStatus applyProduct(ApplyProductRequestDto postData);
 }

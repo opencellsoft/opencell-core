@@ -18,14 +18,25 @@
 
 package org.meveo.service.catalog.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -68,6 +79,57 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 		}
 		return super.update(entity);
 	}
+
+
+    /**
+     * @param expression EL exprestion
+     * @param customerAccount customer account
+     * @param billingAccount billing account
+     * @param invoice invoice
+     * @param dpi the discount plan instance
+     * @return true/false
+     * @throws BusinessException business exception.
+     */
+    public boolean matchDiscountPlanExpression(String expression, CustomerAccount customerAccount, BillingAccount billingAccount, Invoice invoice,OfferTemplate offer,Product product, DiscountPlanInstance dpi) throws BusinessException {
+        Boolean result = true;
+
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, customerAccount);
+        }
+        if (expression.indexOf(ValueExpressionWrapper.VAR_BILLING_ACCOUNT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
+        }
+        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE_SHORT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_INVOICE_SHORT, invoice);
+        }
+        if (expression.indexOf(ValueExpressionWrapper.VAR_INVOICE) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_INVOICE, invoice);
+        }
+        if (expression.indexOf(ValueExpressionWrapper.VAR_DISCOUNT_PLAN_INSTANCE) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_DISCOUNT_PLAN_INSTANCE, dpi);
+        }
+        if (expression.indexOf(ValueExpressionWrapper.VAR_OFFER) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_OFFER, offer);
+        }
+        if (expression.indexOf(ValueExpressionWrapper.VAR_PRODUCT) >= 0) {
+            userMap.put(ValueExpressionWrapper.VAR_OFFER, product);
+        }
+        if (expression.indexOf("su") >= 0) {
+            userMap.put("su", invoice.getSubscription());
+        }
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
+        try {
+            result = (Boolean) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to boolean but " + res);
+        }
+        return result;
+    }
 
 	@Override
 	public void remove(DiscountPlan entity) throws BusinessException {

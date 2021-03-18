@@ -15,6 +15,7 @@ import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.BaseApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.apiv2.article.AccountingArticles;
@@ -22,14 +23,17 @@ import org.meveo.apiv2.article.ImmutableAccountingArticle;
 import org.meveo.apiv2.article.ImmutableAccountingArticles;
 import org.meveo.apiv2.article.resource.AccountingArticleResource;
 import org.meveo.apiv2.article.service.AccountingArticleApiService;
+import org.meveo.apiv2.article.service.AccountingArticleBaseApi;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 //import org.meveo.apiv2.ordering.resource.order.ImmutableOrder;
 import org.meveo.model.article.AccountingArticle;
+import org.meveo.service.api.EntityToDtoConverter;
 
 public class AccountingArticleResourceImpl implements AccountingArticleResource {
 
     @Inject
     private AccountingArticleApiService accountingArticleApiService;
+    @Inject private AccountingArticleBaseApi accountingArticleBaseApi;
     private AccountingArticleMapper mapper = new AccountingArticleMapper();
 
 
@@ -37,8 +41,8 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
     public Response createAccountingArticle(org.meveo.apiv2.article.AccountingArticle accountingArticle) {
 
         AccountingArticle accountingArticleEntity = mapper.toEntity(accountingArticle);
+        accountingArticleBaseApi.populateCustomFieldsForGenericApi(accountingArticle.getCustomFields(), accountingArticleEntity, true);
         accountingArticleEntity = accountingArticleApiService.create(accountingArticleEntity);
-
         return Response
                 .created(LinkGenerator.getUriBuilderFromResource(AccountingArticleResource.class, accountingArticleEntity.getId()).build())
                 .entity(toResourceOrderWithLink(mapper.toResource(accountingArticleEntity)))
@@ -48,6 +52,7 @@ public class AccountingArticleResourceImpl implements AccountingArticleResource 
 	@Override
 	public Response updateAccountingArticle(Long id, org.meveo.apiv2.article.AccountingArticle accountingArticle) {
         AccountingArticle accountingArticleEntity = mapper.toEntity(accountingArticle);
+        accountingArticleBaseApi.populateCustomFieldsForGenericApi(accountingArticle.getCustomFields(), accountingArticleEntity, false);
         Optional<AccountingArticle> accoutningUpdated = accountingArticleApiService.update(id, accountingArticleEntity);
         return Response
                 .created(LinkGenerator.getUriBuilderFromResource(AccountingArticleResource.class, accountingArticleEntity.getId()).build())

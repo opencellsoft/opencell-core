@@ -67,13 +67,17 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.Attribute;
@@ -82,11 +86,13 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
@@ -105,7 +111,6 @@ import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
@@ -117,6 +122,7 @@ import org.meveo.service.cpq.QuoteMapper;
 import org.meveo.service.cpq.QuoteProductService;
 import org.meveo.service.cpq.QuoteVersionService;
 import org.meveo.service.cpq.XmlQuoteFormatter;
+import org.meveo.service.cpq.order.InvoicingPlanService;
 import org.meveo.service.cpq.order.QuotePriceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.quote.QuoteOfferService;
@@ -163,7 +169,7 @@ public class CpqQuoteApi extends BaseApi {
     private TerminationReasonService terminationReasonService;
 
     @Inject
-    private ServiceTemplateService serviceTemplateService;
+    private DiscountPlanService discountPlanService;
 
     @Inject
     private ServiceInstanceService serviceInstanceService;
@@ -194,7 +200,7 @@ public class CpqQuoteApi extends BaseApi {
     
     
     @Inject
-    private DiscountPlanService discountPlanService;
+    private InvoicingPlanService invoicingPlanService;
 
     @Inject
     private QuoteMapper quoteMapper;
@@ -267,10 +273,20 @@ public class CpqQuoteApi extends BaseApi {
 		quoteVersion.setStatusDate(Calendar.getInstance().getTime());
 		quoteVersion.setQuoteVersion(1);
 		quoteVersion.setStatus(VersionStatusEnum.DRAFT);
-		quoteVersion.setBillingPlanCode(quoteVersionDto.getBillingPlanCode());
-		quoteVersion.setStartDate(quoteVersionDto.getStartDate());
-		quoteVersion.setEndDate(quoteVersionDto.getEndDate());
-		quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
+		if(quoteVersionDto != null) {
+			InvoicingPlan invoicingPlan=null;
+			if(!StringUtils.isBlank(quoteVersionDto.getBillingPlanCode())) {
+			invoicingPlan= invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode()); 
+			}
+			if (invoicingPlan == null) {
+				throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
+			}
+			
+			quoteVersion.setInvoicingPlan(invoicingPlan);
+			quoteVersion.setStartDate(quoteVersionDto.getStartDate());
+			quoteVersion.setEndDate(quoteVersionDto.getEndDate());
+			quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
+		}
 		quoteVersion.setQuote(cpqQuote);
 		return quoteVersion;
 	}
@@ -278,13 +294,10 @@ public class CpqQuoteApi extends BaseApi {
 	public GetQuoteVersionDtoResponse createQuoteVersion(QuoteVersionDto quoteVersionDto) {
 		if(Strings.isEmpty(quoteVersionDto.getQuoteCode()))
 			missingParameters.add("quoteCode");
-		if(quoteVersionDto.getCurrentVersion() <= 0)
-			throw new MeveoApiException("current version must be greater than 0");
 		final CpqQuote quote = cpqQuoteService.findByCode(quoteVersionDto.getQuoteCode());
 		if(quote == null)
 			throw new EntityDoesNotExistsException(CpqQuote.class, quoteVersionDto.getQuoteCode());
 		final QuoteVersion quoteVersion = populateNewQuoteVersion(quoteVersionDto, quote);
-		quoteVersion.setQuoteVersion(quoteVersionDto.getCurrentVersion());
 		try {
 			quoteVersionService.create(quoteVersion);
 		}catch(BusinessApiException e) {
@@ -531,8 +544,14 @@ public class CpqQuoteApi extends BaseApi {
                         qv.setStatus(quoteVersionDto.getStatus());
                         qv.setStatusDate(Calendar.getInstance().getTime());
                     }
-                    if(!Strings.isEmpty(quoteVersionDto.getBillingPlanCode()))
-                        qv.setBillingPlanCode(quoteVersionDto.getBillingPlanCode());
+                    InvoicingPlan invoicingPlan=null;
+        			if(!StringUtils.isBlank(quoteVersionDto.getBillingPlanCode())) {
+        			invoicingPlan= invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode()); 
+        			}
+        			if (invoicingPlan == null) {
+        				throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
+        			}
+                   qv.setInvoicingPlan(invoicingPlan);
                     quoteVersionService.update(qv);
                     quoteVersionDto = new QuoteVersionDto(qv);
                     quoteDto.setQuoteVersion(quoteVersionDto);
@@ -1305,6 +1324,31 @@ public class CpqQuoteApi extends BaseApi {
         }
         return cpqQuoteService.getQuotePdf(quote);
 
+    }
+    
+    private boolean isDiscountPlanApplicable(BillingAccount billingAccount,DiscountPlan discountPlan, QuoteOffer quoteOffer, Date quoteDate) {
+    	if(discountPlan.isActive() && discountPlan.isEffective(quoteDate)) {
+    		if(discountPlanService.matchDiscountPlanExpression(discountPlan.getExpressionEl(), null, billingAccount, null, quoteOffer.getOfferTemplate(), null, null)) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount,DiscountPlan discountPlan, QuoteOffer quoteOffer, Date quoteDate)
+            throws BusinessException {
+        List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
+        if (isDiscountPlanApplicable(billingAccount, discountPlan, quoteOffer, quoteDate)) {
+         
+                List<DiscountPlanItem> discountPlanItems = discountPlan.getDiscountPlanItems();
+                for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+                    if (discountPlanItem.isActive() && discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), null, billingAccount, null, quoteOffer.getOfferTemplate(), null, null)) {
+                        applicableDiscountPlanItems.add(discountPlanItem);
+                    }
+                }
+            
+        }
+        return applicableDiscountPlanItems;
     }
 
 }
