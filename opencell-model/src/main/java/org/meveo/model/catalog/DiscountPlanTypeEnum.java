@@ -18,17 +18,21 @@
 
 package org.meveo.model.catalog;
 
+/**
+ * Type of the discount plan. Defines on which entity the discount plan can be applied.
+ *
+ * @author Khalid HORRI
+ */
 public enum DiscountPlanTypeEnum {
 
-    QUOTE(1, "disountPlanTypeEnum.quote"), OFFER(2, "disountPlanTypeEnum.offer"), PRODUCT(3, "disountPlanTypeEnum.product"), 
-    INVOICE(4, "disountPlanTypeEnum.invoice"), INVOICE_LINE(5, "disountPlanTypeEnum.invoiceLine"), CODE_PROMO(5, "disountPlanTypeEnum.codePromo");
+    QUOTE(1, "disountPlanTypeEnum.quote"), OFFER(2, "disountPlanTypeEnum.offer"), PRODUCT(3, "disountPlanTypeEnum.product"), INVOICE(4,
+            "disountPlanTypeEnum.invoice"), INVOICE_LINE(5, "disountPlanTypeEnum.invoiceLine"), PROMO_CODE(6, "disountPlanTypeEnum.promoCode");
     private Integer id;
     private String label;
 
     /**
-     * @param id            the ID
-     * @param label         the label
-     * @param isAccumulator true if is it an accumulator counter type
+     * @param id    the ID
+     * @param label the label
      */
     DiscountPlanTypeEnum(Integer id, String label) {
         this.id = id;
@@ -42,8 +46,6 @@ public enum DiscountPlanTypeEnum {
     public String getLabel() {
         return this.label;
     }
-
-
 
     public static DiscountPlanTypeEnum getValue(Integer id) {
         if (id != null) {

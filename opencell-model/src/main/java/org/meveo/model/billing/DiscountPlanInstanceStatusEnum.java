@@ -16,14 +16,15 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.model.catalog;
+package org.meveo.model.billing;
+
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 
 /**
  * @author Khalid HORRI
  **/
-public enum DiscountPlanStatusEnum {
-    ACTIVE(1, "DiscountPlanStatusEnum.active"), INACTIVE(2, "DiscountPlanStatusEnum.inactive"), DRAFT(3, "DiscountPlanStatusEnum.draft"), IN_USE(4,
-            "DiscountPlanStatusEnum.inUse"), EXPIRED(5, "DiscountPlanStatusEnum.expired");
+public enum DiscountPlanInstanceStatusEnum {
+    ACTIVE(1, "DiscountPlanStatusEnum.active"), APPLIED(2, "DiscountPlanStatusEnum.draft"), IN_USE(3, "DiscountPlanStatusEnum.inUse"), EXPIRED(4, "DiscountPlanStatusEnum.expired");
     /**
      * Enum Id
      */
@@ -37,7 +38,7 @@ public enum DiscountPlanStatusEnum {
      * @param id    Enum Id
      * @param label enum label
      */
-    DiscountPlanStatusEnum(final Integer id, final String label) {
+    DiscountPlanInstanceStatusEnum(final Integer id, final String label) {
         this.id = id;
         this.label = label;
     }
@@ -60,9 +61,9 @@ public enum DiscountPlanStatusEnum {
      * @param id
      * @return
      */
-    public static DiscountPlanStatusEnum getValue(Integer id) {
+    public static DiscountPlanInstanceStatusEnum getValue(Integer id) {
         if (id != null) {
-            for (DiscountPlanStatusEnum status : values()) {
+            for (DiscountPlanInstanceStatusEnum status : values()) {
                 if (id.equals(status.getId())) {
                     return status;
                 }

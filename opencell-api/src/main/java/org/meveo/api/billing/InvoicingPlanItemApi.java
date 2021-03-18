@@ -71,8 +71,9 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 		if (invoicingPlanItem != null) {
 			throw new EntityAlreadyExistsException(InvoicingPlanItem.class, invoicingPlanItemCode);
 		}
-		
-		invoicingPlanItemService.create(dtoToEntity(postData, new InvoicingPlanItem(), true));
+		invoicingPlanItem = dtoToEntity(postData, new InvoicingPlanItem(), true);
+		populateCustomFields(postData.getCustomFields(), invoicingPlanItem, true);
+		invoicingPlanItemService.create(invoicingPlanItem);
 
 		return invoicingPlanItem;
 	}
@@ -100,7 +101,7 @@ public class InvoicingPlanItemApi extends BaseCrudApi<InvoicingPlanItem, Invoici
 		dtoToEntity(postData, invoicingPlanItem, false);
 
 		invoicingPlanItem = invoicingPlanItemService.update(invoicingPlanItem);
-
+		populateCustomFields(postData.getCustomFields(), invoicingPlanItem, false);
 		return invoicingPlanItem;
 	}
 

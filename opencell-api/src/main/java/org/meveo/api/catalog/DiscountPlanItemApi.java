@@ -70,10 +70,10 @@ public class DiscountPlanItemApi extends BaseApi {
 
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
-    
+
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
-    
+
     @Inject
     private AccountingArticleService accountingArticleService;
 
@@ -244,20 +244,20 @@ public class DiscountPlanItemApi extends BaseApi {
         }
         return discountPlanItemDtos;
     }
-    
+
     private void processAccountingArticles(DiscountPlanItemDto postData, DiscountPlanItem discountPlanItem) {
 		Set<String> accountingArticleCodes = postData.getAccountingArticleCodes();
 		if(accountingArticleCodes != null && !accountingArticleCodes.isEmpty()){
 			Set<AccountingArticle> accountingArticles=new HashSet<AccountingArticle>();
 			for(String code:accountingArticleCodes) {
 				AccountingArticle accountingArticle=accountingArticleService.findByCode(code);
-				if(accountingArticle == null) { 
+				if(accountingArticle == null) {
 					throw new EntityDoesNotExistsException(AccountingArticle.class,code);
 				}
 				accountingArticles.add(accountingArticle);
 			}
 			discountPlanItem.setTargetAccountingArticle(accountingArticles);
-		}else {		
+		}else {
 			discountPlanItem.setTargetAccountingArticle(null);
 		}
 	}
@@ -299,17 +299,14 @@ public class DiscountPlanItemApi extends BaseApi {
             }
             discountPlanItem.setInvoiceSubCategory(invoiceSubCategory);
         }
-        
+
         PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(source.getPricePlanMatrixCode());
         if (pricePlanMatrix == null)
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, source.getPricePlanMatrixCode());
         discountPlanItem.setPricePlanMatrix(pricePlanMatrix);
-        
+
         processAccountingArticles(source,discountPlanItem);
-        
-        if (source.getAccountingCode() != null) {
-            discountPlanItem.setAccountingCode(source.getAccountingCode());
-        }
+
         if (source.getExpressionEl() != null) {
             discountPlanItem.setExpressionEl(source.getExpressionEl());
         }
@@ -318,16 +315,19 @@ public class DiscountPlanItemApi extends BaseApi {
         }
 		if (source.getDiscountValue() != null) {
 			discountPlanItem.setDiscountValue(source.getDiscountValue());
-		}
-		if (source.getDiscountValueEL() != null) {
-			discountPlanItem.setDiscountValueEL(source.getDiscountValueEL());
-		}
-		if (source.getDiscountValueElSpark() != null) {
-			discountPlanItem.setDiscountValueElSpark(source.getDiscountValueElSpark());
-		}
-		if (source.getDiscountPlanItemType() != null) {
-			discountPlanItem.setDiscountPlanItemType(source.getDiscountPlanItemType());
-		}
+        }
+        if (source.getDiscountValueEL() != null) {
+            discountPlanItem.setDiscountValueEL(source.getDiscountValueEL());
+        }
+        if (source.getDiscountValueElSpark() != null) {
+            discountPlanItem.setDiscountValueElSpark(source.getDiscountValueElSpark());
+        }
+        if (source.getDiscountPlanItemType() != null) {
+            discountPlanItem.setDiscountPlanItemType(source.getDiscountPlanItemType());
+        }
+        if (source.isAllowToNegate() != null) {
+            discountPlanItem.setAllowToNegate(source.isAllowToNegate());
+        }
 
         return discountPlanItem;
     }

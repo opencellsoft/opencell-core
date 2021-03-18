@@ -110,10 +110,11 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 				if(tag == null) { 
 					throw new EntityDoesNotExistsException(Tag.class,code);
 				}
-				tag.setAttribute(attribute);
 				tags.add(tag);
 			}
-			attribute.getTags().addAll(tags);
+			attribute.setTags(new ArrayList<>(tags));
+		}else {
+			attribute.getTags().clear();
 		}
 	} 
 	
@@ -178,12 +179,11 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		if(postData.getUnitNbDecimal() != null) {
 			attribute.setUnitNbDecimal(postData.getUnitNbDecimal());
 		}
-		if(attribute.getTags() != null && !attribute.getTags().isEmpty()) {
+		/*if(attribute.getTags() != null && !attribute.getTags().isEmpty()) {
 			for (Tag tag : attribute.getTags()) {
-				tag.setAttribute(null);
 				tagService.update(tag);
 			}
-		}
+		}*/
         populateCustomFields(postData.getCustomFields(), attribute, true);
 		processTags(postData,attribute);
 		processAssignedAttributes(postData,attribute);
