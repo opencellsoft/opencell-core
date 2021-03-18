@@ -19,13 +19,11 @@
 
 package org.meveo.admin.async;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.UnitGDPRJobBean;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.communication.contact.Contact;
-import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.AccountOperation;
 import org.slf4j.Logger;
@@ -62,7 +60,7 @@ public class GDPRJobAsync {
                 unitGDPRJobBean.subscriptionRemove(subscription);
                 result[0]++;
             } catch (Exception e) {
-                log.error("Error on removing Subscription[id={}] => {}", subscription.getId(), e.getMessage());
+                log.error("Error on removing Subscription[id={}]", subscription.getId(), e);
                 result[1]++;
             }
         }
