@@ -4058,25 +4058,27 @@ public class OrderAdvancement extends ModuleScript {
 	    </createTable>
 
 	        <addForeignKeyConstraint baseTableName="discount_plan_item_articles" baseColumnNames="discount_plan_item_id"
-                                 constraintName="discount_plan_item_articles_discount_plan_item_id_fk" referencedTableName="cat_discount_plan_item"
-                                 referencedColumnNames="id"/>
+									 constraintName="discount_plan_item_articles_discount_plan_item_id_fk" referencedTableName="cat_discount_plan_item"
+									 referencedColumnNames="id"/>
 
         <addForeignKeyConstraint baseTableName="discount_plan_item_articles" baseColumnNames="accounting_article_id"
                                  constraintName="discount_plan_item_articles_accounting_article_id_fk" referencedTableName="billing_accounting_article"
-                                 referencedColumnNames="id"/>                         
+                                 referencedColumnNames="id"/>
                                  	     
 	  </changeSet>
 
-   <changeSet id="#20210315-329" author="Mbarek-Ay">
-	<dropForeignKeyConstraint baseTableName="billing_service_instance" constraintName="fk_cpq_quote_version_serviceInstance_id"/>
-		<addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="billing_service_instance" constraintName="fk_cpq_product_version_serviceInstance_id" deferrable="false" initiallyDeferred="false"
-									 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
-	  </changeSet>
-	  
-	  
-	  <changeSet id="#20210316-356" author="Mbarek-Ay">
-  <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_product_discount_plan" constraintName="fk_cpq_product_discount_plan_product_id" deferrable="false" initiallyDeferred="false"
-	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+	<changeSet id="#20210315-329" author="Mbarek-Ay">
+		<dropForeignKeyConstraint baseTableName="billing_service_instance" constraintName="fk_cpq_quote_version_serviceInstance_id"/>
+		<addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="billing_service_instance" constraintName="fk_cpq_product_version_serviceInstance_id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version"/>
+	</changeSet>
+
+
+	<changeSet id="#20210316-356" author="Mbarek-Ay">
+		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_product_discount_plan" constraintName="fk_cpq_product_discount_plan_product_id" deferrable="false"
+								 initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product"/>
 
 	        <addForeignKeyConstraint baseColumnNames="discount_id" baseTableName="cpq_product_discount_plan" constraintName="fk_cpq_product_discount_plan_discount_id" deferrable="false" initiallyDeferred="false"
 	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" /> 
@@ -4096,21 +4098,24 @@ public class OrderAdvancement extends ModuleScript {
 		<addColumn tableName="cpq_order_product">
 			<column name="discount_plan_id" type="bigint"/>
 		</addColumn>
-		<addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_discount_plan_id" deferrable="false" initiallyDeferred="false"
-			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
-		
+		<addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_discount_plan_id" deferrable="false"
+								 initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan"/>
+
 		<addColumn tableName="cpq_order_offer">
 			<column name="discount_plan_id" type="bigint"/>
 		</addColumn>
-		<addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_discount_plan_id" deferrable="false" initiallyDeferred="false"
-			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />	     
-	   
-	  
-	  <addColumn tableName="cpq_quote_version">
+		<addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_discount_plan_id" deferrable="false"
+								 initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan"/>
+
+
+		<addColumn tableName="cpq_quote_version">
 			<column name="invoicing_plan_id" type="bigint"/>
 		</addColumn>
-		<addForeignKeyConstraint baseColumnNames="invoicing_plan_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_invoicing_plan_id" deferrable="false" initiallyDeferred="false"
-			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoicing_plan" />	     
-	  </changeSet>
+		<addForeignKeyConstraint baseColumnNames="invoicing_plan_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_invoicing_plan_id" deferrable="false"
+								 initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoicing_plan"/>
+	</changeSet>
 
 </databaseChangeLog>

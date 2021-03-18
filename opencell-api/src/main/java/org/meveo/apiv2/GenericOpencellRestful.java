@@ -8,7 +8,9 @@ import org.json.simple.parser.ParseException;
 import org.meveo.apiv2.article.impl.AccountingArticleResourceImpl;
 import org.meveo.apiv2.article.impl.ArticleMappingLineResourceImpl;
 import org.meveo.apiv2.article.impl.ArticleMappingResourceImpl;
+import org.meveo.apiv2.billing.impl.DiscountPlanInstanceResourceImpl;
 import org.meveo.apiv2.billing.impl.InvoiceResourceImpl;
+import org.meveo.apiv2.catalog.resource.DiscountPlanResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
@@ -66,7 +68,7 @@ public class GenericOpencellRestful extends Application {
                 EJBTransactionRolledbackExceptionMapper.class, OpenApiResource.class,
                 DocumentResourceImpl.class, GenericJacksonProvider.class, ProductResourceImpl.class,
                 OrderItemResourceImpl.class, OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class,
-                ArticleMappingResourceImpl.class, InvoiceResourceImpl.class)
+                ArticleMappingResourceImpl.class, InvoiceResourceImpl.class,DiscountPlanResourceImpl.class, DiscountPlanInstanceResourceImpl.class, BusinessExceptionMapper.class)
                 .collect(Collectors.toSet());
         if(GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")){
             resources.add(GenericApiLoggingFilter.class);

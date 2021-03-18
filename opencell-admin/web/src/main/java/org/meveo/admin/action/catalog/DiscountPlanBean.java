@@ -27,6 +27,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.catalog.ApplicableEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.service.base.local.IPersistenceService;
@@ -58,7 +59,7 @@ public class DiscountPlanBean extends CustomFieldBean<DiscountPlan> {
 
 	@Override
 	public DiscountPlan initEntity() {
-		discountPlanItem.setAccountingCode(appProvider.getDiscountAccountingCode());
+		//discountPlanItem.setAccountingCode(appProvider.getDiscountAccountingCode());
 
 		entity = super.initEntity();
 
@@ -131,7 +132,7 @@ public class DiscountPlanBean extends CustomFieldBean<DiscountPlan> {
 
 		activeDPITabIndex = 0;
 		discountPlanItem = new DiscountPlanItem();
-		discountPlanItem.setAccountingCode(appProvider.getDiscountAccountingCode());
+		//discountPlanItem.setAccountingCode(appProvider.getDiscountAccountingCode());
 	}
 
 	public void newDiscountPlanItem() {
@@ -163,4 +164,17 @@ public class DiscountPlanBean extends CustomFieldBean<DiscountPlan> {
 	public void setActiveDPITabIndex(int activeDPITabIndex) {
 		this.activeDPITabIndex = activeDPITabIndex;
 	}
+
+	public void deleteApplicableEntity(ApplicableEntity applicableEntity) {
+		if (entity.getApplicableEntities() != null) {
+			entity.getApplicableEntities().remove(applicableEntity);
+		}
+	}
+
+	public void deleteIncompatibleDiscountPlan(DiscountPlan discountPlan) {
+		if (entity.getIncompatibleDiscountPlans() != null) {
+			entity.getIncompatibleDiscountPlans().remove(discountPlan);
+		}
+	}
+
 }
