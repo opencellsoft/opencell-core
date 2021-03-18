@@ -4063,13 +4063,7 @@ public class OrderAdvancement extends ModuleScript {
 
         <addForeignKeyConstraint baseTableName="discount_plan_item_articles" baseColumnNames="accounting_article_id"
                                  constraintName="discount_plan_item_articles_accounting_article_id_fk" referencedTableName="billing_accounting_article"
-                                 referencedColumnNames="id"/>
-                                  
-         <addColumn tableName="cat_discount_plan_item">                     		
-			<column name="pricePlanMatrix_id" type="bigint"/>
-		</addColumn>
-		<addForeignKeyConstraint baseColumnNames="pricePlanMatrix_id" baseTableName="cat_discount_plan_item" constraintName="fk_cat_discount_plan_item_pricePlanMatrix_id" deferrable="false" initiallyDeferred="false"
-			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />                         
+                                 referencedColumnNames="id"/>                         
                                  	     
 	  </changeSet>
 
@@ -4090,9 +4084,6 @@ public class OrderAdvancement extends ModuleScript {
 	  </changeSet>
 	
 	  <changeSet id="#20210316-356-2" author="Mbarek-Ay">
-	   <dropColumn tableName="cat_discount_plan_item">
-            <column name="pricePlanMatrix_id"></column>
-        </dropColumn>
         <addColumn tableName="cat_discount_plan_item">
 			<column name="price_plan_matrix_id" type="bigint" />
 	  </addColumn>
