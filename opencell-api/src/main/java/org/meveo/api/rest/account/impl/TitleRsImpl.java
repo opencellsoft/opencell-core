@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.account.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.account.TitleApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -32,6 +28,11 @@ import org.meveo.api.dto.response.account.TitlesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.TitleRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -109,7 +110,7 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
     public TitlesResponseDto list() {
         TitlesResponseDto result = new TitlesResponseDto();
 
-        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering();
+        PagingAndFiltering pagingAndFiltering = GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering();
 
         try {
             result = new TitlesResponseDto(titleApi.search(pagingAndFiltering));
