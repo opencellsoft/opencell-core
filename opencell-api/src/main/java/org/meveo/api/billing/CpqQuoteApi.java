@@ -278,13 +278,8 @@ public class CpqQuoteApi extends BaseApi {
 		if(quoteVersionDto != null) {
 			InvoicingPlan invoicingPlan=null;
 			if(!StringUtils.isBlank(quoteVersionDto.getBillingPlanCode())) {
-			invoicingPlan= invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode()); 
+				quoteVersion.setInvoicingPlan(loadEntityByCode(invoicingPlanService, quoteVersionDto.getBillingPlanCode(), InvoicingPlan.class));
 			}
-			if (invoicingPlan == null) {
-				throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
-			}
-			
-			quoteVersion.setInvoicingPlan(invoicingPlan);
 			quoteVersion.setStartDate(quoteVersionDto.getStartDate());
 			quoteVersion.setEndDate(quoteVersionDto.getEndDate());
 			quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
