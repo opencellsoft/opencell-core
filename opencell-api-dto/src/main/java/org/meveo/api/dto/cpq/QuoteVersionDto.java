@@ -65,6 +65,7 @@ public class QuoteVersionDto extends BaseEntityDto {
 		this.endDate = q.getEndDate();
 		this.billingPlanCode = q.getInvoicingPlan()!=null?q.getInvoicingPlan().getCode():null;
 		this.startDate = q.getStartDate();
+		this.statusDate = q.getStatusDate();
 	}
 
 	/**
