@@ -18,43 +18,25 @@
 
 package org.meveo.api;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.BankingDateStatusDto;
-import org.meveo.api.dto.CalendarDateIntervalDto;
-import org.meveo.api.dto.CalendarDto;
-import org.meveo.api.dto.CalendarHolidayDto;
-import org.meveo.api.dto.CalendarTypeEnum;
-import org.meveo.api.dto.DayInYearDto;
-import org.meveo.api.dto.HourInDayDto;
-import org.meveo.api.exception.BusinessApiException;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.dto.*;
+import org.meveo.api.dto.response.ListCalendarResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.CalendarBanking;
-import org.meveo.model.catalog.CalendarDaily;
-import org.meveo.model.catalog.CalendarDateInterval;
-import org.meveo.model.catalog.CalendarHoliday;
-import org.meveo.model.catalog.CalendarInterval;
-import org.meveo.model.catalog.CalendarJoin;
+import org.meveo.model.catalog.*;
 import org.meveo.model.catalog.CalendarJoin.CalendarJoinTypeEnum;
-import org.meveo.model.catalog.CalendarPeriod;
-import org.meveo.model.catalog.CalendarYearly;
-import org.meveo.model.catalog.DayInYear;
-import org.meveo.model.catalog.HourInDay;
 import org.meveo.service.catalog.impl.CalendarBankingService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DayInYearService;
 import org.meveo.service.catalog.impl.HourInDayService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -393,6 +375,20 @@ public class CalendarApi extends BaseApi {
         for (Calendar calendar : calendarService.list()) {
             result.add(new CalendarDto(calendar));
         }
+        return result;
+    }
+
+    public ListCalendarResponse list(PagingAndFiltering pagingAndFiltering) {
+        ListCalendarResponse result = new ListCalendarResponse();
+        result.setPaging( pagingAndFiltering );
+
+        List<Calendar> calendars = calendarService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (calendars != null) {
+            for (Calendar calendar : calendars) {
+                result.getCalendars().getCalendar().add(new CalendarDto(calendar));
+            }
+        }
+
         return result;
     }
 
