@@ -2,13 +2,12 @@ package org.meveo.apiv2.generic;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.*;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
-import org.meveo.api.dto.billing.ActivateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.billing.*;
+import org.meveo.api.dto.invoice.CancelInvoiceRequestDto;
+import org.meveo.api.dto.invoice.ValidateInvoiceRequestDto;
 import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
 import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.util.Inflector;
@@ -36,6 +35,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String METHOD_GET_ALL = "/list";
     private static final String METHOD_GET_ALL_BIS = "/listGetAll";
     private static final String METHOD_CREATE = "/";
+    private static final String METHOD_CREATE_BIS = "/create";
     private static final String METHOD_UPDATE = "/";
     private static final String METHOD_DELETE = "/";
 
@@ -50,10 +50,6 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     // static final string for services
     private static final String ENABLE_SERVICE = "enable";
     private static final String DISABLE_SERVICE = "disable";
-    private static final String ACTIVATION_SERVICE = "activation";
-    private static final String SUSPENSION_SERVICE = "suspension";
-    private static final String TERMINATION_SERVICE = "termination";
-    private static final String UPDATING_SERVICE = "services";
 
     private static final String API_REST = "api/rest";
 
@@ -75,24 +71,27 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
      */
     @Override
     public Response getAllEntitiesOrGetAnEntity() throws URISyntaxException, JsonProcessingException {
-        String getPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
+        String aGetPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
 
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
         StringBuilder suffixPathBuilder = new StringBuilder();
         for (int i = 0; i < segmentsOfPathAPIv2.size() - 1; i++ )
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
-        String pathGetAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder.toString();
+        String getAnEntityPath = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder.toString();
 
         URI redirectURI;
 
-        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( getPath ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getPath );
+        // to get all entities
+        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( aGetPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( aGetPath );
             if ( pathIBaseRS.equals( "/billing/wallet/operation" ) )
                 entityClassName = "WalletOperation";
             else if ( pathIBaseRS.equals( "/catalog/pricePlan" ) )
                 entityClassName = "PricePlanMatrix";
             else if ( pathIBaseRS.equals( "/countryIso" ) )
                 entityClassName = "Country";
+            else if ( pathIBaseRS.equals( "/job/jobReport" ) )
+                entityClassName = "Job";
             else
                 entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
@@ -109,9 +108,10 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                             + PAIR_QUERY_PARAM_SEPARATOR );
                 }
 
-                if ( pathIBaseRS.contains( "oneShotChargeTemplate" ) || pathIBaseRS.contains( "/account/customer" )
-                    || pathIBaseRS.contains( "/billing/subscription" ) || pathIBaseRS.contains( "/billing/ratedTransaction" )
-                    || pathIBaseRS.contains( "/billing/wallet" ) || pathIBaseRS.contains( "/catalog/offerTemplate" ) )
+                if ( pathIBaseRS.equals( "catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
+                    || pathIBaseRS.equals( "/billing/subscription" ) || pathIBaseRS.equals( "/billing/ratedTransaction" )
+                    || pathIBaseRS.equals( "/billing/wallet" ) || pathIBaseRS.equals( "/catalog/offerTemplate")
+                    || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
@@ -121,9 +121,10 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                             + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
             }
             else {
-                if ( pathIBaseRS.contains( "oneShotChargeTemplate" ) || pathIBaseRS.contains( "/account/customer" )
-                    || pathIBaseRS.contains( "/billing/subscription" ) || pathIBaseRS.contains( "/billing/ratedTransaction" )
-                    || pathIBaseRS.contains( "/billing/wallet" ) || pathIBaseRS.contains( "/catalog/offerTemplate" ) )
+                if ( pathIBaseRS.equals( "/catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
+                    || pathIBaseRS.equals( "/billing/subscription" ) || pathIBaseRS.equals( "/billing/ratedTransaction" )
+                    || pathIBaseRS.equals( "/billing/wallet" ) || pathIBaseRS.equals( "/catalog/offerTemplate" )
+                    || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
@@ -132,14 +133,34 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             }
             return Response.temporaryRedirect( redirectURI ).build();
         }
-        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( pathGetAnEntity ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( pathGetAnEntity );
+        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( getAnEntityPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getAnEntityPath );
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
 
             // special handle for customerCategory
             if ( pathIBaseRS.equals("/account/customer/category") ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + FORWARD_SLASH + entityCode);
+            }
+            // special handle for user
+            else if ( pathIBaseRS.equals("/user") ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "username=" + entityCode);
+            }
+            // special handle for job
+            else if ( pathIBaseRS.equals("/job") ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "jobInstanceCode=" + entityCode);
+            }
+            // special handle for jobReport
+            else if ( pathIBaseRS.equals("/job/jobReport") ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "code=" + entityCode);
+            }
+            // special handle for invoice
+            else if ( pathIBaseRS.equals("/invoice") ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode);
             }
             else {
                 entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
@@ -148,53 +169,77 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             }
             return Response.temporaryRedirect( redirectURI ).build();
         }
-        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( getPath ) ) {
-            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( getPath );
+        // to handle get requests containing regular expressions
+        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( aGetPath ) ) {
+            pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( aGetPath );
             queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
 
             String originalPattern = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.getPattern().toString();
             int indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX );
             String aSmallPattern;
             String smallString = null;
-            while ( indexCodeRegex >= 0 ) {
-                aSmallPattern = originalPattern.substring( 0,
-                        indexCodeRegex + GenericOpencellRestfulAPIv1.CODE_REGEX.length() );
 
-                Matcher matcher = Pattern.compile( aSmallPattern ).matcher( getPath );
-                // get the first occurrence matching smallStringPattern
-                if ( matcher.find() ) {
-                    smallString = matcher.group(0);
+            if ( indexCodeRegex >= 0 ) {
+                while ( indexCodeRegex >= 0 ) {
+                    aSmallPattern = originalPattern.substring( 0,
+                            indexCodeRegex + GenericOpencellRestfulAPIv1.CODE_REGEX.length() );
 
-                    String[] matches = Pattern.compile( GenericOpencellRestfulAPIv1.CODE_REGEX )
-                            .matcher( smallString )
-                            .results()
-                            .map(MatchResult::group)
-                            .toArray(String[]::new);
+                    Matcher matcher = Pattern.compile( aSmallPattern ).matcher( aGetPath );
+                    // get the first occurrence matching smallStringPattern
+                    if ( matcher.find() ) {
+                        smallString = matcher.group(0);
 
-                    queryParams.append( Inflector.getInstance().singularize( matches[matches.length - 2] ) + "Code="
-                            + matches[matches.length - 1] + PAIR_QUERY_PARAM_SEPARATOR );
+                        String[] matches = Pattern.compile( GenericOpencellRestfulAPIv1.CODE_REGEX )
+                                .matcher( smallString )
+                                .results()
+                                .map(MatchResult::group)
+                                .toArray(String[]::new);
+
+                        queryParams.append( Inflector.getInstance().singularize( matches[matches.length - 2] ) + "Code="
+                                + matches[matches.length - 1] + PAIR_QUERY_PARAM_SEPARATOR );
+                    }
+
+                    indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX, indexCodeRegex + 1 );
                 }
 
-                indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX, indexCodeRegex + 1 );
-            }
+                // If smallString differs from the string aGetPath, the request is to retrieve all entities, so we add paging and filtering
+                // Otherwise, if smallString is exactly the string aGetPath, the request is to retrieve a particular entity
+                if ( ! smallString.equals( aGetPath ) ) {
+                    queryParamsMap = uriInfo.getQueryParameters();
+                    GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
+                    entityClassName = aGetPath.split( FORWARD_SLASH )[ aGetPath.split( FORWARD_SLASH ).length - 1 ];
+                    Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize( entityClassName ) );
+                    GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
+                }
 
-            // If smallString differs from the string getPath, the request is to retrieve all entities, so we add paging and filtering
-            // Otherwise, if smallString is exactly the string getPath, the request is to retrieve a particular entity
-            if ( ! smallString.equals( getPath ) ) {
-                queryParamsMap = uriInfo.getQueryParameters();
-                GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
-                entityClassName = getPath.split( FORWARD_SLASH )[ getPath.split( FORWARD_SLASH ).length - 1 ];
-                Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize( entityClassName ) );
-                GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + queryParams.substring( 0, queryParams.length() - 1 ) );
             }
+            else {
+                queryParams.append( uriInfo.getRequestUri().getQuery() );
 
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + queryParams.substring( 0, queryParams.length() - 1 ) );
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + queryParams );
+            }
 
             return Response.temporaryRedirect( redirectURI ).build();
         }
+        else {
+            if ( aGetPath.matches( "/v1/invoices/pdfInvoices/" + GenericOpencellRestfulAPIv1.CODE_REGEX ) ) {
+                entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + "/invoice/getPdfInvoice" + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode );
+                return Response.temporaryRedirect( redirectURI ).build();
+            }
+            else if ( aGetPath.matches( "/v1/invoices/xmlInvoices/" + GenericOpencellRestfulAPIv1.CODE_REGEX ) ) {
+                entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + "/invoice/getXMLInvoice" + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode );
+                return Response.temporaryRedirect( redirectURI ).build();
+            }
 
-        return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
     @Override
@@ -213,8 +258,15 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( postPath ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( postPath );
 
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + METHOD_CREATE );
+            if ( pathIBaseRS.equals( "/jobInstance" ) || pathIBaseRS.equals( "/job" ) )
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + METHOD_CREATE_BIS );
+            else if ( pathIBaseRS.equals( "/invoice/sendByEmail" ) )
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS );
+            else
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + METHOD_CREATE );
 
             return Response.temporaryRedirect( redirectURI )
                     .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
@@ -240,8 +292,22 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             return Response.temporaryRedirect( redirectURI )
                     .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
         }
+        else {
+            if ( postPath.equals( "/v1/invoices/pdfInvoices" ) ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + "/invoice/fetchPdfInvoice" );
+                return Response.temporaryRedirect( redirectURI )
+                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
+            }
+            else if ( postPath.equals( "/v1/invoices/xmlInvoices" ) ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + "/invoice/fetchXMLInvoice" );
+                return Response.temporaryRedirect( redirectURI )
+                        .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
+            }
 
-        return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
     @Override
@@ -257,64 +323,69 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( putPath ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( putPath );
 
-            // Handle the special endpoint: activation of a subscription
-            if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(ACTIVATION_SERVICE) ) {
+            Class entityDtoClass = GenericOpencellRestfulAPIv1.MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.get( pathIBaseRS );
+            Object aDto = null;
+
+            if ( entityDtoClass != null ) {
+                aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
+
+                // Handle the special endpoint, such as: activation, suspension, termination, update services of a subscription,
+                // cancel/validate an existing invoice, cancel/validate a billing run, send an existing invoice by email
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS );
-                ActivateSubscriptionRequestDto aDto = new ActivateSubscriptionRequestDto();
-                aDto.setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
 
-                return AuthenticationFilter.httpClient.target( redirectURI ).request()
-                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
+                if ( aDto instanceof ActivateSubscriptionRequestDto )
+                    ((ActivateSubscriptionRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
+                else if ( aDto instanceof OperationSubscriptionRequestDto )
+                    ((OperationSubscriptionRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
+                else if ( aDto instanceof TerminateSubscriptionRequestDto )
+                    ((TerminateSubscriptionRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
+                else if ( aDto instanceof UpdateServicesRequestDto )
+                    ((UpdateServicesRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
+                else if ( aDto instanceof CancelInvoiceRequestDto )
+                    ((CancelInvoiceRequestDto) aDto).setInvoiceId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+                else if ( aDto instanceof CancelBillingRunRequestDto )
+                    ((CancelBillingRunRequestDto) aDto).setBillingRunId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+                else if ( aDto instanceof ValidateInvoiceRequestDto )
+                    ((ValidateInvoiceRequestDto) aDto).setInvoiceId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
+                else if ( aDto instanceof ValidateBillingRunRequestDto )
+                    ((ValidateBillingRunRequestDto) aDto).setBillingRunId( Long.parseLong(segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString()) );
             }
-            // Handle the special endpoint: suspension of a subscription
-            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(SUSPENSION_SERVICE) ) {
+            else {
+                // Handle the special endpoint, such as: stop a job
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS );
-                OperationSubscriptionRequestDto aDto = new OperationSubscriptionRequestDto();
-                aDto.setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
-
-                return AuthenticationFilter.httpClient.target( redirectURI ).request()
-                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
+                        + API_REST + pathIBaseRS + FORWARD_SLASH + segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
             }
-            // Handle the special endpoint: termination of a subscription
-            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(TERMINATION_SERVICE) ) {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS );
-                Object aDto = new ObjectMapper().readValue( jsonDto, TerminateSubscriptionRequestDto.class );
-                ((TerminateSubscriptionRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
 
-                return AuthenticationFilter.httpClient.target( redirectURI ).request()
-                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
-            }
-            // Handle the special endpoint: update existing services of a subscription
-            else if ( segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath().equals(UPDATING_SERVICE) ) {
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS );
-                Object aDto = new ObjectMapper().readValue( jsonDto, UpdateServicesRequestDto.class );
-                ((UpdateServicesRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv2.get(segmentsOfPathAPIv2.size() - 2).toString() );
-
-                return AuthenticationFilter.httpClient.target( redirectURI ).request()
-                        .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
-            }
+            return AuthenticationFilter.httpClient.target( redirectURI ).request()
+                    .put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
         }
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( pathUpdateAnEntity ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( pathUpdateAnEntity );
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
+            if ( entityClassName.equals( "job" ) )
+                entityClassName = "jobInstance";
+            else if ( entityClassName.equals( "timer" ) )
+                entityClassName = "timerEntity";
+
             Class entityDtoClass = GenericHelper.getEntityDtoClass( entityClassName.toLowerCase() + DTO_SUFFIX );
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
-
             Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
-            if ( aDto instanceof BusinessEntityDto ) {
+            if ( aDto instanceof BusinessEntityDto )
                 ((BusinessEntityDto) aDto).setCode(entityCode);
-            }
-            else if ( aDto instanceof AccountHierarchyDto) {
+            else if ( aDto instanceof AccountHierarchyDto )
                 ((AccountHierarchyDto) aDto).setCustomerCode(entityCode);
-            }
-            else if ( aDto instanceof AccessDto) {
+            else if ( aDto instanceof AccessDto )
                 ((AccessDto) aDto).setCode(entityCode);
-            }
+            else if ( aDto instanceof LanguageDto )
+                ((LanguageDto) aDto).setCode(entityCode);
+            else if ( aDto instanceof CountryDto )
+                ((CountryDto) aDto).setCountryCode(entityCode);
+            else if ( aDto instanceof CurrencyDto )
+                ((CurrencyDto) aDto).setCode(entityCode);
+            else if ( aDto instanceof UserDto )
+                ((UserDto) aDto).setUsername(entityCode);
 
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_UPDATE );
