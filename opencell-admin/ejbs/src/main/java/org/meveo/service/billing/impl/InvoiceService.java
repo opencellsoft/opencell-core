@@ -17,8 +17,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.meveo.commons.utils.NumberUtils.round;
 
@@ -38,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -134,6 +133,7 @@ import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
@@ -3314,11 +3314,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Determine which discount plan items apply to this invoice
         List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
-        if (subscription == null && billingAccount != null) {
-            List<DiscountPlanInstance> discountPlanInstances = fromBillingAccount(billingAccount);
-            List<DiscountPlanItem> result = getApplicableDiscountPlanItems(billingAccount, discountPlanInstances, invoice, customerAccount);
-            ofNullable(result).ifPresent(discountPlans -> subscriptionApplicableDiscountPlanItems.addAll(discountPlans));
-        }
 
         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
             subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscription.getDiscountPlanInstances(), invoice, customerAccount));
@@ -3373,6 +3368,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (billingAccount.getDiscountPlanInstances() != null && !billingAccount.getDiscountPlanInstances().isEmpty()) {
             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
+
+        // Andrius Commented out as it is a performance killer when BA has many subscriptions. And it does not take into account what subscriptions were billed in this invoice. 
+        // E.g. if BA has 100 subscriptions, 98 with disounts and 2 without. And only those 2 were billed in this invoice, according to this logic, discounts will still be applied
+//        if(subscription == null && billingAccount != null) {
+//            List<Long> ids = findSubscriptionIds(billingAccount.getUsersAccounts());
+//            if(ids != null && !ids.isEmpty()) {
+//                Optional.ofNullable(findSubscriptionDPs(ids))
+//                        .ifPresent(discountPlans ->
+//                                subscriptionApplicableDiscountPlanItems.addAll(
+//                                        getApplicableDiscountPlanItems(billingAccount, discountPlans, invoice, customerAccount)));
+//            }
+//        }
 
         // Construct discount and tax aggregates
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates) {
@@ -3507,14 +3514,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setNetToPay(amountWithTax.add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
     }
 
-    private List<DiscountPlanInstance> fromBillingAccount(BillingAccount billingAccount) {                
-          return billingAccount.getUsersAccounts().stream().map(userAccount -> userAccount.getSubscriptions()).map(this::addSubscriptionDiscountPlan).flatMap(Collection::stream).collect(toList());
-    }
-
-    private List<DiscountPlanInstance> addSubscriptionDiscountPlan(List<Subscription> subscriptions) {
-        return subscriptions.stream().map(Subscription::getDiscountPlanInstances).flatMap(Collection::stream).collect(toList());
-    }
-
     private SubCategoryInvoiceAgregate getDiscountAggregates(BillingAccount billingAccount, Invoice invoice, boolean isEnterprise, int rounding, RoundingModeEnum roundingMode, int invoiceRounding,
             RoundingModeEnum invoiceRoundingMode, SubCategoryInvoiceAgregate scAggregate, Map<Tax, BigDecimal> amountsByTax, CategoryInvoiceAgregate cAggregate, DiscountPlanItem discountPlanItem)
             throws BusinessException {
@@ -3639,6 +3638,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
         return applicableDiscountPlanItems;
+    }
+
+    private List<DiscountPlanInstance> findSubscriptionDPs(List<Long> subscriptionIds) {
+        if (!subscriptionIds.isEmpty()) {
+            String query = "from DiscountPlanInstance dp where dp.subscription.id in :subscriptionIds";
+            return getEntityManager().createQuery(query, DiscountPlanInstance.class)
+                    .setParameter("subscriptionIds", subscriptionIds)
+                    .getResultList();
+        }
+        return null;
+    }
+
+    private List<Long> findSubscriptionIds(List<UserAccount> userAccounts) {
+        if(!userAccounts.isEmpty()) {
+            String query = "select sub.id from Subscription sub where sub.userAccount in :userAccounts and sub.status = :status";
+            return getEntityManager().createQuery(query, Long.class)
+                    .setParameter("userAccounts", userAccounts)
+                    .setParameter("status", SubscriptionStatusEnum.ACTIVE)
+                    .getResultList();
+        }
+        return Collections.emptyList();
     }
 
     /**

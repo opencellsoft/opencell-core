@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.InvoiceCategoryApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -31,6 +27,11 @@ import org.meveo.api.dto.response.InvoiceCategoryResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.InvoiceCategoryRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Edward P. Legaspi
@@ -41,6 +42,20 @@ public class InvoiceCategoryRsImpl extends BaseRs implements InvoiceCategoryRs {
 
     @Inject
     private InvoiceCategoryApi invoiceCategoryApi;
+
+    @Override
+    public InvoiceCategoryResponseDto list() {
+        InvoiceCategoryResponseDto result = new InvoiceCategoryResponseDto();
+
+        try {
+            result = new InvoiceCategoryResponseDto(
+                    invoiceCategoryApi.search(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering()) );
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
 
     @Override
     public ActionStatus create(InvoiceCategoryDto postData) {

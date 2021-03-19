@@ -79,6 +79,8 @@ public class QueryBuilder {
 
     static final String FROM = "from ";
     public static final String  JOIN_AS = " as ";
+    
+    private static Set<String> joinAlias = new TreeSet<String>();
 
     public Class<?> getEntityClass() {
         return clazz;
@@ -257,7 +259,7 @@ public class QueryBuilder {
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
-				String joinAlias = fetchField.contains(JOIN_AS) ? "" : JOIN_AS + getJoinAlias(alias, fetchField);
+				String joinAlias = fetchField.contains(JOIN_AS) ? "" : JOIN_AS + getJoinAlias(alias, fetchField, false);
 				query.append(" left join fetch " + alias + "." + fetchField + joinAlias);
             }
         }
@@ -272,8 +274,18 @@ public class QueryBuilder {
 	 * @param fetchField
 	 * @return
 	 */
-	private static String getJoinAlias(String alias, String fetchField) {
-		return alias+"_"+fetchField.replaceAll("\\.", "_");
+	private static String getJoinAlias(String alias, String fetchField, boolean checkExisting) {
+		String result = alias+"_"+fetchField.replaceAll("\\.", "_");
+		if(checkExisting) {
+			if(joinAlias.contains(result)) {
+				return result;
+			} else {
+				return alias;
+			}
+		} else {
+			joinAlias.add(result);
+			return result;
+		}
 	}
 
 	/**
@@ -1359,6 +1371,7 @@ public class QueryBuilder {
      */
     protected void applyOrdering(String alias) {
         if (paginationConfiguration == null) {
+        	joinAlias=new TreeSet<String>();
             return;
         }
 
@@ -1375,12 +1388,15 @@ public class QueryBuilder {
                 	ascending = fieldAndOrder[1].toLowerCase().equals("asc");
                 }
                 if(field.contains(".")) {
-            		currentAlias = getJoinAlias(alias, field.substring(0,field.lastIndexOf(".")));
-            		field =field.substring(field.lastIndexOf(".")+1);
+            		currentAlias = getJoinAlias(alias, field.substring(0,field.lastIndexOf(".")), true);
+            		if(currentAlias != alias){
+            			field =field.substring(field.lastIndexOf(".")+1);
+            		}
             	}
 				addOrderCriterion(((currentAlias != null) ? (currentAlias + ".") : "") + field, ascending);
             }
         }
+        joinAlias=new TreeSet<String>();
     }
 
     /**
