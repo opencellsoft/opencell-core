@@ -385,6 +385,17 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/PdfInvoice" ) ) {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "/pdfInvoices" ), ((Path) anAnnotation).value() );
                         }
+                        else if ( ((Path) anAnnotation).value().equals( "/billing/accountingCode" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/accountingCodes",
+                                    ((Path) anAnnotation).value() );
+
+                            // Processing for enable and disable an accountingCode
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + BILLING + "\\/accountingCodes\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + BILLING + "\\/accountingCodes\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+                        }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
                                     API_VERSION + Inflector.getInstance().pluralize( ((Path) anAnnotation).value() ),

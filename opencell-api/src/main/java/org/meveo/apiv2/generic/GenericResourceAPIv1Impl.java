@@ -111,7 +111,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 if ( pathIBaseRS.equals( "catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
                     || pathIBaseRS.equals( "/billing/subscription" ) || pathIBaseRS.equals( "/billing/ratedTransaction" )
                     || pathIBaseRS.equals( "/billing/wallet" ) || pathIBaseRS.equals( "/catalog/offerTemplate")
-                    || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" ) )
+                    || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" )
+                    || pathIBaseRS.equals( "/billing/accountingCode" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
@@ -124,7 +125,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 if ( pathIBaseRS.equals( "/catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
                     || pathIBaseRS.equals( "/billing/subscription" ) || pathIBaseRS.equals( "/billing/ratedTransaction" )
                     || pathIBaseRS.equals( "/billing/wallet" ) || pathIBaseRS.equals( "/catalog/offerTemplate" )
-                    || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" ) )
+                    || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" )
+                    || pathIBaseRS.equals( "/billing/accountingCode" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
@@ -161,6 +163,11 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             else if ( pathIBaseRS.equals("/invoice") ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode);
+            }
+            // special handle for accountingCode
+            else if ( pathIBaseRS.equals("/billing/accountingCode") ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "accountingCode=" + entityCode);
             }
             else {
                 entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
