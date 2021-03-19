@@ -24,8 +24,21 @@ import java.util.*;
 @Stateless
 public class MinAmountService extends PersistenceService<BusinessEntity> {
 
-    public Map<Long, MinAmountData> getInvoiceableAmountDataPerAccount(IBillableEntity billableEntity, BillingAccount billingAccount, Date lastTransactionDate,
-                                                                       List<ExtraMinAmount> extraMinAmounts, Class accountClass, String invoicingProcessType) {
+
+    /**
+     * Gets the invoiceable amount for each level account.
+     *
+     * @param billableEntity The billable entity
+     * @param billingAccount The billing account
+     * @param lastTransactionDate last transaction date
+     * @param extraMinAmounts The extra minimum amounts generated in children levels
+     * @param accountClass The account level's class
+     * @param invoicingProcessType invoicing process invoiceLine or ratedTransaction
+     * @return return invoiceable amount grouped by entity
+     */
+    public Map<Long, MinAmountData> getInvoiceableAmountDataPerAccount(IBillableEntity billableEntity, BillingAccount billingAccount,
+                                                                       Date lastTransactionDate, List<ExtraMinAmount> extraMinAmounts,
+                                                                       Class accountClass, String invoicingProcessType) {
         Map<Long, MinAmountData> accountToMinAmount = new HashMap<>();
         List<Object[]> amountsList = computeInvoiceableAmountForAccount(billableEntity, new Date(0), lastTransactionDate, accountClass, invoicingProcessType);
         for (Object[] amounts : amountsList) {
@@ -365,8 +378,19 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
         return false;
     }
 
+    /**
+     * Prepare each account level with minimum amount activated to generate the minimum object.
+     *
+     * @param billableEntity the billable entity can be a subscription or a billing account
+     * @param billingAccount The billing account
+     * @param extraMinAmounts The extra minimum amount generated in children levels
+     * @param accountClass The account class
+     * @param accountToMinAmount where to store the entity and new generated amounts to reach the minimum
+     * @return A map where to store amounts for each entity
+     */
     public Map<Long, MinAmountData> prepareAccountsWithMinAmount(IBillableEntity billableEntity, BillingAccount billingAccount,
-                                                                 List<ExtraMinAmount> extraMinAmounts, Class accountClass, Map<Long, MinAmountData> accountToMinAmount) {
+                                                                 List<ExtraMinAmount> extraMinAmounts, Class accountClass,
+                                                                 Map<Long, MinAmountData> accountToMinAmount) {
         List<BusinessEntity> accountsWithMinAmount = getAccountsWithMinAmountElNotNull(billableEntity, accountClass);
         for (BusinessEntity entity : accountsWithMinAmount) {
             MinAmountData minAmountInfo = accountToMinAmount.get(entity.getId());
@@ -477,6 +501,14 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
                 .getResultList();
     }
 
+    /**
+     * compute total invoiceable amount based on billableEntity
+     * @param billableEntity
+     * @param date
+     * @param lastTransactionDate
+     * @param invoicingProcessType
+     * @return
+     */
     public Amounts computeTotalInvoiceableAmount(IBillableEntity billableEntity, Date date, Date lastTransactionDate, String invoicingProcessType) {
         if (billableEntity instanceof Subscription) {
             return computeTotalInvoiceableAmountForSubscription((Subscription) billableEntity, date, lastTransactionDate, invoicingProcessType);
@@ -500,6 +532,13 @@ public class MinAmountService extends PersistenceService<BusinessEntity> {
                 .getResultList();
     }
 
+    /**
+     * Determine if minimum functionality is used at all. A check is done on serviceInstance,
+     * subscription or billing account entities for minimumAmountEl field value presence.
+     *
+     * @return An array of booleans indicating if minimum invoicing amount rule exists on service,
+     * subscription and billingAccount levels, in that particular order.
+     */
     public boolean[] isMinUsed() {
         boolean baMin = false;
         boolean subMin = false;

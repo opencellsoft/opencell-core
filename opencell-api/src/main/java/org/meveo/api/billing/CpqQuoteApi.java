@@ -284,9 +284,10 @@ public class CpqQuoteApi extends BaseApi {
 		QuoteVersion quoteVersion = new QuoteVersion();
 		quoteVersion.setStatusDate(Calendar.getInstance().getTime());
 		quoteVersion.setQuoteVersion(1);
-		quoteVersion.setStatus(VersionStatusEnum.DRAFT);
+		quoteVersion.setStatus(VersionStatusEnum.DRAFT); 
 		if(quoteVersionDto != null) { 
-			if(!StringUtils.isBlank(quoteVersionDto.getBillingPlanCode())) {
+			if(!StringUtils.isBlank(quoteVersionDto.getBillingPlanCode())) { 
+
     			InvoicingPlan invoicingPlan= invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode());  
     			if (invoicingPlan == null) {
     				throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
@@ -657,6 +658,8 @@ public class CpqQuoteApi extends BaseApi {
         dto.setCode(quote.getCode());
         dto.setQuoteNumber(quote.getQuoteNumber());
         dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(quote));
+        dto.setId(quote.getId());
+        dto.setStatusDate(quote.getStatusDate());
         return dto;
     }
 
@@ -982,12 +985,12 @@ public class CpqQuoteApi extends BaseApi {
         if (cpqQuote == null)
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
 
-        if (cpqQuote.getStatus().equals(QuoteStatusEnum.REJECTED.toString()) ||
-                cpqQuote.getStatus().equals(QuoteStatusEnum.CANCELLED.toString())) {
+        if (cpqQuote.getStatus().equalsIgnoreCase(QuoteStatusEnum.REJECTED.toString()) ||
+                cpqQuote.getStatus().equalsIgnoreCase(QuoteStatusEnum.CANCELLED.toString())) {
             throw new MeveoApiException("you can not update the quote with status = " + cpqQuote.getStatus());
         }
         var allStatus = allStatus(QuoteStatusEnum.class, "cpqQuote.status", "");
-		if(!allStatus.contains(status)) {
+		if(!allStatus.contains(status.toLowerCase())) {
 				throw new MeveoApiException("Status is invalid, here is the list of available status : " + allStatus);
 		}
         cpqQuote.setStatus(status);
