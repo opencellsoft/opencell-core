@@ -435,11 +435,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public ActionStatus activate(String subscriptionCode) {
+    public ActionStatus activate(String subscriptionCode, Date subscriptionValidityDate) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.activateSubscription(subscriptionCode);
+            subscriptionApi.activateSubscription(subscriptionCode, subscriptionValidityDate);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -452,7 +452,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.activateSubscription(putData.getSubscriptionCode());
+            subscriptionApi.activateSubscription(putData.getSubscriptionCode(), null);
         } catch (Exception e) {
             processException(e, result);
         }

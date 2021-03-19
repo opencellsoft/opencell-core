@@ -40,7 +40,7 @@ public class InboundServletClient {
 	}
 
 	public void callClient() {
-		System.out.println("calling inboud servlet...");
+		log.info("calling inbound servlet...");
 		URL inboundServlet = null;
 		try {
 			inboundServlet = new URL("http://192.168.0.120:8080/meveo/inbound/demo/");
@@ -70,8 +70,8 @@ public class InboundServletClient {
 			}
 
 			int responseCode = servletConnection.getResponseCode();
-			System.out.println("\nSending 'POST' request to URL : " + inboundServlet.getPath());
-			System.out.println("Response Code : " + responseCode);
+			log.info("\nSending 'POST' request to URL : " + inboundServlet.getPath());
+			log.info("Response Code : " + responseCode);
 
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
