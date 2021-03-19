@@ -452,7 +452,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.activateSubscription(putData.getSubscriptionCode());
+            subscriptionApi.activateSubscription(putData.getSubscriptionCode(), null);
         } catch (Exception e) {
             processException(e, result);
         }
