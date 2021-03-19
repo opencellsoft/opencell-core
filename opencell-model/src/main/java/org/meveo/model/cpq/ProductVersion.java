@@ -69,7 +69,7 @@ public class ProductVersion extends AuditableEntity{
     @JsonProperty
     protected Long id;*/
     
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id", nullable = false, referencedColumnName = "id")
 	@NotNull
     private Product product;

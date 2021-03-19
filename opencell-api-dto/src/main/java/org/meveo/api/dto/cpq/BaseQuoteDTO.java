@@ -48,6 +48,7 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	 */
 	private static final long serialVersionUID = 8115890992793236496L;
 
+	
     private Date quoteDate = new Date();
 
     private DatePeriod validity = new DatePeriod();
@@ -74,6 +75,8 @@ public class BaseQuoteDTO extends BusinessEntityDto{
     private CustomFieldsDto customFields;
 
 
+	@JsonSerialize(using = CustomDateSerializer.class)
+	private Date statusDate;
 
 	/**
 	 * @return the quoteDate
@@ -296,6 +299,22 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	 */
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+
+	/**
+	 * @return the statusDate
+	 */
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+
+	/**
+	 * @param statusDate the statusDate to set
+	 */
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
 	}
 
 

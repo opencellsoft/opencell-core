@@ -329,7 +329,7 @@ public class CommercialOrderApi extends BaseApi {
 				throw new EntityDoesNotExistsException(Order.class, orderDto.getOrderParentCode());
 			order.setOrderParent(orderParent);
 		}
-		populateCustomFields(orderDto.getCustomFields(), order, true);
+		populateCustomFields(orderDto.getCustomFields(), order, false);
 		processAttributes(orderDto, order);
 		commercialOrderService.update(order);
 		CommercialOrderDto dto = new CommercialOrderDto(order);
