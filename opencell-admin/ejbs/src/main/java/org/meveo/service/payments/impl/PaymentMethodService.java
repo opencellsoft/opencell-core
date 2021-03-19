@@ -94,14 +94,15 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
             String iban = ddpaymentMethod.getBankCoordinates().getIban();
             Optional<DDPaymentMethod> optionalOfExistingDDPaymentMethod = findExistingDDPMwithIban(customerAccount, iban, ddpaymentMethod.getId());
-            if (optionalOfExistingDDPaymentMethod.isPresent()) {
-                DDPaymentMethod existingDdPaymentMethod = optionalOfExistingDDPaymentMethod.get();
-                existingDdPaymentMethod.copyFrom(ddpaymentMethod);
-                super.update(existingDdPaymentMethod);
-                paymentMethod.setId(existingDdPaymentMethod.getId());
-                markOtherPpmAsNotPreferred(existingDdPaymentMethod);
-                return;
-            }else if (automaticMandateCreation) {
+//            if (optionalOfExistingDDPaymentMethod.isPresent()) {
+//                DDPaymentMethod existingDdPaymentMethod = optionalOfExistingDDPaymentMethod.get();
+//                existingDdPaymentMethod.copyFrom(ddpaymentMethod);
+//                super.update(existingDdPaymentMethod);
+//                paymentMethod.setId(existingDdPaymentMethod.getId());
+//                markOtherPpmAsNotPreferred(existingDdPaymentMethod);
+//                return;
+//            }else 
+            	if (automaticMandateCreation) {
                 PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, ddpaymentMethod, null);
                 if (paymentGateway != null) {
                     createMandate(ddpaymentMethod);
