@@ -26,11 +26,13 @@ import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.WalletInstance;
@@ -38,8 +40,12 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.ChargeInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -49,6 +55,12 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
 	@EJB
 	private DiscountPlanService discountPlanService;
+	
+	@Inject
+	private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+	
+	@Inject
+    private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 	
 	private final static BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -116,11 +128,18 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         if (isNotBlank(dpValueEL)) {
             final BigDecimal evalDiscountValue = evaluateDiscountPercentExpression(dpValueEL, scAggregate.getBillingAccount(), scAggregate.getWallet(), invoice, amount);
             log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), computedDiscount, amount);
-            if (computedDiscount != null) {
+            if (evalDiscountValue != null) {
                 computedDiscount = evalDiscountValue;
             }
-        }else if(discountPlanItem.getPricePlanMatrix()!=null){
-        	/******@TODO : get the amount from the PPM **********/
+        }else if(discountPlanItem.getPricePlanMatrix()!=null){ 
+        	PricePlanMatrix pricePlan = discountPlanItem.getPricePlanMatrix();
+        	PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlan.getCode());
+        	ChargeInstance chargeInstance = chargeInstanceService.findByCode(pricePlan.getEventCode());
+        	if(ppmVersion!=null&&chargeInstance!=null) {
+        		PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, chargeInstance);
+        		computedDiscount=pricePlanMatrixLine.getPricetWithoutTax();
+        	} 
+        		
         }
         if (computedDiscount == null || amount == null) {
             return BigDecimal.ZERO;
@@ -155,7 +174,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         return result;
     }
 
-    private BigDecimal getDiscountPrices(BillingAccount billingAccount, BigDecimal amountToApplyDiscountOn,boolean isEnterprise,DiscountPlanItem discountPlanItem)
+    public BigDecimal getDiscountAmount(BillingAccount billingAccount, BigDecimal amountToApplyDiscountOn,boolean isEnterprise,DiscountPlanItem discountPlanItem)
             throws BusinessException {
 
 

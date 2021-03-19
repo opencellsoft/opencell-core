@@ -246,7 +246,7 @@ public class DiscountPlanItemApi extends BaseApi {
     }
 
     private void processAccountingArticles(DiscountPlanItemDto postData, DiscountPlanItem discountPlanItem) {
-		Set<String> accountingArticleCodes = postData.getAccountingArticleCodes();
+		Set<String> accountingArticleCodes = postData.getTargetAccountingArticleCodes();
 		if(accountingArticleCodes != null && !accountingArticleCodes.isEmpty()){
 			Set<AccountingArticle> accountingArticles=new HashSet<AccountingArticle>();
 			for(String code:accountingArticleCodes) {

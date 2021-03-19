@@ -1218,15 +1218,14 @@ public class QuoteApi extends BaseApi {
 
 			QuoteVersion quoteVersion = new QuoteVersion();
 			quoteVersion.setStatus(VersionStatusEnum.DRAFT);
-			quoteVersion.setStatusDate(Calendar.getInstance().getTime());
-			InvoicingPlan invoicingPlan=null;
+			quoteVersion.setStatusDate(Calendar.getInstance().getTime()); 
 			if(!StringUtils.isBlank(quoteVersionDto.getBillingPlanCode())) {
-			invoicingPlan= invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode()); 
-			}
-			if (invoicingPlan == null) {
-				throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
-			}
-			quoteVersion.setInvoicingPlan(invoicingPlan);
+    			InvoicingPlan invoicingPlan= invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode());  
+    			if (invoicingPlan == null) {
+    				throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
+    			}
+    			quoteVersion.setInvoicingPlan(invoicingPlan);
+                } 
 			quoteVersion.setStartDate(quoteVersionDto.getStartDate());
 			quoteVersion.setEndDate(quoteVersionDto.getEndDate());
 			//TODO : change with CpqQuote quoteVersion.setQuote(quote);
@@ -1251,14 +1250,14 @@ public class QuoteApi extends BaseApi {
 		//TODO : change with CpqQuote quoteVersion.setQuote(quote);
 		quoteVersion.setStartDate(quoteVersionDto.getStartDate());
 		quoteVersion.setEndDate(quoteVersionDto.getEndDate());
-		InvoicingPlan invoicingPlan=null;
 		if(!StringUtils.isBlank(quoteVersionDto.getBillingPlanCode())) {
-		invoicingPlan= invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode()); 
-		}
-		if (invoicingPlan == null) {
-			throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
-		}
-		quoteVersion.setInvoicingPlan(invoicingPlan); // TODO : add association with belling plan code
+			InvoicingPlan invoicingPlan= invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode());  
+			if (invoicingPlan == null) {
+				throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
+			}
+			quoteVersion.setInvoicingPlan(invoicingPlan);
+            } 
+		quoteVersion.setStartDate(quoteVersionDto.getStartDate());
 		quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
 
 		try {

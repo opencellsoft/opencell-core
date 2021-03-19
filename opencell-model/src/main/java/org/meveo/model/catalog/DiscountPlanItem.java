@@ -440,5 +440,14 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 		this.pricePlanMatrix = pricePlanMatrix;
 	}
 
+	public AccountingArticle getAccountingArticle() {
+		return accountingArticle;
+	}
+
+	public void setAccountingArticle(AccountingArticle accountingArticle) {
+		this.accountingArticle = accountingArticle;
+	}
+
+	
 
 }
