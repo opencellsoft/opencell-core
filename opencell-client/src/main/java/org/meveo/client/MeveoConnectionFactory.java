@@ -75,7 +75,7 @@ public class MeveoConnectionFactory {
 				}						
 			}
 			if(!StringUtils.isBlank(tlsVersion)){
-				System.out.println("tlsversion:"+tlsVersion);
+				log.info("tlsversion:"+tlsVersion);
 				 try{
 
 					SSLConnectionSocketFactory f = new SSLConnectionSocketFactory(

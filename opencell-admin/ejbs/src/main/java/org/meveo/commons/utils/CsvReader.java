@@ -29,6 +29,9 @@ import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class CsvReader {
     private Reader inputStream = null;
@@ -92,6 +95,8 @@ public class CsvReader {
      * occurance of the text qualifier.
      */
     public static final int ESCAPE_MODE_BACKSLASH = 2;
+    
+    private static final Logger log = LoggerFactory.getLogger(CsvReader.class);
 
     /**
      * Creates a {@link org.meveo.commons.utils.CsvReader CsvReader} object using a file
@@ -1542,11 +1547,11 @@ public class CsvReader {
     protected void finalize() throws Throwable {
 //        close(false);
         try {
-            System.out.println("Calling finalize() method of CsvReader class");
+            log.info("Calling finalize() method of CsvReader class");
         } catch(Throwable aTh) {
             throw aTh;
         } finally {
-            System.out.println("Calling finalize() method of Object class");
+            log.info("Calling finalize() method of Object class");
             super.finalize();
         }
     }

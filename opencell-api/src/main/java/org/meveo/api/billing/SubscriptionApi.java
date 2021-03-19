@@ -932,7 +932,8 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
-        if (postData.getOperationDate() == null) {
+        Date operationDate = postData.getOperationDate();
+		if (operationDate == null) {
             postData.setOperationDate(new Date());
         }
 
@@ -947,7 +948,10 @@ public class SubscriptionApi extends BaseApi {
         }
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
-            throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
+        	final Date terminationDate = subscription.getTerminationDate();
+			if((terminationDate!=null && terminationDate.before(operationDate))) {
+				throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
+			}
         }
         if (postData.getWallet() != null) {
             WalletTemplate walletTemplate = walletTemplateService.findByCode(postData.getWallet());
@@ -979,7 +983,7 @@ public class SubscriptionApi extends BaseApi {
         try {
 
             oneShotChargeInstanceService
-                    .oneShotChargeApplication(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
+                    .oneShotChargeApplication(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), operationDate,
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
                             postData.getCriteria3(), postData.getDescription(), subscription.getOrderNumber(), oneShotChargeInstance.getCfValues(), true);
 
@@ -2208,17 +2212,21 @@ public class SubscriptionApi extends BaseApi {
      * Activates all instantiated services of a given subscription.
      *
      * @param subscriptionCode The subscription code
+     * @param subscriptionValidityDate subscription validity date
      * @throws BusinessException
      * @throws MissingParameterException
      */
-    public void activateSubscription(String subscriptionCode) throws MeveoApiException, BusinessException {
+    public void activateSubscription(String subscriptionCode, Date subscriptionValidityDate) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(subscriptionCode)) {
             missingParameters.add("subscriptionCode");
         }
 
         handleMissingParameters();
 
-        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        if (subscriptionValidityDate == null) {
+            subscriptionValidityDate = new Date();
+        }
+        Subscription subscription = subscriptionService.findByCodeAndValidityDate(subscriptionCode, subscriptionValidityDate);
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }

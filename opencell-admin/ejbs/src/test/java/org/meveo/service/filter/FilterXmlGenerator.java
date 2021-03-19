@@ -61,11 +61,11 @@ public class FilterXmlGenerator {
 			FilterXmlGenerator fg = new FilterXmlGenerator();
 			// fg.filter1();
 			// String result = fg.generate();
-			// System.out.println(result);
+			
 
 			// country
 			String result = fg.generate2();
-			System.out.println(result);
+			log.info(result);
 
 			// fg.degenerate(result);
 			// fg.getLinkedListFields();
@@ -101,7 +101,7 @@ public class FilterXmlGenerator {
 		filter.setPrimarySelector(filterSelector1);
 
 		FilteredQueryBuilder fq = new FilteredQueryBuilder(filter);
-		System.out.println(fq.getSqlString());
+		
 
 		try {
 			XStream xStream = getXStream();
@@ -146,7 +146,7 @@ public class FilterXmlGenerator {
 		filter.setOrderCondition(orderCondition);
 
 		FilteredQueryBuilder fq = new FilteredQueryBuilder(filter);
-		System.out.println(fq.getSqlString());
+		
 
 		try {
 			XStream xStream = getXStream();
@@ -173,7 +173,7 @@ public class FilterXmlGenerator {
 		List<Field> fields = new ArrayList<>();
 		getAllFields(fields, Country.class);
 		for (Field f : fields) {
-			System.out.println(f.getName());
+			log.info(f.getName());
 		}
 	}
 
@@ -181,7 +181,6 @@ public class FilterXmlGenerator {
 		try {
 			XStream xStream = getXStream();
 			Filter filter = (Filter) xStream.fromXML(input);
-			System.out.println(filter);
 		} catch (Exception e) {
 			log.error("error = {}", e);
 		}
@@ -248,7 +247,7 @@ public class FilterXmlGenerator {
 		filter.setOrderCondition(orderCondition);
 
 		FilteredQueryBuilder fq = new FilteredQueryBuilder(filter);
-		System.out.println(fq.getSqlString());
+		
 
 		try {
 			XStream xStream = getXStream();
@@ -312,7 +311,7 @@ public class FilterXmlGenerator {
 
 		try {
 			XStream xStream = getXStream();
-			System.out.println(xStream.toXML(filter));
+			log.info(xStream.toXML(filter));
 		} catch (Exception e) {
 			log.error("error = {}", e);
 		}
