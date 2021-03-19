@@ -18,17 +18,19 @@
 
 package org.meveo.api.rest.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.LanguageApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.response.GetTradingLanguageResponse;
+import org.meveo.api.dto.response.TradingLanguagesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.LanguageRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Edward P. Legaspi
@@ -40,6 +42,20 @@ public class LanguageRsImpl extends BaseRs implements LanguageRs {
 
     @Inject
     private LanguageApi languageApi;
+
+    @Override
+    public TradingLanguagesResponseDto list() {
+        TradingLanguagesResponseDto result = new TradingLanguagesResponseDto();
+        result.setPaging( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
+
+        try {
+            result.setTradingLanguages( languageApi.list() );
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
 
     @Override
     public ActionStatus create(LanguageDto postData) {

@@ -18,25 +18,10 @@
 
 package org.meveo.api.rest.invoice.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.ws.rs.QueryParam;
-import java.util.List;
-import java.util.Optional;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
-import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
-import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
-import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
-import org.meveo.api.dto.invoice.GetInvoiceResponseDto;
-import org.meveo.api.dto.invoice.GetPdfInvoiceRequestDto;
-import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
-import org.meveo.api.dto.invoice.GetXmlInvoiceRequestDto;
-import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
-import org.meveo.api.dto.invoice.InvoiceDto;
+import org.meveo.api.dto.invoice.*;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoicesDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -46,9 +31,17 @@ import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.invoice.InvoiceRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.ws.rs.QueryParam;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * The Class InvoiceRsImpl.
@@ -202,10 +195,34 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     }
 
     @Override
+    public ActionStatus cancel(CancelInvoiceRequestDto putData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            invoiceApi.cancelInvoice(putData.getInvoiceId());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
     public ActionStatus validate(Long invoiceId) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             result.setMessage(invoiceApi.validateInvoice(invoiceId));
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus validate(ValidateInvoiceRequestDto putData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            invoiceApi.validateInvoice(putData.getInvoiceId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -267,6 +284,17 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         }
 
         return result;
+    }
+
+    @Override
+    public InvoicesDto list() {
+        try {
+            return invoiceApi.list( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
+        } catch (Exception e) {
+            InvoicesDto result = new InvoicesDto();
+            processException(e, result.getActionStatus());
+            return result;
+        }
     }
 
     @Override
