@@ -971,12 +971,12 @@ public class CpqQuoteApi extends BaseApi {
         if (cpqQuote == null)
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
 
-        if (cpqQuote.getStatus().equals(QuoteStatusEnum.REJECTED.toString()) ||
-                cpqQuote.getStatus().equals(QuoteStatusEnum.CANCELLED.toString())) {
+        if (cpqQuote.getStatus().equalsIgnoreCase(QuoteStatusEnum.REJECTED.toString()) ||
+                cpqQuote.getStatus().equalsIgnoreCase(QuoteStatusEnum.CANCELLED.toString())) {
             throw new MeveoApiException("you can not update the quote with status = " + cpqQuote.getStatus());
         }
         var allStatus = allStatus(QuoteStatusEnum.class, "cpqQuote.status", "");
-		if(!allStatus.contains(status)) {
+		if(!allStatus.contains(status.toLowerCase())) {
 				throw new MeveoApiException("Status is invalid, here is the list of available status : " + allStatus);
 		}
         cpqQuote.setStatus(status);
