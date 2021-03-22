@@ -425,6 +425,11 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
+    @Override
+    public Response getListRestfulEntities() {
+        return Response.ok().entity(GenericOpencellRestfulAPIv1.RESTFUL_ENTITIES_MAP).type(MediaType.APPLICATION_JSON_TYPE).build();
+    }
+
     @PreDestroy
     public void destroy() {
         AuthenticationFilter.httpClient.close();
