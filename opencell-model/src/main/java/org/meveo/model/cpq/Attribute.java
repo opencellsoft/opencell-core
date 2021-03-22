@@ -144,6 +144,9 @@ public class Attribute extends EnableBusinessCFEntity{
 	@Type(type = "numeric_boolean")
     @Column(name = "read_only")
     protected Boolean readOnly = Boolean.FALSE;
+	
+	@Column(name = "default_value", length = 255)
+	private String defaultValue;
 
     public Attribute(){
 
@@ -350,6 +353,20 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setReadOnly(Boolean readOnly) {
 		this.readOnly = readOnly;
+	}
+
+	/**
+	 * @return the defaultValue
+	 */
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	/**
+	 * @param defaultValue the defaultValue to set
+	 */
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
 	}
 	
 	

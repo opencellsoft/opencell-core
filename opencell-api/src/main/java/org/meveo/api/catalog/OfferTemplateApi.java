@@ -623,6 +623,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerComponent.setSequence(offerComponentDto.getSequence());
         offerComponent.setMandatory(offerComponentDto.isMandatory());
         offerComponent.setDisplay(offerComponentDto.isDisplay());
+        offerComponent.setQuantityDefault(offerComponentDto.getQuantityDefault());
+        offerComponent.setQuantityMin(offerComponentDto.getQuantityMin());
+        offerComponent.setQuantityMax(offerComponentDto.getQuantityMax());
         return offerComponent;
     }
 
@@ -768,7 +771,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         				offerProductsDto.setMandatory(offerComponent.isMandatory());
         				offerProductsDto.setSequence(offerComponent.getSequence());
         				offerProductsDto.setDisplay(offerComponent.isDisplay());
-        				
+        				offerProductsDto.setQuantityDefault(offerComponent.getQuantityDefault());
+        				offerProductsDto.setQuantityMin(offerComponent.getQuantityMin());
+        				offerProductsDto.setQuantityMax(offerComponent.getQuantityMax());
         				offerProducts.add(offerProductsDto);
         			} 
 

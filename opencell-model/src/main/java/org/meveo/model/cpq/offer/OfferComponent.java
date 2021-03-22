@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -50,6 +51,15 @@ public class OfferComponent extends BaseEntity {
 	@JoinColumn(name = "product_id")
 	private Product product;
 	
+
+    @Column(name = "quantity_min")
+	private Integer quantityMin = 0;
+
+    @Column(name = "quantity_max")
+	private Integer quantityMax = 0;
+
+    @Column(name = "quantity_default")
+	private Integer quantityDefault = 0;
 
 	/**
 	 *  list of tag associated to offer component
@@ -90,6 +100,9 @@ public class OfferComponent extends BaseEntity {
 		this.product = copy.getProduct();
 		this.offerTemplate = copy.offerTemplate;
 		this.tagsList = new HashSet<>(copy.getTagsList());
+		this.quantityMin = copy.quantityMin;
+		this.quantityMax = copy.quantityMax;
+		this.quantityDefault = copy.quantityDefault;
 	}
 
 
@@ -203,6 +216,48 @@ public class OfferComponent extends BaseEntity {
 	 */
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+
+	/**
+	 * @return the quantityMin
+	 */
+	public Integer getQuantityMin() {
+		return quantityMin;
+	}
+
+	/**
+	 * @param quantityMin the quantityMin to set
+	 */
+	public void setQuantityMin(Integer quantityMin) {
+		this.quantityMin = quantityMin;
+	}
+
+	/**
+	 * @return the quantityMax
+	 */
+	public Integer getQuantityMax() {
+		return quantityMax;
+	}
+
+	/**
+	 * @param quantityMax the quantityMax to set
+	 */
+	public void setQuantityMax(Integer quantityMax) {
+		this.quantityMax = quantityMax;
+	}
+
+	/**
+	 * @return the quantityDefault
+	 */
+	public Integer getQuantityDefault() {
+		return quantityDefault;
+	}
+
+	/**
+	 * @param quantityDefault the quantityDefault to set
+	 */
+	public void setQuantityDefault(Integer quantityDefault) {
+		this.quantityDefault = quantityDefault;
 	}
 
 	

@@ -112,6 +112,8 @@ public class AttributeDTO extends EnableBusinessDto {
 
     protected CustomFieldsDto customFields;
     
+    protected String defaultValue;
+    
     public AttributeDTO() {
     }
 
@@ -136,6 +138,7 @@ public class AttributeDTO extends EnableBusinessDto {
         mandatory=attribute.isMandatory();
         unitNbDecimal = attribute.getUnitNbDecimal(); 
         readOnly = attribute.getReadOnly();
+        defaultValue = attribute.getDefaultValue();
         if (attribute.getAssignedAttributes()!=null) {
         	for (Attribute attr:attribute.getAssignedAttributes()) {
         		assignedAttributeCodes.add(attr.getCode());
@@ -427,6 +430,24 @@ public class AttributeDTO extends EnableBusinessDto {
 	 */
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
+	}
+
+
+
+	/**
+	 * @return the defaultValue
+	 */
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+
+
+	/**
+	 * @param defaultValue the defaultValue to set
+	 */
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
 	}
 
 
