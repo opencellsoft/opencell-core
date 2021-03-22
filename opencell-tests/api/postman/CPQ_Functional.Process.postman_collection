@@ -3223,7 +3223,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"label\": \"Default price plan matrix version\",\n    \"version\": {{ppmRcVersion}},\n    \"isMatrix\": true,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2021-01-03\"\n    }\n}",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"label\": \"Default price plan matrix version\",\n    \"version\": {{ppmRcVersion}},\n    \"isMatrix\": true,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2022-01-03\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3381,7 +3381,7 @@
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"url": {
 							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/{{ppmRcCode}}/{{ppmRcVersion}}?status=PUBLISHED",
@@ -3423,7 +3423,7 @@
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"url": {
 							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/{{ppmOsCode}}/{{ppmOsVersion}}?status=PUBLISHED",
@@ -5030,6 +5030,46 @@
 					"response": []
 				},
 				{
+					"name": "Create The Order Offer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"commercialOrderId\": {{commercialOrderOneId}},\r\n  \"offerTemplateCode\": \"{{offerTemplateCode}}\",\r\n  \"orderProducts\": [\r\n    {\r\n      \"commercialOrderId\": {{commercialOrderOneId}},\r\n      \"productVersion\": {{productOneVersion}},\r\n      \"productCode\": \"{{productOneCode}}\",\r\n      \"quantity\": 1,\r\n      \"orderAttributes\": [\r\n        {\r\n          \"commercialOrderId\": {{commercialOrderOneId}},\r\n          \"orderAttributeCode\": \"{{billingCycleAttribute}}\",\r\n          \"stringValue\": \"Monthly\",\r\n          \"dateValue\": \"2021-03-12\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"orderAttributes\": [\r\n    {\r\n      \"commercialOrderId\": {{commercialOrderOneId}},\r\n      \"orderAttributeCode\": \"{{billingCycleAttribute}}\",\r\n      \"stringValue\": \"Monthly\",\r\n      \"dateValue\": \"2021-03-12\"\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/orderManagement/commercialOrders/orderOffer/create",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"orderManagement",
+								"commercialOrders",
+								"orderOffer",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "List All Commercial Orders",
 					"event": [
 						{
@@ -5101,7 +5141,7 @@
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"url": {
 							"raw": "{{opencell.url}}/orderManagement/commercialOrders/{{commercialOrderOneId}}/userAccounts/{{billableAccountCode}}",
@@ -5137,7 +5177,7 @@
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"url": {
 							"raw": "{{opencell.url}}/orderManagement/commercialOrders/{{commercialOrderTwoId}}/userAccounts/{{billableAccountTwoCode}}",
@@ -5319,7 +5359,7 @@
 						}
 					],
 					"request": {
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -6052,6 +6092,10 @@
 		{
 			"key": "mediaTwoId",
 			"value": "2"
+		},
+		{
+			"key": "orderOfferId",
+			"value": "5"
 		}
 	]
 }
