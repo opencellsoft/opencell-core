@@ -31,6 +31,7 @@ public class InvoicingPlanDto extends BusinessEntityDto {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
+	 private CustomFieldsDto customFields;
 
 	/**
 	 * Instantiates a new invoicingPlan dto.
@@ -47,5 +48,19 @@ public class InvoicingPlanDto extends BusinessEntityDto {
 	public InvoicingPlanDto(org.meveo.model.cpq.commercial.InvoicingPlan invoicingPlan,
 			CustomFieldsDto customFieldInstances) {
 		super(invoicingPlan);
+	}
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 }

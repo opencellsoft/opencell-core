@@ -107,7 +107,7 @@ public class QuoteOffer extends AuditableCFEntity {
 	/**
 	 * discountPlan attached to this quoteOffer
 	 */
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
 	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
 	private DiscountPlan discountPlan;
     

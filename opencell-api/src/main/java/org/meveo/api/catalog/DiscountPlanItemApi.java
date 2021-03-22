@@ -19,7 +19,9 @@
 package org.meveo.api.catalog;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -33,15 +35,20 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
 
 /**
  * 
@@ -63,6 +70,13 @@ public class DiscountPlanItemApi extends BaseApi {
 
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
+
+    @Inject
+    private PricePlanMatrixService pricePlanMatrixService;
+
+    @Inject
+    private AccountingArticleService accountingArticleService;
+
 
     /**
      * creates a discount plan item
@@ -231,6 +245,23 @@ public class DiscountPlanItemApi extends BaseApi {
         return discountPlanItemDtos;
     }
 
+    private void processAccountingArticles(DiscountPlanItemDto postData, DiscountPlanItem discountPlanItem) {
+		Set<String> accountingArticleCodes = postData.getTargetAccountingArticleCodes();
+		if(accountingArticleCodes != null && !accountingArticleCodes.isEmpty()){
+			Set<AccountingArticle> accountingArticles=new HashSet<AccountingArticle>();
+			for(String code:accountingArticleCodes) {
+				AccountingArticle accountingArticle=accountingArticleService.findByCode(code);
+				if(accountingArticle == null) {
+					throw new EntityDoesNotExistsException(AccountingArticle.class,code);
+				}
+				accountingArticles.add(accountingArticle);
+			}
+			discountPlanItem.setTargetAccountingArticle(accountingArticles);
+		}else {
+			discountPlanItem.setTargetAccountingArticle(null);
+		}
+	}
+
     public DiscountPlanItem toDiscountPlanItem(DiscountPlanItemDto source, DiscountPlanItem target) throws MeveoApiException {
         DiscountPlanItem discountPlanItem = target;
         if (discountPlanItem == null) {
@@ -268,9 +299,15 @@ public class DiscountPlanItemApi extends BaseApi {
             }
             discountPlanItem.setInvoiceSubCategory(invoiceSubCategory);
         }
-        if (source.getAccountingCode() != null) {
-            discountPlanItem.setAccountingCode(source.getAccountingCode());
+        if (!StringUtils.isBlank(source.getPricePlanMatrixCode())) {
+        PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(source.getPricePlanMatrixCode());
+        if (pricePlanMatrix == null)
+            throw new EntityDoesNotExistsException(PricePlanMatrix.class, source.getPricePlanMatrixCode());
+        discountPlanItem.setPricePlanMatrix(pricePlanMatrix);
         }
+        
+        processAccountingArticles(source,discountPlanItem);
+
         if (source.getExpressionEl() != null) {
             discountPlanItem.setExpressionEl(source.getExpressionEl());
         }
@@ -279,16 +316,19 @@ public class DiscountPlanItemApi extends BaseApi {
         }
 		if (source.getDiscountValue() != null) {
 			discountPlanItem.setDiscountValue(source.getDiscountValue());
-		}
-		if (source.getDiscountValueEL() != null) {
-			discountPlanItem.setDiscountValueEL(source.getDiscountValueEL());
-		}
-		if (source.getDiscountValueElSpark() != null) {
-			discountPlanItem.setDiscountValueElSpark(source.getDiscountValueElSpark());
-		}
-		if (source.getDiscountPlanItemType() != null) {
-			discountPlanItem.setDiscountPlanItemType(source.getDiscountPlanItemType());
-		}
+        }
+        if (source.getDiscountValueEL() != null) {
+            discountPlanItem.setDiscountValueEL(source.getDiscountValueEL());
+        }
+        if (source.getDiscountValueElSpark() != null) {
+            discountPlanItem.setDiscountValueElSpark(source.getDiscountValueElSpark());
+        }
+        if (source.getDiscountPlanItemType() != null) {
+            discountPlanItem.setDiscountPlanItemType(source.getDiscountPlanItemType());
+        }
+        if (source.isAllowToNegate() != null) {
+            discountPlanItem.setAllowToNegate(source.isAllowToNegate());
+        }
 
         return discountPlanItem;
     }

@@ -22,7 +22,6 @@ import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.CpqOfferDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
-import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.cpq.GroupedAttributeDto;
@@ -143,7 +142,7 @@ public class ProductApi extends BaseApi {
 		}
 		handleMissingParameters();
 		try {
-			Product product=populateProduct(productDto);
+			Product product=populateProduct(productDto, true);
 			productService.create(product);
 			ProductVersionDto currentProductVersion=productDto.getCurrentProductVersion();
 			ProductDto response = new ProductDto(product);
@@ -266,6 +265,9 @@ public class ProductApi extends BaseApi {
 							.sorted( (pv1, pv2) -> pv2.getAuditable().compareByUpdated(pv1.getAuditable())).collect(Collectors.toList());
 				product.setCurrentVersion(noPublishedVersion.get(0));
 			}
+			if(productDto.getCustomFields() != null) {
+				populateCustomFields(productDto.getCustomFields(), product, false);
+			}
 			processMedias(productDto, product);
 			productService.updateProduct(product);
 		} catch (BusinessException e) {
@@ -317,6 +319,7 @@ public class ProductApi extends BaseApi {
 			chargeTemplateDtos.add(chargeTemplateDto); 	
 		}
 			GetProductDtoResponse  result = new GetProductDtoResponse(product,chargeTemplateDtos,true); 
+			result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(product));
 			return result;
 		}
 
@@ -538,7 +541,7 @@ public class ProductApi extends BaseApi {
 
     }
     
-    public Product populateProduct(ProductDto productDto) {
+    public Product populateProduct(ProductDto productDto, boolean isNewEntity) {
     	Product product=new Product();
     	product.setCode(productDto.getCode());
     	product.setDescription(productDto.getLabel());
@@ -583,6 +586,7 @@ public class ProductApi extends BaseApi {
 		createProductChargeTemplateMappings(product, productDto.getChargeTemplateCodes());
 		/***@TODO : update product chargeTemplates
 		 * Use this method to get them by code : chargeTemplateService.getChargeTemplatesByCodes(productDto.getChargeTemplateCodes())***/
+		populateCustomFields(productDto.getCustomFields(), product, isNewEntity);
 		
 		
 		return product;

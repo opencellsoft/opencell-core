@@ -1292,7 +1292,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         try {
 			return (IEntity) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
-            throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with id '"+id+"' found");
+            throw new NotFoundException("No entity of type "+entity.getSimpleName()+" with id '"+id+"' found");
         } catch (NonUniqueResultException e) {
         	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+" with id '"+id+"' found");
         }

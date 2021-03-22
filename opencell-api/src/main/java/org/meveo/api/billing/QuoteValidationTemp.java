@@ -118,7 +118,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		order.setOrderDate(now);
 		order.setCustomerServiceDuration(cpqQuote.getQuoteLotDuration());
 		order.setExternalReference(null);
-		order.setInvoicingPlan(null); //TODO: how to map invoice plan
+		order.setInvoicingPlan(quoteVersion.getInvoicingPlan());
 		order.setOrderType(createOrderTypeTemp()); //TODO: how to map order type
 		order.setOrderProgress(0);
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
@@ -144,6 +144,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		OrderOffer offer = new OrderOffer();
 		offer.setOrder(order);
 		offer.setOfferTemplate(quoteOffer.getOfferTemplate()); 
+		offer.setDiscountPlan(quoteOffer.getDiscountPlan());
 		orderOfferService.create(offer);
 		return offer;
 	}
@@ -154,6 +155,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		orderProduct.setOrderServiceCommercial(orderLot);
 		orderProduct.setProductVersion(product.getProductVersion());
 		orderProduct.setQuantity(product.getQuantity());
+		orderProduct.setDiscountPlan(product.getDiscountPlan());
 		orderProduct.setOrderOffer(orderOffer);  
 		
 		orderProductService.create(orderProduct);
@@ -173,7 +175,7 @@ public class QuoteValidationTemp extends ModuleScript {
 	
 	private void processOrderAttribute(QuoteAttribute quoteAttribute, CommercialOrder commercialOrder, OrderLot orderLot, OrderProduct orderProduct) {
 		OrderAttribute orderAttribute = new OrderAttribute(quoteAttribute, currentUser);
-		orderAttribute.setOrderCode(commercialOrder);
+		orderAttribute.setCommercialOrder(commercialOrder);
 		orderAttribute.setOrderLot(orderLot);
 		orderAttribute.setOrderProduct(orderProduct);
 		orderAttribute.setAccessPoint(null);

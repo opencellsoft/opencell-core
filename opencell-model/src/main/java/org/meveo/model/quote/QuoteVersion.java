@@ -1,5 +1,7 @@
 package org.meveo.model.quote;
 
+import static javax.persistence.FetchType.LAZY;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +29,9 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
@@ -88,12 +92,11 @@ public class QuoteVersion extends BaseEntity{
 	private Date endDate;
 	
 	/**
-	 * billing plan code
-	 */
-	// TODO: associe a l'entité plan facturation
-	@Column(name = "billing_plan_code", length = 20)
-	@Size(max = 20)
-	private String billingPlanCode;
+	 * invoicing plan 
+	 */ 
+    @ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "invoicing_plan_id", referencedColumnName = "id")
+	private InvoicingPlan invoicingPlan;
  
     @Column(name = "short_description", length = 255)
     @Size(max = 255)
@@ -171,21 +174,7 @@ public class QuoteVersion extends BaseEntity{
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
-
-	/**
-	 * @return the billingPlanCode
-	 */
-	public String getBillingPlanCode() {
-		return billingPlanCode;
-	}
-
-	/**
-	 * @param billingPlanCode the billingPlanCode to set
-	 */
-	public void setBillingPlanCode(String billingPlanCode) {
-		this.billingPlanCode = billingPlanCode;
-	}
-
+ 
 
 	/**
 	 * @return the quote
@@ -206,7 +195,7 @@ public class QuoteVersion extends BaseEntity{
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
-				+ Objects.hash(billingPlanCode, endDate, id, quote, quoteVersion, startDate, status, statusDate);
+				+ Objects.hash(invoicingPlan, endDate, id, quote, quoteVersion, startDate, status, statusDate);
 		return result;
 	}
 
@@ -219,7 +208,7 @@ public class QuoteVersion extends BaseEntity{
 		if (getClass() != obj.getClass())
 			return false;
 		QuoteVersion other = (QuoteVersion) obj;
-		return Objects.equals(billingPlanCode, other.billingPlanCode) && Objects.equals(endDate, other.endDate)
+		return Objects.equals(invoicingPlan, other.invoicingPlan) && Objects.equals(endDate, other.endDate)
 				&& Objects.equals(id, other.id) && Objects.equals(quote, other.quote)
 				&& Objects.equals(quoteVersion, other.quoteVersion) && Objects.equals(startDate, other.startDate)
 				&& status == other.status && Objects.equals(statusDate, other.statusDate);
@@ -253,6 +242,16 @@ public class QuoteVersion extends BaseEntity{
 		this.quoteOffers = quoteOffers;
 	}
 
+	public InvoicingPlan getInvoicingPlan() {
+		return invoicingPlan;
+	}
+
+	public void setInvoicingPlan(InvoicingPlan invoicingPlan) {
+		this.invoicingPlan = invoicingPlan;
+	}
+
+	
+	
 	
 
 	

@@ -60,6 +60,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
+import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -86,6 +87,7 @@ import org.meveo.service.cpq.OfferComponentService;
 import org.meveo.service.cpq.QuoteLotService;
 import org.meveo.service.cpq.QuoteProductService;
 import org.meveo.service.cpq.QuoteVersionService;
+import org.meveo.service.cpq.order.InvoicingPlanService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.quote.QuoteInvoiceInfo;
 import org.meveo.service.quote.QuoteItemService;
@@ -170,6 +172,9 @@ public class QuoteApi extends BaseApi {
     
     @Inject 
     private BillingAccountService billingAccountService;
+    
+    @Inject
+    private InvoicingPlanService invoicingPlanService;
 
     /**
      * Register a quote from TMForumApi.
@@ -1213,8 +1218,14 @@ public class QuoteApi extends BaseApi {
 
 			QuoteVersion quoteVersion = new QuoteVersion();
 			quoteVersion.setStatus(VersionStatusEnum.DRAFT);
-			quoteVersion.setStatusDate(Calendar.getInstance().getTime());
-			quoteVersion.setBillingPlanCode(quoteVersionDto.getBillingPlanCode());
+			quoteVersion.setStatusDate(Calendar.getInstance().getTime()); 
+			if(!StringUtils.isBlank(quoteVersionDto.getBillingPlanCode())) {
+    			InvoicingPlan invoicingPlan= invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode());  
+    			if (invoicingPlan == null) {
+    				throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
+    			}
+    			quoteVersion.setInvoicingPlan(invoicingPlan);
+                } 
 			quoteVersion.setStartDate(quoteVersionDto.getStartDate());
 			quoteVersion.setEndDate(quoteVersionDto.getEndDate());
 			//TODO : change with CpqQuote quoteVersion.setQuote(quote);
@@ -1239,7 +1250,14 @@ public class QuoteApi extends BaseApi {
 		//TODO : change with CpqQuote quoteVersion.setQuote(quote);
 		quoteVersion.setStartDate(quoteVersionDto.getStartDate());
 		quoteVersion.setEndDate(quoteVersionDto.getEndDate());
-		quoteVersion.setBillingPlanCode(null); // TODO : add association with belling plan code
+		if(!StringUtils.isBlank(quoteVersionDto.getBillingPlanCode())) {
+			InvoicingPlan invoicingPlan= invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode());  
+			if (invoicingPlan == null) {
+				throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
+			}
+			quoteVersion.setInvoicingPlan(invoicingPlan);
+            } 
+		quoteVersion.setStartDate(quoteVersionDto.getStartDate());
 		quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
 
 		try {

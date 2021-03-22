@@ -84,6 +84,7 @@ public class ProductLineApi extends BaseCrudApi<ProductLine, ProductLineDto> {
 		if(!StringUtils.isBlank(dto.getSellerCode())) {
 			productLine.setSeller(sellerService.findByCode(dto.getSellerCode()));
 		} 
+		populateCustomFields(dto.getCustomFields(), productLine, true);
 		 productLineService.create(productLine);
 		return productLine;
 	}
@@ -107,6 +108,7 @@ public class ProductLineApi extends BaseCrudApi<ProductLine, ProductLineDto> {
 		if(!StringUtils.isBlank(dto.getSellerCode())) {
 			productLine.setSeller(sellerService.findByCode(dto.getSellerCode()));
 		}
+		populateCustomFields(dto.getCustomFields(), productLine, false);
 		productLineService.update(productLine);
 		return productLine;
 	}
@@ -150,6 +152,7 @@ public class ProductLineApi extends BaseCrudApi<ProductLine, ProductLineDto> {
 			 throw new EntityDoesNotExistsException(ProductLine.class, code);
 		 }
 		 ProductLineDto productLineDto= new ProductLineDto(prodcutLine);
+		 productLineDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(prodcutLine));
 		 return productLineDto;
 	 }
 		

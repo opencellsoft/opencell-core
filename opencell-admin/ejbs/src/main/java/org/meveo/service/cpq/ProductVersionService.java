@@ -126,12 +126,8 @@ public class ProductVersionService extends
     	var groupedAttribute = new ArrayList<GroupedAttributes>(productVersion.getGroupedAttributes());
 
     	detach(productVersion);
-    	ProductVersion duplicate = new ProductVersion();
-    	 try {
-             BeanUtils.copyProperties(duplicate, productVersion);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new BusinessException("Failed to clone offer template", e);
-        }
+    	productService.detach(productVersion.getProduct());
+    	ProductVersion duplicate = new ProductVersion(productVersion, productVersion.getProduct());
     	duplicate.setId(null);
      	duplicate.setVersion(0);
      	duplicate.setCurrentVersion(1);
@@ -141,10 +137,9 @@ public class ProductVersionService extends
     	duplicate.setAttributes(new ArrayList<>());
     	duplicate.setGroupedAttributes(new ArrayList<GroupedAttributes>());
 
-    	// TODO : voir duplicate.getId()
 
         try {
-            this.create(duplicate);
+        	create(duplicate);
         }catch(BusinessException e) {
             throw new BusinessException(String.format(PRODUCT_VERSION_ERROR_DUPLICATE, duplicate.getId()), e);
         }

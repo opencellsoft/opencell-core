@@ -385,5 +385,16 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         }
         return result;
     }
+    
+    @Override
+    public ActionStatus subscribeAndInstantiateServices(SubscriptionAndServicesToActivateRequestDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            subscriptionApi.subscribeAndActivateServices(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
 
 }

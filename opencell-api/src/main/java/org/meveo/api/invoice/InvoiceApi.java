@@ -83,6 +83,7 @@ import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.filter.Filter;
@@ -102,6 +103,7 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.generic.wf.WorkflowInstanceService;
@@ -173,6 +175,9 @@ public class InvoiceApi extends BaseApi {
 
     @Inject
     protected WorkflowInstanceService workflowInstanceService;
+    
+    @Inject
+    private DiscountPlanService discountPlanService;
 
     /**
      * Create an invoice based on the DTO object data and current user
@@ -202,6 +207,14 @@ public class InvoiceApi extends BaseApi {
 
         Seller seller = this.getSeller(invoiceDTO, billingAccount);
         Invoice invoice = invoiceService.createInvoice(invoiceDTO, seller, billingAccount, invoiceType);
+        
+        if (!StringUtils.isBlank(invoiceDTO.getDiscountPlanCode())) {
+            DiscountPlan discountPlan = discountPlanService.findByCode(invoiceDTO.getDiscountPlanCode());
+            if (discountPlan == null) {
+                throw new EntityDoesNotExistsException(DiscountPlan.class, invoiceDTO.getDiscountPlanCode());
+            }
+            invoice.setDiscountPlan(discountPlan);
+        }
         // Validate and populate customFields
         try {
             populateCustomFields(invoiceDTO.getCustomFields(), invoice, false);

@@ -18,6 +18,7 @@
 package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -55,6 +57,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
@@ -149,7 +152,7 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     private OfferTemplate offerTemplate;
 
     @OneToMany(mappedBy = "pricePlanMatrix", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PricePlanMatrixVersion> versions;
+    private List<PricePlanMatrixVersion> versions = new ArrayList<>();
 
     /**
      * Filtering criteria - subscription date range - start date
@@ -406,7 +409,13 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Column(name = "parameter3_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String parameter3El;
-
+    
+    /**
+	 * Discount plan items
+	 */
+	@OneToMany(mappedBy = "pricePlanMatrix", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<DiscountPlanItem> discountPlanItems = new ArrayList<>();  
+	
     public String getEventCode() {
         return eventCode;
     }

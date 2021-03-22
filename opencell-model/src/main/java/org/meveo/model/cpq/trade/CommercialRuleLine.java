@@ -1,5 +1,7 @@
 package org.meveo.model.cpq.trade;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -257,6 +259,34 @@ public class CommercialRuleLine extends BaseEntity {
 	 */
 	public void setSourceGroupedAttributeValue(String sourceGroupedAttributeValue) {
 		this.sourceGroupedAttributeValue = sourceGroupedAttributeValue;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(commercialRuleItem, operator, sourceAttribute, sourceAttributeValue,
+				sourceGroupedAttributeValue, sourceGroupedAttributes, sourceOfferTemplate, sourceProduct,
+				sourceProductVersion, sourceTag);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		CommercialRuleLine other = (CommercialRuleLine) obj;
+		return Objects.equals(commercialRuleItem, other.commercialRuleItem) && operator == other.operator
+				&& Objects.equals(sourceAttribute, other.sourceAttribute)
+				&& Objects.equals(sourceAttributeValue, other.sourceAttributeValue)
+				&& Objects.equals(sourceGroupedAttributeValue, other.sourceGroupedAttributeValue)
+				&& Objects.equals(sourceGroupedAttributes, other.sourceGroupedAttributes)
+				&& Objects.equals(sourceOfferTemplate, other.sourceOfferTemplate)
+				&& Objects.equals(sourceProduct, other.sourceProduct)
+				&& Objects.equals(sourceProductVersion, other.sourceProductVersion)
+				&& Objects.equals(sourceTag, other.sourceTag);
 	}
 	
 	

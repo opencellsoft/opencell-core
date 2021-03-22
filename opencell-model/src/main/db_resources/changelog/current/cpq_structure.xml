@@ -3326,7 +3326,8 @@
 	
 			<changeSet id="#222_20210219" author="Mbarek-Ay">
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-26, 0, 0, now(), 'org.meveo.api.billing.QuoteValidation', 'QuoteValidation', 'JAVA', '
-        package org.meveo.api.billing;
+package org.meveo.api.billing;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -3353,6 +3354,8 @@ import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.cpq.QuoteVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
@@ -3364,6 +3367,7 @@ import org.meveo.service.cpq.order.OrderPriceService;
 import org.meveo.service.cpq.order.OrderProductService;
 import org.meveo.service.cpq.order.OrderTypeService;
 import org.meveo.service.cpq.order.QuotePriceService;
+import org.meveo.service.crm.impl.CurrentUserProducer;
 import org.meveo.service.script.module.ModuleScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -3384,7 +3388,8 @@ public class QuoteValidation extends ModuleScript {
     private OrderPriceService orderPriceService = (OrderPriceService) getServiceInterface(OrderPriceService.class.getSimpleName());
     private QuotePriceService quotePriceService = (QuotePriceService) getServiceInterface(QuotePriceService.class.getSimpleName());
     private OrderTypeService orderTypeService = (OrderTypeService) getServiceInterface(OrderTypeService.class.getSimpleName());
-    
+    private MeveoUser currentUser = ((CurrentUserProducer) getServiceInterface(CurrentUserProducer.class.getSimpleName())).getCurrentUser();
+
 	
 	@Override
 	public void execute(Map<String, Object> methodContext) throws BusinessException {
@@ -3441,7 +3446,7 @@ public class QuoteValidation extends ModuleScript {
 		order.setOrderDate(now);
 		order.setCustomerServiceDuration(cpqQuote.getQuoteLotDuration());
 		order.setExternalReference(null);
-		order.setInvoicingPlan(null); //TODO: how to map invoice plan
+		order.setInvoicingPlan(quoteVersion.getInvoicingPlan());
 		order.setOrderType(createOrderTypeTemp()); //TODO: how to map order type
 		order.setOrderProgress(0);
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
@@ -3467,6 +3472,7 @@ public class QuoteValidation extends ModuleScript {
 		OrderOffer offer = new OrderOffer();
 		offer.setOrder(order);
 		offer.setOfferTemplate(quoteOffer.getOfferTemplate()); 
+		offer.setDiscountPlan(quoteOffer.getDiscountPlan());
 		orderOfferService.create(offer);
 		return offer;
 	}
@@ -3477,6 +3483,7 @@ public class QuoteValidation extends ModuleScript {
 		orderProduct.setOrderServiceCommercial(orderLot);
 		orderProduct.setProductVersion(product.getProductVersion());
 		orderProduct.setQuantity(product.getQuantity());
+		orderProduct.setDiscountPlan(product.getDiscountPlan());
 		orderProduct.setOrderOffer(orderOffer);  
 		
 		orderProductService.create(orderProduct);
@@ -3495,15 +3502,11 @@ public class QuoteValidation extends ModuleScript {
 	}
 	
 	private void processOrderAttribute(QuoteAttribute quoteAttribute, CommercialOrder commercialOrder, OrderLot orderLot, OrderProduct orderProduct) {
-		OrderAttribute orderAttribute = new OrderAttribute();
-		orderAttribute.setOrderCode(commercialOrder);
+		OrderAttribute orderAttribute = new OrderAttribute(quoteAttribute, currentUser);
+		orderAttribute.setCommercialOrder(commercialOrder);
 		orderAttribute.setOrderLot(orderLot);
 		orderAttribute.setOrderProduct(orderProduct);
 		orderAttribute.setAccessPoint(null);
-		orderAttribute.setAttribute(quoteAttribute.getAttribute());
-		orderAttribute.setStringValue(quoteAttribute.getStringValue());
-		orderAttribute.setDateValue(quoteAttribute.getDateValue());
-		orderAttribute.setDoubleValue(quoteAttribute.getDoubleValue());
 		orderAttributeService.create(orderAttribute);
 	}
 	
@@ -3554,8 +3557,7 @@ public class QuoteValidation extends ModuleScript {
 	}
 	
 }
-	
-	
+
 	');
         ]]></sql>
         
@@ -4026,7 +4028,117 @@ public class OrderAdvancement extends ModuleScript {
 		
 	</changeSet>
 	
+
+     <changeSet id="#20210304-312" author="Mbarek-Ay">
+		<addColumn tableName="cpq_order_item">
+			<column name="cpq_order_offer_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="cpq_order_offer_id" baseTableName="cpq_order_item" constraintName="fk_cpq_order_item_cpq_order_offer_id" deferrable="false" initiallyDeferred="false"
+			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_offer" />
+	  </changeSet>
+	  
+	  
+	   <changeSet id="#20210310-342" author="Mbarek-Ay">
+		<addColumn tableName="billing_invoice">
+			<column name="discount_plan_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_discount_plan_id" deferrable="false" initiallyDeferred="false"
+			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" />
+		
+		<addColumn tableName="cat_discount_plan">
+			<column name="expression_el" type="varchar(2000)" />
+		</addColumn>	
+		
+			    <createTable tableName="discount_plan_item_articles">
+	        <column name="discount_plan_item_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="accounting_article_id" type="bigint">
+	            <constraints nullable="false" />
+	        </column>
+	    </createTable>
+
+	        <addForeignKeyConstraint baseTableName="discount_plan_item_articles" baseColumnNames="discount_plan_item_id"
+									 constraintName="discount_plan_item_articles_discount_plan_item_id_fk" referencedTableName="cat_discount_plan_item"
+									 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="discount_plan_item_articles" baseColumnNames="accounting_article_id"
+                                 constraintName="discount_plan_item_articles_accounting_article_id_fk" referencedTableName="billing_accounting_article"
+                                 referencedColumnNames="id"/>
+                                 	     
+	  </changeSet>
+
+	<changeSet id="#20210315-329" author="Mbarek-Ay">
+		<dropForeignKeyConstraint baseTableName="billing_service_instance" constraintName="fk_cpq_quote_version_serviceInstance_id"/>
+		<addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="billing_service_instance" constraintName="fk_cpq_product_version_serviceInstance_id"
+								 deferrable="false" initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version"/>
+	</changeSet>
+
+
+	<changeSet id="#20210316-356" author="Mbarek-Ay">
+		<addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_product_discount_plan" constraintName="fk_cpq_product_discount_plan_product_id" deferrable="false"
+								 initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product"/>
+
+	        <addForeignKeyConstraint baseColumnNames="discount_id" baseTableName="cpq_product_discount_plan" constraintName="fk_cpq_product_discount_plan_discount_id" deferrable="false" initiallyDeferred="false"
+	            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan" /> 
+	            
+	  </changeSet>
 	
+	  <changeSet id="#20210316-356-2" author="Mbarek-Ay">
+        <addColumn tableName="cat_discount_plan_item">
+			<column name="price_plan_matrix_id" type="bigint" />
+	  </addColumn>
+	  <addForeignKeyConstraint baseColumnNames="price_plan_matrix_id" baseTableName="cat_discount_plan_item" constraintName="fk_cat_discount_plan_item_price_plan_matrix_id" deferrable="false" initiallyDeferred="false"
+			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" /> 
+	</changeSet>
+
+	<changeSet id="#20210317_M540_16" author="TarikFA.">
+		<dropColumn tableName="cpq_tag">
+			<column name="attribute_id" />
+		</dropColumn>
+		
+		<createTable tableName="cpq_attribute_tag">
+            <column name="tag_id" type="bigint" >
+            	<constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint" >
+            	<constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addPrimaryKey columnNames="tag_id,attribute_id" tableName="cpq_attribute_tag"/>
+        
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_attribute_tag" constraintName="fk_cpq_attribute_tag_attribute_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_attribute_tag" constraintName="fk_cpq_attribute_tag_tag_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+            
+	</changeSet>
 	
+	<changeSet id="#2020317-342" author="Mbarek-Ay">
+		<addColumn tableName="cpq_order_product">
+			<column name="discount_plan_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_discount_plan_id" deferrable="false"
+								 initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan"/>
+
+		<addColumn tableName="cpq_order_offer">
+			<column name="discount_plan_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_discount_plan_id" deferrable="false"
+								 initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan"/>
+
+
+		<addColumn tableName="cpq_quote_version">
+			<column name="invoicing_plan_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="invoicing_plan_id" baseTableName="cpq_quote_version" constraintName="fk_cpq_quote_version_invoicing_plan_id" deferrable="false"
+								 initiallyDeferred="false"
+								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoicing_plan"/>
+	</changeSet>
 
 </databaseChangeLog>

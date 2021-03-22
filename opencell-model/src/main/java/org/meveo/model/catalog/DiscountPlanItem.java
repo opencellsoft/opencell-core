@@ -19,6 +19,9 @@
 package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Cacheable;
@@ -28,7 +31,11 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -46,7 +53,10 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.custom.CustomFieldValues;
+
+import static javax.persistence.CascadeType.ALL;
 
 /**
  * Discount plan item/details
@@ -99,14 +109,6 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	private InvoiceSubCategory invoiceSubCategory;
 
 	/**
-	 * @deprecated As of version 5.0. No replacement.
-	 */
-	@Deprecated // until further analysis
-	@Column(name = "accounting_code", length = 255)
-	@Size(max = 255)
-	private String accountingCode;
-
-	/**
 	 * Expression to determine if discount applies
 	 */
 	@Column(name = "expression_el", length = 2000)
@@ -147,21 +149,21 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	@Enumerated(EnumType.STRING)
 	@Column(name = "discount_plan_item_type", length = 50)
 	private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
-	
-	 /**
-     * Unique identifier UUID
-     */
-    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
-    @Size(max = 60)
-    @NotNull
-    protected String uuid;
 
-    /**
-     * Custom field values in JSON format
-     */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
-    protected CustomFieldValues cfValues;
+	/**
+	 * Unique identifier UUID
+	 */
+	@Column(name = "uuid", nullable = false, updatable = false, length = 60)
+	@Size(max = 60)
+	@NotNull
+	protected String uuid;
+
+	/**
+	 * Custom field values in JSON format
+	 */
+	@Type(type = "cfjson")
+	@Column(name = "cf_values", columnDefinition = "text")
+	protected CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
@@ -177,6 +179,28 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "accounting_article_id")
     private AccountingArticle accountingArticle;
+
+	  /**
+     * list of accountingArticle attached
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "discount_plan_item_articles", joinColumns = @JoinColumn(name = "discount_plan_item_id"), inverseJoinColumns = @JoinColumn(name = "accounting_article_id"))
+    private Set<AccountingArticle> targetAccountingArticle = new HashSet<AccountingArticle>();
+
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "price_plan_matrix_id", nullable = true, referencedColumnName = "id")
+    private PricePlanMatrix pricePlanMatrix;
+
+	/**
+	 * If true, then allows to negate the amount of affected invoice lines.
+	 * If fase, then amount for the discount line produce by the discount plan item cannot exceed the amount of discounted lines.
+	 * Default: false
+	 */
+	@Type(type = "numeric_boolean")
+	@Column(name = "allow_to_negate")
+	@NotNull
+	private boolean allowToNegate = false;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -268,14 +292,6 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 			return false;
 		}
 		return true;
-	}
-
-	public String getAccountingCode() {
-		return accountingCode;
-	}
-
-	public void setAccountingCode(String accountingCode) {
-		this.accountingCode = accountingCode;
 	}
 
 	public DiscountPlanItemTypeEnum getDiscountPlanItemType() {
@@ -386,18 +402,52 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 		this.priority = priority;
 	}
 
+	public boolean isAllowToNegate() {
+		return allowToNegate;
+	}
+
+	public void setAllowToNegate(boolean allowToNegate) {
+		this.allowToNegate = allowToNegate;
+	}
+
+
+
 	/**
-	 * @return the accountingArticle
+	 * @return the targetAccountingArticle
 	 */
+	public Set<AccountingArticle> getTargetAccountingArticle() {
+		return targetAccountingArticle;
+	}
+
+	/**
+	 * @param targetAccountingArticle the targetAccountingArticle to set
+	 */
+	public void setTargetAccountingArticle(Set<AccountingArticle> targetAccountingArticle) {
+		this.targetAccountingArticle = targetAccountingArticle;
+	}
+
+	/**
+	 * @return the pricePlanMatrix
+	 */
+	public PricePlanMatrix getPricePlanMatrix() {
+		return pricePlanMatrix;
+	}
+
+	/**
+	 * @param pricePlanMatrix the pricePlanMatrix to set
+	 */
+	public void setPricePlanMatrix(PricePlanMatrix pricePlanMatrix) {
+		this.pricePlanMatrix = pricePlanMatrix;
+	}
+
 	public AccountingArticle getAccountingArticle() {
 		return accountingArticle;
 	}
 
-	/**
-	 * @param accountingArticle the accountingArticle to set
-	 */
 	public void setAccountingArticle(AccountingArticle accountingArticle) {
 		this.accountingArticle = accountingArticle;
 	}
+
+	
 
 }

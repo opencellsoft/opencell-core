@@ -963,6 +963,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         return billingRun;
     }
 
+    /**
+     * Load rated transaction by billing runs
+     * @param list of billingRuns
+     * @return ratedTransaction list
+     */
     public List<RatedTransaction> loadRTsByBillingRuns(List<BillingRun> billingRuns){
         List<RatedTransaction> ratedTransactions = new ArrayList<>();
         for(BillingRun billingRun : billingRuns){
@@ -1652,8 +1657,17 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 		return null;
 	}
 
+    /**
+     * Creates the aggregates and invoice with invoiceLines.
+     * @param billingRun the billing run
+     * @param nbRuns the nb runs
+     * @param waitingMillis the waiting millis
+     * @param jobInstanceId the job instance id
+     * @throws BusinessException
+     */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void createAggregatesAndInvoiceWithIl(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws BusinessException {
+    public void createAggregatesAndInvoiceWithIl(BillingRun billingRun, long nbRuns, long waitingMillis,
+                                                 Long jobInstanceId) throws BusinessException {
         List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun);
         SubListCreator<? extends IBillableEntity> subListCreator;
         try {

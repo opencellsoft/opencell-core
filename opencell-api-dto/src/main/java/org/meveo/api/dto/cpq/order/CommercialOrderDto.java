@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.cpq.commercial.CommercialOrder;
@@ -51,6 +52,7 @@ public class CommercialOrderDto extends BaseEntityDto {
 	private String userAccountCode;
 	private AccessDto accessDto; 
 	private Set<String> orderLotCodes;
+    private CustomFieldsDto customFields;
 	
 	public CommercialOrderDto() {
 	}
@@ -347,6 +349,20 @@ public class CommercialOrderDto extends BaseEntityDto {
 	 */
 	public void setOrderLotCodes(Set<String> orderLotCodes) {
 		this.orderLotCodes = orderLotCodes;
+	}
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 	
 	

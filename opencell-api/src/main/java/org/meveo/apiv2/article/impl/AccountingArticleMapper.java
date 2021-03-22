@@ -2,19 +2,25 @@ package org.meveo.apiv2.article.impl;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.apiv2.article.ImmutableAccountingArticle;
 import org.meveo.apiv2.generic.LanguageDescription;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleFamily;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.tax.TaxClass;
+import org.meveo.service.api.EntityToDtoConverter;
+import org.meveo.service.cpq.QuoteVersionService;
 
 public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.article.AccountingArticle, AccountingArticle> {
 
+    private EntityToDtoConverter entityToDtoConverter = (EntityToDtoConverter) EjbUtils.getServiceInterface(EntityToDtoConverter.class.getSimpleName());;
 
     @Override
     protected org.meveo.apiv2.article.AccountingArticle toResource(AccountingArticle entity) {
@@ -28,8 +34,9 @@ public class AccountingArticleMapper extends ResourceMapper<org.meveo.apiv2.arti
                 .articleFamily(entity.getArticleFamily() != null ? ImmutableResource.builder().id(entity.getArticleFamily().getId()).build() : null)
                 .analyticCode1(entity.getAnalyticCode1())
                 .analyticCode2(entity.getAnalyticCode2())
-                .analyticCode3(entity.getAnalyticCode3()) 
+                .analyticCode3(entity.getAnalyticCode3())
                 .languageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(entity.getDescriptionI18n()))
+                .customFields(entityToDtoConverter.getCustomFieldsDTO(entity))
                 .build();
     }
 

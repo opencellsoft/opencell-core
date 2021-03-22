@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import javax.validation.constraints.NotNull;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.contract.ContractItem;
 
 /**
@@ -24,6 +25,7 @@ public class ContractItemDto extends BusinessEntityDto {
 	private String serviceTemplateCode;
 	private int rate;
     private BigDecimal amountWithoutTax;
+	private CustomFieldsDto customFields;
     
     public ContractItemDto() {}
     
@@ -141,6 +143,20 @@ public class ContractItemDto extends BusinessEntityDto {
 	 */
 	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
 		this.amountWithoutTax = amountWithoutTax;
+	}
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 
 

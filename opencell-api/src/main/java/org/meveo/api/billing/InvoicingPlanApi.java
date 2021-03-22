@@ -71,6 +71,7 @@ public class InvoicingPlanApi extends BaseCrudApi<InvoicingPlan, InvoicingPlanDt
 		invoicingPlan = new InvoicingPlan();
 		invoicingPlan.setCode(invoicingPlanCode);
 		invoicingPlan.setDescription(postData.getDescription());
+		populateCustomFields(postData.getCustomFields(), invoicingPlan, true);
 
 		invoicingPlanService.create(invoicingPlan);
 
@@ -85,7 +86,7 @@ public class InvoicingPlanApi extends BaseCrudApi<InvoicingPlan, InvoicingPlanDt
 	 * @throws MeveoApiException meveo api exception
 	 * @throws BusinessException business exception.
 	 */
-	public InvoicingPlan update(InvoicingPlanDto postData) throws MeveoApiException, BusinessException {
+	public InvoicingPlanDto updateInvoicingPlan(InvoicingPlanDto postData) throws MeveoApiException, BusinessException {
 		String invoicingPlanCode = postData.getCode();
 		if (StringUtils.isBlank(invoicingPlanCode)) {
 			missingParameters.add("invoicingPlanCode");
@@ -98,10 +99,10 @@ public class InvoicingPlanApi extends BaseCrudApi<InvoicingPlan, InvoicingPlanDt
 		}
 
 		dtoToEntity(postData, invoicingPlan);
-
+		populateCustomFields(postData.getCustomFields(), invoicingPlan, false);
 		invoicingPlan = invoicingPlanService.update(invoicingPlan);
 
-		return invoicingPlan;
+		return new InvoicingPlanDto(invoicingPlan, entityToDtoConverter.getCustomFieldsDTO(invoicingPlan));
 	}
 
 	private InvoicingPlan dtoToEntity(InvoicingPlanDto postData, InvoicingPlan invoicingPlan) {
@@ -117,5 +118,10 @@ public class InvoicingPlanApi extends BaseCrudApi<InvoicingPlan, InvoicingPlanDt
 	@Override
 	protected BiFunction<InvoicingPlan, CustomFieldsDto, InvoicingPlanDto> getEntityToDtoFunction() {
 		return InvoicingPlanDto::new;
+	}
+
+	@Override
+	public InvoicingPlan update(InvoicingPlanDto dtoData) throws MeveoApiException, BusinessException {
+		throw new BusinessException("Method not implemented, please call updateInvoicingPlan instead");
 	}
 }

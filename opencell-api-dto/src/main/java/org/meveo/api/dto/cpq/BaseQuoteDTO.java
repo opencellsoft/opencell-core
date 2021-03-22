@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.quote.QuoteStatusEnum;
@@ -47,6 +48,7 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	 */
 	private static final long serialVersionUID = 8115890992793236496L;
 
+	
     private Date quoteDate = new Date();
 
     private DatePeriod validity = new DatePeriod();
@@ -69,8 +71,12 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 
 
     private String externalId;
+    
+    private CustomFieldsDto customFields;
 
 
+	@JsonSerialize(using = CustomDateSerializer.class)
+	private Date statusDate;
 
 	/**
 	 * @return the quoteDate
@@ -277,6 +283,38 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	 */
 	public void setQuoteNumber(String quoteNumber) {
 		this.quoteNumber = quoteNumber;
+	}
+
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
+
+
+	/**
+	 * @return the statusDate
+	 */
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+
+	/**
+	 * @param statusDate the statusDate to set
+	 */
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
 	}
 
 

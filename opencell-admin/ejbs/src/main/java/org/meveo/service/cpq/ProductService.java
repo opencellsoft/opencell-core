@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.ejb.Stateless;
@@ -20,12 +21,15 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.billing.impl.article.ArticleMappingLineService;
 import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
+import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +63,8 @@ public class ProductService extends BusinessService<Product> {
 	
 	@Inject
 	private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
+	@Inject private PricePlanMatrixColumnService pricePlanMatrixColumnService;
+	@Inject private ArticleMappingLineService articleMappingLineService;
     /**
      * check if the product has any product line 
      * @param idProductLine
@@ -289,8 +295,28 @@ public class ProductService extends BusinessService<Product> {
 		if (product == null) {
 			throw new EntityDoesNotExistsException(Product.class,codeProduct);
 		} 
-		this.remove(product); 
+		
+		if(product.getCommercialRuleHeader().isEmpty() || product.getCommercialRuleLines().isEmpty()) {
+			throw new MeveoApiException("Product ("+codeProduct+") can not be deleted. There are rules applied to this product");
+		}
+
+		pricePlanMatrixColumnService.findByProduct(product).stream().map(PricePlanMatrixColumn::getCode).forEach(code -> pricePlanMatrixColumnService.removePricePlanColumn(code));
+		
+//		articleMappingLineService.findByProductCode(product).forEach(aml -> {
+//			articleMappingLineService.remove(aml);
+//		});
+//		articleMappingLineService.deleteByProductCode(product);
+		remove(product); 
 	}
 
-
+	public Optional<ProductVersion> getCurrentPublishedVersion(String code, Date date) {
+		Product product = findByCode(code);
+		if(product == null)
+			return Optional.empty();
+		return product.getProductVersions()
+				.stream()
+				.filter(pv -> VersionStatusEnum.PUBLISHED.equals(pv.getStatus()))
+				.filter(pv -> pv.getValidity().isCorrespondsToPeriod(date))
+				.findFirst();
+	}
 }

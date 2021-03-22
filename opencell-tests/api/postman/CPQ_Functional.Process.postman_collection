@@ -3223,7 +3223,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"label\": \"Default price plan matrix version\",\n    \"version\": {{ppmRcVersion}},\n    \"isMatrix\": true,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2021-01-03\"\n    }\n}",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"label\": \"Default price plan matrix version\",\n    \"version\": {{ppmRcVersion}},\n    \"isMatrix\": true,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2022-01-03\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3381,7 +3381,7 @@
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"url": {
 							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/{{ppmRcCode}}/{{ppmRcVersion}}?status=PUBLISHED",
@@ -3423,7 +3423,7 @@
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"url": {
 							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/{{ppmOsCode}}/{{ppmOsVersion}}?status=PUBLISHED",
@@ -3852,6 +3852,49 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update All Price Plan Matrix Lines",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pricePlanMatrixCode\": \"{{ppmOsCode}}\",\r\n    \"pricePlanMatrixVersion\": 1,\r\n    \"pricePlanMatrixLinesDto\": [\r\n        {\r\n            \"pricetWithoutTax\": 60,\r\n            \"priority\": 1,\r\n            \"pricePlanMatrixValues\": [\r\n                {\r\n                    \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"ppmColumnCode\": \"{{engagementColumnCode}}\",\r\n                    \"longValue\": 10\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"pricetWithoutTax\": 80,\r\n            \"priority\": 1,\r\n            \"pricePlanMatrixValues\": [\r\n                {\r\n                    \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"ppmColumnCode\": \"{{engagementColumnCode}}\",\r\n                    \"longValue\": 20\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/updatePricePlanMatrixLines",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"updatePricePlanMatrixLines"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -3884,13 +3927,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/cpq/contract",
+							"raw": "{{opencell.url}}/cpq/contracts",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"cpq",
-								"contract"
+								"contracts"
 							]
 						},
 						"description": "Creating a new contract"
@@ -3903,13 +3946,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/cpq/contract/{{contractCode}}",
+							"raw": "{{opencell.url}}/cpq/contracts/{{contractCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"cpq",
-								"contract",
+								"contracts",
 								"{{contractCode}}"
 							]
 						},
@@ -3943,14 +3986,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/cpq/contract/contractLine",
+							"raw": "{{opencell.url}}/cpq/contracts/contractLines",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"cpq",
-								"contract",
-								"contractLine"
+								"contracts",
+								"contractLines"
 							]
 						},
 						"description": "Creating a new contract Line"
@@ -3963,19 +4006,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/cpq/contract?contractAccountLevel={{contractAccountLevel}}&accountCode={{billableAccountCode}}",
+							"raw": "{{opencell.url}}/cpq/contracts?contractAccountLevel={{contractAccountLevel}}&accountCode={{billableAccountCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"cpq",
-								"contract"
+								"contracts"
 							],
 							"query": [
 								{
 									"key": "contractAccountLevel",
-									"value": "{{contractAccountLevel}}",
-									"description": "CUSTOMER, CUSTOMER_ACCOUNT or BILLING_ACCOUNT"
+									"value": "{{contractAccountLevel}}"
 								},
 								{
 									"key": "accountCode",
@@ -4027,13 +4069,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/quote/false",
+							"raw": "{{opencell.url}}/cpq/quotes",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"quote",
-								"false"
+								"cpq",
+								"quotes"
 							]
 						}
 					},
@@ -4056,22 +4098,18 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/quote/{{quoteCode}}/{{QuoteVersion}}/update/status?status=PUBLISHED",
+							"raw": "{{opencell.url}}/cpq/quotes/quoteVersions/{{quoteCode}}/{{QuoteVersion}}/status/PUBLISHED",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"quote",
+								"cpq",
+								"quotes",
+								"quoteVersions",
 								"{{quoteCode}}",
 								"{{QuoteVersion}}",
-								"update",
-								"status"
-							],
-							"query": [
-								{
-									"key": "status",
-									"value": "PUBLISHED"
-								}
+								"status",
+								"PUBLISHED"
 							]
 						}
 					},
@@ -4083,12 +4121,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/quote/{{quoteCode}}",
+							"raw": "{{opencell.url}}/cpq/quotes/{{quoteCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"quote",
+								"cpq",
+								"quotes",
 								"{{quoteCode}}"
 							]
 						}
@@ -4110,13 +4149,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/quote/list",
+							"raw": "{{opencell.url}}/cpq/quotes/filtering",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"quote",
-								"list"
+								"cpq",
+								"quotes",
+								"filtering"
 							]
 						}
 					},
@@ -4412,6 +4452,125 @@
 					"response": []
 				},
 				{
+					"name": "Create The Discount Plan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"{{discountPlanCode}}\",\r\n  \"description\": \"discount plan test description\",  \r\n  \"startDate\": \"2021-01-01\",\r\n  \"endDate\": \"2021-12-01\",\r\n  \"status\":\"DRAFT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/catalog/discountPlans",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"catalog",
+								"discountPlans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create The Discount Plan Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{discountPlanCode}}\",\r\n    \"discountPlan\": {\r\n        \"id\": 1\r\n    },\r\n    \"discountValue\": 10.000000000000,\r\n    \"discountPlanItemType\": \"PERCENTAGE\",\r\n    \"accountingArticle\": {\r\n        \"id\": 2\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/catalog/discountPlans/1/discountPlanItems",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"catalog",
+								"discountPlans",
+								"1",
+								"discountPlanItems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activate The Discount Plan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"{{discountPlanCode}}\",\r\n  \"status\":\"ACTIVE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/discountPlan/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"discountPlan",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create Monthly Quote Offer",
 					"event": [
 						{
@@ -4429,7 +4588,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 24\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttributeTwo}}\",\r\n            \"stringValue\": \"Monthly\",\r\n            \"doubleValue\": 24,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"discountPlanCode\":\"{{discountPlanCode}}\",\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 24\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttributeTwo}}\",\r\n            \"stringValue\": \"Monthly\",\r\n            \"doubleValue\": 24,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4437,13 +4596,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/quote/quoteItem",
+							"raw": "{{opencell.url}}/cpq/quotes/quoteItems",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"quote",
-								"quoteItem"
+								"cpq",
+								"quotes",
+								"quoteItems"
 							]
 						}
 					},
@@ -4467,7 +4627,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountTwoCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Annually\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 12\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttributeTwo}}\",\r\n            \"stringValue\": \"Annually\",\r\n            \"doubleValue\": 12,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountTwoCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"discountPlanCode\":\"{{discountPlanCode}}\",\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Annually\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 12\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttributeTwo}}\",\r\n            \"stringValue\": \"Annually\",\r\n            \"doubleValue\": 12,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4475,13 +4635,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/quote/quoteItem",
+							"raw": "{{opencell.url}}/cpq/quotes/quoteItems",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"quote",
-								"quoteItem"
+								"cpq",
+								"quotes",
+								"quoteItems"
 							]
 						}
 					},
@@ -4504,19 +4665,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/quote/quoteItem?quoteItemId={{quoteOfferOneId}}",
+							"raw": "{{opencell.url}}/cpq/quotes/quoteItems/{{quoteOfferOneId}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"quote",
-								"quoteItem"
-							],
-							"query": [
-								{
-									"key": "quoteItemId",
-									"value": "{{quoteOfferOneId}}"
-								}
+								"cpq",
+								"quotes",
+								"quoteItems",
+								"{{quoteOfferOneId}}"
 							]
 						}
 					},
@@ -4539,19 +4696,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/quote/quoteItem?quoteItemId={{quoteOfferTwoId}}",
+							"raw": "{{opencell.url}}/cpq/quotes/quoteItems/{{quoteOfferTwoId}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"quote",
-								"quoteItem"
-							],
-							"query": [
-								{
-									"key": "quoteItemId",
-									"value": "{{quoteOfferTwoId}}"
-								}
+								"cpq",
+								"quotes",
+								"quoteItems",
+								"{{quoteOfferTwoId}}"
 							]
 						}
 					},
@@ -4765,23 +4918,17 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/quote/quoteQuotation?quoteCode={{quoteCode}}&quoteVersion={{QuoteVersion}}",
+							"raw": "{{opencell.url}}/cpq/quotes/quoteVersions/{{quoteCode}}/{{QuoteVersion}}/quotation",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"quote",
-								"quoteQuotation"
-							],
-							"query": [
-								{
-									"key": "quoteCode",
-									"value": "{{quoteCode}}"
-								},
-								{
-									"key": "quoteVersion",
-									"value": "{{QuoteVersion}}"
-								}
+								"cpq",
+								"quotes",
+								"quoteVersions",
+								"{{quoteCode}}",
+								"{{QuoteVersion}}",
+								"quotation"
 							]
 						}
 					},
@@ -4805,30 +4952,20 @@
 								}
 							]
 						},
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/quote/generateQuoteXml?quoteCode={{quoteCode}}&currentVersion={{QuoteVersion}}&generatePdf=false",
+							"raw": "{{opencell.url}}/cpq/quotes/quoteVersions/{{quoteCode}}/{{QuoteVersion}}/xmlGeneration",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"quote",
-								"generateQuoteXml"
-							],
-							"query": [
-								{
-									"key": "quoteCode",
-									"value": "{{quoteCode}}"
-								},
-								{
-									"key": "currentVersion",
-									"value": "{{QuoteVersion}}"
-								},
-								{
-									"key": "generatePdf",
-									"value": "false"
-								}
+								"cpq",
+								"quotes",
+								"quoteVersions",
+								"{{quoteCode}}",
+								"{{QuoteVersion}}",
+								"xmlGeneration"
 							]
 						}
 					},
@@ -4836,6 +4973,17 @@
 				},
 				{
 					"name": "Generate Quote PDF",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"setTimeout(function(){}, 15000);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -4852,26 +5000,22 @@
 								}
 							]
 						},
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/quote/getQuotePDF?quoteCode={{quoteCode}}&currentVersion={{QuoteVersion}}&generatePdf=true",
+							"raw": "{{opencell.url}}/cpq/quotes/quoteVersions/{{quoteCode}}/{{QuoteVersion}}/pdfGeneration?generatePdf=true",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"quote",
-								"getQuotePDF"
+								"cpq",
+								"quotes",
+								"quoteVersions",
+								"{{quoteCode}}",
+								"{{QuoteVersion}}",
+								"pdfGeneration"
 							],
 							"query": [
-								{
-									"key": "quoteCode",
-									"value": "{{quoteCode}}"
-								},
-								{
-									"key": "currentVersion",
-									"value": "{{QuoteVersion}}"
-								},
 								{
 									"key": "generatePdf",
 									"value": "true"
@@ -4988,15 +5132,17 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/quote/placeOrder/{{quoteCode}}/{{QuoteVersion}}",
+							"raw": "{{opencell.url}}/cpq/quotes/{{quoteCode}}/quoteVersions/{{QuoteVersion}}/orderPlacement",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"quote",
-								"placeOrder",
+								"cpq",
+								"quotes",
 								"{{quoteCode}}",
-								"{{QuoteVersion}}"
+								"quoteVersions",
+								"{{QuoteVersion}}",
+								"orderPlacement"
 							]
 						}
 					},
@@ -5043,12 +5189,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/commercialOrder/list",
+							"raw": "{{opencell.url}}/orderManagement/commercialOrders/list",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"commercialOrder",
+								"orderManagement",
+								"commercialOrders",
 								"list"
 							]
 						}
@@ -5073,17 +5220,18 @@
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/commercialOrder/{{commercialOrderOneId}}/userAccount/{{billableAccountCode}}",
+							"raw": "{{opencell.url}}/orderManagement/commercialOrders/{{commercialOrderOneId}}/userAccounts/{{billableAccountCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"commercialOrder",
+								"orderManagement",
+								"commercialOrders",
 								"{{commercialOrderOneId}}",
-								"userAccount",
+								"userAccounts",
 								"{{billableAccountCode}}"
 							]
 						}
@@ -5108,17 +5256,18 @@
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/commercialOrder/{{commercialOrderTwoId}}/userAccount/{{billableAccountTwoCode}}",
+							"raw": "{{opencell.url}}/orderManagement/commercialOrders/{{commercialOrderTwoId}}/userAccounts/{{billableAccountTwoCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"commercialOrder",
+								"orderManagement",
+								"commercialOrders",
 								"{{commercialOrderTwoId}}",
-								"userAccount",
+								"userAccounts",
 								"{{billableAccountTwoCode}}"
 							]
 						}
@@ -5160,13 +5309,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/billing/invoicingPlan",
+							"raw": "{{opencell.url}}/billing/invoicingPlans",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"billing",
-								"invoicingPlan"
+								"invoicingPlans"
 							]
 						}
 					},
@@ -5207,13 +5356,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/billing/invoicingPlanItem",
+							"raw": "{{opencell.url}}/billing/invoicingPlanItems",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"billing",
-								"invoicingPlanItem"
+								"invoicingPlanItems"
 							]
 						}
 					},
@@ -5254,13 +5403,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/billing/invoicingPlanItem",
+							"raw": "{{opencell.url}}/billing/invoicingPlanItems",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
 								"billing",
-								"invoicingPlanItem"
+								"invoicingPlanItems"
 							]
 						}
 					},
@@ -5289,7 +5438,7 @@
 						}
 					],
 					"request": {
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -5301,14 +5450,15 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/commercialOrder/{{commercialOrderOneId}}/invoicingPlan/{{invoicePlanCode}}",
+							"raw": "{{opencell.url}}/orderManagement/commercialOrders/{{commercialOrderOneId}}/invoicingPlans/{{invoicePlanCode}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"commercialOrder",
+								"orderManagement",
+								"commercialOrders",
 								"{{commercialOrderOneId}}",
-								"invoicingPlan",
+								"invoicingPlans",
 								"{{invoicePlanCode}}"
 							]
 						}
@@ -5345,12 +5495,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/commercialOrder",
+							"raw": "{{opencell.url}}/orderManagement/commercialOrders",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"commercialOrder"
+								"orderManagement",
+								"commercialOrders"
 							]
 						}
 					},
@@ -5386,12 +5537,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/commercialOrder",
+							"raw": "{{opencell.url}}/orderManagement/commercialOrders",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"commercialOrder"
+								"orderManagement",
+								"commercialOrders"
 							]
 						}
 					},
@@ -5427,12 +5579,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{opencell.url}}/commercialOrder",
+							"raw": "{{opencell.url}}/orderManagement/commercialOrders",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"commercialOrder"
+								"orderManagement",
+								"commercialOrders"
 							]
 						}
 					},
@@ -5550,7 +5703,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"setTimeout(function(){}, 60000);"
+									"setTimeout(function(){}, 15000);"
 								],
 								"type": "text/javascript"
 							}
@@ -5622,14 +5775,15 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/commercialOrder/validateOrder/{{commercialOrderTwoId}}",
+							"raw": "{{opencell.url}}/orderManagement/commercialOrders/{{commercialOrderTwoId}}/orderValidation",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"commercialOrder",
-								"validateOrder",
-								"{{commercialOrderTwoId}}"
+								"orderManagement",
+								"commercialOrders",
+								"{{commercialOrderTwoId}}",
+								"orderValidation"
 							]
 						}
 					},
@@ -5656,12 +5810,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/commercialOrder/{{orderTwoNumber}}",
+							"raw": "{{opencell.url}}/orderManagement/commercialOrders/{{orderTwoNumber}}",
 							"host": [
 								"{{opencell.url}}"
 							],
 							"path": [
-								"commercialOrder",
+								"orderManagement",
+								"commercialOrders",
 								"{{orderTwoNumber}}"
 							]
 						}
@@ -5804,6 +5959,10 @@
 		{
 			"key": "accountingArticleCode",
 			"value": "ACCOUNTING_ARTICLE"
+		},
+		{
+			"key": "discountPlanCode",
+			"value": "TEST_DISCOUNT_PLAN"
 		},
 		{
 			"key": "engagementColumnCode",
@@ -6016,6 +6175,10 @@
 		{
 			"key": "mediaTwoId",
 			"value": "2"
+		},
+		{
+			"key": "orderOfferId",
+			"value": "5"
 		}
 	]
 }
