@@ -4837,20 +4837,54 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoiceLines;
     }
 
+    /**
+     * Creates invoices and their aggregates - IN new transaction
+     *
+     * @param entityToInvoice entity to be billed
+     * @param billingRun billing run
+     * @param filter invoice line filter
+     * @param invoiceDate date of invoice
+     * @param firstTransactionDate date of first transaction
+     * @param lastTransactionDate date of last transaction
+     * @param minAmountForAccounts Check if min amount is enabled in any account level
+     * @param isDraft Is this a draft invoice
+     * @param automaticInvoiceCheck automatic invoice check
+     * @return A list of created invoices
+     * @throws BusinessException business exception
+     */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<Invoice> createAggregatesAndInvoiceWithILInNewTransaction(IBillableEntity entityToInvoice,
-                                                                          BillingRun billingRun, Filter filter, Date invoiceDate, Date firstTransactionDate,
-                                                                          Date lastTransactionDate, MinAmountForAccounts minAmountForAccounts,
+                                                                          BillingRun billingRun, Filter filter,
+                                                                          Date invoiceDate, Date firstTransactionDate,
+                                                                          Date lastTransactionDate,
+                                                                          MinAmountForAccounts minAmountForAccounts,
                                                                           boolean isDraft, boolean automaticInvoiceCheck) throws BusinessException {
         return createAggregatesAndInvoiceWithIL(entityToInvoice, billingRun, filter,
                 invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft, automaticInvoiceCheck);
     }
 
+    /**
+     * Creates invoices and their aggregates
+     *
+     * @param entityToInvoice entity to be billed
+     * @param billingRun billing run
+     * @param filter invoice line filter
+     * @param invoiceDate date of invoice
+     * @param firstTransactionDate date of first transaction
+     * @param lastTransactionDate date of last transaction
+     * @param minAmountForAccounts Check if min amount is enabled in any account level
+     * @param isDraft Is this a draft invoice
+     * @param automaticInvoiceCheck automatic invoice check
+     * @return A list of created invoices
+     * @throws BusinessException business exception
+     */
     public List<Invoice> createAggregatesAndInvoiceWithIL(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter,
                                                           Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate,
-                                                          MinAmountForAccounts minAmountForAccounts, boolean isDraft, boolean automaticInvoiceCheck) throws BusinessException {
-        log.debug("Will create invoice and aggregates for {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
+                                                          MinAmountForAccounts minAmountForAccounts, boolean isDraft,
+                                                          boolean automaticInvoiceCheck) throws BusinessException {
+        log.debug("Will create invoice and aggregates for {}/{}",
+                entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
 
         if (billingRun == null) {
             if (invoiceDate == null) {

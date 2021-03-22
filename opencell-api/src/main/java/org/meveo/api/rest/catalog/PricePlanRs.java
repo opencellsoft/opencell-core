@@ -240,7 +240,7 @@ public interface PricePlanRs extends IBaseRs {
      * @param pricePlanMatrixVersion
      * @return
      */
-    @PATCH
+    @PUT
     @Path("/pricePlanMatrixVersion/{pricePlanMatrixCode}/{pricePlanMatrixVersion}")
     @Operation(summary = "update the price plan version status",
             tags = { "Price Plan" },

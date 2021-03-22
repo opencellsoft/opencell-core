@@ -66,7 +66,7 @@ public interface CommercialOrderRs {
 	    })
 	public Response update(CommercialOrderDto orderDto);
 
-	@PATCH
+	@PUT
 	@Path("/{commercialOrderId}/userAccounts/{userAccountCode}")
 	@Operation(summary = "update commercial order user account",
 			tags = { "Order management" },
@@ -78,7 +78,7 @@ public interface CommercialOrderRs {
 			})
 	Response updateUserAccount(@Parameter(required = true) @PathParam("commercialOrderId") Long commercialOrderId, @Parameter(required = true) @PathParam("userAccountCode") String userAccountCode);
 
-	@PATCH
+	@PUT
 	@Path("/{commercialOrderId}/invoicingPlans/{invoicingPlanCode}")
 	@Operation(summary = "update commercial order invoicing plan",
 			tags = { "Order management" },
@@ -103,7 +103,7 @@ public interface CommercialOrderRs {
 	public Response delete(@Parameter(required = true) @PathParam("orderId") Long orderId);
 	
 
-	@PATCH
+	@PUT
 	@Path("/{orderId}/status/{statusTarget}")
 	@Operation(summary = "update status for order",
 	    tags = { "Order management" },

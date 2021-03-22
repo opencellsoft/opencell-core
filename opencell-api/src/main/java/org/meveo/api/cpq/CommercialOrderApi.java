@@ -473,9 +473,9 @@ public class CommercialOrderApi extends BaseApi {
 	public CommercialOrderDto validateOrder(CommercialOrder order, boolean orderCompleted) {
 		ParamBean paramBean = ParamBean.getInstance();
 		String sellerCode = order.getBillingAccount().getCustomerAccount().getCustomer().getSeller().getCode();
-		String quoteScriptCode = paramBean.getProperty("seller." + sellerCode + ".orderValidationScript", "");
-		if (!StringUtils.isBlank(quoteScriptCode)) {
-			ScriptInstance scriptInstance = scriptInstanceService.findByCode(quoteScriptCode);
+		String orderScriptCode = paramBean.getProperty("seller." + sellerCode + ".orderValidationScript", "");
+		if (!StringUtils.isBlank(orderScriptCode)) {
+			ScriptInstance scriptInstance = scriptInstanceService.findByCode(orderScriptCode);
 			if (scriptInstance != null) {
 				String orderValidationProcess = scriptInstance.getCode();
 				ScriptInterface script = scriptInstanceService.getScriptInstance(orderValidationProcess);
@@ -489,7 +489,7 @@ public class CommercialOrderApi extends BaseApi {
 				} else
 					throw new BusinessException("No script interface found with code: " + orderValidationProcess);
 			} else
-				throw new EntityDoesNotExistsException(ScriptInstance.class, quoteScriptCode);
+				throw new EntityDoesNotExistsException(ScriptInstance.class, orderScriptCode);
 		}
 		CommercialOrder commercialOrder = commercialOrderService.validateOrder(order, orderCompleted);
 		return new CommercialOrderDto(commercialOrder);

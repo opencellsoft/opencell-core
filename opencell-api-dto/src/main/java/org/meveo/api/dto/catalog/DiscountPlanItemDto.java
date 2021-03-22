@@ -123,9 +123,9 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 	
 
     /** The accountingArticle */
-    @XmlElementWrapper(name = "accountingArticleCodes")
-    @XmlElement(name = "accountingArticleCodes")
-    protected Set<String> accountingArticleCodes = new HashSet<String>();
+    @XmlElementWrapper(name = "targetAccountingArticleCodes")
+    @XmlElement(name = "targetAccountingArticleCodes")
+    protected Set<String> targetAccountingArticleCodes = new HashSet<String>();
 
 	/**
      * pricePlanMatrix code
@@ -168,7 +168,7 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 		this.discountValueEL = discountPlanItem.getDiscountValueEL();
 		this.discountValueElSpark = discountPlanItem.getDiscountValueElSpark();
 		this.pricePlanMatrixCode=discountPlanItem.getPricePlanMatrix()!=null?discountPlanItem.getPricePlanMatrix().getCode():null;
-		 this.accountingArticleCodes = discountPlanItem.getTargetAccountingArticle()
+		 this.targetAccountingArticleCodes = discountPlanItem.getTargetAccountingArticle()
                  .stream()
                  .map(accountingArticle -> accountingArticle.getCode())
                  .collect(Collectors.toSet());
@@ -407,12 +407,14 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 		this.pricePlanMatrixCode = pricePlanMatrixCode;
 	}
 
-	public Set<String> getAccountingArticleCodes() {
-		return accountingArticleCodes;
+
+
+	public Set<String> getTargetAccountingArticleCodes() {
+		return targetAccountingArticleCodes;
 	}
 
-	public void setAccountingArticleCodes(Set<String> accountingArticleCodes) {
-		this.accountingArticleCodes = accountingArticleCodes;
+	public void setTargetAccountingArticleCodes(Set<String> targetAccountingArticleCodes) {
+		this.targetAccountingArticleCodes = targetAccountingArticleCodes;
 	}
 
 	public String getExpressionEl() {
