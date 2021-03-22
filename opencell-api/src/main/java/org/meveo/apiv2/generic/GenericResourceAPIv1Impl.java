@@ -40,8 +40,6 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String METHOD_DELETE = "/";
 
     private static final String FORWARD_SLASH = "/";
-    private static final String BLANK_SPACE = " ";
-    private static final String BLANK_SPACE_ENCODED = "%20";
     private static final String QUERY_PARAM_SEPARATOR = "?";
     private static final String QUERY_PARAM_VALUE_SEPARATOR = "=";
     private static final String PAIR_QUERY_PARAM_SEPARATOR = "&";
@@ -104,7 +102,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
                 for( String aKey : queryParamsMap.keySet() ){
                     queryParams.append( aKey + QUERY_PARAM_VALUE_SEPARATOR
-                            + queryParamsMap.get( aKey ).get(0).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED )
+                            + queryParamsMap.get( aKey ).get(0).replace( GenericPagingAndFilteringUtils.BLANK_SPACE, GenericPagingAndFilteringUtils.BLANK_SPACE_ENCODED )
                             + PAIR_QUERY_PARAM_SEPARATOR );
                 }
 
@@ -116,11 +114,15 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/catalog/unitOfMeasure" ) || pathIBaseRS.equals( "/contact" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
-                            + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
+                            + queryParams.substring( 0, queryParams.length() - 1 )
+                            .replace( GenericPagingAndFilteringUtils.BLANK_SPACE, GenericPagingAndFilteringUtils.BLANK_SPACE_ENCODED )
+                            .replace( GenericPagingAndFilteringUtils.QUOTE, GenericPagingAndFilteringUtils.QUOTE_ENCODED ) );
                 else
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL
-                            + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
+                            + queryParams.substring( 0, queryParams.length() - 1 )
+                            .replace( GenericPagingAndFilteringUtils.BLANK_SPACE, GenericPagingAndFilteringUtils.BLANK_SPACE_ENCODED )
+                            .replace( GenericPagingAndFilteringUtils.QUOTE, GenericPagingAndFilteringUtils.QUOTE_ENCODED ) );
             }
             else {
                 if ( pathIBaseRS.equals( "/catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
@@ -260,7 +262,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
         for( String aKey : queryParamsMap.keySet() ){
             queryParams.append( aKey + QUERY_PARAM_VALUE_SEPARATOR
-                    + queryParamsMap.get( aKey ).get(0).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED )
+                    + queryParamsMap.get( aKey ).get(0).replace( GenericPagingAndFilteringUtils.BLANK_SPACE, GenericPagingAndFilteringUtils.BLANK_SPACE_ENCODED )
                     + PAIR_QUERY_PARAM_SEPARATOR );
         }
 
