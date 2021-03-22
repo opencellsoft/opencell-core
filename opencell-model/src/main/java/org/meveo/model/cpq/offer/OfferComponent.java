@@ -53,13 +53,13 @@ public class OfferComponent extends BaseEntity {
 	
 
     @Column(name = "quantity_min")
-	private Integer quantityMin = 0;
+	private Integer quantityMin;
 
     @Column(name = "quantity_max")
-	private Integer quantityMax = 0;
+	private Integer quantityMax;
 
     @Column(name = "quantity_default")
-	private Integer quantityDefault = 0;
+	private Integer quantityDefault;
 
 	/**
 	 *  list of tag associated to offer component

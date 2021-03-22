@@ -43,11 +43,11 @@ public class OfferProductsDto extends BaseEntityDto {
 	
 	private boolean display = Boolean.TRUE;
 	
-	private Integer quantityMin = 0;
+	private Integer quantityMin;
 
-	private Integer quantityMax = 0;
+	private Integer quantityMax;
 
-	private Integer quantityDefault = 0;
+	private Integer quantityDefault;
     
     /**
      * Instantiates a new Offer Component dto.
