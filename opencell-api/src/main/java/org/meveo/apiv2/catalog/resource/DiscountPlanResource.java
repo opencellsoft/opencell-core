@@ -66,6 +66,15 @@ public interface DiscountPlanResource {
     Response update(@Parameter(description = "The id here is the database primary key of the record to update", required = true) @PathParam("id") Long id,
             @Parameter(description = "dto the json representation of the object", required = true) String dto);
 
+    @PUT
+    @Path("/{id}/expiration")
+    @Operation(summary = "Force Expiration the discount plan by giving it's Id", tags = {
+            "Discount Plans" }, description = "specify record id, and as body, the list of the fields to update", responses = {
+            @ApiResponse(responseCode = "200", description = "resource successfully updated but not content exposed except the hypermedia"),
+            @ApiResponse(responseCode = "404", description = "baseEntityObject not found", content = @Content(schema = @Schema(implementation = ApiException.class))),
+            @ApiResponse(responseCode = "400", description = "bad request when input not well formed") })
+    Response expire(@Parameter(description = "The id here is the database primary key of the record to update", required = true) @PathParam("id") Long id);
+
     @DELETE
     @Path("/{id}")
     @Operation(summary = "Delete a resource by giving it's Id", tags = {
