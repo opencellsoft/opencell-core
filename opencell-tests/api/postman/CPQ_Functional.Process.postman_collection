@@ -4452,6 +4452,125 @@
 					"response": []
 				},
 				{
+					"name": "Create The Discount Plan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"{{discountPlanCode}}\",\r\n  \"description\": \"discount plan test description\",  \r\n  \"startDate\": \"2021-01-01\",\r\n  \"endDate\": \"2021-12-01\",\r\n  \"status\":\"DRAFT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/catalog/discountPlans",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"catalog",
+								"discountPlans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create The Discount Plan Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{discountPlanCode}}\",\r\n    \"discountPlan\": {\r\n        \"id\": 1\r\n    },\r\n    \"discountValue\": 10.000000000000,\r\n    \"discountPlanItemType\": \"PERCENTAGE\",\r\n    \"accountingArticle\": {\r\n        \"id\": 2\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/catalog/discountPlans/1/discountPlanItems",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"catalog",
+								"discountPlans",
+								"1",
+								"discountPlanItems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activate The Discount Plan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"{{discountPlanCode}}\",\r\n  \"status\":\"ACTIVE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/discountPlan/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"discountPlan",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create Monthly Quote Offer",
 					"event": [
 						{
@@ -4469,7 +4588,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 24\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttributeTwo}}\",\r\n            \"stringValue\": \"Monthly\",\r\n            \"doubleValue\": 24,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"discountPlanCode\":\"{{discountPlanCode}}\",\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 24\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttributeTwo}}\",\r\n            \"stringValue\": \"Monthly\",\r\n            \"doubleValue\": 24,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4508,7 +4627,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountTwoCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Annually\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 12\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttributeTwo}}\",\r\n            \"stringValue\": \"Annually\",\r\n            \"doubleValue\": 12,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountTwoCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"discountPlanCode\":\"{{discountPlanCode}}\",\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Annually\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 12\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttributeTwo}}\",\r\n            \"stringValue\": \"Annually\",\r\n            \"doubleValue\": 12,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -5024,46 +5143,6 @@
 								"quoteVersions",
 								"{{QuoteVersion}}",
 								"orderPlacement"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create The Order Offer",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"commercialOrderId\": {{commercialOrderOneId}},\r\n  \"offerTemplateCode\": \"{{offerTemplateCode}}\",\r\n  \"orderProducts\": [\r\n    {\r\n      \"commercialOrderId\": {{commercialOrderOneId}},\r\n      \"productVersion\": {{productOneVersion}},\r\n      \"productCode\": \"{{productOneCode}}\",\r\n      \"quantity\": 1,\r\n      \"orderAttributes\": [\r\n        {\r\n          \"commercialOrderId\": {{commercialOrderOneId}},\r\n          \"orderAttributeCode\": \"{{billingCycleAttribute}}\",\r\n          \"stringValue\": \"Monthly\",\r\n          \"dateValue\": \"2021-03-12\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"orderAttributes\": [\r\n    {\r\n      \"commercialOrderId\": {{commercialOrderOneId}},\r\n      \"orderAttributeCode\": \"{{billingCycleAttribute}}\",\r\n      \"stringValue\": \"Monthly\",\r\n      \"dateValue\": \"2021-03-12\"\r\n    }\r\n  ]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{opencell.url}}/orderManagement/commercialOrders/orderOffer/create",
-							"host": [
-								"{{opencell.url}}"
-							],
-							"path": [
-								"orderManagement",
-								"commercialOrders",
-								"orderOffer",
-								"create"
 							]
 						}
 					},
@@ -5880,6 +5959,10 @@
 		{
 			"key": "accountingArticleCode",
 			"value": "ACCOUNTING_ARTICLE"
+		},
+		{
+			"key": "discountPlanCode",
+			"value": "TEST_DISCOUNT_PLAN"
 		},
 		{
 			"key": "engagementColumnCode",
