@@ -1048,8 +1048,9 @@ public class CpqQuoteApi extends BaseApi {
                     	 List<QuotePrice> quotePrices=discountCalculator(quotePrice, quoteVersion.getQuote().getDiscountPlan(),quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(), quoteVersion.getQuote().getQuoteDate());
                          pricesDTO.addAll(populateToDTO(quotePrices));
                     }
-                    return quotePrice;
-                });
+                    return pricesDTO;
+                }).collect(Collectors.toList());
+         
          
       
         GetQuoteVersionDtoResponse response = new GetQuoteVersionDtoResponse(quoteVersion, true, true, true,true);
