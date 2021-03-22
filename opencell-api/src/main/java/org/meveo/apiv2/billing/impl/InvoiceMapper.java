@@ -1,5 +1,7 @@
 package org.meveo.apiv2.billing.impl;
 
+import java.util.stream.Collectors;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.models.ImmutableResource;
@@ -22,6 +24,7 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 					.tradingCountry(buildById(entity.getTradingCountry()))
 					.tradingLanguage(buildById(entity.getTradingLanguage())).quote(buildById(entity.getQuote()))
 					.paymentMethod(buildById(entity.getPaymentMethod()))
+					.listLinkedInvoices(entity.getLinkedInvoices() == null ? null : entity.getLinkedInvoices().stream().map(x->x.getId()).collect(Collectors.toList()))
 					.subscription(buildById(entity.getSubscription())).order(buildById(entity.getOrder())).build();
 		} catch (Exception e) {
 			throw new BusinessException(e);
