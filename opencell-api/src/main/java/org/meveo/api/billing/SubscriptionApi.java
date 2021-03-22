@@ -2420,7 +2420,7 @@ public class SubscriptionApi extends BaseApi {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void subscribeAndInstantiateProducts(SubscriptionAndProductsToInstantiateDto postData) throws MeveoApiException, BusinessException {
+    public Subscription subscribeAndInstantiateProducts(SubscriptionAndProductsToInstantiateDto postData) throws MeveoApiException, BusinessException {
     	Subscription subscription=create(postData);
     	
     	if(!StringUtils.isBlank(postData.getProductToInstantiateDto())) {
@@ -2430,6 +2430,7 @@ public class SubscriptionApi extends BaseApi {
     				processProduct(subscription,productDto);
     		}
     	}
+    	return subscription;
     }
     
     
