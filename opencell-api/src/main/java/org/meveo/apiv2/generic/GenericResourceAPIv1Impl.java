@@ -113,7 +113,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/billing/wallet" ) || pathIBaseRS.equals( "/catalog/offerTemplate")
                     || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" )
                     || pathIBaseRS.equals( "/billing/accountingCode" ) || pathIBaseRS.equals( "/calendar" )
-                    || pathIBaseRS.equals( "/catalog/unitOfMeasure" ) )
+                    || pathIBaseRS.equals( "/catalog/unitOfMeasure" ) || pathIBaseRS.equals( "/contact" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
@@ -128,7 +128,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/billing/wallet" ) || pathIBaseRS.equals( "/catalog/offerTemplate" )
                     || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" )
                     || pathIBaseRS.equals( "/billing/accountingCode" ) || pathIBaseRS.equals( "/calendar" )
-                    || pathIBaseRS.equals( "/catalog/unitOfMeasure" ) )
+                    || pathIBaseRS.equals( "/catalog/unitOfMeasure" ) || pathIBaseRS.equals( "/contact" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
@@ -157,7 +157,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "jobInstanceCode=" + entityCode);
             }
             // special handle for jobReport
-            else if ( pathIBaseRS.equals("/job/jobReport") ) {
+            else if ( pathIBaseRS.equals("/job/jobReport") || pathIBaseRS.equals("/contact") ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "code=" + entityCode);
             }
