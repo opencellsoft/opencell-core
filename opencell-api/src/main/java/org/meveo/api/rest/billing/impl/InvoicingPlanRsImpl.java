@@ -45,9 +45,8 @@ public class InvoicingPlanRsImpl extends BaseRs implements InvoicingPlanRs {
 	@Override
 	public ActionStatus create(InvoicingPlanDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
 		try {
-			invoicingPlanApi.create(postData);
+			result.setEntityId(invoicingPlanApi.create(postData).getId());
 		} catch (Exception e) {
 			processException(e, result);
 		}
@@ -69,16 +68,15 @@ public class InvoicingPlanRsImpl extends BaseRs implements InvoicingPlanRs {
 	}
 
 	@Override
-	public ActionStatus update(InvoicingPlanDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+	public Response update(InvoicingPlanDto postData) {
+		InvoicingPlanResponseDto result = new InvoicingPlanResponseDto();
 
 		try {
-			invoicingPlanApi.update(postData);
-		} catch (Exception e) {
-			processException(e, result);
+			result.setInvoicingPlanDto(invoicingPlanApi.updateInvoicingPlan(postData));
+			return Response.ok(result).build();
+		} catch (MeveoApiException e) {
+			return errorResponse(e, result.getActionStatus());
 		}
-
-		return result;
 	}
 
 	@Override
@@ -92,19 +90,6 @@ public class InvoicingPlanRsImpl extends BaseRs implements InvoicingPlanRs {
 		}
 
 		return result;
-	}
-
-	@Override
-	public Response createOrUpdate(InvoicingPlanDto postData) {
-		InvoicingPlanResponseDto result = new InvoicingPlanResponseDto();
-
-		try {
-			result.setInvoicingPlanDto(new InvoicingPlanDto(invoicingPlanApi.createOrUpdate(postData), null));
-			return Response.ok(result).build();
-		} catch (MeveoApiException e) {
-		    return errorResponse(e, result.getActionStatus());
-		}
-
 	}
 
 	@Override

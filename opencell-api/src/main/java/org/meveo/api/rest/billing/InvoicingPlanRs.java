@@ -79,7 +79,7 @@ public interface InvoicingPlanRs extends IBaseRs {
 	 */
 	@PUT
 	@Path("/")
-	ActionStatus update(InvoicingPlanDto postData);
+	Response update(InvoicingPlanDto postData);
 
 	/**
 	 * Remove an existing invoicingPlan with a given code
@@ -91,13 +91,4 @@ public interface InvoicingPlanRs extends IBaseRs {
 	@Path("/{invoicingPlanCode}")
 	public ActionStatus remove(@PathParam("invoicingPlanCode") String invoicingPlanCode);
 
-	/**
-	 * Create new or update an existing invoicingPlan
-	 * 
-	 * @param postData The invoicingPlan's data
-	 * @return Request processing status
-	 */
-	@POST
-	@Path("/createOrUpdate")
-	Response createOrUpdate(InvoicingPlanDto postData);
 }
