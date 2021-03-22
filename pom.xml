@@ -927,5 +927,33 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <!-- To create CSV of third party libs, Use the command : mvn license:aggregate-add-third-party -P create-license-list-->
+            <id>create-license-list</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <version>2.0.0</version>
+                        <configuration>
+                            <useMissingFile>true</useMissingFile>
+                            <!-- assuming that the file is in the same dir as the pom.xml -->
+                            <fileTemplate>${basedir}/license-as-csv.ftl</fileTemplate>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>first</id>
+                                <goals>
+                                    <goal>aggregate-add-third-party</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>

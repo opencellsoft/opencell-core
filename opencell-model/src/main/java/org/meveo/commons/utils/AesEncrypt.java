@@ -19,6 +19,7 @@
 package org.meveo.commons.utils;
 
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -27,6 +28,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
@@ -41,7 +43,7 @@ public class AesEncrypt {
 	 * @throws NoSuchPaddingException
 	 */
 	public AesEncrypt() throws NoSuchAlgorithmException, NoSuchPaddingException {
-		this.cipher = Cipher.getInstance("AES");
+		this.cipher = Cipher.getInstance("AES/GCM/NoPadding");
 	}
 
 	/**
@@ -76,10 +78,11 @@ public class AesEncrypt {
 	 * @throws IllegalBlockSizeException
 	 * @throws BadPaddingException
 	 * @throws InvalidKeyException
+	 * @throws InvalidAlgorithmParameterException 
 	 */
 	public String encryptText(String msg, SecretKey key) throws NoSuchAlgorithmException, NoSuchPaddingException,
-			UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-		this.cipher.init(Cipher.ENCRYPT_MODE, key);
+			UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
+		this.cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(new byte[16]));
 		return Base64.encodeBase64String(cipher.doFinal(msg.getBytes("UTF-8")));
 	}
 
@@ -92,10 +95,11 @@ public class AesEncrypt {
 	 * @throws UnsupportedEncodingException
 	 * @throws IllegalBlockSizeException
 	 * @throws BadPaddingException
+	 * @throws InvalidAlgorithmParameterException 
 	 */
 	public String decryptText(String msg, SecretKey key)
-			throws InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
-		this.cipher.init(Cipher.DECRYPT_MODE, key);
+			throws InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+		this.cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(new byte[16]));
 		return new String(cipher.doFinal(Base64.decodeBase64(msg)), "UTF-8");
 	}
 
