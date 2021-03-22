@@ -50,6 +50,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
@@ -180,6 +181,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	 * The value is incremented every time the discountPlan is instantiated on any Billing Account, Subscription, or ProductInstance
 	 */
 	@Column(name = "used_quantity")
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private Long usedQuantity = 0L;
 
 	/**

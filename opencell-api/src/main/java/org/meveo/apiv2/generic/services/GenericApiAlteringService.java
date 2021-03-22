@@ -40,7 +40,7 @@ import static org.meveo.apiv2.generic.ValidationUtils.checkId;
 public class GenericApiAlteringService {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericApiAlteringService.class);
-    private List<String> forbiddenFieldsToUpdate = Arrays.asList("id", "uuid", "auditable");
+    private List<String> forbiddenFieldsToUpdate = new ArrayList<>(Arrays.asList("id", "uuid", "auditable"));
     private BaseApi baseApi = (BaseApi) EjbUtils.getServiceInterface(TaxApi.class.getSimpleName());
 
     @Inject
@@ -265,7 +265,12 @@ public class GenericApiAlteringService {
         if (forbiddenFieldsToUpdate == null) {
             forbiddenFieldsToUpdate = new ArrayList<>();
         }
-        forbiddenFieldsToUpdate.addAll(fields);
+        for (String field : fields) {
+            if (!forbiddenFieldsToUpdate.contains(field)) {
+                forbiddenFieldsToUpdate.add(field);
+            }
+        }
+
     }
 
 }
