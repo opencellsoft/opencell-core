@@ -225,6 +225,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	public Response create(InvoiceInput input) {
 		Invoice invoiceEntity = invoiceApiService.create(input);
 		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, invoiceEntity.getId()).build())
+				.entity(toResourceInvoiceWithLink(invoiceMapper.toResource(invoiceEntity)))
                 .build();
 	}
 	
@@ -232,6 +233,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	public Response update(Long id, org.meveo.apiv2.billing.Invoice invoiceRessource) {
 		final Invoice invoice = findInvoiceEligibleToUpdate(id);
 		invoiceApiService.update(invoice, invoiceMapper.toEntity(invoiceRessource), invoiceRessource);
+		
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
                 .build();
 	}
