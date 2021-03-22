@@ -24,6 +24,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -83,7 +84,7 @@ public class DiscountPlanApiService {
 		}
 		JsonGenericMapper jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().build();
 		genericApiAlteringService.refreshEntityWithDotFields(jsonGenericMapper.readValue(dto, Map.class), entity, jsonGenericMapper.parseFromJson(dto, entity.getClass()));
-		if (!entity.getStatus().equals(DiscountPlanStatusEnum.ACTIVE) || !entity.getStatus().equals(DiscountPlanStatusEnum.DRAFT)) {
+		if (!(entity.getStatus().equals(DiscountPlanStatusEnum.ACTIVE) || entity.getStatus().equals(DiscountPlanStatusEnum.DRAFT))) {
 			throw new BusinessException("only ACTIVE status can be accepted");
 		}
 		IEntity updatedEntity = persistenceDelegate.update(DiscountPlan.class, entity);
@@ -134,5 +135,17 @@ public class DiscountPlanApiService {
 		persistenceDelegate.remove(DiscountPlanItem.class, entity);
 		return JsonGenericMapper.Builder.getBuilder().withNestedEntities(null).build().toJson(null, DiscountPlanItem.class, entity);
 
+	}
+
+	public Optional<Long> expire(Long id) {
+		checkId(id);
+		DiscountPlan entity = (DiscountPlan) PersistenceServiceHelper.getPersistenceService(DiscountPlan.class).findById(id);
+		if (entity == null) {
+			throw new NotFoundException("entity DiscountPlan with id " + id + " not found.");
+		}
+		entity.setStatus(DiscountPlanStatusEnum.EXPIRED);
+		entity.setStatusDate(new Date());
+		IEntity updatedEntity = persistenceDelegate.update(DiscountPlan.class, entity);
+		return Optional.ofNullable((Long) updatedEntity.getId());
 	}
 }

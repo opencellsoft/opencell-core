@@ -73,6 +73,12 @@ public class DiscountPlanResourceImpl implements DiscountPlanResource {
     }
 
     @Override
+    public Response expire(Long id) {
+        return discountPlanApiService.expire(id)
+                .map(entityId -> Response.ok().entity(Collections.singletonMap("id", entityId)).links(buildSingleResourceLink(ENTITY_NAME, id)).build()).get();
+    }
+
+    @Override
     public Response delete(Long id) {
         return Response.ok().entity(discountPlanApiService.delete(id)).links(buildSingleResourceLink(ENTITY_NAME, id)).build();
     }
