@@ -150,6 +150,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
         fillUpRestfulEntitiesList( "/calendar", aListRestfulEntities );
         fillUpRestfulEntitiesList( "/catalog/unitOfMeasure", aListRestfulEntities );
         fillUpRestfulEntitiesList( "/contact", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/taxCategory", aListRestfulEntities );
 
         for ( Class<? extends IBaseRs> aClass : classes ) {
             if ( aClass.isInterface() ) {
@@ -470,17 +471,17 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/countryIso" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/countriesIso", ((Path) anAnnotation).value() );
 
-                            fillUpRestfulEntitiesList( "countryIso", aListRestfulEntities );
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/currencyIso" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/currenciesIso", ((Path) anAnnotation).value() );
 
-                            fillUpRestfulEntitiesList( "currencyIso", aListRestfulEntities );
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/languageIso" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/languagesIso", ((Path) anAnnotation).value() );
 
-                            fillUpRestfulEntitiesList( "languageIso", aListRestfulEntities );
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(

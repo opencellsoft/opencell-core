@@ -117,7 +117,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/billing/accountingCode" ) || pathIBaseRS.equals( "/calendar" )
                     || pathIBaseRS.equals( "/catalog/unitOfMeasure" ) || pathIBaseRS.equals( "/contact" )
                     || pathIBaseRS.equals( "/countryIso" ) || pathIBaseRS.equals( "/currencyIso" )
-                    || pathIBaseRS.equals( "/languageIso" ) || pathIBaseRS.equals( "/tax" ) )
+                    || pathIBaseRS.equals( "/languageIso" ) || pathIBaseRS.equals( "/tax" )
+                    || pathIBaseRS.equals( "/taxCategory" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 )
@@ -138,7 +139,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/billing/accountingCode" ) || pathIBaseRS.equals( "/calendar" )
                     || pathIBaseRS.equals( "/catalog/unitOfMeasure" ) || pathIBaseRS.equals( "/contact" )
                     || pathIBaseRS.equals( "/countryIso" ) || pathIBaseRS.equals( "/currencyIso" )
-                    || pathIBaseRS.equals( "/languageIso" ) || pathIBaseRS.equals( "/tax" ) )
+                    || pathIBaseRS.equals( "/languageIso" ) || pathIBaseRS.equals( "/tax" )
+                    || pathIBaseRS.equals( "/taxCategory" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
@@ -166,8 +168,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "jobInstanceCode=" + entityCode);
             }
-            // special handle for jobReport
-            else if ( pathIBaseRS.equals("/job/jobReport") || pathIBaseRS.equals("/contact") ) {
+            // special handle for jobReport, contact and taxCategory
+            else if ( pathIBaseRS.equals("/job/jobReport") || pathIBaseRS.equals("/contact") || pathIBaseRS.equals("/taxCategory") ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "code=" + entityCode);
             }
