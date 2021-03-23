@@ -14,8 +14,8 @@ public class EntityReferencePostgreSQLJsonSearchFunction implements SQLFunction 
 	@Override
 	public String render(Type firstArgumentType, List args, SessionFactoryImplementor factory) throws QueryException {
 
-		if (args.size() != 4) {
-			throw new IllegalArgumentException("The function parseJson for Entity must be passed 4 argument");
+		if (args.size() < 3) {
+			throw new IllegalArgumentException("The function parseJson for Entity must be passed 3 argument");
 		}
 		String columnName = (String) args.get(0);
 		String fieldName = (String) args.get(1);
