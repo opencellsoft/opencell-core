@@ -119,7 +119,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/countryIso" ) || pathIBaseRS.equals( "/currencyIso" )
                     || pathIBaseRS.equals( "/languageIso" ) || pathIBaseRS.equals( "/tax" )
                     || pathIBaseRS.equals( "/taxCategory" ) || pathIBaseRS.equals( "/taxClass" )
-                    || pathIBaseRS.equals( "/taxMapping" ) )
+                    || pathIBaseRS.equals( "/taxMapping" ) || pathIBaseRS.equals( "/payment/creditCategory" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 )
@@ -142,7 +142,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/countryIso" ) || pathIBaseRS.equals( "/currencyIso" )
                     || pathIBaseRS.equals( "/languageIso" ) || pathIBaseRS.equals( "/tax" )
                     || pathIBaseRS.equals( "/taxCategory" ) || pathIBaseRS.equals( "/taxClass" )
-                    || pathIBaseRS.equals( "/taxMapping" ) )
+                    || pathIBaseRS.equals( "/taxMapping" ) || pathIBaseRS.equals( "/payment/creditCategory" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else

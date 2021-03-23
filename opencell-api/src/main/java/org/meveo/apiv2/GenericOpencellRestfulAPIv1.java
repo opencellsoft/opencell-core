@@ -153,6 +153,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
         fillUpRestfulEntitiesList( "/taxCategory", aListRestfulEntities );
         fillUpRestfulEntitiesList( "/taxClass", aListRestfulEntities );
         fillUpRestfulEntitiesList( "/taxMapping", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/payment/creditCategory", aListRestfulEntities );
 
         for ( Class<? extends IBaseRs> aClass : classes ) {
             if ( aClass.isInterface() ) {
