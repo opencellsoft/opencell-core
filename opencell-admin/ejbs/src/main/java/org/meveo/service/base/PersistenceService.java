@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,6 +47,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.metamodel.Attribute;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -79,7 +81,6 @@ import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
@@ -590,7 +591,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public List<E> list(PaginationConfiguration config) {
         Map<String, Object> filters = config.getFilters();
-
+		if(isAnEmptyListInFilter(filters)) {
+			return new ArrayList<E>();
+		}
+		
         if (filters != null && filters.containsKey("$FILTER")) {
             Filter filter = (Filter) filters.get("$FILTER");
             FilteredQueryBuilder queryBuilder = (FilteredQueryBuilder) getQuery(config);
@@ -605,10 +609,61 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
+	 * @param filters
+	 * @return
+	 */
+	private boolean isAnEmptyListInFilter(Map<String, Object> filters) {
+		return filters == null ? false : filters.values().stream()
+				.filter(v -> v != null && v instanceof Collection && ((Collection) v).isEmpty()).findAny().isPresent();
+	}
+
+	/**
+     * Used to retrieve related fields of an entity
+     */
+    @SuppressWarnings({ "unchecked" })
+    public Map<String, Object> mapRelatedFields() {
+        final Class<? extends E> productClass = getEntityClass();
+        StringBuilder queryString = new StringBuilder( "from CustomFieldTemplate" );
+        Query query = getEntityManager().createQuery(queryString.toString());
+        List<CustomFieldTemplate> resultsCFTmpl = query.getResultList();
+        Map<String, Object> mapAttributeAndType = new HashMap<>();
+        Set<Attribute<? super E, ?>> setAttributes = ((Session) getEntityManager().getDelegate()).getSessionFactory()
+                .getMetamodel().managedType( getEntityClass() ).getAttributes();
+        for ( Attribute<? super E, ?> att : setAttributes ) {
+            if ( att.getJavaType() != CustomFieldValues.class ) {
+                Map<String,String> mapStringAndType = new HashMap();
+                mapStringAndType.put( "fullQualifiedTypeName", att.getJavaType().toString() );
+                mapStringAndType.put( "shortTypeName", att.getJavaType().getSimpleName() );
+                mapAttributeAndType.put( att.getName(), mapStringAndType);
+            }
+            else {
+                if ( !resultsCFTmpl.isEmpty() ) {
+                    Map<String, Map<String, String>> mapCFValues = new HashMap();
+                    for ( CustomFieldTemplate aCFTmpl : resultsCFTmpl ) {
+                        if ( aCFTmpl.getAppliesTo().equals( productClass.getSimpleName() ) ) {
+                            Map<String,String> mapStringAndType = new HashMap();
+                            mapStringAndType.put( "fullQualifiedTypeName", aCFTmpl.getFieldType().getDataClass().toString() );
+                            mapStringAndType.put( "shortTypeName", aCFTmpl.getFieldType().getDataClass().getSimpleName() );
+                            mapCFValues.put( aCFTmpl.getCode(), mapStringAndType );
+                        }
+                    }
+                    if ( ! mapCFValues.isEmpty() )
+                        mapAttributeAndType.put( att.getName(), mapCFValues );
+                }
+            }
+        }
+        return mapAttributeAndType;
+    }
+
+    /**
      * @see org.meveo.service.base.local.IPersistenceService#count(PaginationConfiguration config)
      */
     @Override
     public long count(PaginationConfiguration config) {
+        Map<String, Object> filters = config.getFilters();
+		if(isAnEmptyListInFilter(filters)) {
+			return 0;
+		} 
         List<String> fetchFields = config.getFetchFields();
         config.setFetchFields(null);
         QueryBuilder queryBuilder = getQuery(config);
@@ -1136,11 +1191,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     String[] fields = fieldInfo.length == 1 ? fieldInfo : Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
                     String transformedFilter = fieldInfo.length == 1 ? "" : fieldInfo[0] + " ";
                     for (String fieldName : fields) {
-                        String castType = getCustomFieldDataType(value.getClass());
-                        String functionPrefix = castType.split("\\(")[0];
-                        transformedFilter = transformedFilter + functionPrefix + FROM_JSON_FUNCTION + fieldName + "," + type + "," + castType + ") ";
+                        String searchFunction = getCustomFieldSearchFunctionPrefix(value.getClass());
+                        transformedFilter = transformedFilter + searchFunction + FROM_JSON_FUNCTION + fieldName + "," + type + ") ";
                     }
-                    cftFilters.put(transformedFilter, value);
+                    if (value instanceof EntityReferenceWrapper) {
+                        cftFilters.put(transformedFilter, ((EntityReferenceWrapper) value).getCode());
+                    } else {
+                        cftFilters.put(transformedFilter, value);
+                    }
                 }
             }
         }
@@ -1366,18 +1424,25 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return query.getResultList();
     }
 
-    public String getCustomFieldDataType(Class<?> clazz) {
+    /**
+     * Get a xxxFromJson function prefix based on a data type
+     * 
+     * @param clazz Data type
+     * @return xxxFromJson function prefix - xxx part
+     */
+    private String getCustomFieldSearchFunctionPrefix(Class<?> clazz) {
         if (clazz == Date.class) {
             return "timestamp";
+        } else if (clazz == EntityReferenceWrapper.class) {
+            return "entity";
+        } else if (clazz == Double.class) {
+            return "numeric";
+        } else if (clazz == Long.class) {
+            return "bigInt";
+        } else if (clazz == Boolean.class) {
+            return "boolean";
+        } else {
+            return "varchar";
         }
-        if (clazz == Double.class || clazz == EntityReferenceWrapper.class || clazz == Long.class || clazz == Boolean.class) {
-            for (CustomFieldTypeEnum cft : CustomFieldTypeEnum.values()) {
-                if (cft.getDataClass().equals(clazz)) {
-                    String dataType = cft.getDataType();
-                    return dataType.split(" ")[0];
-                }
-            }
-        }
-        return "varchar";
     }
 }
