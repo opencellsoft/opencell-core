@@ -18,18 +18,16 @@
 
 package org.meveo.api.tax;
 
-import java.util.function.BiFunction;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.tax.TaxMappingListResponseDto;
 import org.meveo.api.dto.tax.TaxMappingDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
@@ -43,6 +41,11 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.tax.TaxCategoryService;
 import org.meveo.service.tax.TaxClassService;
 import org.meveo.service.tax.TaxMappingService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * CRUD API for {@link TaxMapping} - Tax mapping
@@ -98,6 +101,20 @@ public class TaxMappingApi extends BaseCrudApi<TaxMapping, TaxMappingDto> {
         entityService.create(entity);
 
         return entity;
+    }
+
+    public TaxMappingListResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        TaxMappingListResponseDto result = new TaxMappingListResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<TaxMapping> taxMappings = entityService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (taxMappings != null) {
+            for (TaxMapping taxMapping : taxMappings) {
+                result.getDtos().add(new TaxMappingDto(taxMapping, null));
+            }
+        }
+
+        return result;
     }
 
     /**

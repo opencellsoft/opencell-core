@@ -118,7 +118,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/catalog/unitOfMeasure" ) || pathIBaseRS.equals( "/contact" )
                     || pathIBaseRS.equals( "/countryIso" ) || pathIBaseRS.equals( "/currencyIso" )
                     || pathIBaseRS.equals( "/languageIso" ) || pathIBaseRS.equals( "/tax" )
-                    || pathIBaseRS.equals( "/taxCategory" ) || pathIBaseRS.equals( "/taxClass" ) )
+                    || pathIBaseRS.equals( "/taxCategory" ) || pathIBaseRS.equals( "/taxClass" )
+                    || pathIBaseRS.equals( "/taxMapping" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 )
@@ -140,7 +141,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/catalog/unitOfMeasure" ) || pathIBaseRS.equals( "/contact" )
                     || pathIBaseRS.equals( "/countryIso" ) || pathIBaseRS.equals( "/currencyIso" )
                     || pathIBaseRS.equals( "/languageIso" ) || pathIBaseRS.equals( "/tax" )
-                    || pathIBaseRS.equals( "/taxCategory" ) || pathIBaseRS.equals( "/taxClass" ) )
+                    || pathIBaseRS.equals( "/taxCategory" ) || pathIBaseRS.equals( "/taxClass" )
+                    || pathIBaseRS.equals( "/taxMapping" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
@@ -198,6 +200,11 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             else if ( pathIBaseRS.equals("/languageIso") ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "languageCode=" + entityCode);
+            }
+            // special handle for taxMapping
+            else if ( pathIBaseRS.equals("/taxMapping") ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "id=" + entityCode);
             }
             else {
                 entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
@@ -411,6 +418,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
             if ( aDto instanceof BusinessEntityDto )
                 ((BusinessEntityDto) aDto).setCode(entityCode);
+            else if ( aDto instanceof IEntityDto )
+                ((IEntityDto) aDto).setId(Long.parseLong(entityCode));
             else if ( aDto instanceof AccountHierarchyDto )
                 ((AccountHierarchyDto) aDto).setCustomerCode(entityCode);
             else if ( aDto instanceof AccessDto )
