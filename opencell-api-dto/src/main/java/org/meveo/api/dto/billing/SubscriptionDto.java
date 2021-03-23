@@ -101,7 +101,7 @@ public class SubscriptionDto extends BusinessEntityDto {
      * Use in find.
      */
     @XmlElementWrapper(name = "productInstances")
-    @XmlElement(name = "productInstance")
+    @XmlElement(name = "productInstances")
     private List<ProductInstanceDto> productInstances = new ArrayList<ProductInstanceDto>();
 
     /** The termination reason. */
