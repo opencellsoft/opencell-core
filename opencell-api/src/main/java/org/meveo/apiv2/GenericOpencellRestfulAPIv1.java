@@ -472,6 +472,16 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             fillUpRestfulEntitiesList( "countryIso", aListRestfulEntities );
                         }
+                        else if ( ((Path) anAnnotation).value().equals( "/currencyIso" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/currenciesIso", ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( "currencyIso", aListRestfulEntities );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/languageIso" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/languagesIso", ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( "languageIso", aListRestfulEntities );
+                        }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
                                     API_VERSION + Inflector.getInstance().pluralize( ((Path) anAnnotation).value() ),
