@@ -235,7 +235,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     	
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
         	final Date terminationDate = subscription.getTerminationDate();
-			if((terminationDate!=null && terminationDate.before(chargeDate))) {
+			if(terminationDate!=null && terminationDate.compareTo(chargeDate)<=0) {
 				throw new BusinessException("Subscription is already RESILIATED or CANCELLED.");
 			}
         }
