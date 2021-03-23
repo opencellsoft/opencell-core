@@ -62,8 +62,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Interface that must implement all jobs that are managed in meveo application by the JobService bean. The implementation must be a session EJB and must statically register itself
- * (through its jndi name) to the JobService.
+ * Interface that must implement all jobs that are managed in meveo application by the JobService bean. The implementation must be a session EJB and must statically register itself (through its jndi name) to the
+ * JobService.
  * 
  * @author seb
  * @author Abdellatif BARI
@@ -185,7 +185,7 @@ public abstract class Job {
                 return executionResult.getStatus();
 
             } catch (Exception e) {
-                log.error("Failed to execute a job {} of type {}", jobInstance.getJobTemplate(), jobInstance.getJobTemplate(), e);
+                log.error("Failed to execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate(), e);
                 executionResult.setStatus(JobExecutionResultStatusEnum.FAILED);
                 executionResult.addReport(e.getMessage());
                 executionResult.close();
@@ -218,8 +218,8 @@ public abstract class Job {
      * 
      * @param result Job execution results
      * @param jobInstance Job instance to execute
-     * @return In case job consist of various stages and each stage tracks its own progress, the Job execution result of the last stage will be returned. In case of a single stage,
-     *         a Job execution results that was passed as argument to the method and method return value will be the same.
+     * @return In case job consist of various stages and each stage tracks its own progress, the Job execution result of the last stage will be returned. In case of a single stage, a Job execution results that was passed
+     *         as argument to the method and method return value will be the same.
      * @throws BusinessException Any exception
      */
     protected abstract JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException;

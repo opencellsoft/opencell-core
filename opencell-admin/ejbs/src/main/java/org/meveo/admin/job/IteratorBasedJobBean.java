@@ -166,6 +166,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             });
         }
 
+        boolean wasCanceled = false;
+
         try {
             int i = 0;
             for (Runnable task : tasks) {
@@ -208,7 +210,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
             }
 
-            boolean wasCanceled = wasKilled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
+            wasCanceled = wasKilled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
 
             // Check if there are any more data to process and mark job as completed if there are none
             if (!wasCanceled && hasMoreFunction != null) {
@@ -220,7 +222,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             jobExecutionResult.registerError(e.getMessage());
         }
 
-        if (finalizeFunction != null) {
+        if (!wasCanceled && finalizeFunction != null) {
             finalizeFunction.accept(jobExecutionResult);
         }
     }

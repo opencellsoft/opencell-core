@@ -97,12 +97,14 @@ public class ScriptingJobBean extends IteratorBasedJobBean<ScriptInterface> {
             script = scriptInstanceService.getScriptInstance(scriptCode);
             script.init(context);
 
+            return Optional.of(new SynchronizedIterator<ScriptInterface>(Arrays.asList(script)));
+
         } catch (Exception e) {
             log.error("Exception on initialization of script {}", scriptCode, e);
             jobExecutionResult.addErrorReport("Error in " + scriptCode + " init :" + e.getMessage());
         }
 
-        return Optional.of(new SynchronizedIterator<ScriptInterface>(Arrays.asList(script)));
+        return Optional.empty();
     }
 
     /**
@@ -143,7 +145,9 @@ public class ScriptingJobBean extends IteratorBasedJobBean<ScriptInterface> {
      */
     private void finalizeScript(JobExecutionResultImpl result) {
         try {
-            script.terminate(context);
+            if (script != null) {
+                script.terminate(context);
+            }
 
         } catch (Exception e) {
             log.error("Exception on finalize script", e);

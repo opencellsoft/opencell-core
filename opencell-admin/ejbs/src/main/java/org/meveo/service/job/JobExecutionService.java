@@ -58,7 +58,6 @@ public class JobExecutionService extends BaseService {
      */
     private static final int MAX_TIMES_TO_RUN_INCOMPLETE_JOB = 50;
 
-
     /**
      * job instance service.
      */
@@ -79,8 +78,7 @@ public class JobExecutionService extends BaseService {
     private JobExecutionResultService jobExecutionResultService;
 
     /**
-     * Execute a job and return job execution result ID to be able to query execution results later. Job execution result is persisted right away, while job is executed
-     * asynchronously.
+     * Execute a job and return job execution result ID to be able to query execution results later. Job execution result is persisted right away, while job is executed asynchronously.
      * 
      * @param jobInstance Job instance to execute.
      * @param params Parameters (currently not used)
@@ -177,17 +175,22 @@ public class JobExecutionService extends BaseService {
         log.info("Requested to stop job {}  of type {} by force", jobInstance, jobInstance.getJobTemplate());
 
         jobCacheContainerProvider.markJobToStop(jobInstance);
-        
+
         List<Future> futures = jobCacheContainerProvider.getJobExecutionThreads(jobInstance.getId());
-        int i = 1;
-        for (Future future : futures) {
-            boolean canceled = future.cancel(true);
-            if (canceled) {
-                log.info("Job {} thread #{} was canceled by force", jobInstance, i);
-            } else {
-                log.error("Failed to cancel a job {} thread #{}", jobInstance, i);
+        if (futures.isEmpty()) {
+            jobCacheContainerProvider.markJobAsFinished(jobInstance);
+            
+        } else {
+            int i = 1;
+            for (Future future : futures) {
+                boolean canceled = future.cancel(true);
+                if (canceled) {
+                    log.info("Job {} thread #{} was canceled by force", jobInstance, i);
+                } else {
+                    log.error("Failed to cancel a job {} thread #{}", jobInstance, i);
+                }
+                i++;
             }
-            i++;
         }
         // TODO AKK add publishing to other cluster nodes to cancel job execution
     }
