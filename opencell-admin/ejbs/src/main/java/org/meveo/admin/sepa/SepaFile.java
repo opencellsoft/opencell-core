@@ -518,7 +518,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 
 		PartyIdentification32 debtor = new PartyIdentification32();
 		directDebitTransactionInformation.setDbtr(debtor);
-		debtor.setNm(ca.getDescription());
+		debtor.setNm(ca.getDescriptionOrCode());
 
 		CashAccount16 debtorAccount = new CashAccount16();
 		directDebitTransactionInformation.setDbtrAcct(debtorAccount);
