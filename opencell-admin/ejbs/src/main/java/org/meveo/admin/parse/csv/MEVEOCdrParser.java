@@ -99,8 +99,8 @@ public class MEVEOCdrParser implements ICdrParser {
 
                 } else {
 
-                    DateTimeFormatter formatter1 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                    DateTimeFormatter formatter2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    DateTimeFormatter formatter1 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                    DateTimeFormatter formatter2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZ");
 
                     try {
                         DateTime dt = formatter1.parseDateTime(fields[0]);
