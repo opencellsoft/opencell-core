@@ -98,6 +98,7 @@ public class ReportExtractDto extends EnableBusinessDto {
         setDescription(reportExtract.getDescription());
         setEndDate(reportExtract.getEndDate());
         setFilenameFormat(reportExtract.getFilenameFormat());
+        setFileSeparator(reportExtract.getFileSeparator());
         setParams(reportExtract.getParams());
         setStartDate(reportExtract.getStartDate());
         setScriptType(reportExtract.getScriptType());
