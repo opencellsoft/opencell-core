@@ -60,6 +60,7 @@
 					<hftl:formField label="#{messages['reportExtract.category']}" field="category" />
 					<hftl:formField label="#{messages['reportExtract.outputDir']}" field="outputDir" />
 					<hftl:formField label="#{messages['reportExtract.filenameFormat']}" field="filenameFormat" />
+					<hftl:formField label="#{messages['reportExtract.fileSeparator']}" field="fileSeparator" size="1" maxlength="1"/>
 					<p:outputPanel id="scriptTypeSQL">
 						<hftl:decorateFormField label="#{messages['reportExtract.sqlQuery']}" fieldId="sqlQuery" componentWidth="100" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}">
 			                <pe:codeMirror required="true" id="sqlQuery" theme="eclipse" mode="sql" value="#{reportExtractBean.entity.sqlQuery}" lineNumbers="true" />

@@ -167,6 +167,7 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         reportExtract.setDescription(dto.getDescription());
         reportExtract.setEndDate(dto.getEndDate());
         reportExtract.setFilenameFormat(dto.getFilenameFormat());
+        reportExtract.setFileSeparator(dto.getFileSeparator());
         reportExtract.setParams(dto.getParams());
         reportExtract.setStartDate(dto.getStartDate());
         reportExtract.setScriptType(dto.getScriptType());
