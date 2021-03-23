@@ -43,6 +43,7 @@ import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.quote.QuoteProduct;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -61,6 +62,9 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 	
 	@Inject
     private ChargeInstanceService<ChargeInstance> chargeInstanceService;
+	
+	@Inject
+	PricePlanMatrixService pricePlanMatrixService;
 	
 	private final static BigDecimal HUNDRED = new BigDecimal("100");
 
@@ -121,7 +125,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
      * @param discountPlanItem Discount configuration
      * @return A discount percent (0-100)
      */
-    public BigDecimal getDiscountAmountOrPercent(Invoice invoice, SubCategoryInvoiceAgregate scAggregate, BigDecimal amount, DiscountPlanItem discountPlanItem) {
+    public BigDecimal getDiscountAmountOrPercent(Invoice invoice, SubCategoryInvoiceAgregate scAggregate, BigDecimal amount, DiscountPlanItem discountPlanItem,QuoteProduct quoteProduct) {
         BigDecimal computedDiscount = discountPlanItem.getDiscountValue();
 
         final String dpValueEL = discountPlanItem.getDiscountValueEL();
@@ -134,9 +138,8 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         }else if(discountPlanItem.getPricePlanMatrix()!=null){ 
         	PricePlanMatrix pricePlan = discountPlanItem.getPricePlanMatrix();
         	PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlan.getCode());
-        	ChargeInstance chargeInstance = chargeInstanceService.findByCode(pricePlan.getEventCode());
-        	if(ppmVersion!=null&&chargeInstance!=null) {
-        		PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, chargeInstance);
+        	if(ppmVersion!=null && quoteProduct!=null) {
+        		PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixService.loadPrices(ppmVersion, quoteProduct.getProductVersion().getProduct().getCode(),quoteProduct.getQuoteAttributes());
         		computedDiscount=pricePlanMatrixLine.getPricetWithoutTax();
         	} 
         		
@@ -174,7 +177,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         return result;
     }
 
-    public BigDecimal getDiscountAmount(BillingAccount billingAccount, BigDecimal amountToApplyDiscountOn,boolean isEnterprise,DiscountPlanItem discountPlanItem)
+    public BigDecimal getDiscountAmount(BillingAccount billingAccount, BigDecimal amountToApplyDiscountOn,boolean isEnterprise,DiscountPlanItem discountPlanItem,QuoteProduct quoteProduct)
             throws BusinessException {
 
 
@@ -183,7 +186,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
         }
 
 
-        BigDecimal discountValue = getDiscountAmountOrPercent(null, null, amountToApplyDiscountOn, discountPlanItem);
+        BigDecimal discountValue = getDiscountAmountOrPercent(null, null, amountToApplyDiscountOn, discountPlanItem,quoteProduct);
 
         if (BigDecimal.ZERO.compareTo(discountValue) == 0) {
             return BigDecimal.ZERO;

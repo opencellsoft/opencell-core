@@ -1398,7 +1398,7 @@ public class CpqQuoteApi extends BaseApi {
 			 Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
 			 for(DiscountPlanItem discountPlanItem:discountItems) {
 				 AccountingArticle discountAccountingArticle=discountPlanItem.getAccountingArticle();
-				 discountAmount=discountAmount.add(discountPlanItemService.getDiscountAmount(billingAccount, amountWithoutTax, isEnterprise, discountPlanItem));
+				 discountAmount=discountAmount.add(discountPlanItemService.getDiscountAmount(billingAccount, amountWithoutTax, isEnterprise, discountPlanItem,quoteproduct));
 				 if(discountAmount!=null && discountAmount.abs().compareTo(BigDecimal.ZERO)>0) {
 					  String accountingArticleCode = discountAccountingArticle.getCode();
 			            if (!quoteArticleLines.containsKey(accountingArticleCode)) {

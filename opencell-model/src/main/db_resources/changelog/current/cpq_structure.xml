@@ -4140,5 +4140,16 @@ public class OrderAdvancement extends ModuleScript {
 								 initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoicing_plan"/>
 	</changeSet>
+	
+	<changeSet id="#20210322_377" author="TarikFA.">
+		<addColumn tableName="cpq_attribute">
+			<column name="default_value" type="varchar(255)"></column>
+		</addColumn>
+		<addColumn tableName="cpq_offer_component">
+			<column name="quantity_min" type="int4" />
+			<column name="quantity_max" type="int4" />
+			<column name="quantity_default" type="int4" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

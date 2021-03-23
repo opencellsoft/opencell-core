@@ -41,6 +41,7 @@ import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.service.api.EntityToDtoConverter;
@@ -749,5 +750,13 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
                             .map(attributeInstance -> (AttributeValue)attributeInstance)
                             .collect(Collectors.toSet());
         return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, serviceCode);
+    }
+    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, String productCode,List<QuoteAttribute> quoteAttributes) {
+        
+        Set<AttributeValue> attributeValues = quoteAttributes
+                            .stream()
+                            .map(attributeInstance -> (AttributeValue)attributeInstance)
+                            .collect(Collectors.toSet());
+        return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, productCode);
     }
 }
