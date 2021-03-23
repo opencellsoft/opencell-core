@@ -31,6 +31,7 @@ import org.meveo.api.dto.response.catalog.GetDiscountPlansResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.DiscountPlanRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.catalog.DiscountPlan;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -44,7 +45,9 @@ public class DiscountPlanRsImpl extends BaseRs implements DiscountPlanRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            discountPlanApi.create(postData);
+        	DiscountPlan discountPlan = discountPlanApi.create(postData);
+        	result.setEntityId(discountPlan.getId());
+        	result.setEntityCode(discountPlan.getCode());
         } catch (Exception e) {
             processException(e, result);
         }
