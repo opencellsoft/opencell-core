@@ -486,6 +486,23 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
+                        else if ( ((Path) anAnnotation).value().equals( "/payment" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/payment/paymentMethods",
+                                    ((Path) anAnnotation).value() + "/paymentMethod" );
+
+                            // Processing for request get list of paymentMethods based on a customerAccountCode
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/payment\\/customerAccounts\\/" + CODE_REGEX + "\\/paymentMethods" ) ,
+                                    ((Path) anAnnotation).value() + "/paymentMethod/findByCustomerAccount" );
+
+                            // Processing for enable and disable a paymentMethod
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/payment\\/paymentMethods\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() + "/paymentMethod" );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/payment\\/paymentMethods\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() + "/paymentMethod" );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
+                        }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
                                     API_VERSION + Inflector.getInstance().pluralize( ((Path) anAnnotation).value() ),

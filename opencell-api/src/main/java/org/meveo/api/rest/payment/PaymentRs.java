@@ -18,46 +18,18 @@
 
 package org.meveo.api.rest.payment;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.PaymentActionStatus;
-import org.meveo.api.dto.payment.CardPaymentMethodDto;
-import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
-import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
-import org.meveo.api.dto.payment.DDRequestBuilderDto;
-import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
-import org.meveo.api.dto.payment.PaymentDto;
-import org.meveo.api.dto.payment.PaymentGatewayDto;
-import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
-import org.meveo.api.dto.payment.PaymentGatewayRumSequenceDto;
-import org.meveo.api.dto.payment.PaymentHistoriesDto;
-import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
-import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.payment.PaymentMethodTokenDto;
-import org.meveo.api.dto.payment.PaymentMethodTokensDto;
-import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
-import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
-import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
-import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
-import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
-import org.meveo.api.dto.payment.PaymentScheduleTemplatesDto;
+import org.meveo.api.dto.payment.*;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.payment.PaymentGatewayRumSequenceResponseDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * The Interface PaymentRs.
@@ -211,7 +183,15 @@ public interface PaymentRs extends IBaseRs {
     @Path("/paymentMethod/list")
     public PaymentMethodTokensDto listPaymentMethodGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
-    
+
+    /**
+     * List paymentMethods matching a given criteria
+     *
+     * @return List of paymentMethods
+     */
+    @GET
+    @Path("/paymentMethod/listGetAll")
+    PaymentMethodTokensDto listGetAll();
     
     /**
      * List Payment Methods matching a customer account
