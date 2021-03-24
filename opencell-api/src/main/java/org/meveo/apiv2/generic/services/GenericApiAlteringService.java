@@ -212,33 +212,41 @@ public class GenericApiAlteringService {
 
     private void writeSingleValueToCFDto(CustomFieldDto customFieldDto, CustomFieldTypeEnum fieldType, Object value) {
         switch (fieldType) {
-            case DATE:
-                customFieldDto.setDateValue(new Date((Long) value));
-                break;
-            case LONG:
-                customFieldDto.setLongValue(Integer.toUnsignedLong((Integer) value));
-                break;
-            case DOUBLE:
-                customFieldDto.setDoubleValue(Double.parseDouble(value.toString()));
-                break;
-            case BOOLEAN:
-                customFieldDto.setBooleanValue((Boolean) value);
-                break;
-            case CHILD_ENTITY:
-            case ENTITY:
+        case DATE:
+            customFieldDto.setDateValue(value == null ? null : new Date((Long) value));
+            break;
+        case LONG:
+            customFieldDto.setLongValue(value == null ? null : Integer.toUnsignedLong((Integer) value));
+            break;
+        case DOUBLE:
+            customFieldDto.setDoubleValue(value == null ? null : Double.parseDouble(value.toString()));
+            break;
+        case BOOLEAN:
+            customFieldDto.setBooleanValue((Boolean) value);
+            break;
+        case CHILD_ENTITY:
+        case ENTITY:
+            if (value == null) {
+                customFieldDto.setEntityReferenceValue(null);
+            } else {
                 Map<String, String> entityRefDto = (Map<String, String>) value;
                 EntityReferenceDto entityReferenceDto = new EntityReferenceDto();
                 entityReferenceDto.setClassname(entityRefDto.get("classname"));
                 entityReferenceDto.setCode(entityRefDto.get("code"));
                 customFieldDto.setEntityReferenceValue(entityReferenceDto);
-                break;
-            case LIST:
-                if(!((List)value).isEmpty()){
-                    customFieldDto.setStringValue((String)  ((Map)((List)value).get(0)).get("value"));
+            }
+            break;
+        case LIST:
+            if (value == null) {
+                customFieldDto.setStringValue(null);
+            } else {
+                if (!((List) value).isEmpty()) {
+                    customFieldDto.setStringValue((String) ((Map) ((List) value).get(0)).get("value"));
                 }
-                break;
-            default:
-                customFieldDto.setStringValue((String) value);
+            }
+            break;
+        default:
+            customFieldDto.setStringValue((String) value);
                 break;
         }
     }
