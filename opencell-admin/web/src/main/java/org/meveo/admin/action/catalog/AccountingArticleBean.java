@@ -65,10 +65,18 @@ public class AccountingArticleBean extends BaseBean<AccountingArticle> {
 		return accountingArticleService;
 	}
 	
+	/**
+	 * 
+	 * @return selected accounting article
+	 */
 	public AccountingArticle getSelectedAccountingArticle() {
 		return selectedAccountingArticle;
 	}
-
+	
+	/**
+	 * set selected accounting article
+	 * @param selectedAccountingArticle
+	 */
 	public void setSelectedAccountingArticle(AccountingArticle selectedAccountingArticle) {
 		this.selectedAccountingArticle = selectedAccountingArticle;
 	}

@@ -375,43 +375,83 @@ public class InvoiceConfigurationDto implements Serializable {
                 + ", displayDetail=" + displayDetail + ", displayChargesPeriods=" + displayChargesPeriods + ", displayFreeTransacInInvoice=" + displayFreeTransacInInvoice
                 + ", displayBillingCycle=" + displayBillingCycle + ",displayOrders=" + displayOrders + ",currentInvoiceNb="+currentInvoiceNb+ ",displayWalletOperations="+displayWalletOperations+"]";
     }
-
+    
+    /**
+     * 
+     * @return default invoice sub-category
+     */
 	public String getDefaultInvoiceSubcategoryCode() {
 		return defaultInvoiceSubcategoryCode;
-	}
-
+	} 
+	
+	/**
+	 * set default invoice sub-category
+	 * @param defaultInvoiceSubcategoryCode
+	 */
 	public void setDefaultInvoiceSubcategoryCode(String defaultInvoiceSubcategoryCode) {
 		this.defaultInvoiceSubcategoryCode = defaultInvoiceSubcategoryCode;
 	}
-
+	
+	/**
+	 * 
+	 * @return default generic accounting article
+	 */
 	public String getDefaultGenericArticleCode() {
 		return defaultGenericArticleCode;
 	}
-
+	
+	/**
+	 * set default generic accounting article
+	 * @param defaultGenericArticleCode
+	 */
 	public void setDefaultGenericArticleCode(String defaultGenericArticleCode) {
 		this.defaultGenericArticleCode = defaultGenericArticleCode;
 	}
-
+	
+	/**
+	 * 
+	 * @return default discount accounting article
+	 */
 	public String getDefaultDiscountArticleCode() {
 		return defaultDiscountArticleCode;
 	}
-
+	
+	/**
+	 * set default discount accounting article
+	 * @param defaultDiscountArticleCode
+	 */
 	public void setDefaultDiscountArticleCode(String defaultDiscountArticleCode) {
 		this.defaultDiscountArticleCode = defaultDiscountArticleCode;
 	}
-
+	
+	/**
+	 * 
+	 * @return default advanced payment accounting article
+	 */
 	public String getDefaultAdvancedPaymentArticleCode() {
 		return defaultAdvancedPaymentArticleCode;
 	}
-
+	
+	/**
+	 * set default advanced payment accounting article
+	 * @param defaultAdvancedPaymentArticleCode
+	 */
 	public void setDefaultAdvancedPaymentArticleCode(String defaultAdvancedPaymentArticleCode) {
 		this.defaultAdvancedPaymentArticleCode = defaultAdvancedPaymentArticleCode;
 	}
-
+	
+	/**
+	 * 
+	 * @return default invoice minimum accounting article
+	 */
 	public String getDefaultInvoiceMinimumArticleCode() {
 		return defaultInvoiceMinimumArticleCode;
 	}
-
+	
+	/**
+	 * set default invoice minimum accounting article
+	 * @param defaultInvoiceMinimumArticleCode
+	 */
 	public void setDefaultInvoiceMinimumArticleCode(String defaultInvoiceMinimumArticleCode) {
 		this.defaultInvoiceMinimumArticleCode = defaultInvoiceMinimumArticleCode;
 	}
