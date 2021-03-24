@@ -25,6 +25,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.account.TitleResponseDto;
 import org.meveo.api.dto.response.account.TitlesResponseDto;
+import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.TitleRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -110,10 +111,24 @@ public class TitleRsImpl extends BaseRs implements TitleRs {
     public TitlesResponseDto list() {
         TitlesResponseDto result = new TitlesResponseDto();
 
-        PagingAndFiltering pagingAndFiltering = GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering();
+        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering();
 
         try {
             result = new TitlesResponseDto(titleApi.search(pagingAndFiltering));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public TitlesResponseDto listGetAll() {
+
+        TitlesResponseDto result = new TitlesResponseDto();
+
+        try {
+            result = titleApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
