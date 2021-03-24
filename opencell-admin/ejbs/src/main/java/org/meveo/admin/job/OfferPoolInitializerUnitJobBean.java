@@ -12,6 +12,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
@@ -34,8 +35,7 @@ public class OfferPoolInitializerUnitJobBean {
 
     private static final String CF_POOL_PER_OFFER_MAP = "POOL_PER_OFFER_MAP";
 
-    private static final String SERVICE_TEMPLATE_QUERY = "select ost.serviceTemplate "
-            + "from OfferServiceTemplate ost \n"
+    private static final String SERVICE_TEMPLATE_QUERY = "select ost.serviceTemplate " + "from OfferServiceTemplate ost \n"
             + "where ost.serviceTemplate.code like '%USAGE' and ost.offerTemplate.id=:offerId";
 
     @Inject
@@ -63,25 +63,30 @@ public class OfferPoolInitializerUnitJobBean {
         log.info("Start pool counters initialization for offerId={}, userAccountCode={}", offerId, userAccountCode);
 
         try {
-            List<ServiceTemplate> serviceTemplates = emWrapper.getEntityManager().createQuery(SERVICE_TEMPLATE_QUERY, ServiceTemplate.class).setParameter("offerId", offerId.longValue())
-                .getResultList();
+            List<ServiceTemplate> serviceTemplates = emWrapper.getEntityManager().createQuery(SERVICE_TEMPLATE_QUERY, ServiceTemplate.class)
+                .setParameter("offerId", offerId.longValue()).getResultList();
 
             for (ServiceTemplate serviceTemplate : serviceTemplates) {
 
-                Map<String, Double> poolPerOfferMap = (Map<String, Double>) serviceTemplate.getCfValue(CF_POOL_PER_OFFER_MAP, counterStartDate);
-                if (poolPerOfferMap == null) {
-                    poolPerOfferMap = new HashMap<>();
-                }
+                try {
 
-                if (poolPerOfferMap.get(userAccountCode + "_initial") == null) {
-                    BigDecimal volumePerCard = getVolumePerCard(serviceTemplate);
-                    BigDecimal totalPool = volumePerCard.multiply(new BigDecimal(subCount));
+                    Map<String, Double> poolPerOfferMap = (Map<String, Double>) serviceTemplate.getCfValue(CF_POOL_PER_OFFER_MAP, counterStartDate);
+                    if (poolPerOfferMap == null) {
+                        poolPerOfferMap = new HashMap<>();
+                    }
 
-                    poolPerOfferMap.put(userAccountCode + "_number_of_cards", subCount.doubleValue());
-                    poolPerOfferMap.put(userAccountCode + "_initial", totalPool.doubleValue());
-                    poolPerOfferMap.put(userAccountCode + "_value", totalPool.doubleValue());
-                    cfiService.setCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, poolPerOfferMap, counterStartDate);
-                    serviceTemplateService.update(serviceTemplate);
+                    if (poolPerOfferMap.get(userAccountCode + "_initial") == null) {
+                        BigDecimal volumePerCard = getVolumePerCard(serviceTemplate);
+                        BigDecimal totalPool = volumePerCard.multiply(new BigDecimal(subCount));
+
+                        poolPerOfferMap.put(userAccountCode + "_number_of_cards", subCount.doubleValue());
+                        poolPerOfferMap.put(userAccountCode + "_initial", totalPool.doubleValue());
+                        poolPerOfferMap.put(userAccountCode + "_value", totalPool.doubleValue());
+                        cfiService.setCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, poolPerOfferMap, counterStartDate);
+                        serviceTemplateService.update(serviceTemplate);
+                    }
+                } catch (Exception e) {
+                    new BusinessException("Service=" + serviceTemplate.getCode(), e);
                 }
             }
 
@@ -89,7 +94,7 @@ public class OfferPoolInitializerUnitJobBean {
 
         } catch (Exception e) {
             log.error("Error on initializing counters for offerId={}, userAccountCode={}", offerId, userAccountCode, e);
-            result.registerError("Error on initializing counters for offerId=" + offerId + ", userAccountCode=" + userAccountCode + ": " + e.getMessage());
+            result.registerError("Error on initializing counters for offerId=" + offerId + ", userAccountCode=" + userAccountCode + " => " + e.getCause() + ":" + e.getMessage());
         }
     }
 
