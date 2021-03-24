@@ -19,6 +19,7 @@ package org.meveo.admin.job;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -128,8 +129,8 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 
 		try {
-			Long nbRuns = new Long(1);
-			Long waitingMillis = new Long(0);
+			Long nbRuns;
+			Long waitingMillis;
 
 			try {
 				nbRuns = (Long) this.getParamOrCFValue(jobInstance, "SepaJob_nbRuns");
@@ -139,10 +140,11 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 				}
 
 			} catch (Exception e) {
-				nbRuns = new Long(1);
-				waitingMillis = new Long(0);
-				log.warn("Cant get nbRuns and waitingMillis customFields for " + jobInstance.getCode(), e.getMessage());
+				nbRuns = Long.valueOf(1);
+				waitingMillis = Long.valueOf(0);
+				log.warn("Cant get nbRuns and waitingMillis customFields for {}", jobInstance.getCode(), e.getMessage());
 			}
+			
 			DDRequestBuilder ddRequestBuilder = null;
 			Seller seller = null;
 			String ddRequestBuilderCode = null;
@@ -166,7 +168,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder, seller, paymentOrRefundEnum);
 
 			if (CollectionUtils.isNotEmpty(ddrequestOps)) {
-				log.info("ddrequestOps found:" + ddrequestOps.size());				
+				log.info("ddrequestOps found: {}", ddrequestOps.size());				
 
 			} else {
 				final String msg = "ddrequestOps IS EMPTY !";
@@ -176,6 +178,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 				return;
 			}
 
+			
 			for (DDRequestLotOp ddrequestLotOp : ddrequestOps) {
 				if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
 					break;
@@ -193,20 +196,14 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 						this.updateOperationDateRange(ddrequestLotOp, dateRangeScript);
 					}
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
-						log.info("start filterAoToPayOrRefund...");
 						List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
-						log.info("end filterAoToPayOrRefund listAoToPay.size:" + listAoToPay.size());
 						DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
-						log.info("end createDDRquestLot");
 						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
 							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
 							dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider);
-							log.info("end generateDDRquestLotFile");
 							result.addReport(ddRequestLOT.getRejectedCause());
-							
 							if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
 								dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);
-								log.info("end createPaymentsOrRefundsForDDRequestLot");
 								if (isEmpty(ddRequestLOT.getRejectedCause())) {
 									result.registerSucces();
 								}
@@ -239,6 +236,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					result.registerError(ddrequestLotOp.getId(), e.getMessage());
 					result.addReport("ddrequestLotOp id : " + ddrequestLotOp.getId() + " RejectReason : " + e.getMessage());
 				}
+				
 			}
 		} catch (Exception e) {
 			log.error("Failed to sepa direct debit", e);
@@ -287,9 +285,11 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 				scriptInstance = scriptInstanceService.retrieveIfNotManaged(scriptInstance);
 				final String scriptCode = scriptInstance.getCode();
 				if (scriptCode != null) {
-					log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
+					if (log.isDebugEnabled()) {
+						log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
+					}
 					ScriptInterface si = scriptInstanceService.getScriptInstance(scriptCode);
-					if (si != null && si instanceof DateRangeScript) {
+					if (si instanceof DateRangeScript) {
 						return (DateRangeScript) si;
 					}
 				}
@@ -323,9 +323,8 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
             newDDRequestLotOp.setFilter(ddrequestLotOp.getFilter());
             newDDRequestLotOp.setDdrequestOp(ddrequestLotOp.getDdrequestOp());
 
-            newDDRequestLotOp.setGeneratePaymentLines(ddrequestLotOp.isGeneratePaymentLines());
+			newDDRequestLotOp.setGeneratePaymentLines(ddrequestLotOp.isGeneratePaymentLines());
             newDDRequestLotOp.setPaymentStatus(ddrequestLotOp.getPaymentStatus());
-            
             this.dDRequestLotOpService.create(newDDRequestLotOp);
         } catch (Exception e) {
             log.error(" error on createNewDdrequestLotOp {} ", e.getMessage(), e);
@@ -369,9 +368,11 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
             }
 
             if (aoFilterScriptCode != null) {
-                log.debug(" looking for ScriptInstance with code :  [{}] ", aoFilterScriptCode);
-                ScriptInterface si = scriptInstanceService.getScriptInstance(aoFilterScriptCode);
-                if (si != null && si instanceof AccountOperationFilterScript) {
+            	if (log.isDebugEnabled()) {
+            		log.debug(" looking for ScriptInstance with code :  [{}] ", aoFilterScriptCode);
+            	}
+            	ScriptInterface si = scriptInstanceService.getScriptInstance(aoFilterScriptCode);
+                if (si instanceof AccountOperationFilterScript) {
                     return (AccountOperationFilterScript) si;
                 }
             }

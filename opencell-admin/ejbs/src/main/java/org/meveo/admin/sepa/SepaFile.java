@@ -267,7 +267,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 			outputDir = outputDir + File.separator + additionalOutputDir;
 			outputDir = outputDir.replaceAll(DOUBLE_POINT, EMPTY_STRING);
 
-			log.info("DDRequest output directory=" + outputDir);
+			log.info("DDRequest output directory= {}", outputDir);
 			File dir = new File(outputDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
@@ -325,7 +325,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		if (operationsByFile == null || operationsByFile <= 0) {
 			operationsByFile = (long) ddrequestItems.size();
 		}
-		int filesToGenerate = ddrequestItems.size() == 0 ? 0 : (int) Math.ceil(ddrequestItems.size() / (double) operationsByFile);
+		int filesToGenerate = ddrequestItems.isEmpty() ? 0 : (int) Math.ceil(ddrequestItems.size() / (double) operationsByFile);
 		int opToGenerateByFile;
 		int generatedOps = 0;
 		int opWithErrorsByFile;
@@ -348,8 +348,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 					if (!ddrequestItem.hasError()) {
 						addSctPaymentInformation(message, ddrequestItem, appProvider);
 					} else {
-						log.error("ddrequestItem with id = " + ddrequestItem.getId() + " has Errors :" + ddrequestItem.getErrorMsg() + ". The file " + fileName
-								+ " will not contain all payment informations.");
+						log.error("ddrequestItem with id = {} has Errors : {} . The file {} will not contain all payment informations.",ddrequestItem.getId(), ddrequestItem.getErrorMsg(),fileName);
 						opWithErrorsByFile++;
 					}
 					opToGenerateByFile++;
@@ -413,7 +412,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	 */
 	private void addPaymentInformation(CustomerDirectDebitInitiationV02 Message, DDRequestItem dDRequestItem, Provider appProvider) throws Exception {
 
-		log.info("addPaymentInformation dDRequestItem id=" + dDRequestItem.getId());
+		log.info("addPaymentInformation dDRequestItem id= {}", dDRequestItem.getId());
 		ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
 		PaymentInstructionInformation4 paymentInformation = new PaymentInstructionInformation4();
 		Message.getPmtInf().add(paymentInformation);
@@ -484,7 +483,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		dDRequestItem = ddRequestItemService.findById(dDRequestItem.getId(), Arrays.asList("accountOperations"));
 		CustomerAccount ca = customerAccountService.findById(dDRequestItem.getAccountOperations().get(0).getCustomerAccount().getId(),Arrays.asList("paymentMethods"));
 		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
-		if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
+		if (!(preferedPaymentMethod instanceof DDPaymentMethod)) {
 			throw new BusinessException("Payment method not valid!");
 		}
 		BankCoordinates bankCoordinates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
@@ -538,7 +537,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	 */
 	private void addSctPaymentInformation(CustomerCreditTransferInitiationV03 message, DDRequestItem ddrequestItem, Provider appProvider) throws Exception {
 
-		log.info("addPaymentInformation dDRequestItem id=" + ddrequestItem.getId());
+		log.info("addPaymentInformation dDRequestItem id= {}", ddrequestItem.getId());
 
 		PaymentInstructionInformation3 paymentInformation = new PaymentInstructionInformation3();
 		message.getPmtInf().add(paymentInformation);
@@ -630,7 +629,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	private void addSctTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation3 paymentInformation) throws Exception {
 		CustomerAccount ca = dDRequestItem.getAccountOperations().get(0).getCustomerAccount();
 		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
-		if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
+		if (!(preferedPaymentMethod instanceof DDPaymentMethod)) {
 			throw new BusinessException("Payment method not valid!");
 		}
 		BankCoordinates bankCoordinates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();

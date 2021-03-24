@@ -110,7 +110,7 @@ public class UnitSepaDirectDebitJobBean {
 	public void execute(JobExecutionResultImpl result, DDRequestItem ddrequestItem, boolean isToMatching, PaymentStatusEnum paymentStatusEnum) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 		ddrequestItem = dDRequestItemService.refreshOrRetrieve(ddrequestItem);
 		DDRequestLOT ddRequestLOT = ddrequestItem.getDdRequestLOT();
-		log.debug("processing DD requestItem id  : " + ddrequestItem.getId());
+		log.debug("processing DD requestItem id  : {}", ddrequestItem.getId());
 		AccountOperation automatedPayment = null;
 		PaymentErrorTypeEnum paymentErrorTypeEnum = null;
 		String errorMsg = null;
@@ -177,8 +177,8 @@ public class UnitSepaDirectDebitJobBean {
 			CustomerAccount customerAccount, String reference, String bankLot, Date depositDate, Date bankCollectionDate, Date dueDate, Date transactionDate,
 			List<AccountOperation> occForMatching, boolean isToMatching, MatchingTypeEnum matchingTypeEnum)
 			throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		log.info("create payment for amount:" + amount + " paymentMethodEnum:" + paymentMethodEnum + " isToMatching:" + isToMatching + "  customerAccount:"
-				+ customerAccount.getCode() + "...");
+		log.info("create payment for amount: {} paymentMethodEnum: {} isToMatching: {} customerAccount: {}", amount , paymentMethodEnum, isToMatching ,
+				customerAccount.getCode());
 
 		ParamBean paramBean = paramBeanFactory.getInstance();
 		String occTemplateCode = null;
