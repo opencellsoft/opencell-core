@@ -24,6 +24,7 @@ import org.meveo.jpa.EntityManagerProvider;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.base.PersistenceService;
 import org.primefaces.model.SortOrder;
 
 import javax.persistence.EntityManager;
@@ -1094,6 +1095,9 @@ public class QueryBuilder {
     }
 
     private String createExplicitInnerJoins(String concatenatedFields) {
+    	if(concatenatedFields.contains(PersistenceService.FROM_JSON_FUNCTION)){
+    		return concatenatedFields;
+    	}
         String alias = this.alias + ".";
         if(concatenatedFields.startsWith(alias)){
             concatenatedFields = concatenatedFields.substring(alias.length());
