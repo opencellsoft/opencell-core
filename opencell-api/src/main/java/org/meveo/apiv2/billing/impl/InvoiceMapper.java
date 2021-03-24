@@ -1,7 +1,9 @@
 package org.meveo.apiv2.billing.impl;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.models.ImmutableResource;
@@ -29,6 +31,13 @@ public class InvoiceMapper extends ResourceMapper<org.meveo.apiv2.billing.Invoic
 		} catch (Exception e) {
 			throw new BusinessException(e);
 		}
+	}
+	
+	public List<org.meveo.apiv2.billing.Invoice> toResources(List<Invoice> invoices) {
+		if(CollectionUtils.isEmpty(invoices)) {
+			return null;
+		}
+		return invoices.stream().map(i->toResource(i)).collect(Collectors.toList());
 	}
 
 	private ImmutableResource buildById(BaseEntity entity) {
