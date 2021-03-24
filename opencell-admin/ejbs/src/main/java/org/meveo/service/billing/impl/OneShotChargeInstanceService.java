@@ -30,6 +30,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingWalletTypeEnum;
@@ -40,6 +41,7 @@ import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionChargeInstance;
+import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -229,6 +231,17 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, ServiceInstance serviceInstance, OneShotChargeTemplate chargeTemplate, String walletCode, Date chargeDate, BigDecimal amoutWithoutTax,
             BigDecimal amoutWithTax, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumberOverride, CustomFieldValues cfValues, boolean applyCharge,
             ChargeApplicationModeEnum chargeMode) throws BusinessException, RatingException {
+    	
+        if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
+        	final Date terminationDate = subscription.getTerminationDate();
+			if(terminationDate!=null && terminationDate.compareTo(chargeDate)<=0) {
+				throw new ValidationException("Subscription "+subscription.getCode()+" is already RESILIATED or CANCELLED.");
+			}
+        }
+        
+        if (chargeDate.before(subscription.getSubscriptionDate())) {
+			throw new ValidationException("Operation date is before subscription date for subscription: "+subscription.getCode());
+        }
 
         if (quantity == null) {
             quantity = BigDecimal.ONE;

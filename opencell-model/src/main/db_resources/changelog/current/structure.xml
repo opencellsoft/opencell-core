@@ -4165,4 +4165,9 @@ END $$;]]>
         <sql>CREATE INDEX rt_br_index ON billing_rated_transaction (billing_run_id) where status='BILLED'</sql>
     </changeSet>
     
+    <changeSet id="#6040_20210323" author="amineTazi">
+        <addColumn tableName="dwh_report_extract">
+            <column name="file_separator" type="varchar(1)" defaultValue=","/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
