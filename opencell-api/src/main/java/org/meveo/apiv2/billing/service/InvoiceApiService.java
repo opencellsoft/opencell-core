@@ -42,9 +42,9 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	@Override
 	public List<Invoice> list(Long offset, Long limit, String sort, String orderBy, String filter) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), null, filter, null, null, null);
-        return invoiceService.list(paginationConfiguration);
+        return invoiceService.listWithlinkedInvoices(paginationConfiguration);
 	}
-
+	
 	@Override
 	public Long getCount(String filter) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(null, null, null, filter, null, null, null);

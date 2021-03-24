@@ -84,6 +84,7 @@ import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.util.PdfWaterMark;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.CategoryInvoiceAgregateDto;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
@@ -4350,7 +4351,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Invoice invoice = new Invoice();
         invoice.setBillingAccount(billingAccount);
         invoice.setSeller(seller);
-        invoice.setInvoiceDate(invoiceRessource.getInvoiceDate());
+        invoice.setInvoiceDate(invoiceRessource.getInvoiceDate()!=null? invoiceRessource.getInvoiceDate() : new Date());
         invoice.setDueDate(invoiceRessource.getDueDate());
         invoice.setDraft(isDraft);
         boolean alreadySent = invoiceRessource.getEmailSentDate() != null;
@@ -5594,6 +5595,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			toUpdate.setCfValues(input.getCfValues());
 		}
 		return update(toUpdate);
+	}
+
+	/**
+	 * @param paginationConfiguration
+	 * @return
+	 */
+	public List<Invoice> listWithlinkedInvoices(PaginationConfiguration paginationConfiguration) {
+		List<String> fetchFields = paginationConfiguration.getFetchFields();
+		if(fetchFields==null) {
+			fetchFields = Arrays.asList("linkedInvoices");
+		} else if(!fetchFields.contains("linkedInvoices")){
+			fetchFields.add("linkedInvoices");
+		}
+		paginationConfiguration.setFetchFields(fetchFields);
+		return list(paginationConfiguration);
 	}
     
 }
