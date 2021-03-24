@@ -30,6 +30,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RatingException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingWalletTypeEnum;
@@ -233,13 +234,13 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     	
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
         	final Date terminationDate = subscription.getTerminationDate();
-			if((terminationDate!=null && terminationDate.before(chargeDate))) {
-				throw new BusinessException("Subscription is already RESILIATED or CANCELLED.");
+			if(terminationDate!=null && terminationDate.compareTo(chargeDate)<=0) {
+				throw new ValidationException("Subscription "+subscription.getCode()+" is already RESILIATED or CANCELLED.");
 			}
         }
         
         if (chargeDate.before(subscription.getSubscriptionDate())) {
-			throw new BusinessException("operation date is before subscription date");
+			throw new ValidationException("Operation date is before subscription date for subscription: "+subscription.getCode());
         }
 
         if (quantity == null) {
