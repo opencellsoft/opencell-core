@@ -129,8 +129,8 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 
 		try {
-			Long nbRuns;
-			Long waitingMillis;
+			Long nbRuns = Long.valueOf(1);
+			Long waitingMillis = Long.valueOf(0);
 
 			try {
 				nbRuns = (Long) this.getParamOrCFValue(jobInstance, "SepaJob_nbRuns");
