@@ -62,6 +62,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
@@ -245,11 +246,15 @@ public class ValueExpressionWrapper {
      * EL expression variable - wallet instance - 'wallet'
      */
     public static final String VAR_WALLET_INSTANCE = "wallet";
-    
+
     /**
      * EL expression variable - cpq product - 'product'
      */
     public static final String VAR_PRODUCT = "product";
+    /**
+     * EL expression variable - cpq product - 'product'
+     */
+    public static final String VAR_CPQ_QUOTE = "quote";
 
     /**
      * Variables in EL expression
@@ -294,6 +299,7 @@ public class ValueExpressionWrapper {
         elVariablesByClass.put(Date.class.getName(), new String[] { VAR_DATE });
         elVariablesByClass.put(BigDecimal.class.getName(), new String[] { VAR_AMOUNT });
         elVariablesByClass.put(Product.class.getName(), new String[] { VAR_PRODUCT });
+        elVariablesByClass.put(CpqQuote.class.getName(), new String[] { VAR_CPQ_QUOTE });
     }
 
     /**

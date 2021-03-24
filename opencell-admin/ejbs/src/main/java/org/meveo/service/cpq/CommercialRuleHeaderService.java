@@ -218,6 +218,17 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 												return false;
 											}
 										}
+									case EXPRESSION_LANGUAGE :
+										OfferTemplate offerTemplate = offerTemplateService.findByCode(offerCode);
+										 String result = attributeService.evaluteElExpressionAttribute(convertedValue, null, offerTemplate, null, String.class);
+											if ((isPreRequisite && !result.equals(line.getSourceAttributeValue()))
+													|| !isPreRequisite && result.equals(line.getSourceAttributeValue())) {
+												if (continueProcess) {
+													continue;
+												} else {
+													return false;
+												}
+											}
 									default:
 										if ((isPreRequisite && !convertedValue.equals(line.getSourceAttributeValue()))
 												|| !isPreRequisite && convertedValue.equals(line.getSourceAttributeValue())) {
@@ -303,9 +314,10 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 										break;
 									case LIST_MULTIPLE_TEXT:
 									case LIST_TEXT:
+									case EXPRESSION_LANGUAGE :
 									case TEXT:	
 										fieldName="stringValue";
-										break;
+										break;								
 									case DATE:
 										fieldName="dateValue"; 
 										break;
