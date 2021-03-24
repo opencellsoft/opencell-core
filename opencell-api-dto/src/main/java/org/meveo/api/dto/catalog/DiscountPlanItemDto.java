@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -35,7 +34,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEnableDto;
-import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 
@@ -143,6 +141,7 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      */
     private Boolean allowToNegate;
 
+	private String description;
     /**
      * Instantiates a new discount plan item dto.
      */
@@ -174,6 +173,7 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
                  .collect(Collectors.toSet());
         this.allowToNegate = discountPlanItem.isAllowToNegate();
         customFields = customFieldInstances;
+        this.description = discountPlanItem.getDescription();
     }
 
     /**
@@ -427,6 +427,20 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     public void setAllowToNegate(Boolean allowToNegate) {
         this.allowToNegate = allowToNegate;
     }
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 
 

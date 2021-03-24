@@ -4151,5 +4151,11 @@ public class OrderAdvancement extends ModuleScript {
 			<column name="quantity_default" type="int4" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="#20210323_380" author="TarikFA.">
+		<addColumn tableName="cat_discount_plan_item">
+			<column name="description" type="varchar(255)"/>
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "bd8e2256-094c-47c3-b4ab-2c4dfdce5caa",
-		"name": "CPQ Functional Process",
+		"_postman_id": "def2359f-dfa7-4ce4-ab9b-1deae86c87cc",
+		"name": "CPQ Functional Process Copy 4",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -3636,7 +3636,7 @@
 					"response": []
 				},
 				{
-					"name": "Create Price Plan Matrix Line (Monthly 24)",
+					"name": "Create Price Plan Matrix Line (Monthly 24)-price-30",
 					"event": [
 						{
 							"listen": "test",
@@ -3668,7 +3668,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmRcVersion}},\n    \"pricetWithoutTax\": 24,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n            \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n            \"stringValue\": \"Monthly\"\n        },\n        {\n            \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n            \"longValue\": 24\n        }\n    ]\n}",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmRcVersion}},\n    \"pricetWithoutTax\": 30,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n            \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n            \"stringValue\": \"Monthly\"\n        },\n        {\n            \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n            \"longValue\": 24\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3725,7 +3725,7 @@
 					"response": []
 				},
 				{
-					"name": "Create Price Plan Matrix Line (Monthly 12)",
+					"name": "Create Price Plan Matrix Line (Monthly 12)-price-20",
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -3746,7 +3746,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmRcVersion}},\n    \"pricetWithoutTax\": 15,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n            \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n            \"stringValue\": \"Monthly\"\n        },\n        {\n            \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n            \"longValue\": 12\n        }\n    ]\n}",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"pricePlanMatrixVersion\": {{ppmRcVersion}},\n    \"pricetWithoutTax\": 20,\n    \"priority\": 1,\n    \"pricePlanMatrixValues\": [\n        {\n            \"ppmColumnCode\": \"{{billingCycleColumnCode}}\",\n            \"stringValue\": \"Monthly\"\n        },\n        {\n            \"ppmColumnCode\": \"{{engagementColumnCode}}\",\n            \"longValue\": 12\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4469,7 +4469,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"{{discountPlanCode}}\",\r\n  \"description\": \"discount plan test description\",  \r\n  \"startDate\": \"2021-01-01\",\r\n  \"endDate\": \"2021-12-01\",\r\n  \"status\":\"DRAFT\"\r\n}",
+							"raw": "{\r\n  \"code\": \"{{discountPlanCode}}\",\r\n  \"description\": \"discount plan test description\",  \r\n  \"startDate\": \"2019-01-01\",\r\n  \"endDate\": \"2022-12-01\",\r\n  \"status\":\"DRAFT\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4508,7 +4508,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{discountPlanCode}}\",\r\n    \"discountPlan\": {\r\n        \"id\": 1\r\n    },\r\n    \"discountValue\": 10.000000000000,\r\n    \"discountPlanItemType\": \"PERCENTAGE\",\r\n    \"accountingArticle\": {\r\n        \"id\": 2\r\n    }\r\n}",
+							"raw": "{\r\n    \"code\": \"{{discountPlanCode}}\",\r\n    \"discountPlan\": {\r\n        \"id\": 1\r\n    },\r\n    \"discountValue\": 10.000000000000,\r\n    \"discountPlanItemType\": \"PERCENTAGE\",\r\n    \"accountingArticle\": {\r\n        \"id\": 2\r\n    },\r\n    \"pricePlanMatrix\": {\r\n        \"id\": 1\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -6179,6 +6179,14 @@
 		{
 			"key": "orderOfferId",
 			"value": "5"
+		},
+		{
+			"key": "ppmRec2Code",
+			"value": "TEST_PP_REC_2"
+		},
+		{
+			"key": "ppmColumnRec2",
+			"value": "PPM_COLUMN_REC_2"
 		}
 	]
 }

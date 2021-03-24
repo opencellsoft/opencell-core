@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
@@ -86,7 +87,7 @@ public class DiscountPlanItemApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
-    public void create(DiscountPlanItemDto postData) throws MeveoApiException, BusinessException {
+    public DiscountPlanItem create(DiscountPlanItemDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("discountPlanItemCode");
         }
@@ -124,6 +125,7 @@ public class DiscountPlanItemApi extends BaseApi {
         }
         
         discountPlanItemService.create(discountPlanItem);
+        return discountPlanItem;
     }
 
     /**
@@ -134,7 +136,7 @@ public class DiscountPlanItemApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
      */
-    public void update(DiscountPlanItemDto postData) throws MeveoApiException, BusinessException {
+    public DiscountPlanItem update(DiscountPlanItemDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("discountPlanItemCode");
@@ -159,7 +161,7 @@ public class DiscountPlanItemApi extends BaseApi {
             throw e;
         }
 
-        discountPlanItemService.update(discountPlanItem);
+        return discountPlanItemService.update(discountPlanItem);
     }
 
     /**
@@ -329,7 +331,9 @@ public class DiscountPlanItemApi extends BaseApi {
         if (source.isAllowToNegate() != null) {
             discountPlanItem.setAllowToNegate(source.isAllowToNegate());
         }
-
+        if(!Strings.isEmpty(source.getDescription())) {
+        	discountPlanItem.setDescription(source.getDescription());
+        }
         return discountPlanItem;
     }
 
