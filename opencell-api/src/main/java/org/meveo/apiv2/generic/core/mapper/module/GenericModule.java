@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import org.hibernate.proxy.HibernateProxy;
 import org.meveo.model.IEntity;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.payments.PaymentMethod;
 
@@ -43,6 +44,7 @@ public class GenericModule extends SimpleModule {
         });
         addSerializer(HibernateProxy.class, new LazyProxySerializer(nestedEntities, sharedEntityToSerialize));
         addSerializer(List.class, new ListCustomSerializer(nestedEntities, sharedEntityToSerialize));
+        addDeserializer(ChargeInstance.class, new ChargeInstanceDeserializer());
         addDeserializer(PaymentMethod.class, new PaymentDeserializer());
         addKeyDeserializer(Tax.class, new KeyDeserializer() {
             @Override

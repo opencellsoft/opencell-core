@@ -1807,4 +1807,7 @@ public class ValidateBRScript extends Script {
 	      <sql><![CDATA[UPDATE ${db.schema.adapted}ar_payment_history set operation_category ='CREDIT' where payment_id is not null ]]> </sql>
 	      <sql><![CDATA[UPDATE ${db.schema.adapted}ar_payment_history set operation_category ='DEBIT' where refund_id is not null ]]> </sql>
    </changeSet>
+    <changeSet id="6024_20210317" author="anasseh">
+	      <sql><![CDATA[UPDATE ${db.schema.adapted}ar_account_operation set amount = amount*-1 , un_matching_amount = un_matching_amount*-1, amount_without_tax = amount_without_tax*-1, tax_amount =tax_amount*-1, matching_amount = matching_amount*-1 , net_to_pay=net_to_pay*-1 where amount <0 ]]> </sql>	      
+   </changeSet>   
 </databaseChangeLog>

@@ -18,13 +18,13 @@
 
 package org.meveo.service.script;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Main script interface implementation
@@ -116,6 +116,16 @@ public abstract class Script implements Serializable, ScriptInterface {
      * The job execution result.
      */
     public static final String JOB_EXECUTION_RESULT = "JobExecutionResult";
+
+    /**
+     * The invoice validation status.
+     */
+    public static final String INVOICE_VALIDATION_STATUS = "InvoiceValidation.STATUS";
+
+    /**
+     * The invoice validation reject reason.
+     */
+    public static final String INVOICE_VALIDATION_REASON = "InvoiceValidation.REASON";
 
     /**
      * A logger
