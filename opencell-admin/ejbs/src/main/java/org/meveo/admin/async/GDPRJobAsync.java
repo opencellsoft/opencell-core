@@ -23,7 +23,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.UnitGDPRJobBean;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.communication.contact.Contact;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.AccountOperation;
 import org.slf4j.Logger;
@@ -134,18 +134,18 @@ public class GDPRJobAsync {
     /**
      * bulk contact delete
      *
-     * @param oldCustomerProspects
+     * @param inactiveProspects
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<int[]> contactBulkDelete(List<Contact> oldCustomerProspects) {
+    public Future<int[]> customerBulkDelete(List<Customer> inactiveProspects) {
         int[] result = {0,0};
-        for (Contact contact : oldCustomerProspects) {
+        for (Customer customer : inactiveProspects) {
             try {
-                unitGDPRJobBean.contactRemove(contact);
+                unitGDPRJobBean.customerRemove(customer);
                 result[0]++;
             } catch (Exception e) {
-                log.error("Error on removing contact[id={}]", contact.getId(), e);
+                log.error("Error on removing customer[id={}]", customer.getId(), e);
                 result[1]++;
             }
         }
