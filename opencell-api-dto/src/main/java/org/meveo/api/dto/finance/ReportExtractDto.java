@@ -45,6 +45,9 @@ public class ReportExtractDto extends EnableBusinessDto {
     /** The filename format. */
     private String filenameFormat;
 
+    /** The file separator. */
+    private String fileSeparator;
+
     /** The category. */
     private String category;
     
@@ -95,6 +98,7 @@ public class ReportExtractDto extends EnableBusinessDto {
         setDescription(reportExtract.getDescription());
         setEndDate(reportExtract.getEndDate());
         setFilenameFormat(reportExtract.getFilenameFormat());
+        setFileSeparator(reportExtract.getFileSeparator());
         setParams(reportExtract.getParams());
         setStartDate(reportExtract.getStartDate());
         setScriptType(reportExtract.getScriptType());
@@ -174,6 +178,25 @@ public class ReportExtractDto extends EnableBusinessDto {
         return scriptInstanceCode;
     }
 
+    /**
+     * Gets the file separator.
+     *
+     * @return the file separator
+     */
+    public String getFileSeparator() {
+        return fileSeparator;
+    }
+    
+    /**
+     * Sets the file separator.
+     *
+     * @return the file separator
+     */
+
+    public void setFileSeparator(String fileSeparator) {
+        this.fileSeparator = fileSeparator;
+    }
+    
     /**
      * Sets the script instance code.
      *

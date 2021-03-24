@@ -44,6 +44,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.async.AmountsToInvoice;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoicingJob;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
@@ -480,43 +481,21 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     @Asynchronous
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> cancelAsync(Long billingRunId) {
         try {
 
-            BillingRun billingRun = findById(billingRunId);
-            int count = 10;
-            // We will wait until we get a billingRun instance with status Cancelling
-            while ((billingRun != null) && (count > 0) && !billingRun.getStatus().equals(BillingRunStatusEnum.CANCELLING)) {
-                try {
-                    Thread.sleep((10 - count) * 1000);
-                } catch (InterruptedException e) {
-                    log.warn("Warning on thread sleep={}", e.getMessage());
-                }
-                refresh(billingRun);
-                log.info("BillingRun {} has status {}. COUNT:{}.", billingRunId, billingRun.getStatus(), count);
-                count--;
-            }
-            if (billingRun == null) {
-                throw new BusinessException("Cannot instantiate a billingRun instance with id :" + billingRunId);
-            }
-            if (!billingRun.getStatus().equals(BillingRunStatusEnum.CANCELLING)) {
-                log.info("BillingRun {} has status {}.", billingRunId, billingRun.getStatus());
-                throw new BusinessException("BillingRun instance status " + billingRun.getStatus() + " with id :" + billingRunId);
-            }
-
-            cancelBillingRun(billingRun);
+            billingRunService.markForCancel(billingRunId);
+            billingRunService.cancelBillingRun(billingRunId);
 
         } catch (BusinessException e) {
-            log.error("Error cancelling a billing run with id={}. {}", billingRunId, e.getMessage());
+            log.error("Failed to cancel a billing run with id={}", billingRunId, e);
         }
         return new AsyncResult<>("OK");
     }
 
     /**
-     * Mark billing run as canceled, delete any minimum amount transactions, mark rated transactions as open, delete any invoices and invoice aggregates that were created during
-     * invoicing process
+     * Mark billing run as canceled, delete any minimum amount transactions, mark rated transactions as open, delete any invoices and invoice aggregates that were created during invoicing process
      *
      * @param billingRun The billing run
      * @throws BusinessException Business exception
@@ -1137,8 +1116,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     /**
-     * Re-rate transactions that were invoiced by a billing run, mark billing run as canceled, delete any minimum amount transactions, mark rated transactions as open, delete any
-     * invoices and invoice aggregates that were created during invoicing process created during invoicing process
+     * Re-rate transactions that were invoiced by a billing run, mark billing run as canceled, delete any minimum amount transactions, mark rated transactions as open, delete any invoices and invoice aggregates that were
+     * created during invoicing process created during invoicing process
      *
      * @param billingRun Billing run to re-rate
      * @return Updated billing run
@@ -1150,8 +1129,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         if (billingRun.getStatus() == BillingRunStatusEnum.POSTINVOICED || billingRun.getStatus() == BillingRunStatusEnum.POSTVALIDATED) {
             walletOperationService.markToRerateByBR(billingRun);
             cleanBillingRun(billingRun);
-        } else {
-            ratedTransactionService.deleteSupplementalRTs(billingRun);
+
+            // Andrius: There Supplemental RTS are not saved in PRE-INVOICE report stage, so there is nothing to delete
+            // } else {
+            // ratedTransactionService.deleteSupplementalRTs(billingRun);
         }
 
         billingRun.setStatus(BillingRunStatusEnum.CANCELED);
@@ -1161,18 +1142,20 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     /**
-     * Mark billing run as canceled, delete any minimum amount transactions, mark rated transactions as open, delete any invoices and invoice aggregates that were created during
-     * invoicing process
+     * Mark billing run as canceled, delete any minimum amount transactions, mark rated transactions as open, delete any invoices and invoice aggregates that were created during invoicing process
      *
-     * @param billingRun Billing run to re-rate
+     * @param billingRunId Billing run to cancel Id
      * @return Updated billing run
      */
-    public BillingRun cancelBillingRun(BillingRun billingRun) {
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public BillingRun cancelBillingRun(Long billingRunId) {
 
-        billingRun = refreshOrRetrieve(billingRun);
+        BillingRun billingRun = findById(billingRunId);
 
-        if (billingRun.getStatus() == BillingRunStatusEnum.POSTINVOICED || billingRun.getStatus() == BillingRunStatusEnum.POSTVALIDATED || billingRun.getStatus() == BillingRunStatusEnum.CANCELLING) {
+        if (billingRun.getStatus() == BillingRunStatusEnum.POSTINVOICED || billingRun.getStatus() == BillingRunStatusEnum.POSTVALIDATED) {
             cleanBillingRun(billingRun);
+
             // Andrius: There Supplemental RTS are not saved in PRE-INVOICE report stage, so there is nothing to delete
             // } else {
             // ratedTransactionService.deleteSupplementalRTs(billingRun);
@@ -1231,5 +1214,31 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
         }
         return null;
+    }
+
+    /**
+     * Mark Billing run as "Canceling"
+     * 
+     * @param billingRunId Billing run identifier
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void markForCancel(Long billingRunId) {
+
+        BillingRun billingRun = findById(billingRunId);
+        if (BillingRunStatusEnum.CANCELED.equals(billingRun.getStatus())) {
+            throw new ValidationException("Cannot cancel a Canceled  billingRun #" + billingRunId);
+
+            // Can try canceling again if got stuck in Canceling status for over 5 minutes
+        } else if (BillingRunStatusEnum.CANCELLING.equals(billingRun.getStatus()) && (new Date().getTime() - billingRun.getAuditable().getUpdated().getTime()) < 300000) {
+            throw new ValidationException("BillingRun #" + billingRunId + " in still in a process of cancelling");
+
+        } else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus()) || BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus())) {
+            throw new ValidationException("Cannot cancel a POSTVALIDATED or VALIDATED billingRun #" + billingRunId);
+        }
+
+        billingRun.setStatus(BillingRunStatusEnum.CANCELLING);
+        update(billingRun);
+
     }
 }

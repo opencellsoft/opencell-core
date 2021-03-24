@@ -948,7 +948,8 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
-        if (postData.getOperationDate() == null) {
+        Date operationDate = postData.getOperationDate();
+		if (operationDate == null) {
             postData.setOperationDate(new Date());
         }
 
@@ -962,9 +963,6 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription(), postData.getSubscriptionValidityDate());
         }
 
-        if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
-            throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
-        }
         if (postData.getWallet() != null) {
             WalletTemplate walletTemplate = walletTemplateService.findByCode(postData.getWallet());
             if (walletTemplate == null) {
@@ -995,7 +993,7 @@ public class SubscriptionApi extends BaseApi {
         try {
 
             oneShotChargeInstanceService
-                    .oneShotChargeApplication(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
+                    .oneShotChargeApplication(subscription, null, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), operationDate,
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
                             postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION);
 

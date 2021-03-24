@@ -6753,6 +6753,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
             <column name="output_dir" type="varchar(255)" />
+            <column name="file_separator" type="varchar(1)" defaultValue="," />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-360">

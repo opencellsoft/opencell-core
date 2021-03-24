@@ -60,7 +60,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
         ddDequestItem.setAmount(amountToPay);
         ddDequestItem.setDdRequestLOT(ddRequestLOT);
         ddDequestItem.setBillingAccountName(caFullName);
-        ddDequestItem.setDueDate(listAO.get(0).getDueDate());
+        ddDequestItem.setDueDate(ddRequestLOT.getSendDate());
         ddDequestItem.setPaymentInfo(listAO.get(0).getPaymentInfo());
         ddDequestItem.setPaymentInfo1(listAO.get(0).getPaymentInfo1());
         ddDequestItem.setPaymentInfo2(listAO.get(0).getPaymentInfo2());

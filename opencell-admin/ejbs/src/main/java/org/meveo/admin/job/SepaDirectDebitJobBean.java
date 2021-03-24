@@ -19,7 +19,6 @@ package org.meveo.admin.job;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -376,7 +375,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
                 }
             }
         } catch (Exception e) {
-            log.error(" Error on newAoFilterScriptInstance : [{}]", e.getMessage());
+            log.error(" Error on newAoFilterScriptInstance : [{}]", e);
         }
         return null;
     }

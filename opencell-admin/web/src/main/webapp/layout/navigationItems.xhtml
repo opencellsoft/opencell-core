@@ -256,7 +256,7 @@
 			rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">
 			<p:menuitem id="billingRuns" outcome="billingRuns"
 				value="#{messages['menu.billingRuns']}" />
-			<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing"
+			<p:menuitem id="billingRunDetail" outcome="billingRunDetail"
 				rendered="#{currentUser.hasRole('billingManagement')}"
 				value="#{messages['menu.globalExecution']}" />
 			<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing"

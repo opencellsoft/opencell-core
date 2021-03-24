@@ -18,7 +18,7 @@
             </p:breadCrumb>
         </h:form>
 
-        <hftl:searchPanel backingBean="#{billingRunListBean}" label="#{messages['billingRun.search']}" renderNewButton="false">
+        <hftl:searchPanel backingBean="#{billingRunListBean}" label="#{messages['billingRun.search']}" renderNewButton="true">
             <hftl:searchField label="#{messages['billingRun.status']}" field="status" />
             <hftl:searchField label="#{messages['billingRun.processDate']}" field="processDate" />
             <hftl:searchField label="#{messages['billingRun.invoiceDate']}" field="invoiceDate" />
@@ -59,7 +59,7 @@
                     <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
                 </p:button>
                 <p:commandButton value="#{messages['action.cancel']}"
-                    rendered="#{entity.status != BillingRunStatusEnum.POSTINVOICED and entity.status != BillingRunStatusEnum.CANCELED and entity.status != BillingRunStatusEnum.VALIDATED and entity.status != BillingRunStatusEnum.POSTVALIDATED}"
+                    rendered="#{entity.status != BillingRunStatusEnum.CANCELED and entity.status != BillingRunStatusEnum.VALIDATED and entity.status != BillingRunStatusEnum.POSTVALIDATED}"
                     action="#{billingRunBean.cancel()}" update=":results_form">
                     <f:setPropertyActionListener target="#{billingRunBean.entity}" value="#{entity}"></f:setPropertyActionListener>
                 </p:commandButton>
