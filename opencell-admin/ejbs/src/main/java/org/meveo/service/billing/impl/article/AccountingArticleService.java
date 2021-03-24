@@ -18,11 +18,13 @@ import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.cpq.AttributeService;
 
 @Stateless
 public class AccountingArticleService extends BusinessService<AccountingArticle> {
 	
 	@Inject private ArticleMappingLineService articleMappingLineService;
+	@Inject private AttributeService attributeService;
 	
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) {
 		List<ArticleMappingLine> articleMappingLines = articleMappingLineService.findByProductCode(product);
@@ -52,6 +54,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 								return false;
 							}).findFirst();
 							return valExist.isPresent();
+						case EXPRESSION_LANGUAGE :
+							 String result = attributeService.evaluteElExpressionAttribute(value.toString(), product, null, null, String.class);
+							 return am.getAttributeValue().contentEquals(result);
 						default:
 							return value.toString().contentEquals(am.getAttributeValue());
 					}
