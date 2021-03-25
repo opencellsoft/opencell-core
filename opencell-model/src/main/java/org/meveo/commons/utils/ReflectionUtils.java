@@ -24,10 +24,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,7 +63,7 @@ public class ReflectionUtils {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
 
     public static final String SET_PREFIX = "set";
-    
+
     /**
      * Mapping between an entity class and entity classes containing a field that that class.
      */
@@ -96,7 +98,7 @@ public class ReflectionUtils {
      * @param packageName Package name
      * @return A list of classes
      * @throws ClassNotFoundException Class discovery issue
-     * @throws IOException            Class discovery issue
+     * @throws IOException Class discovery issue
      */
     @SuppressWarnings("rawtypes")
     public static List<Class> getClasses(String packageName) throws ClassNotFoundException, IOException {
@@ -135,7 +137,7 @@ public class ReflectionUtils {
      * Get fields of a given class and it's superclasses
      *
      * @param fields A list of fields to supplement to
-     * @param type   Class
+     * @param type Class
      * @return A list of field (same as fields parameter plus newly discovered fields
      */
     public static List<Field> getAllFields(List<Field> fields, Class<?> type) {
@@ -155,7 +157,7 @@ public class ReflectionUtils {
     /**
      * Get enum object from string value for a given enum type
      *
-     * @param enumType  Enum class
+     * @param enumType Enum class
      * @param enumValue Enum value as string
      * @return Enum object
      */
@@ -170,8 +172,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Remove proxy suffix from a class name. Proxy classes contain a name in "..._$$_javassist.. format" If a proxy class object clasname was passed, strip the ending
-     * "_$$_javassist.."to obtain real class name
+     * Remove proxy suffix from a class name. Proxy classes contain a name in "..._$$_javassist.. format" If a proxy class object clasname was passed, strip the ending "_$$_javassist.."to obtain real class name
      *
      * @param classname Class name
      * @return Class name without a proxy suffix
@@ -232,7 +233,7 @@ public class ReflectionUtils {
     /**
      * Check if object has a field.
      *
-     * @param object    Object to check
+     * @param object Object to check
      * @param fieldName Name of a field to check
      * @return True if object has a field
      */
@@ -247,7 +248,7 @@ public class ReflectionUtils {
     /**
      * Check if class has a field.
      *
-     * @param clazz     Object to check
+     * @param clazz Object to check
      * @param fieldName Name of a field to check
      * @return True if object has a field
      */
@@ -260,7 +261,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * @param className       class name
+     * @param className class name
      * @param annotationClass annotation class
      * @return instance of Class.
      */
@@ -279,17 +280,21 @@ public class ReflectionUtils {
     }
 
     /**
+     * Get a list of classes annotated with a given annotation from org.meveo.model package
+     * 
      * @param annotationClass annotation class
-     * @return set of class
+     * @return set of classes
      */
     public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass) {
         return getClassesAnnotatedWith(annotationClass, "org.meveo.model");
     }
 
     /**
+     * Get a list of classes annotated with a given annotation from a given package
+     * 
      * @param annotationClass annotation class
-     * @param prefix          prefix
-     * @return set of class.
+     * @param prefix prefix
+     * @return set of classes
      */
     public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass, String prefix) {
         Reflections reflections = new Reflections(prefix);
@@ -298,9 +303,24 @@ public class ReflectionUtils {
     }
 
     /**
+     * @param prefix prefix
+     * @param annotationClasses annotation classes
+     * @return set of classes
+     */
+    @SafeVarargs
+    public static Set<Class<?>> getClassesAnnotatedWith(String prefix, Class<? extends Annotation>... annotationClasses) {
+        Reflections reflections = new Reflections(prefix);
+        Set<Class<?>> classes = new HashSet<Class<?>>();
+        for (Class<? extends Annotation> annotationClass : annotationClasses) {
+            classes.addAll(reflections.getTypesAnnotatedWith(annotationClass));
+        }
+        return classes;
+    }
+
+    /**
      * Find a class by its simple name that is a subclass of a certain class.
      *
-     * @param className   Simple classname to match
+     * @param className Simple classname to match
      * @param parentClass Parent or interface class
      * @return A class object
      */
@@ -337,7 +357,7 @@ public class ReflectionUtils {
 
         return classes;
     }
-    
+
     /**
      * Find subclasses of a certain class.
      *
@@ -349,7 +369,7 @@ public class ReflectionUtils {
     public static Set<Class<?>> getSubclasses(Class parentClass, Reflections reflections) {
         return reflections.getSubTypesOf(parentClass);
     }
-    
+
     /**
      * Get a new Reflection object instance.
      *
@@ -359,8 +379,7 @@ public class ReflectionUtils {
     public static Reflections getReflectionsInstance(String packageName) {
         return new Reflections(packageName);
     }
-    
-    
+
     public static Object getSubclassObjectByDiscriminatorValue(Class parentClass, String discriminatorValue) {
         Set<Class<?>> subClasses = getSubclasses(parentClass);
         Object result = null;
@@ -372,7 +391,7 @@ public class ReflectionUtils {
                 break;
             }
         }
-        
+
         return result;
     }
 
@@ -389,7 +408,7 @@ public class ReflectionUtils {
     /**
      * Checks if a method is from a particular object.
      *
-     * @param obj  entity to check
+     * @param obj entity to check
      * @param name name of method.
      * @return true/false
      */
@@ -410,8 +429,8 @@ public class ReflectionUtils {
     /**
      * Checks if a method is from a particular class.
      *
-     * @param clazz          instance of Class
-     * @param name           name of method
+     * @param clazz instance of Class
+     * @param name name of method
      * @param parameterTypes parameter type list.
      * @return true/false
      */
@@ -453,10 +472,10 @@ public class ReflectionUtils {
     /**
      * Get a field from a given class. Fieldname can refer to an immediate field of a class or traverse class relationship hierarchy e.g. customerAccount.customer.seller
      *
-     * @param c         Class to start with
+     * @param c Class to start with
      * @param fieldName Field name
      * @return A field definition
-     * @throws SecurityException    security excetion
+     * @throws SecurityException security excetion
      * @throws NoSuchFieldException no such field exception.
      */
     public static Field getFieldThrowException(Class<?> c, String fieldName) throws NoSuchFieldException {
@@ -488,11 +507,11 @@ public class ReflectionUtils {
                 String iterationFieldName = tokenizer.nextToken();
                 field = getField(iterationClazz, iterationFieldName);
                 if (field != null) {
-                	if(Collection.class.isAssignableFrom(field.getType())){
-                		iterationClazz = getFieldGenericsType(field);
-                	} else {
-                		iterationClazz = field.getType();
-                	}
+                    if (Collection.class.isAssignableFrom(field.getType())) {
+                        iterationClazz = getFieldGenericsType(field);
+                    } else {
+                        iterationClazz = field.getType();
+                    }
                 } else {
                     Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
                     log.error("No field {} in {}", iterationFieldName, iterationClazz);
@@ -519,7 +538,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Determine a generics type of a field.
+     * Determine a generic's type of a field.
      *
      * @param field instance of Field
      * @return A class
@@ -540,11 +559,36 @@ public class ReflectionUtils {
     }
 
     /**
+     * Determine a generic's type of a class.
+     *
+     * @param clazz Class
+     * @return A class
+     */
+    @SuppressWarnings("rawtypes")
+    public static Class getClassGenericsType(Class clazz) {
+        while (!(clazz.getGenericSuperclass() instanceof ParameterizedType) && !clazz.equals(Object.class)) {
+            clazz = clazz.getSuperclass();
+        }
+
+        if (!(clazz.getGenericSuperclass() instanceof ParameterizedType)) {
+            return null;
+        }
+
+        Object o = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
+
+        if (o instanceof TypeVariable) {
+            return (Class) ((TypeVariable) o).getBounds()[0];
+        } else {
+            return (Class) o;
+        }
+    }
+
+    /**
      * This is a recursive function that aims to walk through the properties of an object until it gets the final value.
      * <p>
      * e.g. If we received an Object named obj and given a string property of "code.name", then the value of obj.code.name will be returned.
      *
-     * @param obj      The object that contains the property value.
+     * @param obj The object that contains the property value.
      * @param property The property of the object that contains the data.
      * @return The value of the data contained in obj.property
      * @throws IllegalAccessException illegal access exception.
@@ -623,8 +667,8 @@ public class ReflectionUtils {
                     continue;
                 }
 
-                if (field.getType() == fieldClass || (Collection.class.isAssignableFrom(field.getType()) && getFieldGenericsType(field) == fieldClass) || (superClass != null && (
-                        field.getType() == superClass || (Collection.class.isAssignableFrom(field.getType()) && getFieldGenericsType(field) == superClass)))) {
+                if (field.getType() == fieldClass || (Collection.class.isAssignableFrom(field.getType()) && getFieldGenericsType(field) == fieldClass)
+                        || (superClass != null && (field.getType() == superClass || (Collection.class.isAssignableFrom(field.getType()) && getFieldGenericsType(field) == superClass)))) {
 
                     if (!matchedFields.containsKey(clazz)) {
                         matchedFields.put(clazz, new ArrayList<>());
@@ -636,13 +680,14 @@ public class ReflectionUtils {
         classReferences.put(fieldClass, matchedFields);
         return matchedFields;
     }
-    
+
     /**
      * Find methods annotated with annotationClass
+     * 
      * @param clazz the class where to search methods
      * @param annotationClass the annotation class
      * @return a list of methods
-
+     * 
      */
 
     public static List<Method> findAnnotatedMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
@@ -681,7 +726,7 @@ public class ReflectionUtils {
     /**
      * Get parent method from interface having the annotation in parameter
      *
-     * @param method          the class method
+     * @param method the class method
      * @param annotationClass the annotation of the desired interface
      * @return the matching interface method
      */
@@ -689,14 +734,14 @@ public class ReflectionUtils {
         return getMethodFromInterface(method.getDeclaringClass(), annotationClass, method.getName(), method.getParameterTypes());
     }
 
-    public static Optional<Object> getMethodValue(Object object, String methodName, Object... args){
-            Class[] classes = (args == null || args.length == 0) ? null : Arrays.stream(args).map(Object::getClass).collect(Collectors.toList()).toArray(new Class[args.length]);
-            try {
-                Method method = object.getClass().getDeclaredMethod(methodName, classes);
-                return Optional.ofNullable(method.invoke(object, args));
-            } catch (Exception e) {
-                return Optional.empty();
-            }
+    public static Optional<Object> getMethodValue(Object object, String methodName, Object... args) {
+        Class[] classes = (args == null || args.length == 0) ? null : Arrays.stream(args).map(Object::getClass).collect(Collectors.toList()).toArray(new Class[args.length]);
+        try {
+            Method method = object.getClass().getDeclaredMethod(methodName, classes);
+            return Optional.ofNullable(method.invoke(object, args));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
 }
