@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -192,7 +193,9 @@ public class CommercialOrder extends AuditableCFEntity  {
 	private List<OrderOffer> offers;
 
 	
-	@OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
+	//@OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = ALL)
+    @JoinTable(name = "cpq_commercial_order_order_lot", joinColumns = @JoinColumn(name = "commercial_order_id"), inverseJoinColumns = @JoinColumn(name = "order_lot_id"))
 	private List<OrderLot> orderLots;
 	
 	

@@ -198,7 +198,7 @@ public class CommercialOrderApi extends BaseApi {
 			order.setOrderParent(orderParent);
 		}
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
-		processAttributes(orderDto, order);
+		processOrderLot(orderDto, order);
 		commercialOrderService.create(order);
 		CommercialOrderDto dto = new CommercialOrderDto(order);
 		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order));
@@ -330,7 +330,7 @@ public class CommercialOrderApi extends BaseApi {
 			order.setOrderParent(orderParent);
 		}
 		populateCustomFields(orderDto.getCustomFields(), order, false);
-		processAttributes(orderDto, order);
+		processOrderLot(orderDto, order);
 		commercialOrderService.update(order);
 		CommercialOrderDto dto = new CommercialOrderDto(order);
 		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order));
@@ -495,10 +495,10 @@ public class CommercialOrderApi extends BaseApi {
 		return new CommercialOrderDto(commercialOrder);
 	}
 	
-	private void processAttributes(CommercialOrderDto postData, CommercialOrder commercialOrder) {
+	private void processOrderLot(CommercialOrderDto postData, CommercialOrder commercialOrder) {
 		Set<String> orderLots = postData.getOrderLotCodes(); 
+		List<OrderLot> orderLotList=new ArrayList<OrderLot>();
 		if(orderLots != null && !orderLots.isEmpty()){
-			List<OrderLot> orderLotList=new ArrayList<OrderLot>();
 			for(String code:orderLots) {
 				OrderLot orderLot=orderLotService.findByCode(code);
 				if(orderLot == null) { 
@@ -506,8 +506,8 @@ public class CommercialOrderApi extends BaseApi {
 				}
 				orderLotList.add(orderLot);
 			}
-			commercialOrder.setOrderLots(orderLotList);
 		}
+		commercialOrder.setOrderLots(orderLotList);
 	} 
 	
 	
