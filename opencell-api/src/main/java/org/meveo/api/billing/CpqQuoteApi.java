@@ -255,7 +255,7 @@ public class CpqQuoteApi extends BaseApi {
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
         cpqQuote.setSendDate(quote.getSendDate());
         if(!Strings.isEmpty(quote.getDiscountPlanCode())) {
-            cpqQuote.setDiscountPlan(discountPlanService.findByCode(quote.getDiscountPlanCode()));
+            cpqQuote.setDiscountPlan(loadEntityByCode(discountPlanService, quote.getDiscountPlanCode(), DiscountPlan.class));
         }
 
         cpqQuote.setQuoteLotDateBegin(quote.getQuoteLotDateBegin());
@@ -538,7 +538,9 @@ public class CpqQuoteApi extends BaseApi {
                 quote.setBillableAccount(billableAccount);
         }else
             quote.setBillableAccount(quote.getApplicantAccount());
-
+        if(!Strings.isEmpty(quoteDto.getDiscountPlanCode())) {
+        	quote.setDiscountPlan(loadEntityByCode(discountPlanService, quoteDto.getDiscountPlanCode(), DiscountPlan.class));
+        }
         try {
             populateCustomFields(quoteDto.getCustomFields(), quote, false);
             cpqQuoteService.update(quote);
@@ -660,6 +662,9 @@ public class CpqQuoteApi extends BaseApi {
         dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(quote));
         dto.setId(quote.getId());
         dto.setStatusDate(quote.getStatusDate());
+        if(quote.getDiscountPlan() != null)
+        	dto.setDiscountPlanCode(quote.getDiscountPlan().getCode());
+        
         return dto;
     }
 
