@@ -31,6 +31,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -84,6 +85,9 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
             // Check if entity's type is restricted to a specific group of
             // entities. i.e. only specific Customers, CA, BA, etc.
             boolean isSameTypeAsParent = getClassForHibernateObject(entity) == entity.getParentEntityType();
+            if(isSameTypeAsParent && entity.getParentEntityType().equals(Seller.class) && !paramBeanFactory.getInstance().getBooleanValue("accessible.entity.allows.access.childs.seller", false)) {
+            	return false;
+            }
             if (!isSameTypeAsParent && securedEntities != null && !securedEntities.isEmpty()) {
                 // This means that the entity type is being restricted. Since
                 // the entity did not match anything above, the authorization
