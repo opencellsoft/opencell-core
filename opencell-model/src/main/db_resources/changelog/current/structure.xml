@@ -4170,6 +4170,27 @@ END $$;]]>
             <column name="file_separator" type="varchar(1)" defaultValue=","/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#6012_20210323" author="MohamedAliHammal">
+        <dropForeignKeyConstraint baseTableName="adm_inbound_resp_cookies" constraintName="fk_1kyctwmlumac9aoikhb3kmc02"/>
+        <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_resp_cookies" constraintName="fk_1kyctwmlumac9aoikhb3kmc02" deferrable="false" initiallyDeferred="false"
+                                 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+        <dropForeignKeyConstraint baseTableName="adm_inbound_req_headers" constraintName="fk_5l2gy0e4dol6gtr05sq929hnx"/>
+        <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_headers" constraintName="fk_5l2gy0e4dol6gtr05sq929hnx" deferrable="false" initiallyDeferred="false"
+                                 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+        <dropForeignKeyConstraint baseTableName="adm_notif_history" constraintName="fk_8k2sxhjmrswxnecfo74bdmnsa"/>
+        <addForeignKeyConstraint baseColumnNames="inbound_request_id" baseTableName="adm_notif_history" constraintName="fk_8k2sxhjmrswxnecfo74bdmnsa" deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+        <dropForeignKeyConstraint baseTableName="adm_inbound_req_cookies" constraintName="fk_cfd55de59w792gxpcd478ujfq"/>
+        <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_cookies" constraintName="fk_cfd55de59w792gxpcd478ujfq" deferrable="false" initiallyDeferred="false"
+                                 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+        <dropForeignKeyConstraint baseTableName="adm_inbound_req_params" constraintName="fk_djmbjb6ja9fapeadjyj395020"/>
+        <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_params" constraintName="fk_djmbjb6ja9fapeadjyj395020" deferrable="false" initiallyDeferred="false"
+                                 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+        <dropForeignKeyConstraint baseTableName="adm_inbound_resp_headers" constraintName="fk_h07be9b84xmmx5ypkbunkxwxt"/>
+        <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_resp_headers" constraintName="fk_h07be9b84xmmx5ypkbunkxwxt" deferrable="false" initiallyDeferred="false"
+                                 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+    </changeSet>
     <changeSet id="4756_20191104" author="Andrius">
         <!-- <dropColumn tableName="job_execution" columnName="job_done"/>  -->
         <addColumn tableName="job_execution">

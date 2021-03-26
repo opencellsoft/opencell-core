@@ -60,8 +60,7 @@ import org.meveo.model.ModuleItem;
 @CustomFieldEntity(cftCodePrefix = "JobInstance", cftCodeFields = "jobTemplate")
 @ExportIdentifier({ "code" })
 @Table(name = "meveo_job_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "meveo_job_instance_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "meveo_job_instance_seq"), })
 @NamedQueries({ @NamedQuery(name = "JobInstance.listByTemplate", query = "SELECT ji FROM JobInstance ji where ji.jobTemplate=:jobTemplate order by ji.code"),
         @NamedQuery(name = "JobInstance.findByJobTemplate", query = "select ji FROM JobInstance ji WHERE ji.jobTemplate=:jobTemplate") })
 public class JobInstance extends EnableBusinessCFEntity {
@@ -369,8 +368,8 @@ public class JobInstance extends EnableBusinessCFEntity {
      */
     @Override
     public String toString() {
-        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]", super.toString(), jobTemplate, parametres,
-            jobCategoryEnum, timerEntity, followingJob != null ? followingJob.getCode() : null);
+        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]", super.toString(), jobTemplate, parametres, jobCategoryEnum,
+            timerEntity != null ? timerEntity.getId() : null, followingJob != null ? followingJob.getId() : null);
     }
 
     /**
