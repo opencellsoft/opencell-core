@@ -2235,8 +2235,7 @@ public class ValidateBRScript extends Script {
 	      <sql><![CDATA[UPDATE ${db.schema.adapted}ar_payment_history set operation_category ='DEBIT' where refund_id is not null ]]> </sql>
    </changeSet>
 
-
-    <changeSet author="ZBARIKI" id="#540-10_20210326">
+    <changeSet author="ZBARIKI" id="#6048_20210326">
         <sql dbms="postgresql"><![CDATA[UPDATE ${db.schema.adapted}meveo_script_instance SET
             script = 'package org.meveo.service.script;
 
