@@ -36,12 +36,15 @@ class ListCustomSerializer extends StdSerializer<List> implements GenericSeriali
         if(shouldReturnOnlyIds(list, gen.getCurrentValue(), gen.getOutputContext().getCurrentName(), getPathToRoot(gen))){
             List<? extends IEntity> listIEntity = (List<? extends IEntity>) list;
             gen.writeStartArray(listIEntity.size());
-            for (IEntity iEntity : listIEntity) {
-                gen.writeStartObject();
-                gen.writeFieldName("id");
-                gen.writeNumber((Long) iEntity.getId());
-                gen.writeEndObject();
-            }
+			for (IEntity iEntity : listIEntity) {
+				final Long id = (Long) iEntity.getId();
+				if (id != null) {
+					gen.writeStartObject();
+					gen.writeFieldName("id");
+					gen.writeNumber(id);
+					gen.writeEndObject();
+				}
+			}
             gen.writeEndArray();
         }else if(!list.isEmpty() && list.get(0) instanceof IEntity){
             List<? extends IEntity> listIEntity = (List<? extends IEntity>) list;
