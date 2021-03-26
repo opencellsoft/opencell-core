@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "41a5efdb-90a2-4484-814a-7d8c7d785023",
+		"_postman_id": "5dc3f7cc-0dbf-4490-a844-ff7db9f724f9",
 		"name": "CLOUD Functional Process",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1437,6 +1437,48 @@
 								"catalog",
 								"pricePlan",
 								"pricePlanMatrixVersion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Publish VM_MUTUALISE Price Plan Matrix Version Copy",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "opencell.admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "opencell.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/{{ppmOsVmMutualise}}/{{ppmOsVmMutualiseVer}}?status=PUBLISHED",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"pricePlan",
+								"pricePlanMatrixVersion",
+								"{{ppmOsVmMutualise}}",
+								"{{ppmOsVmMutualiseVer}}"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "PUBLISHED"
+								}
 							]
 						}
 					},
