@@ -18,18 +18,6 @@
 
 package org.meveo.api.rest.billing;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.AccountingCodeDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -37,6 +25,9 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.AccountingCodeGetResponseDto;
 import org.meveo.api.dto.response.billing.AccountingCodeListResponseDto;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * API for managing AccountingCode entity.
@@ -103,6 +94,15 @@ public interface AccountingCodeRs extends IBaseRs {
     @Path("/list")
     AccountingCodeListResponseDto listGet(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy,
             @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List AccountingCodes matching a given criteria
+     *
+     * @return List of AccountingCodes
+     */
+    @GET
+    @Path("/listGetAll")
+    AccountingCodeListResponseDto list();
 
     /**
      * List AccountingCode matching the given criteria.

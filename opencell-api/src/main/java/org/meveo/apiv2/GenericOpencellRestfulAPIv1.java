@@ -52,6 +52,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
     public static Map<String,Class> MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS = new HashMap<>();
     public static long API_LIST_DEFAULT_LIMIT;
     public static final String API_VERSION = "/v1";
+    public static Map<String,List<String>> RESTFUL_ENTITIES_MAP = new HashMap();
 
     private static final String GENERIC_API_REQUEST_LOGGING_CONFIG_KEY = "generic.api.request.logging";
     private static final String API_LIST_DEFAULT_LIMIT_KEY = "api.list.defaultLimit";
@@ -127,9 +128,33 @@ public class GenericOpencellRestfulAPIv1 extends Application {
         }
     }
 
+    private void fillUpRestfulEntitiesList(String aRestfulEntity, List<String> listRestfulEntities) {
+        aRestfulEntity = Inflector.getInstance().capitalize( aRestfulEntity.substring( aRestfulEntity.lastIndexOf( FORWARD_SLASH ) + 1 ) );
+        listRestfulEntities.add( aRestfulEntity );
+    }
+
+    private void loadRestfulEntitiesMap(List<String> listEntities) {
+        RESTFUL_ENTITIES_MAP.put( "RestfulEntities", listEntities );
+    }
+
     private void loadMapPathAndInterfaceIBaseRs() {
         Reflections reflections = new Reflections( PATH_TO_ALL_ENTITY_RS );
         Set<Class<? extends IBaseRs>> classes = reflections.getSubTypesOf(IBaseRs.class);
+        List<String> aListRestfulEntities = new ArrayList<>();
+        fillUpRestfulEntitiesList( "/billingCycle", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/invoiceCategory", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/invoiceSequence", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/invoiceSubCategory", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/invoiceType", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/user", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/account/title", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/calendar", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/catalog/unitOfMeasure", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/contact", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/taxCategory", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/taxClass", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/taxMapping", aListRestfulEntities );
+        fillUpRestfulEntitiesList( "/payment/creditCategory", aListRestfulEntities );
 
         for ( Class<? extends IBaseRs> aClass : classes ) {
             if ( aClass.isInterface() ) {
@@ -139,6 +164,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         if ( ((Path) anAnnotation).value().equals( "/seller" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + ((Path) anAnnotation).value() + "s",
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/customer" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customers",
@@ -147,6 +174,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             // Processing for requests related to customerCategory
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customers/categories",
                                     ((Path) anAnnotation).value() + "/category" );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/customerAccount" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customerAccounts",
@@ -155,6 +184,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             // Processing for request get list of customerAccounts based on a customerCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/customers\\/" + CODE_REGEX + "\\/customerAccounts" ) ,
                                     ((Path) anAnnotation).value() + "/list" );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/billingAccount" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/billingAccounts",
@@ -163,6 +194,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             // Processing for request get list of billingAccounts based on a customerAccountCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/customerAccounts\\/" + CODE_REGEX + "\\/billingAccounts" ) ,
                                     ((Path) anAnnotation).value() + "/list" );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/userAccount" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/userAccounts",
@@ -171,10 +204,14 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             // Processing for request get list of userAccounts based on a billingAccountCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/billingAccounts\\/" + CODE_REGEX + "\\/userAccounts" ) ,
                                     ((Path) anAnnotation).value() + "/list" );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/accountHierarchy" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/accountHierarchies",
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/billing/subscription" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/subscriptions",
@@ -200,6 +237,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() + "/updateServices" );
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/updateServices", UpdateServicesRequestDto.class );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/access" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/accesses",
@@ -212,18 +251,24 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             // Processing for request get an accessPoint based on a subscriptionCode and an accessCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/accesses\\/" + CODE_REGEX ) ,
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/billing/ratedTransaction" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/ratedTransactions",
                                     ((Path) anAnnotation).value() );
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/ratedTransactions/cancellation",
                                     ((Path) anAnnotation).value() + "/cancelRatedTransactions" );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/billing/wallet" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/wallets",
                                     ((Path) anAnnotation).value() );
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/wallets/operation",
                                     ((Path) anAnnotation).value() + "/operation" );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/offerTemplate" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/offerTemplates",
@@ -235,6 +280,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/offerTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/oneShotChargeTemplate" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/oneShotChargeTemplates",
@@ -246,6 +293,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/oneShotChargeTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/recurringChargeTemplate" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/recurringChargeTemplates",
@@ -257,6 +306,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/recurringChargeTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/usageChargeTemplate" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/usageChargeTemplates",
@@ -268,6 +319,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/usageChargeTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/serviceTemplate" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/serviceTemplates",
@@ -279,6 +332,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/serviceTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/pricePlan" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/pricePlans",
@@ -290,6 +345,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/pricePlans\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/country" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/countries", ((Path) anAnnotation).value() );
@@ -300,6 +357,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/countries\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/currency" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/currencies", ((Path) anAnnotation).value() );
@@ -310,6 +369,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/currencies\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/jobInstance" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobInstances", ((Path) anAnnotation).value() );
@@ -320,6 +381,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/jobInstances\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/language" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/languages", ((Path) anAnnotation).value() );
@@ -330,6 +393,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/languages\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/invoice" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices",
@@ -353,6 +418,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() + "/validate" );
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/validate", ValidateInvoiceRequestDto.class );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/billing/invoicing" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/billing/invoicings/creation",
@@ -368,6 +435,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() + "/validateBillingRun" );
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/validateBillingRun", ValidateBillingRunRequestDto.class );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/job" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobs", ((Path) anAnnotation).value() );
@@ -382,9 +451,58 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() + "/stop" );
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/stop", null );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/PdfInvoice" ) ) {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "/pdfInvoices" ), ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/billing/accountingCode" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/accountingCodes",
+                                    ((Path) anAnnotation).value() );
+
+                            // Processing for enable and disable an accountingCode
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + BILLING + "\\/accountingCodes\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + BILLING + "\\/accountingCodes\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/countryIso" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/countriesIso", ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/currencyIso" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/currenciesIso", ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/languageIso" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/languagesIso", ((Path) anAnnotation).value() );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/payment" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/payment/paymentMethods",
+                                    ((Path) anAnnotation).value() + "/paymentMethod" );
+
+                            // Processing for request get list of paymentMethods based on a customerAccountCode
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/payment\\/customerAccounts\\/" + CODE_REGEX + "\\/paymentMethods" ) ,
+                                    ((Path) anAnnotation).value() + "/paymentMethod/findByCustomerAccount" );
+
+                            // Processing for enable and disable a paymentMethod
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/payment\\/paymentMethods\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() + "/paymentMethod" );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/payment\\/paymentMethods\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() + "/paymentMethod" );
+
+                            fillUpRestfulEntitiesList( ((Path) anAnnotation).value(), aListRestfulEntities );
                         }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
@@ -395,5 +513,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                 }
             }
         }
+
+        loadRestfulEntitiesMap( aListRestfulEntities );
     }
 }
