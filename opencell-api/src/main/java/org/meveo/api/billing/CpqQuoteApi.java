@@ -683,18 +683,18 @@ public class CpqQuoteApi extends BaseApi {
 
     public QuoteOfferDTO createQuoteItem(QuoteOfferDTO quoteOfferDto) {
 
-        if (Strings.isEmpty(quoteOfferDto.getOfferCode()))
-            missingParameters.add("offerCode");
         if (quoteOfferDto.getQuoteVersion() == null)
             missingParameters.add("quoteVersion");
         if (Strings.isEmpty(quoteOfferDto.getQuoteCode()))
             missingParameters.add("quoteCode");
+        if (quoteOfferDto.getQuoteOfferId() == null)
+            missingParameters.add("quoteOfferId");
 
         handleMissingParameters();
 
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(quoteOfferDto.getOfferCode());
+        OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDto.getQuoteOfferId());
         if (offerTemplate == null)
-            throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferCode());
+            throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getQuoteOfferId());
         final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDto.getQuoteCode(), quoteOfferDto.getQuoteVersion());
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteOfferDto.getQuoteCode() + "," + quoteOfferDto.getQuoteVersion() + ")");
