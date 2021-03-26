@@ -127,6 +127,20 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
     }
 
     @Override
+    public CustomerAccountsResponseDto listGetAll() {
+
+        CustomerAccountsResponseDto result = new CustomerAccountsResponseDto();
+
+        try {
+            result = customerAccountApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
     public ActionStatus createCreditCategory(CreditCategoryDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
