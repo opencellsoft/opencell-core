@@ -11654,7 +11654,7 @@ public class KPICustomerPerOfferReporting extends ReportExtractScript {
         </insert>
     </changeSet>
 
-    <changeSet author="ZBARIKI" id="M540-10_20210326">
+    <changeSet author="ZBARIKI" id="#540-10_20210326">
         <sql dbms="postgresql"><![CDATA[UPDATE ${db.schema.adapted}meveo_script_instance SET
             script = 'package org.meveo.service.script;
 
