@@ -18,17 +18,14 @@
 
 package org.meveo.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CountryIsoDto;
+import org.meveo.api.dto.response.GetCountriesIsoResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.Country;
@@ -37,6 +34,11 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.LanguageService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Mounir HAMMAM
@@ -187,6 +189,20 @@ public class CountryIsoApi extends BaseApi {
         if (countries != null) {
             for (Country country : countries) {
                 result.add(new CountryIsoDto(country));
+            }
+        }
+
+        return result;
+    }
+
+    public GetCountriesIsoResponse list(PagingAndFiltering pagingAndFiltering) {
+        GetCountriesIsoResponse result = new GetCountriesIsoResponse();
+        result.setPaging( pagingAndFiltering );
+
+        List<Country> countries = countryService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (countries != null) {
+            for (Country country : countries) {
+                result.getCountries().add(new CountryIsoDto(country));
             }
         }
 

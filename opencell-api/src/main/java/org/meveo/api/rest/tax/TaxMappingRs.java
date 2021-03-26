@@ -18,18 +18,6 @@
 
 package org.meveo.api.rest.tax;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -37,6 +25,9 @@ import org.meveo.api.dto.response.tax.TaxMappingListResponseDto;
 import org.meveo.api.dto.response.tax.TaxMappingResponseDto;
 import org.meveo.api.dto.tax.TaxMappingDto;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * REST interface definition of Tax mapping API
@@ -81,6 +72,15 @@ public interface TaxMappingRs extends IBaseRs {
     @Path("/list")
     public TaxMappingListResponseDto searchGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List taxMappings matching a given criteria
+     *
+     * @return List of taxMappings
+     */
+    @GET
+    @Path("/listGetAll")
+    TaxMappingListResponseDto listGetAll();
 
     /**
      * Search for Tax mapping by matching a given criteria

@@ -27,6 +27,8 @@ import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
 import org.meveo.api.exception.*;
 import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
@@ -56,6 +58,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -445,6 +448,20 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (customerAccounts != null) {
             for (CustomerAccount ca : customerAccounts) {
                 result.getCustomerAccount().add(accountHierarchyApi.customerAccountToDto(ca));
+            }
+        }
+
+        return result;
+    }
+
+    public CustomerAccountsResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        CustomerAccountsResponseDto result = new CustomerAccountsResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<CustomerAccount> customerAccounts = customerAccountService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (customerAccounts != null) {
+            for (CustomerAccount customerAccount : customerAccounts) {
+                result.getCustomerAccounts().getCustomerAccount().add(new CustomerAccountDto(customerAccount));
             }
         }
 
