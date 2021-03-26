@@ -18,13 +18,6 @@
 
 package org.meveo.api.rest.account.impl;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.account.BillingAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -45,7 +38,6 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -122,6 +114,20 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
 
         try {
             result.setBillingAccounts(billingAccountApi.listByCustomerAccount(customerAccountCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public BillingAccountsResponseDto listGetAll() {
+
+        BillingAccountsResponseDto result = new BillingAccountsResponseDto();
+
+        try {
+            result = billingAccountApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

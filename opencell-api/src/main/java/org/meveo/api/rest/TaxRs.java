@@ -18,21 +18,13 @@
 
 package org.meveo.api.rest;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.Tax}.
@@ -103,4 +95,13 @@ public interface TaxRs extends IBaseRs {
     @GET 
     @Path("/list")
     GetTaxesResponse list();
+
+    /**
+     * List taxes matching a given criteria
+     *
+     * @return List of taxes
+     */
+    @GET
+    @Path("/listGetAll")
+    GetTaxesResponse listGetAll();
 }

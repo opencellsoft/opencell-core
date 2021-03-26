@@ -27,6 +27,7 @@ import org.meveo.api.dto.response.catalog.GetUnitOfMeasureResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.UnitOfMeasureRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -112,6 +113,20 @@ public class UnitOfMeasureRsImpl extends BaseRs implements UnitOfMeasureRs {
 
         try {
             result.setListUnitOfMeasure(unitOfMeasureApi.list());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public GetListUnitOfMeasureResponseDto listGetAll() {
+
+        GetListUnitOfMeasureResponseDto result = new GetListUnitOfMeasureResponseDto();
+
+        try {
+            result = unitOfMeasureApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

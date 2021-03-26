@@ -29,4 +29,8 @@ public interface GenericResourceAPIv1 {
     @Path("/{segments:.*}")
     Response deleteAnEntity() throws URISyntaxException;
 
+    @GET
+    @Path("/restfulEntities")
+    Response getListRestfulEntities();
+
 }

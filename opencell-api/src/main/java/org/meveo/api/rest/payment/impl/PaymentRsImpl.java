@@ -18,51 +18,26 @@
 
 package org.meveo.api.rest.payment.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.ws.rs.QueryParam;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.PaymentActionStatus;
-import org.meveo.api.dto.payment.CardPaymentMethodDto;
-import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
-import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
-import org.meveo.api.dto.payment.DDRequestBuilderDto;
-import org.meveo.api.dto.payment.DDRequestBuilderResponseDto;
-import org.meveo.api.dto.payment.GatewayPaymentNamesEnum;
-import org.meveo.api.dto.payment.HostedCheckoutInput;
-import org.meveo.api.dto.payment.PaymentDto;
-import org.meveo.api.dto.payment.PaymentGatewayDto;
-import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
-import org.meveo.api.dto.payment.PaymentGatewayRumSequenceDto;
-import org.meveo.api.dto.payment.PaymentHistoriesDto;
-import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
-import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.payment.PaymentMethodTokenDto;
-import org.meveo.api.dto.payment.PaymentMethodTokensDto;
-import org.meveo.api.dto.payment.PaymentScheduleInstanceDto;
-import org.meveo.api.dto.payment.PaymentScheduleInstanceResponseDto;
-import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
-import org.meveo.api.dto.payment.PaymentScheduleTemplateDto;
-import org.meveo.api.dto.payment.PaymentScheduleTemplateResponseDto;
-import org.meveo.api.dto.payment.PaymentScheduleTemplatesDto;
+import org.meveo.api.dto.payment.*;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.payment.PaymentGatewayRumSequenceResponseDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.payment.DDRequestBuilderApi;
-import org.meveo.api.payment.PaymentApi;
-import org.meveo.api.payment.PaymentGatewayApi;
-import org.meveo.api.payment.PaymentGatewayRumSequenceApi;
-import org.meveo.api.payment.PaymentMethodApi;
-import org.meveo.api.payment.PaymentScheduleApi;
+import org.meveo.api.payment.*;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.PaymentRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.ws.rs.QueryParam;
 
 /**
  * The implementation for PaymentRs.
@@ -268,6 +243,20 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         PaymentMethodTokensDto result = new PaymentMethodTokensDto();
         try {
             result = paymentMethodApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public PaymentMethodTokensDto listGetAll() {
+
+        PaymentMethodTokensDto result = new PaymentMethodTokensDto();
+
+        try {
+            result = paymentMethodApi.listGet(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

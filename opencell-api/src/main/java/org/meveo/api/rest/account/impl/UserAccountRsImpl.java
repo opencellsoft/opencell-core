@@ -123,6 +123,20 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
     }
 
     @Override
+    public UserAccountsResponseDto listGetAll() {
+
+        UserAccountsResponseDto result = new UserAccountsResponseDto();
+
+        try {
+            result = userAccountApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
     public ActionStatus createOrUpdate(UserAccountDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
