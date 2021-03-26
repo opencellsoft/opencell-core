@@ -587,7 +587,7 @@ Accounting Team
 
     </changeSet>
 
-    <changeSet author="ZBARIKI" id="#540-10_20210326_2">
+    <changeSet author="ZBARIKI" id="#6048_20210326_2">
         <sql dbms="postgresql"><![CDATA[UPDATE ${db.schema.adapted}meveo_script_instance SET
 
             script = 'package org.meveo.service.script;
