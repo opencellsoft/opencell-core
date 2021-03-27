@@ -18,8 +18,8 @@
 
 package org.meveo.service.security;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -31,6 +31,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -83,7 +84,10 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
         if (entity != null) {
             // Check if entity's type is restricted to a specific group of
             // entities. i.e. only specific Customers, CA, BA, etc.
-            boolean isSameTypeAsParent = entity.getClass() == entity.getParentEntityType();
+            boolean isSameTypeAsParent = getClassForHibernateObject(entity) == entity.getParentEntityType();
+            if(isSameTypeAsParent && entity.getParentEntityType().equals(Seller.class) && !paramBeanFactory.getInstance().getBooleanValue("accessible.entity.allows.access.childs.seller", false)) {
+            	return false;
+            }
             if (!isSameTypeAsParent && securedEntities != null && !securedEntities.isEmpty()) {
                 // This means that the entity type is being restricted. Since
                 // the entity did not match anything above, the authorization
@@ -111,6 +115,11 @@ public class SecuredBusinessEntityService extends PersistenceService<BusinessEnt
             return false;
         }
     }
+    
+	public static Class<?> getClassForHibernateObject(Object object) {
+		return object instanceof HibernateProxy ? ((HibernateProxy) object).getHibernateLazyInitializer().getPersistentClass()
+				: object.getClass();
+	}
 
     private static boolean entityFoundInSecuredEntities(BusinessEntity entity, Set<SecuredEntity> securedEntities) {
     	if (entity == null || securedEntities == null) {
