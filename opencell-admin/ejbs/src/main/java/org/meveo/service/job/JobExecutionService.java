@@ -137,7 +137,7 @@ public class JobExecutionService extends BaseService {
         }
 
         if (jobResultStatus == JobExecutionResultStatusEnum.COMPLETED && jobInstance.getFollowingJob() != null) {
-            JobInstance nextJob = jobInstanceService.retrieveIfNotManaged(jobInstance.getFollowingJob());
+            JobInstance nextJob = jobInstanceService.refreshOrRetrieve(jobInstance.getFollowingJob());
             log.info("Executing next job {} for {}", nextJob.getCode(), jobInstance.getCode());
             executeJob(nextJob, null, JobLauncherEnum.TRIGGER);
         }

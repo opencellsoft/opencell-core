@@ -52,7 +52,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
     /**
      * Number of Wallet operations to process in a single job run
      */
-    private static int PROCESS_NR_IN_JOB_RUN = 200000;
+    private static int PROCESS_NR_IN_JOB_RUN = 2000000;
 
     @Inject
     private WalletOperationService walletOperationService;
