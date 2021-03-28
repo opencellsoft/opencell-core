@@ -579,6 +579,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                     }
 
                     oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
+                    oneShotChargeInstanceService.update(oneShotChargeInstance);
+                    
                 } else {
                     log.debug("we do not apply the termination charge because of its status {}", oneShotChargeInstance.getId(), oneShotChargeInstance.getStatus());
                 }

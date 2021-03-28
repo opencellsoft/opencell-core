@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -61,7 +63,7 @@ public class InvoicingApi extends BaseApi {
 
     @Inject
     InvoiceService invoiceService;
-    
+
     @Inject
     BillingCycleService billingCycleService;
 
@@ -118,8 +120,7 @@ public class InvoicingApi extends BaseApi {
             if (billingCycle.getLastTransactionDateEL() != null) {
                 billingRun.setLastTransactionDate(BillingRunService.resolveLastTransactionDate(billingCycle.getLastTransactionDateEL(), billingRun));
             } else if (billingCycle.getLastTransactionDateDelayEL() != null) {
-                billingRun.setLastTransactionDate(DateUtils
-                        .addDaysToDate(billingRun.getProcessDate(), BillingRunService.resolveLastTransactionDateDelay(billingCycle.getLastTransactionDateDelayEL(), billingRun)));
+                billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), BillingRunService.resolveLastTransactionDateDelay(billingCycle.getLastTransactionDateDelayEL(), billingRun)));
             } else {
                 billingRun.setLastTransactionDate(DateUtils.addDaysToDate(billingRun.getProcessDate(), 1));
             }
@@ -226,74 +227,71 @@ public class InvoicingApi extends BaseApi {
 
     }
 
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void cancelBillingRun(Long billingRunId) throws MissingParameterException, EntityDoesNotExistsException, BusinessApiException, BusinessException {
-        if (billingRunId == null || billingRunId.longValue() == 0) {
-            missingParameters.add("billingRunId");
-            handleMissingParameters();
-        }
+
         BillingRun billingRun = getBillingRun(billingRunId);
-        if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
-            throw new BusinessApiException("Cannot cancel a POSTVALIDATED billingRun");
-        }
-        if (BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus())) {
-            throw new BusinessApiException("Cannot cancel a VALIDATED billingRun");
+        if (BillingRunStatusEnum.CANCELED.equals(billingRun.getStatus())) {
+            throw new InvalidParameterException("Cannot cancel a Canceled billingRun ");
+
+        } else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus()) || BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus())) {
+            throw new InvalidParameterException("Cannot cancel a POSTVALIDATED or VALIDATED billingRun");
         }
 
-        billingRun.setStatus(BillingRunStatusEnum.CANCELLING);
         billingRunService.cancelAsync(billingRun.getId());
     }
 
-	/**
-	 * @param billingRunId
-	 * @param invoices
-	 */
-	public void rebuildInvoice(Long billingRunId, List<Long> invoices) {
-		invoiceService.rebuildInvoices(billingRunId, invoices);
-		
-	}
+    /**
+     * @param billingRunId
+     * @param invoices
+     */
+    public void rebuildInvoice(Long billingRunId, List<Long> invoices) {
+        invoiceService.rebuildInvoices(billingRunId, invoices);
 
-	/**
-	 * @param billingRunId
-	 * @param invoices
-	 */
-	public void rejectInvoice(Long billingRunId, List<Long> invoices) {
-		invoiceService.rejectInvoices(billingRunId, invoices);
-		
-	}
+    }
 
-	/**
-	 * @param billingRunId
-	 * @param invoices
-	 */
-	public void validateInvoice(Long billingRunId, List<Long> invoices) {
-		invoiceService.validateInvoices(billingRunId, invoices);
-	}
+    /**
+     * @param billingRunId
+     * @param invoices
+     */
+    public void rejectInvoice(Long billingRunId, List<Long> invoices) {
+        invoiceService.rejectInvoices(billingRunId, invoices);
 
-	/**
-	 * @param billingRunId
-	 * @param invoices
-	 */
-	public void moveInvoice(Long billingRunId, List<Long> invoices) {
-		invoiceService.moveInvoices(billingRunId, invoices);
-	}
+    }
 
-	/**
-	 * @param billingRunId
-	 * @param invoices
-	 */
-	public void cancelInvoice(Long billingRunId, List<Long> invoices, Boolean deleteCanceledInvoices) {
-		invoiceService.cancelInvoices(billingRunId, invoices, deleteCanceledInvoices == null ? false : deleteCanceledInvoices);
-	}
+    /**
+     * @param billingRunId
+     * @param invoices
+     */
+    public void validateInvoice(Long billingRunId, List<Long> invoices) {
+        invoiceService.validateInvoices(billingRunId, invoices);
+    }
 
-	/**
-	 * Delete canceled invoices for a given billing run
-	 * 
-	 * @param billingRunId
-	 * @param invoices
-	 */
-	public void canceledInvoices(Long billingRunId) {
-		invoiceService.deleteInvoices(billingRunId);
-		
-	}
+    /**
+     * @param billingRunId
+     * @param invoices
+     */
+    public void moveInvoice(Long billingRunId, List<Long> invoices) {
+        invoiceService.moveInvoices(billingRunId, invoices);
+    }
+
+    /**
+     * @param billingRunId
+     * @param invoices
+     */
+    public void cancelInvoice(Long billingRunId, List<Long> invoices, Boolean deleteCanceledInvoices) {
+        invoiceService.cancelInvoices(billingRunId, invoices, deleteCanceledInvoices == null ? false : deleteCanceledInvoices);
+    }
+
+    /**
+     * Delete canceled invoices for a given billing run
+     * 
+     * @param billingRunId
+     * @param invoices
+     */
+    public void canceledInvoices(Long billingRunId) {
+        invoiceService.deleteInvoices(billingRunId);
+
+    }
 
 }

@@ -3320,15 +3320,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
 
-        if(subscription == null && billingAccount != null) {
-            List<Long> ids = findSubscriptionIds(billingAccount.getUsersAccounts());
-            if(ids != null && !ids.isEmpty()) {
-                Optional.ofNullable(findSubscriptionDPs(ids))
-                        .ifPresent(discountPlans ->
-                                subscriptionApplicableDiscountPlanItems.addAll(
-                                        getApplicableDiscountPlanItems(billingAccount, discountPlans, invoice, customerAccount)));
-            }
-        }
+        // Andrius Commented out as it is a performance killer when BA has many subscriptions. And it does not take into account what subscriptions were billed in this invoice. 
+        // E.g. if BA has 100 subscriptions, 98 with disounts and 2 without. And only those 2 were billed in this invoice, according to this logic, discounts will still be applied
+//        if(subscription == null && billingAccount != null) {
+//            List<Long> ids = findSubscriptionIds(billingAccount.getUsersAccounts());
+//            if(ids != null && !ids.isEmpty()) {
+//                Optional.ofNullable(findSubscriptionDPs(ids))
+//                        .ifPresent(discountPlans ->
+//                                subscriptionApplicableDiscountPlanItems.addAll(
+//                                        getApplicableDiscountPlanItems(billingAccount, discountPlans, invoice, customerAccount)));
+//            }
+//        }
 
         // Construct discount and tax aggregates
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates) {

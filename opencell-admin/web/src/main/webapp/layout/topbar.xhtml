@@ -23,9 +23,7 @@
 							<a href="#" id="menu1"><i class="fa fa-2x fa-cog"></i></a>
 							<ul style="display: none; z-index: 1">
 								<li><h:commandLink id="logout" action="#{authenticationProvider.logout}" value="#{messages['menutop.logout']}" /></li>
-								<li><h:link outcome="/index.html"
-										value="#{messages['menutop.changePassword']}" rendered="true"
-										styleClass="headerLink" immediate="true" /></li>
+								
 							</ul>
 						</c:if></li>
 					<li><a href="#" id="menu2"><i class="fa fa-2x fa-question"></i></a>

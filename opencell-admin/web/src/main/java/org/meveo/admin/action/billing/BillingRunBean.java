@@ -30,6 +30,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingProcessTypesEnum;
@@ -46,8 +47,8 @@ import org.omnifaces.cdi.Param;
 import org.primefaces.model.SortOrder;
 
 /**
- * Standard backing bean for {@link BillingRun} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
- * edit, view, delete operations). It works with Manaty custom JSF components.
+ * Standard backing bean for {@link BillingRun} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit, view, delete operations). It works
+ * with Manaty custom JSF components.
  * 
  * @author Edward P. Legaspi
  * @author Wassim Drira
@@ -222,21 +223,17 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
         }
         return null;
     }
-    
+
     public Boolean canBeValidated() {
-    	 return !billingRunService.isBillingRunContainingRejectedInvoices(entity.getId());
+        return !billingRunService.isBillingRunContainingRejectedInvoices(entity.getId());
     }
 
+    @ActionMethod
     public String cancel() {
-        try {
-            entity = billingRunService.cancelBillingRun(entity);
-            return "billingRuns";
 
-        } catch (Exception e) {
-            log.error("Failed to cancel billing run", e);
-            messages.error(new BundleKey("messages", "error.execution"));
-        }
-        return null;
+        billingRunService.cancelAsync(entity.getId());
+        messages.info(new BundleKey("messages", "billingRun.submitedToCancel"));
+        return "billingRuns";
     }
 
     /**
