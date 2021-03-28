@@ -31,12 +31,17 @@
         showEnableDisableButton - show a default "enable/disable" button
         showDeleteButton - show "delete" button
         useCustomIdParam and objectIdParamName - should a custom parameter id instead of a default "objectId" be used for navigation
-        updateConfirmationMessage - if not empty, update will show a confirmation dialog with this message  
+        updateConfirmationMessage - if not empty, "update" will show a confirmation dialog with this message  
         execute - show button to invoke a execute method
         executeLabel - Button execute lapel
         formId - form id, to distinguish buttons, defaults to 'formId'
         submitActionListener - if true add actionListener to submit button=submitActionListener()
         stop - show button to invoke a stop method
+                stopLabel - a "stop" button label 
+        stopConfirmationMessage - if not empty, "stop" will show a confirmation dialog with this message
+        stopByForce - show button to invoke a stop by force method
+        stopByForceLabel - a "stop by force" button label
+        stopByForceConfirmationMessage - if not empty, "stopByForce" will show a confirmation dialog with this message
         executeLabel - Button stop lapel
 -->
 
@@ -62,6 +67,7 @@
     <cc:attribute name="formId" default="formId" />
     <cc:attribute name="submitActionListener" default="false" />
     <cc:attribute name="stop" default="false" />
+    <cc:attribute name="stopByForce" default="false" />
 </cc:interface>
 
 <cc:implementation>
@@ -135,14 +141,23 @@
             process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
             <f:param name="edit" value="#{cc.attrs.edit}" />
         </p:commandButton>
-        
+                
         <p:commandButton id="StopButtonAjax"
             rendered="#{ cc.attrs.stop  and cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit and !empty(cc.attrs.backingBean.objectId) and cc.attrs.backingBean.canUserUpdateEntity()}"
             value="#{cc.attrs.stopLabel}" oncomplete="$('html,body').scrollTop(0);"
-            action="#{cc.attrs.backingBean.stop()}"
-            process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}" partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="#{cc.attrs.submitUpdate}">
+            action="#{cc.attrs.backingBean.stop()}" immediate="true" update="#{cc.attrs.submitUpdate}">
             <f:param name="edit" value="#{cc.attrs.edit}" />
-        </p:commandButton>        
+            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{(cc.attrs.stopConfirmationMessage eq '') ? messages['confirmationMessage.confirmStop'] : cc.attrs.stopConfirmationMessage}" icon="ui-icon-alert" />
+        </p:commandButton>            
+        
+        <p:commandButton id="StopByForceButtonAjax"
+            rendered="#{ cc.attrs.stop and cc.attrs.stopByForce and cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit and !empty(cc.attrs.backingBean.objectId) and cc.attrs.backingBean.canUserUpdateEntity()}"
+            value="#{cc.attrs.stopByForceLabel}" oncomplete="$('html,body').scrollTop(0);"
+            action="#{cc.attrs.backingBean.stopByForce()}" immediate="true" update="#{cc.attrs.submitUpdate}">
+            <f:param name="edit" value="#{cc.attrs.edit}" />
+            <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{(cc.attrs.stopByForceConfirmationMessage eq '') ? messages['confirmationMessage.confirmStopByForce'] : cc.attrs.stopByForceConfirmationMessage}" icon="ui-icon-alert" />
+        </p:commandButton>      
+        
 
 		<!-- Update with message -->
 		<p:remoteCommand id="remoteUpdateWithMessageButton" rendered="#{cc.attrs.submitPartialProcess==null}"

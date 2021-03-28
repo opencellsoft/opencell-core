@@ -31,7 +31,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 /**
@@ -47,9 +46,6 @@ public class UpdateUnpaidInvoiceStatusJobBean extends BaseJobBean {
 
     @Inject
     InvoiceService invoiceService;
-    
-    @Inject
-    protected JobExecutionService jobExecutionService;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -61,7 +57,7 @@ public class UpdateUnpaidInvoiceStatusJobBean extends BaseJobBean {
             invoiceService.updateUnpaidInvoicesStatus();
         } catch (BusinessException e) {
             log.error("Failed to run the job : UpdateUnpaidInvoiceStatusJobBean", e);
-            jobExecutionService.registerError(result, e.getMessage());
+            result.registerError(e.getMessage());
         }
 
     }

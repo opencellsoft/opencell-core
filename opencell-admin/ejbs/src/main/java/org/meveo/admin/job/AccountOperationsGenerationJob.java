@@ -39,7 +39,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.job.Job;
 
 /**
- * The Class AccountOperationsGenerationJob generate the invoice account operation for all invoices that dont have it yet.
+ * Job definition to generate the invoice account operation for all invoices that don't have it yet.
  * 
  * @author anasseh
  * @author Abdellatif BARI
@@ -54,8 +54,9 @@ public class AccountOperationsGenerationJob extends Job {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         accountOperationsGenerationJobBean.execute(result, jobInstance);
+        return result;
     }
 
     @Override

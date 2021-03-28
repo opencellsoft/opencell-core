@@ -70,19 +70,19 @@
                                         rendered="#{invoiceBean.pdfInvoiceAlreadyGenerated or invoiceBean.xmlInvoiceAlreadyGenerated}">
                                         <p:panelGrid columns="1">
                                             <p:outputPanel rendered="#{invoiceBean.pdfInvoiceAlreadyGenerated}">
-                                                <h:commandLink action="#{invoiceBean.downloadPdfInvoice()}">
+                                                <h:commandLink action="#{invoiceBean.downloadPdfInvoice()}" immediate="true">
                                                     <h:outputText value="#{invoiceBean.getEntity().pdfFilenameOnly}" />
                                                 </h:commandLink>
                                                 <p:spacer width="10" />
-                                                <p:commandButton icon="ui-icon-close" action="#{invoiceBean.deletePdfInvoice}"
+                                                <p:commandButton icon="ui-icon-close" action="#{invoiceBean.deletePdfInvoice}" immediate="true"
                                                     update=":headerForm:messages :headerForm:tabView:attachments :headerForm:tabView:buttonGenerate" />
                                             </p:outputPanel>
                                             <p:outputPanel rendered="#{invoiceBean.xmlInvoiceAlreadyGenerated}">
-                                                <h:commandLink action="#{invoiceBean.downloadXmlInvoice()}">
+                                                <h:commandLink action="#{invoiceBean.downloadXmlInvoice()}" immediate="true">
                                                     <h:outputText value="#{invoiceBean.getEntity().xmlFilenameOnly}" />
                                                 </h:commandLink>
                                                 <p:spacer width="10" />
-                                                <p:commandButton icon="ui-icon-close" action="#{invoiceBean.deleteXmlInvoice}"
+                                                <p:commandButton icon="ui-icon-close" action="#{invoiceBean.deleteXmlInvoice}" immediate="true"
                                                     update=":headerForm:messages :headerForm:tabView:attachments :headerForm:tabView:buttonGenerate" />
                                             </p:outputPanel>
                                         </p:panelGrid>

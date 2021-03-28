@@ -56,6 +56,7 @@ import org.meveo.model.jaxb.customer.WarningCustomerAccount;
 import org.meveo.model.jaxb.customer.WarningSeller;
 import org.meveo.model.jaxb.customer.Warnings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -176,14 +177,14 @@ public class ImportCustomersJobBean {
         log.info("InputFiles job " + numberOfFiles + " to import");
 
         for (File file : files) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
             File currentFile = null;
             try {
                 log.info("InputFiles job " + file.getName() + " in progres");
                 currentFile = FileUtils.addExtension(file, ".processing");
-                importFile(currentFile, file.getName(), result.getJobInstance().getId());
+                importFile(currentFile, file.getName(), result.getJobInstance());
                 FileUtils.moveFile(dirOK, currentFile, file.getName());
                 log.info("InputFiles job " + file.getName() + " done");
             } catch (Exception e) {
@@ -231,11 +232,11 @@ public class ImportCustomersJobBean {
     /**
      * @param file file to import
      * @param fileName file's name
-     * @param jobInstanceId the job Instance Id
+     * @param jobInstance the job Instance
      * @throws JAXBException jaxb exception
      * @throws Exception exception
      */
-    private void importFile(File file, String fileName, Long jobInstanceId) throws JAXBException, Exception {
+    private void importFile(File file, String fileName, JobInstance jobInstance) throws JAXBException, Exception {
 
         log.info("start import file :" + fileName);
 
@@ -302,9 +303,11 @@ public class ImportCustomersJobBean {
                 seller = createSeller(sell, fileName, i);
 
                 List<org.meveo.model.jaxb.customer.Customer> customerList = sell.getCustomers().getCustomer();
-                 for (org.meveo.model.jaxb.customer.Customer cust : customerList) {
-                    ji++;
-                    if (ji % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+
+                int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
+                
+                for (org.meveo.model.jaxb.customer.Customer cust : customerList) {
+                    if (ji % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
                         break;
                     }
                     if (customerCheckError(sell, cust)) {
@@ -315,6 +318,7 @@ public class ImportCustomersJobBean {
 
                     nbCustomers++;
                     createCustomer(fileName, seller, sell, cust, i);
+                    ji++;
                 }
             } catch (Exception e) {
                 createSellerError(sell, ExceptionUtils.getRootCause(e).getMessage());
