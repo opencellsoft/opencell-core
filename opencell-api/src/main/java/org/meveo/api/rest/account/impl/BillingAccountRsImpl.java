@@ -124,6 +124,20 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
     }
 
     @Override
+    public BillingAccountsResponseDto listGetAll() {
+
+        BillingAccountsResponseDto result = new BillingAccountsResponseDto();
+
+        try {
+            result = billingAccountApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
     public ActionStatus createOrUpdate(BillingAccountDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 

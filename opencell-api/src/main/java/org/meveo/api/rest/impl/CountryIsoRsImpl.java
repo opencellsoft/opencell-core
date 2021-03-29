@@ -18,12 +18,6 @@
 
 package org.meveo.api.rest.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-
 import org.meveo.api.CountryIsoApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -32,6 +26,13 @@ import org.meveo.api.dto.response.GetCountriesIsoResponse;
 import org.meveo.api.dto.response.GetCountryIsoResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CountryIsoRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 
 /**
  * 
@@ -129,5 +130,19 @@ public class CountryIsoRsImpl extends BaseRs implements CountryIsoRs {
 
         return result;
 	}
+
+    @Override
+    public GetCountriesIsoResponse listGetAll() {
+
+        GetCountriesIsoResponse result = new GetCountriesIsoResponse();
+
+        try {
+            result = countryIsoApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
 
 }

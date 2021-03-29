@@ -21,9 +21,12 @@ package org.meveo.api.catalog;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.UnitOfMeasureDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetListUnitOfMeasureResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.service.catalog.impl.UnitOfMeasureService;
@@ -124,6 +127,20 @@ public class UnitOfMeasureApi extends BaseCrudApi<UnitOfMeasure, UnitOfMeasureDt
         }
 
         return unitOfMeasureDtos;
+    }
+
+    public GetListUnitOfMeasureResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        GetListUnitOfMeasureResponseDto result = new GetListUnitOfMeasureResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<UnitOfMeasure> unitOfMeasures = unitOfMeasureService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (unitOfMeasures != null) {
+            for (UnitOfMeasure unitOfMeasure : unitOfMeasures) {
+                result.getListUnitOfMeasure().add(new UnitOfMeasureDto(unitOfMeasure));
+            }
+        }
+
+        return result;
     }
 
     /**
