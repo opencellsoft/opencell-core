@@ -4157,7 +4157,12 @@ public class OrderAdvancement extends ModuleScript {
 			<column name="description" type="varchar(255)"/>
 		</addColumn>
 	</changeSet>
-	
+
+	<changeSet id="#20210323-382" author="Mbarek-Ay">
+		<addColumn tableName="cpq_contract_item">
+			<column name="rate_type" type="varchar(255)"/>
+		</addColumn>
+	</changeSet>	
 	<changeSet id="#20220325_360" author="TarikFA.">
 		<createTable tableName="cpq_commercial_order_order_lot">
 	        	<column name="commercial_order_id" type="bigint">

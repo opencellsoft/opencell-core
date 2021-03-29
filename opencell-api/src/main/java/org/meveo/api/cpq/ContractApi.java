@@ -33,7 +33,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
-import org.meveo.model.cpq.enums.ProductStatusEnum;
+import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.SellerService;
@@ -158,7 +158,7 @@ public class ContractApi extends BaseApi{
 		if(contract == null)
 			throw new EntityDoesNotExistsException(Contract.class, dto.getCode());
 		//check the status of the contract
-		if(!ProductStatusEnum.DRAFT.equals(contract.getStatus())) {
+		if(!ContractStatusEnum.DRAFT.equals(contract.getStatus())) {
 			throw new MeveoApiException(CONTRACt_STAT_DIFF_TO_DRAFT);
 		}else {
 			contract.setStatus(dto.getStatus());
@@ -227,7 +227,7 @@ public class ContractApi extends BaseApi{
 													
 	}
 
-	public void updateStatus(String contractCode, ProductStatusEnum contractStatus){
+	public void updateStatus(String contractCode, ContractStatusEnum contractStatus){
 		Contract contract = loadEntityByCode(contractService, contractCode, Contract.class);
 		contractService.updateStatus(contract, contractStatus);
 	}
@@ -301,6 +301,7 @@ public class ContractApi extends BaseApi{
     	item.setRate(contractItemDto.getRate());
     	item.setAmountWithoutTax(contractItemDto.getAmountWithoutTax());
     	item.setDescription(contractItemDto.getDescription());
+    	item.setContractRateTypeEnum(contractItemDto.getContractRateTypeEnum());
     	
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, true);
@@ -339,6 +340,7 @@ public class ContractApi extends BaseApi{
     		item.setChargeTemplate(chargeTemplateService.findByCode(contractItemDto.getChargeTemplateCode()));
     	item.setRate(contractItemDto.getRate());
     	item.setAmountWithoutTax(contractItemDto.getAmountWithoutTax());
+    	item.setContractRateTypeEnum(contractItemDto.getContractRateTypeEnum());
     	
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, false);

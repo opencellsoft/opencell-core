@@ -9,6 +9,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
+import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -22,7 +23,7 @@ public class ContractDto extends BusinessEntityDto {
 
 	private ContractAccountLevel contractAccountLevel;
 	private String accountCode;
-	private ProductStatusEnum status;
+	private ContractStatusEnum status;
 	@JsonSerialize(using = CustomDateSerializer.class)
 	private Date statusDate;
     @NotNull
@@ -68,18 +69,15 @@ public class ContractDto extends BusinessEntityDto {
 		this.description = c.getDescription();
 	}
 	
-	/**
-	 * @return the status
-	 */
-	public ProductStatusEnum getStatus() {
+	 
+	public ContractStatusEnum getStatus() {
 		return status;
 	}
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(ProductStatusEnum status) {
+
+	public void setStatus(ContractStatusEnum status) {
 		this.status = status;
 	}
+
 	/**
 	 * @return the statusDate
 	 */

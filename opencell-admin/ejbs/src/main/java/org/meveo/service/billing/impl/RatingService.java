@@ -79,6 +79,9 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.communication.MeveoInstance;
+import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.cpq.contract.ContractItem;
+import org.meveo.model.cpq.contract.ContractRateTypeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.CustomerAccount;
@@ -95,6 +98,8 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
+import org.meveo.service.cpq.ContractItemService;
+import org.meveo.service.cpq.ContractService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.catalog.TriggeredEdrScriptService;
@@ -152,7 +157,14 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
     @Inject
     private PricePlanMatrixVersionService pricePlanMatrixVersionService;
+    
+    @Inject
+    private ContractService contractService;
+    
+    @Inject
+    private ContractItemService contractItemService;
 
+    private final static BigDecimal HUNDRED = new BigDecimal("100");
 
 //    private Map<String, String> descriptionMap = new HashMap<>();
 
@@ -545,14 +557,41 @@ public class RatingService extends PersistenceService<WalletOperation> {
             }
 
             PricePlanMatrix pricePlan = null;
-
             if ((unitPriceWithoutTaxOverridden == null && appProvider.isEntreprise()) || (unitPriceWithTaxOverriden == null && !appProvider.isEntreprise())) {
 
                 List<PricePlanMatrix> chargePricePlans = getActivePricePlansByChargeCode(bareWalletOperation.getCode());
                 if (chargePricePlans == null || chargePricePlans.isEmpty()) {
                     throw new NoPricePlanException("No price plan for charge code " + bareWalletOperation.getCode());
                 }
+                Subscription subscription=bareWalletOperation.getSubscription();
+                BillingAccount billingAccount=subscription.getUserAccount().getBillingAccount();
+                CustomerAccount customerAccount=billingAccount.getCustomerAccount();
+                Customer customer=customerAccount.getCustomer();
+                Contract contract=contractService.getContractByAccount(customer, billingAccount, customerAccount);
+                ServiceInstance serviceInstance=chargeInstance.getServiceInstance();
+                ChargeTemplate  chargeTemplate=chargeInstance.getChargeTemplate();
+                OfferTemplate offerTemplate=subscription.getOffer();
+                ContractItem contractItem=null;  
+                if(contract!=null) {
+                contractItem=contractItemService.getApplicableContractItem(contract ,offerTemplate,serviceInstance.getCode(),chargeTemplate);
+                } 
+                if (contractItem!=null && ContractRateTypeEnum.FIXED.equals(contractItem.getRateType())) {
+                	 
+                if(contractItem.getPricePlan()!=null){ 
+    				PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
+    				PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlanMatrix.getCode());
+    				if(ppmVersion!=null) {
+    					PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixService.loadPrices(ppmVersion, chargeInstance);
+    					unitPriceWithoutTaxOverridden=pricePlanMatrixLine.getPricetWithoutTax();
+    				} 
 
+    			}else {
+    				unitPriceWithoutTaxOverridden =contractItem.getAmountWithoutTax();	
+    			  } 
+                } 
+    			
+                
+                if(unitPriceWithoutTaxOverridden==null) {
                 pricePlan = ratePrice(chargePricePlans, bareWalletOperation, buyerCountryId, buyerCurrency);
                 if (pricePlan == null) {
                     throw new NoPricePlanException("No price plan matched for charge code " + bareWalletOperation.getCode());
@@ -621,13 +660,20 @@ public class RatingService extends PersistenceService<WalletOperation> {
                         }
                     }
                 }
+                if (contractItem!=null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getRateType() )&& contractItem.getRate()>0  ) {
+       			 BigDecimal amount = unitPriceWithoutTaxOverridden.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
+       		      	if (amount != null && unitPriceWithoutTaxOverridden.compareTo(amount)>0) 
+       				   unitPriceWithoutTaxOverridden=unitPriceWithoutTaxOverridden.subtract(amount);    
+       			
+       		       }
+                }
 
             }
 
             // if the wallet operation correspond to a recurring charge that is
             // shared, we divide the price by the number of
             // shared charges
-
+////////----------------------------------------unitPriceWithTaxOverriden=get amount in contract with PERCENTAGE
             if (recChargeTemplate != null && recChargeTemplate.getShareLevel() != null) {
                 RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) chargeInstance;
                 int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);

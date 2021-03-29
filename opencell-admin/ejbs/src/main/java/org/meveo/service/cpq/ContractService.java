@@ -1,14 +1,20 @@
 package org.meveo.service.cpq;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
+import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.BusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,12 +91,12 @@ public class ContractService extends BusinessService<Contract>  {
 	 * @return
 	 * @throws ContractException
 	 */
-	public Contract updateStatus(Contract contract, ProductStatusEnum status){
-		if(contract.getStatus().equals(ProductStatusEnum.DRAFT)) {
+	public Contract updateStatus(Contract contract, ContractStatusEnum status){
+		if(contract.getStatus().equals(ContractStatusEnum.DRAFT)) {
 			contract.setStatus(status);
 			return  update(contract);
-		}else if (ProductStatusEnum.ACTIVE.equals(contract.getStatus())) {
-			contract.setStatus(ProductStatusEnum.CLOSED);
+		}else if (ContractStatusEnum.ACTIVE.equals(contract.getStatus())) {
+			contract.setStatus(ContractStatusEnum.CLOSED);
 			return  update(contract);
 		}
 		throw new BusinessException(String.format(CONTRACT_CAN_NOT_CHANGE_THE_STATUS, contract.getCode()));
@@ -108,6 +114,18 @@ public class ContractService extends BusinessService<Contract>  {
 			default : throw new BusinessException("Account level is missing for code : " + accountLevelCode);
 		}
 		
+	}
+	
+	public Contract getContractByAccount(Customer customer,BillingAccount billingAccount,CustomerAccount customerAccount) {
+		Contract contract = null;
+		try {
+			contract = (Contract) getEntityManager().createNamedQuery("Contract.findByAccounts")
+					.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
+					.setParameter("customerAccountId",customerAccount.getId()).getSingleResult();
+		} catch (Exception e) {
+			log.error("getContractByAccount error ", e.getMessage());
+		}
+		return contract;
 	}
 	
 	
