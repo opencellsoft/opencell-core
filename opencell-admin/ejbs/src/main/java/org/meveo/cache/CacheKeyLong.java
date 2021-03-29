@@ -44,6 +44,10 @@ public class CacheKeyLong implements Serializable {
      */
     private Long key;
 
+    public CacheKeyLong() {
+    	
+    }
+    
     /**
      * @param provider Provider code
      * @param key Cache key

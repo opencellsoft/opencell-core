@@ -37,7 +37,8 @@ import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
 /**
- * The Class GenericWorkflowJob execute the transition script on each workflowed entity instance.
+ * Job definition to execute the transition script on each workflowed entity instance.
+ * 
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
@@ -58,8 +59,9 @@ public class GenericWorkflowJob extends Job {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         genericWorkflowJobBean.execute(result, jobInstance);
+        return result;
     }
 
     @Override
@@ -70,7 +72,6 @@ public class GenericWorkflowJob extends Job {
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
-
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode("gwfJob_nbRuns");
@@ -104,7 +105,7 @@ public class GenericWorkflowJob extends Job {
         worklowCF.setValueRequired(true);
         worklowCF.setGuiPosition("tab:Configuration:0;field:2");
         result.put("gwfJob_generic_wf", worklowCF);
-        
+
         return result;
     }
 }

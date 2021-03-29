@@ -39,8 +39,9 @@ public class ExportAccountsJob extends Job {
 
     @Override
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    protected void execute(JobExecutionResultImpl result,JobInstance jobIntstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result,JobInstance jobIntstance) throws BusinessException {
         exportAccountsJobBean.execute(result, jobIntstance.getParametres());
+        return result;
     }
 
     @Override

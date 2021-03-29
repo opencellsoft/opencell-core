@@ -101,6 +101,14 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
     @Override
     public void create(CustomEntityTemplate cet) throws BusinessException {
+    	create(cet, true);
+    }
+    
+    public void createWithoutPermissions(CustomEntityTemplate cet) throws BusinessException {
+    	create(cet, false);
+    }
+    
+    public void create(CustomEntityTemplate cet, boolean createPermissions) throws BusinessException {
 
         ParamBean paramBean = paramBeanFactory.getInstance();
         super.create(cet);
@@ -161,14 +169,15 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         if (cet.isStoreInES()) {
             elasticClient.createCETMapping(cet);
         }
-
-        try {
-            permissionService.createIfAbsent(cet.getModifyPermission(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
-            permissionService.createIfAbsent(cet.getReadPermission(), paramBean.getProperty("role.readAllCE", "ReadAllCE"));
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+		if(createPermissions) {
+	        try {
+	            permissionService.createIfAbsent(cet.getModifyPermission(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
+	            permissionService.createIfAbsent(cet.getReadPermission(), paramBean.getProperty("role.readAllCE", "ReadAllCE"));
+	
+	        } catch (Exception e) {
+	            throw new RuntimeException(e);
+	        }
+		}
     }
 
     @Override

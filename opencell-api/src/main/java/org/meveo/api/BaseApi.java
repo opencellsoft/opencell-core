@@ -162,7 +162,7 @@ public abstract class BaseApi {
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
 
-    private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
+    protected ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
     protected void handleMissingParameters() throws MissingParameterException {
         if (!missingParameters.isEmpty()) {

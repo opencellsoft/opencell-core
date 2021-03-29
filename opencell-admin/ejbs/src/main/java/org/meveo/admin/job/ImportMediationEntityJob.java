@@ -40,15 +40,16 @@ import org.meveo.service.job.Job;
 public class ImportMediationEntityJob extends Job {
 
     private static final String APPLIES_TO_NAME = "JobInstance_ImportMediationEntityJob";
-    
+
     /** The payment job bean. */
     @Inject
     private ImportMediationEntityJobBean importMediationEntityJobBean;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         importMediationEntityJobBean.execute(result, jobInstance);
+        return result;
     }
 
     @Override

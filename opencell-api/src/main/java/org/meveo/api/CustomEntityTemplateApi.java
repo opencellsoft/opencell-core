@@ -50,6 +50,7 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
@@ -83,6 +84,9 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
     @Inject
     private EntityCustomActionService entityCustomActionService;
+
+    @Inject
+	private PermissionService permissionService;
 
     @Override
     public CustomEntityTemplate create(CustomEntityTemplateDto dto) throws MeveoApiException, BusinessException {
@@ -143,7 +147,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         }
 
         CustomEntityTemplate cet = convertCustomEntityTemplateFromDTO(dto, null);
-        customEntityTemplateService.create(cet);
+        customEntityTemplateService.createWithoutPermissions(cet);
 
         if (dto.getFields() != null) {
             for (CustomFieldTemplateDto cftDto : dto.getFields()) {
@@ -160,6 +164,12 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
                 actionDto.setDisabled(dto.isDisabled());
                 entityCustomActionApi.createOrUpdate(actionDto, cet.getAppliesTo());
             }
+        }
+        try {
+            permissionService.createIfAbsent(cet.getModifyPermission(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
+            permissionService.createIfAbsent(cet.getReadPermission(), paramBean.getProperty("role.readAllCE", "ReadAllCE"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         return cet;

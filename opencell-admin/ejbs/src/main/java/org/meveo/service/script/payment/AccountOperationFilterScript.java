@@ -21,7 +21,6 @@ package org.meveo.service.script.payment;
 import java.util.List;
 import java.util.Map;
 
-import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.service.script.Script;
 
@@ -31,6 +30,8 @@ import org.meveo.service.script.Script;
  * @author Said Ramli
  */
 public abstract class AccountOperationFilterScript extends Script {
+
+    private static final long serialVersionUID = 5329117277858473758L;
 
     public static final String LIST_AO_TO_PAY = "LIST_AO_TO_PAY";
     public static final String FROM_DUE_DATE = "FROM_DUE_DATE";
@@ -43,9 +44,4 @@ public abstract class AccountOperationFilterScript extends Script {
     public void checkPaymentRetry(Map<String, Object> methodContext) {
         // To be overridden by the custom script implementation ...
     }
-
-    protected Object getServiceInterface(String serviceInterfaceName) {
-        return EjbUtils.getServiceInterface(serviceInterfaceName);
-    }
-
 }

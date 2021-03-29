@@ -92,7 +92,7 @@ public class SepaDirectDebitAsync {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-	@Interceptors({ JobMultithreadingHistoryInterceptor.class })
+//	@Interceptors({ JobMultithreadingHistoryInterceptor.class })
 	public Future<String> launchAndForgetPaymentCreation(List<DDRequestItem> ddRequestItems, boolean isToMatching, PaymentStatusEnum paymentStatus, JobExecutionResultImpl result) throws BusinessException {
 		for (DDRequestItem ddRequestItem : ddRequestItems) {
 
@@ -104,7 +104,7 @@ public class SepaDirectDebitAsync {
 			} catch (Exception e) {
 				Log.warn("Error on launchAndForgetPaymentCreation", e);
 				if(result != null) {
-					jobExecutionService.registerError(result, e.getMessage());
+					result.registerError(e.getMessage());
 				}
 			}
 		}
@@ -121,7 +121,7 @@ public class SepaDirectDebitAsync {
 	 */
 	@Asynchronous
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	@Interceptors({ JobMultithreadingHistoryInterceptor.class })
+//	@Interceptors({ JobMultithreadingHistoryInterceptor.class })
 	public Future<Map<String,Object>> launchAndForgetDDRequesltLotCreation(DDRequestLOT ddRequestLOT, List<AccountOperation> listAoToPay,
 			Provider appProvider) throws BusinessException {
 				

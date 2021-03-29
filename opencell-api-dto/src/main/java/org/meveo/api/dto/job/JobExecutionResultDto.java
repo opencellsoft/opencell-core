@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.IEntityDto;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 
 /**
  * Contains information about job execution status and history once job is completed.
@@ -77,9 +78,17 @@ public class JobExecutionResultDto extends BaseEntityDto implements IEntityDto {
     @XmlElement(required = true)
     private long nbItemsProcessedWithError;
 
-    /** Is job execution done - if False, job should be repeated again to finish processing. */
-    @XmlElement(required = true)
+    /**
+     * Is job execution done - if False, job should be repeated again to finish processing. Deprecated in 7.4. Use status field instead
+     */
+    @Deprecated
+    @XmlElement
     private boolean done = true;
+
+    /**
+     * Job execution status
+     */
+    private JobExecutionResultStatusEnum status;
 
     /** Jon execution report/summary. */
     private String report;
@@ -109,8 +118,9 @@ public class JobExecutionResultDto extends BaseEntityDto implements IEntityDto {
         this.nbItemsCorrectlyProcessed = jobExecutionResult.getNbItemsCorrectlyProcessed();
         this.nbItemsProcessedWithWarning = jobExecutionResult.getNbItemsProcessedWithWarning();
         this.nbItemsProcessedWithError = jobExecutionResult.getNbItemsProcessedWithError();
-        this.done = jobExecutionResult.isDone();
+        this.done = jobExecutionResult.getStatus() == JobExecutionResultStatusEnum.COMPLETED;
         this.report = jobExecutionResult.getReport();
+        this.status = jobExecutionResult.getStatus();
         this.jobInstanceCode = jobExecutionResult.getJobInstance().getCode();
     }
 
@@ -329,11 +339,25 @@ public class JobExecutionResultDto extends BaseEntityDto implements IEntityDto {
     public void setJobInstanceCode(String jobInstanceCode) {
         this.jobInstanceCode = jobInstanceCode;
     }
-    
+
+    /**
+     * @return Job execution status
+     */
+    public JobExecutionResultStatusEnum getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status Job execution status
+     */
+    public void setStatus(JobExecutionResultStatusEnum status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
-        return "JobExecutionResultDto [id=" + id + ", jobInstanceId=" + jobInstanceId + ", runningOnNodes=" + runningOnNodes + ", startDate=" + startDate + ", endDate=" + endDate
-                + ", nbItemsToProcess=" + nbItemsToProcess + ", nbItemsCorrectlyProcessed=" + nbItemsCorrectlyProcessed + ", nbItemsProcessedWithWarning="
-                + nbItemsProcessedWithWarning + ", nbItemsProcessedWithError=" + nbItemsProcessedWithError + ", done=" + done + ", report=" + report + "]";
+        return "JobExecutionResultDto [id=" + id + ", jobInstanceId=" + jobInstanceId + ", runningOnNodes=" + runningOnNodes + ", startDate=" + startDate + ", endDate=" + endDate + ", nbItemsToProcess="
+                + nbItemsToProcess + ", nbItemsCorrectlyProcessed=" + nbItemsCorrectlyProcessed + ", nbItemsProcessedWithWarning=" + nbItemsProcessedWithWarning + ", nbItemsProcessedWithError="
+                + nbItemsProcessedWithError + ", done=" + done + ", report=" + report + "]";
     }
 }
