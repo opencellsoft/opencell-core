@@ -1,6 +1,7 @@
 package org.meveo.apiv2.generic;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections.MapUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.apiv2.generic.core.GenericRequestMapper;
@@ -103,7 +104,9 @@ public class GenericPagingAndFilteringUtils {
                 Object anObject = jsonMapper.readValue( aList.get(0), Object.class );
                 genericFilters.put( aKey, anObject );
             }
-            pagingAndFiltering.setFilters( genericFilters );
+
+            if ( ! MapUtils.isEmpty(genericFilters) )
+                pagingAndFiltering.setFilters( genericFilters );
         }
     }
 
