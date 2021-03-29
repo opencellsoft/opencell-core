@@ -42,7 +42,7 @@ import org.meveo.service.filter.FilterService;
 import org.meveo.service.job.Job;
 
 /**
- * The Class FilteringJob execute the given script for each entity returned from the given filter.
+ * Job definition to execute the given script for each entity returned from the given filter.
  * 
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -59,8 +59,9 @@ public class FilteringJob extends Job {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         filteringJobBean.execute(result, jobInstance);
+        return result;
     }
 
     @Override

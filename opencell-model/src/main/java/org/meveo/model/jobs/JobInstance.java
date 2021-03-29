@@ -25,6 +25,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -140,6 +142,13 @@ public class JobInstance extends EnableBusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "stop_on_error")
     private boolean stopOnError = false;
+
+    /**
+     * Job execution speed. Defines how often job execution history gets updated.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "job_speed", nullable = false)
+    private JobSpeedEnum jobSpeed = JobSpeedEnum.NORMAL;
 
     /** Code of provider, that job belongs to. */
     @Transient
@@ -452,5 +461,19 @@ public class JobInstance extends EnableBusinessCFEntity {
      */
     public void setStopOnError(boolean stopOnError) {
         this.stopOnError = stopOnError;
+    }
+
+    /**
+     * @return Job execution speed. Defines how often job execution history gets updated.
+     */
+    public JobSpeedEnum getJobSpeed() {
+        return jobSpeed;
+    }
+
+    /**
+     * @param jobSpeed Job execution speed. Defines how often job execution history gets updated.
+     */
+    public void setJobSpeed(JobSpeedEnum jobSpeed) {
+        this.jobSpeed = jobSpeed;
     }
 }

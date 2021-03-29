@@ -46,38 +46,20 @@ public class MediationReprocessingJob extends Job {
 
     private static final String JOB_INSTANCE_MEDIATION_JOB = "JobInstance_MediationReprocessingJob";
 
-    private static final String MEDIATION_JOB_PARSER = "MediationJob_parser";
+    protected static final String MEDIATION_JOB_PARSER = "MediationJob_parser";
 
-    private static final String MEDIATION_JOB_READER = "MediationJob_reader";
-    
+    protected static final String MEDIATION_JOB_READER = "MediationJob_reader";
 
     @Inject
     private MediationReprocessingJobBean mediationReprocessingJobBean;
-    
+
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
-        if (nbRuns == -1) {
-            nbRuns = (long) Runtime.getRuntime().availableProcessors();
-        }
-        jobExecutionService.counterRunningThreads(result, nbRuns);
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
-        
-        String readerCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
-        String parserCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
-        
-        try {            
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
-                return;
-            }
+        mediationReprocessingJobBean.execute(result, jobInstance);
 
-            mediationReprocessingJobBean.execute(result, jobInstance.getParametres(), nbRuns, waitingMillis, readerCode, parserCode);           
-        } catch (Exception e) {
-            log.error("Failed to run mediation job", e);
-            jobExecutionService.registerError(result, e.getMessage());
-        }
+        return result;
     }
 
     @Override
@@ -110,8 +92,7 @@ public class MediationReprocessingJob extends Job {
         waitingMillis.setValueRequired(false);
         waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
         result.put("waitingMillis", waitingMillis);
-        
-        
+
         CustomFieldTemplate parserCF = new CustomFieldTemplate();
         parserCF.setCode(MEDIATION_JOB_PARSER);
         parserCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
@@ -123,7 +104,7 @@ public class MediationReprocessingJob extends Job {
         parserCF.setMaxValue(256L);
         parserCF.setGuiPosition("tab:Configuration:0;field:2");
         result.put(MEDIATION_JOB_PARSER, parserCF);
-        
+
         CustomFieldTemplate readerCF = new CustomFieldTemplate();
         readerCF.setCode(MEDIATION_JOB_READER);
         readerCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);

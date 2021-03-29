@@ -35,8 +35,9 @@ public class DataCollectorJob extends Job {
     private DataCollectorJobBean dataCollectorJobBean;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         dataCollectorJobBean.execute(result,  jobInstance.getParametres());
+        return result;
     }
 
     @Override

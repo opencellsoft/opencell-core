@@ -33,7 +33,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CacheKeyLong;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.commons.utils.EjbUtils;
@@ -187,7 +186,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     @Override
     public void create(JobInstance jobInstance) throws BusinessException {
         super.create(jobInstance);
-        jobCacheContainerProvider.addUpdateJobInstance(jobInstance.getId());
+        jobCacheContainerProvider.addUpdateJobInstance(jobInstance);
         scheduleJob(jobInstance, null);
 
         clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.create);
@@ -196,7 +195,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     @Override
     public JobInstance update(JobInstance jobInstance) throws BusinessException {
         super.update(jobInstance);
-        jobCacheContainerProvider.addUpdateJobInstance(jobInstance.getId());
+        jobCacheContainerProvider.addUpdateJobInstance(jobInstance);
         scheduleUnscheduleJob(jobInstance);
 
         clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.update);
@@ -381,5 +380,16 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     public List<JobInstance> listByJobType(String jobTemplate) {
 
         return getEntityManager().createNamedQuery("JobInstance.listByTemplate", JobInstance.class).setParameter("jobTemplate", jobTemplate).getResultList();
+    }
+
+    /**
+     * Get a list of job instances corresponding to a given job template
+     * 
+     * @param jobTemplateName Job template name
+     * @return A list of job instances
+     */
+    public List<JobInstance> findByJobTemplate(String jobTemplateName) {
+
+        return getEntityManager().createNamedQuery("JobInstance.findByJobTemplate", JobInstance.class).setParameter("jobTemplate", jobTemplateName).getResultList();
     }
 }

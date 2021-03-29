@@ -7,6 +7,7 @@ import org.meveo.model.rating.CDR;
 
 /**
  * The Interface CdrReader.
+ * 
  * @author h.znibar
  */
 public interface ICdrReader {
@@ -17,7 +18,16 @@ public interface ICdrReader {
      * @param originBatch the origin batch
      */
     void init(String originBatch);
-    
+
+    /**
+     * Return a total number of records if a reader supports such functionality
+     * 
+     * @return A total number of records or NULL if reader does not support such functionality
+     */
+    default Integer getNumberOfRecords() {
+        return null;
+    }
+
     /**
      * Get next record. A synchronized method to read from CDR source
      *
@@ -26,19 +36,20 @@ public interface ICdrReader {
      * @throws IOException Failure to read the CDR source
      */
     CDR getNextRecord(ICdrParser cdrParser) throws IOException;
-    
+
     /**
      * Close CDR record reader
      * 
      * @throws IOException IO exception
      */
-    void close() throws IOException;    
-    
+    void close() throws IOException;
+
     /**
      * Get CDR Records
+     * 
      * @param cdrParser CDR Parser
      * @param cdrLines CDR Lines
      * @return List of CDRs
      */
-    public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines); 
+    public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines);
 }

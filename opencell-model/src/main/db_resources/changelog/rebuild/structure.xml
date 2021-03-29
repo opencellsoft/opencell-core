@@ -4978,6 +4978,7 @@
             <column name="job_instance_id" type="bigint">
                 <constraints nullable="false" />
             </column>
+            <column name="job_status" type="varchar(14)"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-262">
@@ -5212,6 +5213,7 @@
             <column name="exclude_inv_without_amount" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="stop_on_error" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-278">

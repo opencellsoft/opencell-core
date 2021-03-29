@@ -39,7 +39,7 @@ import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
 /**
- * The Class RecurringRatingJob apply recurring charge for next billingCycle.
+ * Job definition to apply recurring charges for next billing cycle
  * 
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
@@ -53,8 +53,9 @@ public class RecurringRatingJob extends Job {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         recurringRatingJobBean.execute(result, jobInstance);
+        return result;
     }
 
     @Override

@@ -69,8 +69,9 @@ public class ExportMediationEntityJob extends Job {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         exportMediationEntityJobBean.execute(result, jobInstance);
+        return result;
     }
 
     @Override

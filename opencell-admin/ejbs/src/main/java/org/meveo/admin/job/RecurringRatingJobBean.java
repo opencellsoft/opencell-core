@@ -18,146 +18,113 @@
 
 package org.meveo.admin.job;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.async.RecurringChargeAsync;
-import org.meveo.admin.async.SubListCreator;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.RatingStatus;
+import org.meveo.model.billing.RatingStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
-import org.meveo.service.job.Job;
-import org.meveo.service.job.JobExecutionErrorService;
-import org.meveo.service.job.JobExecutionService;
-import org.slf4j.Logger;
 
+/**
+ * Job implementation to apply recurring charges for next billing cycle
+ * 
+ * @author Andrius Karpavicius
+ */
 @Stateless
-public class RecurringRatingJobBean extends BaseJobBean implements Serializable {
+public class RecurringRatingJobBean extends IteratorBasedJobBean<Long> {
 
     private static final long serialVersionUID = 2226065462536318643L;
-
-    @Inject
-    private RecurringChargeAsync recurringChargeAsync;
 
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
 
     @Inject
-    private Logger log;
-
-    @Inject
     private BillingCycleService billingCycleService;
 
-    @Inject
-    private JobExecutionErrorService jobExecutionErrorService;
+    private Date rateUntilDate = null;
 
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
-    
-    @Inject
-    protected JobExecutionService jobExecutionService;
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("start in running with parameter={}", jobInstance.getParametres());
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createRecurringCharges, null, null);
+        rateUntilDate = null;
+    }
 
-        jobExecutionErrorService.purgeJobErrors(jobInstance);
+    /**
+     * Initialize job settings and retrieve data to process
+     * 
+     * @param jobExecutionResult Job execution result
+     * @return An iterator over a list of recurring charge instances to create recurring charges for
+     */
+    private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbRuns == -1) {
-            nbRuns = (long) Runtime.getRuntime().availableProcessors();
-        }
-        jobExecutionService.counterRunningThreads(result, nbRuns);
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
-
+        rateUntilDate = null;
         try {
-            // Determine rateUntilDate in the following order: rateUntilDate CF value, rateUntilDateEL CF value, today
-            Date rateUntilDate = null;
-            try {
-                rateUntilDate = (Date) this.getParamOrCFValue(jobInstance, "rateUntilDate");
-            } catch (Exception e) {
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
-            }
-            if (rateUntilDate == null) {
-                String rateUntilDateEL = (String) this.getParamOrCFValue(jobInstance, "rateUntilDateEL");
-                if (rateUntilDateEL != null) {
-                    rateUntilDate = ValueExpressionWrapper.evaluateExpression(rateUntilDateEL, null, Date.class);
-                }
-            }
-
-            if (rateUntilDate == null) {
-                rateUntilDate = new Date();
-            }
-
-            // Resolve billing cycles from CF value
-            List<BillingCycle> billingCycles = null;
-            List<EntityReferenceWrapper> billingCycleReferences = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "rateBC");
-            if (billingCycleReferences != null && !billingCycleReferences.isEmpty()) {
-                billingCycles = billingCycleService.findByCodes(billingCycleReferences.stream().map(er -> er.getCode()).collect(Collectors.toList()));
-            }
-
-            List<Long> ids = recurringChargeInstanceService.findRecurringChargeInstancesToRate(InstanceStatusEnum.ACTIVE, rateUntilDate, billingCycles);
-            int inputSize = ids.size();
-            result.setNbItemsToProcess(inputSize);
-            log.info("RecurringRatingJob - charges to rate={}", inputSize);
-            jobExecutionService.initCounterElementsRemaining(result, inputSize);
-
-            List<Future<String>> futures = new ArrayList<Future<String>>();
-            SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
-            MeveoUser lastCurrentUser = currentUser.unProxy();
-            while (subListCreator.isHasNext()) {
-                futures.add(recurringChargeAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, rateUntilDate, lastCurrentUser));
-
-                if (subListCreator.isHasNext()) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-            }
-
-            // Wait for all async methods to finish
-            for (Future<String> future : futures) {
-                try {
-                    future.get();
-
-                } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
-
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    jobExecutionService.registerError(result, cause.getMessage());
-                    log.error("Failed to execute async method", cause);
-                }
-            }
+            rateUntilDate = (Date) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "rateUntilDate");
         } catch (Exception e) {
-            log.error("Failed to run recurring rating job", e);
-            jobExecutionService.registerError(result, e.getMessage());
+            log.warn("Cant get customFields for " + jobExecutionResult.getJobInstance().getJobTemplate(), e.getMessage());
         }
-        log.debug("end running RecurringRatingJobBean!");
+        if (rateUntilDate == null) {
+            String rateUntilDateEL = (String) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "rateUntilDateEL");
+            if (rateUntilDateEL != null) {
+                rateUntilDate = ValueExpressionWrapper.evaluateExpression(rateUntilDateEL, null, Date.class);
+            }
+        }
+
+        if (rateUntilDate == null) {
+            rateUntilDate = new Date();
+        }
+
+        // Resolve billing cycles from CF value
+        List<BillingCycle> billingCycles = null;
+        List<EntityReferenceWrapper> billingCycleReferences = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "rateBC");
+        if (billingCycleReferences != null && !billingCycleReferences.isEmpty()) {
+            billingCycles = billingCycleService.findByCodes(billingCycleReferences.stream().map(er -> er.getCode()).collect(Collectors.toList()));
+        }
+
+        List<Long> ids = recurringChargeInstanceService.findRecurringChargeInstancesToRate(InstanceStatusEnum.ACTIVE, rateUntilDate, billingCycles);
+
+        return Optional.of(new SynchronizedIterator<Long>(ids));
+    }
+
+    /**
+     * Create recurring charges
+     * 
+     * @param chargeInstanceId Recurring charge instance id
+     * @param jobExecutionResult Job execution result
+     */
+    private void createRecurringCharges(Long chargeInstanceId, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
+
+        RatingStatus ratingStatus = recurringChargeInstanceService.applyRecurringCharge(chargeInstanceId, rateUntilDate, false);
+        if (ratingStatus.getNbRating() == 1) {
+            // jobExecutionResult.registerSucces();
+
+        } else if (ratingStatus.getNbRating() > 1) {
+            jobExecutionResult.unRegisterSucces(); // Reduce success as success is added automatically in main loop of IteratorBasedJobBean
+            jobExecutionResult.registerWarning(chargeInstanceId + " rated " + ratingStatus.getNbRating() + " times");
+
+        } else {
+            if (ratingStatus.getStatus() != RatingStatusEnum.NOT_RATED_FALSE_FILTER) {
+                jobExecutionResult.unRegisterSucces(); // Reduce success as success is added automatically in main loop of IteratorBasedJobBean
+                jobExecutionResult.registerWarning(chargeInstanceId + " not rated");
+            }
+        }
     }
 }

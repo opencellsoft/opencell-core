@@ -4191,4 +4191,18 @@ END $$;]]>
         <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_resp_headers" constraintName="fk_h07be9b84xmmx5ypkbunkxwxt" deferrable="false" initiallyDeferred="false"
                                  onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
     </changeSet>
+    <changeSet id="4756_20191104" author="Andrius">
+        <!-- <dropColumn tableName="job_execution" columnName="job_done"/>  -->
+        <addColumn tableName="job_execution">
+            <column name="job_status" type="varchar(14)"/>
+        </addColumn>
+    </changeSet>    
+        
+    <changeSet id="4756_20210311" author="Andrius">
+    	<addColumn tableName="meveo_job_instance">
+    		<column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
+    	</addColumn>
+    	<sql>update ${db.schema.adapted}job_execution set job_launcher='TRIGGER' where job_launcher='TRIGER'</sql>
+    </changeSet>
+    
 </databaseChangeLog>

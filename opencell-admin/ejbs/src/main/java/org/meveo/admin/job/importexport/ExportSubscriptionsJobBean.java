@@ -44,6 +44,7 @@ import org.meveo.model.jaxb.subscription.Status;
 import org.meveo.model.jaxb.subscription.Subscription;
 import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.job.JobExecutionService;
@@ -92,7 +93,7 @@ public class ExportSubscriptionsJobBean {
 
         String timestamp = sdf.format(new Date());
         List<org.meveo.model.billing.Subscription> subs = subscriptionService.list();
-        subscriptions = subscriptionsToDto(subs, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance().getId());
+        subscriptions = subscriptionsToDto(subs, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance());
         int nbItems = subscriptions.getSubscription() != null ? subscriptions.getSubscription().size() : 0;
         result.setNbItemsToProcess(nbItems);
         try {
@@ -118,16 +119,18 @@ public class ExportSubscriptionsJobBean {
         }
     }
 
-    private Subscriptions subscriptionsToDto(List<org.meveo.model.billing.Subscription> subs, String dateFormat, Long jobInstanceId) {
+    private Subscriptions subscriptionsToDto(List<org.meveo.model.billing.Subscription> subs, String dateFormat, JobInstance jobInstance) {
         Subscriptions dto = new Subscriptions();
         if (subs != null) {
             int i = 0;
+            int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
+            
             for (org.meveo.model.billing.Subscription sub : subs) {
-                i++;
-                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
                     break;
                 }
                 dto.getSubscription().add(subscriptionToDto(sub, dateFormat));
+                i++;
             }
         }
         return dto;
