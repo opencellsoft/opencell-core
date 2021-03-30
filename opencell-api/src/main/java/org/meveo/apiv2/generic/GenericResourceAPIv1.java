@@ -30,7 +30,7 @@ public interface GenericResourceAPIv1 {
     Response deleteAnEntity() throws URISyntaxException;
 
     @GET
-    @Path("/restfulEntities")
-    Response getListRestfulEntities();
+    @Path("/restfulURLs")
+    Response getListRestfulURLs();
 
 }
