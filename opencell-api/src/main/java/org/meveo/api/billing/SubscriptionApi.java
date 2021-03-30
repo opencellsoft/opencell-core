@@ -2604,8 +2604,16 @@ public class SubscriptionApi extends BaseApi {
                     log.error("Failed to associate custom field instance to an entity {}", discountPlanDto.getCode(), e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity " + discountPlanDto.getCode());
                 }
+                if (offerTemplate.getAllowedDiscountPlans() != null && offerTemplate.getAllowedDiscountPlans().contains(dp)) {
+                    continue;
+                }
                 subscriptionService.instantiateDiscountPlan(subscription, dp);
             }
+        }
+        if (offerTemplate.getAllowedDiscountPlans() != null && !offerTemplate.getAllowedDiscountPlans().isEmpty()) {
+            offerTemplate.getAllowedDiscountPlans().forEach(discountPlan -> {
+                subscriptionService.instantiateDiscountPlan(subscription, discountPlan);
+            });
         }
         return subscription;
     }

@@ -47,6 +47,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
@@ -467,6 +468,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     public BillingAccount instantiateDiscountPlan(BillingAccount entity, DiscountPlan dp) throws BusinessException {
+        if (dp.getDiscountPlanType() != null && dp.getDiscountPlanType().equals(DiscountPlanTypeEnum.OFFER)) {
+            throw new BusinessException("DiscountPlan " + dp.getCode() + " of type OFFER is not allowed to be applied to BillingAccount.");
+        }
         for (UserAccount userAccount : entity.getUsersAccounts()) {
             UserAccount userAccountById = userAccountService.findById(userAccount.getId());
             for (Subscription subscription : userAccountById.getSubscriptions()) {

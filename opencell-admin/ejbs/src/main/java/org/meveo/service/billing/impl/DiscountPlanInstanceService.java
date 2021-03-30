@@ -110,16 +110,25 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 
 	/**
 	 * Update this entity. Computing the endDate first.
-	 * 
-	 * @param dp
-	 *            DiscountPlan
+	 *
+	 * @param dp DiscountPlan
 	 */
 	public DiscountPlanInstance update(DiscountPlanInstance entity, DiscountPlan dp) throws BusinessException {
 
 		entity.setEndDate(computeEndDate(entity.getStartDate(), entity.getEndDate(), dp.getDefaultDuration(), dp.getDurationUnit()));
+		entity.setDiscountPlanInstanceStatus(entity.getDiscountPlan());
 		return super.update(entity);
 	}
 
+	/**
+	 * Update this entity. Computing the endDate first.
+	 */
+	public DiscountPlanInstance update(DiscountPlanInstance entity) throws BusinessException {
+		DiscountPlan dp = entity.getDiscountPlan();
+		entity.setEndDate(computeEndDate(entity.getStartDate(), entity.getEndDate(), dp.getDefaultDuration(), dp.getDurationUnit()));
+		entity.setDiscountPlanInstanceStatus(entity.getDiscountPlan());
+		return super.update(entity);
+	}
 
 	public IDiscountable instantiateDiscountPlan(IDiscountable entity, DiscountPlan dp, List<DiscountPlanInstance> toAdd) throws BusinessException {
 		if (!isInstantiableDiscountPlan(entity, dp)) {
@@ -178,9 +187,9 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 		if (!(dp.getStatus().equals(DiscountPlanStatusEnum.IN_USE) || dp.getStatus().equals(DiscountPlanStatusEnum.ACTIVE))) {
 			throw new BusinessException("only ACTIVE and IN_USE discount plans can be instantiated");
 		}
-		if (entity instanceof Subscription && !dp.getDiscountPlanType().equals(DiscountPlanTypeEnum.OFFER)) {
-			throw new BusinessException(
-					"could not instantiate a discount plan of type: " + dp.getDiscountPlanType() + " in a subscription entity:" + ((Subscription) entity).getCode());
+		if (entity instanceof Subscription && dp.getDiscountPlanType() != null && !dp.getDiscountPlanType().equals(DiscountPlanTypeEnum.OFFER) && !((Subscription) entity)
+				.getOffer().getAllowedDiscountPlans().contains(dp)) {
+			throw new BusinessException("could not instantiate a discount plan : " + dp.getCode() + " in a subscription entity:" + ((Subscription) entity).getCode());
 		}
 		if (dp.getApplicationFilterEL() != null) {
 			Map<Object, Object> context = new HashMap<>();

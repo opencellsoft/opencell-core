@@ -25,9 +25,11 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -100,8 +102,8 @@ public class DiscountPlanInstanceApiService {
 			throw new BusinessException("The Subscription with the Id: " + discountable.getId() + " is invalid for discount plan instance with id: " + id);
 		}
 		if (entity.getStatus() != null && !entity.getStatus().equals(DiscountPlanInstanceStatusEnum.APPLIED)) {
-			log.error("Only status APPLIED is allowed to update a discount plan: {}", entity.getId());
-			throw new BusinessException("Only status APPLIED is allowed to update a discount plan: " + entity.getId());
+			log.error("Only status APPLIED is allowed to update a discount plan instance: {}", entity.getId());
+			throw new BusinessException("Only status APPLIED is allowed to update a discount plan instance: " + entity.getId());
 		}
 		JsonGenericMapper jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().build();
 		genericApiAlteringService.refreshEntityWithDotFields(jsonGenericMapper.readValue(dto, Map.class), entity, jsonGenericMapper.parseFromJson(dto, entity.getClass()));

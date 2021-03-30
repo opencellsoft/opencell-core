@@ -3708,6 +3708,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, List<DiscountPlanInstance> discountPlanInstances, Invoice invoice, CustomerAccount customerAccount)
             throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>();
+        InvoiceType invoiceType = invoiceTypeService.getDefaultDraft();
         for (DiscountPlanInstance dpi : discountPlanInstances) {
             if (!dpi.isEffective(invoice.getInvoiceDate()) || dpi.getStatus().equals(DiscountPlanInstanceStatusEnum.EXPIRED)) {
                 continue;
@@ -3719,7 +3720,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         applicableDiscountPlanItems.add(discountPlanItem);
                     }
                 }
-                if (!invoice.isDraft()) {
+                if (!invoice.getInvoiceType().equals(invoiceType)) {
                     dpi.setApplicationCount(dpi.getApplicationCount() == null ? 1 : dpi.getApplicationCount() + 1);
 
                     if (dpi.getDiscountPlan().getApplicationLimit() != 0 && dpi.getApplicationCount() >= dpi.getDiscountPlan().getApplicationLimit()) {
@@ -3738,11 +3739,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * @param expression EL exprestion
+     * @param expression      EL expression
      * @param customerAccount customer account
-     * @param billingAccount billing account
-     * @param invoice invoice
-     * @param dpi the discount plan instance
+     * @param billingAccount  billing account
+     * @param invoice         invoice
+     * @param dpi             the discount plan instance
      * @return true/false
      * @throws BusinessException business exception.
      */
