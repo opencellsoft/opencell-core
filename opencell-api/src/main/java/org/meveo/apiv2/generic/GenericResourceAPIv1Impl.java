@@ -112,7 +112,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                             + PAIR_QUERY_PARAM_SEPARATOR );
                 }
 
-                if ( pathIBaseRS.equals( "catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
+                if ( pathIBaseRS.equals( "/catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
                     || pathIBaseRS.equals( "/billing/subscription" ) || pathIBaseRS.equals( "/billing/ratedTransaction" )
                     || pathIBaseRS.equals( "/billing/wallet" ) || pathIBaseRS.equals( "/catalog/offerTemplate")
                     || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" )
@@ -313,7 +313,9 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     if ( entry.getValue() instanceof Map ) {
                         Map mapEntities = (Map) entry.getValue();
                         for (Object aKey : mapEntities.keySet()) {
-                            if ( aKey.equals( Inflector.getInstance().singularize(entityName) ) )
+                            if ( aKey.equals( Inflector.getInstance().singularize(entityName) ) ||
+                                aKey.equals( Inflector.getInstance().pluralize(entityName) ) ||
+                                aKey.equals( entityName ) )
                                 customResponse.put( entry.getKey(), mapEntities.get(aKey) );
                         }
                     }
