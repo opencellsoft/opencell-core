@@ -92,7 +92,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
         OneShotChargeTemplateResponseDto result = new OneShotChargeTemplateResponseDto();
 
         try {
-            result = new OneShotChargeTemplateResponseDto( oneShotChargeTemplateApi.search(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering()) );
+            result = oneShotChargeTemplateApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
