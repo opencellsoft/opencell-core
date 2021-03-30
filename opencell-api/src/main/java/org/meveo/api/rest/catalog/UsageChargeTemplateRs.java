@@ -125,6 +125,6 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      * @return List of UsageChargeTemplate
      */
     @GET
-    @Path("/list")
-    UsageChargeTemplateResponseDto listGet();
+    @Path("/listGetAll")
+    UsageChargeTemplateResponseDto listGetAll();
 }
