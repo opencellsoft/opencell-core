@@ -536,11 +536,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.taksan</groupId>
-            <artifactId>skype-java-api</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
         </dependency>
