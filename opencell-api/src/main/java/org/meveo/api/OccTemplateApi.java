@@ -53,7 +53,7 @@ public class OccTemplateApi extends BaseApi {
 
     public void create(OccTemplateDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(OCCTemplate.class.getName(), postData);
         }
         if (StringUtils.isBlank(postData.getAccountingCode()) && StringUtils.isBlank(postData.getAccountCode())) {
             missingParameters.add("accountCode / accountingCode");
@@ -184,12 +184,10 @@ public class OccTemplateApi extends BaseApi {
      */
     public void createOrUpdate(OccTemplateDto postData) throws MeveoApiException, BusinessException {
 
-        OCCTemplate occTemplate = occTemplateService.findByCode(postData.getCode());
-
-        if (occTemplate == null) {
-            create(postData);
-        } else {
+        if(!StringUtils.isBlank(postData.getCode()) && occTemplateService.findByCode(postData.getCode()) != null) {
             update(postData);
+        } else {
+            create(postData);
         }
     }
 

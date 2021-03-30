@@ -72,7 +72,7 @@ public class CalendarApi extends BaseApi {
     public void create(CalendarDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(Calendar.class.getName(), postData);
         }
         if (postData.getCalendarType()==null) {
             missingParameters.add("calendarType");
@@ -476,13 +476,10 @@ public class CalendarApi extends BaseApi {
     }
 
     public void createOrUpdate(CalendarDto postData) throws MeveoApiException, BusinessException {
-        Calendar calendar = calendarService.findByCode(postData.getCode());
-        if (calendar == null) {
-            // create
-            create(postData);
-        } else {
-            // update
+        if (!StringUtils.isBlank(postData.getCode()) && calendarService.findByCode(postData.getCode()) != null) {
             update(postData);
+        } else {
+            create(postData);
         }
     }
     

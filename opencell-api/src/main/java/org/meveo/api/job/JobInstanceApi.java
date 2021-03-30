@@ -77,7 +77,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
                 missingParameters.add("jobTemplate");
             }
             if (StringUtils.isBlank(postData.getCode())) {
-                missingParameters.add("code");
+                addGenericCodeIfAssociated(JobInstance.class.getName(), postData);
             }
             handleMissingParametersAndValidate(postData);
         }

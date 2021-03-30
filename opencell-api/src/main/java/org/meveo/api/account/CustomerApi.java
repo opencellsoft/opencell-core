@@ -155,6 +155,9 @@ public class CustomerApi extends AccountEntityApi {
 
     public Customer create(CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(Customer.class.getName(), postData);
+        }
         if (StringUtils.isBlank(postData.getCustomerCategory())) {
             missingParameters.add("customerCategory");
         }
@@ -697,13 +700,11 @@ public class CustomerApi extends AccountEntityApi {
     }
 
     public Customer createOrUpdate(CustomerDto postData) throws MeveoApiException, BusinessException {
-        Customer customer = customerService.findByCode(postData.getCode());
-        if (customer == null) {
-            customer = create(postData);
+        if (!StringUtils.isBlank(postData.getCode()) && customerService.findByCode(postData.getCode()) != null) {
+            return update(postData);
         } else {
-            customer = update(postData);
+            return create(postData);
         }
-        return customer;
     }
 
     /**

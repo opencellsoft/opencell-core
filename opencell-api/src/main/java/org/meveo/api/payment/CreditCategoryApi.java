@@ -74,7 +74,7 @@ public class CreditCategoryApi extends BaseApi {
 
 	public CreditCategory create(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+			addGenericCodeIfAssociated(CreditCategory.class.getName(), postData);
         }
 
         handleMissingParameters();
@@ -113,13 +113,11 @@ public class CreditCategoryApi extends BaseApi {
 	}
 
 	public CreditCategory createOrUpdate(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
-		CreditCategory creditCategory = creditCategoryService.findByCode(postData.getCode());
-		if (creditCategory == null) {
-			creditCategory = create(postData);
+		if (!StringUtils.isBlank(postData.getCode()) && creditCategoryService.findByCode(postData.getCode()) != null) {
+			return update(postData);
 		} else {
-			creditCategory = update(postData);
+			return create(postData);
 		}
-		return creditCategory;
 	}
 
 	public CreditCategoryDto find(String creditCategoryCode) throws MeveoApiException {

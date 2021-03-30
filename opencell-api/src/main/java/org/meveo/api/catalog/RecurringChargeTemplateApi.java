@@ -51,7 +51,7 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
     public RecurringChargeTemplate create(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(RecurringChargeTemplate.class.getName(), postData);
         }
         if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
             missingParameters.add("invoiceSubCategory");

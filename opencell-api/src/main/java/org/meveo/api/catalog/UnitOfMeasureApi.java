@@ -49,7 +49,7 @@ public class UnitOfMeasureApi extends BaseCrudApi<UnitOfMeasure, UnitOfMeasureDt
     public UnitOfMeasure create(UnitOfMeasureDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(UnitOfMeasure.class.getName(), postData);
         }
         handleMissingParametersAndValidate(postData);
 
