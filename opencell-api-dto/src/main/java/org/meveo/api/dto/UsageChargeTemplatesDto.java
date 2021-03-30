@@ -18,15 +18,14 @@
 
 package org.meveo.api.dto;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class UsageChargeTemplatesDto.
@@ -41,7 +40,7 @@ public class UsageChargeTemplatesDto implements Serializable {
     private static final long serialVersionUID = -4830516684799736318L;
 
     /** The invoice sub category. */
-    private List<UsageChargeTemplateDto> usageChargeTemplates;
+    private List<UsageChargeTemplateDto> usageChargeTemplates = new ArrayList<>();
 
     /**
      * Gets the invoice sub category.

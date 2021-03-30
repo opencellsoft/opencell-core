@@ -113,7 +113,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 }
 
                 if ( pathIBaseRS.equals( "/catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/catalog/recurringChargeTemplate" )
-                    || pathIBaseRS.equals( "/account/customer" )
+                    || pathIBaseRS.equals( "/catalog/usageChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
                     || pathIBaseRS.equals( "/billing/subscription" ) || pathIBaseRS.equals( "/billing/ratedTransaction" )
                     || pathIBaseRS.equals( "/billing/wallet" ) || pathIBaseRS.equals( "/catalog/offerTemplate")
                     || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" )
@@ -140,7 +140,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             }
             else {
                 if ( pathIBaseRS.equals( "/catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/catalog/recurringChargeTemplate" )
-                    || pathIBaseRS.equals( "/account/customer" )
+                    || pathIBaseRS.equals( "/catalog/usageChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
                     || pathIBaseRS.equals( "/billing/subscription" ) || pathIBaseRS.equals( "/billing/ratedTransaction" )
                     || pathIBaseRS.equals( "/billing/wallet" ) || pathIBaseRS.equals( "/catalog/offerTemplate" )
                     || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" )
