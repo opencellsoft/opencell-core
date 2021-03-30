@@ -55,7 +55,7 @@ public class TaxApi extends BaseApi {
     public ActionStatus create(TaxDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(Tax.class.getName(), postData);
         }
 
         if (StringUtils.isBlank(postData.getPercent())) {
@@ -190,12 +190,10 @@ public class TaxApi extends BaseApi {
     }
 
     public void createOrUpdate(TaxDto postData) throws MeveoApiException, BusinessException {
-        Tax tax = taxService.findByCode(postData.getCode());
-
-        if (tax == null) {
-            create(postData);
-        } else {
+        if(!StringUtils.isBlank(postData.getCode()) && taxService.findByCode(postData.getCode()) != null) {
             update(postData);
+        } else {
+            create(postData);
         }
     }
 

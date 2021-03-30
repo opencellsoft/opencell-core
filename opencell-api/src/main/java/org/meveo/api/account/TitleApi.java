@@ -58,15 +58,12 @@ public class TitleApi extends BaseCrudApi<Title, TitleDto> {
      * @throws BusinessException business exception.
      */
     public Title create(TitleDto postData) throws MeveoApiException, BusinessException {
-
-        String titleCode = postData.getCode();
-
-        if (StringUtils.isBlank(titleCode)) {
-            missingParameters.add("titleCode");
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(Title.class.getName(), postData);
         }
-
         handleMissingParametersAndValidate(postData);
 
+        String titleCode = postData.getCode();
         Title title = titleService.findByCode(titleCode);
 
         if (title != null) {

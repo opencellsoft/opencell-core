@@ -62,7 +62,7 @@ public class TaxCategoryApi extends BaseCrudApi<TaxCategory, TaxCategoryDto> {
         String code = dto.getCode();
 
         if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(TaxCategory.class.getName(), dto);
         }
 
         handleMissingParametersAndValidate(dto);

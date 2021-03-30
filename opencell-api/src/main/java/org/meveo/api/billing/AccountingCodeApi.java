@@ -54,6 +54,9 @@ public class AccountingCodeApi extends BaseCrudApi<AccountingCode, AccountingCod
 
     @Override
     public AccountingCode create(AccountingCodeDto postData) throws BusinessException, MeveoApiException {
+        if (postData.getCode() == null) {
+            addGenericCodeIfAssociated(AccountingCode.class.getName(), postData);
+        }
         if (postData.getChartOfAccountTypeEnum() == null) {
             missingParameters.add("chartOfAccountTypeEnum");
         }

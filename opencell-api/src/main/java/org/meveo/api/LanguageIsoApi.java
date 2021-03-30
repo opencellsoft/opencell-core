@@ -46,11 +46,8 @@ public class LanguageIsoApi extends BaseApi {
     private LanguageService languageService;
 
     public void create(LanguageIsoDto postData) throws MeveoApiException, BusinessException {
+        validateCode(postData);
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
- 
         handleMissingParameters();
 
         if (languageService.findByCode(postData.getCode()) != null) {
@@ -62,6 +59,17 @@ public class LanguageIsoApi extends BaseApi {
         language.setDescriptionEn(postData.getDescription());
         languageService.create(language);
 
+    }
+
+    private void validateCode(LanguageIsoDto postData) {
+        if (StringUtils.isBlank(postData.getCode())) {
+            String generatedCode = getGenericCode(Language.class.getName());
+            if (generatedCode != null) {
+                postData.setCode(generatedCode);
+            } else {
+                missingParameters.add("code");
+            }
+        }
     }
 
     public void update(LanguageIsoDto postData) throws MeveoApiException, BusinessException {
@@ -117,11 +125,10 @@ public class LanguageIsoApi extends BaseApi {
 
     public void createOrUpdate(LanguageIsoDto postData) throws MeveoApiException, BusinessException {
 
-        Language language = languageService.findByCode(postData.getCode());
-        if (language == null) {
-            create(postData);
-        } else {
+        if(StringUtils.isBlank(postData.getCode()) && languageService.findByCode(postData.getCode()) != null) {
             update(postData);
+        } else {
+            create(postData);
         }
     }
     

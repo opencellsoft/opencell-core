@@ -58,7 +58,12 @@ public class CountryIsoApi extends BaseApi {
     public void create(CountryIsoDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCountryCode())) {
-            missingParameters.add("code");
+            String generatedCode = getGenericCode(Country.class.getName());
+            if (generatedCode != null) {
+                postData.setCountryCode(generatedCode);
+            } else {
+                missingParameters.add("code");
+            }
         }
         if (StringUtils.isBlank(postData.getLanguageCode())) {
             missingParameters.add("languageCode");
@@ -174,11 +179,11 @@ public class CountryIsoApi extends BaseApi {
 
     public void createOrUpdate(CountryIsoDto postData) throws MeveoApiException, BusinessException {
 
-        Country country = countryService.findByCode(postData.getCountryCode());
-        if (country == null) {
-            create(postData);
-        } else {
+        if (!StringUtils.isBlank(postData.getCountryCode())
+                && countryService.findByCode(postData.getCountryCode()) != null) {
             update(postData);
+        } else {
+            create(postData);
         }
     }
 

@@ -232,7 +232,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     public ServiceTemplate create(ServiceTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(ServiceTemplate.class.getName(), postData);
         }
 
         handleMissingParametersAndValidate(postData);

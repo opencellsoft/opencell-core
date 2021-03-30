@@ -66,7 +66,12 @@ public class CurrencyApi extends BaseApi {
 
     public void create(CurrencyDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            String generatedCode = getGenericCode(Currency.class.getName());
+            if (generatedCode != null) {
+                postData.setCode(generatedCode);
+            } else {
+                missingParameters.add("code");
+            }
         }
 
         handleMissingParameters();
@@ -156,11 +161,11 @@ public class CurrencyApi extends BaseApi {
     }
 
     public void createOrUpdate(CurrencyDto postData) throws MeveoApiException, BusinessException {
-        TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCode());
-        if (tradingCurrency == null) {
-            create(postData);
-        } else {
+        if (StringUtils.isBlank(postData.getCode())
+                && tradingCurrencyService.findByTradingCurrencyCode(postData.getCode()) != null) {
             update(postData);
+        } else {
+            create(postData);
         }
     }
 

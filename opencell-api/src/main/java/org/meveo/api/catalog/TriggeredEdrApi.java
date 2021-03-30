@@ -55,7 +55,7 @@ public class TriggeredEdrApi extends BaseApi {
     public void create(TriggeredEdrTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(TriggeredEDRTemplate.class.getName(), postData);
         }
         if (StringUtils.isBlank(postData.getQuantityEl())) {
             missingParameters.add("quantityEl");
@@ -220,10 +220,11 @@ public class TriggeredEdrApi extends BaseApi {
     }
 
     public void createOrUpdate(TriggeredEdrTemplateDto postData) throws MeveoApiException, BusinessException {
-        if (triggeredEDRTemplateService.findByCode(postData.getCode()) == null) {
-            create(postData);
-        } else {
+        if (!StringUtils.isBlank(postData.getCode()) &&
+                triggeredEDRTemplateService.findByCode(postData.getCode()) != null) {
             update(postData);
+        } else {
+            create(postData);
         }
     }
 }

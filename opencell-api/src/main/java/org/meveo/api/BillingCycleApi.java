@@ -68,7 +68,7 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
     public BillingCycle create(BillingCycleDto dto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(dto.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(BillingCycle.class.getName(), dto);
         }
         if (StringUtils.isBlank(dto.getCalendar())) {
             missingParameters.add("calendar");

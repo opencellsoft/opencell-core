@@ -18,7 +18,6 @@
 
 package org.meveo.api.account;
 
-import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -38,14 +37,12 @@ import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
-import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.*;
-import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 
@@ -104,6 +101,9 @@ public class UserAccountApi extends AccountEntityApi {
 
     public UserAccount create(UserAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(UserAccount.class.getName(), postData);
+        }
         if (StringUtils.isBlank(postData.getBillingAccount())) {
             missingParameters.add("billingAccount");
         }
@@ -298,14 +298,11 @@ public class UserAccountApi extends AccountEntityApi {
      */
     public UserAccount createOrUpdate(UserAccountDto postData) throws MeveoApiException, BusinessException {
 
-        UserAccount userAccount = userAccountService.findByCode(postData.getCode());
-
-        if (userAccount == null) {
-            userAccount = create(postData);
+        if (!StringUtils.isBlank(postData.getCode()) && userAccountService.findByCode(postData.getCode()) != null) {
+            return update(postData);
         } else {
-            userAccount = update(postData);
+            return create(postData);
         }
-        return userAccount;
     }
 
     public UserAccount terminate(UserAccountDto postData) throws MeveoApiException, BusinessException {

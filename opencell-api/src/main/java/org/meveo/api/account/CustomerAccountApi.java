@@ -36,10 +36,7 @@ import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.billing.*;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -58,7 +55,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -118,6 +114,9 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     public CustomerAccount create(CustomerAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(CustomerAccount.class.getName(), postData);
+        }
         if (StringUtils.isBlank(postData.getCustomer())) {
             missingParameters.add("customer");
         }
@@ -550,13 +549,11 @@ public class CustomerAccountApi extends AccountEntityApi {
     }
 
     public CustomerAccount createOrUpdate(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
-        CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode());
-        if (customerAccount == null) {
-            customerAccount = create(postData);
+        if (!StringUtils.isBlank(postData.getCode()) && customerAccountService.findByCode(postData.getCode()) != null) {
+            return update(postData);
         } else {
-            customerAccount = update(postData);
+            return create(postData);
         }
-        return customerAccount;
     }
 
     public CustomerAccount closeAccount(CustomerAccountDto postData) throws EntityDoesNotExistsException, BusinessException {

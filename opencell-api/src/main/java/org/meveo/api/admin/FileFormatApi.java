@@ -125,7 +125,7 @@ public class FileFormatApi extends BaseCrudApi<FileFormat, FileFormatDto> {
     public FileFormat create(FileFormatDto fileFormatDto) {
 
         if (StringUtils.isBlank(fileFormatDto.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(FileFormat.class.getName(), fileFormatDto);
         }
         if (StringUtils.isBlank(fileFormatDto.getInputDirectory())) {
             missingParameters.add("inputDirectory");
