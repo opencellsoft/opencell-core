@@ -3362,17 +3362,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
 
-        // Andrius Commented out as it is a performance killer when BA has many subscriptions. And it does not take into account what subscriptions were billed in this invoice.
-        // E.g. if BA has 100 subscriptions, 98 with disounts and 2 without. And only those 2 were billed in this invoice, according to this logic, discounts will still be applied
-//        if(subscription == null && billingAccount != null) {
-//            List<Long> ids = findSubscriptionIds(billingAccount.getUsersAccounts());
-//            if(ids != null && !ids.isEmpty()) {
-//                Optional.ofNullable(findSubscriptionDPs(ids))
-//                        .ifPresent(discountPlans ->
-//                                subscriptionApplicableDiscountPlanItems.addAll(
-//                                        getApplicableDiscountPlanItems(billingAccount, discountPlans, invoice, customerAccount)));
-//            }
-//        }
+        if(subscription == null && billingAccount != null) {
+            List<DiscountPlanInstance> subscriptionDiscountPlans = findSubscriptionDPs(billingAccount.getUsersAccounts());
+            subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscriptionDiscountPlans, invoice, customerAccount));
+        }
 
         // Construct discount and tax aggregates
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates) {
@@ -3381,12 +3374,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 continue;
             }
 
-            Map<Tax, SubcategoryInvoiceAgregateAmount> amountCumulativeForTax = new LinkedHashMap<Tax, SubcategoryInvoiceAgregateAmount>();
+            Map<Tax, SubcategoryInvoiceAgregateAmount> amountCumulativeForTax = new LinkedHashMap<>();
             scAggregate.getAmountsByTax().entrySet().stream().forEach(amountInfo -> amountCumulativeForTax.put(amountInfo.getKey(), amountInfo.getValue().clone()));
 
             CategoryInvoiceAgregate cAggregate = scAggregate.getCategoryInvoiceAgregate();
 
-            Map<Tax, BigDecimal> amountAsDiscountBase = new LinkedHashMap<Tax, BigDecimal>();
+            Map<Tax, BigDecimal> amountAsDiscountBase = new LinkedHashMap<>();
             scAggregate.getAmountsByTax().entrySet().stream().forEach(amountInfo -> amountAsDiscountBase.put(amountInfo.getKey(), amountInfo.getValue().getAmount(!isEnterprise)));
 
             // Add discount aggregates defined on subscription level - ONLY when invoicing by subscription
@@ -3400,7 +3393,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             for (DiscountPlanItem discountPlanItem : billingAccountApplicableDiscountPlanItems) {
-                SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise, rounding, roundingMode, invoiceRounding, invoiceRoundingMode, scAggregate, amountAsDiscountBase,
+                SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise,
+                        rounding, roundingMode, invoiceRounding, invoiceRoundingMode, scAggregate, amountAsDiscountBase,
                     cAggregate, discountPlanItem);
                 if (discountAggregate != null) {
                     addAmountsToMap(amountCumulativeForTax, discountAggregate.getAmountsByTax());
@@ -3633,18 +3627,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return applicableDiscountPlanItems;
     }
 
-    private List<DiscountPlanInstance> findSubscriptionDPs(List<Long> subscriptionIds) {
-        if (!subscriptionIds.isEmpty()) {
-            String query = "from DiscountPlanInstance dp where dp.subscription.id in :subscriptionIds";
-            return getEntityManager().createQuery(query, DiscountPlanInstance.class).setParameter("subscriptionIds", subscriptionIds).getResultList();
-        }
-        return null;
-    }
-
-    private List<Long> findSubscriptionIds(List<UserAccount> userAccounts) {
-        if (!userAccounts.isEmpty()) {
-            String query = "select sub.id from Subscription sub where sub.userAccount in :userAccounts and sub.status = :status";
-            return getEntityManager().createQuery(query, Long.class).setParameter("userAccounts", userAccounts).setParameter("status", SubscriptionStatusEnum.ACTIVE).getResultList();
+    private List<DiscountPlanInstance> findSubscriptionDPs(List<UserAccount> userAccounts) {
+        if(!userAccounts.isEmpty()) {
+            String query = "FROM DiscountPlanInstance dp WHERE dp.subscription.id IN " +
+                    "(SELECT rt.subscription.id FROM RatedTransaction rt LEFT JOIN rt.subscription WHERE rt.subscription.id IN( " +
+                    "SELECT sub.id FROM Subscription sub WHERE sub.userAccount IN :userAccounts AND sub.status = :status))";
+            return getEntityManager().createQuery(query, DiscountPlanInstance.class)
+                    .setParameter("userAccounts", userAccounts)
+                    .setParameter("status", SubscriptionStatusEnum.ACTIVE)
+                    .getResultList();
         }
         return Collections.emptyList();
     }
