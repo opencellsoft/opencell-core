@@ -126,7 +126,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/payment/paymentMethod" ) || pathIBaseRS.equals( "/account/title" )
                     || pathIBaseRS.equals( "/account/customerAccount" ) || pathIBaseRS.equals( "/account/billingAccount" )
                     || pathIBaseRS.equals( "/account/userAccount" ) || pathIBaseRS.equals( "/catalog/serviceTemplate" )
-                    || pathIBaseRS.equals( "/catalog/pricePlan" ) )
+                    || pathIBaseRS.equals( "/catalog/pricePlan" ) || pathIBaseRS.equals( "/billing/wallet/operation" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 )
@@ -154,7 +154,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/payment/paymentMethod" ) || pathIBaseRS.equals( "/account/title" )
                     || pathIBaseRS.equals( "/account/customerAccount" ) || pathIBaseRS.equals( "/account/billingAccount" )
                     || pathIBaseRS.equals( "/account/userAccount" ) || pathIBaseRS.equals( "/catalog/serviceTemplate" )
-                    || pathIBaseRS.equals( "/catalog/pricePlan" ) )
+                    || pathIBaseRS.equals( "/catalog/pricePlan" ) || pathIBaseRS.equals( "/billing/wallet/operation" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
@@ -321,7 +321,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             for (Map.Entry<String,Object> entry : origResponse.entrySet()) {
                 if ( entry.getKey().equals("actionStatus") || entry.getKey().equals("paging") )
                     customResponse.put(entry.getKey(), entry.getValue());
-                else if ( entry.getKey().equals( Inflector.getInstance().pluralize(entityName) ) ) {
+                else if ( entry.getKey().equals( Inflector.getInstance().pluralize(entityName) ) ||
+                        entry.getKey().equals( Inflector.getInstance().pluralize(entityName) + "Dto" ) ) {
                     if ( entry.getValue() instanceof Map ) {
                         Map mapEntities = (Map) entry.getValue();
                         for (Object aKey : mapEntities.keySet()) {

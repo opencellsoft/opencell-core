@@ -614,10 +614,6 @@ public class WalletApi extends BaseApi {
     public FindWalletOperationsResponseDto listGetAll(FindWalletOperationsDto postData, PagingAndFiltering pagingAndFiltering, Boolean includeRatedTransactions)
             throws MeveoApiException {
 
-        if (pagingAndFiltering == null) {
-            pagingAndFiltering = new PagingAndFiltering();
-        }
-
         if (postData != null) {
             this.completeFilteringByPostedData(postData, pagingAndFiltering);
         }
