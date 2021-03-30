@@ -200,7 +200,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customers",
                                     ((Path) anAnnotation).value() );
 
-                            // Processing for requests related to customerCategory
+                            // Handling requests related to customerCategory
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customers/categories",
                                     ((Path) anAnnotation).value() + "/category" );
 
@@ -210,7 +210,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customerAccounts",
                                     ((Path) anAnnotation).value() );
 
-                            // Processing for request get list of customerAccounts based on a customerCode
+                            // Handling request get list of customerAccounts based on a customerCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/customers\\/" + CODE_REGEX + "\\/customerAccounts" ) ,
                                     ((Path) anAnnotation).value() + "/list" );
 
@@ -220,7 +220,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/billingAccounts",
                                     ((Path) anAnnotation).value() );
 
-                            // Processing for request get list of billingAccounts based on a customerAccountCode
+                            // Handling request get list of billingAccounts based on a customerAccountCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/customerAccounts\\/" + CODE_REGEX + "\\/billingAccounts" ) ,
                                     ((Path) anAnnotation).value() + "/list" );
 
@@ -229,7 +229,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/account/userAccount" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/userAccounts", ((Path) anAnnotation).value() );
 
-                            // Processing for request get list of userAccounts based on a billingAccountCode
+                            // Handling request get list of userAccounts based on a billingAccountCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/billingAccounts\\/" + CODE_REGEX + "\\/userAccounts" ) ,
                                     ((Path) anAnnotation).value() + "/list" );
 
@@ -247,7 +247,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/subscriptions",
                                     ((Path) anAnnotation).value() );
 
-                            // Processing for different services of subscription: activation, suspension, termination, update of existing services
+                            // Handling different services of subscription: activation, suspension, termination, update of existing services
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/activation" ) ,
                                     ((Path) anAnnotation).value() + "/activate" );
 
@@ -274,11 +274,11 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/accesses",
                                     ((Path) anAnnotation).value() );
 
-                            // Processing for request get list of accesses based on a subscriptionCode
+                            // Handling request get list of accesses based on a subscriptionCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/accesses" ) ,
                                     ((Path) anAnnotation).value() + "/list" );
 
-                            // Processing for request get an accessPoint based on a subscriptionCode and an accessCode
+                            // Handling request get an accessPoint based on a subscriptionCode and an accessCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/accesses\\/" + CODE_REGEX ) ,
                                     ((Path) anAnnotation).value() );
 
@@ -304,7 +304,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/offerTemplates",
                                     ((Path) anAnnotation).value() );
 
-                            // Processing for enable and disable an offerTemplate
+                            // Handling enable and disable an offerTemplate
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/offerTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
@@ -317,7 +317,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/oneShotChargeTemplates",
                                     ((Path) anAnnotation).value() );
 
-                            // Processing for enable and disable an oneShotChargeTemplate
+                            // Handling enable and disable an oneShotChargeTemplate
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/oneShotChargeTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
@@ -330,7 +330,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/recurringChargeTemplates",
                                     ((Path) anAnnotation).value() );
 
-                            // Processing for enable and disable a recurringChargeTemplate
+                            // Handling enable and disable a recurringChargeTemplate
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/recurringChargeTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
@@ -343,7 +343,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/usageChargeTemplates",
                                     ((Path) anAnnotation).value() );
 
-                            // Processing for enable and disable a usageChargeTemplate
+                            // Handling enable and disable a usageChargeTemplate
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/usageChargeTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
@@ -356,7 +356,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/serviceTemplates",
                                     ((Path) anAnnotation).value() );
 
-                            // Processing for enable and disable a serviceTemplate
+                            // Handling enable and disable a serviceTemplate
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/serviceTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
@@ -369,7 +369,11 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/pricePlans",
                                     ((Path) anAnnotation).value() );
 
-                            // Processing for enable and disable a pricePlan
+                            // Handling the list of pricePlans based on given charge code
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/" + CODE_REGEX + "\\/pricePlans" ) ,
+                                    ((Path) anAnnotation).value() + "/list" );
+
+                            // Handling enable and disable a pricePlan
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/pricePlans\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
@@ -381,7 +385,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/country" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/countries", ((Path) anAnnotation).value() );
 
-                            // Processing for enable and disable a trading country
+                            // Handling enable and disable a trading country
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/countries\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
@@ -393,7 +397,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/currency" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/currencies", ((Path) anAnnotation).value() );
 
-                            // Processing for enable and disable a trading currency
+                            // Handling enable and disable a trading currency
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/currencies\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
@@ -405,7 +409,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/jobInstance" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobInstances", ((Path) anAnnotation).value() );
 
-                            // Processing for enable and disable a jobInstance
+                            // Handling enable and disable a jobInstance
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/jobInstances\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
@@ -417,7 +421,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/language" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/languages", ((Path) anAnnotation).value() );
 
-                            // Processing for enable and disable a language
+                            // Handling enable and disable a language
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/languages\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
@@ -438,7 +442,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/sendByEmail", InvoiceDto.class );
 
-                            // Processing for different services of invoice: cancellation, validation
+                            // Handling different services of invoice: cancellation, validation
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/invoices\\/" + CODE_REGEX + "\\/cancellation" ) ,
                                     ((Path) anAnnotation).value() + "/cancel" );
 
@@ -455,7 +459,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/billing/invoicings/creation",
                                     ((Path) anAnnotation).value() + "/createBillingRun" );
 
-                            // Processing for different services of billing: cancellation of a billing run, validation of a billing run
+                            // Handling different services of billing: cancellation of a billing run, validation of a billing run
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/billing/invoicings\\/" + CODE_REGEX + "\\/cancellation" ) ,
                                     ((Path) anAnnotation).value() + "/cancelBillingRun" );
 
@@ -491,7 +495,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/accountingCodes",
                                     ((Path) anAnnotation).value() );
 
-                            // Processing for enable and disable an accountingCode
+                            // Handling enable and disable an accountingCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + BILLING + "\\/accountingCodes\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
@@ -519,11 +523,11 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/payment/paymentMethods",
                                     ((Path) anAnnotation).value() + "/paymentMethod" );
 
-                            // Processing for request get list of paymentMethods based on a customerAccountCode
+                            // Handling request get list of paymentMethods based on a customerAccountCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/payment\\/customerAccounts\\/" + CODE_REGEX + "\\/paymentMethods" ) ,
                                     ((Path) anAnnotation).value() + "/paymentMethod/findByCustomerAccount" );
 
-                            // Processing for enable and disable a paymentMethod
+                            // Handling enable and disable a paymentMethod
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/payment\\/paymentMethods\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() + "/paymentMethod" );
 

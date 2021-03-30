@@ -18,12 +18,12 @@
 
 package org.meveo.api.dto.response.catalog;
 
+import org.meveo.api.dto.catalog.PricePlansDto;
+import org.meveo.api.dto.response.SearchResponse;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.catalog.PricePlansDto;
-import org.meveo.api.dto.response.BaseResponse;
 
 /**
  * The Class PricePlanMatrixesResponseDto.
@@ -32,7 +32,7 @@ import org.meveo.api.dto.response.BaseResponse;
  */
 @XmlRootElement(name = "PricePlanMatrixesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PricePlanMatrixesResponseDto extends BaseResponse {
+public class PricePlanMatrixesResponseDto extends SearchResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7527987531474820250L;
