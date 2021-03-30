@@ -124,7 +124,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/taxMapping" ) || pathIBaseRS.equals( "/payment/creditCategory" )
                     || pathIBaseRS.equals( "/payment/paymentMethod" ) || pathIBaseRS.equals( "/account/title" )
                     || pathIBaseRS.equals( "/account/customerAccount" ) || pathIBaseRS.equals( "/account/billingAccount" )
-                    || pathIBaseRS.equals( "/account/userAccount" ) )
+                    || pathIBaseRS.equals( "/account/userAccount" ) || pathIBaseRS.equals( "/catalog/serviceTemplate" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 )
@@ -154,7 +154,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/taxMapping" ) || pathIBaseRS.equals( "/payment/creditCategory" )
                     || pathIBaseRS.equals( "/payment/paymentMethod" ) || pathIBaseRS.equals( "/account/title" )
                     || pathIBaseRS.equals( "/account/customerAccount" ) || pathIBaseRS.equals( "/account/billingAccount" )
-                    || pathIBaseRS.equals( "/account/userAccount" ) )
+                    || pathIBaseRS.equals( "/account/userAccount" ) || pathIBaseRS.equals( "/catalog/serviceTemplate" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
