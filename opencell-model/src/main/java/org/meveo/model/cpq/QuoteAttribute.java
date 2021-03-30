@@ -52,7 +52,7 @@ public class QuoteAttribute extends AttributeValue<QuoteAttribute> {
 	private QuoteProduct  quoteProduct ;
 	
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
 	@JoinColumn(name = "cpq_quote_offer_id",referencedColumnName = "id")
 	private QuoteOffer  quoteOffer;
 
