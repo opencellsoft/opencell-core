@@ -152,11 +152,11 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
     }
 
     @Override
-    public GetListServiceTemplateResponseDto listGet() {
+    public GetListServiceTemplateResponseDto listGetAll() {
         GetListServiceTemplateResponseDto result = new GetListServiceTemplateResponseDto();
 
         try {
-            return serviceTemplateApi.list( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
+            return serviceTemplateApi.listGetAll( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
