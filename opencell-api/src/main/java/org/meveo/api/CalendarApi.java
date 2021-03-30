@@ -18,6 +18,23 @@
 
 package org.meveo.api;
 
+import org.apache.commons.lang3.StringUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.*;
+import org.meveo.api.dto.response.ListCalendarResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.CalendarJoin.CalendarJoinTypeEnum;
+import org.meveo.service.catalog.impl.CalendarBankingService;
+import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.catalog.impl.DayInYearService;
+import org.meveo.service.catalog.impl.HourInDayService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -25,37 +42,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
-import org.apache.commons.lang3.StringUtils;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.*;
-import org.meveo.api.exception.BusinessApiException;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.CalendarBanking;
-import org.meveo.model.catalog.CalendarDaily;
-import org.meveo.model.catalog.CalendarDateInterval;
-import org.meveo.model.catalog.CalendarFixed;
-import org.meveo.model.catalog.CalendarHoliday;
-import org.meveo.model.catalog.CalendarInterval;
-import org.meveo.model.catalog.CalendarJoin;
-import org.meveo.model.catalog.CalendarJoin.CalendarJoinTypeEnum;
-import org.meveo.model.catalog.CalendarPeriod;
-import org.meveo.model.catalog.CalendarYearly;
-import org.meveo.model.catalog.DayInYear;
-import org.meveo.model.catalog.FixedDate;
-import org.meveo.model.catalog.HourInDay;
-import org.meveo.service.catalog.impl.CalendarBankingService;
-import org.meveo.service.catalog.impl.CalendarService;
-import org.meveo.service.catalog.impl.DayInYearService;
-import org.meveo.service.catalog.impl.HourInDayService;
 
 /**
  * @author Edward P. Legaspi
@@ -455,6 +441,20 @@ public class CalendarApi extends BaseApi {
         for (Calendar calendar : calendarService.list()) {
             result.add(new CalendarDto(calendar));
         }
+        return result;
+    }
+
+    public ListCalendarResponse list(PagingAndFiltering pagingAndFiltering) {
+        ListCalendarResponse result = new ListCalendarResponse();
+        result.setPaging( pagingAndFiltering );
+
+        List<Calendar> calendars = calendarService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (calendars != null) {
+            for (Calendar calendar : calendars) {
+                result.getCalendars().getCalendar().add(new CalendarDto(calendar));
+            }
+        }
+
         return result;
     }
 

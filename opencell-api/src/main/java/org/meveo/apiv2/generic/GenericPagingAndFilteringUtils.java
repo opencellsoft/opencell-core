@@ -24,8 +24,14 @@ public class GenericPagingAndFilteringUtils {
     private static final char DESCENDING_SIGN = '-';
     private static final char OPEN_HOOK = '[';
     private static final char CLOSE_HOOK = ']';
-    private static final char OPEN_ACCOLADE = '{';
-    private static final String BLANK_SPACE = " ";
+    public static final String OPEN_ACCOLADE = "{";
+    public static final String OPEN_ACCOLADE_ENCODED = "%7B";
+    public static final String CLOSE_ACCOLADE = "}";
+    public static final String CLOSE_ACCOLADE_ENCODED = "%7D";
+    public static final String BLANK_SPACE = " ";
+    public static final String BLANK_SPACE_ENCODED = "%20";
+    public static final String QUOTE = "\"";
+    public static final String QUOTE_ENCODED = "%22";
     private static final String ASCENDING_ORDER = "ASC";
     private static final String DESCENDING_ORDER = "DESC";
     private static final String MULTI_SORTING_DELIMITER = ",";
@@ -97,13 +103,8 @@ public class GenericPagingAndFilteringUtils {
             }
             else {
                 ObjectMapper jsonMapper = new ObjectMapper();
-                if ( aList.get(0).charAt(0) == OPEN_HOOK ) {
-                    String contentWithBrackets = aList.get(0).replace( OPEN_ACCOLADE, OPEN_HOOK ).replace( OPEN_ACCOLADE, CLOSE_HOOK );
-                    List listElements = jsonMapper.readValue( contentWithBrackets, List.class );
-                    genericFilters.put( aKey, listElements );
-                } else {
-                    genericFilters.put( aKey, aList.get(0) );
-                }
+                Object anObject = jsonMapper.readValue( aList.get(0), Object.class );
+                genericFilters.put( aKey, anObject );
             }
             pagingAndFiltering.setFilters( genericFilters );
         }

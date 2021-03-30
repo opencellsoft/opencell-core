@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -32,9 +34,9 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
-
 /**
- * The Class InternalNotificationJob fire the given notification for each entity returned from the given filter.
+ * Job definition to launch the given notification for each entity returned from the given filter
+ * 
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
@@ -46,12 +48,11 @@ public class InternalNotificationJob extends Job {
     private InternalNotificationJobBean internalNotificationJobBean;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        String filterCode = (String) this.getParamOrCFValue(jobInstance, "InternalNotificationJob_filterCode");
-        String notificationCode = (String) this.getParamOrCFValue(jobInstance, "InternalNotificationJob_notificationCode");
-        internalNotificationJobBean.execute(filterCode, notificationCode, result);
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+        internalNotificationJobBean.execute(result, jobInstance);
+        return result;
     }
-
 
     @Override
     public JobCategoryEnum getJobCategory() {

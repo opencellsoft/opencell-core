@@ -25,6 +25,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -59,7 +61,8 @@ import org.meveo.model.ModuleItem;
 @ExportIdentifier({ "code" })
 @Table(name = "meveo_job_instance", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "meveo_job_instance_seq"), })
-@NamedQueries({ @NamedQuery(name = "JobInstance.listByTemplate", query = "SELECT ji FROM JobInstance ji where ji.jobTemplate=:jobTemplate order by ji.code") })
+@NamedQueries({ @NamedQuery(name = "JobInstance.listByTemplate", query = "SELECT ji FROM JobInstance ji where ji.jobTemplate=:jobTemplate order by ji.code"),
+        @NamedQuery(name = "JobInstance.findByJobTemplate", query = "select ji FROM JobInstance ji WHERE ji.jobTemplate=:jobTemplate") })
 public class JobInstance extends EnableBusinessCFEntity {
 
     private static final long serialVersionUID = -5517252645289726288L;
@@ -139,6 +142,13 @@ public class JobInstance extends EnableBusinessCFEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "stop_on_error")
     private boolean stopOnError = false;
+
+    /**
+     * Job execution speed. Defines how often job execution history gets updated.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "job_speed", nullable = false)
+    private JobSpeedEnum jobSpeed = JobSpeedEnum.NORMAL;
 
     /** Code of provider, that job belongs to. */
     @Transient
@@ -358,8 +368,8 @@ public class JobInstance extends EnableBusinessCFEntity {
      */
     @Override
     public String toString() {
-        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]", super.toString(), jobTemplate, parametres, jobCategoryEnum, timerEntity,
-            followingJob != null ? followingJob.getCode() : null);
+        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]", super.toString(), jobTemplate, parametres, jobCategoryEnum,
+            timerEntity != null ? timerEntity.getId() : null, followingJob != null ? followingJob.getId() : null);
     }
 
     /**
@@ -451,5 +461,19 @@ public class JobInstance extends EnableBusinessCFEntity {
      */
     public void setStopOnError(boolean stopOnError) {
         this.stopOnError = stopOnError;
+    }
+
+    /**
+     * @return Job execution speed. Defines how often job execution history gets updated.
+     */
+    public JobSpeedEnum getJobSpeed() {
+        return jobSpeed;
+    }
+
+    /**
+     * @param jobSpeed Job execution speed. Defines how often job execution history gets updated.
+     */
+    public void setJobSpeed(JobSpeedEnum jobSpeed) {
+        this.jobSpeed = jobSpeed;
     }
 }

@@ -37,9 +37,9 @@ import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.service.job.Job;
 
-
 /**
- * The Class SepaDirectDebitJob generate sepa/paynum or custom files for available DirectDebit request operations.
+ * Job definition to generate sepa/paynum or custom files for available DirectDebit request operations
+ * 
  * @author anasseh
  * @author Abdellatif BARI
  * @lastModifiedVersion 10.0
@@ -50,13 +50,14 @@ public class SepaDirectDebitJob extends Job {
     /** The sepa direct debit job bean. */
     @Inject
     private SepaDirectDebitJobBean sepaDirectDebitJobBean;
-    
+
     private static final String APPLIES_TO_NAME = "JobInstance_SepaDirectDebitJob";
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         sepaDirectDebitJobBean.execute(result, jobInstance);
+        return result;
     }
 
     @Override
@@ -66,8 +67,8 @@ public class SepaDirectDebitJob extends Job {
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
-        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();        
-       
+        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
+
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode("SepaJob_nbRuns");
         nbRuns.setAppliesTo(APPLIES_TO_NAME);
@@ -89,7 +90,7 @@ public class SepaDirectDebitJob extends Job {
         waitingMillis.setDefaultValue("0");
         waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
         result.put(Job.CF_WAITING_MILLIS, waitingMillis);
-        
+
         CustomFieldTemplate payentGatewayCF = new CustomFieldTemplate();
         payentGatewayCF.setCode("SepaJob_ddRequestBuilder");
         payentGatewayCF.setAppliesTo(APPLIES_TO_NAME);
@@ -100,7 +101,7 @@ public class SepaDirectDebitJob extends Job {
         payentGatewayCF.setValueRequired(true);
         payentGatewayCF.setGuiPosition("tab:Configuration:0;field:2");
         result.put("SepaJob_ddRequestBuilder", payentGatewayCF);
-        
+
         // CF to set a custom script filtering AOs to pay
         CustomFieldTemplate aoFilterScript = new CustomFieldTemplate();
         final String cfAoFilterScriptCode = "SepaJob_aoFilterScript";
@@ -112,7 +113,7 @@ public class SepaDirectDebitJob extends Job {
         aoFilterScript.setEntityClazz("org.meveo.model.scripts.ScriptInstance");
         aoFilterScript.setGuiPosition("tab:Configuration:0;field:3");
         result.put(cfAoFilterScriptCode, aoFilterScript);
-        
+
         CustomFieldTemplate sellerCF = new CustomFieldTemplate();
         final String sellerCFcode = "SepaJob_seller";
         sellerCF.setCode(sellerCFcode);
@@ -128,7 +129,7 @@ public class SepaDirectDebitJob extends Job {
         Map<String, String> lisValuesCreditDebit = new HashMap<String, String>();
         lisValuesCreditDebit.put(PaymentOrRefundEnum.PAYMENT.name(), PaymentOrRefundEnum.PAYMENT.name());
         lisValuesCreditDebit.put(PaymentOrRefundEnum.REFUND.name(), PaymentOrRefundEnum.REFUND.name());
-        
+
         CustomFieldTemplate creditOrDebitCF = new CustomFieldTemplate();
         creditOrDebitCF.setCode("SepaJob_paymentOrRefund");
         creditOrDebitCF.setAppliesTo(APPLIES_TO_NAME);

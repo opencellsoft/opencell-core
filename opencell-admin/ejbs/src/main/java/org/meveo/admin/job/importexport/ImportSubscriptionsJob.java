@@ -49,47 +49,42 @@ public class ImportSubscriptionsJob extends Job {
     private ImportSubscriptionsAsync importSubscriptionsAsync;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 
         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, CF_NB_RUNS, -1L);
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
-        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
-        try {
-            List<Future<String>> futures = new ArrayList<Future<String>>();
-            MeveoUser lastCurrentUser = currentUser.unProxy();
-            for (int i = 0; i < nbRuns.intValue(); i++) {
-                futures.add(importSubscriptionsAsync.launchAndForget(result, lastCurrentUser));
-                if (i > 0) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-            }
-            // Wait for all async methods to finish
-            for (Future<String> future : futures) {
+        List<Future<String>> futures = new ArrayList<Future<String>>();
+        MeveoUser lastCurrentUser = currentUser.unProxy();
+        for (int i = 0; i < nbRuns.intValue(); i++) {
+            futures.add(importSubscriptionsAsync.launchAndForget(result, lastCurrentUser));
+            if (i > 0) {
                 try {
-                    future.get();
-
+                    Thread.sleep(waitingMillis.longValue());
                 } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
-
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    jobExecutionService.registerError(result, cause.getMessage());
-                    log.error("Failed to execute async method", cause);
+                    log.error("", e);
                 }
             }
-
-        } catch (Exception e) {
-            log.error("Failed to import subscriptions", e);
-            jobExecutionService.registerError(result, e.getMessage());
         }
+        // Wait for all async methods to finish
+        for (Future<String> future : futures) {
+            try {
+                future.get();
+
+            } catch (InterruptedException e) {
+                // It was cancelled from outside - no interest
+
+            } catch (ExecutionException e) {
+                Throwable cause = e.getCause();
+                result.registerError(cause.getMessage());
+                log.error("Failed to execute async method", cause);
+            }
+        }
+
+        return result;
     }
 
     @Override

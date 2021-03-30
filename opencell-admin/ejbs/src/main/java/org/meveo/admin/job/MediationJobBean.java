@@ -19,35 +19,44 @@
 package org.meveo.admin.job;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.FlatFileProcessing;
-import org.meveo.admin.async.MediationFileProcessing;
 import org.meveo.admin.parse.csv.MEVEOCdrFlatFileReader;
+import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
-import org.meveo.model.bi.FlatFile;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.security.CurrentUser;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.mediation.Access;
+import org.meveo.model.rating.CDR;
+import org.meveo.model.rating.CDRStatusEnum;
+import org.meveo.model.rating.EDR;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.bi.impl.FlatFileService;
-import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.Job;
+import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
+import org.meveo.service.medina.impl.CDRService;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.ICdrReader;
-import org.slf4j.Logger;
 
 /**
- * The Class MediationJobBean.
+ * Job implementation to process CDR files converting CDRs to EDR records
  *
  * @author Edward P. Legaspi
  * @author Wassim Drira
@@ -56,33 +65,19 @@ import org.slf4j.Logger;
  * 
  */
 @Stateless
-public class MediationJobBean {
+public class MediationJobBean extends BaseJobBean {
 
-    /** The log. */
-    @Inject
-    private Logger log;
-
-    /** The job execution service. */
-    @Inject
-    private MediationFileProcessing mediationFileProcessing;
+    private static final long serialVersionUID = -6818809357366374519L;
 
     /** The cdr parser. */
     @Inject
     private CDRParsingService cdrParserService;
 
-    /** The flat file service. */
-    @Inject
-    private FlatFileService flatFileService;
-
     @Inject
     private FlatFileProcessing flatFileProcessing;
-    
+
     @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
-    
-    @Inject
-    protected JobExecutionService jobExecutionService;
+    private CDRService cdrService;
 
     /** The cdr file name. */
     String cdrFileName;
@@ -111,23 +106,22 @@ public class MediationJobBean {
     /**
      * Process a single file.
      *
-     * @param result Job execution result
+     * @param jobExecutionResult Job execution result
      * @param inputDir Input directory
      * @param outputDir Directory to store a successfully processed records
      * @param archiveDir Directory to store a copy of a processed file
      * @param rejectDir Directory to store a failed records
      * @param file File to process
      * @param parameter the parameter
-     * @param nbRuns Number of parallel executions
-     * @param waitingMillis the waiting millis
      * @param readerCode the reader code
      * @param parserCode the parser code
      * @param mappingConf the mapping conf
      * @param recordVariableName the record variable name
      */
+    @SuppressWarnings("rawtypes")
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl result, String inputDir, String outputDir, String archiveDir, String rejectDir, File file, String parameter, Long nbRuns,
-            Long waitingMillis, String readerCode, String parserCode, String mappingConf, String recordVariableName) {
+    public void execute(JobExecutionResultImpl jobExecutionResult, String inputDir, String outputDir, String archiveDir, String rejectDir, File file, String parameter, String readerCode, String parserCode,
+            String mappingConf, String recordVariableName) {
 
         log.debug("Processing mediation file  in inputDir={}, file={}", inputDir, file.getAbsolutePath());
 
@@ -145,6 +139,14 @@ public class MediationJobBean {
         ICdrReader cdrReader = null;
         ICdrParser cdrParser = null;
 
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
+
+        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
+        if (nbRuns == -1) {
+            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        }
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
+
         try {
 
             rejectFile = new File(rejectDir + File.separator + rejectedfileName);
@@ -156,9 +158,15 @@ public class MediationJobBean {
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
 
             cdrReader = cdrParserService.getCDRReaderByCode(currentFile, readerCode);
-            
             cdrParser = cdrParserService.getCDRParser(parserCode);
-            
+
+            Integer totalNummberOfRecords = cdrReader.getNumberOfRecords();
+            boolean updateTotalCount = totalNummberOfRecords == null;
+            if (totalNummberOfRecords != null) {
+                jobExecutionResult.addNbItemsToProcess(totalNummberOfRecords);
+                jobExecutionResultService.persistResult(jobExecutionResult);
+            }
+
             if (MEVEOCdrFlatFileReader.class.isAssignableFrom(cdrReader.getClass())) {
                 ((MEVEOCdrFlatFileReader) cdrReader).setDataFile(currentFile);
                 ((MEVEOCdrFlatFileReader) cdrReader).setMappingDescriptor(mappingConf);
@@ -167,59 +175,179 @@ public class MediationJobBean {
             }
 
             // Launch parallel processing of a file
-            List<Future<String>> futures = new ArrayList<Future<String>>();
+            List<Future> futures = new ArrayList<>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
-            for (long i = 0; i < nbRuns; i++) {
 
-                futures.add(mediationFileProcessing.processFileAsync(cdrReader, cdrParser, result, fileName, rejectFileWriter, outputFileWriter, lastCurrentUser));
+            int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
+            int updateJobStatusEveryNr = nbRuns.longValue() > 3 ? jobInstance.getJobSpeed().getUpdateNb() * nbRuns.intValue() / 2 : jobInstance.getJobSpeed().getUpdateNb();
 
-                if (waitingMillis > 0) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
+            ICdrReader cdrReaderFinal = cdrReader;
+            ICdrParser cdrParserFinal = cdrParser;
+            PrintWriter outputFileWriterFinal = outputFileWriter;
+            PrintWriter rejectFileWriterFinal = rejectFileWriter;
+
+            Runnable task = () -> {
+
+                currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+                int i = 0;
+                long globalI = 0;
+                CDR cdr = null;
+
+                while (true) {
+
+                    if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
+                        break;
                     }
+
+                    try {
+                        cdr = cdrReaderFinal.getNextRecord(cdrParserFinal);
+                        if (cdr == null) {
+                            break;
+                        }
+
+                        if (StringUtils.isBlank(cdr.getRejectReason())) {
+                            List<Access> accessPoints = cdrParserFinal.accessPointLookup(cdr);
+                            List<EDR> edrs = cdrParserFinal.convertCdrToEdr(cdr, accessPoints);
+                            log.debug("Processing record line content:{} from file {}", cdr.getLine(), fileName);
+
+                            cdrParserService.createEdrs(edrs, cdr);
+
+                            synchronized (outputFileWriterFinal) {
+                                outputFileWriterFinal.println(cdr.getLine());
+                            }
+                            globalI = jobExecutionResult.registerSucces();
+
+                        } else {
+                            globalI = jobExecutionResult.registerError("file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
+
+                            cdr.setStatus(CDRStatusEnum.ERROR);
+                            createOrUpdateCdr(cdr);
+                        }
+
+                    } catch (IOException e) {
+                        log.error("Failed to read a CDR line from file {}", fileName, e);
+                        jobExecutionResult.addReport("Failed to read a CDR line from file " + fileName + " " + e.getMessage());
+                        cdr.setStatus(CDRStatusEnum.ERROR);
+                        cdr.setRejectReason(e.getMessage());
+                        createOrUpdateCdr(cdr);
+                        break;
+
+                    } catch (Exception e) {
+                        String errorReason = e.getMessage();
+                        final Throwable rootCause = getRootCause(e);
+                        if (e instanceof EJBTransactionRolledbackException && rootCause instanceof ConstraintViolationException) {
+                            StringBuilder builder = new StringBuilder();
+                            builder.append("Invalid values passed: ");
+                            for (ConstraintViolation<?> violation : ((ConstraintViolationException) rootCause).getConstraintViolations()) {
+                                builder.append(
+                                    String.format(" %s.%s: value '%s' - %s;", violation.getRootBeanClass().getSimpleName(), violation.getPropertyPath().toString(), violation.getInvalidValue(), violation.getMessage()));
+                            }
+                            errorReason = builder.toString();
+                            log.error("Failed to process a CDR line: {} from file {} error {}", cdr != null ? cdr.getLine() : null, fileName, errorReason);
+                        } else if (e instanceof CDRParsingException) {
+                            log.error("Failed to process a CDR line: {} from file {} error {}", cdr != null ? cdr.getLine() : null, fileName, errorReason);
+                        } else {
+                            log.error("Failed to process a CDR line: {} from file {} error {}", cdr != null ? cdr.getLine() : null, fileName, errorReason, e);
+                        }
+
+                        synchronized (rejectFileWriterFinal) {
+                            rejectFileWriterFinal.println((cdr != null ? cdr.getLine() : "") + "\t" + errorReason);
+                        }
+                        globalI = jobExecutionResult.registerError("file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + errorReason);
+                        cdr.setStatus(CDRStatusEnum.ERROR);
+                        cdr.setRejectReason(e.getMessage());
+                        createOrUpdateCdr(cdr);
+                    }
+
+                    // It is not known in advance of a number of records in a file, so total count is being updated with each record
+                    if (updateTotalCount) {
+                        jobExecutionResult.addNbItemsToProcess(1L);
+                    }
+
+                    try {
+                        // Record progress
+                        if (globalI > 0 && globalI % updateJobStatusEveryNr == 0) {
+                            jobExecutionResultService.persistResult(jobExecutionResult);
+                        }
+                    } catch (EJBTransactionRolledbackException e) {
+                        // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
+                    } catch (Exception e) {
+                        log.error("Failed to update job progress", e);
+                    }
+                    i++;
+                }
+            };
+
+            for (int i = 0; i < nbRuns; i++) {
+                log.info("{}/{} Will submit task to run", jobInstance.getJobTemplate(), jobInstance.getCode());
+                futures.add(executor.submit(task));
+                try {
+                    Thread.sleep(waitingMillis.longValue());
+                } catch (InterruptedException e) {
+                    log.error("", e);
                 }
             }
 
+            // Mark number of threads it will be running on
+            JobRunningStatusEnum jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), futures);
+
+            boolean wasKilled = false;
+
             // Wait for all async methods to finish
-            for (Future<String> future : futures) {
+            for (Future future : futures) {
                 try {
                     future.get();
 
                 } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
+                    wasKilled = true;
+                    log.error("Thread/future for job {} was canceled", jobInstance);
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    jobExecutionService.registerError(result, cause.getMessage());
+                    jobExecutionResult.registerError(cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }
-            errors.addAll(result.getErrors());
 
-            if (result.getNbItemsProcessed() == 0) {
+            // Mark job as stopped if task was killed
+            if (wasKilled) {
+                jobExecutionService.markJobToStop(jobInstance);
+
+                // Mark that all threads are finished
+            } else {
+                jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
+            }
+
+            boolean wasCanceled = wasKilled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
+
+            errors.addAll(jobExecutionResult.getErrors());
+
+            if (jobExecutionResult.getNbItemsProcessed() == 0) {
                 String errorDescription = "\r\n file " + fileName + " is empty";
-                result.addReport(errorDescription);
+                jobExecutionResult.addReport(errorDescription);
                 errors.add(errorDescription);
             }
 
-            log.info("Finished processing mediation {}", fileName);
+            if (wasCanceled) {
+                log.info("Canceled processing mediation file {}", fileName);
+            } else {
+                log.info("Finished processing mediation file {}", fileName);
+            }
 
         } catch (Exception e) {
             log.error("Failed to process mediation file {}", fileName, e);
-            result.addReport(e.getMessage());
+            jobExecutionResult.addReport(e.getMessage());
             errors.add(e.getMessage());
             if (currentFile != null) {
                 fileCurrentName = FileUtils.moveFileDontOverwrite(rejectDir, currentFile, fileName);
             }
 
         } finally {
-            FlatFile flatFile = flatFileService.getFlatFileByFileName(fileName);
-            if (flatFile != null) {
-                flatFileProcessing.updateFlatFile(fileName, fileCurrentName, rejectedfileName, processedfileName, rejectDir, outputDir, errors, result.getNbItemsCorrectlyProcessed(), result.getNbItemsProcessedWithError(), result.getJobInstance().getCode());
+            if (MEVEOCdrFlatFileReader.class.isAssignableFrom(cdrReader.getClass())) {
+                flatFileProcessing.updateFlatFile(fileName, fileCurrentName, rejectedfileName, processedfileName, rejectDir, outputDir, errors, jobExecutionResult.getNbItemsCorrectlyProcessed(),
+                    jobExecutionResult.getNbItemsProcessedWithError(), jobExecutionResult.getJobInstance().getCode());
             }
-
             try {
                 if (cdrReader != null) {
                     cdrReader.close();
@@ -232,7 +360,7 @@ public class MediationJobBean {
                     FileUtils.moveFileDontOverwrite(archiveDir, currentFile, fileName);
                 }
             } catch (Exception e) {
-                result.addReport("\r\n cannot move file to archive directory " + fileName);
+                jobExecutionResult.addReport("\r\n cannot move file to archive directory " + fileName);
             }
 
             try {
@@ -245,7 +373,7 @@ public class MediationJobBean {
             }
 
             // Delete reject file if it is empty
-            if ((result.getErrors().isEmpty() && result.getNbItemsProcessedWithError() == 0) && rejectFile != null) {
+            if ((jobExecutionResult.getErrors().isEmpty() && jobExecutionResult.getNbItemsProcessedWithError() == 0) && rejectFile != null) {
                 try {
                     rejectFile.delete();
                 } catch (Exception e) {
@@ -261,6 +389,29 @@ public class MediationJobBean {
                 }
             } catch (Exception e) {
                 log.error("Failed to close output file writer for file {}", fileName, e);
+            }
+        }
+    }
+
+    private Throwable getRootCause(Throwable e) {
+        if (e.getCause() != null) {
+            return getRootCause(e.getCause());
+        }
+        return e;
+    }
+
+    /**
+     * Save the cdr if the configuration property mediation.persistCDR is true.
+     *
+     * @param cdr the cdr
+     */
+    private void createOrUpdateCdr(CDR cdr) {
+        boolean persistCDR = "true".equals(ParamBeanFactory.getAppScopeInstance().getProperty("mediation.persistCDR", "false"));
+        if (cdr != null && persistCDR) {
+            if (cdr.getId() == null) {
+                cdrService.create(cdr);
+            } else {
+                cdrService.update(cdr);
             }
         }
     }

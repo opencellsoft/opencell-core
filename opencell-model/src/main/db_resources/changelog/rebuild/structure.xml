@@ -4978,6 +4978,7 @@
             <column name="job_instance_id" type="bigint">
                 <constraints nullable="false" />
             </column>
+            <column name="job_status" type="varchar(14)"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-262">
@@ -5212,6 +5213,7 @@
             <column name="exclude_inv_without_amount" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="stop_on_error" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-278">
@@ -6751,6 +6753,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
             <column name="output_dir" type="varchar(255)" />
+            <column name="file_separator" type="varchar(1)" defaultValue="," />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-360">
@@ -8518,7 +8521,7 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-485">
         <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_resp_cookies" constraintName="fk_1kyctwmlumac9aoikhb3kmc02" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+            onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-486">
         <addForeignKeyConstraint baseColumnNames="campaign_id" baseTableName="com_message" constraintName="fk_1pyl5u7tyess63kwnpvmpk261" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -8622,7 +8625,7 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-560">
         <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_headers" constraintName="fk_5l2gy0e4dol6gtr05sq929hnx" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+            onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-561">
         <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="crm_provider" constraintName="fk_5llfbkuo4biup0stpfma3t1yg" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -8705,7 +8708,7 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_agregate" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-609">
-        <addForeignKeyConstraint baseColumnNames="inbound_request_id" baseTableName="adm_notif_history" constraintName="fk_8k2sxhjmrswxnecfo74bdmnsa" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="inbound_request_id" baseTableName="adm_notif_history" constraintName="fk_8k2sxhjmrswxnecfo74bdmnsa" deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-612">
@@ -8842,7 +8845,7 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-682">
         <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_cookies" constraintName="fk_cfd55de59w792gxpcd478ujfq" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+            onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-684">
         <addForeignKeyConstraint baseColumnNames="subscription_id" baseTableName="billing_service_instance" constraintName="fk_cjdtigou2dhmp30e1je4l4la3" deferrable="false" initiallyDeferred="false"
@@ -8874,7 +8877,7 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-698">
         <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_params" constraintName="fk_djmbjb6ja9fapeadjyj395020" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+            onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-699">
         <addForeignKeyConstraint baseColumnNames="wallet_template_id" baseTableName="cat_serv_usage_wallet_template" constraintName="fk_djsiyqv4nss0aba3dfvxlo0g9" deferrable="false" initiallyDeferred="false"
@@ -8990,7 +8993,7 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-763">
         <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_resp_headers" constraintName="fk_h07be9b84xmmx5ypkbunkxwxt" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+            onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-767">
         <addForeignKeyConstraint baseColumnNames="billing_account" baseTableName="billing_rejected_billing_accounts" constraintName="fk_hamqnc1lpwfm4b3qjbefi24rn" deferrable="false" initiallyDeferred="false"

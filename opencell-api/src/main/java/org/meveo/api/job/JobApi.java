@@ -44,9 +44,12 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.cache.JobCacheContainerProvider;
+import org.meveo.cache.JobExecutionStatus;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
+import org.meveo.service.job.JobExecutionResultService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.primefaces.model.SortOrder;
@@ -65,6 +68,9 @@ public class JobApi extends BaseApi {
 
     @Inject
     private JobExecutionService jobExecutionService;
+    
+    @Inject
+    private JobExecutionResultService jobExecutionResultService;
 
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
@@ -106,10 +112,10 @@ public class JobApi extends BaseApi {
         this.setJobRunTimeJobValues(jobExecution, jobInstance);
 
         if (jobExecution.isForceExecution()) {
-            jobCacheContainerProvider.resetJobRunningStatus(jobInstance.getId());
+            jobCacheContainerProvider.resetJobRunningStatus(jobInstance);
         }
 
-        Long executionId = jobExecutionService.executeJobWithResultId(jobInstance, null);
+        Long executionId = jobExecutionService.executeJob(jobInstance, null, JobLauncherEnum.API);
 
         return findJobExecutionResult(null, executionId);
     }
@@ -194,7 +200,7 @@ public class JobApi extends BaseApi {
 
         JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
         if (!StringUtils.isBlank(id)) {
-            jobExecutionResult = jobExecutionService.findById(id);
+            jobExecutionResult = jobExecutionResultService.findById(id);
             if (jobExecutionResult == null) {
                 throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, id);
             }
@@ -205,7 +211,7 @@ public class JobApi extends BaseApi {
                 throw new EntityDoesNotExistsException(JobInstance.class, code);
             }
 
-            jobExecutionResult = jobExecutionService.findLastExecutionByInstance(jobInstance);
+            jobExecutionResult = jobExecutionResultService.findLastExecutionByInstance(jobInstance);
             if (jobExecutionResult == null) {
                 throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, code);
             }
@@ -214,9 +220,9 @@ public class JobApi extends BaseApi {
         jobExecutionResultDto = new JobExecutionResultDto(jobExecutionResult);
 
         if (jobExecutionResult.getEndDate() == null) {
-            List<String> nodeNames = jobCacheContainerProvider.getNodesJobIsRuningOn(jobExecutionResult.getJobInstance().getId());
-            if (nodeNames != null && !nodeNames.isEmpty()) {
-                jobExecutionResultDto.setRunningOnNodes(StringUtils.concatenate(",", nodeNames));
+            JobExecutionStatus jobExecutionStatus = jobCacheContainerProvider.getJobStatus(jobExecutionResult.getJobInstance().getId());
+            if (jobExecutionStatus != null && !jobExecutionStatus.getNodes().isEmpty()) {
+                jobExecutionResultDto.setRunningOnNodes(StringUtils.concatenate(",", jobExecutionStatus.getNodes()));
             }
         }
 
@@ -233,7 +239,7 @@ public class JobApi extends BaseApi {
                 toPaginationConfiguration(pagingAndFiltering.getSortBy(),
                         SortOrder.ASCENDING, null, pagingAndFiltering, JobExecutionResultImpl.class);
 
-        Long totalCount = jobExecutionService.count(paginationConfig);
+        Long totalCount = jobExecutionResultService.count(paginationConfig);
 
         JobExecutionResultsResponseDto jobExecutionResultsResponse = new JobExecutionResultsResponseDto();
         JobExecutionResultsDto jobExecutionResult = new JobExecutionResultsDto();
@@ -243,7 +249,7 @@ public class JobApi extends BaseApi {
         jobExecutionResultsResponse.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
         if (totalCount > 0) {
-            List<JobExecutionResultImpl> jobExecutionResults = jobExecutionService.list(paginationConfig);
+            List<JobExecutionResultImpl> jobExecutionResults = jobExecutionResultService.list(paginationConfig);
             jobExecutionResult.setJobExecutionResults(jobExecutionResults
                                                 .stream()
                                                 .map(JobExecutionResultDto::new)

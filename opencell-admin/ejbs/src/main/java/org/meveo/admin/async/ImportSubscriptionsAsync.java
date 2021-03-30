@@ -58,7 +58,7 @@ public class ImportSubscriptionsAsync {
      * @return Future String
      */
     @Asynchronous
-    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
+//    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
     public Future<String> launchAndForget(JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);

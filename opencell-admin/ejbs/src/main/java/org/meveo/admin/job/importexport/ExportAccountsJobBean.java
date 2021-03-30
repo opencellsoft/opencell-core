@@ -45,6 +45,8 @@ import org.meveo.model.jaxb.account.UserAccount;
 import org.meveo.model.jaxb.account.UserAccounts;
 import org.meveo.model.jaxb.customer.CustomFields;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.job.JobExecutionService;
@@ -93,7 +95,7 @@ public class ExportAccountsJobBean {
 
         String timestamp = sdf.format(new Date());
         List<org.meveo.model.billing.BillingAccount> bas = billingAccountService.list();
-        billingAccounts = billingAccountsToDto(bas, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance().getId());
+        billingAccounts = billingAccountsToDto(bas, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance());
         int nbItems = billingAccounts.getBillingAccount() != null ? billingAccounts.getBillingAccount().size() : 0;
         result.setNbItemsToProcess(nbItems);
         try {
@@ -102,7 +104,6 @@ public class ExportAccountsJobBean {
             logResult();
         } catch (JAXBException e) {
             log.error("Failed to export accounts job", e);
-            result.getErrors().add(e.getMessage());
             result.setReport(e.getMessage());
             result.setNbItemsProcessedWithError(nbItems);
         }
@@ -119,16 +120,18 @@ public class ExportAccountsJobBean {
         }
     }
 
-    private BillingAccounts billingAccountsToDto(List<org.meveo.model.billing.BillingAccount> bas, String dateFormat, Long jobInstanceId) {
+    private BillingAccounts billingAccountsToDto(List<org.meveo.model.billing.BillingAccount> bas, String dateFormat, JobInstance jobInstance) {
         BillingAccounts dto = new BillingAccounts();
         int i = 0;
+        int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
+        
         for (org.meveo.model.billing.BillingAccount ba : bas) {
-            i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
                 break;
             }
-            BillingAccount billingAcc = billingAccountToDto(ba, dateFormat, jobInstanceId);
+            BillingAccount billingAcc = billingAccountToDto(ba, dateFormat, jobInstance.getId());
             dto.getBillingAccount().add(billingAcc);
+            i++;
         }
         return dto;
     }
@@ -171,11 +174,11 @@ public class ExportAccountsJobBean {
         UserAccounts dto = new UserAccounts();
         int i = 0;
         for (org.meveo.model.billing.UserAccount userAcc : usersAccounts) {
-            i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            if (i % JobSpeedEnum.NORMAL.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobInstanceId)) {
                 break;
             }
             dto.getUserAccount().add(userAccountToDto(userAcc, dateFormat));
+            i++;
         }
         return dto;
     }
