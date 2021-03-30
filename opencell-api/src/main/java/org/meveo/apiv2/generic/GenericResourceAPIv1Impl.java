@@ -1,6 +1,5 @@
 package org.meveo.apiv2.generic;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.meveo.api.dto.*;
 import org.meveo.api.dto.account.AccessDto;
@@ -18,9 +17,12 @@ import javax.interceptor.Interceptors;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,7 +70,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
      * This request is used to retrieve all entities, or also a particular entity
      */
     @Override
-    public Response getAllEntitiesOrGetAnEntity() throws URISyntaxException, JsonProcessingException {
+    public Response getAllEntitiesOrGetAnEntity() throws URISyntaxException, IOException {
         String aGetPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
 
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
@@ -155,7 +157,10 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL );
             }
-            return Response.temporaryRedirect( redirectURI ).build();
+
+            Response getResponse = AuthenticationFilter.httpClient.target( redirectURI ).request().get();
+
+            return Response.ok().entity(customizeResponse(getResponse, entityClassName)).build();
         }
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( getAnEntityPath ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getAnEntityPath );
@@ -272,7 +277,9 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                         + API_REST + pathIBaseRS + queryParams );
             }
 
-            return Response.temporaryRedirect( redirectURI ).build();
+            Response getResponse = AuthenticationFilter.httpClient.target( redirectURI ).request().get();
+
+            return Response.ok().entity(customizeResponse(getResponse, entityClassName)).build();
         }
         else {
             if ( aGetPath.matches( "/v1/invoices/pdfInvoices/" + GenericOpencellRestfulAPIv1.CODE_REGEX ) ) {
@@ -290,6 +297,33 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+    }
+
+    // Concerns only responses for requests get all entities
+    public Map<String, Object> customizeResponse( Response getResponse, String entityName ) throws IOException {
+        Map<String, Object> customResponse = new LinkedHashMap<>();
+        if ( getResponse.hasEntity() ) {
+            Object aResponse2 = getResponse.getEntity();
+            Map<String, Object> origResponse = new ObjectMapper().readValue( (InputStream) aResponse2, Map.class );
+
+            for (Map.Entry<String,Object> entry : origResponse.entrySet()) {
+                if ( entry.getKey().equals("actionStatus") || entry.getKey().equals("paging") )
+                    customResponse.put(entry.getKey(), entry.getValue());
+                else if ( entry.getKey().equals( Inflector.getInstance().pluralize(entityName) ) ) {
+                    if ( entry.getValue() instanceof Map ) {
+                        Map mapEntities = (Map) entry.getValue();
+                        for (Object aKey : mapEntities.keySet()) {
+                            if ( aKey.equals( Inflector.getInstance().singularize(entityName) ) )
+                                customResponse.put( entry.getKey(), mapEntities.get(aKey) );
+                        }
+                    }
+                }
+                else
+                    customResponse.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return customResponse;
     }
 
     @Override
@@ -474,8 +508,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     }
 
     @Override
-    public Response getListRestfulEntities() {
-        return Response.ok().entity(GenericOpencellRestfulAPIv1.RESTFUL_ENTITIES_MAP).type(MediaType.APPLICATION_JSON_TYPE).build();
+    public Response getListRestfulURLs() {
+        return Response.ok().entity(GenericOpencellRestfulAPIv1.RESTFUL_ENTITIES_LIST).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
 
     @PreDestroy
