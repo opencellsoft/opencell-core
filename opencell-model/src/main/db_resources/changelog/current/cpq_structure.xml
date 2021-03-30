@@ -4174,6 +4174,10 @@ public class OrderAdvancement extends ModuleScript {
             	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
         	<addForeignKeyConstraint baseColumnNames="order_lot_id" baseTableName="cpq_commercial_order_order_lot" constraintName="fk_cpq_commercial_order_order_lot_order_lot_id" deferrable="false" initiallyDeferred="false"
             	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_lot" />
+            	
 	</changeSet>
+	<changeSet id="#20210329_399" author="TarikFA.">
+            <renameTable newTableName="cpq_order_attribute" oldTableName="cpq_order_item"/>
+    </changeSet>
 
 </databaseChangeLog>

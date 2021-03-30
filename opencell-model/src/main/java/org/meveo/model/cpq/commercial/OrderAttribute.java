@@ -35,7 +35,7 @@ import org.meveo.security.MeveoUser;
 @Entity
 @Cacheable
 @CustomFieldEntity(cftCodePrefix = "OrderAttribute")
-@Table(name = "cpq_order_item", uniqueConstraints = @UniqueConstraint(columnNames = { "id" }))
+@Table(name = "cpq_order_attribute", uniqueConstraints = @UniqueConstraint(columnNames = { "id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_item_seq")})
 public class OrderAttribute extends AttributeValue<OrderAttribute> {
@@ -64,7 +64,7 @@ public class OrderAttribute extends AttributeValue<OrderAttribute> {
 	@Size(max = 20)
 	private String accessPoint;
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
 	@JoinColumn(name = "cpq_order_offer_id",referencedColumnName = "id")
 	private OrderOffer  orderOffer;
 
