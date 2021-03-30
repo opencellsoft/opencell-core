@@ -87,7 +87,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             if ( pathIBaseRS.equals( "/billing/wallet/operation" ) )
                 entityClassName = "WalletOperation";
             else if ( pathIBaseRS.equals( "/catalog/pricePlan" ) )
-                entityClassName = "PricePlanMatrix";
+                entityClassName = "pricePlanMatrix";
             else if ( pathIBaseRS.equals( "/countryIso" ) )
                 entityClassName = "Country";
             else if ( pathIBaseRS.equals( "/currencyIso" ) )
@@ -125,7 +125,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/taxMapping" ) || pathIBaseRS.equals( "/payment/creditCategory" )
                     || pathIBaseRS.equals( "/payment/paymentMethod" ) || pathIBaseRS.equals( "/account/title" )
                     || pathIBaseRS.equals( "/account/customerAccount" ) || pathIBaseRS.equals( "/account/billingAccount" )
-                    || pathIBaseRS.equals( "/account/userAccount" ) || pathIBaseRS.equals( "/catalog/serviceTemplate" ) )
+                    || pathIBaseRS.equals( "/account/userAccount" ) || pathIBaseRS.equals( "/catalog/serviceTemplate" )
+                    || pathIBaseRS.equals( "/catalog/pricePlan" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 )
@@ -152,7 +153,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/taxMapping" ) || pathIBaseRS.equals( "/payment/creditCategory" )
                     || pathIBaseRS.equals( "/payment/paymentMethod" ) || pathIBaseRS.equals( "/account/title" )
                     || pathIBaseRS.equals( "/account/customerAccount" ) || pathIBaseRS.equals( "/account/billingAccount" )
-                    || pathIBaseRS.equals( "/account/userAccount" ) || pathIBaseRS.equals( "/catalog/serviceTemplate" ) )
+                    || pathIBaseRS.equals( "/account/userAccount" ) || pathIBaseRS.equals( "/catalog/serviceTemplate" )
+                    || pathIBaseRS.equals( "/catalog/pricePlan" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
@@ -252,8 +254,11 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                                 .map(MatchResult::group)
                                 .toArray(String[]::new);
 
-                        queryParams.append( Inflector.getInstance().singularize( matches[matches.length - 2] ) + "Code="
-                                + matches[matches.length - 1] + PAIR_QUERY_PARAM_SEPARATOR );
+                        if ( pathIBaseRS.equals( "/catalog/pricePlan/list" ) )
+                            queryParams.append( "eventCode=" + matches[matches.length - 1] + PAIR_QUERY_PARAM_SEPARATOR );
+                        else
+                            queryParams.append( Inflector.getInstance().singularize( matches[matches.length - 2] ) + "Code="
+                                    + matches[matches.length - 1] + PAIR_QUERY_PARAM_SEPARATOR );
                     }
 
                     indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX, indexCodeRegex + 1 );
@@ -264,7 +269,12 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 if ( ! smallString.equals( aGetPath ) ) {
                     queryParamsMap = uriInfo.getQueryParameters();
                     GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
-                    entityClassName = aGetPath.split( FORWARD_SLASH )[ aGetPath.split( FORWARD_SLASH ).length - 1 ];
+
+                    if ( pathIBaseRS.equals( "/catalog/pricePlan/list" ) )
+                        entityClassName = "PricePlanMatrix";
+                    else
+                        entityClassName = aGetPath.split( FORWARD_SLASH )[ aGetPath.split( FORWARD_SLASH ).length - 1 ];
+
                     Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize( entityClassName ) );
                     GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
                 }
@@ -319,6 +329,14 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                                 aKey.equals( Inflector.getInstance().pluralize(entityName) ) ||
                                 aKey.equals( entityName ) )
                                 customResponse.put( entry.getKey(), mapEntities.get(aKey) );
+                        }
+                    }
+                }
+                else if ( entry.getKey().equals( "pricePlanMatrixes" ) ) {
+                    if ( entry.getValue() instanceof Map ) {
+                        Map mapEntities = (Map) entry.getValue();
+                        for (Object aKey : mapEntities.keySet()) {
+                            customResponse.put( "pricePlanMatrices", mapEntities.get(aKey) );
                         }
                     }
                 }
