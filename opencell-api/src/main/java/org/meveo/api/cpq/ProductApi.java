@@ -64,6 +64,7 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
+import org.meveo.service.cpq.CommercialRuleLineService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.ProductLineService;
@@ -129,6 +130,9 @@ public class ProductApi extends BaseApi {
 	
 	 @Inject
 	 private MediaService mediaService;
+	 
+	 @Inject
+    private CommercialRuleLineService commercialRuleLineService;
 	
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 	
@@ -862,10 +866,13 @@ public class ProductApi extends BaseApi {
 						 for(CommercialRuleHeader rule:attributeCommercialRules) { 
 							 commercialRuleCodes.add(rule.getCode());
 						 } 
-						 attributeDto.setCommercialRuleCodes(commercialRuleCodes);
-						 attributeDto.setRuled(true);
+						 attributeDto.setCommercialRuleCodes(commercialRuleCodes); 
 						 boolean isSelectable=commercialRuleHeaderService.isElementSelectable(offerCode, attributeCommercialRules, offerContextDTO.getSelectedProducts());
 						 attributeDto.setSelectable(isSelectable);
+					 }
+					 List<Long> sourceRules=commercialRuleLineService.getSourceProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
+					 if(sourceRules!=null && !sourceRules.isEmpty()) {
+						 attributeDto.setRuled(true); 
 					 }
 				 }  
 				 
