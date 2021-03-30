@@ -51,7 +51,7 @@ public class ProductVersionDto extends BaseEntityDto {
     /** The attributeCodes. */
     @XmlElementWrapper(name = "attributeCodes")
     @XmlElement(name = "attributeCodes")
-    protected Set<String> attributeCodes=new HashSet<String>();;
+    protected Set<String> attributeCodes=new HashSet<String>();
     
     @XmlElementWrapper(name = "groupedAttributeCodes")
     @XmlElement(name = "groupedAttributeCodes")

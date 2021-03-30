@@ -850,16 +850,18 @@ public class ProductApi extends BaseApi {
 						 commercialRuleDtoList.add(commercialRuleDto);
 					 }	
 					 offerProduct.setCommercialRules(commercialRuleDtoList);
-					 offerProduct.setRuled(true);
 					 boolean isSelectable=commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts());
 					 offerProduct.setSelectable(isSelectable);
 				 }
 				 
-				 for(String attributeCode:offerProduct.getProduct().getCurrentProductVersion().getAttributeCodes()) {
-					 Attribute attribute=attributeService.findByCode(attributeCode);
-					 if(attribute==null)
-						 continue;
-					 AttributeDTO attributeDto=new AttributeDTO(attribute);
+				 List<Long> sourceProductRules=commercialRuleLineService.getSourceProductRules(offerCode, offerProduct.getProduct().getCode(), offerProduct.getProduct().getCurrentProductVersion().getCurrentVersion()); 
+				 if(sourceProductRules!=null && !sourceProductRules.isEmpty()) {
+					 offerProduct.setRuled(true); 
+				 }
+				 
+				 
+				 GetProductVersionResponse productVersionResponse =(GetProductVersionResponse)offerProduct.getProduct().getCurrentProductVersion();
+				 for(AttributeDTO attributeDto:productVersionResponse.getAttributes()) {
 					 List<CommercialRuleHeader> attributeCommercialRules=commercialRuleHeaderService.getProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
 					 if(attributeCommercialRules!=null && !attributeCommercialRules.isEmpty()) {
 						 List<String> commercialRuleCodes= new ArrayList<String>();
@@ -873,14 +875,11 @@ public class ProductApi extends BaseApi {
 					 List<Long> sourceRules=commercialRuleLineService.getSourceProductAttributeRules(attributeDto.getCode(), offerProduct.getProduct().getCode());
 					 if(sourceRules!=null && !sourceRules.isEmpty()) {
 						 attributeDto.setRuled(true); 
-					 }
+					 } 
 				 }  
+				
 				 
-				 for(String groupedAttribute:offerProduct.getProduct().getCurrentProductVersion().getGroupedAttributeCodes()) {
-					 GroupedAttributes groupedAttributes=groupedAttributeService.findByCode(groupedAttribute);
-					 if(groupedAttributes==null)
-						 continue;
-					 GroupedAttributeDto groupedAttributeDTO=new GroupedAttributeDto(groupedAttributes);
+					 for(GroupedAttributeDto groupedAttributeDTO:productVersionResponse.getGroupedAttributes()) { 
 					 List<CommercialRuleHeader> groupedAttributeCommercialRules=commercialRuleHeaderService.getGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
 					 if(groupedAttributeCommercialRules!=null && !groupedAttributeCommercialRules.isEmpty()) {
 						 List<String> commercialRuleCodes= new ArrayList<String>();
@@ -888,11 +887,15 @@ public class ProductApi extends BaseApi {
 							 commercialRuleCodes.add(rule.getCode());
 						 } 
 						 groupedAttributeDTO.setCommercialRuleCodes(commercialRuleCodes);
-						 groupedAttributeDTO.setRuled(true);
 						 boolean isSelectable=commercialRuleHeaderService.isElementSelectable(offerCode, groupedAttributeCommercialRules, offerContextDTO.getSelectedProducts());
 						 groupedAttributeDTO.setSelectable(isSelectable);
 					 }
-				 }
+					 List<Long> sourceGroupedAttributeRules=commercialRuleLineService.getSourceGroupedAttributesRules(groupedAttributeDTO.getCode(), offerProduct.getProduct().getCode());
+					 if(sourceGroupedAttributeRules!=null && !sourceGroupedAttributeRules.isEmpty()) {
+						 groupedAttributeDTO.setRuled(true); 
+					 }
+				 }  
+				   offerProduct.getProduct().setCurrentProductVersion(productVersionResponse);
 			 }
 		 } 
 		 for(AttributeDTO attributeDto:offertemplateDTO.getAttributes()) {
