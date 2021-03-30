@@ -64,7 +64,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
      * @return list of recurringChargeTemplates
      */
     @GET
-    @Path("/list")
+    @Path("/listGetAll")
     RecurringChargeTemplateResponseDto list();
 
     /**

@@ -75,7 +75,7 @@ public class RecurringChargeTemplateRsImpl extends BaseRs implements RecurringCh
         RecurringChargeTemplateResponseDto result = new RecurringChargeTemplateResponseDto();
 
         try {
-            result = new RecurringChargeTemplateResponseDto( recurringChargeTemplateApi.search(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering()) );
+            result = recurringChargeTemplateApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
