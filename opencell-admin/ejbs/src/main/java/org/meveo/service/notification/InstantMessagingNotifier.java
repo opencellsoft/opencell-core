@@ -37,8 +37,6 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.slf4j.Logger;
 
-import com.skype.Skype;
-
 //TODO : transform that into MDB to correctly handle retries
 /**
  * @author Edward P. Legaspi
@@ -101,12 +99,6 @@ public class InstantMessagingNotifier {
             String message = (String) ValueExpressionWrapper.evaluateExpression(notification.getMessage(), userMap, String.class);
 
             switch (notification.getImProvider()) {
-            case SKYPE:
-                for (String imId : imIdSet) {
-                    log.debug("send skype message to {}, mess={}", imId, message);
-                    Skype.chat(imId).send(message);
-                }
-                break;
             case FACEBOOK:
                 break;
             case GTALK:
