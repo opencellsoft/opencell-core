@@ -124,6 +124,8 @@ public class CpqOfferDto extends EnableBusinessDto {
 
 	public CpqOfferDto(GetOfferTemplateResponseDto offerTemplatedto) {
 		super();
+		this.code=offerTemplatedto.getCode();
+		this.description=offerTemplatedto.getDescription();
 		this.bomCode = offerTemplatedto.getBomCode();
 		this.offerServiceTemplates = offerTemplatedto.getOfferServiceTemplates();
 		this.offerProducts = offerTemplatedto.getOfferProducts();

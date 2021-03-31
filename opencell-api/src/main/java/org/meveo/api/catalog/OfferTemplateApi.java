@@ -756,7 +756,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         				if(productVersionList!=null && !productVersionList.isEmpty()) {  
         					  
         					for(ProductVersion productVersion : productVersionList) {  
-        						if(productVersion.getValidity().isCorrespondsToPeriod(new Date())) {
+        						if(productVersion.getValidity()!=null) {
+        								if(productVersion.getValidity().isCorrespondsToPeriod(new Date())) {
         							if(requestedTagTypes!=null && !requestedTagTypes.isEmpty()) {
         							   tags=productVersionService.getProductTagsByType(requestedTagTypes);
         					           productVersion.setTags(new HashSet<Tag>(tags));
@@ -764,7 +765,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         							getProductVersionResponse =new GetProductVersionResponse(productVersion,loadAttributes, loadTags);
         							productDTO.setCurrentProductVersion(getProductVersionResponse);
         							break;
-        							}
+        							}}
         					}  	
         				}
         				offerProductsDto.setProduct(productDTO);
