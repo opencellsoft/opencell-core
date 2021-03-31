@@ -84,6 +84,7 @@ public class CpqQuoteRsImpl extends BaseRs implements CpqQuoteRs {
 	public GetPdfQuoteResponseDto getQuotePDF(String quoteCode, int currentVersion, boolean generatePdf) {
 		GetPdfQuoteResponseDto result = new GetPdfQuoteResponseDto();
 		try {
+			cpqQuoteApi.generateQuoteXml(quoteCode, currentVersion, generatePdf);
 			result.setPdfContent(cpqQuoteApi.generateQuotePDF(quoteCode, currentVersion,generatePdf));
 			result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
