@@ -1,6 +1,7 @@
 package org.meveo.apiv2.generic;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.api.dto.*;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
@@ -9,6 +10,7 @@ import org.meveo.api.dto.invoice.CancelInvoiceRequestDto;
 import org.meveo.api.dto.invoice.ValidateInvoiceRequestDto;
 import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
 import org.meveo.apiv2.generic.core.GenericHelper;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.util.Inflector;
 
 import javax.annotation.PreDestroy;
@@ -89,11 +91,11 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             else if ( pathIBaseRS.equals( "/catalog/pricePlan" ) )
                 entityClassName = "pricePlanMatrix";
             else if ( pathIBaseRS.equals( "/countryIso" ) )
-                entityClassName = "Country";
+                entityClassName = "country";
             else if ( pathIBaseRS.equals( "/currencyIso" ) )
-                entityClassName = "Currency";
+                entityClassName = "currency";
             else if ( pathIBaseRS.equals( "/languageIso" ) )
-                entityClassName = "Language";
+                entityClassName = "language";
             else if ( pathIBaseRS.equals( "/job/jobReport" ) )
                 entityClassName = "Job";
             else
@@ -321,18 +323,6 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             for (Map.Entry<String,Object> entry : origResponse.entrySet()) {
                 if ( entry.getKey().equals("actionStatus") || entry.getKey().equals("paging") )
                     customResponse.put(entry.getKey(), entry.getValue());
-                else if ( entry.getKey().equals( Inflector.getInstance().pluralize(entityName) ) ||
-                        entry.getKey().equals( Inflector.getInstance().pluralize(entityName) + "Dto" ) ) {
-                    if ( entry.getValue() instanceof Map ) {
-                        Map mapEntities = (Map) entry.getValue();
-                        for (Object aKey : mapEntities.keySet()) {
-                            if ( aKey.equals( Inflector.getInstance().singularize(entityName) ) ||
-                                aKey.equals( Inflector.getInstance().pluralize(entityName) ) ||
-                                aKey.equals( entityName ) )
-                                customResponse.put( entry.getKey(), mapEntities.get(aKey) );
-                        }
-                    }
-                }
                 else if ( entry.getKey().equals( "pricePlanMatrixes" ) ) {
                     if ( entry.getValue() instanceof Map ) {
                         Map mapEntities = (Map) entry.getValue();
@@ -340,6 +330,24 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                             customResponse.put( "pricePlanMatrices", mapEntities.get(aKey) );
                         }
                     }
+                }
+                else if ( entry.getKey().equals( "list" + StringUtils.capitalizeFirstLetter(entityName) )
+                        || entry.getKey().equals( entityName ) || entry.getKey().equals( "dto" )
+                        || entry.getKey().equals( Inflector.getInstance().pluralize(entityName) )
+                        || entry.getKey().equals( Inflector.getInstance().pluralize(entityName) + "Dto" ) ) {
+                    if ( entry.getValue() instanceof Map ) {
+                        Map mapEntities = (Map) entry.getValue();
+                        for (Object aKey : mapEntities.keySet()) {
+                            if ( aKey.equals( Inflector.getInstance().singularize(entityName) ) ||
+                                aKey.equals( Inflector.getInstance().pluralize(entityName) ) ||
+                                aKey.equals( entityName ) )
+                                if ( CollectionUtils.isNotEmpty((List) mapEntities.get(aKey)) )
+                                    customResponse.put( Inflector.getInstance().pluralize(entityName), mapEntities.get(aKey) );
+                        }
+                    }
+                    else if ( entry.getValue() instanceof List )
+                        if ( CollectionUtils.isNotEmpty((List) entry.getValue() ) )
+                            customResponse.put( Inflector.getInstance().pluralize(entityName), entry.getValue() );
                 }
                 else
                     customResponse.put(entry.getKey(), entry.getValue());
