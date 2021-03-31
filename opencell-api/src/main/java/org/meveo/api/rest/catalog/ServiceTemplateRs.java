@@ -130,6 +130,6 @@ public interface ServiceTemplateRs extends IBaseRs {
      * @return Return serviceTemplate list
      */
     @GET
-    @Path("/list")
-    GetListServiceTemplateResponseDto listGet();
+    @Path("/listGetAll")
+    GetListServiceTemplateResponseDto listGetAll();
 }
