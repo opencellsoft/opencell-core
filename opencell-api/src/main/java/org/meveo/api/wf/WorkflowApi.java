@@ -205,7 +205,7 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
      */
     public void validateDto(WorkflowDto workflowDto, boolean isUpdate) throws MissingParameterException {
         if (StringUtils.isBlank(workflowDto.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(Workflow.class.getName(), workflowDto);
         }
         if (!isUpdate && StringUtils.isBlank(workflowDto.getWfType())) {
             missingParameters.add("WFType");

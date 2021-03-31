@@ -18,26 +18,24 @@
 
 package org.meveo.api;
 
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TaxesDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.dto.response.GetTaxesResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.catalog.impl.TaxService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
 
 /**
  * CRUD API for managing {@link Tax}.
@@ -57,7 +55,7 @@ public class TaxApi extends BaseApi {
     public ActionStatus create(TaxDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(Tax.class.getName(), postData);
         }
 
         if (StringUtils.isBlank(postData.getPercent())) {
@@ -192,12 +190,10 @@ public class TaxApi extends BaseApi {
     }
 
     public void createOrUpdate(TaxDto postData) throws MeveoApiException, BusinessException {
-        Tax tax = taxService.findByCode(postData.getCode());
-
-        if (tax == null) {
-            create(postData);
-        } else {
+        if(!StringUtils.isBlank(postData.getCode()) && taxService.findByCode(postData.getCode()) != null) {
             update(postData);
+        } else {
+            create(postData);
         }
     }
 
@@ -213,5 +209,19 @@ public class TaxApi extends BaseApi {
         }
 
         return taxesDto;
+    }
+
+    public GetTaxesResponse list(PagingAndFiltering pagingAndFiltering) {
+        GetTaxesResponse result = new GetTaxesResponse();
+        result.setPaging( pagingAndFiltering );
+
+        List<Tax> taxes = taxService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (taxes != null) {
+            for (Tax tax : taxes) {
+                result.getTaxesDto().getTax().add(new TaxDto(tax, entityToDtoConverter.getCustomFieldsDTO(tax, CustomFieldInheritanceEnum.INHERIT_NO_MERGE), false));
+            }
+        }
+
+        return result;
     }
 }

@@ -48,7 +48,7 @@ public class ProductChargeTemplateApi extends ChargeTemplateApi<ProductChargeTem
     public ProductChargeTemplate create(ProductChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(ProductChargeTemplate.class.getName(), postData);
         }
         if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
             missingParameters.add("invoiceSubCategory");

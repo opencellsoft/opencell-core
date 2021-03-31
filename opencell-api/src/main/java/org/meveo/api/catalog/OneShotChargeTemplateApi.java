@@ -67,7 +67,7 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
     public OneShotChargeTemplate create(OneShotChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(OneShotChargeTemplate.class.getName(), postData);
         }
         if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
             missingParameters.add("invoiceSubCategory");

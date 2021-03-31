@@ -65,10 +65,7 @@ public class LanguageApi extends BaseApi {
 
     public void create(LanguageDto postData) throws MissingParameterException, EntityAlreadyExistsException, EntityDoesNotExistsException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-            handleMissingParameters();
-        }
+        validateCode(postData);
 
         if (tradingLanguageService.findByTradingLanguageCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(TradingLanguage.class, postData.getCode());
@@ -93,6 +90,18 @@ public class LanguageApi extends BaseApi {
             tradingLanguage.setDisabled(postData.isDisabled());
         }
         tradingLanguageService.create(tradingLanguage);
+    }
+
+    private void validateCode(LanguageDto postData) {
+        if (StringUtils.isBlank(postData.getCode())) {
+            String generatedCode = getGenericCode(Language.class.getName());
+            if (generatedCode != null) {
+                postData.setCode(generatedCode);
+            } else {
+                missingParameters.add("code");
+            }
+            handleMissingParameters();
+        }
     }
 
     public void remove(String code) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
@@ -162,13 +171,10 @@ public class LanguageApi extends BaseApi {
      * @throws BusinessException business exception.
      */
     public void createOrUpdate(LanguageDto postData) throws MeveoApiException, BusinessException {
-
-        TradingLanguage tradingLanguage = tradingLanguageService.findByTradingLanguageCode(postData.getCode());
-
-        if (tradingLanguage == null) {
-            create(postData);
-        } else {
+        if(postData.getCode() != null && tradingLanguageService.findByTradingLanguageCode(postData.getCode()) != null) {
             update(postData);
+        } else {
+            create(postData);
         }
     }
 

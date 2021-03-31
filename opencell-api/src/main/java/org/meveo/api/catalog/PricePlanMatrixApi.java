@@ -92,7 +92,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             missingParameters.add("eventCode");
         }
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(PricePlanMatrix.class.getName(), postData);
         }
         if (postData.getAmountWithoutTax() == null && appProvider.isEntreprise()) {
             missingParameters.add("amountWithoutTax");

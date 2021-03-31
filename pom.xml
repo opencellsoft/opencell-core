@@ -275,24 +275,13 @@
             </dependency>
             
             <dependency>
-                <groupId>com.github.taksan</groupId>
-                <artifactId>skype-java-api</artifactId>
-                <version>1.4</version>
-            </dependency>
-            
-            <dependency>
                 <groupId>org.jboss</groupId>
                 <artifactId>jboss-vfs</artifactId>
                 <version>3.2.12.Final</version>
                 <scope>provided</scope>
             </dependency>
             
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>1.15</version>
-                <scope>provided</scope>
-            </dependency>
+            
             
             <dependency>
                 <groupId>org.mozilla</groupId>

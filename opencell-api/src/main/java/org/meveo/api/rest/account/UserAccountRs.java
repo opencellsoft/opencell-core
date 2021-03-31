@@ -18,20 +18,6 @@
 
 package org.meveo.api.rest.account;
 
-import java.util.Date;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
@@ -41,6 +27,10 @@ import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.Date;
 
 /**
  * @author Edward P. Legaspi
@@ -103,6 +93,15 @@ public interface UserAccountRs extends IBaseRs {
     @GET
     @Path("/list")
     UserAccountsResponseDto listByBillingAccount(@QueryParam("billingAccountCode") String billingAccountCode);
+
+    /**
+     * List user accounts matching a given criteria
+     *
+     * @return List of user accounts
+     */
+    @GET
+    @Path("/listGetAll")
+    UserAccountsResponseDto listGetAll();
 
     /**
      * Create new or update an existing user account.

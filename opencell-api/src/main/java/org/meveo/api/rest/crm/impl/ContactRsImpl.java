@@ -18,9 +18,6 @@
 
 package org.meveo.api.rest.crm.impl;
 
-import javax.inject.Inject;
-import javax.ws.rs.PathParam;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.crm.ContactApi;
 import org.meveo.api.dto.ActionStatus;
@@ -33,8 +30,12 @@ import org.meveo.api.dto.response.crm.ContactsResponseDto;
 import org.meveo.api.dto.response.crm.GetContactResponseDto;
 import org.meveo.api.rest.crm.ContactRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import javax.inject.Inject;
+import javax.ws.rs.PathParam;
 
 /**
  * @author Abdellatif BARI
@@ -153,6 +154,20 @@ public class ContactRsImpl extends BaseRs implements ContactRs {
 			processException(e, result.getActionStatus());
 			return result;
 		}
+	}
+
+	@Override
+	public ContactsResponseDto listGetAll() {
+
+		ContactsResponseDto result = new ContactsResponseDto();
+
+		try {
+			result = contactApi.listGetAll(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
 	}
 
 	@Override

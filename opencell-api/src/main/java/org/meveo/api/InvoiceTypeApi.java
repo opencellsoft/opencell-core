@@ -96,7 +96,7 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
      */
     private void handleParameters(InvoiceTypeDto postData) throws MeveoApiException {
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(InvoiceType.class.getName(), postData);
         }
         handleMissingParametersAndValidate(postData);
     }

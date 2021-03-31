@@ -251,6 +251,9 @@ public class SubscriptionApi extends BaseApi {
      */
     public Subscription create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(Subscription.class.getName(), postData);
+        }
         if (StringUtils.isBlank(postData.getUserAccount())) {
             missingParameters.add("userAccount");
         }
@@ -1380,13 +1383,12 @@ public class SubscriptionApi extends BaseApi {
      * @throws BusinessException business exception.
      */
     public Subscription createOrUpdate(SubscriptionDto postData) throws MeveoApiException, BusinessException {
-        Subscription subscription = subscriptionService.findByCodeAndValidityDate(postData.getCode(), postData.getValidityDate());
-        if (subscription == null) {
-            subscription = create(postData);
+        if (!StringUtils.isBlank(postData.getCode())
+                && subscriptionService.findByCodeAndValidityDate(postData.getCode(), postData.getValidityDate()) != null) {
+            return update(postData);
         } else {
-            subscription = update(postData);
+            return create(postData);
         }
-        return subscription;
     }
 
     /**

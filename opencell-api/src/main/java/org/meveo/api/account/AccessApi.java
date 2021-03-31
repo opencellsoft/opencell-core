@@ -55,7 +55,12 @@ public class AccessApi extends BaseApi {
     public Access create(AccessDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            String generatedCode = getGenericCode(Access.class.getName());
+            if (generatedCode != null) {
+                postData.setCode(generatedCode);
+            } else {
+                missingParameters.add("code");
+            }
         }
         if (postData.getSubscription() == null) {
             missingParameters.add("subscription");

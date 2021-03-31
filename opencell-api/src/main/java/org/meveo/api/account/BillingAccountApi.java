@@ -28,6 +28,8 @@ import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
 import org.meveo.api.exception.*;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
@@ -149,6 +151,9 @@ public class BillingAccountApi extends AccountEntityApi {
 
     public BillingAccount create(BillingAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
+        if(StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(BillingAccount.class.getName(), postData);
+        }
         if (StringUtils.isBlank(postData.getCustomerAccount())) {
             missingParameters.add("customerAccount");
         }
@@ -584,6 +589,20 @@ public class BillingAccountApi extends AccountEntityApi {
         return result;
     }
 
+    public BillingAccountsResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        BillingAccountsResponseDto result = new BillingAccountsResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<BillingAccount> billingAccounts = billingAccountService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (billingAccounts != null) {
+            for (BillingAccount billingAccount : billingAccounts) {
+                result.getBillingAccounts().getBillingAccount().add(new BillingAccountDto(billingAccount));
+            }
+        }
+
+        return result;
+    }
+
     /**
      * Create or update Billing Account based on Billing Account Code
      * 
@@ -593,13 +612,11 @@ public class BillingAccountApi extends AccountEntityApi {
      * @throws BusinessException business exception.
      */
     public BillingAccount createOrUpdate(BillingAccountDto postData) throws MeveoApiException, BusinessException {
-        BillingAccount billingAccount = billingAccountService.findByCode(postData.getCode());
-        if (billingAccount == null) {
-            billingAccount = create(postData);
+        if (!StringUtils.isBlank(postData.getCode()) && billingAccountService.findByCode(postData.getCode()) != null) {
+            return update(postData);
         } else {
-            billingAccount = update(postData);
+            return create(postData);
         }
-        return billingAccount;
     }
 
     public BillingAccount terminate(BillingAccountDto postData) throws MeveoApiException {

@@ -27,6 +27,8 @@ import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
 import org.meveo.api.exception.*;
 import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
@@ -34,10 +36,7 @@ import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.billing.*;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -115,6 +114,9 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     public CustomerAccount create(CustomerAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(CustomerAccount.class.getName(), postData);
+        }
         if (StringUtils.isBlank(postData.getCustomer())) {
             missingParameters.add("customer");
         }
@@ -451,6 +453,20 @@ public class CustomerAccountApi extends AccountEntityApi {
         return result;
     }
 
+    public CustomerAccountsResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        CustomerAccountsResponseDto result = new CustomerAccountsResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<CustomerAccount> customerAccounts = customerAccountService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (customerAccounts != null) {
+            for (CustomerAccount customerAccount : customerAccounts) {
+                result.getCustomerAccounts().getCustomerAccount().add(new CustomerAccountDto(customerAccount));
+            }
+        }
+
+        return result;
+    }
+
     public void createCreditCategory(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -533,13 +549,11 @@ public class CustomerAccountApi extends AccountEntityApi {
     }
 
     public CustomerAccount createOrUpdate(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
-        CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode());
-        if (customerAccount == null) {
-            customerAccount = create(postData);
+        if (!StringUtils.isBlank(postData.getCode()) && customerAccountService.findByCode(postData.getCode()) != null) {
+            return update(postData);
         } else {
-            customerAccount = update(postData);
+            return create(postData);
         }
-        return customerAccount;
     }
 
     public CustomerAccount closeAccount(CustomerAccountDto postData) throws EntityDoesNotExistsException, BusinessException {

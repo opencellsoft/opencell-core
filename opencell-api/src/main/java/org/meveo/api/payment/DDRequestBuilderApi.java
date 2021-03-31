@@ -77,7 +77,7 @@ public class DDRequestBuilderApi extends BaseCrudApi<DDRequestBuilder, DDRequest
 
         String code = ddRequestBuilderDto.getCode();
         if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(DDRequestBuilder.class.getName(), ddRequestBuilderDto);
         }
 
         DDRequestBuilderTypeEnum type = ddRequestBuilderDto.getType();
