@@ -146,6 +146,7 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
@@ -5343,6 +5344,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Map<InvoiceCategory, List<InvoiceSubCategory>> subCategoryMap = new HashMap<InvoiceCategory, List<InvoiceSubCategory>>();
         Invoice invoice = this.initValidatedInvoice(invoiceRessource, billingAccount, invoiceType, seller, isDraft);
 
+		if(invoiceRessource.getDiscountPlan()!=null) {
+			final Long dpId = invoiceRessource.getDiscountPlan().getId();
+			DiscountPlan discountPlan = (DiscountPlan)tryToFindByEntityClassAndId(DiscountPlan.class, dpId);
+			invoice.setDiscountPlan(discountPlan);
+		}
+		
         for (org.meveo.apiv2.billing.CategoryInvoiceAgregate catInvAgr : invoiceRessource.getCategoryInvoiceAgregates()) {
             UserAccount userAccount = extractUserAccount(billingAccount, catInvAgr.getUserAccountCode());
             InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(catInvAgr.getCategoryInvoiceCode());
@@ -5591,6 +5598,31 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			PaymentMethod pm = (PaymentMethod)tryToFindByEntityClassAndId(PaymentMethod.class, pmId);
 			toUpdate.setPaymentMethod(pm);
 		}
+		if(invoiceRessource.getListLinkedInvoices()!=null) {
+            for (Long invoiceId : invoiceRessource.getListLinkedInvoices()) {
+                Invoice invoiceTmp = findById(invoiceId);
+                if (invoiceTmp == null) {
+                    throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
+                }
+                if (!toUpdate.getInvoiceType().getAppliesTo().contains(invoiceTmp.getInvoiceType())) {
+                    throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
+                }
+                toUpdate.getLinkedInvoices().add(invoiceTmp);
+            }
+        }
+		
+		if(invoiceRessource.getOrder()!=null) {
+			final Long orderId = invoiceRessource.getOrder().getId();
+			Order order = (Order)tryToFindByEntityClassAndId(Order.class, orderId);
+			toUpdate.setOrder(order);
+		}
+		
+		if(invoiceRessource.getDiscountPlan()!=null) {
+			final Long dpId = invoiceRessource.getDiscountPlan().getId();
+			DiscountPlan discountPlan = (DiscountPlan)tryToFindByEntityClassAndId(DiscountPlan.class, dpId);
+			toUpdate.setDiscountPlan(discountPlan);
+		}
+		
 		if(input.getCfValues()!=null) {
 			toUpdate.setCfValues(input.getCfValues());
 		}

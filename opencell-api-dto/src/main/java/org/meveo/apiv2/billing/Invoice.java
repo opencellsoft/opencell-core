@@ -205,5 +205,8 @@ public interface Invoice extends Resource {
 
 	@Nullable
 	List<Long> getInvoiceLinesTolink();
+	
+	@Nullable
+	Resource getDiscountPlan();
 
 }
