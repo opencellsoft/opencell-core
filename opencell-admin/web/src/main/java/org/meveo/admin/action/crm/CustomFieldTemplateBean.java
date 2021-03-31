@@ -56,6 +56,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.service.custom.CustomTableService;
 import org.meveo.service.custom.CustomizedEntity;
 import org.meveo.service.custom.CustomizedEntityService;
 import org.meveo.util.EntityCustomizationUtils;
@@ -90,6 +91,9 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
 
     @Inject
     private ResourceBundle resourceMessages;
+    
+    @Inject
+    private CustomTableService customTableService;
 
     private DualListModel<CustomFieldMatrixColumn> childEntityFieldDM;
 
@@ -141,6 +145,14 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         if (fieldType == CustomFieldTypeEnum.LIST || fieldType ==CustomFieldTypeEnum.CHECKBOX_LIST) {
             entity.setListValues(new TreeMap<>());
             updateMapTypeFieldInEntity(entity.getListValues(), "listValues");
+        }
+        
+        if (fieldType == CustomFieldTypeEnum.CUSTOM_TABLE_WRAPPER) {
+        	CustomEntityTemplate cet = customEntityTemplateService.findByCodeOrDbTablename(entity.getCustomTableCodeEL());
+        	if(cet == null) {
+	            messages.error(new BundleKey("messages", "customFieldTemplate.doNotExist"),entity.getCustomTableCodeEL());
+	            return null;
+        	}
         }
 
         CustomFieldTemplate cfDuplicate = customFieldTemplateService.findByCodeAndAppliesTo(entity.getCode(), entity.getAppliesTo());
