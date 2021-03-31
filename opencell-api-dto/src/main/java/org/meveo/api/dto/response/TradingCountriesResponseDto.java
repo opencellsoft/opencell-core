@@ -21,7 +21,7 @@ public class TradingCountriesResponseDto extends SearchResponse {
     private static final long serialVersionUID = 6134470575443721802L;
 
     /** The countries DTO. */
-    private TradingCountriesDto tradingCountriesDto = new TradingCountriesDto();
+    private TradingCountriesDto countriesDto = new TradingCountriesDto();
 
     /**
      * Constructor of CountriesResponseDto.
@@ -31,7 +31,7 @@ public class TradingCountriesResponseDto extends SearchResponse {
 
     public TradingCountriesResponseDto(GenericSearchResponse<TradingCountryDto> searchResponse) {
         super(searchResponse.getPaging());
-        this.tradingCountriesDto.setCountry(searchResponse.getSearchResults());
+        this.countriesDto.setCountry(searchResponse.getSearchResults());
     }
 
     /**
@@ -40,7 +40,7 @@ public class TradingCountriesResponseDto extends SearchResponse {
      * @return the countries DTO
      */
     public TradingCountriesDto getTradingCountries() {
-        return tradingCountriesDto;
+        return countriesDto;
     }
 
     /**
@@ -49,11 +49,11 @@ public class TradingCountriesResponseDto extends SearchResponse {
      * @param tradingCountriesDto the countries DTO
      */
     public void setTradingCountries(TradingCountriesDto tradingCountriesDto) {
-        this.tradingCountriesDto = tradingCountriesDto;
+        this.countriesDto = tradingCountriesDto;
     }
 
     @Override
     public String toString() {
-        return "ListTradingCountriesResponseDto [countries=" + tradingCountriesDto + ", toString()=" + super.toString() + "]";
+        return "ListTradingCountriesResponseDto [countries=" + countriesDto + ", toString()=" + super.toString() + "]";
     }
 }
