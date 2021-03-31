@@ -326,6 +326,8 @@ public class CpqQuoteApi extends BaseApi {
 			for (QuoteProductDTO quoteProductDTO : quoteProductDtos) {
 				if(Strings.isEmpty(quoteProductDTO.getProductCode()))
 					missingParameters.add("products["+index+"].productCode");
+				if(quoteProductDTO.getProductVersion() == null)
+					missingParameters.add("products["+index+"].productVersion");
 				
 				handleMissingParameters();
 				

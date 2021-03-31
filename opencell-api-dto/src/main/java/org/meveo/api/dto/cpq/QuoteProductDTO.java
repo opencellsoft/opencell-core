@@ -58,7 +58,8 @@ public class QuoteProductDTO extends BaseEntityDto{
 
     @NotNull
     private int quoteVersion;
-    
+
+    @NotNull
     private Integer productVersion;
 
     @NotNull
