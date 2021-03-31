@@ -1021,6 +1021,9 @@ public class CpqQuoteApi extends BaseApi {
         quoteVersion.setStatus(status);
         quoteVersion.setStatusDate(Calendar.getInstance().getTime());
         quoteVersionService.update(quoteVersion);
+        if (status.equals(VersionStatusEnum.PUBLISHED)){
+        	updateQuoteStatus(quoteCode, QuoteStatusEnum.PENDING.toString());
+        }
     }
 
     public GetQuoteVersionDtoResponse quoteQuotation(String quoteCode, int currentVersion) {
