@@ -107,7 +107,7 @@ public class QuoteValidationTemp extends ModuleScript {
 	}
 	private CommercialOrder processCommercialOrder(CpqQuote cpqQuote, QuoteVersion quoteVersion, BillingAccount account) {
 		CommercialOrder order = new CommercialOrder();
-		order.setSeller(cpqQuote.getSeller());
+		order.setSeller(cpqQuote.getSeller()!=null?cpqQuote.getSeller():account.getCustomerAccount().getCustomer().getSeller());
 		order.setBillingAccount(account);
 		order.setQuote(cpqQuote);
 		order.setContract(cpqQuote.getContract());

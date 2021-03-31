@@ -242,7 +242,7 @@ public class CommercialOrderApi extends BaseApi {
 		final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		if(order == null)
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderDto.getId());
-		if(!order.getStatus().equals(CommercialOrderEnum.DRAFT.toString())) {
+		if(!order.getStatus().equals(CommercialOrderEnum.DRAFT.toString()) && !order.getStatus().equals(CommercialOrderEnum.FINALIZED.toString())) {
 			throw new BusinessApiException("The Order can not be edited, the status must not be : " + order.getStatus());
 		}
 		if(order.getOrderProgress() != null)
