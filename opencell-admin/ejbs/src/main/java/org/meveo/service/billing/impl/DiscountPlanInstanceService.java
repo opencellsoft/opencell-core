@@ -126,7 +126,14 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 	public DiscountPlanInstance update(DiscountPlanInstance entity) throws BusinessException {
 		DiscountPlan dp = entity.getDiscountPlan();
 		entity.setEndDate(computeEndDate(entity.getStartDate(), entity.getEndDate(), dp.getDefaultDuration(), dp.getDurationUnit()));
-		entity.setDiscountPlanInstanceStatus(entity.getDiscountPlan());
+		entity.setDiscountPlanInstanceStatus(dp);
+		return super.update(entity);
+	}
+
+	/**
+	 * Update this entity. Computing the endDate first.
+	 */
+	public DiscountPlanInstance updateStatus(DiscountPlanInstance entity) throws BusinessException {
 		return super.update(entity);
 	}
 
@@ -260,7 +267,7 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 
 	public List<Long> getDiscountPlanInstanceToExpire(Date expireDiscountPlanInstanceToDate) {
 		List<Long> ids = getEntityManager().createNamedQuery("discountPlanInstance.getExpired", Long.class).setParameter("date", expireDiscountPlanInstanceToDate)
-				.setParameter("statuses", Arrays.asList(DiscountPlanInstanceStatusEnum.APPLIED, DiscountPlanInstanceStatusEnum.ACTIVE, DiscountPlanStatusEnum.IN_USE))
+				.setParameter("statuses", Arrays.asList(DiscountPlanInstanceStatusEnum.APPLIED, DiscountPlanInstanceStatusEnum.ACTIVE, DiscountPlanInstanceStatusEnum.IN_USE))
 				.getResultList();
 		return ids;
 	}
