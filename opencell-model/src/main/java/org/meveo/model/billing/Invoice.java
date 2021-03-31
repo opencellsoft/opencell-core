@@ -65,6 +65,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
@@ -590,6 +591,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
 	private DiscountPlan discountPlan;
+    
+    /**
+	 * invoiceLines attached to the invoice
+	 */
+    @OneToMany(mappedBy = "invoice", fetch = LAZY)
+	private List<InvoiceLine>  invoiceLines;
 
     /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
@@ -1460,6 +1467,20 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	 */
 	public void setDiscountPlan(DiscountPlan discountPlan) {
 		this.discountPlan = discountPlan;
+	}
+
+	/**
+	 * @return the invoiceLines
+	 */
+	public List<InvoiceLine> getInvoiceLines() {
+		return invoiceLines;
+	}
+
+	/**
+	 * @param invoiceLines the invoiceLines to set
+	 */
+	public void setInvoiceLines(List<InvoiceLine> invoiceLines) {
+		this.invoiceLines = invoiceLines;
 	}
     
     
