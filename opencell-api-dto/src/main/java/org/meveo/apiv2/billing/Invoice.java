@@ -35,13 +35,11 @@ public interface Invoice extends Resource {
 	@Nullable
 	Date getProductDate();
 
-	@Nullable
 	Date getInvoiceDate();
 
 	@Nullable
 	InvoiceStatusEnum getStatus();
 
-	@Nullable
 	Date getDueDate();
 
 	@Nullable
