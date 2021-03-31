@@ -63,6 +63,8 @@ public class QuoteOfferDTO extends BaseEntityDto{
     private String quoteLotCode;
 
     @NotNull
+    private Long offerId;
+    
     private String offerCode;
 
     private String billableAccountCode;
@@ -95,6 +97,7 @@ public class QuoteOfferDTO extends BaseEntityDto{
 		billableAccountCode=quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount().getCode():null;
 		contractCode=quoteOffer.getContractCode();
 		discountPlanCode=quoteOffer.getDiscountPlan()!=null?quoteOffer.getDiscountPlan().getCode():null;
+		offerId = quoteOffer.getOfferTemplate().getId();
 		
 	}
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
@@ -261,6 +264,18 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	 */
 	public void setDiscountPlanCode(String discountPlanCode) {
 		this.discountPlanCode = discountPlanCode;
+	}
+	/**
+	 * @return the offerId
+	 */
+	public Long getOfferId() {
+		return offerId;
+	}
+	/**
+	 * @param offerId the offerId to set
+	 */
+	public void setOfferId(Long offerId) {
+		this.offerId = offerId;
 	}
 	
 	

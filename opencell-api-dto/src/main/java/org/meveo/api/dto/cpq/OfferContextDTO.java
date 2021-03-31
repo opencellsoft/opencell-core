@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.cpq;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -53,7 +54,7 @@ public class OfferContextDTO extends BaseEntityDto {
     /**
      * The selected products in the quote
      */
-    private List<ProductContextDTO> selectedProducts;
+    private List<ProductContextDTO> selectedProducts=new ArrayList<ProductContextDTO>();;
     
    
     

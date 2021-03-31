@@ -326,6 +326,8 @@ public class CpqQuoteApi extends BaseApi {
 			for (QuoteProductDTO quoteProductDTO : quoteProductDtos) {
 				if(Strings.isEmpty(quoteProductDTO.getProductCode()))
 					missingParameters.add("products["+index+"].productCode");
+				if(quoteProductDTO.getProductVersion() == null)
+					missingParameters.add("products["+index+"].productVersion");
 				
 				handleMissingParameters();
 				
@@ -683,18 +685,18 @@ public class CpqQuoteApi extends BaseApi {
 
     public QuoteOfferDTO createQuoteItem(QuoteOfferDTO quoteOfferDto) {
 
-        if (Strings.isEmpty(quoteOfferDto.getOfferCode()))
-            missingParameters.add("offerCode");
         if (quoteOfferDto.getQuoteVersion() == null)
             missingParameters.add("quoteVersion");
         if (Strings.isEmpty(quoteOfferDto.getQuoteCode()))
             missingParameters.add("quoteCode");
+        if (quoteOfferDto.getOfferId() == null)
+            missingParameters.add("offerId");
 
         handleMissingParameters();
 
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(quoteOfferDto.getOfferCode());
+        OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDto.getOfferId());
         if (offerTemplate == null)
-            throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferCode());
+            throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferId());
         final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDto.getQuoteCode(), quoteOfferDto.getQuoteVersion());
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteOfferDto.getQuoteCode() + "," + quoteOfferDto.getQuoteVersion() + ")");
@@ -727,10 +729,10 @@ public class CpqQuoteApi extends BaseApi {
         if (quoteOffer == null)
             throw new EntityDoesNotExistsException(QuoteOffer.class, quoteOfferDTO.getQuoteOfferId());
         // check offer template if exist
-        if (!Strings.isEmpty(quoteOfferDTO.getOfferCode())) {
-            OfferTemplate offerTemplate = offerTemplateService.findByCode(quoteOfferDTO.getOfferCode());
+        if (quoteOfferDTO.getOfferId() != null) {
+            OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDTO.getOfferId());
             if (offerTemplate == null)
-                throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDTO.getOfferCode());
+                throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDTO.getOfferId());
             quoteOffer.setOfferTemplate(offerTemplate);
         }
 

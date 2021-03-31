@@ -39,6 +39,7 @@ import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -318,7 +319,7 @@ public interface OfferTemplateRs extends IBaseRs {
     tags = { "Catalog browsing" },
     description ="Get offers matching the customer and seller contexts, it returns offers and their products",
     responses = {
-            @ApiResponse(responseCode="200", description = "All offers successfully retrieved",content = @Content(schema = @Schema(implementation = GetListOfferTemplateResponseDto.class))),
+            @ApiResponse(responseCode="200", description = "All offers successfully retrieved",content = @Content(schema = @Schema(implementation = GetListCpqOfferResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
 			@ApiResponse(
 					responseCode = "400", 
