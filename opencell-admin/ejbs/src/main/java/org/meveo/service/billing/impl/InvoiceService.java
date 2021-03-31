@@ -3362,10 +3362,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             billingAccountApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, billingAccount.getDiscountPlanInstances(), invoice, customerAccount));
         }
 
-        if(subscription == null && billingAccount != null) {
-            List<DiscountPlanInstance> subscriptionDiscountPlans = findSubscriptionDPs(billingAccount.getUsersAccounts());
-            subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscriptionDiscountPlans, invoice, customerAccount));
-        }
+        // Comented out because billingAccount.getUsersAccounts() is a performance killer when a single BA has 400K of user accounts. This has to be a single SQL. Plus you can not send 400k parameters to a query.
+//        if(subscription == null && billingAccount != null) {
+//            List<DiscountPlanInstance> subscriptionDiscountPlans = findSubscriptionDPs(billingAccount.getUsersAccounts());
+//            subscriptionApplicableDiscountPlanItems.addAll(getApplicableDiscountPlanItems(billingAccount, subscriptionDiscountPlans, invoice, customerAccount));
+//        }
 
         // Construct discount and tax aggregates
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates) {
