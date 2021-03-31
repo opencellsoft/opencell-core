@@ -474,6 +474,11 @@ public class CpqQuoteApi extends BaseApi {
 
             if (generatePdf) {
                 result.setPdfContent(generateQuotePDF(quoteCode, currentVersion, true));
+                CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
+                if (quote == null) {
+                    throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode, "Code");
+                }
+                result.setPdfFileName(quote.getPdfFilename());
             }
 
 
