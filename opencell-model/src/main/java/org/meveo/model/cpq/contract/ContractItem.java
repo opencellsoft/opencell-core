@@ -109,7 +109,7 @@ public class ContractItem extends EnableBusinessCFEntity {
      */
 	@Enumerated(EnumType.STRING)
 	@Column(name = "rate_type", length = 50)
-	private ContractRateTypeEnum contractRateTypeEnum = ContractRateTypeEnum.PERCENTAGE;
+	private ContractRateTypeEnum contractRateType = ContractRateTypeEnum.PERCENTAGE;
 
 
 	/**
@@ -238,16 +238,14 @@ public class ContractItem extends EnableBusinessCFEntity {
 	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
 		this.amountWithoutTax = amountWithoutTax;
 	}
-	
-
-
-	public ContractRateTypeEnum getContractRateTypeEnum() {
-		return contractRateTypeEnum;
+	 
+	public ContractRateTypeEnum getContractRateType() {
+		return contractRateType;
 	}
 
 
-	public void setContractRateTypeEnum(ContractRateTypeEnum contractRateTypeEnum) {
-		this.contractRateTypeEnum = contractRateTypeEnum;
+	public void setContractRateType(ContractRateTypeEnum contractRateType) {
+		this.contractRateType = contractRateType;
 	}
 
 

@@ -575,7 +575,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 if(contract!=null) {
                 contractItem=contractItemService.getApplicableContractItem(contract ,offerTemplate,serviceInstance.getCode(),chargeTemplate);
                 } 
-                if (contractItem!=null && ContractRateTypeEnum.FIXED.equals(contractItem.getRateType())) {
+                if (contractItem!=null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
                 	 
                 if(contractItem.getPricePlan()!=null){ 
     				PricePlanMatrix pricePlanMatrix = contractItem.getPricePlan();
@@ -660,7 +660,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                         }
                     }
                 }
-                if (contractItem!=null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getRateType() )&& contractItem.getRate()>0  ) {
+                if (contractItem!=null && ContractRateTypeEnum.PERCENTAGE.equals(contractItem.getContractRateType() )&& contractItem.getRate()>0  ) {
        			 BigDecimal amount = unitPriceWithoutTaxOverridden.abs().multiply(BigDecimal.valueOf(contractItem.getRate()).divide(HUNDRED));
        		      	if (amount != null && unitPriceWithoutTaxOverridden.compareTo(amount)>0) 
        				   unitPriceWithoutTaxOverridden=unitPriceWithoutTaxOverridden.subtract(amount);    

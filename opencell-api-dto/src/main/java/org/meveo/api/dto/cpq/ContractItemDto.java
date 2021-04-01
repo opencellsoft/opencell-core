@@ -30,7 +30,7 @@ public class ContractItemDto extends BusinessEntityDto {
     /**
      * Type of rate, whether absolute or percentage.
      */
-    private ContractRateTypeEnum contractRateTypeEnum = ContractRateTypeEnum.PERCENTAGE;
+    private ContractRateTypeEnum contractRateType = ContractRateTypeEnum.PERCENTAGE;
     
 	private CustomFieldsDto customFields;
     
@@ -53,7 +53,7 @@ public class ContractItemDto extends BusinessEntityDto {
     	this.amountWithoutTax = c.getAmountWithoutTax();
     	this.description = c.getDescription();
     	this.code = c.getCode();
-    	this.contractRateTypeEnum=c.getContractRateTypeEnum();
+    	this.contractRateType=c.getContractRateType();
     }
     
 	/**
@@ -167,13 +167,15 @@ public class ContractItemDto extends BusinessEntityDto {
 		this.customFields = customFields;
 	}
 
-	public ContractRateTypeEnum getContractRateTypeEnum() {
-		return contractRateTypeEnum;
+	public ContractRateTypeEnum getContractRateType() {
+		return contractRateType;
 	}
 
-	public void setContractRateTypeEnum(ContractRateTypeEnum contractRateTypeEnum) {
-		this.contractRateTypeEnum = contractRateTypeEnum;
+	public void setContractRateType(ContractRateTypeEnum contractRateType) {
+		this.contractRateType = contractRateType;
 	}
+
+
 	
 	
 

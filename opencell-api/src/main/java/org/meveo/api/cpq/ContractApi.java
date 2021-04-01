@@ -301,7 +301,7 @@ public class ContractApi extends BaseApi{
     	item.setRate(contractItemDto.getRate());
     	item.setAmountWithoutTax(contractItemDto.getAmountWithoutTax());
     	item.setDescription(contractItemDto.getDescription());
-    	item.setContractRateTypeEnum(contractItemDto.getContractRateTypeEnum());
+    	item.setContractRateType(contractItemDto.getContractRateType());
     	
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, true);
@@ -340,7 +340,7 @@ public class ContractApi extends BaseApi{
     		item.setChargeTemplate(chargeTemplateService.findByCode(contractItemDto.getChargeTemplateCode()));
     	item.setRate(contractItemDto.getRate());
     	item.setAmountWithoutTax(contractItemDto.getAmountWithoutTax());
-    	item.setContractRateTypeEnum(contractItemDto.getContractRateTypeEnum());
+    	item.setContractRateType(contractItemDto.getContractRateType());
     	
     	try {
     		populateCustomFields(contractItemDto.getCustomFields(), item, false);
