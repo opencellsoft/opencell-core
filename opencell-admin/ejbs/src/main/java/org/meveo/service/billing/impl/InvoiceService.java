@@ -4835,9 +4835,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private List<InvoiceLine> getInvoiceLines(IBillableEntity entityToInvoice, Filter filter,
                                               Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) {
-        List<InvoiceLine> invoiceLines =
-                invoiceLinesService.listInvoiceLinesToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, filter, rtPaginationSize);
-        return invoiceLines;
+        return invoiceLinesService.listInvoiceLinesToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, filter, rtPaginationSize);
     }
 
     /**
@@ -5064,24 +5062,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         if (subAggregate.getRatedtransactionsToAssociate() == null) {
                             continue;
                         }
-                        List<Long> rtIds = new ArrayList<>();
-                        List<RatedTransaction> rts = new ArrayList<>();
+                        List<Long> invoiceLineIds = new ArrayList<>();
+                        List<InvoiceLine> invoiceLines = new ArrayList<>();
 
-                        for (RatedTransaction rt : subAggregate.getRatedtransactionsToAssociate()) {
+                        for (InvoiceLine invoiceLine : subAggregate.getInvoiceLinesToAssociate()) {
 
-                            if (rt.isTaxRecalculated()) {
-                                rts.add(rt);
+                            if (invoiceLine.isTaxRecalculated()) {
+                                invoiceLines.add(invoiceLine);
                             } else {
-                                rtIds.add(rt.getId());
+                                invoiceLineIds.add(invoice.getId());
                             }
                         }
 
-                        if (!rtIds.isEmpty()) {
-                            ilMassUpdates.add(new Object[] { subAggregate, rtIds });
-                        } else if (!rts.isEmpty()) {
-                            ilUpdates.add(new Object[] { subAggregate, rts });
+                        if (!invoiceLineIds.isEmpty()) {
+                            ilMassUpdates.add(new Object[] { subAggregate, invoiceLineIds });
+                        } else if (!invoiceLines.isEmpty()) {
+                            ilUpdates.add(new Object[] { subAggregate, invoiceLines });
                         }
-                        subAggregate.setRatedtransactionsToAssociate(new ArrayList<>());
+                        subAggregate.setInvoiceLinesToAssociate(new ArrayList<>());
                     }
 
                     setInvoiceDueDate(invoice, invoiceLinesGroup.getBillingCycle());
@@ -5106,6 +5104,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     for (Object[] aggregateAndILIds : ilMassUpdates) {
                         List<Long> ilIds = (List<Long>) aggregateAndILIds[1];
                         em.createNamedQuery("InvoiceLine.updateWithInvoice")
+                                .setParameter("billingRun", billingRun)
                                 .setParameter("invoice", invoice)
                                 .setParameter("now", now)
                                 .setParameter("ids", ilIds)
@@ -5116,6 +5115,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         List<InvoiceLine> invoiceLines = (List<InvoiceLine>) aggregateAndILs[1];
                         for (InvoiceLine invoiceLine : invoiceLines) {
                             em.createNamedQuery("InvoiceLine.updateWithInvoiceInfo")
+                                    .setParameter("billingRun", billingRun)
+                                    .setParameter("invoice", invoice)
                                     .setParameter("now", now)
                                     .setParameter("id", invoiceLine.getId())
                                     .setParameter("amountWithoutTax", invoiceLine.getAmountWithoutTax())
