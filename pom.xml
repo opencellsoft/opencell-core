@@ -35,6 +35,12 @@
         <elasticsearch.version>6.6.2</elasticsearch.version>
         <java.version>11</java.version>
         <primefaces.version>7.0</primefaces.version>
+
+        <sonar.projectKey>core_test2</sonar.projectKey>
+        <sonar.organization>opencellsoft</sonar.organization>
+        <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
     </properties>
     
     <scm>
