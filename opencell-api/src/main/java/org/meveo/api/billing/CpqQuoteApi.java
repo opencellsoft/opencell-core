@@ -1238,7 +1238,9 @@ public class CpqQuoteApi extends BaseApi {
 
         Subscription subscription = new Subscription();
         subscription.setCode(subscriptionCode);
-        subscription.setSeller(quoteOffer.getBillableAccount().getCustomerAccount().getCustomer().getSeller());
+        Seller seller =quoteOffer.getBillableAccount()!=null? quoteOffer.getBillableAccount().getCustomerAccount().getCustomer().getSeller():
+        	quoteOffer.getQuoteVersion().getQuote().getBillableAccount().getCustomerAccount().getCustomer().getSeller();
+        subscription.setSeller(seller);
 
         subscription.setOffer(quoteOffer.getOfferTemplate());
         subscription.setSubscriptionDate(new Date());
