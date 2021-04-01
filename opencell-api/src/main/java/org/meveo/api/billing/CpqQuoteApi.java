@@ -1007,6 +1007,7 @@ public class CpqQuoteApi extends BaseApi {
 		}
         cpqQuote.setStatus(status);
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
+       
         if (QuoteStatusEnum.APPROVED.toString().equalsIgnoreCase(status)) {
             cpqQuote = serviceSingleton.assignCpqQuoteNumber(cpqQuote);
         }
@@ -1029,6 +1030,7 @@ public class CpqQuoteApi extends BaseApi {
         quoteVersion.setStatusDate(Calendar.getInstance().getTime());
         quoteVersionService.update(quoteVersion);
         if (status.equals(VersionStatusEnum.PUBLISHED)){
+        	quoteQuotation(quoteCode, currentVersion);
         	updateQuoteStatus(quoteCode, QuoteStatusEnum.PENDING.toString());
         }
     }
