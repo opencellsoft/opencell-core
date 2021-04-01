@@ -32,9 +32,11 @@ import javax.interceptor.Interceptors;
 import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.GDPRInfoDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
@@ -76,6 +78,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.shared.Title;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
@@ -87,6 +90,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -168,6 +172,9 @@ public class BillingAccountApi extends AccountEntityApi {
 
     @Inject
     private TagService tagService;
+    
+    @Inject
+    private TitleService titleService;
 
     public BillingAccount create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -527,6 +534,29 @@ public class BillingAccountApi extends AccountEntityApi {
                     billingAccount.setPrimaryContact(primaryContact);
                 }
             }
+        }
+        
+        if(postData.getIsCompany() != null) {
+        	billingAccount.setIsCompany(postData.getIsCompany());
+        }
+        
+        if(postData.getLegalEntityType() != null) {
+        	if(Strings.isEmpty(postData.getLegalEntityType().getCode()))
+        		missingParameters.add("legalEntityType.code");
+        	handleMissingParameters();
+        	var titleCode = postData.getLegalEntityType().getCode();
+        	Title title = titleService.findByCode(titleCode);
+        	if(title == null)
+        		title = new Title(titleCode, postData.getIsCompany());
+        	title.setDescription(postData.getDescription());
+        	if(postData.getLegalEntityType().getLanguageDescriptions() != null && !postData.getLegalEntityType().getLanguageDescriptions().isEmpty()) {
+        		title.setDescriptionI18n(
+        								postData.getLegalEntityType().getLanguageDescriptions()
+        											.stream().collect(Collectors.toMap(LanguageDescriptionDto::getLanguageCode, LanguageDescriptionDto::getDescription)));
+        	}
+        	if(title.getId() == null)
+        		titleService.create(title);
+        	billingAccount.setLegalEntityType(title);
         }
 
         // Update payment method information in a customer account.
