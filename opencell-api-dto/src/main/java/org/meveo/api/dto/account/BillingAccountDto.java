@@ -37,6 +37,7 @@ import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.response.TitleDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -217,6 +218,10 @@ public class BillingAccountDto extends AccountDto {
      * Contact code
      */
     private String primaryContact;
+    
+    protected Boolean isCompany;
+    
+    protected TitleDto legalEntityType;
 
     public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
@@ -906,6 +911,34 @@ public class BillingAccountDto extends AccountDto {
 	 */
 	public void setTagCodes(Set<String> tagCodes) {
 		this.tagCodes = tagCodes;
+	}
+
+	/**
+	 * @return the isCompany
+	 */
+	public Boolean getIsCompany() {
+		return isCompany;
+	}
+
+	/**
+	 * @param isCompany the isCompany to set
+	 */
+	public void setIsCompany(Boolean isCompany) {
+		this.isCompany = isCompany;
+	}
+
+	/**
+	 * @return the legalEntityType
+	 */
+	public TitleDto getLegalEntityType() {
+		return legalEntityType;
+	}
+
+	/**
+	 * @param legalEntityType the legalEntityType to set
+	 */
+	public void setLegalEntityType(TitleDto legalEntityType) {
+		this.legalEntityType = legalEntityType;
 	}
 
 
