@@ -26,6 +26,7 @@ import org.meveo.model.BaseEntity;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,7 +84,7 @@ public abstract class ResourceMapper<T extends Resource, E extends BaseEntity> {
 		
 		for (Field field : matchedFieldsByName) {
 			final Field resourceField = resourceClass.getDeclaredField(field.getName());
-			if(resourceField!=null && resourceField.getType().equals(field.getType()) ) {
+			if(resourceField!=null && !(Collection.class.isAssignableFrom(resourceField.getType())) && resourceField.getType().equals(field.getType())) {
 				Method accessor = builderClass.getMethod(field.getName(), field.getType());
 				field.setAccessible(true);
 				Object value = field.get(entity);

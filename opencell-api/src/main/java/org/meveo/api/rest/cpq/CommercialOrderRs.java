@@ -163,7 +163,7 @@ public interface CommercialOrderRs {
 	
 	
 	@POST
-	@Path("orderOffer/create")
+	@Path("orderOffers")
 	@Operation(summary = "This endpoint allows to create new order offer",
 	tags = { "Order management" },
 	description ="Creating a new order offer",
@@ -180,7 +180,7 @@ public interface CommercialOrderRs {
 
 
 	@PUT
-	@Path("orderOffer/update")
+	@Path("orderOffers")
 	@Operation(summary = "This endpoint allows to update an existing order offer",
 	description ="Updating an existing order offer",
 	tags = { "Order management" },

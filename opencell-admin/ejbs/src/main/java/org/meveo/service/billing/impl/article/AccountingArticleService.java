@@ -76,6 +76,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			result = matchResult.get(0).getAccountingArticle();
 			detach(result);
 		}
+		if(result==null) {
+			result=findByCode("ART-STD"); 
+		}
 		return  result != null ? Optional.of(result) : Optional.empty();
 	}
 

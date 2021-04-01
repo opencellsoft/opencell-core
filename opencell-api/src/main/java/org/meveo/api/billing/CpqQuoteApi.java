@@ -474,6 +474,11 @@ public class CpqQuoteApi extends BaseApi {
 
             if (generatePdf) {
                 result.setPdfContent(generateQuotePDF(quoteCode, currentVersion, true));
+                CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
+                if (quote == null) {
+                    throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode, "Code");
+                }
+                result.setPdfFileName(quote.getPdfFilename());
             }
 
 
@@ -1002,6 +1007,7 @@ public class CpqQuoteApi extends BaseApi {
 		}
         cpqQuote.setStatus(status);
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
+       
         if (QuoteStatusEnum.APPROVED.toString().equalsIgnoreCase(status)) {
             cpqQuote = serviceSingleton.assignCpqQuoteNumber(cpqQuote);
         }
@@ -1023,6 +1029,10 @@ public class CpqQuoteApi extends BaseApi {
         quoteVersion.setStatus(status);
         quoteVersion.setStatusDate(Calendar.getInstance().getTime());
         quoteVersionService.update(quoteVersion);
+        if (status.equals(VersionStatusEnum.PUBLISHED)){
+        	quoteQuotation(quoteCode, currentVersion);
+        	updateQuoteStatus(quoteCode, QuoteStatusEnum.PENDING.toString());
+        }
     }
 
     public GetQuoteVersionDtoResponse quoteQuotation(String quoteCode, int currentVersion) {
@@ -1230,15 +1240,17 @@ public class CpqQuoteApi extends BaseApi {
 
         Subscription subscription = new Subscription();
         subscription.setCode(subscriptionCode);
-        subscription.setSeller(quoteOffer.getBillableAccount().getCustomerAccount().getCustomer().getSeller());
+        BillingAccount billableAccount=quoteOffer.getBillableAccount()!=null? quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount();
+        Seller seller =billableAccount.getCustomerAccount().getCustomer().getSeller();
+        subscription.setSeller(seller);
 
         subscription.setOffer(quoteOffer.getOfferTemplate());
         subscription.setSubscriptionDate(new Date());
         subscription.setEndAgreementDate(null);
 
-        if (quoteOffer.getBillableAccount().getUsersAccounts().isEmpty())
-            throw new BusinessException("Billing account: " + quoteOffer.getBillableAccount().getCode() + " has no user accounts");
-        subscription.setUserAccount(quoteOffer.getBillableAccount().getUsersAccounts().get(0));
+        if (billableAccount.getUsersAccounts().isEmpty())
+            throw new BusinessException("Billing account: " + billableAccount.getCode() + " has no user accounts");
+        subscription.setUserAccount(billableAccount.getUsersAccounts().get(0));
 //
 //        String terminationReasonCode = null;
 //

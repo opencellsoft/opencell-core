@@ -38,6 +38,10 @@ public class GetPdfQuoteResponseDto extends BaseResponse {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
     
+    private String pdfFileName;
+    
+    private String xmlFileName;
+    
     /** The pdf content. */
     private byte[] pdfContent;
 
@@ -76,5 +80,35 @@ public class GetPdfQuoteResponseDto extends BaseResponse {
     public void setXmlContent(byte[] xmlContent) {
         this.xmlContent = xmlContent;
     }
+
+	/**
+	 * @return the pdfFileName
+	 */
+	public String getPdfFileName() {
+		return pdfFileName;
+	}
+
+	/**
+	 * @param pdfFileName the pdfFileName to set
+	 */
+	public void setPdfFileName(String pdfFileName) {
+		this.pdfFileName = pdfFileName;
+	}
+
+	/**
+	 * @return the xmlFileName
+	 */
+	public String getXmlFileName() {
+		return xmlFileName;
+	}
+
+	/**
+	 * @param xmlFileName the xmlFileName to set
+	 */
+	public void setXmlFileName(String xmlFileName) {
+		this.xmlFileName = xmlFileName;
+	}
+    
+    
 
 }

@@ -82,6 +82,7 @@ import org.meveo.admin.exception.ConfigurationException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.util.PdfWaterMark;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -5333,7 +5334,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Seller seller = (Seller) tryToFindByEntityClassAndCode(Seller.class, invoiceRessource.getSellerCode());
         BillingAccount billingAccount = (BillingAccount) tryToFindByEntityClassAndCode(BillingAccount.class, invoiceRessource.getBillingAccountCode());
         InvoiceType invoiceType = (InvoiceType) tryToFindByEntityClassAndCode(InvoiceType.class, invoiceRessource.getInvoiceTypeCode());
-
+        if (invoiceType == null) {
+            throw new EntityDoesNotExistsException(InvoiceType.class, invoiceRessource.getInvoiceTypeCode());
+        }
         Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap = new HashMap<Long, TaxInvoiceAgregate>();
         boolean isEnterprise = appProvider.isEntreprise();
         int invoiceRounding = appProvider.getInvoiceRounding();
@@ -5349,15 +5352,21 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			DiscountPlan discountPlan = (DiscountPlan)tryToFindByEntityClassAndId(DiscountPlan.class, dpId);
 			invoice.setDiscountPlan(discountPlan);
 		}
-		
+		validateInvoiceResourceAgregates(invoiceRessource);
         for (org.meveo.apiv2.billing.CategoryInvoiceAgregate catInvAgr : invoiceRessource.getCategoryInvoiceAgregates()) {
             UserAccount userAccount = extractUserAccount(billingAccount, catInvAgr.getUserAccountCode());
             InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(catInvAgr.getCategoryInvoiceCode());
+            if (invoiceCategory == null) {
+                throw new EntityDoesNotExistsException(InvoiceSubCategory.class, catInvAgr.getCategoryInvoiceCode());
+            }
             CategoryInvoiceAgregate invoiceAgregateCat = initCategoryInvoiceAgregate(billingAccount, auditable, invoice, userAccount, invoiceCategory,
                     catInvAgr.getListSubCategoryInvoiceAgregate().size(), catInvAgr.getDescription());
 
             for (org.meveo.apiv2.billing.SubCategoryInvoiceAgregate subCatInvAgr : catInvAgr.getListSubCategoryInvoiceAgregate()) {
                 InvoiceSubCategory invoiceSubCategory = invoiceSubcategoryService.findByCode(subCatInvAgr.getInvoiceSubCategoryCode());
+                if (invoiceSubCategory == null) {
+                    throw new EntityDoesNotExistsException(InvoiceSubCategory.class, subCatInvAgr.getInvoiceSubCategoryCode());
+                }
                 SubCategoryInvoiceAgregate invoiceAgregateSubcat = initSubCategoryInvoiceAgregate(auditable, invoice, userAccount, invoiceAgregateCat,
                         subCatInvAgr.getDescription(), invoiceSubCategory);
                 createAndLinkILsFromDTO(seller, billingAccount, isEnterprise, invoiceRounding, invoiceRoundingMode, invoice, userAccount, subCatInvAgr, invoiceSubCategory,
@@ -5384,6 +5393,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice = finaliseInvoiceCreation(invoiceRessource, isEnterprise, invoiceRounding, invoiceRoundingMode, invoice, isAutoValidation, isIncludeBalance);
         return invoice;
     }
+    
+
+	private void validateInvoiceResourceAgregates(org.meveo.apiv2.billing.Invoice invoiceResource)
+			throws ValidationException {
+		for (org.meveo.apiv2.billing.CategoryInvoiceAgregate catInvAgr : invoiceResource
+				.getCategoryInvoiceAgregates()) {
+			if (StringUtils.isBlank(catInvAgr.getCategoryInvoiceCode())) {
+				throw new ValidationException("missing categoryInvoiceCode");
+			}
+			if (catInvAgr.getListSubCategoryInvoiceAgregate() == null
+					|| catInvAgr.getListSubCategoryInvoiceAgregate().isEmpty()) {
+				throw new ValidationException("missing listSubCategoryInvoiceAgregate");
+			}
+			for (org.meveo.apiv2.billing.SubCategoryInvoiceAgregate subCatInvAgr : catInvAgr
+					.getListSubCategoryInvoiceAgregate()) {
+				if (StringUtils.isBlank(subCatInvAgr.getInvoiceSubCategoryCode())) {
+					throw new ValidationException("missing invoiceSubCategoryCode");
+				}
+			}
+		}
+	}
 
     /**
      * @param billingAccount
