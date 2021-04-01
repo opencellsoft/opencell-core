@@ -1240,17 +1240,17 @@ public class CpqQuoteApi extends BaseApi {
 
         Subscription subscription = new Subscription();
         subscription.setCode(subscriptionCode);
-        Seller seller =quoteOffer.getBillableAccount()!=null? quoteOffer.getBillableAccount().getCustomerAccount().getCustomer().getSeller():
-        	quoteOffer.getQuoteVersion().getQuote().getBillableAccount().getCustomerAccount().getCustomer().getSeller();
+        BillingAccount billableAccount=quoteOffer.getBillableAccount()!=null? quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount();
+        Seller seller =billableAccount.getCustomerAccount().getCustomer().getSeller();
         subscription.setSeller(seller);
 
         subscription.setOffer(quoteOffer.getOfferTemplate());
         subscription.setSubscriptionDate(new Date());
         subscription.setEndAgreementDate(null);
 
-        if (quoteOffer.getBillableAccount().getUsersAccounts().isEmpty())
-            throw new BusinessException("Billing account: " + quoteOffer.getBillableAccount().getCode() + " has no user accounts");
-        subscription.setUserAccount(quoteOffer.getBillableAccount().getUsersAccounts().get(0));
+        if (billableAccount.getUsersAccounts().isEmpty())
+            throw new BusinessException("Billing account: " + billableAccount.getCode() + " has no user accounts");
+        subscription.setUserAccount(billableAccount.getUsersAccounts().get(0));
 //
 //        String terminationReasonCode = null;
 //
