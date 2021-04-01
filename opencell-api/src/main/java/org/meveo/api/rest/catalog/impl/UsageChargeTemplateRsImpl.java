@@ -148,12 +148,12 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
     }
 
     @Override
-    public UsageChargeTemplateResponseDto listGet() {
+    public UsageChargeTemplateResponseDto listGetAll() {
 
         UsageChargeTemplateResponseDto result = new UsageChargeTemplateResponseDto();
 
         try {
-            result = new UsageChargeTemplateResponseDto( usageChargeTemplateApi.search(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering()) );
+            result = usageChargeTemplateApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

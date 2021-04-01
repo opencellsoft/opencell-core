@@ -26,6 +26,7 @@ import org.meveo.api.dto.catalog.*;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.*;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -561,5 +562,19 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         return result;
 
+    }
+
+    public GetListServiceTemplateResponseDto listGetAll(PagingAndFiltering pagingAndFiltering) {
+        GetListServiceTemplateResponseDto result = new GetListServiceTemplateResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<ServiceTemplate> serviceTemplates = serviceTemplateService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (serviceTemplates != null) {
+            for (ServiceTemplate serviceTemplate : serviceTemplates) {
+                result.getListServiceTemplate().add(new ServiceTemplateDto(serviceTemplate));
+            }
+        }
+
+        return result;
     }
 }

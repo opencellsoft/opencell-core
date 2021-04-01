@@ -1,7 +1,5 @@
 package org.meveo.apiv2.generic;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -15,7 +13,7 @@ public interface GenericResourceAPIv1 {
 
     @GET
     @Path("/{segments:.*}")
-    Response getAllEntitiesOrGetAnEntity() throws URISyntaxException, JsonProcessingException;
+    Response getAllEntitiesOrGetAnEntity() throws URISyntaxException, IOException;
 
     @POST
     @Path("/{segments:.*}")
@@ -30,7 +28,7 @@ public interface GenericResourceAPIv1 {
     Response deleteAnEntity() throws URISyntaxException;
 
     @GET
-    @Path("/restfulEntities")
-    Response getListRestfulEntities();
+    @Path("/restfulURLs")
+    Response getListRestfulURLs();
 
 }
