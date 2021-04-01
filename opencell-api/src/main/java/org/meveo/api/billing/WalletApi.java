@@ -25,6 +25,7 @@ import org.meveo.api.dto.billing.*;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
@@ -618,8 +619,7 @@ public class WalletApi extends BaseApi {
             this.completeFilteringByPostedData(postData, pagingAndFiltering);
         }
 
-        PaginationConfiguration paginationConfig =
-                toPaginationConfiguration(pagingAndFiltering.getSortBy(), pagingAndFiltering.getMultiSortOrder(), null, pagingAndFiltering, WalletOperation.class);
+        PaginationConfiguration paginationConfig = GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration();
 
         Long totalCount = walletOperationService.count(paginationConfig);
 
