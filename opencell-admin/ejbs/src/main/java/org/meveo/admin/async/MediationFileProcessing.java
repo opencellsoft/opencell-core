@@ -9,10 +9,13 @@ import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CDR;
@@ -105,9 +108,19 @@ public class MediationFileProcessing {
                 break;
 
             } catch (Exception e) {
-
                 String errorReason = e.getMessage();
-                if (e instanceof CDRParsingException) {
+				final Throwable rootCause = getRootCause(e);
+				if (e instanceof EJBTransactionRolledbackException && rootCause instanceof ConstraintViolationException) {
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("Invalid values passed: ");
+                    for (ConstraintViolation<?> violation : ((ConstraintViolationException) rootCause).getConstraintViolations()) {
+                        builder.append(String.format(" %s.%s: value '%s' - %s;", violation.getRootBeanClass().getSimpleName(), violation.getPropertyPath().toString(), violation.getInvalidValue(), violation.getMessage()));
+                    }
+                    errorReason = builder.toString();
+					log.error("Failed to process a CDR line: {} from file {} error {}", cdr != null ? cdr.getLine() : null, fileName, errorReason);
+				}
+				
+				if (e instanceof CDRParsingException) {
                     log.error("Failed to process a CDR line: {} from file {} error {}", cdr != null ? cdr.getLine() : null, fileName, errorReason);
                 } else {
                     log.error("Failed to process a CDR line: {} from file {} error {}", cdr != null ? cdr.getLine() : null, fileName, errorReason, e);
@@ -121,4 +134,11 @@ public class MediationFileProcessing {
         }
         return new AsyncResult<String>("OK");
     }
+    
+	private Throwable getRootCause(Throwable e) {
+		if(e.getCause()!=null) {
+			return getRootCause(e.getCause());
+		}
+		return e;
+	}
 }

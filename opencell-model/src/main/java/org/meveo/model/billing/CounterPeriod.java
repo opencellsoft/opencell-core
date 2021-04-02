@@ -270,9 +270,11 @@ public class CounterPeriod extends BusinessEntity {
         }
 
         List<Entry<String, BigDecimal>> matchedLevels = new ArrayList<>();
-        for (Entry<String, BigDecimal> notifValue : getNotificationLevelsAsMap().entrySet()) {
-            if (fromValue.compareTo(notifValue.getValue()) > 0 && notifValue.getValue().compareTo(toValue) >= 0) {
-                matchedLevels.add(notifValue);
+        if(getNotificationLevelsAsMap() != null) {
+            for (Entry<String, BigDecimal> notifValue : getNotificationLevelsAsMap().entrySet()) {
+                if (fromValue.compareTo(notifValue.getValue()) > 0 && notifValue.getValue().compareTo(toValue) >= 0) {
+                    matchedLevels.add(notifValue);
+                }
             }
         }
         return matchedLevels;
