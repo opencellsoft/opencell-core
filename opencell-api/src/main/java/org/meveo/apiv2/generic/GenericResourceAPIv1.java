@@ -31,10 +31,10 @@ public interface GenericResourceAPIv1 {
 
     @GET
     @Path("/restEndpoints")
-    Response getListRestfulURLs();
+    Response getListRestEndpoints();
 
     @GET
     @Path("/restEndpoints/{entityName}")
-    Response getListRestfulURLsForEntity(@Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName);
+    Response getListRestEndpointsForEntity(@Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName);
 
 }
