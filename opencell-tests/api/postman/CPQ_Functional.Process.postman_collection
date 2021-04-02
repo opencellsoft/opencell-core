@@ -3919,7 +3919,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"{{contractCode}}\",\r\n  \"description\": \"This is the contract test description\",\r\n  \"contractAccountLevel\":\"BILLING_ACCOUNT\",\r\n  \"accountCode\":\"{{billableAccountCode}}\",\r\n  \"contractDate\": \"2021-03-03\",\r\n  \"beginDate\": \"2021-01-01\",\r\n  \"endDate\": \"2021-12-31\",\r\n  \"status\":\"ACTIVE\"\r\n}\r\n\r\n",
+							"raw": "{\r\n    \"code\": \"{{contractCode}}\",\r\n    \"description\": \"This is the contract test description\",\r\n    \"contractAccountLevel\": \"BILLING_ACCOUNT\",\r\n    \"accountCode\": \"{{billableAccountCode}}\",\r\n    \"contractDate\": \"2021-03-03\",\r\n    \"beginDate\": \"2021-01-01\",\r\n    \"endDate\": \"2021-12-31\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3961,6 +3961,28 @@
 					"response": []
 				},
 				{
+					"name": "Activate The Contract",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contracts/{{contractCode}}/status/ACTIVE",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contracts",
+								"{{contractCode}}",
+								"status",
+								"ACTIVE"
+							]
+						},
+						"description": "Find a Contract type by contractCode"
+					},
+					"response": []
+				},
+				{
 					"name": "Create Contract Line",
 					"event": [
 						{
@@ -3978,7 +4000,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"code\": \"{{contractLineCode}}\",\r\n    \"description\": \"The contract line test description\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"chargeTemplateCode\": \"{{recChargeTemplateCode}}\",\r\n    \"pricePlanCode\": \"{{ppmRcCode}}\",\r\n    \"contractRateType\": \"FIXED\",\r\n    \"amountWithoutTax\": 155\r\n}",
+							"raw": "{\r\n    \"code\": \"{{contractLineCode}}\",\r\n    \"description\": \"The contract line test description\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"chargeTemplateCode\": \"{{recChargeTemplateCode}}\",\r\n    \"contractRateType\": \"FIXED\",\r\n    \"amountWithoutTax\": 155\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
