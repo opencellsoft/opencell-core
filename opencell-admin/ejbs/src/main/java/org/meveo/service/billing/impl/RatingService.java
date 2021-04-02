@@ -673,7 +673,6 @@ public class RatingService extends PersistenceService<WalletOperation> {
             // if the wallet operation correspond to a recurring charge that is
             // shared, we divide the price by the number of
             // shared charges
-////////----------------------------------------unitPriceWithTaxOverriden=get amount in contract with PERCENTAGE
             if (recChargeTemplate != null && recChargeTemplate.getShareLevel() != null) {
                 RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) chargeInstance;
                 int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);

@@ -3978,7 +3978,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"{{contractLineCode}}\",\r\n  \"description\": \"This is a contract line test desc\",\r\n  \"contractCode\": \"{{contractCode}}\",\r\n  \"pricePlanCode\":\"{{ppmRcCode}}\",\r\n  \"amountWithoutTax\":\"100\",\r\n  \"contractRateType\":\"FIXED\",\r\n  \"rate\":30\r\n}",
+							"raw": "{\r\n  \"code\": \"{{contractLineCode}}\",\r\n  \"description\": \"This is a contract line test desc\",\r\n  \"contractCode\": \"{{contractCode}}\",\r\n  \"offerTemplateCode\": \"{{offerTemplateCode}}\",\r\n  \"productCode\": \"{{productOneCode}}\",\r\n  \"chargeTemplateCode\":\"{{recChargeTemplateCode}}\",\r\n  \"pricePlanCode\":\"{{ppmRcCode}}\",\r\n  \"amountWithoutTax\":\"100\",\r\n  \"contractRateType\":\"FIXED\",\r\n  \"rate\":30\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
