@@ -120,7 +120,6 @@ import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalTermTypeEnum;
@@ -129,7 +128,6 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -850,6 +848,7 @@ public class SubscriptionApi extends BaseApi {
         	for (ServiceInstance serviceInstance : serviceInstances) {
 
         		try {
+        		    serviceInstance.clearTransientSubscriptionChargeInstance();
         			serviceInstanceService.serviceActivation(serviceInstance);
         		} catch (BusinessException e) {
         			log.error("Failed to activate a service {}/{} on subscription {}", serviceInstance.getId(), serviceInstance.getCode(), subscription.getCode(), e);
