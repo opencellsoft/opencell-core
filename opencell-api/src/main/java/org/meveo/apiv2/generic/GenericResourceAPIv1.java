@@ -1,5 +1,7 @@
 package org.meveo.apiv2.generic;
 
+import io.swagger.v3.oas.annotations.Parameter;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -28,7 +30,11 @@ public interface GenericResourceAPIv1 {
     Response deleteAnEntity() throws URISyntaxException;
 
     @GET
-    @Path("/restfulURLs")
+    @Path("/restEndpoints")
     Response getListRestfulURLs();
+
+    @GET
+    @Path("/restEndpoints/{entityName}")
+    Response getListRestfulURLsForEntity(@Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName);
 
 }

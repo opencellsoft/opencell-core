@@ -2,6 +2,7 @@ package org.meveo.apiv2.generic;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.*;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -544,7 +546,23 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
     @Override
     public Response getListRestfulURLs() {
-        return Response.ok().entity(GenericOpencellRestfulAPIv1.RESTFUL_ENTITIES_LIST).type(MediaType.APPLICATION_JSON_TYPE).build();
+        return Response.ok().entity(GenericOpencellRestfulAPIv1.RESTFUL_ENTITIES_MAP).type(MediaType.APPLICATION_JSON_TYPE).build();
+    }
+
+    @Override
+    public Response getListRestfulURLsForEntity(String entityName) {
+        if ( GenericOpencellRestfulAPIv1.RESTFUL_ENTITIES_MAP.containsKey( StringUtils.capitalizeFirstLetter(entityName) ) ) {
+            entityName = StringUtils.capitalizeFirstLetter(entityName);
+            Map responseMap = new HashMap();
+            responseMap.put( entityName, GenericOpencellRestfulAPIv1.RESTFUL_ENTITIES_MAP.get( entityName ) );
+            return Response.ok().entity(responseMap).type(MediaType.APPLICATION_JSON_TYPE).build();
+        }
+        else {
+            ActionStatus notFoundStatus = new ActionStatus(ActionStatusEnum.FAIL,
+                    MeveoApiErrorCodeEnum.ENTITY_DOES_NOT_EXISTS_EXCEPTION, "Entity " + entityName + " cannot be found");
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(notFoundStatus).type(MediaType.APPLICATION_JSON_TYPE).build();
+        }
     }
 
     @PreDestroy
