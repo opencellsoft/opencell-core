@@ -36,6 +36,7 @@ import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.document.Document;
 import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.CashPaymentMethod;
 import org.meveo.model.payments.CheckPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -337,7 +338,9 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
             break;
         case STRIPE:
             pmEntity = new StripePaymentMethod(disabledBool, alias, preferred, customerAccount,userId);
-            break;            
+            break;   
+        case CASH:
+        	pmEntity = new CashPaymentMethod(disabledBool, alias, disabledBool, customerAccount, userId);
         default:
             break;
         }
