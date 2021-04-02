@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.payment.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CreditCategoryDto;
@@ -31,8 +27,13 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.CreditCategoryApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.CreditCategoryRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CreditCategory;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Edward P. Legaspi
@@ -111,6 +112,20 @@ public class CreditCategoryRsImpl extends BaseRs implements CreditCategoryRs {
 
 		try {
 			result.setCreditCategories(creditCategoryApi.list());
+		} catch (Exception e) {
+			processException(e, result.getActionStatus());
+		}
+
+		return result;
+	}
+
+	@Override
+	public CreditCategoriesResponseDto listGetAll() {
+
+		CreditCategoriesResponseDto result = new CreditCategoriesResponseDto();
+
+		try {
+			result = creditCategoryApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
 		} catch (Exception e) {
 			processException(e, result.getActionStatus());
 		}

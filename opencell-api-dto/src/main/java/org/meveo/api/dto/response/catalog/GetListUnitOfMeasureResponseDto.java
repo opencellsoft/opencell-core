@@ -40,7 +40,7 @@ public class GetListUnitOfMeasureResponseDto extends SearchResponse {
     private static final long serialVersionUID = 6452134563213220603L;
 
     /** The list UnitOfMeasure. */
-    private List<UnitOfMeasureDto> listUnitOfMeasure;
+    private List<UnitOfMeasureDto> listUnitOfMeasure = new ArrayList<>();
 
     /**
      * Instantiates a new gets the list unitOfMeasure response dto.

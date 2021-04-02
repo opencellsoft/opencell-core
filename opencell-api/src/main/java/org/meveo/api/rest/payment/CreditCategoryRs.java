@@ -18,22 +18,14 @@
 
 package org.meveo.api.rest.payment;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
 import org.meveo.api.dto.response.payment.CreditCategoryResponseDto;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * @author Edward P. Legaspi
@@ -93,6 +85,15 @@ public interface CreditCategoryRs extends IBaseRs {
 	@GET
 	@Path("/list")
 	CreditCategoriesResponseDto list();
+
+	/**
+	 * List creditCategories matching a given criteria
+	 *
+	 * @return List of creditCategories
+	 */
+	@GET
+	@Path("/listGetAll")
+	CreditCategoriesResponseDto listGetAll();
 
     /**
      * Delete a credit category with his given code 

@@ -21,7 +21,10 @@ package org.meveo.api.catalog;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.RecurringChargeTemplateResponseDto;
 import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.LevelEnum;
@@ -33,6 +36,7 @@ import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiFunction;
 
 /**
@@ -192,6 +196,21 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         }
 
         RecurringChargeTemplateDto result = new RecurringChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+
+        return result;
+    }
+
+    public RecurringChargeTemplateResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        RecurringChargeTemplateResponseDto result = new RecurringChargeTemplateResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<RecurringChargeTemplate> recurringChargeTemplates = recurringChargeTemplateService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (recurringChargeTemplates != null) {
+            for (RecurringChargeTemplate chargeTemplate : recurringChargeTemplates) {
+                result.getRecurringChargeTemplates().getRecurringChargeTemplates()
+                        .add(new RecurringChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+        }
 
         return result;
     }

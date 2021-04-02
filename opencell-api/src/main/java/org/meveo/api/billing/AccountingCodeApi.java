@@ -18,12 +18,6 @@
 
 package org.meveo.api.billing;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
@@ -34,10 +28,16 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Subscription;
 import org.meveo.service.billing.impl.AccountingCodeService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * API class for AccountingCode CRUD.
@@ -125,6 +125,20 @@ public class AccountingCodeApi extends BaseCrudApi<AccountingCode, AccountingCod
             List<AccountingCode> accountingCodes = accountingCodeService.list(paginationConfiguration);
             if (accountingCodes != null) {
                 result.setAccountingCodes(accountingCodes.stream().map(p -> new AccountingCodeDto(p)).collect(Collectors.toList()));
+            }
+        }
+
+        return result;
+    }
+
+    public AccountingCodeListResponseDto list() {
+        AccountingCodeListResponseDto result = new AccountingCodeListResponseDto();
+        result.setPaging( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
+
+        List<AccountingCode> accountingCodes = accountingCodeService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (accountingCodes != null) {
+            for (AccountingCode accountingCode : accountingCodes) {
+                result.getAccountingCodes().add(new AccountingCodeDto(accountingCode));
             }
         }
 

@@ -18,12 +18,6 @@
 
 package org.meveo.api.payment;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.collections4.map.HashedMap;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -39,16 +33,18 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.message.exception.InvalidDTOException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.payments.CreditCardTypeEnum;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.DDPaymentMethod;
-import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.*;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 import org.primefaces.model.SortOrder;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The CRUD Api for PaymentMethod.
@@ -190,6 +186,20 @@ public class PaymentMethodApi extends BaseApi {
                 result.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
             }
         }
+        return result;
+    }
+
+    public PaymentMethodTokensDto listGet(PagingAndFiltering pagingAndFiltering) {
+        PaymentMethodTokensDto result = new PaymentMethodTokensDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<PaymentMethod> paymentMethods = paymentMethodService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (paymentMethods != null) {
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                result.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
+            }
+        }
+
         return result;
     }
     

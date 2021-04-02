@@ -27,6 +27,8 @@ import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
 import org.meveo.api.exception.*;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
@@ -644,6 +646,20 @@ public class BillingAccountApi extends AccountEntityApi {
                 }
 
                 result.getBillingAccount().add(billingAccountDto);
+            }
+        }
+
+        return result;
+    }
+
+    public BillingAccountsResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        BillingAccountsResponseDto result = new BillingAccountsResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<BillingAccount> billingAccounts = billingAccountService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (billingAccounts != null) {
+            for (BillingAccount billingAccount : billingAccounts) {
+                result.getBillingAccounts().getBillingAccount().add(new BillingAccountDto(billingAccount));
             }
         }
 

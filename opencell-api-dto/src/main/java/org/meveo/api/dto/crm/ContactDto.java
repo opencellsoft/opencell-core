@@ -18,12 +18,16 @@
 
 package org.meveo.api.dto.crm;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.meveo.api.dto.AuditableDto;
 import org.meveo.api.dto.account.AccountDto;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.contact.Contact;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class ContactDto extends AccountDto {
 
@@ -51,20 +55,27 @@ public class ContactDto extends AccountDto {
 	
 	private String socialIdentifier;
 
+	@JsonProperty("isVip")
+	@JsonAlias({"isVip", "vip"})
 	private boolean isVip;
 
+	@JsonProperty("isProspect")
+	@JsonAlias({"isProspect", "prospect"})
 	private boolean isProspect;
 
 	private boolean agreedToUA;
 
 	private CommunicationPolicy contactPolicy;
 
+	@JsonIgnore
+	private AuditableDto auditableNullSafe;
+
 //	private List<Message> messages;
 	
 	private Set<String> tags = new HashSet<String>();
 	
 	public ContactDto () {
-		
+
 	}
 	
 	public ContactDto(Contact contact) {
@@ -225,5 +236,11 @@ public class ContactDto extends AccountDto {
 
 	public void setTags(Set<String> tags) {
 		this.tags = tags;
+	}
+
+	@Override
+	public String toString() {
+		return "ContactDto [email=" + email + ", assistantName=" + assistantName + ", assistantPhone=" + assistantPhone + ", company=" + company
+				+ ", phone=" + phone + ", websiteUrl=" + websiteUrl + ", socialIdentifier=" + socialIdentifier + "]";
 	}
 }

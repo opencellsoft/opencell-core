@@ -18,21 +18,24 @@
 
 package org.meveo.api.account;
 
-import java.util.function.BiFunction;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.TitleDto;
+import org.meveo.api.dto.response.account.TitlesResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.shared.Title;
 import org.meveo.service.catalog.impl.TitleService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * CRUD API for {@link Title}.
@@ -79,6 +82,20 @@ public class TitleApi extends BaseCrudApi<Title, TitleDto> {
         titleService.create(title);
 
         return title;
+    }
+
+    public TitlesResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        TitlesResponseDto result = new TitlesResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<Title> titles = titleService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (titles != null) {
+            for (Title title : titles) {
+                result.getTitles().getTitle().add(new TitleDto(title, null));
+            }
+        }
+
+        return result;
     }
 
     /**

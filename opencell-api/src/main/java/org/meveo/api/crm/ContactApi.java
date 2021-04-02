@@ -18,19 +18,9 @@
 
 package org.meveo.api.crm;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.account.AccountEntityApi;
-import org.meveo.api.security.config.annotation.FilterProperty;
-import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.dto.crm.ContactDto;
 import org.meveo.api.dto.crm.ContactsDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -38,9 +28,12 @@ import org.meveo.api.dto.response.crm.ContactsResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.Customer;
@@ -54,6 +47,13 @@ import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.intcrm.impl.ContactService;
 import org.primefaces.model.SortOrder;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Abdellatif BARI
@@ -333,6 +333,20 @@ public class ContactApi extends AccountEntityApi {
 		contactDto = new ContactDto(contact);
 
 		return contactDto;
+	}
+
+	public ContactsResponseDto listGetAll(PagingAndFiltering pagingAndFiltering) {
+		ContactsResponseDto result = new ContactsResponseDto();
+		result.setPaging( pagingAndFiltering );
+
+		List<Contact> contacts = contactService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+		if (contacts != null) {
+			for (Contact contact : contacts) {
+				result.getContacts().getContact().add(new ContactDto(contact));
+			}
+		}
+
+		return result;
 	}
 
 	@SecuredBusinessEntityMethod(resultFilter = ListFilter.class)

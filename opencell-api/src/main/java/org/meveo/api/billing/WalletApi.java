@@ -25,6 +25,7 @@ import org.meveo.api.dto.billing.*;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
@@ -38,17 +39,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.*;
-import org.meveo.service.catalog.impl.CalendarService;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.ChargeInstanceService;
-import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.ReservationService;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.billing.impl.WalletReservationService;
-import org.meveo.service.billing.impl.WalletService;
-import org.meveo.service.billing.impl.WalletTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -625,16 +615,11 @@ public class WalletApi extends BaseApi {
     public FindWalletOperationsResponseDto listGetAll(FindWalletOperationsDto postData, PagingAndFiltering pagingAndFiltering, Boolean includeRatedTransactions)
             throws MeveoApiException {
 
-        if (pagingAndFiltering == null) {
-            pagingAndFiltering = new PagingAndFiltering();
-        }
-
         if (postData != null) {
             this.completeFilteringByPostedData(postData, pagingAndFiltering);
         }
 
-        PaginationConfiguration paginationConfig =
-                toPaginationConfiguration(pagingAndFiltering.getSortBy(), pagingAndFiltering.getMultiSortOrder(), null, pagingAndFiltering, WalletOperation.class);
+        PaginationConfiguration paginationConfig = GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration();
 
         Long totalCount = walletOperationService.count(paginationConfig);
 
