@@ -2584,7 +2584,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (billingAccount.getContactInformation() != null) {
                 to.add(billingAccount.getContactInformation().getEmail());
             }
-            if (billingAccount.getCcedEmails() != null) {
+            if (!StringUtils.isBlank(billingAccount.getCcedEmails())) {
                 cc.addAll(Arrays.asList(billingAccount.getCcedEmails().split(",")));
             }
             if (billingAccount.getEmailTemplate() != null) {
@@ -2602,7 +2602,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 to.clear();
                 to.add(subscription.getEmail());
                 cc.clear();
-                if (subscription.getCcedEmails() != null) {
+                if (!StringUtils.isBlank(subscription.getCcedEmails())) {
                     cc.addAll(Arrays.asList(subscription.getCcedEmails().split(",")));
                 }
                 emailTemplate = (subscription.getEmailTemplate() != null) ? subscription.getEmailTemplate() : emailTemplate;
@@ -2615,7 +2615,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 to.clear();
                 to.add(order.getEmail());
                 cc.clear();
-                if (order.getCcedEmails() != null) {
+                if (!StringUtils.isBlank(order.getCcedEmails())) {
                     cc.addAll(Arrays.asList(order.getCcedEmails().split(",")));
                 }
                 emailTemplate = (order.getEmailTemplate() != null) ? order.getEmailTemplate() : emailTemplate;
