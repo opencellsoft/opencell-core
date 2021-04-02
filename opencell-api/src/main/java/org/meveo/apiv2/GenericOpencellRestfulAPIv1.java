@@ -1,7 +1,6 @@
 package org.meveo.apiv2;
 
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -36,6 +35,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,7 +54,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
     public static Map<String,Class> MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS = new HashMap<>();
     public static long API_LIST_DEFAULT_LIMIT;
     public static final String API_VERSION = "/v1";
-    public static List<Map<String,List<String>>> RESTFUL_ENTITIES_LIST = new ArrayList<>();
+    public static Map RESTFUL_ENTITIES_MAP = new LinkedHashMap();
 
     private static final String GENERIC_API_REQUEST_LOGGING_CONFIG_KEY = "generic.api.request.logging";
     private static final String API_LIST_DEFAULT_LIMIT_KEY = "api.list.defaultLimit";
@@ -73,6 +73,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
     private static final String FORWARD_SLASH = "/";
     public static final String CODE_REGEX = "[^\\/^$]+";
     private String entityName;
+    private String upperEntityName;
+    private String endpoint;
     private String baseURL;
     private List<String> listOfURLs;
 
@@ -134,33 +136,113 @@ public class GenericOpencellRestfulAPIv1 extends Application {
     }
 
     private void fillUpRestfulURLsMap(String aRestfulURL, Map mapRestful) {
-        // if mapRestful has contained already something, reinitialize the map
-        if ( ! MapUtils.isEmpty( mapRestful ) )
-            mapRestful = new HashMap();
+        baseURL = API_VERSION + aRestfulURL;
+        entityName = Inflector.getInstance().singularize(aRestfulURL.substring( aRestfulURL.lastIndexOf( FORWARD_SLASH ) + 1 ));
+        upperEntityName = StringUtils.capitalizeFirstLetter(entityName);
 
-        baseURL = aRestfulURL;
-        entityName = StringUtils.capitalizeFirstLetter(
-                Inflector.getInstance().singularize(aRestfulURL.substring( aRestfulURL.lastIndexOf( FORWARD_SLASH ) + 1 )));
+        if ( ! mapRestful.containsKey( upperEntityName ) )
+            listOfURLs = new ArrayList<>();
+        else
+            listOfURLs = (List) mapRestful.get( upperEntityName );
 
-        listOfURLs = new ArrayList<>();
+        endpoint = "POST - Create an entity of " + upperEntityName + " : " + baseURL;
+        listOfURLs.add(endpoint);
+        endpoint = "GET - Retrieve all entities of " + upperEntityName + " : " + baseURL;
+        listOfURLs.add(endpoint);
+        endpoint = "GET - Retrieve an entity of " + upperEntityName + " : " + baseURL + FORWARD_SLASH + "{" + entityName + "Code}";
+        listOfURLs.add(endpoint);
+        endpoint = "PUT - Update an entity of " + upperEntityName + " : "+ baseURL + FORWARD_SLASH + "{" + entityName + "Code}";
+        listOfURLs.add(endpoint);
+        endpoint = "DELETE - Delete an entity of " + upperEntityName + " : " + baseURL + FORWARD_SLASH + "{" + entityName + "Code}";
+        listOfURLs.add(endpoint);
 
-        aRestfulURL = "POST - Create an entity of " + entityName + " : " + baseURL;
-        listOfURLs.add(aRestfulURL);
-        aRestfulURL = "GET - Retrieve all entities of " + entityName + " : " + baseURL;
-        listOfURLs.add(aRestfulURL);
-        aRestfulURL = "GET - Retrieve an entity of " + entityName + " : " + baseURL + FORWARD_SLASH + "{aCode}";
-        listOfURLs.add(aRestfulURL);
-        aRestfulURL = "PUT - Update an entity of " + entityName + " : "+ baseURL + FORWARD_SLASH + "{aCode}";
-        listOfURLs.add(aRestfulURL);
-        aRestfulURL = "DELETE - Delete an entity of " + entityName + " : " + baseURL + FORWARD_SLASH + "{aCode}";
-        listOfURLs.add(aRestfulURL);
-        mapRestful.put(entityName, listOfURLs);
+        mapRestful.put(upperEntityName, listOfURLs);
 
-        fillUpRestfulEntitiesList( mapRestful );
+        fillUpRestfulEntitiesMap( mapRestful );
     }
 
-    private void fillUpRestfulEntitiesList(Map<String,List<String>> mapOfEntityAndURLs) {
-        RESTFUL_ENTITIES_LIST.add(mapOfEntityAndURLs);
+    private void fillUpRestfulURLsMapWithSpecialURL(String aRestfulURL, Map mapRestful, String entityName) {
+        baseURL = API_VERSION + aRestfulURL;
+        upperEntityName = StringUtils.capitalizeFirstLetter(entityName);
+
+        if ( ! mapRestful.containsKey( upperEntityName ) )
+            listOfURLs = new ArrayList<>();
+        else
+            listOfURLs = (List) mapRestful.get( upperEntityName );
+
+        if ( aRestfulURL.split( FORWARD_SLASH )[ aRestfulURL.split( FORWARD_SLASH ).length - 1 ].equals( "enable" ) ) {
+            endpoint = "POST - Enable an entity of " + entityName + " : " + baseURL;
+            endpoint = endpoint.replace( CODE_REGEX, "{" + entityName + "Code}" );
+            listOfURLs.add(endpoint);
+        }
+        else if ( aRestfulURL.split( FORWARD_SLASH )[ aRestfulURL.split( FORWARD_SLASH ).length - 1 ].equals( "disable" ) ) {
+            endpoint = "POST - Disable an entity of " + entityName + " : " + baseURL;
+            endpoint = endpoint.replace( CODE_REGEX, "{" + entityName + "Code}" );
+            listOfURLs.add(endpoint);
+        }
+        else if ( aRestfulURL.contains( CODE_REGEX ) ) {
+            int indexCodeRegex = aRestfulURL.indexOf( CODE_REGEX );
+            String aSmallPattern;
+            String smallString = null;
+
+            if ( indexCodeRegex >= 0 ) {
+                String parentEntityName;
+                while ( indexCodeRegex >= 0 ) {
+                    aSmallPattern = aRestfulURL.substring( 0, indexCodeRegex + CODE_REGEX.length() );
+                    Matcher matcher = Pattern.compile( Pattern.quote(aSmallPattern) ).matcher( aRestfulURL );
+                    // get the first occurrence matching smallStringPattern
+                    if ( matcher.find() ) {
+                        smallString = matcher.group(0);
+                    }
+                    indexCodeRegex = aRestfulURL.indexOf( CODE_REGEX, indexCodeRegex + 1 );
+                }
+
+                String[] anArray = aRestfulURL.split( Pattern.quote(CODE_REGEX) );
+                parentEntityName = Inflector.getInstance().singularize(anArray[0].split(FORWARD_SLASH)[ anArray[0].split(FORWARD_SLASH).length - 1 ]);
+                // If smallString differs from the string aGetPath, the request is to retrieve all entities, so we add paging and filtering
+                // Otherwise, if smallString is exactly the string aRestfulURL, the request is to retrieve a particular entity
+                if ( ! smallString.equals( aRestfulURL ) ) {
+                    endpoint = "GET - Search for all " + upperEntityName + " based on a given code of a " + parentEntityName + " : " + baseURL;
+                    endpoint = endpoint.replace( CODE_REGEX, "{" + parentEntityName + "Code}" );
+                }
+                else {
+                    endpoint = "GET - Search for a particular entity of " + upperEntityName + " based on a given code of a " + parentEntityName + " : " + baseURL;
+                    endpoint = endpoint.replaceFirst( Pattern.quote(CODE_REGEX), "{" + parentEntityName + "Code}" )
+                                        .replace( CODE_REGEX, "{" + entityName + "Code}" );
+                }
+                listOfURLs.add(endpoint);
+            }
+        }
+        else if ( aRestfulURL.equals(ACCOUNT_MANAGEMENT + "/customers/categories") ) {
+            endpoint = "GET - Search for a customer category with a given code : " + baseURL + FORWARD_SLASH + "{" + entityName + "Code}";
+            listOfURLs.add(endpoint);
+        }
+        else if ( aRestfulURL.equals(ACCOUNT_MANAGEMENT + "/accountHierarchies") ) {
+            endpoint = "POST - Create an AccountHierarchy : " + baseURL + FORWARD_SLASH + "{" + entityName + "Code}";
+            listOfURLs.add(endpoint);
+
+            endpoint = "PUT - Update an AccountHierarchy : " + baseURL + FORWARD_SLASH + "{" + entityName + "Code}";
+            listOfURLs.add(endpoint);
+        }
+        else if ( aRestfulURL.equals(ACCOUNT_MANAGEMENT + "/subscriptions") ) {
+            endpoint = "PUT - Activate a subscription : " + baseURL + FORWARD_SLASH + "{" + entityName + "Code}" + "/activation";
+            listOfURLs.add(endpoint);
+
+            endpoint = "PUT - Suspend a subscription : " + baseURL + FORWARD_SLASH + "{" + entityName + "Code}" + "/suspension";
+            listOfURLs.add(endpoint);
+
+            endpoint = "PUT - Update services of a subscription : " + baseURL + FORWARD_SLASH + "{" + entityName + "Code}" + "/services";
+            listOfURLs.add(endpoint);
+
+            endpoint = "PUT - Terminate a subscription : " + baseURL + FORWARD_SLASH + "{" + entityName + "Code}" + "/termination";
+            listOfURLs.add(endpoint);
+        }
+
+        mapRestful.put(upperEntityName, listOfURLs);
+    }
+
+    private void fillUpRestfulEntitiesMap(Map mapOfEntityAndURLs) {
+        RESTFUL_ENTITIES_MAP.putAll(mapOfEntityAndURLs);
     }
 
     private void loadMapPathAndInterfaceIBaseRs() {
@@ -169,20 +251,21 @@ public class GenericOpencellRestfulAPIv1 extends Application {
         Map<String, List<String>> aMapRestful = new HashMap<>();
 
         // handling normal cases
-        fillUpRestfulURLsMap( API_VERSION + "/billingCycles", aMapRestful );
-        fillUpRestfulURLsMap( API_VERSION + "/invoiceCategories", aMapRestful );
-        fillUpRestfulURLsMap( API_VERSION + "/invoiceSequences", aMapRestful );
-        fillUpRestfulURLsMap( API_VERSION + "/invoiceSubCategories", aMapRestful );
-        fillUpRestfulURLsMap( API_VERSION + "/invoiceTypes", aMapRestful );
-        fillUpRestfulURLsMap( API_VERSION + "/users", aMapRestful );
-        fillUpRestfulURLsMap( API_VERSION + "/account/titles", aMapRestful );
-        fillUpRestfulURLsMap( API_VERSION + "/calendars", aMapRestful );
-        fillUpRestfulURLsMap( API_VERSION + "/catalog/unitOfMeasures", aMapRestful );
-        fillUpRestfulURLsMap( API_VERSION + "/contacts", aMapRestful );
-        fillUpRestfulURLsMap( API_VERSION + "/taxCategories", aMapRestful );
-        fillUpRestfulURLsMap( API_VERSION + "/taxClasses", aMapRestful );
-        fillUpRestfulURLsMap( API_VERSION + "/taxMappings", aMapRestful );
-        fillUpRestfulURLsMap( API_VERSION + "/payment/creditCategories", aMapRestful );
+        fillUpRestfulURLsMap( "/billingCycles", aMapRestful );
+        fillUpRestfulURLsMap( "/invoiceCategories", aMapRestful );
+        fillUpRestfulURLsMap( "/invoiceSequences", aMapRestful );
+        fillUpRestfulURLsMap( "/invoiceSubCategories", aMapRestful );
+        fillUpRestfulURLsMap( "/invoiceTypes", aMapRestful );
+        fillUpRestfulURLsMap( "/users", aMapRestful );
+        fillUpRestfulURLsMap( "/account/titles", aMapRestful );
+        fillUpRestfulURLsMap( "/calendars", aMapRestful );
+        fillUpRestfulURLsMap( "/catalog/unitOfMeasures", aMapRestful );
+        fillUpRestfulURLsMap( "/contacts", aMapRestful );
+        fillUpRestfulURLsMap( "/taxes", aMapRestful );
+        fillUpRestfulURLsMap( "/taxCategories", aMapRestful );
+        fillUpRestfulURLsMap( "/taxClasses", aMapRestful );
+        fillUpRestfulURLsMap( "/taxMappings", aMapRestful );
+        fillUpRestfulURLsMap( "/payment/creditCategories", aMapRestful );
 
         for ( Class<? extends IBaseRs> aClass : classes ) {
             if ( aClass.isInterface() ) {
@@ -193,59 +276,67 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + ((Path) anAnnotation).value() + "s",
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + ACCOUNT_MANAGEMENT + Inflector.getInstance().pluralize(((Path) anAnnotation).value()),
+                            fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/sellers",
                                     aMapRestful );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/customer" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customers",
                                     ((Path) anAnnotation).value() );
 
+                            fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/customers", aMapRestful );
+
                             // Handling requests related to customerCategory
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customers/categories",
                                     ((Path) anAnnotation).value() + "/category" );
 
-                            fillUpRestfulURLsMap( API_VERSION + ACCOUNT_MANAGEMENT + "/customers", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( ACCOUNT_MANAGEMENT + "/customers/categories", aMapRestful, "customer" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/customerAccount" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customerAccounts",
                                     ((Path) anAnnotation).value() );
 
+                            fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/customerAccounts", aMapRestful );
+
                             // Handling request get list of customerAccounts based on a customerCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/customers\\/" + CODE_REGEX + "\\/customerAccounts" ) ,
                                     ((Path) anAnnotation).value() + "/list" );
 
-                            fillUpRestfulURLsMap( API_VERSION + ACCOUNT_MANAGEMENT + "/customerAccounts", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( "/accountManagement/customers/" + CODE_REGEX + "/customerAccounts", aMapRestful, "customerAccount" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/billingAccount" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/billingAccounts",
                                     ((Path) anAnnotation).value() );
 
+                            fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/billingAccounts", aMapRestful );
+
                             // Handling request get list of billingAccounts based on a customerAccountCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/customerAccounts\\/" + CODE_REGEX + "\\/billingAccounts" ) ,
                                     ((Path) anAnnotation).value() + "/list" );
 
-                            fillUpRestfulURLsMap( API_VERSION + ACCOUNT_MANAGEMENT + "/billingAccounts", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( "/accountManagement/customerAccounts/" + CODE_REGEX + "/billingAccounts", aMapRestful, "billingAccount" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/userAccount" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/userAccounts", ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/userAccounts", aMapRestful );
 
                             // Handling request get list of userAccounts based on a billingAccountCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/billingAccounts\\/" + CODE_REGEX + "\\/userAccounts" ) ,
                                     ((Path) anAnnotation).value() + "/list" );
 
-                            fillUpRestfulURLsMap( API_VERSION + ACCOUNT_MANAGEMENT + "/userAccounts", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( "/accountManagement/billingAccounts/" + CODE_REGEX + "/userAccounts", aMapRestful, "userAccount" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/accountHierarchy" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/accountHierarchies",
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( ((Path) anAnnotation).value(), aMapRestful );
-
-                            fillUpRestfulURLsMap( API_VERSION + ACCOUNT_MANAGEMENT + "/userAccounts", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( ACCOUNT_MANAGEMENT + "/accountHierarchies", aMapRestful, "accountHierarchy" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/billing/subscription" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/subscriptions",
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/subscriptions", aMapRestful );
 
                             // Handling different services of subscription: activation, suspension, termination, update of existing services
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/activation" ) ,
@@ -268,21 +359,25 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/updateServices", UpdateServicesRequestDto.class );
 
-                            fillUpRestfulURLsMap( API_VERSION + ACCOUNT_MANAGEMENT + "/subscriptions", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( ACCOUNT_MANAGEMENT + "/subscriptions", aMapRestful, "subscription" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/access" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/accesses",
                                     ((Path) anAnnotation).value() );
 
+                            fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/accesses", aMapRestful );
+
                             // Handling request get list of accesses based on a subscriptionCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/accesses" ) ,
                                     ((Path) anAnnotation).value() + "/list" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( ACCOUNT_MANAGEMENT + "/subscriptions/" + CODE_REGEX + "/accesses", aMapRestful, "access" );
 
                             // Handling request get an accessPoint based on a subscriptionCode and an accessCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/accesses\\/" + CODE_REGEX ) ,
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + ACCOUNT_MANAGEMENT + "/accesses", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( ACCOUNT_MANAGEMENT + "/subscriptions/" + CODE_REGEX + "/accesses/" + CODE_REGEX, aMapRestful, "access" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/billing/ratedTransaction" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/ratedTransactions",
@@ -290,7 +385,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/ratedTransactions/cancellation",
                                     ((Path) anAnnotation).value() + "/cancelRatedTransactions" );
 
-                            fillUpRestfulURLsMap( API_VERSION + BILLING + "/ratedTransactions", aMapRestful );
+                            fillUpRestfulURLsMap( BILLING + "/ratedTransactions", aMapRestful );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/billing/wallet" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/wallets",
@@ -298,11 +393,13 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/wallets/operation",
                                     ((Path) anAnnotation).value() + "/operation" );
 
-                            fillUpRestfulURLsMap( API_VERSION + BILLING + "/wallets", aMapRestful );
+                            fillUpRestfulURLsMap( BILLING + "/wallets", aMapRestful );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/offerTemplate" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/offerTemplates",
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( CATALOG + "/offerTemplates", aMapRestful );
 
                             // Handling enable and disable an offerTemplate
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/offerTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
@@ -311,11 +408,15 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/offerTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + CATALOG + "/offerTemplates", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/offerTemplates/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "offerTemplate" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/offerTemplates/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "offerTemplate" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/oneShotChargeTemplate" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/oneShotChargeTemplates",
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( CATALOG + "/oneShotChargeTemplates", aMapRestful );
 
                             // Handling enable and disable an oneShotChargeTemplate
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/oneShotChargeTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
@@ -324,11 +425,15 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/oneShotChargeTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + CATALOG + "/oneShotChargeTemplates", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/oneShotChargeTemplates/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "oneShotChargeTemplate" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/oneShotChargeTemplates/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "oneShotChargeTemplate" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/recurringChargeTemplate" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/recurringChargeTemplates",
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( CATALOG + "/recurringChargeTemplates", aMapRestful );
 
                             // Handling enable and disable a recurringChargeTemplate
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/recurringChargeTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
@@ -337,11 +442,15 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/recurringChargeTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + CATALOG + "/recurringChargeTemplates", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/recurringChargeTemplates/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "recurringChargeTemplate" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/recurringChargeTemplates/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "recurringChargeTemplate" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/usageChargeTemplate" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/usageChargeTemplates",
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( CATALOG + "/usageChargeTemplates", aMapRestful );
 
                             // Handling enable and disable a usageChargeTemplate
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/usageChargeTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
@@ -350,11 +459,15 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/usageChargeTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + CATALOG + "/usageChargeTemplates", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/usageChargeTemplates/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "usageChargeTemplate" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/usageChargeTemplates/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "usageChargeTemplate" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/serviceTemplate" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/serviceTemplates",
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( CATALOG + "/serviceTemplates", aMapRestful );
 
                             // Handling enable and disable a serviceTemplate
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/serviceTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
@@ -363,11 +476,15 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/serviceTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + CATALOG + "/serviceTemplates", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/serviceTemplates/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "serviceTemplate" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/serviceTemplates/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "serviceTemplate" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/pricePlan" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/pricePlans",
                                     ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( CATALOG + "/pricePlans", aMapRestful );
 
                             // Handling the list of pricePlans based on given charge code
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/" + CODE_REGEX + "\\/pricePlans" ) ,
@@ -380,10 +497,14 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/pricePlans\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + CATALOG + "/pricePlans", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/pricePlans/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "pricePlan" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/pricePlans/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "pricePlan" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/country" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/countries", ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( "/countries", aMapRestful );
 
                             // Handling enable and disable a trading country
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/countries\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
@@ -392,10 +513,14 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/countries\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + "/countries", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( "/countries/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "country" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( "/countries/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "country" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/currency" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/currencies", ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( "/currencies", aMapRestful );
 
                             // Handling enable and disable a trading currency
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/currencies\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
@@ -404,10 +529,14 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/currencies\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + "/currencies", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( "/currencies/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "currency" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( "/currencies/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "currency" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/jobInstance" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobInstances", ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( "/jobInstances", aMapRestful );
 
                             // Handling enable and disable a jobInstance
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/jobInstances\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
@@ -416,19 +545,25 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/jobInstances\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + "/jobInstances", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( "/jobInstances/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "jobInstance" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( "/jobInstances/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "jobInstance" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/language" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/languages", ((Path) anAnnotation).value() );
 
-                            // Handling enable and disable a language
+                            fillUpRestfulURLsMap( "/languages", aMapRestful );
+
+                            // Handling enable and disable a trading language
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/languages\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/languages\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + "/languages", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( "/languages/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "language" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( "/languages/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "language" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/invoice" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices",
@@ -453,7 +588,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/validate", ValidateInvoiceRequestDto.class );
 
-                            fillUpRestfulURLsMap( API_VERSION + "/invoices", aMapRestful );
+                            fillUpRestfulURLsMap( "/invoices", aMapRestful );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/billing/invoicing" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/billing/invoicings/creation",
@@ -484,7 +619,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/stop", null );
 
-                            fillUpRestfulURLsMap( API_VERSION + "/jobs", aMapRestful );
+                            fillUpRestfulURLsMap( "/jobs", aMapRestful );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/PdfInvoice" ) ) {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "/pdfInvoices" ), ((Path) anAnnotation).value() );
@@ -495,6 +630,8 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/accountingCodes",
                                     ((Path) anAnnotation).value() );
 
+                            fillUpRestfulURLsMap( BILLING + "/accountingCodes", aMapRestful );
+
                             // Handling enable and disable an accountingCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + BILLING + "\\/accountingCodes\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
@@ -502,26 +639,30 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + BILLING + "\\/accountingCodes\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + BILLING + "/accountingCodes", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( BILLING + "/accountingCodes/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "accountingCode" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( BILLING + "/accountingCodes/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "accountingCode" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/countryIso" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/countriesIso", ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + "/countriesIso", aMapRestful );
+                            fillUpRestfulURLsMap( "/countriesIso", aMapRestful );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/currencyIso" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/currenciesIso", ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + "/currenciesIso", aMapRestful );
+                            fillUpRestfulURLsMap( "/currenciesIso", aMapRestful );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/languageIso" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/languagesIso", ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( API_VERSION + "/languagesIso", aMapRestful );
+                            fillUpRestfulURLsMap( "/languagesIso", aMapRestful );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/payment" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/payment/paymentMethods",
                                     ((Path) anAnnotation).value() + "/paymentMethod" );
+
+                            fillUpRestfulURLsMap( "/payment/paymentMethods", aMapRestful );
 
                             // Handling request get list of paymentMethods based on a customerAccountCode
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/payment\\/customerAccounts\\/" + CODE_REGEX + "\\/paymentMethods" ) ,
@@ -534,7 +675,9 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/payment\\/paymentMethods\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
                                     ((Path) anAnnotation).value() + "/paymentMethod" );
 
-                            fillUpRestfulURLsMap( API_VERSION + "/payment/paymentMethods", aMapRestful );
+                            fillUpRestfulURLsMapWithSpecialURL( "/payment/paymentMethods/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "paymentMethod" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( "/payment/paymentMethods/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "paymentMethod" );
                         }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
