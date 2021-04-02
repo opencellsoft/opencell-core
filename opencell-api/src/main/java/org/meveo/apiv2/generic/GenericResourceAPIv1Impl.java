@@ -541,12 +541,12 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     }
 
     @Override
-    public Response getListRestfulURLs() {
+    public Response getListRestEndpoints() {
         return Response.ok().entity(GenericOpencellRestfulAPIv1.RESTFUL_ENTITIES_MAP).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
 
     @Override
-    public Response getListRestfulURLsForEntity(String entityName) {
+    public Response getListRestEndpointsForEntity(String entityName) {
         if ( GenericOpencellRestfulAPIv1.RESTFUL_ENTITIES_MAP.containsKey( StringUtils.capitalizeFirstLetter(entityName) ) ) {
             entityName = StringUtils.capitalizeFirstLetter(entityName);
             Map responseMap = new HashMap();
