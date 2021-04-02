@@ -101,7 +101,7 @@ public class OrderValidationScript extends Script {
 
         AttributeInstance attributeInstance = null;
         for (OrderAttribute orderAttribute : orderProduct.getOrderAttributes()) {
-            attributeInstance = new AttributeInstance(orderAttribute);
+            attributeInstance = new AttributeInstance(orderAttribute, currentUser);
             attributeInstance.updateAudit(currentUser);
             attributeInstance.setServiceInstance(serviceInstance);
             attributeInstance.setSubscription(subscription);
