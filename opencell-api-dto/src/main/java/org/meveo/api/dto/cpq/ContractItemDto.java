@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.contract.ContractItem;
+import org.meveo.model.cpq.contract.ContractRateTypeEnum;
 
 /**
  * @author Tarik FAKHOURI
@@ -25,6 +26,12 @@ public class ContractItemDto extends BusinessEntityDto {
 	private String serviceTemplateCode;
 	private int rate;
     private BigDecimal amountWithoutTax;
+    
+    /**
+     * Type of rate, whether absolute or percentage.
+     */
+    private ContractRateTypeEnum contractRateType = ContractRateTypeEnum.PERCENTAGE;
+    
 	private CustomFieldsDto customFields;
     
     public ContractItemDto() {}
@@ -46,6 +53,7 @@ public class ContractItemDto extends BusinessEntityDto {
     	this.amountWithoutTax = c.getAmountWithoutTax();
     	this.description = c.getDescription();
     	this.code = c.getCode();
+    	this.contractRateType=c.getContractRateType();
     }
     
 	/**
@@ -158,6 +166,18 @@ public class ContractItemDto extends BusinessEntityDto {
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
+
+	public ContractRateTypeEnum getContractRateType() {
+		return contractRateType;
+	}
+
+	public void setContractRateType(ContractRateTypeEnum contractRateType) {
+		this.contractRateType = contractRateType;
+	}
+
+
+	
+	
 
 
 

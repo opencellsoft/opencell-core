@@ -91,6 +91,7 @@ import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -114,6 +115,7 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.AttributeService;
+import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -217,6 +219,9 @@ public class CpqQuoteApi extends BaseApi {
     
     @Inject
     private TaxMappingService taxMappingService;
+    
+    @Inject
+    private ContractItemService contractItemService;
 
 	public QuoteDTO createQuote(QuoteDTO quote) {
 	    if(Strings.isEmpty(quote.getApplicantAccountCode())) {
@@ -1478,6 +1483,9 @@ public class CpqQuoteApi extends BaseApi {
     	return false;
     }
     
+    
+  
+    
     private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount,DiscountPlan discountPlan, OfferTemplate offer,Product product, Date quoteDate,AccountingArticle accountingArticle)
             throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>(); 
@@ -1491,6 +1499,8 @@ public class CpqQuoteApi extends BaseApi {
         return applicableDiscountPlanItems;
     }
     
+     
+    
     private List<PriceDTO> populateToDTO(List<QuotePrice> quotePrices){
     	if(quotePrices==null) {
     		return new ArrayList<PriceDTO>();
@@ -1502,6 +1512,6 @@ public class CpqQuoteApi extends BaseApi {
             return new PriceDTO(price);
         }).collect(Collectors.toList());
     	return priceDTO;
-    }
+    } 
 
 }
