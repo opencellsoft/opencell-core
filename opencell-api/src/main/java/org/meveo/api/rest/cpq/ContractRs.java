@@ -128,8 +128,8 @@ public interface ContractRs extends IBaseRs {
             @ApiResponse(responseCode = "412", description = "One of the parameters is missing",
     		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
     })
-	Response findByCode(@Parameter(description = "retrieving a Contract with its code") @QueryParam("contractAccountLevel") ContractAccountLevel contractAccountLevel,
-								@Parameter(description = "retrieving a Contract with its code") @QueryParam("accountCode") String accountCode);
+	Response findByCode(@Parameter(description = "retrieving a Contract with its code", example = "possible value : SELLER, CUSTOMER, CUSTOMER_ACCOUNT, BILLING_ACCOUNT") @QueryParam("contractAccountLevel") ContractAccountLevel contractAccountLevel,
+						@Parameter(description = "retrieving a Contract with its code") @QueryParam("accountCode") String accountCode);
 
 	@PUT
 	@Path("/{contractCode}/status/{status}")
