@@ -128,6 +128,9 @@ public class UnitSepaDirectDebitJobBean {
 			if (BigDecimal.ZERO.compareTo(ddrequestItem.getAmount()) == 0) {
 				log.info("invoice: {}  balanceDue:{}  no DIRECTDEBIT transaction", ddrequestItem.getReference(), BigDecimal.ZERO);
 			} else {
+				if (ddrequestItem.getAccountOperations() == null || ddrequestItem.getAccountOperations().isEmpty()) {
+					throw new BusinessException("ddRequestItem " + ddrequestItem + " has no attached AOs ! Payment or refund can't be created for it.");
+				}
 				automatedPayment = createPaymentOrRefund(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
 						ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), "ddItem" + ddrequestItem.getId(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
 						DateUtils.addDaysToDate(new Date(), ArConfig.getDateValueAfter()), ddRequestLOT.getSendDate(), ddRequestLOT.getSendDate(),
