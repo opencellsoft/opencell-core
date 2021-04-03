@@ -248,43 +248,82 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
         this.displayBillingCycle = displayBillingCycle;
     }
     
-    
+    /**
+     * 
+     * @return default invoice sub-category
+     */
     public InvoiceSubCategory getDefaultInvoiceSubCategory() {
 		return defaultInvoiceSubCategory;
 	}
-
+    
+    /**
+     * set default invoice sub-category
+     * @param defaultInvoiceSubCategory
+     */
 	public void setDefaultInvoiceSubCategory(InvoiceSubCategory defaultInvoiceSubCategory) {
 		this.defaultInvoiceSubCategory = defaultInvoiceSubCategory;
 	}
-
+	
+	/**
+	 * 
+	 * @return default generic accounting article
+	 */
 	public AccountingArticle getDefaultGenericAccountingArticle() {
 		return defaultGenericAccountingArticle;
 	}
-
+	
+	/**
+	 * set default generic accounting article
+	 * @param defaultGenericAccountingArticle
+	 */
 	public void setDefaultGenericAccountingArticle(AccountingArticle defaultGenericAccountingArticle) {
 		this.defaultGenericAccountingArticle = defaultGenericAccountingArticle;
 	}
-
+	
+	/**
+	 * 
+	 * @return default discount accounting article
+	 */
 	public AccountingArticle getDefaultDiscountAccountingArticle() {
 		return defaultDiscountAccountingArticle;
 	}
-
+	
+	/**
+	 * set default discount accounting article
+	 * @param defaultDiscountAccountingArticle
+	 */
 	public void setDefaultDiscountAccountingArticle(AccountingArticle defaultDiscountAccountingArticle) {
 		this.defaultDiscountAccountingArticle = defaultDiscountAccountingArticle;
 	}
-
+	
+	/**
+	 * 
+	 * @return default advanced payment accounting article
+	 */
 	public AccountingArticle getDefaultAdvancedPaymentAccountingArticle() {
 		return defaultAdvancedPaymentAccountingArticle;
 	}
-
+	
+	/**
+	 * set default advanced payment accounting article
+	 * @param defaultAdvancedPaymentAccountingArticle
+	 */
 	public void setDefaultAdvancedPaymentAccountingArticle(AccountingArticle defaultAdvancedPaymentAccountingArticle) {
 		this.defaultAdvancedPaymentAccountingArticle = defaultAdvancedPaymentAccountingArticle;
 	}
-
+	
+	/**
+	 * 
+	 * @return default invoice minimum accounting article
+	 */
 	public AccountingArticle getDefaultInvoiceMinimumAccountingArticle() {
 		return defaultInvoiceMinimumAccountingArticle;
 	}
-
+	
+	/**
+	 * set default invoice minimum accounting article
+	 * @param defaultInvoiceMinimumAccountingArticle
+	 */
 	public void setDefaultInvoiceMinimumAccountingArticle(AccountingArticle defaultInvoiceMinimumAccountingArticle) {
 		this.defaultInvoiceMinimumAccountingArticle = defaultInvoiceMinimumAccountingArticle;
 	}

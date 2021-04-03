@@ -56,14 +56,16 @@ public class AttributeInstance extends AttributeValue<AttributeInstance> {
         dateValue=orderAttribute.getDateValue();
         doubleValue=orderAttribute.getDoubleValue();
         updateAudit(currentUser);
-        assignedAttributeValue = orderAttribute.getAssignedAttributeValue()
-                .stream()
-                .map(oa -> {
-                    AttributeInstance attributeInstance = new AttributeInstance(oa, currentUser);
-                    attributeInstance.setParentAttributeValue(this);
-                    return attributeInstance;
-                })
-                .collect(Collectors.toList());
+        if(orderAttribute.getAssignedAttributeValue() != null) {
+            assignedAttributeValue = orderAttribute.getAssignedAttributeValue()
+                    .stream()
+                    .map(oa -> {
+                        AttributeInstance attributeInstance = new AttributeInstance(oa, currentUser);
+                        attributeInstance.setParentAttributeValue(this);
+                        return attributeInstance;
+                    })
+                    .collect(Collectors.toList());
+        }
     }
 
     public ServiceInstance getServiceInstance() {

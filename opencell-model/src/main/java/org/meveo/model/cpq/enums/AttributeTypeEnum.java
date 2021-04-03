@@ -158,6 +158,13 @@ public enum AttributeTypeEnum {
 					.collect(Collectors.toSet());
 			return values.size();
 		}
+	},
+    
+	EXPRESSION_LANGUAGE {
+		@Override
+		public ColumnTypeEnum getColumnType(Boolean isRange) {
+			return ColumnTypeEnum.String;
+		}
 	};
 
 	public abstract ColumnTypeEnum getColumnType(Boolean isRange);

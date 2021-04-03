@@ -16,6 +16,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
+import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetQuoteProductDtoResponse;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
@@ -104,7 +105,7 @@ public interface AttributeRs extends IBaseRs {
     tags = { "Catalog browsing" },
     description ="Get attributes related to the given product that match the quote offer context",
     responses = {
-            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetQuoteProductDtoResponse.class))),
+            @ApiResponse(responseCode="200", description = "The search operation is succefully executed",content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
             @ApiResponse(responseCode = "404", description = "billingAccountCode does not exist"),
             @ApiResponse(responseCode = "404", description = "offerCode does not exist"),
             @ApiResponse(responseCode = "404", description = "productCode does not exist"),

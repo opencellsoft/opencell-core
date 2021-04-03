@@ -144,7 +144,7 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
              if(chargeTemplate == null)
                  throw new BadRequestException("No charge template found with id: " + articleMappingLine.getChargeTemplate().getId());
              articleMappingLine.setChargeTemplate(chargeTemplate);
-         } 
+         }
     }
     
    

@@ -1130,7 +1130,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"currentVersion\": {{productOneVersion}},\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-11-24\",\r\n        \"to\": \"2020-11-25\"\r\n    },\r\n    \"groupedAttributeCodes\" : [\"{{groupedAttributeCode}}\"],\r\n    \"attributeCodes\": [\r\n        \"{{billingCycleAttribute}}\",\r\n        \"{{engagementAttributeCode}}\"\r\n    ],\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagTwoCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"shortDescription\": \"Product version test description\",\r\n    \"currentVersion\": {{productOneVersion}},\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-24\",\r\n    \"longDescription\": \"This is a long test description for product version\",\r\n    \"validity\": {\r\n        \"from\": \"2020-11-24\",\r\n        \"to\": \"2022-11-25\"\r\n    },\r\n    \"groupedAttributeCodes\" : [\"{{groupedAttributeCode}}\"],\r\n    \"attributeCodes\": [\r\n        \"{{billingCycleAttribute}}\",\r\n        \"{{engagementAttributeCode}}\"\r\n    ],\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagTwoCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -3223,7 +3223,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"label\": \"Default price plan matrix version\",\n    \"version\": {{ppmRcVersion}},\n    \"isMatrix\": true,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2021-01-03\"\n    }\n}",
+							"raw": "{\n    \"pricePlanMatrixCode\": \"{{ppmRcCode}}\",\n    \"label\": \"Default price plan matrix version\",\n    \"version\": {{ppmRcVersion}},\n    \"isMatrix\": true,\n    \"validity\": {\n        \"from\": \"2020-10-12\",\n        \"to\": \"2022-01-03\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3381,7 +3381,7 @@
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"url": {
 							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/{{ppmRcCode}}/{{ppmRcVersion}}?status=PUBLISHED",
@@ -3423,7 +3423,7 @@
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"url": {
 							"raw": "{{opencell.url}}/catalog/pricePlan/pricePlanMatrixVersion/{{ppmOsCode}}/{{ppmOsVersion}}?status=PUBLISHED",
@@ -3919,7 +3919,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"{{contractCode}}\",\r\n  \"description\": \"This is the contract test description\",\r\n  \"contractAccountLevel\":\"BILLING_ACCOUNT\",\r\n  \"accountCode\":\"{{billableAccountCode}}\",\r\n  \"contractDate\": \"2020-12-31\",\r\n  \"beginDate\": \"2021-01-01\",\r\n  \"endDate\": \"2021-12-31\"\r\n}\r\n\r\n",
+							"raw": "{\r\n    \"code\": \"{{contractCode}}\",\r\n    \"description\": \"This is the contract test description\",\r\n    \"contractAccountLevel\": \"BILLING_ACCOUNT\",\r\n    \"accountCode\": \"{{billableAccountCode}}\",\r\n    \"contractDate\": \"2021-03-03\",\r\n    \"beginDate\": \"2021-01-01\",\r\n    \"endDate\": \"2021-12-31\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3961,6 +3961,28 @@
 					"response": []
 				},
 				{
+					"name": "Activate The Contract",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{opencell.url}}/cpq/contracts/{{contractCode}}/status/ACTIVE",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"cpq",
+								"contracts",
+								"{{contractCode}}",
+								"status",
+								"ACTIVE"
+							]
+						},
+						"description": "Find a Contract type by contractCode"
+					},
+					"response": []
+				},
+				{
 					"name": "Create Contract Line",
 					"event": [
 						{
@@ -3978,7 +4000,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"code\": \"{{contractLineCode}}\",\r\n  \"description\": \"This is a contract line test desc\",\r\n  \"contractCode\": \"{{contractCode}}\",\r\n  \"offerTemplateCode\": \"{{offerTemplateCode}}\",\r\n  \"productCode\": \"{{productLineCode}}\",\r\n  \"pricePlanCode\":\"{{ppmRcCode}}\"\r\n}",
+							"raw": "{\r\n    \"code\": \"{{contractLineCode}}\",\r\n    \"description\": \"The contract line test description\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"offerTemplateCode\": \"{{offerTemplateCode}}\",\r\n    \"productCode\": \"{{productOneCode}}\",\r\n    \"chargeTemplateCode\": \"{{recChargeTemplateCode}}\",\r\n    \"contractRateType\": \"FIXED\",\r\n    \"amountWithoutTax\": 155\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4452,6 +4474,125 @@
 					"response": []
 				},
 				{
+					"name": "Create The Discount Plan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"{{discountPlanCode}}\",\r\n  \"description\": \"discount plan test description\",  \r\n  \"startDate\": \"2021-01-01\",\r\n  \"endDate\": \"2021-12-01\",\r\n  \"status\":\"DRAFT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/catalog/discountPlans",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"catalog",
+								"discountPlans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create The Discount Plan Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"{{discountPlanCode}}\",\r\n    \"discountPlan\": {\r\n        \"id\": 1\r\n    },\r\n    \"discountValue\": 10.000000000000,\r\n    \"discountPlanItemType\": \"PERCENTAGE\",\r\n    \"accountingArticle\": {\r\n        \"id\": 2\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/v2/catalog/discountPlans/1/discountPlanItems",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"v2",
+								"catalog",
+								"discountPlans",
+								"1",
+								"discountPlanItems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activate The Discount Plan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"{{discountPlanCode}}\",\r\n  \"status\":\"ACTIVE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{opencell.url}}/catalog/discountPlan/createOrUpdate",
+							"host": [
+								"{{opencell.url}}"
+							],
+							"path": [
+								"catalog",
+								"discountPlan",
+								"createOrUpdate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create Monthly Quote Offer",
 					"event": [
 						{
@@ -4469,7 +4610,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 24\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttributeTwo}}\",\r\n            \"stringValue\": \"Monthly\",\r\n            \"doubleValue\": 24,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"offerId\": {{offerOneId}},\r\n    \"billableAccountCode\": \"{{billableAccountCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"discountPlanCode\": \"{{discountPlanCode}}\",\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Monthly\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 24\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttributeTwo}}\",\r\n            \"stringValue\": \"Monthly\",\r\n            \"doubleValue\": 24,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4508,7 +4649,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"billableAccountCode\": \"{{billableAccountTwoCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Annually\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 12\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttributeTwo}}\",\r\n            \"stringValue\": \"Annually\",\r\n            \"doubleValue\": 12,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"quoteCode\": \"{{quoteCode}}\",\r\n    \"offerId\": {{offerOneId}},\r\n    \"billableAccountCode\": \"{{billableAccountTwoCode}}\",\r\n    \"offerCode\": \"{{offerTemplateCode}}\",\r\n    \"contractCode\": \"{{contractCode}}\",\r\n    \"quoteVersion\": {{QuoteVersion}},\r\n    \"discountPlanCode\":\"{{discountPlanCode}}\",\r\n    \"products\": [\r\n        {\r\n            \"productCode\": \"{{productOneCode}}\",\r\n            \"quoteCode\": \"{{quoteCode}}\",\r\n            \"productVersion\": {{productOneVersion}},\r\n            \"quoteVersion\": {{QuoteVersion}},\r\n            \"quantity\": 1,\r\n            \"productAttributes\": [\r\n                {\r\n                    \"quoteAttributeCode\": \"{{billingCycleAttribute}}\",\r\n                    \"stringValue\": \"Annually\"\r\n                },\r\n                {\r\n                    \"quoteAttributeCode\": \"{{engagementAttributeCode}}\",\r\n                    \"doubleValue\": 12\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"offerAttributes\": [\r\n        {\r\n            \"quoteAttributeCode\": \"{{billingCycleAttributeTwo}}\",\r\n            \"stringValue\": \"Annually\",\r\n            \"doubleValue\": 12,\r\n            \"dateValue\": \"2021-02-22\"\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4546,7 +4687,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/cpq/quotes/quoteItems/{{quoteOfferOneId}}",
+							"raw": "{{opencell.url}}/cpq/quotes/quoteItems/{{offerOneId}}",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -4554,7 +4695,7 @@
 								"cpq",
 								"quotes",
 								"quoteItems",
-								"{{quoteOfferOneId}}"
+								"{{offerOneId}}"
 							]
 						}
 					},
@@ -4577,7 +4718,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{opencell.url}}/cpq/quotes/quoteItems/{{quoteOfferTwoId}}",
+							"raw": "{{opencell.url}}/cpq/quotes/quoteItems/{{offerTwoId}}",
 							"host": [
 								"{{opencell.url}}"
 							],
@@ -4585,7 +4726,7 @@
 								"cpq",
 								"quotes",
 								"quoteItems",
-								"{{quoteOfferTwoId}}"
+								"{{offerTwoId}}"
 							]
 						}
 					},
@@ -5101,7 +5242,7 @@
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"url": {
 							"raw": "{{opencell.url}}/orderManagement/commercialOrders/{{commercialOrderOneId}}/userAccounts/{{billableAccountCode}}",
@@ -5137,7 +5278,7 @@
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"url": {
 							"raw": "{{opencell.url}}/orderManagement/commercialOrders/{{commercialOrderTwoId}}/userAccounts/{{billableAccountTwoCode}}",
@@ -5319,7 +5460,7 @@
 						}
 					],
 					"request": {
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -5842,6 +5983,10 @@
 			"value": "ACCOUNTING_ARTICLE"
 		},
 		{
+			"key": "discountPlanCode",
+			"value": "TEST_DISCOUNT_PLAN"
+		},
+		{
 			"key": "engagementColumnCode",
 			"value": "ENGAGEMENT_DURATION_COLUMN"
 		},
@@ -6034,11 +6179,11 @@
 			"value": 1
 		},
 		{
-			"key": "quoteOfferOneId",
+			"key": "offerOneId",
 			"value": 1
 		},
 		{
-			"key": "quoteOfferTwoId",
+			"key": "offerTwoId",
 			"value": "2"
 		},
 		{
@@ -6052,6 +6197,10 @@
 		{
 			"key": "mediaTwoId",
 			"value": "2"
+		},
+		{
+			"key": "orderOfferId",
+			"value": "5"
 		}
 	]
 }

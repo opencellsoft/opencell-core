@@ -623,6 +623,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerComponent.setSequence(offerComponentDto.getSequence());
         offerComponent.setMandatory(offerComponentDto.isMandatory());
         offerComponent.setDisplay(offerComponentDto.isDisplay());
+        offerComponent.setQuantityDefault(offerComponentDto.getQuantityDefault());
+        offerComponent.setQuantityMin(offerComponentDto.getQuantityMin());
+        offerComponent.setQuantityMax(offerComponentDto.getQuantityMax());
         return offerComponent;
     }
 
@@ -753,7 +756,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         				if(productVersionList!=null && !productVersionList.isEmpty()) {  
         					  
         					for(ProductVersion productVersion : productVersionList) {  
-        						if(productVersion.getValidity().isCorrespondsToPeriod(new Date())) {
+        						if(productVersion.getValidity()!=null) {
+        								if(productVersion.getValidity().isCorrespondsToPeriod(new Date())) {
         							if(requestedTagTypes!=null && !requestedTagTypes.isEmpty()) {
         							   tags=productVersionService.getProductTagsByType(requestedTagTypes);
         					           productVersion.setTags(new HashSet<Tag>(tags));
@@ -761,14 +765,16 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         							getProductVersionResponse =new GetProductVersionResponse(productVersion,loadAttributes, loadTags);
         							productDTO.setCurrentProductVersion(getProductVersionResponse);
         							break;
-        							}
+        							}}
         					}  	
         				}
         				offerProductsDto.setProduct(productDTO);
         				offerProductsDto.setMandatory(offerComponent.isMandatory());
         				offerProductsDto.setSequence(offerComponent.getSequence());
         				offerProductsDto.setDisplay(offerComponent.isDisplay());
-        				
+        				offerProductsDto.setQuantityDefault(offerComponent.getQuantityDefault());
+        				offerProductsDto.setQuantityMin(offerComponent.getQuantityMin());
+        				offerProductsDto.setQuantityMax(offerComponent.getQuantityMax());
         				offerProducts.add(offerProductsDto);
         			} 
 

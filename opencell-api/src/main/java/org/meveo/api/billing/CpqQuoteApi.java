@@ -91,6 +91,7 @@ import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -114,6 +115,7 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.AttributeService;
+import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -217,6 +219,9 @@ public class CpqQuoteApi extends BaseApi {
     
     @Inject
     private TaxMappingService taxMappingService;
+    
+    @Inject
+    private ContractItemService contractItemService;
 
 	public QuoteDTO createQuote(QuoteDTO quote) {
 	    if(Strings.isEmpty(quote.getApplicantAccountCode())) {
@@ -255,7 +260,7 @@ public class CpqQuoteApi extends BaseApi {
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
         cpqQuote.setSendDate(quote.getSendDate());
         if(!Strings.isEmpty(quote.getDiscountPlanCode())) {
-            cpqQuote.setDiscountPlan(discountPlanService.findByCode(quote.getDiscountPlanCode()));
+            cpqQuote.setDiscountPlan(loadEntityByCode(discountPlanService, quote.getDiscountPlanCode(), DiscountPlan.class));
         }
 
         cpqQuote.setQuoteLotDateBegin(quote.getQuoteLotDateBegin());
@@ -326,6 +331,8 @@ public class CpqQuoteApi extends BaseApi {
 			for (QuoteProductDTO quoteProductDTO : quoteProductDtos) {
 				if(Strings.isEmpty(quoteProductDTO.getProductCode()))
 					missingParameters.add("products["+index+"].productCode");
+				if(quoteProductDTO.getProductVersion() == null)
+					missingParameters.add("products["+index+"].productVersion");
 				
 				handleMissingParameters();
 				
@@ -472,6 +479,11 @@ public class CpqQuoteApi extends BaseApi {
 
             if (generatePdf) {
                 result.setPdfContent(generateQuotePDF(quoteCode, currentVersion, true));
+                CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
+                if (quote == null) {
+                    throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode, "Code");
+                }
+                result.setPdfFileName(quote.getPdfFilename());
             }
 
 
@@ -538,7 +550,9 @@ public class CpqQuoteApi extends BaseApi {
                 quote.setBillableAccount(billableAccount);
         }else
             quote.setBillableAccount(quote.getApplicantAccount());
-
+        if(!Strings.isEmpty(quoteDto.getDiscountPlanCode())) {
+        	quote.setDiscountPlan(loadEntityByCode(discountPlanService, quoteDto.getDiscountPlanCode(), DiscountPlan.class));
+        }
         try {
             populateCustomFields(quoteDto.getCustomFields(), quote, false);
             cpqQuoteService.update(quote);
@@ -660,6 +674,9 @@ public class CpqQuoteApi extends BaseApi {
         dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(quote));
         dto.setId(quote.getId());
         dto.setStatusDate(quote.getStatusDate());
+        if(quote.getDiscountPlan() != null)
+        	dto.setDiscountPlanCode(quote.getDiscountPlan().getCode());
+        
         return dto;
     }
 
@@ -678,18 +695,18 @@ public class CpqQuoteApi extends BaseApi {
 
     public QuoteOfferDTO createQuoteItem(QuoteOfferDTO quoteOfferDto) {
 
-        if (Strings.isEmpty(quoteOfferDto.getOfferCode()))
-            missingParameters.add("offerCode");
         if (quoteOfferDto.getQuoteVersion() == null)
             missingParameters.add("quoteVersion");
         if (Strings.isEmpty(quoteOfferDto.getQuoteCode()))
             missingParameters.add("quoteCode");
+        if (quoteOfferDto.getOfferId() == null)
+            missingParameters.add("offerId");
 
         handleMissingParameters();
 
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(quoteOfferDto.getOfferCode());
+        OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDto.getOfferId());
         if (offerTemplate == null)
-            throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferCode());
+            throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferId());
         final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDto.getQuoteCode(), quoteOfferDto.getQuoteVersion());
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteOfferDto.getQuoteCode() + "," + quoteOfferDto.getQuoteVersion() + ")");
@@ -722,10 +739,10 @@ public class CpqQuoteApi extends BaseApi {
         if (quoteOffer == null)
             throw new EntityDoesNotExistsException(QuoteOffer.class, quoteOfferDTO.getQuoteOfferId());
         // check offer template if exist
-        if (!Strings.isEmpty(quoteOfferDTO.getOfferCode())) {
-            OfferTemplate offerTemplate = offerTemplateService.findByCode(quoteOfferDTO.getOfferCode());
+        if (quoteOfferDTO.getOfferId() != null) {
+            OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDTO.getOfferId());
             if (offerTemplate == null)
-                throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDTO.getOfferCode());
+                throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDTO.getOfferId());
             quoteOffer.setOfferTemplate(offerTemplate);
         }
 
@@ -995,6 +1012,7 @@ public class CpqQuoteApi extends BaseApi {
 		}
         cpqQuote.setStatus(status);
         cpqQuote.setStatusDate(Calendar.getInstance().getTime());
+       
         if (QuoteStatusEnum.APPROVED.toString().equalsIgnoreCase(status)) {
             cpqQuote = serviceSingleton.assignCpqQuoteNumber(cpqQuote);
         }
@@ -1016,6 +1034,10 @@ public class CpqQuoteApi extends BaseApi {
         quoteVersion.setStatus(status);
         quoteVersion.setStatusDate(Calendar.getInstance().getTime());
         quoteVersionService.update(quoteVersion);
+        if (status.equals(VersionStatusEnum.PUBLISHED)){
+        	quoteQuotation(quoteCode, currentVersion);
+        	updateQuoteStatus(quoteCode, QuoteStatusEnum.PENDING.toString());
+        }
     }
 
     public GetQuoteVersionDtoResponse quoteQuotation(String quoteCode, int currentVersion) {
@@ -1048,8 +1070,9 @@ public class CpqQuoteApi extends BaseApi {
                     	 List<QuotePrice> quotePrices=discountCalculator(quotePrice, quoteVersion.getQuote().getDiscountPlan(),quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(), quoteVersion.getQuote().getQuoteDate());
                          pricesDTO.addAll(populateToDTO(quotePrices));
                     }
-                    return quotePrice;
-                });
+                    return pricesDTO;
+                }).collect(Collectors.toList());
+         
          
       
         GetQuoteVersionDtoResponse response = new GetQuoteVersionDtoResponse(quoteVersion, true, true, true,true);
@@ -1222,15 +1245,17 @@ public class CpqQuoteApi extends BaseApi {
 
         Subscription subscription = new Subscription();
         subscription.setCode(subscriptionCode);
-        subscription.setSeller(quoteOffer.getBillableAccount().getCustomerAccount().getCustomer().getSeller());
+        BillingAccount billableAccount=quoteOffer.getBillableAccount()!=null? quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount();
+        Seller seller =billableAccount.getCustomerAccount().getCustomer().getSeller();
+        subscription.setSeller(seller);
 
         subscription.setOffer(quoteOffer.getOfferTemplate());
         subscription.setSubscriptionDate(new Date());
         subscription.setEndAgreementDate(null);
 
-        if (quoteOffer.getBillableAccount().getUsersAccounts().isEmpty())
-            throw new BusinessException("Billing account: " + quoteOffer.getBillableAccount().getCode() + " has no user accounts");
-        subscription.setUserAccount(quoteOffer.getBillableAccount().getUsersAccounts().get(0));
+        if (billableAccount.getUsersAccounts().isEmpty())
+            throw new BusinessException("Billing account: " + billableAccount.getCode() + " has no user accounts");
+        subscription.setUserAccount(billableAccount.getUsersAccounts().get(0));
 //
 //        String terminationReasonCode = null;
 //
@@ -1397,7 +1422,7 @@ public class CpqQuoteApi extends BaseApi {
 			 Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
 			 for(DiscountPlanItem discountPlanItem:discountItems) {
 				 AccountingArticle discountAccountingArticle=discountPlanItem.getAccountingArticle();
-				 discountAmount=discountAmount.add(discountPlanItemService.getDiscountAmount(billingAccount, amountWithoutTax, isEnterprise, discountPlanItem));
+				 discountAmount=discountAmount.add(discountPlanItemService.getDiscountAmount(billingAccount, amountWithoutTax, isEnterprise, discountPlanItem,quoteproduct));
 				 if(discountAmount!=null && discountAmount.abs().compareTo(BigDecimal.ZERO)>0) {
 					  String accountingArticleCode = discountAccountingArticle.getCode();
 			            if (!quoteArticleLines.containsKey(accountingArticleCode)) {
@@ -1458,6 +1483,9 @@ public class CpqQuoteApi extends BaseApi {
     	return false;
     }
     
+    
+  
+    
     private List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount,DiscountPlan discountPlan, OfferTemplate offer,Product product, Date quoteDate,AccountingArticle accountingArticle)
             throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>(); 
@@ -1471,6 +1499,8 @@ public class CpqQuoteApi extends BaseApi {
         return applicableDiscountPlanItems;
     }
     
+     
+    
     private List<PriceDTO> populateToDTO(List<QuotePrice> quotePrices){
     	if(quotePrices==null) {
     		return new ArrayList<PriceDTO>();
@@ -1482,6 +1512,6 @@ public class CpqQuoteApi extends BaseApi {
             return new PriceDTO(price);
         }).collect(Collectors.toList());
     	return priceDTO;
-    }
+    } 
 
 }

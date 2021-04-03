@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -127,7 +128,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			subscriptionService.create(subscription);
 
 			for (OrderProduct product : offer.getProducts()){
-				processProduct(subscription, product);
+				processProduct(subscription, product.getProductVersion().getProduct(), product.getQuantity(), product.getOrderAttributes());
 			}
 
 			subscriptionService.update(subscription);
@@ -142,26 +143,24 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 		return order;
 	}
 
-	private void processProduct(Subscription subscription, OrderProduct orderProduct) {
-		Product product = orderProduct.getProductVersion().getProduct();
+	public void processProduct(Subscription subscription, Product product, BigDecimal quantity, List<OrderAttribute> orderAttributes) {
 
 		ServiceInstance serviceInstance = new ServiceInstance();
 		serviceInstance.setCode(product.getCode());
-		serviceInstance.setQuantity(orderProduct.getQuantity());
+		serviceInstance.setQuantity(quantity);
 		serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate());
 		serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
 		serviceInstance.setRateUntilDate(subscription.getEndAgreementDate());
-		serviceInstance.setProductVersion(orderProduct.getProductVersion());
+		serviceInstance.setProductVersion(product.getCurrentVersion());
 
 		serviceInstance.setSubscription(subscription);
 
-		AttributeInstance attributeInstance = null;
-		for (OrderAttribute orderAttribute : orderProduct.getOrderAttributes()) {
-				attributeInstance = new AttributeInstance(orderAttribute, currentUser);
-				attributeInstance.setServiceInstance(serviceInstance);
-				attributeInstance.setSubscription(subscription);
-				serviceInstance.addAttributeInstance(attributeInstance);
-			}
+		for (OrderAttribute orderAttribute : orderAttributes) {
+			AttributeInstance attributeInstance = new AttributeInstance(orderAttribute, currentUser);
+			attributeInstance.setServiceInstance(serviceInstance);
+			attributeInstance.setSubscription(subscription);
+			serviceInstance.addAttributeInstance(attributeInstance);
+		}
 		serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, false);
 
 			List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances()

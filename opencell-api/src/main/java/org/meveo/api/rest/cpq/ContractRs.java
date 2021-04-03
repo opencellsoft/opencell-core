@@ -26,13 +26,13 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
+import org.meveo.model.cpq.enums.ContractStatusEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.meveo.model.cpq.enums.ProductStatusEnum;
 
 
 /**
@@ -128,8 +128,8 @@ public interface ContractRs extends IBaseRs {
             @ApiResponse(responseCode = "412", description = "One of the parameters is missing",
     		content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
     })
-	Response findByCode(@Parameter(description = "retrieving a Contract with its code") @QueryParam("contractAccountLevel") ContractAccountLevel contractAccountLevel,
-								@Parameter(description = "retrieving a Contract with its code") @QueryParam("accountCode") String accountCode);
+	Response findByCode(@Parameter(description = "retrieving a Contract with its code", example = "possible value : SELLER, CUSTOMER, CUSTOMER_ACCOUNT, BILLING_ACCOUNT") @QueryParam("contractAccountLevel") ContractAccountLevel contractAccountLevel,
+						@Parameter(description = "retrieving a Contract with its code") @QueryParam("accountCode") String accountCode);
 
 	@PUT
 	@Path("/{contractCode}/status/{status}")
@@ -142,7 +142,7 @@ public interface ContractRs extends IBaseRs {
 					@ApiResponse(responseCode = "412", description = "One of the parameters is missing",
 							content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 			})
-	Response updateStatus(@Parameter(description = "contract code to update status") @PathParam("contractCode")String contractCode, @Parameter(description = "target contract status") @PathParam("status") ProductStatusEnum status);
+	Response updateStatus(@Parameter(description = "contract code to update status") @PathParam("contractCode")String contractCode, @Parameter(description = "target contract status") @PathParam("status") ContractStatusEnum status);
 
 
 	@POST

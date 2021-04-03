@@ -474,7 +474,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     public ActionStatus subscribeAndInstantiateProducts(SubscriptionAndProductsToInstantiateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            subscriptionApi.subscribeAndInstantiateProducts(postData);
+        	result.setEntityId(subscriptionApi.subscribeAndInstantiateProducts(postData).getId());
         } catch (Exception e) {
             processException(e, result);
         }

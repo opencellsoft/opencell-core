@@ -1,5 +1,6 @@
 package org.meveo.api.dto.response.cpq;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,16 +36,16 @@ public class GetProductVersionResponse extends ProductVersionDto{
 	
 	@XmlElementWrapper(name = "attributes")
     @XmlElement(name = "attributes")
-    private Set<AttributeDTO> attributes;
+    private Set<AttributeDTO> attributes=new HashSet<AttributeDTO>();
  
 	
 	@XmlElementWrapper(name = "tags")
     @XmlElement(name = "tags")
-    private Set<TagDto> tagList;
+    private Set<TagDto> tagList=new HashSet<TagDto>();
 	
     @XmlElementWrapper(name = "groupedAttributes")
     @XmlElement(name = "groupedAttributes")
-    private Set<GroupedAttributeDto> groupedAttributes;
+    private Set<GroupedAttributeDto> groupedAttributes= new HashSet<GroupedAttributeDto>();
     
 	
 	public GetProductVersionResponse() { 

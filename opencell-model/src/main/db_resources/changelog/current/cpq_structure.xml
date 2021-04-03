@@ -4140,5 +4140,63 @@ public class OrderAdvancement extends ModuleScript {
 								 initiallyDeferred="false"
 								 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_invoicing_plan"/>
 	</changeSet>
+	
+	<changeSet id="#20210322_377" author="TarikFA.">
+		<addColumn tableName="cpq_attribute">
+			<column name="default_value" type="varchar(255)"></column>
+		</addColumn>
+		<addColumn tableName="cpq_offer_component">
+			<column name="quantity_min" type="int4" />
+			<column name="quantity_max" type="int4" />
+			<column name="quantity_default" type="int4" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="#20210323_380" author="TarikFA.">
+		<addColumn tableName="cat_discount_plan_item">
+			<column name="description" type="varchar(255)"/>
+		</addColumn>
+	</changeSet>
+	
+		<changeSet id="#20210323-382" author="Mbarek-Ay">
+		<addColumn tableName="cpq_contract_item">
+			<column name="rate_type" type="varchar(255)"/>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="#20210323-382" author="Mbarek-Ay">
+		<addColumn tableName="cpq_contract_item">
+			<column name="rate_type" type="varchar(255)"/>
+		</addColumn>
+	</changeSet>	
+	<changeSet id="#20220325_360" author="TarikFA.">
+		<createTable tableName="cpq_commercial_order_order_lot">
+	        	<column name="commercial_order_id" type="bigint">
+	        		<constraints nullable="false"/>
+	        	</column>
+	        	<column name="order_lot_id" type="bigint">
+	        		<constraints nullable="false"/>
+	        	</column>
+	        </createTable>
+
+	        <addPrimaryKey columnNames="commercial_order_id,order_lot_id" tableName="cpq_commercial_order_order_lot"/>
+
+        	<addForeignKeyConstraint baseColumnNames="commercial_order_id" baseTableName="cpq_commercial_order_order_lot" constraintName="fk_cpq_commercial_order_order_lot_commercial_order_id" deferrable="false" initiallyDeferred="false"
+            	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+        	<addForeignKeyConstraint baseColumnNames="order_lot_id" baseTableName="cpq_commercial_order_order_lot" constraintName="fk_cpq_commercial_order_order_lot_order_lot_id" deferrable="false" initiallyDeferred="false"
+            	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_order_lot" />
+            	
+	</changeSet>
+	<changeSet id="#20210329_399" author="TarikFA.">
+            <renameTable newTableName="cpq_order_attribute" oldTableName="cpq_order_item"/>
+    </changeSet>
+    <changeSet id="#20210401_402" author="TarikFA.">
+    	<addColumn tableName="account_entity">
+    		<column name="company" type="${type.boolean}"/>
+    		<column name="legal_entity_type_id" type="bigint" />
+    	</addColumn>
+        	<addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="account_entity" constraintName="fk_account_entity_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
+            	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+    </changeSet>
 
 </databaseChangeLog>

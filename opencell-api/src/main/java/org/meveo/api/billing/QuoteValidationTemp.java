@@ -107,7 +107,7 @@ public class QuoteValidationTemp extends ModuleScript {
 	}
 	private CommercialOrder processCommercialOrder(CpqQuote cpqQuote, QuoteVersion quoteVersion, BillingAccount account) {
 		CommercialOrder order = new CommercialOrder();
-		order.setSeller(cpqQuote.getSeller());
+		order.setSeller(cpqQuote.getSeller()!=null?cpqQuote.getSeller():account.getCustomerAccount().getCustomer().getSeller());
 		order.setBillingAccount(account);
 		order.setQuote(cpqQuote);
 		order.setContract(cpqQuote.getContract());
@@ -185,7 +185,6 @@ public class QuoteValidationTemp extends ModuleScript {
 	private OrderLot processOrderCustomerService(QuoteLot quoteLot, CommercialOrder commercialOrder) {
 		OrderLot orderCustomer = new OrderLot();
 		orderCustomer.setCode(UUID.randomUUID().toString());
-		orderCustomer.setCode(orderCustomerServiceService.findDuplicateCode(orderCustomer));
 		orderCustomer.setOrder(commercialOrder);
 		orderCustomerServiceService.create(orderCustomer);
 		return orderCustomer;
@@ -193,7 +192,7 @@ public class QuoteValidationTemp extends ModuleScript {
 	
 	private OrderArticleLine processOrderArticleLine(QuoteArticleLine quoteArticleLine, CommercialOrder commercialOrder, OrderLot orderCustomerService, OrderProduct orderProduct) {
 		OrderArticleLine articleLine = new OrderArticleLine();
-		articleLine.setCode(orderArticleLineService.findDuplicateCode(articleLine));
+		articleLine.setCode(UUID.randomUUID().toString());
 		articleLine.setOrder(commercialOrder);
 		articleLine.setOrderCustomerService(orderCustomerService);
 		articleLine.setQuantity(quoteArticleLine.getQuantity());
@@ -209,7 +208,6 @@ public class QuoteValidationTemp extends ModuleScript {
 		quotePrices.forEach( price -> {
 			OrderPrice orderPrice = new OrderPrice();
 			orderPrice.setCode(UUID.randomUUID().toString());
-			orderPrice.setCode(orderPriceService.findDuplicateCode(orderPrice));
 			orderPrice.setOrderArticleLine(orderArticleLine);
 			orderPrice.setOrder(commercialOrder);
 			orderPrice.setPriceLevelEnum(price.getPriceLevelEnum());

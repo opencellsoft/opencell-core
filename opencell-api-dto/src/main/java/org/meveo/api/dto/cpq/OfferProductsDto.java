@@ -42,6 +42,12 @@ public class OfferProductsDto extends BaseEntityDto {
 	private boolean mandatory=Boolean.FALSE;
 	
 	private boolean display = Boolean.TRUE;
+	
+	private Integer quantityMin;
+
+	private Integer quantityMax;
+
+	private Integer quantityDefault;
     
     /**
      * Instantiates a new Offer Component dto.
@@ -188,6 +194,60 @@ public class OfferProductsDto extends BaseEntityDto {
 	 */
 	public void setDisplay(boolean display) {
 		this.display = display;
+	}
+
+
+
+	/**
+	 * @return the quantityMin
+	 */
+	public Integer getQuantityMin() {
+		return quantityMin;
+	}
+
+
+
+	/**
+	 * @param quantityMin the quantityMin to set
+	 */
+	public void setQuantityMin(Integer quantityMin) {
+		this.quantityMin = quantityMin;
+	}
+
+
+
+	/**
+	 * @return the quantityMax
+	 */
+	public Integer getQuantityMax() {
+		return quantityMax;
+	}
+
+
+
+	/**
+	 * @param quantityMax the quantityMax to set
+	 */
+	public void setQuantityMax(Integer quantityMax) {
+		this.quantityMax = quantityMax;
+	}
+
+
+
+	/**
+	 * @return the quantityDefault
+	 */
+	public Integer getQuantityDefault() {
+		return quantityDefault;
+	}
+
+
+
+	/**
+	 * @param quantityDefault the quantityDefault to set
+	 */
+	public void setQuantityDefault(Integer quantityDefault) {
+		this.quantityDefault = quantityDefault;
 	}
 
 	

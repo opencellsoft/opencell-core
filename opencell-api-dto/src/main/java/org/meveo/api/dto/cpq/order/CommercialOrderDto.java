@@ -15,15 +15,22 @@ import org.meveo.model.cpq.commercial.OrderLot;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @SuppressWarnings("serial")
 public class CommercialOrderDto extends BaseEntityDto {
 
+	@Schema(description = "id of the order")
 	private Long id;
+	@Schema(description = "code seller")
 	@NotNull
 	private String sellerCode;
+	@Schema(description = "order number of the order, it set automatically when the order is validated")
 	private String orderNumber;
+	@Schema(description = "description of the order")
 	private String label;
 	@NotNull
+	@Schema(description = "code of the billing account")
 	private String billingAccountCode;
 	private String quoteCode;
 	private String contractCode;

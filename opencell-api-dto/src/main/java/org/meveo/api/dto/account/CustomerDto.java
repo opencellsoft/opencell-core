@@ -56,7 +56,7 @@ public class CustomerDto extends AccountDto {
     private String customerBrand;
 
     /** The seller. */
-    @XmlElement(required = true)
+    @XmlElement()
     private String seller;
 
     /** The mandate identification. */

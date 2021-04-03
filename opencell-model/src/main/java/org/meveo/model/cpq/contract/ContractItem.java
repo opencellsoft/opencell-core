@@ -5,9 +5,13 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
@@ -24,13 +28,19 @@ import org.meveo.model.cpq.Product;
 
 /**
  * @author Tarik FAKHOURI
- * @version 10.0
+ * @author Mbarek-Ay
+ * @version 11.0
  */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "ContractItem")
 @Table(name = "cpq_contract_item", uniqueConstraints = { @UniqueConstraint(columnNames = {"code"})})
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_contract_item_seq")})
+@NamedQueries({
+	@NamedQuery(name = "ContractItem.getApplicableContracts", query = "select c from ContractItem c where  c.contract.id=:contractId "
+			+ " and (c.offerTemplate is null or c.offerTemplate.id=:offerId) "
+			+ " and (c.product is null or c.product.code=:productCode) and (c.chargeTemplate is null or c.chargeTemplate.id=:chargeTemplateId)  " )})
+	
 public class ContractItem extends EnableBusinessCFEntity {
 
 	/**
@@ -94,9 +104,16 @@ public class ContractItem extends EnableBusinessCFEntity {
     @Digits(integer = 23, fraction = 12)
     private BigDecimal amountWithoutTax;
 
+    /**
+     * rate type
+     */
+	@Enumerated(EnumType.STRING)
+	@Column(name = "rate_type", length = 50)
+	private ContractRateTypeEnum contractRateType = ContractRateTypeEnum.PERCENTAGE;
+
 
 	/**
-	 * @return the contarct
+	 * @return the contract
 	 */
 	public Contract getContract() {
 		return contract;
@@ -220,6 +237,15 @@ public class ContractItem extends EnableBusinessCFEntity {
 	 */
 	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
 		this.amountWithoutTax = amountWithoutTax;
+	}
+	 
+	public ContractRateTypeEnum getContractRateType() {
+		return contractRateType;
+	}
+
+
+	public void setContractRateType(ContractRateTypeEnum contractRateType) {
+		this.contractRateType = contractRateType;
 	}
 
 

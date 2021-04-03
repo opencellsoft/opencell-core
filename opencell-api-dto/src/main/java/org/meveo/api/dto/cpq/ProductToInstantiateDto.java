@@ -20,6 +20,8 @@ package org.meveo.api.dto.cpq;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -50,6 +52,8 @@ public class ProductToInstantiateDto extends BaseEntityDto implements Serializab
     @XmlElement(required = true)
     private BigDecimal quantity = BigDecimal.ONE;
 
+    private List<OrderAttributeDto> attributeInstances = new ArrayList<>();
+
      
 
   
@@ -78,10 +82,16 @@ public class ProductToInstantiateDto extends BaseEntityDto implements Serializab
     public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
     }
-    
-    
 
-	@Override
+    public List<OrderAttributeDto> getAttributeInstances() {
+        return attributeInstances;
+    }
+
+    public void setAttributeInstances(List<OrderAttributeDto> attributeInstances) {
+        this.attributeInstances = attributeInstances;
+    }
+
+    @Override
 	public String toString() {
 		return "ProductToInstantiateDto [code=" + productCode + ", quantity=" + quantity + "]";
 	}

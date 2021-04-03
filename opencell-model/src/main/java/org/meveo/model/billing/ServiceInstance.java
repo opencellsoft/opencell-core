@@ -75,6 +75,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Service subscribed to.
@@ -1247,5 +1248,11 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 
     public ServiceCharge getServiceCharge() {
         return serviceTemplate != null ? serviceTemplate : productVersion.getProduct();
+    }
+
+    public void clearTransientSubscriptionChargeInstance() {
+        this.subscriptionChargeInstances = getSubscriptionChargeInstances().stream()
+                .filter(ch -> ch.getId() != null)
+                .collect(Collectors.toList());
     }
 }

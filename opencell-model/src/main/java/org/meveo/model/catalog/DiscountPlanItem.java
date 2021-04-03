@@ -21,7 +21,6 @@ package org.meveo.model.catalog;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Cacheable;
@@ -33,9 +32,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -53,10 +50,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.custom.CustomFieldValues;
-
-import static javax.persistence.CascadeType.ALL;
 
 /**
  * Discount plan item/details
@@ -201,6 +195,12 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	@Column(name = "allow_to_negate")
 	@NotNull
 	private boolean allowToNegate = false;
+	
+	/**
+	 * Code
+	 */
+	@Column(name = "description", length = 255)
+	private String description;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -446,6 +446,20 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 
 	public void setAccountingArticle(AccountingArticle accountingArticle) {
 		this.accountingArticle = accountingArticle;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	

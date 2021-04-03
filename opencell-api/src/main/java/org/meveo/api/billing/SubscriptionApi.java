@@ -120,7 +120,6 @@ import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionChargeInstance;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalTermTypeEnum;
@@ -129,7 +128,6 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -140,8 +138,10 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
@@ -171,7 +171,9 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.communication.impl.EmailTemplateService;
+import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductService;
+import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.PaymentMethodService;
@@ -270,6 +272,11 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private PaymentMethodService paymentMethodService;
+
+    @Inject
+    private CommercialOrderService commercialOrderService;
+    @Inject
+    private AttributeService attributeService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -841,6 +848,7 @@ public class SubscriptionApi extends BaseApi {
         	for (ServiceInstance serviceInstance : serviceInstances) {
 
         		try {
+        		    serviceInstance.clearTransientSubscriptionChargeInstance();
         			serviceInstanceService.serviceActivation(serviceInstance);
         		} catch (BusinessException e) {
         			log.error("Failed to activate a service {}/{} on subscription {}", serviceInstance.getId(), serviceInstance.getCode(), subscription.getCode(), e);
@@ -2420,7 +2428,7 @@ public class SubscriptionApi extends BaseApi {
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void subscribeAndInstantiateProducts(SubscriptionAndProductsToInstantiateDto postData) throws MeveoApiException, BusinessException {
+    public Subscription subscribeAndInstantiateProducts(SubscriptionAndProductsToInstantiateDto postData) throws MeveoApiException, BusinessException {
     	Subscription subscription=create(postData);
     	
     	if(!StringUtils.isBlank(postData.getProductToInstantiateDto())) {
@@ -2430,6 +2438,7 @@ public class SubscriptionApi extends BaseApi {
     				processProduct(subscription,productDto);
     		}
     	}
+    	return subscription;
     }
     
     
@@ -2804,43 +2813,22 @@ public class SubscriptionApi extends BaseApi {
     	if (product == null) {
     		throw new EntityDoesNotExistsException(Product.class,productDto.getProductCode());
     	}
-    	ServiceInstance serviceInstance = new ServiceInstance();
-    	serviceInstance.setCode(productDto.getProductCode());
-    	serviceInstance.setQuantity(productDto.getQuantity());
-    	serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate());
-    	serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
-    	serviceInstance.setRateUntilDate(subscription.getEndAgreementDate()); 
-    	serviceInstance.setProductVersion(product.getCurrentVersion());
-
-    	serviceInstance.setSubscription(subscription); 
-    	serviceInstanceService.cpqServiceInstanciation(serviceInstance, product,null, null, false);
-
-    	List<SubscriptionChargeInstance> oneShotCharges = serviceInstance.getSubscriptionChargeInstances()
-    			.stream()
-    			.filter(oneShotChargeInstance -> ((OneShotChargeTemplate)oneShotChargeInstance.getChargeTemplate()).getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.SUBSCRIPTION)
-    			.map(oneShotChargeInstance -> {
-    				oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
-    				oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
-    				return oneShotChargeInstance;
-    			}).collect(Collectors.toList());
-    	serviceInstance.getSubscriptionChargeInstances().clear();
-    	serviceInstance.getSubscriptionChargeInstances().addAll(oneShotCharges);
 
 
-    	List<RecurringChargeInstance> recurringChargeInstances = serviceInstance.getRecurringChargeInstances();
-    	for (RecurringChargeInstance recurringChargeInstance : recurringChargeInstances) {
-    		recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
-    		recurringChargeInstance.setQuantity(serviceInstance.getQuantity());
-    		recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-    	}
-    	subscription.addServiceInstance(serviceInstance);
+        List<OrderAttribute> orderAttributes = productDto.getAttributeInstances().stream()
+                .map(ai -> {
+                    OrderAttribute orderAttribute = new OrderAttribute();
+                    Attribute attribute = loadEntityByCode(attributeService, ai.getOrderAttributeCode(), Attribute.class);
+                    orderAttribute.setAttribute(attribute);
+                    orderAttribute.setStringValue(ai.getStringValue());
+                    orderAttribute.setDoubleValue(ai.getDoubleValue());
+                    orderAttribute.setDateValue(ai.getDateValue());
+                    return orderAttribute;
+                })
+                .collect(Collectors.toList());
+
+        commercialOrderService.processProduct(subscription, product, productDto.getQuantity(), orderAttributes);
+
     }
-    
-    
-    
-    
-    
-    
-    
-    
+
 }
