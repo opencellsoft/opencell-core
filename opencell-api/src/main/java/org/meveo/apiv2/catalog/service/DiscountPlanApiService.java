@@ -12,6 +12,8 @@ import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.GenericApiPersistenceDelegate;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.IEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -46,6 +48,10 @@ public class DiscountPlanApiService {
 	@Inject
 	private GenericApiPersistenceDelegate persistenceDelegate;
 
+	@Inject
+	@MeveoJpa
+	private EntityManagerWrapper entityManagerWrapper;
+
 	@PostConstruct
 	public void configure() {
 		genericApiAlteringService.addForbiddenFieldsToUpdate(Collections.singletonList("usedQuantity"));
@@ -73,7 +79,8 @@ public class DiscountPlanApiService {
 
 	public Optional<Long> update(Long id, String dto) {
 		checkId(id).checkDto(dto);
-		DiscountPlan entity = (DiscountPlan) PersistenceServiceHelper.getPersistenceService(DiscountPlan.class).findById(id);
+		DiscountPlan entity = entityManagerWrapper.getEntityManager().find(DiscountPlan.class, id);
+		//PersistenceServiceHelper.getPersistenceService(DiscountPlan.class).findById(id);
 
 		if (entity == null) {
 			throw new NotFoundException("entity discount plan with id " + id + " not found.");
@@ -93,7 +100,7 @@ public class DiscountPlanApiService {
 
 	public String delete(Long id) {
 		checkId(id);
-		DiscountPlan entity = (DiscountPlan) PersistenceServiceHelper.getPersistenceService(DiscountPlan.class).findById(id);
+		DiscountPlan entity = entityManagerWrapper.getEntityManager().find(DiscountPlan.class, id);
 		if (entity == null) {
 			throw new NotFoundException("entity DiscountPlan with id " + id + " not found.");
 		}
@@ -115,20 +122,21 @@ public class DiscountPlanApiService {
 
 	public Optional<Long> updateItem(Long id, String dto) {
 		checkId(id).checkDto(dto);
-		IEntity entity = PersistenceServiceHelper.getPersistenceService(DiscountPlanItem.class).findById(id);
+		IEntity entity = entityManagerWrapper.getEntityManager().find(DiscountPlanItem.class, id);
 
 		if (entity == null) {
 			throw new NotFoundException("entity discount plan with id " + id + " not found.");
 		}
 		JsonGenericMapper jsonGenericMapper = JsonGenericMapper.Builder.getBuilder().build();
-		genericApiAlteringService.refreshEntityWithDotFields(jsonGenericMapper.readValue(dto, Map.class), entity, jsonGenericMapper.parseFromJson(dto, entity.getClass()));
+		genericApiAlteringService.refreshEntityWithDotFields(JsonGenericMapper.Builder.getBuilder().build().readValue(dto, Map.class), entity,
+				jsonGenericMapper.parseFromJson(dto, entity.getClass()));
 		IEntity updatedEntity = persistenceDelegate.update(DiscountPlanItem.class, entity);
 		return Optional.ofNullable((Long) updatedEntity.getId());
 	}
 
 	public String deleteItem(Long id) {
 		checkId(id);
-		DiscountPlanItem entity = (DiscountPlanItem) PersistenceServiceHelper.getPersistenceService(DiscountPlanItem.class).findById(id);
+		DiscountPlanItem entity = entityManagerWrapper.getEntityManager().find(DiscountPlanItem.class, id);
 		if (entity == null) {
 			throw new NotFoundException("entity DiscountPlan with id " + id + " not found.");
 		}
@@ -139,7 +147,7 @@ public class DiscountPlanApiService {
 
 	public Optional<Long> expire(Long id) {
 		checkId(id);
-		DiscountPlan entity = (DiscountPlan) PersistenceServiceHelper.getPersistenceService(DiscountPlan.class).findById(id);
+		DiscountPlan entity = entityManagerWrapper.getEntityManager().find(DiscountPlan.class, id);
 		if (entity == null) {
 			throw new NotFoundException("entity DiscountPlan with id " + id + " not found.");
 		}

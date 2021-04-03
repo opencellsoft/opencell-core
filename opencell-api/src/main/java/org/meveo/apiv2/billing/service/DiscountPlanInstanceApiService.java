@@ -10,6 +10,8 @@ import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.GenericApiPersistenceDelegate;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.IDiscountable;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.BillingAccount;
@@ -60,12 +62,12 @@ public class DiscountPlanInstanceApiService {
 	@Inject
 	private DiscountPlanService discountPlanService;
 
+	@Inject
+	@MeveoJpa
+	private EntityManagerWrapper entityManagerWrapper;
+
 	public String findPaginatedRecords(PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
 		return loadService.findPaginatedRecords(true, DiscountPlanInstance.class, searchConfig, genericFields, nestedEntities, 1L);
-	}
-
-	public String findPaginatedDiscountPlanItems(PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
-		return loadService.findPaginatedRecords(true, DiscountPlanItem.class, searchConfig, genericFields, nestedEntities, 1L);
 	}
 
 	public Optional<String> findById(Long id, PaginationConfiguration searchConfig, Set<String> genericFields, Set<String> nestedEntities) {
@@ -88,7 +90,7 @@ public class DiscountPlanInstanceApiService {
 
 	public Optional<Long> update(IEntity discountable, Long id, String dto) {
 		checkId(id).checkDto(dto);
-		DiscountPlanInstance entity = (DiscountPlanInstance) PersistenceServiceHelper.getPersistenceService(DiscountPlanInstance.class).findById(id);
+		DiscountPlanInstance entity = entityManagerWrapper.getEntityManager().find(DiscountPlanInstance.class, id);
 
 		if (entity == null) {
 			throw new NotFoundException("entity discount plan instance with id " + id + " not found.");
@@ -113,7 +115,7 @@ public class DiscountPlanInstanceApiService {
 
 	public String delete(IEntity discountable, Long id) {
 		checkId(id);
-		DiscountPlanInstance entity = (DiscountPlanInstance) PersistenceServiceHelper.getPersistenceService(DiscountPlanInstance.class).findById(id);
+		DiscountPlanInstance entity = entityManagerWrapper.getEntityManager().find(DiscountPlanInstance.class, id);
 		if (entity == null) {
 			throw new NotFoundException("entity DiscountPlanInstance with id " + id + " not found.");
 		}
@@ -130,7 +132,7 @@ public class DiscountPlanInstanceApiService {
 	}
 
 	public Optional<Long> expire(IEntity discountable, Long id) {
-		DiscountPlanInstance entity = (DiscountPlanInstance) PersistenceServiceHelper.getPersistenceService(DiscountPlanInstance.class).findById(id);
+		DiscountPlanInstance entity = entityManagerWrapper.getEntityManager().find(DiscountPlanInstance.class, id);
 		if (entity == null) {
 			throw new NotFoundException("entity discount plan instance with id " + id + " not found.");
 		}
