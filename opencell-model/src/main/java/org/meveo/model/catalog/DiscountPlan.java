@@ -458,6 +458,9 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
      * @return returns true if this DiscountItem is to be applied
      */
     public boolean isEffective(Date date) {
+    	if(date==null) {
+    		return true;
+    	}
         if (startDate == null && endDate == null) {
             return true;
         }

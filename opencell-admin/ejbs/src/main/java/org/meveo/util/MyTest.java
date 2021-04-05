@@ -1,5 +1,6 @@
 package org.meveo.util;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -55,22 +56,63 @@ public class MyTest {
 
 	public static void main(String[] args) throws BusinessException, JsonProcessingException {
 		//IngenicoGatewayPayment ingenico=new IngenicoGatewayPayment();
+		
+		
+		/*********
+		 * 
+		 * {
+createMandate body={
+  "alias" : null,
+  "customer" : {
+    "bankAccountIban" : {
+      "accountHolderName" : null,
+      "iban" : "FR7630001007941234567890185"
+    },
+    "companyName" : "LES MOUSQUETAIRES",
+    "contactDetails" : {
+      "emailAddress" : null
+    },
+    "mandateAddress" : {
+      "city" : "PARIS 15",
+      "countryCode" : "FR",
+      "houseNumber" : null,
+      "street" : "24 RUE AUGUSTE CHABRIERES",
+      "zip" : "75015"
+    },
+    "personalInformation" : {
+      "name" : {
+        "firstName" : "-",
+        "surname" : "LES MOUSQUETAIRES"
+      },
+      "title" : "Mr"
+    }
+  },
+  "customerReference" : "4179360464",
+  "language" : null,
+  "recurrenceType" : "RECURRING",
+  "signatureType" : "UNSIGNED",
+  "uniqueMandateReference" : "BPIAB0000002926FD010",
+  "returnUrl" : null
+}
+ }
+}
+		 * ***/
 		CustomerAccount customerAccount=new CustomerAccount();
 		
 		ContactInformation ci=new ContactInformation();
-		ci.setEmail("rachidweb@gmail.com");
+		ci.setEmail("rachid.aityaazza@opencellsoft.com");
 		Address address=new Address();
-		address.setAddress1("2578");
+		address.setAddress1("56 rue Kleber");
 		address.setCity("Paris");
 		Country country=new Country();
 		country.setDescription("France");
 		country.setCountryCode("FR");
 		address.setCountry(country);
-		address.setZipCode("20000");
+		address.setZipCode("92300");
 		
 		Name name=new Name();
-		name.setFirstName("rac");
-		name.setLastName("AIT");
+		name.setFirstName("-");
+		name.setLastName("ISSUE-SEPA-REJ-AC01");
 		Title title=new Title();
 		title.setDescription("Mr");
 		name.setTitle(title);
@@ -78,11 +120,12 @@ public class MyTest {
 		customerAccount.setContactInformation(ci);
 		customerAccount.setAddress(address);
 		customerAccount.setName(name);
-		customerAccount.setExternalRef1("cust1");
-		String rum="BPIAB0000000001951FD";
+		customerAccount.setExternalRef1("cust2");
+		customerAccount.setCode("4003868175");
+		String rum="BPIAB0000000002312FD673";
 		createMandate(customerAccount, "FR7630001007941234567890185",rum);
 		checkMandat(rum, null);
-		doPayment(null, rum, 2000L, customerAccount, null, null, null,null,null, "FR", null);
+		doPayment(null, rum, 3000L, customerAccount, null, null, null,null,null, "FR", null);
 	}
 	
     public static void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException {
@@ -92,7 +135,7 @@ public class MyTest {
  
     		MandateContactDetails contactDetails=new MandateContactDetails();
     		if(customerAccount.getContactInformation() != null ) {
-    			contactDetails.setEmailAddress(customerAccount.getContactInformation().getEmail()); 
+    			//contactDetails.setEmailAddress(customerAccount.getContactInformation().getEmail()); 
     		}
     		
     		MandateAddress address=new MandateAddress();
@@ -124,6 +167,10 @@ public class MyTest {
     		body.setRecurrenceType("RECURRING");
     		body.setSignatureType("UNSIGNED");
     		getClient();
+    	      
+            ObjectMapper mapper = new ObjectMapper(); 
+            String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
+    		System.out.println("createMandate body="+jsonString);
     		CreateMandateResponse response = client.merchant("bpifrance").mandates().create(body); 
     		System.out.println(response.getMandate().getStatus());
     		
