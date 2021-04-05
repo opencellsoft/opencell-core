@@ -31,6 +31,8 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEnableDto;
 import org.meveo.model.mediation.Access;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class AccessDto.
  *
@@ -45,20 +47,26 @@ public class AccessDto extends BaseEntityDto implements IEnableDto {
 
     /** Code. */
     @XmlAttribute(required = false)
+	@Schema(description = "code of the access")
     private String code;
 
     /** Subscription. */
     @XmlElement(required = true)
+	@Schema(description = "code of the subscription")
     private String subscription;
+	@Schema(description = "code of existing ")
     private Date subscriptionValidityDate;
 
     /** Starting date. */
+	@Schema(description = "start date of the access")
     private Date startDate;
 
     /** Ending date. */
+	@Schema(description = "end date of the access")
     private Date endDate;
 
     /** Custom fields. */
+	@Schema(description = "custom field for the access")
     private CustomFieldsDto customFields;
 
     /**
