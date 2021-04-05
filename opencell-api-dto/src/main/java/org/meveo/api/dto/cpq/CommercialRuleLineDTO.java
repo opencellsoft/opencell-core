@@ -9,6 +9,8 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.enums.RuleOperatorEnum;
 import org.meveo.model.cpq.trade.CommercialRuleLine;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlRootElement(name = "CommercialRuleLineDTO")
 @XmlType(name = "CommercialRuleLineDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -19,19 +21,27 @@ public class CommercialRuleLineDTO extends BaseEntityDto{
 	 * 
 	 */
 	private static final long serialVersionUID = -386310082819716271L;
+    @Schema(description = "offer code associated to commercial rule line")
 	private String offerCode;  
+    @Schema(description = "product code")
 	private String productCode;
+    @Schema(description = "product version")
 	private Integer productVersion;
+    @Schema(description = "attribute code")
 	private String attributeCode;
+    @Schema(description = "grouped attribute code")
 	private String groupedAttributeCode;
+    @Schema(description = "value of the attribute")
 	private String attributeValue;
+    @Schema(description = "value of grouped attribute")
 	private String groupedAttributeValue;
+    @Schema(description = "tag code")
 	private String tagCode;
+    @Schema(description = "operator for commercial rule line", example = "possible value are : GREATER_THAN, LESS_THAN, EQUAL, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL, NOT_EQUAL, EXISTS")
 	private RuleOperatorEnum operator;
 	public CommercialRuleLineDTO() {
 		super();
-		// TODO Auto-generated constructor stub
-	}
+ 	}
 	
 	
 	public CommercialRuleLineDTO(CommercialRuleLine commercialRuleLine) {
