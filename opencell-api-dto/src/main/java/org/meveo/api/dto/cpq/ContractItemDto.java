@@ -9,6 +9,8 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.contract.ContractRateTypeEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * @author Tarik FAKHOURI
  * @version 10.0
@@ -16,22 +18,33 @@ import org.meveo.model.cpq.contract.ContractRateTypeEnum;
 @SuppressWarnings("serial")
 public class ContractItemDto extends BusinessEntityDto {
 
+
+	@Schema(description = "contract code")
     @NotNull
 	private String contractCode;
+	@Schema(description = "code of the offer template")
 	private String offerTemplateCode;
+	@Schema(description = "code of the product")
 	private String productCode;
+	@Schema(description = "code price plan")
     @NotNull
 	private String pricePlanCode;
+	@Schema(description = "code of charge template")
 	private String chargeTemplateCode;
+	@Schema(description = "code of the service template")
 	private String serviceTemplateCode;
+	@Schema(description = "rate of the contract")
 	private int rate;
+	@Schema(description = "amount without tax")
     private BigDecimal amountWithoutTax;
     
     /**
      * Type of rate, whether absolute or percentage.
      */
+	@Schema(description = "rate of contract type", example = "possible value are : PERCENTAGE, FIXED")
     private ContractRateTypeEnum contractRateType = ContractRateTypeEnum.PERCENTAGE;
     
+	@Schema(description = "list of the custom field if any")
 	private CustomFieldsDto customFields;
     
     public ContractItemDto() {}

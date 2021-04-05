@@ -136,16 +136,16 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
         }
     }
 
-    public void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, OrderProduct orderProduct, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+    public void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
         InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setCode("COMMERCIAL-GEN");
         invoiceLine.setCode(findDuplicateCode(invoiceLine));
         invoiceLine.setAccountingArticle(accountingArticle);
         invoiceLine.setLabel(accountingArticle.getDescription());
-        invoiceLine.setProduct(orderProduct.getProductVersion().getProduct());
-        invoiceLine.setProductVersion(orderProduct.getProductVersion());
+        invoiceLine.setProduct(productVersion.getProduct());
+        invoiceLine.setProductVersion(productVersion);
         invoiceLine.setCommercialOrder(commercialOrder);
-        invoiceLine.setOrderLot(orderProduct.getOrderServiceCommercial());
+        invoiceLine.setOrderLot(orderLot);
         invoiceLine.setQuantity(BigDecimal.valueOf(1));
         invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithoutTax(amountWithoutTaxToBeInvoiced);

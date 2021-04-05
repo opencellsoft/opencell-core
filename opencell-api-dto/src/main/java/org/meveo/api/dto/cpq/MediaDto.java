@@ -7,6 +7,8 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.enums.MediaTypeEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * 
  * @author Tarik FAKHOURI.
@@ -19,23 +21,27 @@ public class MediaDto extends BaseEntityDto{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	@Schema(description = "id of media")
 	private Long id;
-	
+	@Schema(description = "code of the media")
 	private String code;
-
+	@Schema(description = "description")
 	private String description;
- 
+	@Schema(description = "name of the media")
 	@NotNull
 	private String mediaName;
+	@Schema(description = "label of the media")
 	@NotNull
 	private String label;
+	@Schema(description = "indicate that the media is main")
 	@NotNull
 	private Boolean main;
+	@Schema(description = "type of the media", example = "possible value are : IMAGE, VIDEO")
 	@NotNull
 	private MediaTypeEnum mediaType;
+	@Schema(description = "the path of the media")
 	private String mediaPath;
-
+	@Schema(description = "custom field associated to the media")
 	 private CustomFieldsDto customFields;
 	
 	public MediaDto() {

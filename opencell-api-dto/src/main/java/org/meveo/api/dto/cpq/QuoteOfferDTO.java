@@ -32,6 +32,8 @@ import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteProduct;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * DTO to create or update a quoteOffer
  * 
@@ -52,32 +54,69 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	 */
 	private static final long serialVersionUID = 8115890992793236496L;
 
+	@Schema(description = "quote offer id, used for updating an existing quote offer")
 	private Long quoteOfferId;
 	
-    
+
+	@Schema(description = "the code of the quote")
     private String quoteCode;
 
+	@Schema(description = "the version of the quote, associated to the quote code to retrieve a quote")
     @NotNull
     private Integer quoteVersion;
 
+	@Schema(description = "the code of the quote lot")
     private String quoteLotCode;
 
     @NotNull
+	@Schema(description = "id of offer template")
     private Long offerId;
-    
+
+	@Schema(description = "the code of offer template")
     private String offerCode;
 
+	@Schema(description = "code of billing account")
     private String billableAccountCode;
-    
+
+	@Schema(description = "the code of contract ")
     private String contractCode;
-    
+
+	@Schema(description = "list of quote product", example = "\"products\": [[<br/>" + 
+			"        {[<br/>" + 
+			"            \"productCode\": \"product_Code\",[<br/>" + 
+			"            \"quoteCode\": \"quote_Code\",[<br/>" + 
+			"            \"productVersion\": product_Version,[<br/>" + 
+			"            \"quoteVersion\": Quote_Version,[<br/>" + 
+			"            \"quantity\": 1,[<br/>" + 
+			"            \"productAttributes\": [[<br/>" + 
+			"                {[<br/>" + 
+			"                    \"quoteAttributeCode\": \"billing_Cycle_Attribute\",[<br/>" + 
+			"                    \"stringValue\": \"Monthly\"[<br/>" + 
+			"                },[<br/>" + 
+			"                {[<br/>" + 
+			"                    \"quoteAttributeCode\": \"engagement_Attribute_Code\",[<br/>" + 
+			"                    \"doubleValue\": 24[<br/>" + 
+			"                }[<br/>" + 
+			"            ][<br/>" + 
+			"        }[<br/>" + 
+			"    ]")
     private List<QuoteProductDTO> products = new ArrayList<QuoteProductDTO>();
-    
+
+	@Schema(description = "list of quote attribute", example = " \"offerAttributes\": [[<br/>" + 
+			"        {[<br/>" + 
+			"            \"quoteAttributeCode\": \"Attribute_code}}\",[<br/>" + 
+			"            \"stringValue\": \"Monthly\",[<br/>" + 
+			"            \"doubleValue\": 24,[<br/>" + 
+			"            \"dateValue\": \"2021-02-22\"[<br/>" + 
+			"        }[<br/>" + 
+			"    ]")
     private List<QuoteAttributeDTO> offerAttributes =new ArrayList<QuoteAttributeDTO>();
-    
+
+	@Schema(description = "custom fields for quote offer")
     private CustomFieldsDto customFields;
     
     /** Discount plan code */
+	@Schema(description = "the code of the discount plan")
 	private String discountPlanCode;
     
     

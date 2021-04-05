@@ -10,9 +10,10 @@ import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
 import org.meveo.model.cpq.enums.ContractStatusEnum;
-import org.meveo.model.cpq.enums.ProductStatusEnum;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * @author Tarik FAKHOURI
@@ -21,23 +22,36 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @SuppressWarnings("serial")
 public class ContractDto extends BusinessEntityDto {
 
+	@Schema(description = "contract account level, associate seller or customer or customer account or billing account to this contract",
+			example = "possible value are : SELLER, CUSTOMER, CUSTOMER_ACCOUNT, BILLING_ACCOUNT")
 	private ContractAccountLevel contractAccountLevel;
+	@Schema(description = "account code associated to contract depending the value of  contractAccountLevel")
 	private String accountCode;
+	@Schema(description = "status of the contract" ,example="possible value are : DRAFT, ACTIVE, CLOSED" )
 	private ContractStatusEnum status;
+	@Schema(description = "date of the changement of the status, it set automatically")
 	@JsonSerialize(using = CustomDateSerializer.class)
 	private Date statusDate;
+
+	@Schema(description = "day of the contract")
     @NotNull
 	@JsonSerialize(using = CustomDateSerializer.class)
 	private Date contractDate;
+	@Schema(description = "begin date of the contract")
     @NotNull
 	@JsonSerialize(using = CustomDateSerializer.class)
 	private Date beginDate;
+	@Schema(description = "end date of the contract")
     @NotNull
 	@JsonSerialize(using = CustomDateSerializer.class)
 	private Date endDate;
+
+	@Schema(description = "renwal a the contract")
     @NotNull
 	private boolean renewal;
+	@Schema(description = "duration of the contract")
 	private int contractDuration;
+	@Schema(description = "list of the custom field if any")
 	private CustomFieldsDto customFields;
 
     
