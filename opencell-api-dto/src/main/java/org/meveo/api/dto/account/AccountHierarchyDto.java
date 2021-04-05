@@ -37,6 +37,8 @@ import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.crm.Customer;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class AccountHierarchyDto.
  *
@@ -53,6 +55,7 @@ public class AccountHierarchyDto implements Serializable {
 
     /** The email. */
     @XmlElement(required = true)
+	@Schema(description = "email")
     private String email;
 
     /**
@@ -62,60 +65,78 @@ public class AccountHierarchyDto implements Serializable {
     private String customerId;
 
     /** Customer Code. */
+	@Schema(description = "code of the customer")
     private String customerCode;
 
     /** Seller Code. */
+	@Schema(description = "code of the seller")
     private String sellerCode;
 
     /** SelCustomer Brand Code. */
+	@Schema(description = "code of the customer brand")
     private String customerBrandCode;
 
     /** Custmork Code. */
+	@Schema(description = "code of the customer category")
     private String customerCategoryCode;
 
     /** Currency Code. */
+	@Schema(description = "code of the currency")
     private String currencyCode;
 
     /** SeCountry Cideller Code. */
+	@Schema(description = "code of the customer country")
     private String countryCode;
 
     /** Language Code. */
+	@Schema(description = "code of the language")
     private String languageCode;
 
     /** Title Code. */
+	@Schema(description = "code of the title")
     private String titleCode;
 
     /** First Code. */
+	@Schema(description = "first name of the account user")
     private String firstName;
 
     /** Last Name. */
+	@Schema(description = "last name of the account user")
     private String lastName;
 
     /** Birth Date. */
+	@Schema(description = "date of the birthday")
     private Date birthDate;
 
     /** Phone Number. */
+	@Schema(description = "phone number")
     private String phoneNumber;
 
     /** Billing Cycle Code. */
+	@Schema(description = "code of the billing cycle")
     private String billingCycleCode;
 
     /** Address 1. */
+	@Schema(description = "the first adresse, to be used for account")
     private String address1;
 
     /** Address 2. */
+	@Schema(description = "the second adresse, to be used for account")
     private String address2;
 
     /** Address 3. */
+	@Schema(description = "the third adresse, to be used for account")
     private String address3;
 
     /** Zip Code. */
+	@Schema(description = "zip code")
     private String zipCode;
 
     /** State. */
     private String state;
 
     /** City. */
+	@Schema(description = "city of the user account")
     private String city;
 
     /** True if use prefix. */
@@ -127,19 +148,23 @@ public class AccountHierarchyDto implements Serializable {
     /**
      * Account tax category code - overrides the value from a customer category
      **/
+	@Schema(description = "Account tax category code - overrides the value from a customer category")
     private String taxCategoryCode;
 
     /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
     @XmlElementWrapper(name = "discountPlansForInstantiation")
     @XmlElement(name = "discountPlanForInstantiation")
+	@Schema(description = "List of discount plans")
     private List<DiscountPlanDto> discountPlansForInstantiation;
 
     /** List of discount plans to be disassociated in a BillingAccount */
     @XmlElementWrapper(name = "discountPlansForTermination")
     @XmlElement(name = "discountPlanForTermination")
+	@Schema(description = "List of discount plans to be disassociated in a billing account")
     private List<String> discountPlansForTermination;
 
     /** Custom Fiends. */
+	@Schema(description = "list of the custom field associated to account")
     private CustomFieldsDto customFields;
 
     /** The limit. */
@@ -157,6 +182,7 @@ public class AccountHierarchyDto implements Serializable {
     /** The payment methods. */
     @XmlElementWrapper(name = "paymentMethods")
     @XmlElement(name = "methodOfPayment")
+	@Schema(description = "The payment methods")
     private List<PaymentMethodDto> paymentMethods;
 
     /**
@@ -168,29 +194,34 @@ public class AccountHierarchyDto implements Serializable {
     /**
      * Job title. Account Entity
      */
+	@Schema(description = "Job title. Account Entity")
     private String jobTitle;
 
     /**
      * Registration number. CUST.
      */
+	@Schema(description = "Registration number")
     private String registrationNo;
 
     /**
      * The option on how to check the threshold.
      */
     @XmlElement
+	@Schema(description = "The option on how to check the threshold", example = "possible value are : BEFORE_DISCOUNT, AFTER_DISCOUNT, POSITIVE_RT, POSITIVE_IL")
     private ThresholdOptionsEnum checkThreshold;
 
     /**
      * The option on how to check the threshold for customer Account.
      */
     @XmlElement
+	@Schema(description = "The option on how to check the threshold for customer Account", example = "possible value are : BEFORE_DISCOUNT, AFTER_DISCOUNT, POSITIVE_RT, POSITIVE_IL")
     private ThresholdOptionsEnum customerAccountCheckThreshold;
 
     /**
      * The option on how to check the threshold for customer.
      */
     @XmlElement
+	@Schema(description = "The option on how to check the threshold for customer", example = "possible value are : BEFORE_DISCOUNT, AFTER_DISCOUNT, POSITIVE_RT, POSITIVE_IL")
     private ThresholdOptionsEnum customerCheckThreshold;
 
     /**
@@ -200,25 +231,31 @@ public class AccountHierarchyDto implements Serializable {
     /**
      * The mailing Type.
      */
+    @Schema(description = "The mailing Type")
     private String mailingType;
     /**
      * Email template.
      */
+    @Schema(description = "Email template")
     private String emailTemplate;
     /**
      * CC Emails.
      */
+    @Schema(description = "cc Emails")
     private String ccedEmails;
 
     /**
      * An object to store minimumAmount data for each account.
      */
+    @Schema(description = "store minimumAmount data for each account")
     private MinimumAmountElDto minimumAmountEl;
 
     /** The invoicing threshold for the customer . */
+    @Schema(description = "The invoicing threshold for the customer")
     private BigDecimal customerInvoicingThreshold;
 
     /** The invoicing threshold for the customer account. */
+    @Schema(description = "The invoicing threshold for the customer account")
     private BigDecimal customerAccountInvoicingThreshold;
     
     /**
@@ -226,6 +263,7 @@ public class AccountHierarchyDto implements Serializable {
      * check the threshold per entity/invoice for BA.
      */
     @XmlElement
+    @Schema(description = "check the threshold per entity/invoice for BA")
     private Boolean thresholdPerEntity;
 
     public Boolean isThresholdPerEntity() {
