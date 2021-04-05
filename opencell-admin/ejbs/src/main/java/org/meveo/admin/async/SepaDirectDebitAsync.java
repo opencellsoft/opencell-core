@@ -125,27 +125,28 @@ public class SepaDirectDebitAsync {
 		String allErrors="";
 		Long nbItemsKo = 0L,nbItemsOk=0L;	
 		BigDecimal totalAmount = BigDecimal.ZERO;
-			for (AccountOperation ao : listAoToPay) {
-				ao = accountOperationService.refreshOrRetrieve(ao);
-				CustomerAccount ca = ao.getCustomerAccount();
-				String errorMsg = ddRequestLOTService.getMissingField(ao, ddRequestLOT, appProvider, ca);
-				String caFullName =  ca.getName() != null ? ca.getName().getFullName() : "";
-				ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
-				if (errorMsg != null) {
-					nbItemsKo++;
-					allErrors += errorMsg + " ; ";
-				} else {
-					nbItemsOk++;
-					totalAmount = totalAmount.add(ao.getUnMatchingAmount());
-				}
+
+		for (AccountOperation ao : listAoToPay) {
+			ao = accountOperationService.refreshOrRetrieve(ao);
+			CustomerAccount ca = ao.getCustomerAccount();
+			String errorMsg = ddRequestLOTService.getMissingField(ao, ddRequestLOT, appProvider, ca);
+			String caFullName =  ca.getName() != null ? ca.getName().getFullName() : "";
+			ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
+			if (errorMsg != null) {
+				nbItemsKo++;
+				allErrors += errorMsg + " ; ";
+			} else {
+				nbItemsOk++;
+				totalAmount = totalAmount.add(ao.getUnMatchingAmount());
 			}
+		}
 			
-			result.put("nbItemsOk",nbItemsOk);
-			result.put("nbItemsKo",nbItemsKo);
-			result.put("allErrors",allErrors);
-			result.put("totalAmount",totalAmount);
-			
-			return new AsyncResult<Map<String,Object>>(result);
+		result.put("nbItemsOk",nbItemsOk);
+		result.put("nbItemsKo",nbItemsKo);
+		result.put("allErrors",allErrors);
+		result.put("totalAmount",totalAmount);
+
+		return new AsyncResult<Map<String,Object>>(result);
 		
 	}
 
