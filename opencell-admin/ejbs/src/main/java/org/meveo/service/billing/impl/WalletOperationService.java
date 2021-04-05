@@ -1480,4 +1480,13 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     public void removeZeroWalletOperation() {
         getEntityManager().createNamedQuery("WalletOperation.deleteZeroWO").executeUpdate();
     }
+
+    /**
+     * Detach WOs From subscription.
+     *
+     * @param subscription subscription
+     */
+    public void detachWOsFromSubscription(Subscription subscription) {
+        getEntityManager().createNamedQuery("WalletOperation.detachWOsFromSubscription").setParameter("subscription", subscription).executeUpdate();
+    }
 }

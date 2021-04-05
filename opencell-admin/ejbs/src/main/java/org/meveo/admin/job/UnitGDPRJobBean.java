@@ -19,6 +19,11 @@
 
 package org.meveo.admin.job;
 
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
@@ -28,15 +33,10 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.AccountOperationService;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import java.util.List;
 
 /**
  * Unit GDPR Job bean
@@ -48,6 +48,9 @@ public class UnitGDPRJobBean {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
+    
+    @Inject
+    private WalletOperationService walletOperationService;
 
     @Inject
     private SubscriptionService subscriptionService;
@@ -73,6 +76,7 @@ public class UnitGDPRJobBean {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void subscriptionRemove(Subscription subscription) {
         ratedTransactionService.detachRTsFromSubscription(subscription);
+        walletOperationService.detachWOsFromSubscription(subscription);
         subscriptionService.remove(subscription);
     }
 
