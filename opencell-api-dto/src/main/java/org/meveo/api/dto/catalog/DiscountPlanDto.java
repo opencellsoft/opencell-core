@@ -19,11 +19,9 @@
 package org.meveo.api.dto.catalog;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -33,13 +31,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.ApplicableEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
-import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.catalog.ApplicableEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
-import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * The Class DiscountPlanDto.
@@ -177,7 +173,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 		endDate = discountPlan.getEndDate();
 		defaultDuration = discountPlan.getDefaultDuration();
 		durationUnit = discountPlan.getDurationUnit();
-		expressionEl=discountPlan.getExpressionEl();
+		expressionEl = discountPlan.getExpressionEl();
 		customFields = customFieldInstances;
 		status = discountPlan.getStatus();
 		statusDate = discountPlan.getStatusDate();
@@ -185,8 +181,8 @@ public class DiscountPlanDto extends EnableBusinessDto {
 		usedQuantity = discountPlan.getUsedQuantity();
 		applicationLimit = discountPlan.getApplicationLimit();
 		applicationFilterEL = discountPlan.getApplicationFilterEL();
-		if (discountPlan.getApplicableEntities() != null && discountPlan.getApplicableEntities().isEmpty()) {
-			for (ApplicableEntity applicableEntity : discountPlan.getApplicableEntities()) {
+		if (discountPlan.getDiscountPlanaApplicableEntities() != null && discountPlan.getDiscountPlanaApplicableEntities().isEmpty()) {
+			for (ApplicableEntity applicableEntity : discountPlan.getDiscountPlanaApplicableEntities()) {
 				ApplicableEntityDto applicableEntityDto = new ApplicableEntityDto(applicableEntity);
 				applicableEntities.add(applicableEntityDto);
 			}

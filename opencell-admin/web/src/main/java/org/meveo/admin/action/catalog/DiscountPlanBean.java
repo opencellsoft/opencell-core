@@ -166,8 +166,8 @@ public class DiscountPlanBean extends CustomFieldBean<DiscountPlan> {
 	}
 
 	public void deleteApplicableEntity(ApplicableEntity applicableEntity) {
-		if (entity.getApplicableEntities() != null) {
-			entity.getApplicableEntities().remove(applicableEntity);
+		if (entity.getDiscountPlanaApplicableEntities() != null) {
+			entity.getDiscountPlanaApplicableEntities().remove(applicableEntity);
 		}
 	}
 

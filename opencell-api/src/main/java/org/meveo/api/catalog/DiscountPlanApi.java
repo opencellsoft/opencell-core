@@ -43,7 +43,6 @@ import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 
 /**
@@ -89,8 +88,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         discountPlan.setApplicationLimit(postData.getApplicationLimit());
         discountPlan.setApplicationFilterEL(postData.getApplicationFilterEL());
         discountPlan.setIncompatibleDiscountPlans(getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans()));
-        discountPlan.setApplicableEntities(getApplicableEntities(postData.getApplicableEntities()));
-        discountPlan.setUsedQuantity(postData.getUsedQuantity());
+        discountPlan.setDiscountPlanaApplicableEntities(getApplicableEntities(postData.getApplicableEntities()));
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), discountPlan, true);
@@ -193,10 +191,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         }
         List<ApplicableEntity> applicableEntities = getApplicableEntities(postData.getApplicableEntities());
         if (applicableEntities != null && !applicableEntities.isEmpty()) {
-            discountPlan.setApplicableEntities(applicableEntities);
-        }
-        if(postData.getUsedQuantity() != null) {
-        	discountPlan.setUsedQuantity(postData.getUsedQuantity());
+            discountPlan.setDiscountPlanaApplicableEntities(applicableEntities);
         }
 
         // populate customFields

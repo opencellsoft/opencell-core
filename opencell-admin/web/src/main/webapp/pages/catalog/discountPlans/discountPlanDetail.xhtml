@@ -54,7 +54,7 @@
                                 <p:fieldset legend="#{messages['discountPlanItem.applicableEntities']}" styleClass="clearLeft">
                                     <p:outputPanel id="applicableEntitiesPanel">
                                         <p:dataTable id="applicableEntities" var="entity" resizableColumns="true"
-                                                     value="#{discountPlanBean.entity.applicableEntities}" rows="10" styleClass="custom-grid">
+                                                     value="#{discountPlanBean.entity.discountPlanaApplicableEntities}" rows="10" styleClass="custom-grid">
                                             <hftl:column label="#{messages['applicableEntity.code']}" field="code"/>
                                             <hftl:column label="#{messages['applicableEntity.entityClass']}" field="entityClass"/>
                                             <p:column style="width: 5%">

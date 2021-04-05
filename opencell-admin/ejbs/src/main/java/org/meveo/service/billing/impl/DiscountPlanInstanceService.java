@@ -30,10 +30,8 @@ import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.apache.lucene.index.DocIDMerger;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IDiscountable;
 import org.meveo.model.billing.BillingAccount;
@@ -221,8 +219,8 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 	}
 
 	private boolean isApplicableEntity(IDiscountable entity, DiscountPlan dp) {
-		if (dp.getApplicableEntities() != null && !dp.getApplicableEntities().isEmpty()) {
-			long count = dp.getApplicableEntities().stream()
+		if (dp.getDiscountPlanaApplicableEntities() != null && !dp.getDiscountPlanaApplicableEntities().isEmpty()) {
+			long count = dp.getDiscountPlanaApplicableEntities().stream()
 					.filter(applicableEntity -> applicableEntity.getCode().equals(((BusinessEntity) entity).getCode()) && applicableEntity.getEntityClass()
 							.equals(entity.getClass().getSimpleName())).count();
 			return count == 0;
