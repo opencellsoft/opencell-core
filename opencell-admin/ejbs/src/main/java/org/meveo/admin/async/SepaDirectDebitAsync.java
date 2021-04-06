@@ -18,10 +18,7 @@
 package org.meveo.admin.async;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
@@ -131,7 +128,7 @@ public class SepaDirectDebitAsync {
 			CustomerAccount ca = ao.getCustomerAccount();
 			String errorMsg = ddRequestLOTService.getMissingField(ao, ddRequestLOT, appProvider, ca);
 			String caFullName =  ca.getName() != null ? ca.getName().getFullName() : "";
-			ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, Arrays.asList(ao)));
+			ddRequestLOT.getDdrequestItems().add(ddRequestItemService.createDDRequestItem(ao.getUnMatchingAmount(), ddRequestLOT, caFullName, errorMsg, new ArrayList<>(Arrays.asList(ao))));
 			if (errorMsg != null) {
 				nbItemsKo++;
 				allErrors += errorMsg + " ; ";
