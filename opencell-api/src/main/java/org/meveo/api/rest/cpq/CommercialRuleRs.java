@@ -32,7 +32,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
  * @version 11.0
  *
  */
-@Path("/commercialRule")
+@Path("/commercialRules")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -82,7 +82,7 @@ public interface CommercialRuleRs extends IBaseRs {
 	Response delete(@Parameter(description = "contain the code of CommercialRule te be deleted by its code", required = true) @PathParam("code") String code);
 
 	@GET
-	@Path("/")
+	@Path("/{code}")
     @Operation(summary = "This endpoint allows to find a commercialRule by its code",
     description ="Finding a commercialRule by its code ",
     tags = { "CommercialRules" },
@@ -90,7 +90,7 @@ public interface CommercialRuleRs extends IBaseRs {
             @ApiResponse(responseCode="200", description = "The CommercialRule successfully retrieved",
             		content = @Content(schema = @Schema(implementation = GetCommercialRuleDtoResponse.class))),
     })
-	Response findByCode(@Parameter(description = "retrieving a commercialRule with its code") @QueryParam("code") String code);
+	Response findByCode(@Parameter(description = "retrieving a commercialRule with its code") @PathParam("code") String code);
 	
 	   /**
      * List Commercial Rules matching a given criteria
@@ -99,7 +99,7 @@ public interface CommercialRuleRs extends IBaseRs {
      * @return List of offer templates
      */
     @POST
-    @Path("/list")
+    @Path("/filtering")
     @Operation(summary = "Get commercial rules matching the given criteria",
     tags = { "CommercialRules" },
     description ="Get commercial rules matching the given criteria",

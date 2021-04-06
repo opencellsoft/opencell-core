@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
-import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -32,24 +31,24 @@ public class PricePlanMatrixLineApi extends BaseApi {
     @Inject
     private PricePlanMatrixValueService pricePlanMatrixValueService;
 
-    public PricePlanMatrixLineDto addPricePlanMatrixLine(PricePlanMatrixLineDto dtoData) throws MeveoApiException, BusinessException {
+    public PricePlanMatrixLineDto addPricePlanMatrixLine(String pricePlanMatrixCode, int version, PricePlanMatrixLineDto dtoData) throws MeveoApiException, BusinessException {
 
-        checkCommunMissingParameters(dtoData);
+        checkCommunMissingParameters(pricePlanMatrixCode, version, dtoData);
 
         return pricePlanMatrixLineService.createPricePlanMatrixLine(dtoData);
     }
     
-    public GetPricePlanVersionResponseDto addPricePlanMatrixLines(PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
+    public GetPricePlanVersionResponseDto addPricePlanMatrixLines(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
             for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLinesDto()) {
-            	addPricePlanMatrixLine(pricePlanMatrixLineDto);
+            	addPricePlanMatrixLine(pricePlanMatrixCode, pricePlanMatrixVersion, pricePlanMatrixLineDto);
             }
            PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
           return new GetPricePlanVersionResponseDto(ppmVersion);
     }
 
     
-    public GetPricePlanVersionResponseDto updatePricePlanMatrixLines(PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
-        PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
+    public GetPricePlanVersionResponseDto updatePricePlanMatrixLines(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
+        PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
         	ppmVersion.getLines().clear();
         	Set<PricePlanMatrixLine> lines = new HashSet<PricePlanMatrixLine>();
             for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLinesDto()) {
@@ -70,21 +69,21 @@ public class PricePlanMatrixLineApi extends BaseApi {
           return new GetPricePlanVersionResponseDto(ppmVersion);
     }
     
-    public PricePlanMatrixLineDto updatePricePlanMatrixLine(PricePlanMatrixLineDto pricePlanMatrixLineDto) {
+    public PricePlanMatrixLineDto updatePricePlanMatrixLine(String pricePlanMatrixCode, int version, PricePlanMatrixLineDto pricePlanMatrixLineDto) {
 
         if(StringUtils.isBlank(pricePlanMatrixLineDto.getPpmLineId()))
             missingParameters.add("ppmLineId");
-        checkCommunMissingParameters(pricePlanMatrixLineDto);
+        checkCommunMissingParameters(pricePlanMatrixCode, version, pricePlanMatrixLineDto);
 
 
         return pricePlanMatrixLineService.updatePricePlanMatrixLine(pricePlanMatrixLineDto);
     }
 
-    private void checkCommunMissingParameters(PricePlanMatrixLineDto dtoData) {
-        if(StringUtils.isBlank(dtoData.getPricePlanMatrixCode())){
+    private void checkCommunMissingParameters(String pricePlanMatrixCode, int version, PricePlanMatrixLineDto dtoData) {
+        if(StringUtils.isBlank(pricePlanMatrixCode)){
             missingParameters.add("pricePlanMatrixCode");
         }
-        if(StringUtils.isBlank(dtoData.getPricePlanMatrixVersion())){
+        if(StringUtils.isBlank(version)){
             missingParameters.add("pricePlanMatrixVersion");
         }
 

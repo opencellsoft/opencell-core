@@ -2,32 +2,28 @@ package org.meveo.api.catalog;
 
 import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseCrudApi;
-import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
-import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.function.BiFunction;
 
 @Stateless
-public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn, PricePlanMatrixColumnDto> {
+public class PricePlanMatrixColumnApi extends BaseApi {
 
     @Inject
     private PricePlanMatrixColumnService pricePlanMatrixColumnService;
@@ -40,15 +36,14 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
     @Inject
     private AttributeService attributeService;
 
-    @Override
-    public PricePlanMatrixColumn create(PricePlanMatrixColumnDto dtoData) throws MeveoApiException, BusinessException {
+    public PricePlanMatrixColumn create(String pricePlanMatrixCode, int version, PricePlanMatrixColumnDto dtoData) throws MeveoApiException, BusinessException {
 
-        checkMissingParameters(dtoData);
+        checkMissingParameters(pricePlanMatrixCode, version, dtoData);
 
-        PricePlanMatrixVersion pricePlanMatrixVersion = getPricePlanMatrixVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
+        PricePlanMatrixVersion pricePlanMatrixVersion = getPricePlanMatrixVersion(pricePlanMatrixCode, version);
         
         if(!pricePlanMatrixColumnService.findByCodeAndPlanMaptrixVersion(dtoData.getCode(), pricePlanMatrixVersion).isEmpty()) {
-            throw new EntityAlreadyExistsException(PricePlanMatrixColumn.class, "(" + dtoData.getCode() + ", " + dtoData.getPricePlanMatrixVersion() + ")");
+            throw new EntityAlreadyExistsException(PricePlanMatrixColumn.class, "(" + dtoData.getCode() + ", " + version + ")");
         }
 
         PricePlanMatrixColumn pricePlanMatrixColumn = new PricePlanMatrixColumn();
@@ -64,12 +59,11 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
         return pricePlanMatrixColumn;
     }
 
-    @Override
-    public PricePlanMatrixColumn update(PricePlanMatrixColumnDto dtoData) throws MeveoApiException, BusinessException {
-        checkMissingParameters(dtoData);
-        PricePlanMatrixVersion pricePlanMatrixVersion = getPricePlanMatrixVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
+    public PricePlanMatrixColumn update(String pricePlanMatrixCode, int version, PricePlanMatrixColumnDto dtoData) throws MeveoApiException, BusinessException {
+        checkMissingParameters(pricePlanMatrixCode, version,dtoData);
+        PricePlanMatrixVersion pricePlanMatrixVersion = getPricePlanMatrixVersion(pricePlanMatrixCode, version);
         PricePlanMatrixColumn pricePlanMatrixColumn = loadEntityByCode(pricePlanMatrixColumnService, dtoData.getCode(), PricePlanMatrixColumn.class);
-        populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn, pricePlanMatrixVersion);
+        populatePricePlanMatrixColumn(dtoData, pricePlanMatrixColumn,pricePlanMatrixVersion);
         Attribute attribute = loadEntityByCode(attributeService, dtoData.getAttributeCode(), Attribute.class);
         pricePlanMatrixColumn.setAttribute(attribute);
         return pricePlanMatrixColumnService.update(pricePlanMatrixColumn);
@@ -79,21 +73,22 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
         pricePlanMatrixColumnService.removePricePlanColumn(code);
     }
 
-    @Override
-    protected BiFunction<PricePlanMatrixColumn, CustomFieldsDto, PricePlanMatrixColumnDto> getEntityToDtoFunction() {
-        return (a, b) -> new PricePlanMatrixColumnDto(a);
-    }
+    private void checkMissingParameters(String pricePlanMatrixCode, int version, PricePlanMatrixColumnDto dtoData) {
 
-    private void checkMissingParameters(PricePlanMatrixColumnDto dtoData) {
-       
-        if (StringUtils.isBlank(dtoData.getPricePlanMatrixVersion())) {
+
+        if (StringUtils.isBlank(pricePlanMatrixCode)) {
+            missingParameters.add("pricePlanMatrixCode");
+        }
+        if (StringUtils.isBlank(version)) {
             missingParameters.add("pricePlanMatrixVersion");
         }
-        if (StringUtils.isBlank(dtoData.getAttributeCode())) {
-            missingParameters.add("attributeCode");
-        }
+
         if (StringUtils.isBlank(dtoData.getCode())) {
             missingParameters.add("code");
+        }
+
+        if (StringUtils.isBlank(dtoData.getAttributeCode())) {
+            missingParameters.add("attributeCode");
         }
 
         handleMissingParametersAndValidate(dtoData);
@@ -118,5 +113,15 @@ public class PricePlanMatrixColumnApi extends BaseCrudApi<PricePlanMatrixColumn,
             throw new EntityDoesNotExistsException(PricePlanMatrixVersion.class, plnaMatrixCode, "pricePlanMatrixCode", ""+currentPricePlanMatrixVersion, "pricePlanMatrixVersion");
         }
         return pricePlanMatrixVersion;
+    }
+
+    public PricePlanMatrixColumnDto find(String code) throws MeveoApiException {
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        handleMissingParameters();
+
+        PricePlanMatrixColumn pricePlanMatrixColumn = loadEntityByCode(pricePlanMatrixColumnService, code, PricePlanMatrixColumn.class);
+        return new PricePlanMatrixColumnDto(pricePlanMatrixColumn);
     }
 }

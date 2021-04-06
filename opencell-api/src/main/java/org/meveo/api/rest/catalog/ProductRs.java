@@ -36,7 +36,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
-@Path("/catalog/product")
+@Path("/catalog/products")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface ProductRs extends IBaseRs{
@@ -69,7 +69,7 @@ public interface ProductRs extends IBaseRs{
 	 * @return
 	 */
 	@POST
-	@Path("/duplicate/{productCode}")
+	@Path("/{productCode}/duplication")
 	@Operation(summary = "This endpoint allows to duplicate a product",
 	tags = { "Product" },
 	description ="duplicate a product with the published its version or a recent version",
@@ -107,8 +107,8 @@ public interface ProductRs extends IBaseRs{
 	 * @param status
 	 * @return
 	 */
-	@POST
-	@Path("/{productCode}/update/status")
+	@PUT
+	@Path("/{productCode}/status/{status}")
     @Operation(summary = "This endpoint allows to update product status  ",
     tags = { "Product" },
     description ="the product with status DRAFT can be change to ACTIVE or CLOSED, if the product status is ACTIVE then the only value possible is CLOSED otherwise it will throw exception",
@@ -117,7 +117,7 @@ public interface ProductRs extends IBaseRs{
                     content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
             @ApiResponse(responseCode = "400", description = "the status of the product is already closed")
     })
-	Response updateProductStatus(@Parameter @PathParam("productCode") String productCode,@Parameter @QueryParam("status") ProductStatusEnum status);
+	Response updateProductStatus(@Parameter @PathParam("productCode") String productCode,@Parameter @PathParam("status") ProductStatusEnum status);
 	
 	/**
 	 * 
@@ -125,7 +125,7 @@ public interface ProductRs extends IBaseRs{
 	 * @return
 	 */
 	@GET
-	@Path("/")
+	@Path("/{productCode}")
     @Operation(summary = "This endpoint allows to find an existing product  ",
     tags = { "Product" },
     description ="retrieving a product with its code",
@@ -134,7 +134,7 @@ public interface ProductRs extends IBaseRs{
                     content = @Content(schema = @Schema(implementation = GetProductDtoResponse.class))),
             @ApiResponse(responseCode = "400", description = "the product with code in param does not exist")
     })
-	Response findProductByCode(@Parameter(description = "code product for searching an existing product", required = true) @QueryParam("productCode") String productCode);
+	Response findProductByCode(@Parameter(description = "code product for searching an existing product", required = true) @PathParam("productCode") String productCode);
 	
 	
     /**
@@ -144,7 +144,7 @@ public interface ProductRs extends IBaseRs{
      * @return List of offer templates
      */
     @POST
-    @Path("/list")
+    @Path("/filtering")
     @Operation(summary = "Get products matching the given criteria",
     tags = { "Product" },
     description ="Get products matching the given criteria",
@@ -179,7 +179,7 @@ public interface ProductRs extends IBaseRs{
 	 * @return
 	 */
     @DELETE
-    @Path("/productLine/{productLineCode}")
+    @Path("/productLines/{productLineCode}")
     @Operation(summary = "This endpoint allows to remove an existing product line",
     tags = { "Product" },
     description ="remove a product line by its code",
@@ -197,7 +197,7 @@ public interface ProductRs extends IBaseRs{
      * @return
      */
 	@POST
-	@Path("/productLine")
+	@Path("/productLines")
     @Operation(summary = "This endpoint allows to create or update a product line",
     tags = { "Product" },
     description ="create a product line if it doesn't exist or update an existing product line",
@@ -214,7 +214,7 @@ public interface ProductRs extends IBaseRs{
 	 * @return
 	 */
 	@GET
-	@Path("/productLine")
+	@Path("/productLines/{productLineCode}")
     @Operation(summary = "This endpoint allows to retrieve a product line",
     tags = { "Product" },
     description ="retrieving a product line with its code",
@@ -234,7 +234,7 @@ public interface ProductRs extends IBaseRs{
      * @return
      */
 	@POST
-	@Path("/productVersion")
+	@Path("/productVersions")
     @Operation(summary = "This endpoint allows to create or update a product version",
     tags = { "Product" },
     description ="create a product version if it doesn't exist or update an existing product line",
@@ -255,7 +255,7 @@ public interface ProductRs extends IBaseRs{
 	 * @return
 	 */
 	@DELETE
-	@Path("/productVersion/{productCode}/{productVersion}")
+	@Path("/{productCode}/productVersions/{productVersion}")
 	@Operation(summary = "This endpoint allows to remove a product version",
 	tags = { "Product"},
 	description ="remove a product version with product code and current version",
@@ -278,7 +278,7 @@ public interface ProductRs extends IBaseRs{
 	 * @return
 	 */
 	@POST
-	@Path("/productVersion/{productCode}/{productVersion}")
+	@Path("/{productCode}/productVersions/{productVersion}")
     @Operation(summary = "This endpoint allows to update the product version status",
     tags = { "Product" },
     description ="the product with status DRAFT can be change to PUBLIED or CLOSED ",
@@ -300,7 +300,7 @@ public interface ProductRs extends IBaseRs{
 	 * @return
 	 */
 	@POST
-	@Path("/productVersion/duplicate/{productCode}/{productVersion}")
+	@Path("/{productCode}/productVersions/{productVersion}/duplication")
 	@Operation(summary = "This endpoint allows to duplicate a product version",
 	tags = { "Product" },
 	description ="duplicate a product version",
@@ -318,7 +318,7 @@ public interface ProductRs extends IBaseRs{
 	 * @return
 	 */
 	@GET
-	@Path("/productVersion/{productCode}/{productVersion}")
+	@Path("/{productCode}/productVersions/{productVersion}")
 	@Operation(summary = "This endpoint allows to find a product version",
 	tags = { "Product" },
 	description ="find a product version",
@@ -336,7 +336,7 @@ public interface ProductRs extends IBaseRs{
 	 * @return
 	 */
 	@GET
-	@Path("/productVersion/{productCode}")
+	@Path("/{productCode}/productVersions")
 	@Operation(summary = "This endpoint allows to find all product versions related to a product",
 	tags = { "Product" },
 	description ="find product versions by product code",
@@ -347,7 +347,7 @@ public interface ProductRs extends IBaseRs{
 	
 
     @POST
-    @Path("/cpq/list")
+    @Path("/cpq/offers")
     @Operation(summary = "Get products with their attributes that match the quote offer context",
     tags = { "Catalog browsing" },
     description ="Get products with their attributes that match the offer context",
