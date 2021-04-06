@@ -214,7 +214,6 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "charge_instance_id", nullable = false)
-    @NotNull
     private ChargeInstance chargeInstance;
 
     /**
