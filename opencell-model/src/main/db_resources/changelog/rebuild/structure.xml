@@ -3266,9 +3266,7 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="aggregate_serv_id" type="bigint" />
-            <column name="charge_instance_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
+            <column name="charge_instance_id" type="bigint" />
             <column name="counter_id" type="bigint" />
             <column name="currency_id" type="bigint" />
             <column name="priceplan_id" type="bigint" />
