@@ -10,6 +10,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.tax.TaxClass;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -36,7 +37,7 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@OneToOne(fetch = LAZY)
+	@OneToOne(fetch = LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "tax_class_id")
     private TaxClass taxClass;
 
