@@ -176,7 +176,6 @@ public class WalletOperation extends BaseEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "charge_instance_id", nullable = false)
-    @NotNull
     private ChargeInstance chargeInstance;
 
     /**
