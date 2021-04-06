@@ -256,7 +256,6 @@ public class GenericOpencellRestfulAPIv1 extends Application {
         fillUpRestfulURLsMap( "/invoiceSubCategories", aMapRestful );
         fillUpRestfulURLsMap( "/invoiceTypes", aMapRestful );
         fillUpRestfulURLsMap( "/users", aMapRestful );
-        fillUpRestfulURLsMap( "/account/titles", aMapRestful );
         fillUpRestfulURLsMap( "/calendars", aMapRestful );
         fillUpRestfulURLsMap( "/catalog/unitOfMeasures", aMapRestful );
         fillUpRestfulURLsMap( "/contacts", aMapRestful );
@@ -276,6 +275,13 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                                     ((Path) anAnnotation).value() );
 
                             fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/sellers",
+                                    aMapRestful );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/account/title" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/titles",
+                                    ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/titles",
                                     aMapRestful );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/customer" ) ) {
