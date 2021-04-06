@@ -96,7 +96,7 @@ public class ProductOfferingDto extends EnableBusinessDto implements IVersionedD
 
     /** The life cycle status. */
     @XmlElement(required = true)
-    protected LifeCycleStatusEnum lifeCycleStatus = LifeCycleStatusEnum.IN_DESIGN;
+    protected LifeCycleStatusEnum lifeCycleStatus;
 
     /** The custom fields. */
     protected CustomFieldsDto customFields;
