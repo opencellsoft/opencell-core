@@ -105,7 +105,7 @@ import org.meveo.model.rating.EDR;
 
         @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select o.status, count(o.id) from WalletOperation o group by o.status"),
         
-        @NamedQuery(name = "WalletOperation.detachWOsFromSubscription", query = "UPDATE WalletOperation set chargeInstance = null where chargeInstance.id IN (SELECT id from ChargeInstance where subscription=:subscription)"),
+        @NamedQuery(name = "WalletOperation.detachWOsFromSubscription", query = "UPDATE WalletOperation set chargeInstance = null, serviceInstance = null where chargeInstance.id IN (SELECT id from ChargeInstance where subscription=:subscription)"),
 
         @NamedQuery(name = "WalletOperation.listNotOpenedWObetweenTwoDates", query = "SELECT o FROM WalletOperation o WHERE o.status != 'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate and o.id >:lastId order by o.id asc"),
         @NamedQuery(name = "WalletOperation.listWObetweenTwoDatesByStatus", query = "SELECT o FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate and o.id >:lastId order by o.id asc"),
