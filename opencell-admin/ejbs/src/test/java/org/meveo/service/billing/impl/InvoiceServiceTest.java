@@ -2,6 +2,7 @@ package org.meveo.service.billing.impl;
 
 import static java.math.RoundingMode.HALF_UP;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -18,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +53,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.DiscountPlanInstance;
+import org.meveo.model.billing.DiscountPlanInstanceStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceLineStatusEnum;
@@ -72,6 +75,8 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.Customer;
@@ -133,15 +138,21 @@ public class InvoiceServiceTest {
 
     @Mock
     private InvoiceLinesService invoiceLinesService;
-    
+
     @Mock
     private ServiceSingleton serviceSingleton;
 
+    @Mock
+    private InvoiceTypeService invoiceTypeService;
+
+    @Mock
+    private DiscountPlanInstanceService discountPlanInstanceService;
+
     @Rule
     public final ExpectedException exception = ExpectedException.none();
-    
+
     private Random random = new Random();
-    
+
     @Before
     public void setUp() {
         when(ratedTransactionService.listRTsToInvoice(any(), any(), any(), any(), anyInt())).thenAnswer(new Answer<List<RatedTransaction>>() {
@@ -1247,70 +1258,259 @@ public class InvoiceServiceTest {
         assertThat(subAggr11.getAmountTax()).isEqualTo(new BigDecimal(60.00d).setScale(2, HALF_UP));
     }
 
-	public <T> T instantiateRandomObject(Class<T> clazz, boolean onlyBasicFields) throws Exception {
-		T instance = null;
-		if(Resource.class.isAssignableFrom(clazz)) {
-			Method builderMethod = clazz.getMethod("builder");
-			Object builder = builderMethod.invoke(null);
-			final Class builderClass = builder.getClass();
-			final Method build = builderClass.getMethod("build");
-			
-			for (Field field : clazz.getDeclaredFields()) {
-				final String name = field.getName();
-				if (!java.lang.reflect.Modifier.isStatic(field.getModifiers()) && name!="id" && name!="links" && !name.endsWith("EL")) {
-					Method accessor = builderClass.getMethod(name, field.getType());
-					Object value = getRandomValueForField(field, onlyBasicFields);
-					accessor.invoke(builder, value);
-				}
-			}
-			instance =  (T)build.invoke(builder);
-		} else {
-			final Constructor<T>[] constructors = (Constructor<T>[]) clazz.getConstructors();
-			if(constructors!=null && constructors.length>0) {
-				final Constructor<T> constructor = constructors[0];
-				Object[] cargs = new Object[constructor.getParameterCount()];
-				instance = constructor.newInstance(cargs);
-				for (Field field : clazz.getDeclaredFields()) {
-					if (!java.lang.reflect.Modifier.isStatic(field.getModifiers()) && !field.getName().endsWith("EL")) {
-						field.setAccessible(true);
-						Object value = getRandomValueForField(field, onlyBasicFields);
-						field.set(instance, value);
-					}
-				}
-			} else {
-				System.out.println("WARNING: NO CONSTRUCTOR FOR "+clazz);
-			}
-		}
-		return instance;
-	}
- 
-	private Object getRandomValueForField(Field field, boolean onlyBasicFields) throws Exception {
-		Class<?> type = field.getType();
-		if (type.isEnum()) {
-			Object[] enumValues = type.getEnumConstants();
-			return enumValues[random.nextInt(enumValues.length)];
-		} else if (type.equals(Integer.TYPE) || type.equals(Integer.class)) {
-			return random.nextInt();
-		} else if (type.equals(Long.TYPE) || type.equals(Long.class)) {
-			return random.nextLong();
-		} else if (type.equals(Double.TYPE) || type.equals(Double.class)) {
-			return random.nextDouble();
-		} else if (type.equals(Float.TYPE) || type.equals(Float.class)) {
-			return random.nextFloat();
-		} else if (type.equals(Boolean.TYPE) || type.equals(Boolean.class)) {
-			return random.nextBoolean();
-		} else if (type.equals(String.class)) {
-			return UUID.randomUUID().toString();
-		} else if (type.equals(BigInteger.class)) {
-			return BigInteger.valueOf(random.nextInt());
-		} else if (type.equals(BigDecimal.class)) {
-			return BigDecimal.valueOf(random.nextInt());
-		} else if (type.equals(Date.class)) {
-			return new Date();
-		} else if(!onlyBasicFields) {
-			return instantiateRandomObject(type, onlyBasicFields);
-		}
-		return null;
-	}
-	
+    public <T> T instantiateRandomObject(Class<T> clazz, boolean onlyBasicFields) throws Exception {
+        T instance = null;
+        if (Resource.class.isAssignableFrom(clazz)) {
+            Method builderMethod = clazz.getMethod("builder");
+            Object builder = builderMethod.invoke(null);
+            final Class builderClass = builder.getClass();
+            final Method build = builderClass.getMethod("build");
+
+            for (Field field : clazz.getDeclaredFields()) {
+                final String name = field.getName();
+                if (!java.lang.reflect.Modifier.isStatic(field.getModifiers()) && name != "id" && name != "links" && !name.endsWith("EL")) {
+                    Method accessor = builderClass.getMethod(name, field.getType());
+                    Object value = getRandomValueForField(field, onlyBasicFields);
+                    accessor.invoke(builder, value);
+                }
+            }
+            instance = (T) build.invoke(builder);
+        } else {
+            final Constructor<T>[] constructors = (Constructor<T>[]) clazz.getConstructors();
+            if (constructors != null && constructors.length > 0) {
+                final Constructor<T> constructor = constructors[0];
+                Object[] cargs = new Object[constructor.getParameterCount()];
+                instance = constructor.newInstance(cargs);
+                for (Field field : clazz.getDeclaredFields()) {
+                    if (!java.lang.reflect.Modifier.isStatic(field.getModifiers()) && !field.getName().endsWith("EL")) {
+                        field.setAccessible(true);
+                        Object value = getRandomValueForField(field, onlyBasicFields);
+                        field.set(instance, value);
+                    }
+                }
+            } else {
+                System.out.println("WARNING: NO CONSTRUCTOR FOR " + clazz);
+            }
+        }
+        return instance;
+    }
+
+    private Object getRandomValueForField(Field field, boolean onlyBasicFields) throws Exception {
+        Class<?> type = field.getType();
+        if (type.isEnum()) {
+            Object[] enumValues = type.getEnumConstants();
+            return enumValues[random.nextInt(enumValues.length)];
+        } else if (type.equals(Integer.TYPE) || type.equals(Integer.class)) {
+            return random.nextInt();
+        } else if (type.equals(Long.TYPE) || type.equals(Long.class)) {
+            return random.nextLong();
+        } else if (type.equals(Double.TYPE) || type.equals(Double.class)) {
+            return random.nextDouble();
+        } else if (type.equals(Float.TYPE) || type.equals(Float.class)) {
+            return random.nextFloat();
+        } else if (type.equals(Boolean.TYPE) || type.equals(Boolean.class)) {
+            return random.nextBoolean();
+        } else if (type.equals(String.class)) {
+            return UUID.randomUUID().toString();
+        } else if (type.equals(BigInteger.class)) {
+            return BigInteger.valueOf(random.nextInt());
+        } else if (type.equals(BigDecimal.class)) {
+            return BigDecimal.valueOf(random.nextInt());
+        } else if (type.equals(Date.class)) {
+            return new Date();
+        } else if (!onlyBasicFields) {
+            return instantiateRandomObject(type, onlyBasicFields);
+        }
+        return null;
+    }
+
+    @Test
+    public void test_appendInvoiceAggregates_apply_discount() {
+
+        Seller seller = new Seller();
+
+        CustomerAccount ca = new CustomerAccount();
+        ca.setId(1L);
+        BillingAccount ba = new BillingAccount();
+        ba.setCustomerAccount(ca);
+        ba.setId(2L);
+
+        TradingLanguage tradingLanguage = new TradingLanguage();
+        tradingLanguage.setLanguageCode("en");
+        tradingLanguage.setId(3L);
+
+        ba.setTradingLanguage(tradingLanguage);
+
+        DiscountPlan discountPlan = new DiscountPlan();
+        discountPlan.setDiscountPlanType(DiscountPlanTypeEnum.PROMO_CODE);
+        discountPlan.setStatus(DiscountPlanStatusEnum.IN_USE);
+
+        DiscountPlanItem dpi = new DiscountPlanItem();
+        dpi.setDiscountPlan(discountPlan);
+        dpi.setDiscountPlanItemType(DiscountPlanItemTypeEnum.FIXED);
+        dpi.setDiscountValue(BigDecimal.TEN);
+        discountPlan.setDiscountPlanItems(List.of(dpi));
+
+        DiscountPlanInstance discountPlanInstance = new DiscountPlanInstance();
+        discountPlanInstance.setDiscountPlan(discountPlan);
+        discountPlanInstance.setBillingAccount(ba);
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.set(Calendar.MONTH, -1);
+        discountPlanInstance.setStartDate(cal.getTime());
+        cal.add(Calendar.MONTH, 8);
+        discountPlanInstance.setEndDate(cal.getTime());
+        discountPlanInstance.setStatus(DiscountPlanInstanceStatusEnum.ACTIVE);
+
+        ba.setDiscountPlanInstances(List.of(discountPlanInstance));
+
+        List<RatedTransaction> rts = new ArrayList<RatedTransaction>();
+
+        UserAccount ua1 = new UserAccount();
+        WalletInstance wallet1 = new WalletInstance();
+        wallet1.setId(5L);
+        wallet1.setCode("wallet1");
+        ua1.setCode("ua1");
+        ua1.setWallet(wallet1);
+        ua1.setBillingAccount(ba);
+        ua1.setId(6L);
+
+        UserAccount ua2 = new UserAccount();
+        WalletInstance wallet2 = new WalletInstance();
+        wallet2.setId(7L);
+        wallet2.setCode("wallet2");
+
+        ua2.setCode("ua2");
+        ua2.setWallet(wallet2);
+        ua2.setBillingAccount(ba);
+        ua2.setId(8L);
+
+        Subscription subscription1 = new Subscription();
+        subscription1.setCode("subsc1");
+        subscription1.setUserAccount(ua1);
+        subscription1.setId(9L);
+
+        Subscription subscription2 = new Subscription();
+        subscription2.setCode("subsc2");
+        subscription2.setUserAccount(ua1);
+        subscription2.setId(10L);
+
+        InvoiceCategory cat1 = new InvoiceCategory();
+        cat1.setCode("cat1");
+        cat1.setId(11L);
+
+        InvoiceCategory cat2 = new InvoiceCategory();
+        cat2.setCode("cat2");
+        cat2.setId(12L);
+
+        InvoiceSubCategory subCat11 = new InvoiceSubCategory();
+        subCat11.setInvoiceCategory(cat1);
+        subCat11.setCode("subCat11");
+        subCat11.setId(13L);
+
+        InvoiceSubCategory subCat12 = new InvoiceSubCategory();
+        subCat12.setInvoiceCategory(cat1);
+        subCat12.setCode("subCat12");
+        subCat12.setId(14L);
+
+        InvoiceSubCategory subCat21 = new InvoiceSubCategory();
+        subCat21.setInvoiceCategory(cat2);
+        subCat21.setCode("subCat21");
+        subCat21.setId(15L);
+
+        InvoiceSubCategory subCat22 = new InvoiceSubCategory();
+        subCat22.setInvoiceCategory(cat2);
+        subCat22.setCode("subCat22");
+        subCat22.setId(16L);
+
+        Tax tax = new Tax();
+        tax.setId(17L);
+        tax.setCode("tax1");
+        tax.setPercent(new BigDecimal(15));
+
+        TaxClass taxClass = new TaxClass();
+        taxClass.setId(18L);
+
+        AccountingCode accountingCode = new AccountingCode();
+        accountingCode.setId(19L);
+
+        InvoiceType invoiceType = new InvoiceType();
+        invoiceType.setId(4L);
+
+        RatedTransaction rt111 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15),
+                new BigDecimal(16), new BigDecimal(1), RatedTransactionStatusEnum.OPEN, ua1.getWallet(), ba, ua1, subCat11, null, null, null, null, null, subscription1, null, null,
+                null, null, null, "rt111", "RT111", new Date(), new Date(), seller, tax, tax.getPercent(), null, taxClass, accountingCode, null);
+        rt111.setId(20L);
+        rts.add(rt111);
+
+        RatedTransaction rt112 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15),
+                new BigDecimal(16), new BigDecimal(1), RatedTransactionStatusEnum.OPEN, ua1.getWallet(), ba, ua1, subCat12, null, null, null, null, null, subscription1, null, null,
+                null, null, null, "rt112", "RT112", new Date(), new Date(), seller, tax, tax.getPercent(), null, taxClass, accountingCode, null);
+        rt112.setId(21L);
+        rts.add(rt112);
+
+        RatedTransaction rt121 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15),
+                new BigDecimal(16), new BigDecimal(1), RatedTransactionStatusEnum.OPEN, ua1.getWallet(), ba, ua1, subCat21, null, null, null, null, null, subscription1, null, null,
+                null, null, null, "rt121", "RT121", new Date(), new Date(), seller, tax, tax.getPercent(), null, taxClass, accountingCode, null);
+        rt121.setId(22L);
+        rts.add(rt121);
+
+        RatedTransaction rt122 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15),
+                new BigDecimal(16), new BigDecimal(1), RatedTransactionStatusEnum.OPEN, ua1.getWallet(), ba, ua1, subCat22, null, null, null, null, null, subscription1, null, null,
+                null, null, null, "rt122", "RT122", new Date(), new Date(), seller, tax, tax.getPercent(), null, taxClass, accountingCode, null);
+        rt122.setId(23L);
+        rts.add(rt122);
+
+        RatedTransaction rt211 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15),
+                new BigDecimal(16), new BigDecimal(1), RatedTransactionStatusEnum.OPEN, ua2.getWallet(), ba, ua2, subCat11, null, null, null, null, null, subscription2, null, null,
+                null, null, null, "rt211", "RT211", new Date(), new Date(), seller, tax, tax.getPercent(), null, taxClass, accountingCode, null);
+        rt211.setId(24L);
+        rts.add(rt211);
+
+        RatedTransaction rt212 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15),
+                new BigDecimal(16), new BigDecimal(1), RatedTransactionStatusEnum.OPEN, ua2.getWallet(), ba, ua2, subCat12, null, null, null, null, null, subscription2, null, null,
+                null, null, null, "rt212", "RT212", new Date(), new Date(), seller, tax, tax.getPercent(), null, taxClass, accountingCode, null);
+        rt212.setId(25L);
+        rts.add(rt212);
+
+        RatedTransaction rt221 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15),
+                new BigDecimal(16), new BigDecimal(1), RatedTransactionStatusEnum.OPEN, ua2.getWallet(), ba, ua2, subCat21, null, null, null, null, null, subscription2, null, null,
+                null, null, null, "rt221", "RT221", new Date(), new Date(), seller, tax, tax.getPercent(), null, taxClass, accountingCode, null);
+        rt221.setId(26L);
+        rts.add(rt221);
+
+        RatedTransaction rt222 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15),
+                new BigDecimal(16), new BigDecimal(1), RatedTransactionStatusEnum.OPEN, ua2.getWallet(), ba, ua2, subCat22, null, null, null, null, null, subscription2, null, null,
+                null, null, null, "rt222", "RT222", new Date(), new Date(), seller, tax, tax.getPercent(), null, taxClass, accountingCode, null);
+        rt222.setId(27L);
+        rts.add(rt222);
+
+        when(billingAccountService.isExonerated(any())).thenReturn(false);
+        TaxInfo taxInfo = taxMappingService.new TaxInfo();
+        taxInfo.tax = tax;
+        taxInfo.taxClass = taxClass;
+
+        when(taxMappingService.determineTax(any(), any(), any(), any(), any(), anyBoolean(), anyBoolean())).thenReturn(taxInfo);
+
+        when(appProvider.getRoundingMode()).thenReturn(RoundingModeEnum.NEAREST);
+        when(appProvider.getRounding()).thenReturn(6);
+        when(appProvider.getInvoiceRoundingMode()).thenReturn(RoundingModeEnum.NEAREST);
+        when(appProvider.getInvoiceRounding()).thenReturn(2);
+        when(appProvider.isEntreprise()).thenReturn(true);
+
+        ParamBean paramBean = mock(ParamBean.class);
+        when(paramBean.getPropertyAsBoolean(eq("invoice.agregateByUA"), anyBoolean())).thenReturn(true);
+
+        when(paramBeanFactory.getInstance()).thenReturn(paramBean);
+
+        Invoice invoice = new Invoice();
+        invoice.setInvoiceType(invoiceType);
+        invoice.setBillingAccount(ba);
+        invoice.setInvoiceDate(new Date());
+        invoiceService.appendInvoiceAgregates(ba, ba, invoice, rts, false, null, false);
+
+        assertThat(invoice.getInvoiceAgregates().size()).isEqualTo(21);
+        assertThat(invoice.getAmountWithTax().doubleValue()).isEqualTo(46d);
+        assertThat(invoice.getAmountWithoutTax().doubleValue()).isEqualTo(40d);
+        assertThat(invoice.getAmountTax().doubleValue()).isEqualTo(6d);
+    }
 }
