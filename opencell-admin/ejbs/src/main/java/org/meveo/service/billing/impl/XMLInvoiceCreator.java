@@ -1341,10 +1341,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     lebel.appendChild(lebelTxt);
                     Date periodStartDateRT = ratedTransaction.getStartDate();
                     Date periodEndDateRT = ratedTransaction.getEndDate();
-
+                    
+                    line.setAttribute("code",ratedTransaction.getCode());
                     line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDateRT, invoiceDateFormat));
                     line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDateRT, invoiceDateFormat));
                     line.setAttribute("sortIndex", ratedTransaction.getSortIndex() != null ? ratedTransaction.getSortIndex() + "" : "");
+                    line.setAttribute("taxPercent", ratedTransaction.getTaxPercent().toPlainString());
 
 
                     Element lineUnitAmountWithoutTax = doc.createElement("unitAmountWithoutTax");
@@ -1369,6 +1371,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     quantity.appendChild(quantityTxt);
                     line.appendChild(quantity);
                     line.appendChild(lebel);
+                    
+                    Element usageDate = doc.createElement("usageDate");
+                    Text usageDateTxt = doc.createTextNode(DateUtils.formatDateWithPattern(ratedTransaction.getUsageDate(), invoiceDateFormat));
+                    usageDate.appendChild(usageDateTxt);
+                    line.appendChild(usageDate);
+                    
                     subCategory.appendChild(line);
     
                     subCategoriesMap.put(invoiceSubCategory, subCategory);
