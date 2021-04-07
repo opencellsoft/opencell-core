@@ -4106,7 +4106,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoiceAgregateCat.setBillingAccount(billingAccount);
         invoiceAgregateCat.setInvoiceCategory(invoiceCategory);
         invoiceAgregateCat.setUserAccount(userAccount);
-        invoice.addInvoiceAggregate(invoiceAgregateCat);
+        //invoice.addInvoiceAggregate(invoiceAgregateCat);
         return invoiceAgregateCat;
     }
 
@@ -4124,7 +4124,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         invoiceAgregateSubcat.setAccountingCode(invoiceSubCategory.getAccountingCode());
         invoiceAgregateSubcat.setAuditable(auditable);
-        invoice.addInvoiceAggregate(invoiceAgregateSubcat);
+        //invoice.addInvoiceAggregate(invoiceAgregateSubcat);
         return invoiceAgregateSubcat;
     }
 
