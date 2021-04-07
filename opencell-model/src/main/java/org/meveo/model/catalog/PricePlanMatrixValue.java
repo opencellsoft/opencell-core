@@ -151,6 +151,10 @@ public class PricePlanMatrixValue extends BaseEntity {
                         && pricePlanMatrixColumn.getType().valueMatch(this, attributeValue));
     }
 
+    public boolean matchWithAllValues() {
+        return pricePlanMatrixColumn.getType().matchWithAllValues(this);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

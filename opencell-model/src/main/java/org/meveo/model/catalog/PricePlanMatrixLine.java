@@ -3,11 +3,9 @@ package org.meveo.model.catalog;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.cpq.AttributeValue;
-import org.meveo.model.cpq.QuoteAttribute;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,16 +16,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @ExportIdentifier({"code"})
@@ -93,6 +87,11 @@ public class PricePlanMatrixLine extends AuditableEntity {
 
     public void setPriority(Integer priority) {
         this.priority = priority != null ? priority : 0;
+    }
+
+    public boolean isDefaultLine(){
+        return pricePlanMatrixValues.stream()
+                .allMatch(v -> v.matchWithAllValues());
     }
 
     public boolean match(Set<AttributeValue> attributeValues) {
