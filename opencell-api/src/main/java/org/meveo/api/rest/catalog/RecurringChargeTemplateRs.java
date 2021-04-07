@@ -18,15 +18,6 @@
 
 package org.meveo.api.rest.catalog;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -42,6 +33,13 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.RecurringChargeTemplate}.
@@ -197,7 +195,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus enable(@PathParam("code") String code);
+    ActionStatus enable(@Parameter(required = true) @PathParam("code") String code);
 
     /**
      * Disable a Recurring charge template with a given code
@@ -221,5 +219,5 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus disable(@PathParam("code") String code);
+    ActionStatus disable(@Parameter(required = true) @PathParam("code") String code);
 }
