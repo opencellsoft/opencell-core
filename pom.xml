@@ -35,6 +35,12 @@
         <elasticsearch.version>6.6.2</elasticsearch.version>
         <java.version>11</java.version>
         <primefaces.version>7.0</primefaces.version>
+
+        <sonar.projectKey>core_test2</sonar.projectKey>
+        <sonar.organization>opencellsoft</sonar.organization>
+        <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
     </properties>
     
     <scm>
@@ -77,8 +83,8 @@
             
             <dependency>
                 <groupId>org.wildfly.bom</groupId>
-                <artifactId>wildfly-javaee8-with-tools</artifactId>
-                <version>17.0.1.Final</version>
+                <artifactId>wildfly-jakartaee8-with-tools</artifactId>
+                <version>19.1.0.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -189,6 +195,12 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+	            <groupId>javax.mail</groupId>
+	            <artifactId>javax.mail-api</artifactId>
+	            <version>1.6.2</version>
+	            <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.primefaces.extensions</groupId>
                 <artifactId>primefaces-extensions</artifactId>
                 <version>${primefaces.version}</version>
@@ -248,13 +260,13 @@
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
-                <version>1.4.11.1</version>
+                <version>1.4.16</version>
             </dependency>
 
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream-hibernate</artifactId>
-                <version>1.4.9</version>
+                <version>1.4.16</version>
             </dependency>
             
             <dependency>
@@ -269,24 +281,13 @@
             </dependency>
             
             <dependency>
-                <groupId>com.github.taksan</groupId>
-                <artifactId>skype-java-api</artifactId>
-                <version>1.4</version>
-            </dependency>
-            
-            <dependency>
                 <groupId>org.jboss</groupId>
                 <artifactId>jboss-vfs</artifactId>
                 <version>3.2.12.Final</version>
                 <scope>provided</scope>
             </dependency>
             
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>1.15</version>
-                <scope>provided</scope>
-            </dependency>
+            
             
             <dependency>
                 <groupId>org.mozilla</groupId>
@@ -516,7 +517,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>5.3.10.Final</version>
+                <version>5.3.15.Final</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -549,14 +550,14 @@
             <dependency>
                 <groupId>org.jboss.spec.javax.el</groupId>
                 <artifactId>jboss-el-api_3.0_spec</artifactId>
-                <version>1.0.13.Final</version>
+                <version>2.0.0.Final</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.jboss.spec.javax.ejb</groupId>
                 <artifactId>jboss-ejb-api_3.2_spec</artifactId>
-                <version>1.0.2.Final</version>
+                <version>2.0.0.Final</version>
                 <scope>provided</scope>
             </dependency>
             <!-- Added after migration to JDK 11 -->
@@ -591,7 +592,7 @@
                 <groupId>org.eclipse.microprofile.metrics</groupId>
                 <artifactId>microprofile-metrics-api</artifactId>
                 <version>2.0.2</version>
-                <scope>provided</scope>
+<!--                 <scope>provided</scope> -->
             </dependency>
 
         </dependencies>

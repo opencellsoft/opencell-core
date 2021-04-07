@@ -22,7 +22,10 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceDto;
+import org.meveo.api.dto.response.OneShotChargeTemplateResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Amounts;
@@ -67,7 +70,7 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
     public OneShotChargeTemplate create(OneShotChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(OneShotChargeTemplate.class.getName(), postData);
         }
         if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
             missingParameters.add("invoiceSubCategory");
@@ -205,6 +208,21 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
         }
 
         return oneShotChargeTemplatesWPrice;
+    }
+
+    public OneShotChargeTemplateResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        OneShotChargeTemplateResponseDto result = new OneShotChargeTemplateResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<OneShotChargeTemplate> oneShotChargeTemplates = oneShotChargeTemplateService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (oneShotChargeTemplates != null) {
+            for (OneShotChargeTemplate chargeTemplate : oneShotChargeTemplates) {
+                result.getOneShotChargeTemplates().getOneShotChargeTemplates()
+                        .add(new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+        }
+
+        return result;
     }
 
     @Override

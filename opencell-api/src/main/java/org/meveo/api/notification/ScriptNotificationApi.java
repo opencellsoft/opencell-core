@@ -37,10 +37,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.CounterTemplate;
-import org.meveo.model.notification.InboundRequest;
-import org.meveo.model.notification.Notification;
-import org.meveo.model.notification.NotificationHistory;
-import org.meveo.model.notification.ScriptNotification;
+import org.meveo.model.notification.*;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.InboundRequestService;
@@ -75,7 +72,7 @@ public class ScriptNotificationApi extends BaseCrudApi<ScriptNotification, Scrip
     @Override
     public ScriptNotification create(ScriptNotificationDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(ScriptNotification.class.getName(), postData);
         }
         if (StringUtils.isBlank(postData.getClassNameFilter())) {
             missingParameters.add("classNameFilter");

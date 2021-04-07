@@ -56,7 +56,7 @@ public class CounterTemplateApi extends BaseCrudApi<CounterTemplate, CounterTemp
     public CounterTemplate create(CounterTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(CounterTemplate.class.getName(), postData);
         }
         if (StringUtils.isBlank(postData.getCalendar())) {
             missingParameters.add("calendar");

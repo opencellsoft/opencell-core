@@ -21,45 +21,36 @@ package org.meveo.admin.job;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 import javax.persistence.Query;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.EntityManagerWrapper;
-import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.notification.Notification;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.notification.GenericNotificationService;
 import org.meveo.service.script.ScriptInstanceService;
-import org.slf4j.Logger;
 
 /**
- * The Class InternalNotificationJobBean.
+ * Job implementation to launch notification of entities returned by a filter
  */
 @Stateless
-public class InternalNotificationJobBean {
+public class InternalNotificationJobBean extends IteratorBasedJobBean<Object> {
 
-    /** The log. */
-    @Inject
-    protected Logger log;
-
-    /** The job execution service . */
-    @Inject
-    private JobExecutionService jobExecutionService;
+    private static final long serialVersionUID = -4180210233668446254L;
 
     /** The df. */
     // iso 8601 date and datetime format
@@ -85,79 +76,86 @@ public class InternalNotificationJobBean {
     private ScriptInstanceService scriptInstanceService;
 
     /**
-     * Execute.
-     *
-     * @param filterCode the filter code
-     * @param notificationCode the notification code
-     * @param result the result
+     * Notification to fire - job execution parameter
      */
-    @SuppressWarnings("rawtypes")
-    @JpaAmpNewTx
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(String filterCode, String notificationCode, JobExecutionResultImpl result) {
-        log.debug("Running with filterCode={}", filterCode);
+    private Notification notification;
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::executeNotification, null, null);
+        notification = null;
+    }
+
+    /**
+     * Initialize job settings and retrieve data to process
+     * 
+     * @param jobExecutionResult Job execution result
+     * @return An iterator over a list of entities to execute the script on
+     */
+    @SuppressWarnings("unchecked")
+    private Optional<Iterator<Object>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+
+        String filterCode = (String) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "InternalNotificationJob_filterCode");
+        String notificationCode = (String) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "InternalNotificationJob_notificationCode");
+
         if (StringUtils.isBlank(filterCode)) {
-            jobExecutionService.registerError(result, "filterCode has no SQL query set.");
-            return;
+            jobExecutionResult.addErrorReport("Job has no filter SQL query set.");
+            return Optional.empty();
         }
 
-        Notification notification = notificationService.findByCode(notificationCode);
+        notification = notificationService.findByCode(notificationCode);
         if (notification == null) {
-            jobExecutionService.registerError(result, "no notification found for " + notificationCode);
-            return;
+            jobExecutionResult.addErrorReport("No notification found for " + notificationCode);
+            return Optional.empty();
         }
+
+        if (notification.getScriptInstance() == null) {
+            jobExecutionResult.addErrorReport("Notification " + notificationCode + " has no script to execute");
+            return Optional.empty();
+        }
+
+        String queryStr = null;
         try {
-
-            String queryStr = filterCode.replaceAll("#\\{date\\}", df.format(new Date()));
+            queryStr = filterCode.replaceAll("#\\{date\\}", df.format(new Date()));
             queryStr = queryStr.replaceAll("#\\{dateTime\\}", tf.format(new Date()));
-            log.debug("execute query:{}", queryStr);
             Query query = emWrapper.getEntityManager().createNativeQuery(queryStr);
-            @SuppressWarnings("unchecked")
-            List<Object> results = query.getResultList();
-            result.setNbItemsToProcess(results.size());
-            jobExecutionService.initCounterElementsRemaining(result, results.size());
-            int i = 0;
-            for (Object res : results) {
-                i++;
-                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
-                    break;
-                }
 
-                Map<Object, Object> userMap = new HashMap<Object, Object>();
-                userMap.put("event", res);
-                userMap.put("manager", manager);
-                if (!StringUtils.isBlank(notification.getElFilter())) {
-                    Object o = ValueExpressionWrapper.evaluateExpression(notification.getElFilter(), userMap, Boolean.class);
-                    try {
-                        if (!(Boolean) o) {
-                            jobExecutionService.registerSucces(result);
-                            continue;
-                        }
-                    } catch (Exception e) {
-                        throw new BusinessException("Expression " + notification.getElFilter() + " do not evaluate to boolean but " + res);
-                    }
-                }
-                try {
-                    if (notification.getScriptInstance() != null) {
-                        Map<String, Object> paramsEvaluated = new HashMap<String, Object>();
-                        for (Map.Entry entry : notification.getParams().entrySet()) {
-                            paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), userMap, String.class));
-                        }
-                        scriptInstanceService.execute(notification.getScriptInstance().getCode(), paramsEvaluated);
-                        jobExecutionService.registerSucces(result);
-                    } else {
-                        log.debug("No script instance on this Notification");
-                    }
-                } catch (Exception e) {
-                    jobExecutionService.registerError(result, "Error execution " + notification.getScriptInstance() + " on " + res);
-                    throw new BusinessException("Expression " + notification.getElFilter() + " do not evaluate to boolean but " + res);
-                }
-                jobExecutionService.decCounterElementsRemaining(result);
-            }
+            List<Object> items = query.getResultList();
+
+            return Optional.of(new SynchronizedIterator<Object>(items));
 
         } catch (Exception e) {
-            jobExecutionService.registerError(result, "filterCode contain invalid SQL query: " + e.getMessage());
+            log.error("Failed to execute a filter query {}", queryStr);
+            jobExecutionResult.addErrorReport("Failed to execute a query to filter the data");
+            return Optional.empty();
         }
+    }
+
+    /**
+     * Execute notification on an entity
+     * 
+     * @param entity Entity to execute notification on
+     * @param jobExecutionResult Job execution result
+     */
+    private void executeNotification(Object entity, JobExecutionResultImpl jobExecutionResult) {
+
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        userMap.put("event", entity);
+        userMap.put("manager", manager);
+
+        if (!StringUtils.isBlank(notification.getElFilter())) {
+            boolean applies = ValueExpressionWrapper.evaluateToBoolean(notification.getElFilter(), userMap);
+            if (!applies) {
+                return;
+            }
+        }
+
+        Map<String, Object> paramsEvaluated = new HashMap<String, Object>();
+        for (Map.Entry<String, String> entry : notification.getParams().entrySet()) {
+            paramsEvaluated.put((String) entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), userMap, String.class));
+        }
+        scriptInstanceService.execute(notification.getScriptInstance().getCode(), paramsEvaluated);
+
     }
 }

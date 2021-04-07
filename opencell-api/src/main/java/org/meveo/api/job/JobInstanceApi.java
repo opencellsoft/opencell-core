@@ -29,7 +29,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.dto.AuditableDto;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.job.JobInstanceListResponseDto;
@@ -52,12 +51,12 @@ import org.meveo.service.job.TimerEntityService;
 
 @Stateless
 public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
-	
-	/**
+
+    /**
      * Default sort for list call.
      */
     private static final String DEFAULT_SORT_ORDER_ID = "id";
-    
+
     @Inject
     private JobInstanceService jobInstanceService;
 
@@ -66,7 +65,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
-    
+
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
@@ -78,7 +77,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
                 missingParameters.add("jobTemplate");
             }
             if (StringUtils.isBlank(postData.getCode())) {
-                missingParameters.add("code");
+                addGenericCodeIfAssociated(JobInstance.class.getName(), postData);
             }
             handleMissingParametersAndValidate(postData);
         }
@@ -128,7 +127,14 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
                 throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingJob());
             }
         }
-		jobInstance.setVerboseReport(postData.getVerboseReport());
+
+        if (postData.getVerboseReport() != null) {
+            jobInstance.setVerboseReport(postData.getVerboseReport());
+        }
+
+        if (postData.getJobSpeed() != null) {
+            jobInstance.setJobSpeed(postData.getJobSpeed());
+        }
 
         // Create any missing CFT for a given provider and job
         Map<String, CustomFieldTemplate> jobCustomFields = job.getCustomFields();
@@ -160,7 +166,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
     public JobInstance update(JobInstanceDto postData) throws MeveoApiException, BusinessException {
 
         String jobInstanceCode = postData.getCode();
-        
+
         if (StringUtils.isBlank(postData.getJobTemplate())) {
             missingParameters.add("jobTemplate");
         }
@@ -178,11 +184,11 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         }
 
         Job job = jobInstanceService.getJobByName(postData.getJobTemplate());
-        
+
         if (job == null) {
-            throw new EntityDoesNotExistsException("JobTemplate with code '" + postData.getJobTemplate() + "' doesn't exist." );
+            throw new EntityDoesNotExistsException("JobTemplate with code '" + postData.getJobTemplate() + "' doesn't exist.");
         }
-        
+
         JobCategoryEnum jobCategory = job.getJobCategory();
 
         jobInstance.setJobTemplate(postData.getJobTemplate());
@@ -197,9 +203,9 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         if (postData.getLimitToSingleNode() != null) {
             jobInstance.setLimitToSingleNode(postData.getLimitToSingleNode());
         }
-		if (postData.getVerboseReport() != null) {
-			jobInstance.setVerboseReport(postData.getVerboseReport());
-		}
+        if (postData.getVerboseReport() != null) {
+            jobInstance.setVerboseReport(postData.getVerboseReport());
+        }
 
         if (!StringUtils.isBlank(postData.getTimerCode())) {
             TimerEntity timerEntity = timerEntityService.findByCode(postData.getTimerCode());
@@ -218,6 +224,10 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             if (nextJob == null) {
                 throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Invalid next job=" + postData.getFollowingJob());
             }
+        }
+
+        if (postData.getJobSpeed() != null) {
+            jobInstance.setJobSpeed(postData.getJobSpeed());
         }
 
         // Create any missing CFT for a given provider and job
@@ -254,14 +264,13 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         if (jobInstance == null) {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
-        
+
         customFieldInstanceService.instantiateCFWithDefaultValueIfNull(jobInstance);
-        
+
         JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance, entityToDtoConverter.getCustomFieldsDTO(jobInstance, CustomFieldInheritanceEnum.INHERIT_NONE));
         return jobInstanceDto;
     }
-    
-    
+
     /**
      * List job instances
      * 
@@ -293,42 +302,12 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             List<JobInstance> jobInstances = jobInstanceService.list(paginationConfiguration);
             if (jobInstances != null) {
                 for (JobInstance jobInstance : jobInstances) {
-                    result.getJobInstances().getJobInstances().add(JobInstanceToDto(jobInstance, inheritCF));
+                    result.getJobInstances().getJobInstances().add(new JobInstanceDto(jobInstance, entityToDtoConverter.getCustomFieldsDTO(jobInstance, inheritCF)));
                 }
             }
         }
 
         return result;
 
-    }
-    
-    /**
-     * Convert jobInstance entity to dto
-     * 
-     * @param jobInstance of JobInstance to be mapped
-     * @return instance of JobInstanceDto.
-     */
-    public JobInstanceDto JobInstanceToDto(JobInstance jobInstance) {
-        return this.JobInstanceToDto(jobInstance, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
-    }
-
-    /**
-     * Convert jobInstance dto to entity
-     *
-     * @param jobInstance instance of JobInstance to be mapped
-     * @param inheritCF the inherit CF
-     * @return instance of JobInstanceDto
-     */
-    public JobInstanceDto JobInstanceToDto(JobInstance jobInstance, CustomFieldInheritanceEnum inheritCF) {
-    	JobInstanceDto dto = new JobInstanceDto();
-
-    	dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(jobInstance, inheritCF));
-        dto.setAuditable(new AuditableDto(jobInstance.getAuditable()));
-        dto.setJobTemplate(jobInstance.getJobTemplate());
-        dto.setJobTemplate(jobInstance.getJobTemplate());
-        dto.setJobCategory(jobInstance.getJobCategoryEnum());
-        dto.setParameter(jobInstance.getParametres());
-
-        return dto;
     }
 }

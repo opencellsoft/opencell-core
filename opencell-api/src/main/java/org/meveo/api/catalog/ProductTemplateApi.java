@@ -108,6 +108,9 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
     @Override
     public ProductTemplate create(ProductTemplateDto postData) throws MeveoApiException, BusinessException {
 
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(ProductTemplate.class.getName(), postData);
+        }
         if (StringUtils.isBlank(postData.getName())) {
             missingParameters.add("name");
         }

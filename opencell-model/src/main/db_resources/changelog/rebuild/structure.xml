@@ -2,6 +2,25 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
+    <changeSet author="AndriusKarpavicius"  id="rebuild_pg_operators" dbms="postgresql">
+    	<sql>CREATE OPERATOR ^|(
+			  PROCEDURE = jsonb_exists_any,
+			  LEFTARG = jsonb,
+			  RIGHTARG = _text,
+			  RESTRICT = contsel,
+			  JOIN = contjoinsel)</sql>
+		
+		<sql>CREATE OPERATOR CLASS jsonb_ops_custom
+			   FOR TYPE jsonb USING gin AS
+			   OPERATOR 10  ^|(jsonb, _text),
+			   FUNCTION 1  gin_compare_jsonb(text, text),
+			   FUNCTION 2  gin_extract_jsonb(jsonb, internal, internal),
+			   FUNCTION 3  gin_extract_jsonb_query(jsonb, internal, smallint, internal, internal, internal, internal),
+			   FUNCTION 4  gin_consistent_jsonb(internal, smallint, jsonb, integer, internal, internal, internal, internal),
+			   FUNCTION 6  gin_triconsistent_jsonb(internal, smallint, jsonb, integer, internal, internal, internal);
+			   </sql>
+    </changeSet>
+
     <!-- start sequence -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-seq-1">
@@ -4978,6 +4997,7 @@
             <column name="job_instance_id" type="bigint">
                 <constraints nullable="false" />
             </column>
+            <column name="job_status" type="varchar(14)"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-262">
@@ -5212,6 +5232,7 @@
             <column name="exclude_inv_without_amount" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="stop_on_error" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-278">

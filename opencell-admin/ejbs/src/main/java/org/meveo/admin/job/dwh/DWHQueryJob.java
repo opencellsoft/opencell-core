@@ -40,8 +40,9 @@ public class DWHQueryJob extends Job {
     private DWHQueryBean dwhQueryBean;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         dwhQueryBean.executeQuery(result, jobInstance.getParametres());
+        return result;
     }
 
     @Override

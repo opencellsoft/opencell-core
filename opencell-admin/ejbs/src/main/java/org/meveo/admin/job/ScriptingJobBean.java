@@ -18,123 +18,150 @@
 
 package org.meveo.admin.job;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
+import java.util.Optional;
 
-import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 
 import org.apache.commons.beanutils.ConvertUtils;
-import org.meveo.admin.async.ScriptingAsync;
-import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
 @Stateless
-public class ScriptingJobBean extends BaseJobBean {
+public class ScriptingJobBean extends IteratorBasedJobBean<ScriptInterface> {
 
-	@Inject
-	private Logger log;
+    private static final long serialVersionUID = 4521052615288928077L;
 
-	@Inject
-	private ScriptInstanceService scriptInstanceService;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private JobExecutionService jobExecutionService;
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
-	@Inject
-	@CurrentUser
-	protected MeveoUser currentUser;
-	
-	@Resource(lookup = "java:jboss/ee/concurrency/executor/default")
-	ManagedExecutorService executor;
-	
-	@Inject
-	private ScriptingAsync scriptingAsync;
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
-	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void init(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context)
-			throws BusinessException {
-		ScriptInterface script = null;
-		try {
-			script = scriptInstanceService.getScriptInstance(scriptCode);
-			script.init(context);
-		} catch (Exception e) {
-			log.error("Exception on init script", e);
-			jobExecutionService.registerError(result, "Error in " + scriptCode + " init :" + e.getMessage());
-		}
-	}
+    private ScriptInterface script;
+    private Map<String, Object> context;
 
-	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context)
-			throws BusinessException {
-		ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
-		MeveoUser lastCurrentUser = currentUser.unProxy();
-		Callable<String> task = () -> scriptingAsync.runScript(result, scriptCode, context, lastCurrentUser,script);
-		Future<String> futureResult = executor.submit(task);
-		while (!futureResult.isDone()) {
-			try {
-				Thread.sleep((long) 2000);
-				if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
-					futureResult.cancel(true);
-				}
-			} catch (InterruptedException e) {
-				log.error("Failed to complete script execution : ", e);
-			}
-		}
+    private boolean newTx;
 
-	}
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::executeScript, null, this::finalizeScript);
+        context = null;
+        script = null;
+    }
 
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void executeWithoutTx(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context)
-			throws BusinessException {
-	    ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
-        MeveoUser lastCurrentUser = currentUser.unProxy();
-		Callable<String> task = () -> scriptingAsync.runScriptWithoutTx(result, scriptCode, context, lastCurrentUser,script);
-		Future<String> futureResult = executor.submit(task);
-		while (!futureResult.isDone()) {
-			try {
-				Thread.sleep((long) 2000);
-				if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
-					futureResult.cancel(true);
-				}
-			} catch (InterruptedException e) {
-				log.error("Failed to complete script execution : ", e);
-			}
-		}
-	}
+    /**
+     * Initialize job settings and retrieve data to process
+     * 
+     * @param jobExecutionResult Job execution result
+     * @return An iterator over a list (of a single item) Script to run
+     */
+    @SuppressWarnings("unchecked")
+    private Optional<Iterator<ScriptInterface>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
-	@JpaAmpNewTx
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void complete(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context)
-			throws BusinessException {
-		ScriptInterface script = null;
-		try {
-			script = scriptInstanceService.getScriptInstance(scriptCode);
-			script.terminate(context);
+        String txType = (String) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "ScriptingJob_TransactionType", "REQUIRES_NEW");
+        newTx = (StringUtils.isBlank(txType) || "REQUIRES_NEW".equals(txType));
 
-		} catch (Exception e) {
-			log.error("Exception on finalize script", e);
-			jobExecutionService.registerError(result, "Error in " + scriptCode + " finalize :" + e.getMessage());
-		}
-	}
+        String scriptCode = null;
+        try {
+            scriptCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "ScriptingJob_script")).getCode();
+            context = (Map<String, Object>) this.getParamOrCFValue(jobExecutionResult.getJobInstance(), "ScriptingJob_variables");
+            if (context == null) {
+                context = new HashMap<String, Object>();
+            }
+            context.put(Script.CONTEXT_ENTITY, jobExecutionResult.getJobInstance());
+            context.put(Script.CONTEXT_ACTION, scriptCode);
+            context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+            context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
-	long convert(Object s) {
-		long result = (long) ((StringUtils.isBlank(s)) ? 0l : ConvertUtils.convert(s + "", Long.class));
+            script = scriptInstanceService.getScriptInstance(scriptCode);
+            script.init(context);
+
+            return Optional.of(new SynchronizedIterator<ScriptInterface>(Arrays.asList(script)));
+
+        } catch (Exception e) {
+            log.error("Exception on initialization of script {}", scriptCode, e);
+            jobExecutionResult.addErrorReport("Error in " + scriptCode + " init :" + e.getMessage());
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Execute a script
+     * 
+     * @param script Script to execute
+     * @param jobExecutionResult Job execution result
+     */
+    private void executeScript(ScriptInterface script, JobExecutionResultImpl jobExecutionResult) {
+
+        script.execute(context);
+
+        if (context.containsKey(Script.JOB_RESULT_NB_OK)) {
+            jobExecutionResult.unRegisterSucces();// Reduce success as success is added automatically in main loop of IteratorBasedJobBean
+            jobExecutionResult.setNbItemsCorrectlyProcessed(convert(context.get(Script.JOB_RESULT_NB_OK)));
+            if (context.containsKey(Script.JOB_RESULT_NB_WARN)) {
+                jobExecutionResult.setNbItemsProcessedWithWarning(convert(context.get(Script.JOB_RESULT_NB_WARN)));
+            }
+            if (context.containsKey(Script.JOB_RESULT_NB_KO)) {
+                jobExecutionResult.setNbItemsProcessedWithError(convert(context.get(Script.JOB_RESULT_NB_KO)));
+            }
+            if (context.containsKey(Script.JOB_RESULT_TO_PROCESS)) {
+                jobExecutionResult.setNbItemsToProcess(convert(context.get(Script.JOB_RESULT_TO_PROCESS)));
+            }
+            if (context.containsKey(Script.JOB_RESULT_REPORT)) {
+                jobExecutionResult.addReport(context.get(Script.JOB_RESULT_REPORT) + "");
+            }
+            // } else {
+            // jobExecutionResult.registerSucces();
+        }
+
+    }
+
+    /**
+     * Finalize script execution
+     * 
+     * @param result Job execution result
+     */
+    private void finalizeScript(JobExecutionResultImpl result) {
+        try {
+            if (script != null) {
+                script.terminate(context);
+            }
+
+        } catch (Exception e) {
+            log.error("Exception on finalize script", e);
+            result.registerError(script.getClass().getName() + " finalize", e.getMessage());
+        }
+    }
+
+    long convert(Object s) {
+        long result = (long) ((StringUtils.isBlank(s)) ? 0l : ConvertUtils.convert(s + "", Long.class));
         return result;
+    }
+
+    @Override
+    protected boolean isProcessItemInNewTx() {
+        return newTx;
     }
 }

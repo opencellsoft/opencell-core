@@ -28,6 +28,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobSpeedEnum;
 
 /**
  * The Class JobInstanceDto.
@@ -78,11 +79,16 @@ public class JobInstanceDto extends EnableBusinessDto {
      * Can job be run in parallel on several cluster nodes. Value of True indicates that job can be run on a single node at a time.
      */
     private Boolean limitToSingleNode;
-    
+
     /**
      * Whether a verbose error log will be kept.
      */
-    private Boolean verboseReport = true;
+    private Boolean verboseReport;
+
+    /**
+     * Job execution speed. Defines how often job execution history gets updated.
+     */
+    private JobSpeedEnum jobSpeed;
 
     /**
      * Instantiate a new JobInstance DTO
@@ -118,6 +124,7 @@ public class JobInstanceDto extends EnableBusinessDto {
             setFollowingJob(jobInstance.getFollowingJob().getCode());
         }
         verboseReport = jobInstance.isVerboseReport();
+        jobSpeed = jobInstance.getJobSpeed();
     }
 
     /**
@@ -288,11 +295,25 @@ public class JobInstanceDto extends EnableBusinessDto {
                 + ", customFields=" + customFields + ", timerCode=" + timerCode + ", runOnNodes=" + runOnNodes + ", limitToSingleNode=" + limitToSingleNode + "]";
     }
 
-	public Boolean getVerboseReport() {
-		return verboseReport;
-	}
+    public Boolean getVerboseReport() {
+        return verboseReport;
+    }
 
-	public void setVerboseReport(Boolean verboseReport) {
-		this.verboseReport = verboseReport;
-	}
+    public void setVerboseReport(Boolean verboseReport) {
+        this.verboseReport = verboseReport;
+    }
+
+    /**
+     * @return Job execution speed. Defines how often job execution history gets updated.
+     */
+    public JobSpeedEnum getJobSpeed() {
+        return jobSpeed;
+    }
+
+    /**
+     * @param jobSpeed Job execution speed. Defines how often job execution history gets updated.
+     */
+    public void setJobSpeed(JobSpeedEnum jobSpeed) {
+        this.jobSpeed = jobSpeed;
+    }
 }

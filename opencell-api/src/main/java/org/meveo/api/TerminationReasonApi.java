@@ -52,7 +52,7 @@ public class TerminationReasonApi extends BaseApi {
     public void create(TerminationReasonDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(SubscriptionTerminationReason.class.getName(), postData);
         }
 
         handleMissingParametersAndValidate(postData);
@@ -143,18 +143,10 @@ public class TerminationReasonApi extends BaseApi {
      * @throws BusinessException  business exception.
      */
     public void createOrUpdate(TerminationReasonDto postData) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-            handleMissingParameters();
-        }
-
-        SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(postData.getCode());
-
-        if (subscriptionTerminationReason == null) {
-            create(postData);
-        } else {
+        if (!StringUtils.isBlank(postData.getCode()) && terminationReasonService.findByCode(postData.getCode()) != null) {
             update(postData);
+        } else {
+            create(postData);
         }
     }
 

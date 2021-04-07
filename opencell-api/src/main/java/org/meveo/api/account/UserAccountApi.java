@@ -27,6 +27,8 @@ import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.account.UserAccountsDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.account.UserAccountsResponseDto;
 import org.meveo.api.exception.*;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
@@ -99,6 +101,9 @@ public class UserAccountApi extends AccountEntityApi {
 
     public UserAccount create(UserAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(UserAccount.class.getName(), postData);
+        }
         if (StringUtils.isBlank(postData.getBillingAccount())) {
             missingParameters.add("billingAccount");
         }
@@ -149,7 +154,7 @@ public class UserAccountApi extends AccountEntityApi {
 
     /**
      * Populate entity with fields from DTO entity
-     * 
+     *
      * @param userAccount Entity to populate
      * @param postData DTO entity object to populate from
      * @param checkCustomField Should a check be made if CF field is required
@@ -269,6 +274,20 @@ public class UserAccountApi extends AccountEntityApi {
         return result;
     }
 
+    public UserAccountsResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        UserAccountsResponseDto result = new UserAccountsResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<UserAccount> userAccounts = userAccountService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (userAccounts != null) {
+            for (UserAccount userAccount : userAccounts) {
+                result.getUserAccounts().getUserAccount().add(new UserAccountDto(userAccount));
+            }
+        }
+
+        return result;
+    }
+
     /**
      * Create or update User Account entity based on code.
      *
@@ -279,14 +298,11 @@ public class UserAccountApi extends AccountEntityApi {
      */
     public UserAccount createOrUpdate(UserAccountDto postData) throws MeveoApiException, BusinessException {
 
-        UserAccount userAccount = userAccountService.findByCode(postData.getCode());
-
-        if (userAccount == null) {
-            userAccount = create(postData);
+        if (!StringUtils.isBlank(postData.getCode()) && userAccountService.findByCode(postData.getCode()) != null) {
+            return update(postData);
         } else {
-            userAccount = update(postData);
+            return create(postData);
         }
-        return userAccount;
     }
 
     public UserAccount terminate(UserAccountDto postData) throws MeveoApiException, BusinessException {

@@ -159,6 +159,9 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     @Override
     public MeveoModule create(MeveoModuleDto moduleDto) throws MeveoApiException, BusinessException {
 
+        if (StringUtils.isBlank(moduleDto.getCode())) {
+            addGenericCodeIfAssociated(MeveoModule.class.getName(), moduleDto);
+        }
         if (StringUtils.isBlank(moduleDto.getDescription())) {
             missingParameters.add("description");
         }

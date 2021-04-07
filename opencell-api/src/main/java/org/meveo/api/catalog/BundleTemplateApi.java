@@ -135,6 +135,9 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
     @Override
     public BundleTemplate create(BundleTemplateDto postData) throws MeveoApiException, BusinessException {
 
+        if(StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(BundleTemplate.class.getName(), postData);
+        }
         List<BundleProductTemplateDto> bundleProductTemplates = postData.getBundleProductTemplates();
         if (bundleProductTemplates == null || bundleProductTemplates.isEmpty()) {
             missingParameters.add("bundleProductTemplates");

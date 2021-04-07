@@ -44,7 +44,7 @@ public class ChannelApi extends BaseCrudApi<Channel, ChannelDto> {
     public Channel create(ChannelDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(Channel.class.getName(), postData);
         }
 
         handleMissingParametersAndValidate(postData);

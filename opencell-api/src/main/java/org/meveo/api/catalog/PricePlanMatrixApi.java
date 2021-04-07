@@ -18,20 +18,13 @@
 
 package org.meveo.api.catalog;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
+import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
@@ -51,6 +44,11 @@ import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.script.ScriptInstanceService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -92,7 +90,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             missingParameters.add("eventCode");
         }
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(PricePlanMatrix.class.getName(), postData);
         }
         if (postData.getAmountWithoutTax() == null && appProvider.isEntreprise()) {
             missingParameters.add("amountWithoutTax");
@@ -522,5 +520,20 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
 
         return pricePlanDtos;
+    }
+
+    public PricePlanMatrixesResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        PricePlanMatrixesResponseDto result = new PricePlanMatrixesResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<PricePlanMatrix> pricePlanMatrices = pricePlanMatrixService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (pricePlanMatrices != null) {
+            for (PricePlanMatrix pricePlanMatrix : pricePlanMatrices) {
+                result.getPricePlanMatrixes().getPricePlanMatrix()
+                        .add(new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+        }
+
+        return result;
     }
 }

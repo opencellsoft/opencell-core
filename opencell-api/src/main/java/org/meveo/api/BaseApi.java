@@ -22,7 +22,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.*;
@@ -48,9 +47,6 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.CustomGenericEntityCode;
-import org.meveo.api.exception.*;
-import org.meveo.commons.utils.*;
-import org.meveo.model.*;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -71,6 +67,7 @@ import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.*;
+import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -105,7 +102,7 @@ import java.util.stream.Stream;
  * @author Khalid HORRI
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
- * 
+ *
  */
 public abstract class BaseApi {
 
@@ -162,7 +159,10 @@ public abstract class BaseApi {
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
 
-    private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
+    @Inject
+    private ServiceSingleton serviceSingleton;
+
+    protected ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
     protected void handleMissingParameters() throws MissingParameterException {
         if (!missingParameters.isEmpty()) {
@@ -179,24 +179,13 @@ public abstract class BaseApi {
             if (!allowEntityCodeUpdate && !StringUtils.isBlank(bdto.getUpdatedCode()) && !currentUser.hasRole(SUPER_ADMIN_MANAGEMENT)) {
                 throw new org.meveo.api.exception.AccessDeniedException("Super administrator permission is required to update entity code");
             }
-            handleMissingCode(bdto);
         }
         handleMissingParameters();
     }
 
-    private void handleMissingCode(BusinessEntityDto dto) throws MeveoApiException {
-        if(dto.getCode() == null) {
-            String dtoClassName = dto.getClass().getSimpleName();
-            String entityClass = dtoClassName.substring(0, dtoClassName.length() - 3);
-            CustomGenericEntityCode customGenericEntityCode = customGenericEntityCodeService.findByClass(entityClass);
-            if(customGenericEntityCode == null) {
-                throw new MeveoApiException("missing mandatory field code");
-            }
-        }
-    }
     /**
      * Check if any parameters are missing and throw and exception.
-     * 
+     *
      * @param dto base data transfer object.
      * @throws MeveoApiException meveo api exception.
      */
@@ -227,11 +216,11 @@ public abstract class BaseApi {
 
     /**
      * Populate custom field values from DTO.
-     * 
+     *
      * @param customFieldsDto Custom field values
      * @param entity Entity
      * @param isNewEntity Is entity a newly saved entity
-     * 
+     *
      * @throws MeveoApiException meveo api exception.
      */
     protected ICustomFieldEntity populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
@@ -240,11 +229,11 @@ public abstract class BaseApi {
 
     /**
      * Populate custom field values from DTO.
-     * 
+     *
      * @param customFieldsDto Custom field values
      * @param entity Entity
      * @param isNewEntity Is entity a newly saved entity
-     * 
+     *
      * @param checkCustomField Should a check be made if CF field is required
      * @throws MeveoApiException meveo api exception.
      */
@@ -264,12 +253,12 @@ public abstract class BaseApi {
 
     /**
      * Populate custom field values from DTO.
-     * 
+     *
      * @param customFieldTemplates Custom field templates
      * @param customFieldDtos Custom field values
      * @param entity Entity
      * @param isNewEntity Is entity a newly saved entity
-     * 
+     *
      * @param checkCustomFields Should a check be made if CF field is required
      * @throws IllegalArgumentException illegal argument exception
      * @throws IllegalAccessException illegal access exception
@@ -403,7 +392,7 @@ public abstract class BaseApi {
                         }
 
                         if (!hasValue && cft.getDefaultValue() != null && (isNewEntity || cftValueRequired)) { // No need to check for !cft.isInheritedAsDefaultValue() as it was
-                                                                                                               // checked above
+                            // checked above
                             Object value = customFieldInstanceService.instantiateCFWithDefaultValue(entity, cft.getCode());
                             hasValue = value != null;
                         }
@@ -597,17 +586,17 @@ public abstract class BaseApi {
                     if (CustomFieldValue.MAP_KEY.equals(mapEntry.getKey())) {
                         matrixColumnsPresent = true;
                     }else {
-                    	int keySize=mapEntry.getKey() == null ? 0 : Stream.of(mapEntry.getKey().split("\\" +CustomFieldValue.MATRIX_KEY_SEPARATOR)).collect(Collectors.toList()).size();
-                    	int valueSize=mapEntry.getValue() == null ? 0 : Stream.of(mapEntry.getValue().toString().split("\\" +CustomFieldValue.MATRIX_KEY_SEPARATOR)).collect(Collectors.toList()).size();
+                        int keySize=mapEntry.getKey() == null ? 0 : Stream.of(mapEntry.getKey().split("\\" +CustomFieldValue.MATRIX_KEY_SEPARATOR)).collect(Collectors.toList()).size();
+                        int valueSize=mapEntry.getValue() == null ? 0 : Stream.of(mapEntry.getValue().toString().split("\\" +CustomFieldValue.MATRIX_KEY_SEPARATOR)).collect(Collectors.toList()).size();
 
-                    	int matrixKeySize = cft.getMatrixKeyColumns() != null ? cft.getMatrixKeyColumns().size() : 0;
-						if(matrixKeySize>0 && matrixKeySize<keySize) {
-                    		throw new BusinessApiException("invalid matrix key format for '"+mapEntry.getKey()+"', number of keys is "+keySize+", greater than matrix key definition ("+matrixKeySize+")") ;
-                    	}
-                    	int matrixValueSize = cft.getMatrixValueColumns()!=null ? cft.getMatrixValueColumns().size() : 0;
-						if(matrixValueSize>0 && matrixValueSize<valueSize) {
-                    		throw new BusinessApiException("invalid matrix value format for '"+mapEntry.getValue().toString()+"', number of values is "+valueSize+", greater than matrix value definition ("+matrixValueSize+")") ;
-                    	}
+                        int matrixKeySize = cft.getMatrixKeyColumns() != null ? cft.getMatrixKeyColumns().size() : 0;
+                        if(matrixKeySize>0 && matrixKeySize<keySize) {
+                            throw new BusinessApiException("invalid matrix key format for '"+mapEntry.getKey()+"', number of keys is "+keySize+", greater than matrix key definition ("+matrixKeySize+")") ;
+                        }
+                        int matrixValueSize = cft.getMatrixValueColumns()!=null ? cft.getMatrixValueColumns().size() : 0;
+                        if(matrixValueSize>0 && matrixValueSize<valueSize) {
+                            throw new BusinessApiException("invalid matrix value format for '"+mapEntry.getValue().toString()+"', number of values is "+valueSize+", greater than matrix value definition ("+matrixValueSize+")") ;
+                        }
                     }
                 }
 
@@ -624,7 +613,7 @@ public abstract class BaseApi {
 
     /**
      * Validates the DTO based on its constraint annotations.
-     * 
+     *
      * @param dto data transfer object.
      * @throws ConstraintViolationException constraint violation exception.
      * @throws MeveoApiException meveo api exception.
@@ -655,7 +644,7 @@ public abstract class BaseApi {
      *
      * @param cft the custom field template
      * @param cfDto the custom field dto.
-     * 
+     *
      * @return the list or the linked hash map
      */
     private Object fromDTO(CustomFieldTemplate cft, CustomFieldDto cfDto) {
@@ -668,7 +657,7 @@ public abstract class BaseApi {
 
     /**
      * Get a value converted from DTO a proper Map, List, EntityWrapper, Date, Long, Double or String value.
-     * 
+     *
      * @param cfDto cf dto.
      * @param cft the the custom field template
      * @return custom field converted object.
@@ -702,7 +691,7 @@ public abstract class BaseApi {
 
     /**
      * Get a value converted from DTO a proper Map, List, EntityWrapper, Date, Long, Double or String value.
-     * 
+     *
      * @param cfDto cf dto.
      * @return custom field converted object.
      */
@@ -720,11 +709,11 @@ public abstract class BaseApi {
     /**
      * Convert DTO object to an entity. In addition process child DTO object by creating or updating related entities via calls to API.createOrUpdate(). Note: Does not persist the
      * entity passed to the method.Takes about 1ms longer as compared to a regular hardcoded jpa.value=dto.value assignment
-     * 
+     *
      * @param entityToPopulate JPA Entity to populate with data from DTO object
      * @param dto DTO object
      * @param partialUpdate Is this a partial update - fields with null values will be ignored
-     * 
+     *
      * @throws MeveoApiException meveo api exception.
      */
     @SuppressWarnings({ "rawtypes", "unchecked", "deprecation" })
@@ -887,7 +876,7 @@ public abstract class BaseApi {
 
     /**
      * Check if DTO object represents only a reference. In case of reference only code and provider fields contain values.
-     * 
+     *
      * @param objectToEvaluate Dto to evaluate
      * @return True if only code and provider fields contain values
      * @throws IllegalAccessException illegal access exception
@@ -920,7 +909,7 @@ public abstract class BaseApi {
     /**
      * Get a corresponding API service for a given DTO object. Find API service class first trying with item's classname and then with its super class (a simplified version instead
      * of trying various classsuper classes)
-     * 
+     *
      * @param dto DTO object
      * @param throwException Should exception be thrown if API service is not found
      * @return Api service
@@ -936,7 +925,7 @@ public abstract class BaseApi {
 
     /**
      * Find API service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses).
-     * 
+     *
      * @param classname JPA entity classname
      * @param throwException Should exception be thrown if API service is not found
      * @return Api service
@@ -951,11 +940,11 @@ public abstract class BaseApi {
 
     /**
      * Find API service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses).
-     * 
+     *
      * @param entityClass JPA entity class
      * @param throwException Should exception be thrown if API service is not found
      * @return Api service
-     * 
+     *
      */
     @SuppressWarnings("rawtypes")
     protected ApiService getApiService(Class entityClass, boolean throwException) {
@@ -973,7 +962,7 @@ public abstract class BaseApi {
 
     /**
      * Find API versioned service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses).
-     * 
+     *
      * @param classname JPA entity classname
      * @param throwException Should exception be thrown if API service is not found
      * @return Api service
@@ -988,7 +977,7 @@ public abstract class BaseApi {
 
     /**
      * Find API versioned service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses).
-     * 
+     *
      * @param entityClass JPA entity class
      * @param throwException Should exception be thrown if API service is not found
      * @return Api service
@@ -1011,7 +1000,7 @@ public abstract class BaseApi {
     /**
      * Find Persistence service class a given DTO object. Find API service class first trying with item's classname and then with its super class (a simplified version instead of
      * trying various class superclasses)
-     * 
+     *
      * @param dto DTO object
      * @param throwException Should exception be thrown if API service is not found
      * @return Persistence service
@@ -1035,7 +1024,7 @@ public abstract class BaseApi {
 
     /**
      * Find Persistence service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses).
-     * 
+     *
      * @param entityClass JPA Entity class
      * @param throwException Should exception be thrown if API service is not found
      * @return Persistence service
@@ -1093,7 +1082,7 @@ public abstract class BaseApi {
 
     /**
      * Convert multi language field DTO values into a map of values with language code as a key.
-     * 
+     *
      * @param translationInfos Multi langauge field DTO values
      * @param currentValues map of current values.
      * @return Map of values with language code as a key
@@ -1133,7 +1122,7 @@ public abstract class BaseApi {
 
     /**
      * Convert pagination and filtering DTO to a pagination configuration used in services.
-     * 
+     *
      * @param defaultSortBy A default value to sortBy
      * @param defaultSortOrder A default sort order
      * @param fetchFields Fields to fetch
@@ -1213,7 +1202,7 @@ public abstract class BaseApi {
 
     /**
      * Convert pagination and filtering DTO to a pagination configuration used in services.
-     * 
+     *
      * @param defaultSortBy A default value to sortBy
      * @param defaultSortOrder A default sort order
      * @param fetchFields Fields to fetch
@@ -1247,8 +1236,8 @@ public abstract class BaseApi {
         // fetchFields = fetchFields!=null? fetchFields: pagingAndFiltering!=null && pagingAndFiltering.getFields() != null ?
         // Arrays.asList(pagingAndFiltering.getFields().split(",")) : null;
         return new PaginationConfiguration(pagingAndFiltering != null ? pagingAndFiltering.getOffset() : null, limit, pagingAndFiltering != null ? pagingAndFiltering.getFilters() : null,
-            pagingAndFiltering != null ? pagingAndFiltering.getFullTextFilter() : null, fetchFields, pagingAndFiltering != null && pagingAndFiltering.getSortBy() != null ? pagingAndFiltering.getSortBy() : defaultSortBy,
-            pagingAndFiltering != null && pagingAndFiltering.getSortOrder() != null ? SortOrder.valueOf(pagingAndFiltering.getSortOrder().name()) : defaultSortOrder);
+                pagingAndFiltering != null ? pagingAndFiltering.getFullTextFilter() : null, fetchFields, pagingAndFiltering != null && pagingAndFiltering.getSortBy() != null ? pagingAndFiltering.getSortBy() : defaultSortBy,
+                pagingAndFiltering != null && pagingAndFiltering.getSortOrder() != null ? SortOrder.valueOf(pagingAndFiltering.getSortOrder().name()) : defaultSortOrder);
     }
 
     private PaginationConfiguration initPaginationConfigurationMultiSort(String defaultSortBy, String defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering) {
@@ -1272,7 +1261,7 @@ public abstract class BaseApi {
 
     /**
      * Convert string type filter criteria to a data type corresponding to a particular field
-     * 
+     *
      * @param targetClass Principal class that filter criteria is targeting
      * @param filtersToConvert Filtering criteria
      * @param cfts
@@ -1321,7 +1310,7 @@ public abstract class BaseApi {
                     throw new InvalidParameterException("Field '" + fieldName + "' is not a valid field name");
                 }
                 Object valueConverted = castFilterValue(value, fieldClassType,
-                    (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition) || "overlapOptionalRangeInclusive".equals(condition), cfts, false);
+                        (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition) || "overlapOptionalRangeInclusive".equals(condition), cfts, false);
                 if (valueConverted != null) {
                     filters.put(key, valueConverted);
 
@@ -1365,7 +1354,7 @@ public abstract class BaseApi {
 
     /**
      * Convert value of unknown data type to a target data type. A value of type list is considered as already converted value, as would come only from WS.
-     * 
+     *
      * @param value Value to convert
      * @param targetClass Target data type class to convert to
      * @param expectedList Is return value expected to be a list. If value is not a list and is a string a value will be parsed as comma separated string and each value will be
@@ -1678,7 +1667,7 @@ public abstract class BaseApi {
 
     /**
      * Rounding the double values.
-     * 
+     *
      * @param cfDto the customFieldDto
      * @param cft The customFieldTemplate
      * @return A rounded bigDecimal number.
@@ -1770,5 +1759,22 @@ public abstract class BaseApi {
 
     public ICustomFieldEntity populateCustomFieldsForGenericApi(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
         return populateCustomFields(customFieldsDto, entity, isNewEntity, true);
+    }
+
+    protected void addGenericCodeIfAssociated(String entityClass, BusinessEntityDto postData) {
+        String generatedCode = getGenericCode(entityClass);
+        if (generatedCode != null) {
+            postData.setCode(generatedCode);
+        } else {
+            missingParameters.add("code");
+        }
+    }
+
+    protected String getGenericCode(String entityClass) {
+        CustomGenericEntityCode customGenericEntityCode = customGenericEntityCodeService.findByClass(entityClass);
+        if (customGenericEntityCode != null) {
+            return serviceSingleton.getGenericCode(customGenericEntityCode);
+        }
+        return null;
     }
 }
