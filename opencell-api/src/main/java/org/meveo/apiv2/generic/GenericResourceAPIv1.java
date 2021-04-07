@@ -1,5 +1,6 @@
 package org.meveo.apiv2.generic;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Parameter;
 
 import javax.ws.rs.*;
@@ -28,6 +29,10 @@ public interface GenericResourceAPIv1 {
     @DELETE
     @Path("/{segments:.*}")
     Response deleteAnEntity() throws URISyntaxException;
+
+    @POST
+    @Path("/{segments:.*}/creationOrUpdate")
+    Response postCreationOrUpdate( String postData ) throws JsonProcessingException, URISyntaxException;
 
     @GET
     @Path("/restEndpoints")
