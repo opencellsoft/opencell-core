@@ -1,5 +1,6 @@
 package org.meveo.apiv2.generic;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -44,6 +45,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String METHOD_CREATE_BIS = "/create";
     private static final String METHOD_UPDATE = "/";
     private static final String METHOD_DELETE = "/";
+    private static final String METHOD_CREATE_OR_UPDATE = "/createOrUpdate";
 
     private static final String FORWARD_SLASH = "/";
     private static final String QUERY_PARAM_SEPARATOR = "?";
@@ -538,6 +540,53 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             return Response.temporaryRedirect( redirectURI ).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+    @Override
+    public Response postCreationOrUpdate( String jsonDto ) throws JsonProcessingException, URISyntaxException {
+        URI redirectURI;
+        StringBuilder aPathBd = new StringBuilder(GenericOpencellRestfulAPIv1.API_VERSION);
+        segmentsOfPathAPIv2 = uriInfo.getPathSegments();
+
+        String entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).toString();
+
+        if ( segmentsOfPathAPIv2.size() >= 3 ) {
+            entityClassName = Inflector.getInstance().singularize(segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 3 ));
+            Class entityDtoClass = GenericHelper.getEntityDtoClass( entityClassName.toLowerCase() + DTO_SUFFIX );
+            Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
+            if ( aDto instanceof BusinessEntityDto ) {
+                ((BusinessEntityDto) aDto).setCode(entityCode);
+            }
+            else if ( aDto instanceof AccessDto ) {
+                ((AccessDto) aDto).setCode(entityCode);
+            }
+
+            for ( int i = 0; i <= segmentsOfPathAPIv2.size() - 3; i++ )
+                aPathBd.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i) );
+            String aPath = aPathBd.toString();
+            if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey(aPath) ) {
+                pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get(aPath);
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + METHOD_CREATE_OR_UPDATE );
+
+                return AuthenticationFilter.httpClient.target( redirectURI ).request()
+                        .post( Entity.entity( aDto, MediaType.APPLICATION_JSON ) );
+            }
+            else {
+                ActionStatus notFoundStatus = new ActionStatus(ActionStatusEnum.FAIL,
+                        MeveoApiErrorCodeEnum.URL_NOT_FOUND, "The specified URL cannot be found");
+
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(notFoundStatus).type(MediaType.APPLICATION_JSON_TYPE).build();
+            }
+        }
+        else {
+            ActionStatus notFoundStatus = new ActionStatus(ActionStatusEnum.FAIL,
+                    MeveoApiErrorCodeEnum.URL_NOT_FOUND, "The specified URL cannot be found");
+
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(notFoundStatus).type(MediaType.APPLICATION_JSON_TYPE).build();
+        }
     }
 
     @Override

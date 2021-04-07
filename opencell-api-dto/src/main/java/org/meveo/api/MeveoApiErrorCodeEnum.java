@@ -101,6 +101,11 @@ public enum MeveoApiErrorCodeEnum implements ApiErrorCodeEnum {
      * Could be a wrong content type or invalid image byte[].
      */
     INVALID_IMAGE_DATA,
+
+    /**
+     * The specified URL was not found.
+     */
+    URL_NOT_FOUND,
     
     /**
      * database constraint violation.

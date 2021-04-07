@@ -104,10 +104,10 @@ public class GenericPagingAndFilteringUtils {
                 Object anObject = jsonMapper.readValue( aList.get(0), Object.class );
                 genericFilters.put( aKey, anObject );
             }
-
-            if ( ! MapUtils.isEmpty(genericFilters) )
-                pagingAndFiltering.setFilters( genericFilters );
         }
+
+        if ( ! MapUtils.isEmpty(genericFilters) )
+            pagingAndFiltering.setFilters( genericFilters );
     }
 
     public PaginationConfiguration getPaginationConfiguration(){
