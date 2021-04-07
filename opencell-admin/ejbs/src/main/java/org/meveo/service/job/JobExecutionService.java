@@ -34,6 +34,10 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobExecutionStatus;
 import org.meveo.cache.JobRunningStatusEnum;
+import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.PersistenceUtils;
+import org.meveo.event.monitoring.ClusterEventPublisher;
+import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
@@ -77,6 +81,9 @@ public class JobExecutionService extends BaseService {
     @Inject
     private JobExecutionResultService jobExecutionResultService;
 
+    @Inject
+    private ClusterEventPublisher clusterEventPublisher;
+
     /**
      * Execute a job and return job execution result ID to be able to query execution results later. Job execution result is persisted right away, while job is executed asynchronously.
      * 
@@ -87,29 +94,62 @@ public class JobExecutionService extends BaseService {
      * @throws BusinessException Any exception
      */
     public Long executeJob(JobInstance jobInstance, Map<String, Object> params, JobLauncherEnum jobLauncher) throws BusinessException {
+        return executeJob(jobInstance, params, jobLauncher, true);
+    }
+
+    /**
+     * Execute a job and return job execution result ID to be able to query execution results later. Job execution result is persisted right away, while job is executed asynchronously.
+     * 
+     * @param jobInstance Job instance to execute.
+     * @param params Parameters (currently not used)
+     * @param jobLauncher How job was launched
+     * @param triggerExecutionOnOtherNodes When job is initiated from GUI or API, shall job execution be triggered on other nodes as well
+     * @return Job execution result ID
+     * @throws BusinessException Any exception
+     */
+    public Long executeJob(JobInstance jobInstance, Map<String, Object> params, JobLauncherEnum jobLauncher, boolean triggerExecutionOnOtherNodes) throws BusinessException {
+
+        // Preserve runTimeValues field, that gets set when executing from API
+        Map<String, Object> runTimeValues = jobInstance.getRunTimeValues();
+
+        jobInstance = jobInstanceService.findById(jobInstance.getId());
+        
+        jobInstance.setRunTimeValues(runTimeValues);
 
         log.info("Execute a job {} of type {} with parameters {} from {}", jobInstance, jobInstance.getJobTemplate(), params, jobLauncher);
 
-        JobRunningStatusEnum isRunning = lockForRunning(jobInstance, jobInstance.isLimitToSingleNode());
+        Long jobExecutionResultId = null;
 
-        if (isRunning == JobRunningStatusEnum.NOT_RUNNING || ((isRunning == JobRunningStatusEnum.LOCKED_OTHER || isRunning == JobRunningStatusEnum.RUNNING_OTHER) && !jobInstance.isLimitToSingleNode())) {
+        if (jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())) {
 
-            JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl(jobInstance, jobLauncher);
-            jobExecutionResultService.persistResult(jobExecutionResult);
+            JobRunningStatusEnum isRunning = lockForRunning(jobInstance, jobInstance.isLimitToSingleNode());
 
-            jobExecutionService.executeJobAsync(jobInstance, params, jobExecutionResult, currentUser.unProxy());
+            if ((jobInstance.isLimitToSingleNode() && isRunning == JobRunningStatusEnum.NOT_RUNNING)
+                    || (!jobInstance.isLimitToSingleNode() && (isRunning == JobRunningStatusEnum.NOT_RUNNING || isRunning == JobRunningStatusEnum.LOCKED_OTHER || isRunning == JobRunningStatusEnum.RUNNING_OTHER))) {
 
-            return jobExecutionResult.getId();
+                JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl(jobInstance, jobLauncher);
+                jobExecutionResultService.persistResult(jobExecutionResult);
 
-        } else if (isRunning == JobRunningStatusEnum.REQUEST_TO_STOP) {
-            throw new ValidationException("Job is in the process of stopping. Please try again shortly.");
+                jobExecutionService.executeJobAsync(jobInstance, params, jobExecutionResult, currentUser.unProxy());
 
-        } else if (isRunning == JobRunningStatusEnum.RUNNING_THIS || isRunning == JobRunningStatusEnum.LOCKED_THIS) {
-            throw new ValidationException("Job is already running on this cluster node");
+                jobExecutionResultId = jobExecutionResult.getId();
 
-        } else {
-            throw new ValidationException("Job is currently running on another cluster node and is limited to run one at a time");
+            } else if (isRunning == JobRunningStatusEnum.REQUEST_TO_STOP) {
+                throw new ValidationException("Job is in the process of stopping. Please try again shortly.");
+
+            } else if (isRunning == JobRunningStatusEnum.RUNNING_THIS || isRunning == JobRunningStatusEnum.LOCKED_THIS) {
+                throw new ValidationException("Job is already running on this cluster node");
+
+            } else {
+                throw new ValidationException("Job is currently running on another cluster node and is limited to run one at a time");
+            }
         }
+        // Execute a job on other nodes if was launched from GUI or API and is not limited to run on current node only
+        if (triggerExecutionOnOtherNodes && (jobLauncher == JobLauncherEnum.GUI || jobLauncher == JobLauncherEnum.API)
+                && (!jobInstance.isLimitToSingleNode() || (jobInstance.isLimitToSingleNode() && !jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())))) {
+            clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.execute, jobLauncher.name());
+        }
+        return jobExecutionResultId;
     }
 
     /**
@@ -138,8 +178,9 @@ public class JobExecutionService extends BaseService {
 
         if (jobResultStatus == JobExecutionResultStatusEnum.COMPLETED && jobInstance.getFollowingJob() != null) {
             JobInstance nextJob = jobInstanceService.refreshOrRetrieve(jobInstance.getFollowingJob());
+            nextJob = PersistenceUtils.initializeAndUnproxy(nextJob);
             log.info("Executing next job {} for {}", nextJob.getCode(), jobInstance.getCode());
-            executeJob(nextJob, null, JobLauncherEnum.TRIGGER);
+            executeJob(nextJob, null, JobLauncherEnum.TRIGGER, false);
         }
     }
 
@@ -171,28 +212,46 @@ public class JobExecutionService extends BaseService {
      */
     @SuppressWarnings("rawtypes")
     public void stopJobByForce(JobInstance jobInstance) {
+        stopJobByForce(jobInstance, true);
+    }
 
-        log.info("Requested to stop job {}  of type {} by force", jobInstance, jobInstance.getJobTemplate());
+    /**
+     * Stop a running job by force - cancel futures/kill threads
+     *
+     * @param jobInstance Job instance to stop
+     * @param triggerStopOnOtherNodes When job is being stopped from GUI or API, shall job stopping be triggered on other nodes as well
+     */
+    @SuppressWarnings("rawtypes")
+    public void stopJobByForce(JobInstance jobInstance, boolean triggerStopOnOtherNodes) {
 
-        jobCacheContainerProvider.markJobToStop(jobInstance);
+        log.info("Requested to stop BY FORCE job {}  of type {}", jobInstance, jobInstance.getJobTemplate());
+
+        if (triggerStopOnOtherNodes) {
+            jobCacheContainerProvider.markJobToStop(jobInstance);
+        }
 
         List<Future> futures = jobCacheContainerProvider.getJobExecutionThreads(jobInstance.getId());
         if (futures.isEmpty()) {
             jobCacheContainerProvider.markJobAsFinished(jobInstance);
-            
+
         } else {
             int i = 1;
             for (Future future : futures) {
-                boolean canceled = future.cancel(true);
-                if (canceled) {
-                    log.info("Job {} thread #{} was canceled by force", jobInstance, i);
-                } else {
-                    log.error("Failed to cancel a job {} thread #{}", jobInstance, i);
+                if (!future.isDone()) {
+                    boolean canceled = future.cancel(true);
+                    if (canceled) {
+                        log.info("Job {} thread #{} was canceled by force", jobInstance, i);
+                    } else {
+                        log.error("Failed to cancel a job {} thread #{}", jobInstance, i);
+                    }
                 }
                 i++;
             }
         }
-        // TODO AKK add publishing to other cluster nodes to cancel job execution
+        // Publish to other cluster nodes to cancel job execution
+        if (triggerStopOnOtherNodes) {
+            clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.stop);
+        }
     }
 
     /**

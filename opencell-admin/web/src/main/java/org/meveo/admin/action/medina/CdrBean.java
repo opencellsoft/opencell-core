@@ -169,7 +169,6 @@ public class CdrBean extends BaseBean<CDR> {
         JobInstance jobInstance = jobInstanceService.findByCode("CDR_BACK_OUT_JOB");
         jobInstance.setParametres(getEntity().getOriginBatch());
 
-        log.debug("Execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate());
         jobExecutionService.executeJob(jobInstance, null, JobLauncherEnum.GUI);
     }
 

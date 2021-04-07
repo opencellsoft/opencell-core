@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.meveo.commons.utils.StringUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,6 +32,7 @@ import java.util.Map;
  *
  * @author anasseh
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PagingAndFiltering implements Serializable {
     

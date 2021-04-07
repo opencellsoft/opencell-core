@@ -118,8 +118,8 @@ public class ScriptingJobBean extends IteratorBasedJobBean<ScriptInterface> {
         script.execute(context);
 
         if (context.containsKey(Script.JOB_RESULT_NB_OK)) {
-            jobExecutionResult.unRegisterSucces();// Reduce success as success is added automatically in main loop of IteratorBasedJobBean
             jobExecutionResult.setNbItemsCorrectlyProcessed(convert(context.get(Script.JOB_RESULT_NB_OK)));
+            jobExecutionResult.unRegisterSucces();// Reduce success as success is added automatically in main loop of IteratorBasedJobBean
             if (context.containsKey(Script.JOB_RESULT_NB_WARN)) {
                 jobExecutionResult.setNbItemsProcessedWithWarning(convert(context.get(Script.JOB_RESULT_NB_WARN)));
             }

@@ -49,6 +49,7 @@ import javax.interceptor.Interceptors;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -164,7 +165,7 @@ public class GDPRJobBean extends BaseJobBean {
 					result.addNbItemsProcessedWithError(asyncResult[1]);
 
 					result.addReport(String.format("%s=>[Items OKs=%d, Items KO=%d]", entity, asyncResult[0], asyncResult[1]));
-				} catch (InterruptedException e) {
+				} catch (InterruptedException | CancellationException e) {
 					// It was cancelled from outside - no interest
 				} catch (ExecutionException e) {
 					Throwable cause = e.getCause();

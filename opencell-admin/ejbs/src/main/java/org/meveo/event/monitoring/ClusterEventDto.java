@@ -31,11 +31,11 @@ public class ClusterEventDto implements Serializable {
     private static final long serialVersionUID = -4400683830870993336L;
 
     /**
-     * crud action value.
+     * Cluster event action value.
      *
      */
     public enum CrudActionEnum {
-        create, update, remove, enable, disable
+        create, update, remove, enable, disable, execute, stop;
     };
 
     /**
@@ -74,6 +74,11 @@ public class ClusterEventDto implements Serializable {
     private String userName;
 
     /**
+     * Additional information about the action
+     */
+    private String additionalInfo;
+
+    /**
      * Defaut constructor.
      */
     public ClusterEventDto() {
@@ -87,9 +92,10 @@ public class ClusterEventDto implements Serializable {
      * @param sourceNode Node that published the information
      * @param providerCode Code of provider, that information belonged to
      * @param userName Username that initiated information publication
+     * @param additionalInfo Additional information about the action
      * 
      */
-    public ClusterEventDto(String clazz, Long id, String code, CrudActionEnum action, String sourceNode, String providerCode, String userName) {
+    public ClusterEventDto(String clazz, Long id, String code, CrudActionEnum action, String sourceNode, String providerCode, String userName, String additionalInfo) {
         super();
         this.clazz = clazz;
         this.id = id;
@@ -98,6 +104,7 @@ public class ClusterEventDto implements Serializable {
         this.sourceNode = sourceNode;
         this.providerCode = providerCode;
         this.userName = userName;
+        this.additionalInfo = additionalInfo;
     }
 
     /**
@@ -150,10 +157,24 @@ public class ClusterEventDto implements Serializable {
     }
 
     /**
+     * @return Additional information about the action
+     */
+    public String getAdditionalInfo() {
+        return additionalInfo;
+    }
+
+    /**
+     * @param additionalInfo Additional information about the action
+     */
+    public void setAdditionalInfo(String additionalInfo) {
+        this.additionalInfo = additionalInfo;
+    }
+
+    /**
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "ClusterEventDto [clazz=" + clazz + ", idOrCode=" + id + ", action=" + action + ", sourceNode=" + sourceNode + "]";
+        return "ClusterEventDto [clazz=" + clazz + ", idOrCode=" + id + ", action=" + action + ", sourceNode=" + sourceNode + ", additionalInfo=" + additionalInfo + "]";
     }
 }

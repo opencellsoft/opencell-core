@@ -151,7 +151,7 @@
         </p:commandButton>            
         
         <p:commandButton id="StopByForceButtonAjax"
-            rendered="#{ cc.attrs.stop and cc.attrs.stopByForce and cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit and !empty(cc.attrs.backingBean.objectId) and cc.attrs.backingBean.canUserUpdateEntity()}"
+            rendered="#{ cc.attrs.stopByForce and cc.attrs.edit and empty(cc.attrs.updateConfirmationMessage) and cc.attrs.ajaxSubmit and !empty(cc.attrs.backingBean.objectId) and cc.attrs.backingBean.canUserUpdateEntity()}"
             value="#{cc.attrs.stopByForceLabel}" oncomplete="$('html,body').scrollTop(0);"
             action="#{cc.attrs.backingBean.stopByForce()}" immediate="true" update="#{cc.attrs.submitUpdate}">
             <f:param name="edit" value="#{cc.attrs.edit}" />

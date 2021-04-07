@@ -1484,4 +1484,13 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         }
         return refundedWOs;
     }
+    
+    /**
+     * Detach WOs From subscription.
+     *
+     * @param subscription subscription
+     */
+    public void detachWOsFromSubscription(Subscription subscription) {
+        getEntityManager().createNamedQuery("WalletOperation.detachWOsFromSubscription").setParameter("subscription", subscription).executeUpdate();
+    }
 }

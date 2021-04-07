@@ -17,8 +17,6 @@
  */
 package org.meveo.admin.job;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -205,10 +203,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 							result.addReport(ddRequestLOT.getRejectedCause());
 							if(ddrequestLotOp.isGeneratePaymentLines() != Boolean.FALSE) {
                                 dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, isToMatching, ddrequestLotOp.getPaymentStatus(), nbRuns, waitingMillis, result);
-							log.info("end createPaymentsOrRefundsForDDRequestLot");
-							if (isEmpty(ddRequestLOT.getRejectedCause())) {
-								result.registerSucces();
-							}
+							log.info("end createPaymentsOrRefundsForDDRequestLot");							
 						}
 					}
 					}

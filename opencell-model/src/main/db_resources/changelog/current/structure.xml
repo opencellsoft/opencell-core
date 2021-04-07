@@ -4226,4 +4226,11 @@ END $$;]]>
     </changeSet>
     
     
+    <changeSet id="#5622_20210406" author="AbdelmounaimAkadid">
+	    <sql>
+            ALTER TABLE ${db.schema.adapted}billing_wallet_operation ALTER COLUMN charge_instance_id DROP NOT NULL
+        </sql>
+    </changeSet>
+    
+    
 </databaseChangeLog>
