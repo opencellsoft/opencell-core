@@ -15,6 +15,8 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
@@ -23,6 +25,7 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceLinesService;
 import org.meveo.service.billing.impl.RatedTransactionService;
+import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -50,6 +53,9 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
+    
+    @Inject
+    DiscountPlanItemService discountPlanItemService;
 
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -151,6 +157,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
             try {
                 InvoiceLine invoiceLine = linesFactory.create(record, aggregationConfiguration);
                 invoiceLinesService.create(invoiceLine);
+                discountPlanItemService.applyDiscounts(invoiceLine,DiscountPlanTypeEnum.PRODUCT);
             } catch (Exception exception) {
                 log.error(exception.getMessage());
             }

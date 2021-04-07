@@ -751,12 +751,9 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
                             .collect(Collectors.toSet());
         return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, serviceCode);
     }
-    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, String productCode,List<QuoteAttribute> quoteAttributes) {
+    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, String productCode,Set<AttributeValue> attributeValues) {
         
-        Set<AttributeValue> attributeValues = quoteAttributes
-                            .stream()
-                            .map(attributeInstance -> (AttributeValue)attributeInstance)
-                            .collect(Collectors.toSet());
         return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, productCode);
     }
+
 }
