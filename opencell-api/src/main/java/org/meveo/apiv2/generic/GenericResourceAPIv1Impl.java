@@ -1,7 +1,8 @@
 package org.meveo.apiv2.generic;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections4.CollectionUtils;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.*;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
@@ -10,6 +11,7 @@ import org.meveo.api.dto.invoice.CancelInvoiceRequestDto;
 import org.meveo.api.dto.invoice.ValidateInvoiceRequestDto;
 import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
 import org.meveo.apiv2.generic.core.GenericHelper;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.util.Inflector;
 
 import javax.annotation.PreDestroy;
@@ -18,9 +20,13 @@ import javax.interceptor.Interceptors;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,8 +46,6 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String METHOD_DELETE = "/";
 
     private static final String FORWARD_SLASH = "/";
-    private static final String BLANK_SPACE = " ";
-    private static final String BLANK_SPACE_ENCODED = "%20";
     private static final String QUERY_PARAM_SEPARATOR = "?";
     private static final String QUERY_PARAM_VALUE_SEPARATOR = "=";
     private static final String PAIR_QUERY_PARAM_SEPARATOR = "&";
@@ -70,7 +74,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
      * This request is used to retrieve all entities, or also a particular entity
      */
     @Override
-    public Response getAllEntitiesOrGetAnEntity() throws URISyntaxException, JsonProcessingException {
+    public Response getAllEntitiesOrGetAnEntity() throws URISyntaxException, IOException {
         String aGetPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
 
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
@@ -87,9 +91,13 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             if ( pathIBaseRS.equals( "/billing/wallet/operation" ) )
                 entityClassName = "WalletOperation";
             else if ( pathIBaseRS.equals( "/catalog/pricePlan" ) )
-                entityClassName = "PricePlanMatrix";
+                entityClassName = "pricePlanMatrix";
             else if ( pathIBaseRS.equals( "/countryIso" ) )
-                entityClassName = "Country";
+                entityClassName = "country";
+            else if ( pathIBaseRS.equals( "/currencyIso" ) )
+                entityClassName = "currency";
+            else if ( pathIBaseRS.equals( "/languageIso" ) )
+                entityClassName = "language";
             else if ( pathIBaseRS.equals( "/job/jobReport" ) )
                 entityClassName = "Job";
             else
@@ -104,34 +112,63 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
                 for( String aKey : queryParamsMap.keySet() ){
                     queryParams.append( aKey + QUERY_PARAM_VALUE_SEPARATOR
-                            + queryParamsMap.get( aKey ).get(0).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED )
+                            + queryParamsMap.get( aKey ).get(0).replace( GenericPagingAndFilteringUtils.BLANK_SPACE, GenericPagingAndFilteringUtils.BLANK_SPACE_ENCODED )
                             + PAIR_QUERY_PARAM_SEPARATOR );
                 }
 
-                if ( pathIBaseRS.equals( "catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
+                if ( pathIBaseRS.equals( "/catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/catalog/recurringChargeTemplate" )
+                    || pathIBaseRS.equals( "/catalog/usageChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
                     || pathIBaseRS.equals( "/billing/subscription" ) || pathIBaseRS.equals( "/billing/ratedTransaction" )
                     || pathIBaseRS.equals( "/billing/wallet" ) || pathIBaseRS.equals( "/catalog/offerTemplate")
-                    || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" ) )
+                    || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" )
+                    || pathIBaseRS.equals( "/billing/accountingCode" ) || pathIBaseRS.equals( "/calendar" )
+                    || pathIBaseRS.equals( "/catalog/unitOfMeasure" ) || pathIBaseRS.equals( "/contact" )
+                    || pathIBaseRS.equals( "/countryIso" ) || pathIBaseRS.equals( "/currencyIso" )
+                    || pathIBaseRS.equals( "/languageIso" ) || pathIBaseRS.equals( "/tax" )
+                    || pathIBaseRS.equals( "/taxCategory" ) || pathIBaseRS.equals( "/taxClass" )
+                    || pathIBaseRS.equals( "/taxMapping" ) || pathIBaseRS.equals( "/payment/creditCategory" )
+                    || pathIBaseRS.equals( "/payment/paymentMethod" ) || pathIBaseRS.equals( "/account/title" )
+                    || pathIBaseRS.equals( "/account/customerAccount" ) || pathIBaseRS.equals( "/account/billingAccount" )
+                    || pathIBaseRS.equals( "/account/userAccount" ) || pathIBaseRS.equals( "/catalog/serviceTemplate" )
+                    || pathIBaseRS.equals( "/catalog/pricePlan" ) || pathIBaseRS.equals( "/billing/wallet/operation" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
-                            + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
+                            + queryParams.substring( 0, queryParams.length() - 1 )
+                            .replace( GenericPagingAndFilteringUtils.BLANK_SPACE, GenericPagingAndFilteringUtils.BLANK_SPACE_ENCODED )
+                            .replace( GenericPagingAndFilteringUtils.QUOTE, GenericPagingAndFilteringUtils.QUOTE_ENCODED ) );
                 else
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL
-                            + queryParams.substring( 0, queryParams.length() - 1 ).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED ) );
+                            + queryParams.substring( 0, queryParams.length() - 1 )
+                            .replace( GenericPagingAndFilteringUtils.BLANK_SPACE, GenericPagingAndFilteringUtils.BLANK_SPACE_ENCODED )
+                            .replace( GenericPagingAndFilteringUtils.QUOTE, GenericPagingAndFilteringUtils.QUOTE_ENCODED ) );
             }
             else {
-                if ( pathIBaseRS.equals( "/catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
+                if ( pathIBaseRS.equals( "/catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/catalog/recurringChargeTemplate" )
+                    || pathIBaseRS.equals( "/catalog/usageChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
                     || pathIBaseRS.equals( "/billing/subscription" ) || pathIBaseRS.equals( "/billing/ratedTransaction" )
                     || pathIBaseRS.equals( "/billing/wallet" ) || pathIBaseRS.equals( "/catalog/offerTemplate" )
-                    || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" ) )
+                    || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" )
+                    || pathIBaseRS.equals( "/billing/accountingCode" ) || pathIBaseRS.equals( "/calendar" )
+                    || pathIBaseRS.equals( "/catalog/unitOfMeasure" ) || pathIBaseRS.equals( "/contact" )
+                    || pathIBaseRS.equals( "/countryIso" ) || pathIBaseRS.equals( "/currencyIso" )
+                    || pathIBaseRS.equals( "/languageIso" ) || pathIBaseRS.equals( "/tax" )
+                    || pathIBaseRS.equals( "/taxCategory" ) || pathIBaseRS.equals( "/taxClass" )
+                    || pathIBaseRS.equals( "/taxMapping" ) || pathIBaseRS.equals( "/payment/creditCategory" )
+                    || pathIBaseRS.equals( "/payment/paymentMethod" ) || pathIBaseRS.equals( "/account/title" )
+                    || pathIBaseRS.equals( "/account/customerAccount" ) || pathIBaseRS.equals( "/account/billingAccount" )
+                    || pathIBaseRS.equals( "/account/userAccount" ) || pathIBaseRS.equals( "/catalog/serviceTemplate" )
+                    || pathIBaseRS.equals( "/catalog/pricePlan" ) || pathIBaseRS.equals( "/billing/wallet/operation" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL );
             }
-            return Response.temporaryRedirect( redirectURI ).build();
+
+            Response getResponse = AuthenticationFilter.httpClient.target( redirectURI ).request().get();
+
+            return Response.ok().entity(customizeResponse(getResponse, entityClassName)).build();
         }
         else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( getAnEntityPath ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getAnEntityPath );
@@ -152,8 +189,9 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "jobInstanceCode=" + entityCode);
             }
-            // special handle for jobReport
-            else if ( pathIBaseRS.equals("/job/jobReport") ) {
+            // special handle for jobReport, contact, taxCategory, taxClass
+            else if ( pathIBaseRS.equals("/job/jobReport") || pathIBaseRS.equals("/contact")
+                    || pathIBaseRS.equals("/taxCategory") || pathIBaseRS.equals("/taxClass")) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "code=" + entityCode);
             }
@@ -161,6 +199,31 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             else if ( pathIBaseRS.equals("/invoice") ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode);
+            }
+            // special handle for accountingCode
+            else if ( pathIBaseRS.equals("/billing/accountingCode") ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "accountingCode=" + entityCode);
+            }
+            // special handle for countryIso
+            else if ( pathIBaseRS.equals("/countryIso") ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "countryCode=" + entityCode);
+            }
+            // special handle for currencyIso
+            else if ( pathIBaseRS.equals("/currencyIso") ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "currencyCode=" + entityCode);
+            }
+            // special handle for languageIso
+            else if ( pathIBaseRS.equals("/languageIso") ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "languageCode=" + entityCode);
+            }
+            // special handle for taxMapping, paymentMethod
+            else if ( pathIBaseRS.equals("/taxMapping") || pathIBaseRS.equals("/payment/paymentMethod") ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "id=" + entityCode);
             }
             else {
                 entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
@@ -195,8 +258,11 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                                 .map(MatchResult::group)
                                 .toArray(String[]::new);
 
-                        queryParams.append( Inflector.getInstance().singularize( matches[matches.length - 2] ) + "Code="
-                                + matches[matches.length - 1] + PAIR_QUERY_PARAM_SEPARATOR );
+                        if ( pathIBaseRS.equals( "/catalog/pricePlan/list" ) )
+                            queryParams.append( "eventCode=" + matches[matches.length - 1] + PAIR_QUERY_PARAM_SEPARATOR );
+                        else
+                            queryParams.append( Inflector.getInstance().singularize( matches[matches.length - 2] ) + "Code="
+                                    + matches[matches.length - 1] + PAIR_QUERY_PARAM_SEPARATOR );
                     }
 
                     indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX, indexCodeRegex + 1 );
@@ -207,7 +273,12 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 if ( ! smallString.equals( aGetPath ) ) {
                     queryParamsMap = uriInfo.getQueryParameters();
                     GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
-                    entityClassName = aGetPath.split( FORWARD_SLASH )[ aGetPath.split( FORWARD_SLASH ).length - 1 ];
+
+                    if ( pathIBaseRS.equals( "/catalog/pricePlan/list" ) )
+                        entityClassName = "PricePlanMatrix";
+                    else
+                        entityClassName = aGetPath.split( FORWARD_SLASH )[ aGetPath.split( FORWARD_SLASH ).length - 1 ];
+
                     Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize( entityClassName ) );
                     GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
                 }
@@ -222,7 +293,9 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                         + API_REST + pathIBaseRS + queryParams );
             }
 
-            return Response.temporaryRedirect( redirectURI ).build();
+            Response getResponse = AuthenticationFilter.httpClient.target( redirectURI ).request().get();
+
+            return Response.ok().entity(customizeResponse(getResponse, entityClassName)).build();
         }
         else {
             if ( aGetPath.matches( "/v1/invoices/pdfInvoices/" + GenericOpencellRestfulAPIv1.CODE_REGEX ) ) {
@@ -242,6 +315,50 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         }
     }
 
+    // Concerns only responses for requests get all entities
+    public Map<String, Object> customizeResponse( Response getResponse, String entityName ) throws IOException {
+        Map<String, Object> customResponse = new LinkedHashMap<>();
+        if ( getResponse.hasEntity() ) {
+            Object aResponse2 = getResponse.getEntity();
+            Map<String, Object> origResponse = new ObjectMapper().readValue( (InputStream) aResponse2, Map.class );
+
+            for (Map.Entry<String,Object> entry : origResponse.entrySet()) {
+                if ( entry.getKey().equals("actionStatus") || entry.getKey().equals("paging") )
+                    customResponse.put(entry.getKey(), entry.getValue());
+                else if ( entry.getKey().equals( "pricePlanMatrixes" ) ) {
+                    if ( entry.getValue() instanceof Map ) {
+                        Map mapEntities = (Map) entry.getValue();
+                        for (Object aKey : mapEntities.keySet()) {
+                            customResponse.put( "pricePlanMatrices", mapEntities.get(aKey) );
+                        }
+                    }
+                }
+                else if ( entry.getKey().equals( "list" + StringUtils.capitalizeFirstLetter(entityName) )
+                        || entry.getKey().equals( entityName ) || entry.getKey().equals( "dto" )
+                        || entry.getKey().equals( Inflector.getInstance().pluralize(entityName) )
+                        || entry.getKey().equals( Inflector.getInstance().pluralize(entityName) + "Dto" ) ) {
+                    if ( entry.getValue() instanceof Map ) {
+                        Map mapEntities = (Map) entry.getValue();
+                        for (Object aKey : mapEntities.keySet()) {
+                            if ( aKey.equals( Inflector.getInstance().singularize(entityName) ) ||
+                                aKey.equals( Inflector.getInstance().pluralize(entityName) ) ||
+                                aKey.equals( entityName ) )
+                                if ( CollectionUtils.isNotEmpty((List) mapEntities.get(aKey)) )
+                                    customResponse.put( Inflector.getInstance().pluralize(entityName), mapEntities.get(aKey) );
+                        }
+                    }
+                    else if ( entry.getValue() instanceof List )
+                        if ( CollectionUtils.isNotEmpty((List) entry.getValue() ) )
+                            customResponse.put( Inflector.getInstance().pluralize(entityName), entry.getValue() );
+                }
+                else
+                    customResponse.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return customResponse;
+    }
+
     @Override
     public Response postRequest( String jsonDto ) throws URISyntaxException {
         String postPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
@@ -251,7 +368,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
         for( String aKey : queryParamsMap.keySet() ){
             queryParams.append( aKey + QUERY_PARAM_VALUE_SEPARATOR
-                    + queryParamsMap.get( aKey ).get(0).replaceAll( BLANK_SPACE, BLANK_SPACE_ENCODED )
+                    + queryParamsMap.get( aKey ).get(0).replace( GenericPagingAndFilteringUtils.BLANK_SPACE, GenericPagingAndFilteringUtils.BLANK_SPACE_ENCODED )
                     + PAIR_QUERY_PARAM_SEPARATOR );
         }
 
@@ -374,6 +491,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
             if ( aDto instanceof BusinessEntityDto )
                 ((BusinessEntityDto) aDto).setCode(entityCode);
+            else if ( aDto instanceof IEntityDto )
+                ((IEntityDto) aDto).setId(Long.parseLong(entityCode));
             else if ( aDto instanceof AccountHierarchyDto )
                 ((AccountHierarchyDto) aDto).setCustomerCode(entityCode);
             else if ( aDto instanceof AccessDto )
@@ -400,6 +519,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     @Override
     public Response deleteAnEntity() throws URISyntaxException {
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
+        URI redirectURI;
         StringBuilder suffixPathBuilder = new StringBuilder();
         for (int i = 0; i < segmentsOfPathAPIv2.size() - 1; i++ )
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i).getPath() );
@@ -408,12 +528,37 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( deletePath ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( deletePath );
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
-            URI redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + METHOD_DELETE
-                    + entityCode);
+
+            if ( pathIBaseRS.equals( "/payment/paymentMethod" ) )
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "id=" + entityCode);
+            else
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + METHOD_DELETE + entityCode);
             return Response.temporaryRedirect( redirectURI ).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+    @Override
+    public Response getListRestEndpoints() {
+        return Response.ok().entity(GenericOpencellRestfulAPIv1.RESTFUL_ENTITIES_MAP).type(MediaType.APPLICATION_JSON_TYPE).build();
+    }
+
+    @Override
+    public Response getListRestEndpointsForEntity(String entityName) {
+        if ( GenericOpencellRestfulAPIv1.RESTFUL_ENTITIES_MAP.containsKey( StringUtils.capitalizeFirstLetter(entityName) ) ) {
+            entityName = StringUtils.capitalizeFirstLetter(entityName);
+            Map responseMap = new HashMap();
+            responseMap.put( entityName, GenericOpencellRestfulAPIv1.RESTFUL_ENTITIES_MAP.get( entityName ) );
+            return Response.ok().entity(responseMap).type(MediaType.APPLICATION_JSON_TYPE).build();
+        }
+        else {
+            ActionStatus notFoundStatus = new ActionStatus(ActionStatusEnum.FAIL,
+                    MeveoApiErrorCodeEnum.ENTITY_DOES_NOT_EXISTS_EXCEPTION, "Entity " + entityName + " cannot be found");
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(notFoundStatus).type(MediaType.APPLICATION_JSON_TYPE).build();
+        }
     }
 
     @PreDestroy
