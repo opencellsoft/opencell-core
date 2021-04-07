@@ -38,6 +38,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 
 /**
  * REST API for managing {@link Role}.
@@ -83,7 +84,7 @@ public interface RoleRs extends IBaseRs {
     @Path("/{roleName}")
     @Operation(summary = "Remove role.",
     tags = { "Roles management" })
-    ActionStatus remove(@PathParam("roleName") String roleName);
+    ActionStatus remove(@Parameter(required = true) @PathParam("roleName") String roleName);
 
     /**
      * Search role.
@@ -96,7 +97,7 @@ public interface RoleRs extends IBaseRs {
     @Path("/") 
     @Operation(summary = "Search role.", deprecated = true,
     tags = { "Deprecated" })
-    GetRoleResponse find(@QueryParam("roleName") String roleName, @QueryParam("includeSecuredEntities") boolean includeSecuredEntities);
+    GetRoleResponse find(@Parameter(required = true)  @QueryParam("roleName") String roleName, @Parameter(description = "indicate return of the list of secured entties") @QueryParam("includeSecuredEntities") boolean includeSecuredEntities);
 
     /**
      * Search role.
@@ -109,7 +110,7 @@ public interface RoleRs extends IBaseRs {
     @Path("/{roleName}")
     @Operation(summary = "Search role.",
             tags = { "Roles management" })
-    GetRoleResponse findV2(@PathParam("roleName") String roleName, @QueryParam("includeSecuredEntities") boolean includeSecuredEntities);
+    GetRoleResponse findV2(@Parameter(required = true) @PathParam("roleName") String roleName, @Parameter(description = "indicate return of the list of secured entties") @QueryParam("includeSecuredEntities") boolean includeSecuredEntities);
 
     /**
      * Create or update role.
@@ -156,8 +157,12 @@ public interface RoleRs extends IBaseRs {
     @Path("/filtering")
     @Operation(summary = "List roles matching a given criteria.",
             tags = { "Roles management" })
-    RolesDto listGetV2(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
-                     @DefaultValue("name") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+    RolesDto listGetV2(@Parameter(description = "query Search criteria", example = "filterKey1:filterValue1|filterKey2:filterValue2") @QueryParam("query") String query, 
+    				  @Parameter(description = "fields Data retrieval options/fieldnames separated by a comma. Specify \"permissions\" in fields to include the permissions. Specify \"roles\" to include child roles") @QueryParam("fields") String fields,
+    				  @Parameter(description = "offset Pagination - from record number")  @QueryParam("offset") Integer offset,
+    				  @Parameter(description = "limit Pagination - number of records to retrieve") @QueryParam("limit") Integer limit,
+    				  @Parameter(description = "sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields") @DefaultValue("name") @QueryParam("sortBy") String sortBy,
+    				  @Parameter(description = "sortOrder Sorting - sort order") @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
      * List roles matching a given criteria.

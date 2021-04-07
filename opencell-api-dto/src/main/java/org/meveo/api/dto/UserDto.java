@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -34,6 +35,8 @@ import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class UserDto.
@@ -51,37 +54,47 @@ public class UserDto extends AuditableEntityDto {
 
     /** The username. */
     @XmlElement(required = true)
+    @Schema(description = "the username of the user")
+    @NotNull
     private String username;
 
     /**
      * Used when creating keycloak user.
      */
     @XmlElement()
+    @Schema(description = "Used when creating keycloak user")
     private String password;
 
     /** The email. */
     @XmlElement(required = true)
+    @Schema(description = "email of the user")
+    @NotNull
     private String email;
 
     /** The first name. */
+    @Schema(description = "first name")
     private String firstName;
 
     /** The last name. */
+    @Schema(description = "last name")
     private String lastName;
 
     /** The roles. */
     @XmlElementWrapper(name = "userRoles")
     @XmlElement(name = "userRole")
+    @Schema(description = "list of role associated to user")
     private List<String> roles;
 
     /** The external roles. */
     @XmlElementWrapper(name = "externalRoles")
     @XmlElement(name = "externalRole")
+    @Schema(description = "list of external role")
     private List<RoleDto> externalRoles;
 
     /** The secured entities. */
     @XmlElementWrapper(name = "accessibleEntities")
     @XmlElement(name = "accessibleEntity")
+    @Schema(description = "list of secured entities associated to the user")
     private List<SecuredEntityDto> securedEntities;
 
     /** The role. */
@@ -90,17 +103,21 @@ public class UserDto extends AuditableEntityDto {
 
     /** The user level. */
     @XmlElement()
+    @Schema(description = "the user level")
     private String userLevel;
 
     /** The created at. */
+    @Schema(description = "date time creation of the user")
     private Date createdAt;
 
     /** The last login date. */
+    @Schema(description = "the last login date")
     private Date lastLoginDate;
 
     /** The roles. */
     @XmlElementWrapper(name = "permissions")
     @XmlElement(name = "permission")
+    @Schema(description = "list of the permission")
     private List<String> permissions;
 
     /**
