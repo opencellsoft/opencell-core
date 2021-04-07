@@ -162,14 +162,12 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 		return ids;
 	}
 	
-	public boolean isDiscountPlanApplicable(IDiscountable entity, DiscountPlan discountPlan,
-			OfferTemplate offer, Product product, Date quoteDate) {
+	public boolean isDiscountPlanApplicable(IDiscountable entity, DiscountPlan discountPlan, OfferTemplate offer, Product product, Date quoteDate) {
 		if (!(discountPlan.getStatus().equals(DiscountPlanStatusEnum.IN_USE) || discountPlan.getStatus().equals(DiscountPlanStatusEnum.ACTIVE))) {
 			return false;
 		}
 		if (discountPlan.isActive() && discountPlan.isEffective(quoteDate)) {
-			if (matchDiscountPlanExpression(discountPlan.getExpressionEl(),entity,null, offer, product,
-					discountPlan)) {
+			if (matchDiscountPlanExpression(discountPlan.getExpressionEl(),entity,null, offer, product, discountPlan)) {
 				return true;
 			}
 		}

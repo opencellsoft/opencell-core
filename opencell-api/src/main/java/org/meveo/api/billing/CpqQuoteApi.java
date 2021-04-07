@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +92,6 @@ import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.cpq.contract.Contract;
-import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -1050,7 +1050,7 @@ public class CpqQuoteApi extends BaseApi {
             accountingArticlePrices.addAll(offerQuotation(quoteOffer));
         }
         accountingArticlePrices.addAll(applyDiscounts(accountingArticlePrices, quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(),
-        		quoteVersion.getQuote().getQuoteDate()));
+        		quoteVersion));
         
         Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = accountingArticlePrices.stream()
                 .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
@@ -1067,7 +1067,7 @@ public class CpqQuoteApi extends BaseApi {
                     quotePriceService.create(quotePrice);
                     pricesDTO.add(new PriceDTO(quotePrice));
                     if(quoteVersion.getQuote().getDiscountPlan()!=null) {
-                    	 List<QuotePrice> quotePrices=discountCalculator(quotePrice, quoteVersion.getQuote().getDiscountPlan(),quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(), quoteVersion.getQuote().getQuoteDate());
+                    	 List<QuotePrice> quotePrices=discountCalculator(quotePrice, quoteVersion.getQuote().getDiscountPlan(),quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(), quoteVersion);
                          pricesDTO.addAll(populateToDTO(quotePrices));
                     }
                     return pricesDTO;
@@ -1375,10 +1375,9 @@ public class CpqQuoteApi extends BaseApi {
 
     }
     
-    private List<QuotePrice> applyDiscounts(List<QuotePrice> quotePrices,Seller seller,BillingAccount billingAccount, Date quoteDate) {
+    private List<QuotePrice> applyDiscounts(List<QuotePrice> quotePrices,Seller seller,BillingAccount billingAccount, QuoteVersion quoteVersion) {
     	QuoteOffer quoteOffer=null;
     	QuoteProduct quoteproduct=null;
-    	QuoteVersion quoteVersion=null;
     	List<QuotePrice> discountPrices=new ArrayList<QuotePrice>();
     	for(QuotePrice quotePrice : quotePrices) {
     		 quoteproduct=quotePrice.getQuoteArticleLine().getQuoteProduct();
@@ -1386,94 +1385,107 @@ public class CpqQuoteApi extends BaseApi {
         	 quoteVersion=quotePrice.getQuoteVersion();
         	if(PriceLevelEnum.ACCOUNTING_ARTICLE.equals(quotePrice.getPriceLevelEnum())) {
         		if(quoteOffer.getDiscountPlan()!=null) {
-        			discountPrices.addAll(discountCalculator(quotePrice, quoteOffer.getDiscountPlan(),seller, billingAccount, quoteDate));
+        			discountPrices.addAll(discountCalculator(quotePrice, quoteOffer.getDiscountPlan(),seller, billingAccount, quoteVersion));
         		}
         		if(quoteproduct.getDiscountPlan()!=null) {
-        			discountPrices.addAll(discountCalculator(quotePrice,quoteproduct.getDiscountPlan(), seller, billingAccount, quoteDate));
+        			discountPrices.addAll(discountCalculator(quotePrice,quoteproduct.getDiscountPlan(), seller, billingAccount, quoteVersion));
         		}
         	}else if(PriceLevelEnum.QUOTE.equals(quotePrice.getPriceLevelEnum()) && quoteVersion.getQuote().getDiscountPlan()!=null) {
-        		discountPrices.addAll(discountCalculator(quotePrice,quoteVersion.getQuote().getDiscountPlan(), seller, billingAccount, quoteDate));
+        		discountPrices.addAll(discountCalculator(quotePrice,quoteVersion.getQuote().getDiscountPlan(), seller, billingAccount, quoteVersion));
     		}
     		
     	}
     	return discountPrices;
     }
-    
-    private List<QuotePrice> discountCalculator(QuotePrice quotePrice,DiscountPlan discountPlan,Seller seller,BillingAccount billingAccount, Date quoteDate) {
-    	
-    	List<QuotePrice> discountPrices = new ArrayList<>();
-    	if(discountPlan==null) {
-    		return new ArrayList<>();
-    	}
-    	AccountingArticle accountintArticle=quotePrice.getQuoteArticleLine().getAccountingArticle();
-    	QuoteProduct quoteproduct=quotePrice.getQuoteArticleLine().getQuoteProduct();
-    	QuoteOffer quoteOffer=quoteproduct.getQuoteOffre();
-    	if(quoteOffer.getBillableAccount()!=null) {
-    		billingAccount=quoteOffer.getBillableAccount();
-    	}
-    	BigDecimal amountWithoutTax=quotePrice.getAmountWithoutTax();
-    	BigDecimal discountAmount=BigDecimal.ZERO;
-    	 boolean isEnterprise = appProvider.isEntreprise();	
-    	 QuoteArticleLine quoteArticleLine=null;
-    	 TaxInfo taxInfo =null;
-		boolean isOfferDiscountApplicable=discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan, quoteOffer.getOfferTemplate(), quoteproduct.getProductVersion().getProduct(), quoteDate);
-		if(isOfferDiscountApplicable) {
-			 List<DiscountPlanItem>  discountItems=discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, quoteOffer.getOfferTemplate(), quoteproduct.getProductVersion().getProduct(), quoteDate,accountintArticle);
-			 Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
-			 for(DiscountPlanItem discountPlanItem:discountItems) {
-				 AccountingArticle discountAccountingArticle=discountPlanItem.getAccountingArticle();
-				 @SuppressWarnings("unchecked")
-				List<AttributeValue> attributesValues=new ArrayList(quoteproduct.getQuoteAttributes());
-				 discountAmount=discountAmount.add(discountPlanItemService.getDiscountAmount(billingAccount, amountWithoutTax, isEnterprise, discountPlanItem,quoteproduct.getProductVersion().getProduct(),attributesValues));
-				 if(discountAmount!=null && discountAmount.abs().compareTo(BigDecimal.ZERO)>0) {
-					  String accountingArticleCode = discountAccountingArticle.getCode();
-			            if (!quoteArticleLines.containsKey(accountingArticleCode)) {
-			                quoteArticleLine = new QuoteArticleLine();
-			                quoteArticleLine.setAccountingArticle(discountAccountingArticle);
-			                quoteArticleLine.setQuantity(BigDecimal.ONE);
-			                quoteArticleLine.setServiceQuantity(BigDecimal.ONE);
-			                quoteArticleLine.setBillableAccount(billingAccount);
-			                quoteArticleLine.setQuoteProduct(quoteproduct);
-			                quoteArticleLine.setQuoteLot(quoteOffer.getQuoteLot());
-			                quoteproduct.getQuoteArticleLines().add(quoteArticleLine);
-			                quoteArticleLineService.create(quoteArticleLine);
-			                quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
-			            }else {
-			            	quoteArticleLine=quoteArticleLines.get(accountingArticleCode);
-			            }
-					    
-					    QuotePrice discountQuotePrice = new QuotePrice();
-			            discountQuotePrice.setPriceTypeEnum(quotePrice.getPriceTypeEnum());
-			            discountQuotePrice.setPriceLevelEnum(quotePrice.getPriceLevelEnum());
-			            
-			            BigDecimal taxPercent= quotePrice.getTaxRate();
-			            if(discountAccountingArticle.getTaxClass()!=null) {
-			            	 taxInfo = taxMappingService.determineTax(discountAccountingArticle.getTaxClass(),seller, billingAccount, null, quoteOffer.getQuoteVersion().getQuote().getQuoteDate(), false, false);
-			            	 taxPercent=taxInfo.tax.getPercent();
-			            }
-			            BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-			            discountQuotePrice.setAmountWithoutTax(amounts[0]);
-			            discountQuotePrice.setAmountWithTax(amounts[1]);
-			            discountQuotePrice.setTaxAmount(amounts[2]);
-			            discountQuotePrice.setCurrencyCode(quotePrice.getCurrencyCode());
-			            discountQuotePrice.setQuoteArticleLine(quoteArticleLine);
-			            discountQuotePrice.setQuoteVersion(quoteOffer.getQuoteVersion());
-			            discountQuotePrice.setChargeTemplate(quotePrice.getChargeTemplate());
-			            if (PriceTypeEnum.RECURRING.equals(discountQuotePrice.getPriceTypeEnum())) {
-			                Integer durationTermInMonth = ((RecurringChargeTemplate) quotePrice.getChargeTemplate()).getDurationTermInMonth();
-			                if(durationTermInMonth != null)
-			                    discountQuotePrice.setRecurrenceDuration(Long.valueOf(durationTermInMonth));
-			                //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
-			            }
-			            discountQuotePrice.setUnitPriceWithoutTax(discountAmount);
-			            discountQuotePrice.setTaxRate(taxPercent);
-			            quotePriceService.create(discountQuotePrice);
-			            discountPrices.add(discountQuotePrice);
-				 }
-			 }
-			 
-		}
-	return discountPrices;
+
+    private List<QuotePrice> discountCalculator(QuotePrice quotePrice, DiscountPlan discountPlan, Seller seller, BillingAccount billingAccount, QuoteVersion quoteVersion) {
+
+        List<QuotePrice> discountPrices = new ArrayList<>();
+        if (discountPlan == null) {
+            return new ArrayList<>();
+        }
+        AccountingArticle accountintArticle = null;
+        QuoteProduct quoteproduct = null;
+        QuoteOffer quoteOffer = null;
+        OfferTemplate offerTemplate = null;
+        List<AttributeValue> attributesValues = null;
+        Product product = null;
+        if(quotePrice.getQuoteArticleLine() != null) {
+            accountintArticle = quotePrice.getQuoteArticleLine().getAccountingArticle();
+            quoteproduct = quotePrice.getQuoteArticleLine().getQuoteProduct();
+            quoteOffer = quoteproduct.getQuoteOffre();
+            offerTemplate = quoteOffer.getOfferTemplate();
+            product = quoteproduct.getProductVersion().getProduct();
+            attributesValues = new ArrayList(quoteproduct.getQuoteAttributes());
+            if (quoteOffer.getBillableAccount() != null) {
+                billingAccount = quoteOffer.getBillableAccount();
+            }
+        }
+        BigDecimal amountWithoutTax = quotePrice.getAmountWithoutTax();
+        BigDecimal discountAmount = BigDecimal.ZERO;
+        boolean isEnterprise = appProvider.isEntreprise();
+        QuoteArticleLine quoteArticleLine = null;
+        TaxInfo taxInfo = null;
+
+        boolean isOfferDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan, offerTemplate, product, quoteVersion.getQuote().getQuoteDate());
+        if (isOfferDiscountApplicable) {
+            List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, offerTemplate, product, accountintArticle);
+            Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
+            for (DiscountPlanItem discountPlanItem : discountItems) {
+                AccountingArticle discountAccountingArticle = discountPlanItem.getAccountingArticle();
+
+                discountAmount = discountAmount.add(discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues));
+                if (discountAmount != null && discountAmount.abs().compareTo(BigDecimal.ZERO) > 0) {
+                    String accountingArticleCode = discountAccountingArticle.getCode();
+                    if (!quoteArticleLines.containsKey(accountingArticleCode)) {
+                        quoteArticleLine = new QuoteArticleLine();
+                        quoteArticleLine.setAccountingArticle(discountAccountingArticle);
+                        quoteArticleLine.setQuantity(BigDecimal.ONE);
+                        quoteArticleLine.setServiceQuantity(BigDecimal.ONE);
+                        quoteArticleLine.setBillableAccount(billingAccount);
+                        quoteArticleLine.setQuoteProduct(quoteproduct);
+                        if(quoteOffer != null) {
+                            quoteArticleLine.setQuoteLot(quoteOffer.getQuoteLot());
+                            quoteproduct.getQuoteArticleLines().add(quoteArticleLine);
+                        }
+                        quoteArticleLineService.create(quoteArticleLine);
+                        quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
+                    } else {
+                        quoteArticleLine = quoteArticleLines.get(accountingArticleCode);
+                    }
+
+                    QuotePrice discountQuotePrice = new QuotePrice();
+                    discountQuotePrice.setPriceTypeEnum(quotePrice.getPriceTypeEnum());
+                    discountQuotePrice.setPriceLevelEnum(quotePrice.getPriceLevelEnum());
+
+                    BigDecimal taxPercent = quotePrice.getTaxRate();
+                    if (discountAccountingArticle.getTaxClass() != null) {
+                        taxInfo = taxMappingService.determineTax(discountAccountingArticle.getTaxClass(), seller, billingAccount, null, quoteVersion.getQuote().getQuoteDate(), false, false);
+                        taxPercent = taxInfo.tax.getPercent();
+                    }
+                    BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                    discountQuotePrice.setAmountWithoutTax(amounts[0]);
+                    discountQuotePrice.setAmountWithTax(amounts[1]);
+                    discountQuotePrice.setTaxAmount(amounts[2]);
+                    discountQuotePrice.setCurrencyCode(quotePrice.getCurrencyCode());
+                    discountQuotePrice.setQuoteArticleLine(quoteArticleLine);
+                    discountQuotePrice.setQuoteVersion(quoteVersion);
+                    discountQuotePrice.setChargeTemplate(quotePrice.getChargeTemplate());
+                    if (PriceTypeEnum.RECURRING.equals(discountQuotePrice.getPriceTypeEnum())) {
+                        Integer durationTermInMonth = ((RecurringChargeTemplate) quotePrice.getChargeTemplate()).getDurationTermInMonth();
+                        if (durationTermInMonth != null)
+                            discountQuotePrice.setRecurrenceDuration(Long.valueOf(durationTermInMonth));
+                        //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
+                    }
+                    discountQuotePrice.setUnitPriceWithoutTax(discountAmount);
+                    discountQuotePrice.setTaxRate(taxPercent);
+                    quotePriceService.create(discountQuotePrice);
+                    discountPrices.add(discountQuotePrice);
+                }
+            }
+
+        }
+        return discountPrices;
     }
    
      
