@@ -1429,12 +1429,12 @@ public class CpqQuoteApi extends BaseApi {
 
         boolean isOfferDiscountApplicable = discountPlanService.isDiscountPlanApplicable(billingAccount, discountPlan, offerTemplate, product, quoteVersion.getQuote().getQuoteDate());
         if (isOfferDiscountApplicable) {
-            List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, offerTemplate, product);
+            List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, discountPlan, offerTemplate, product, accountintArticle);
             Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
             for (DiscountPlanItem discountPlanItem : discountItems) {
                 AccountingArticle discountAccountingArticle = discountPlanItem.getAccountingArticle();
-                @SuppressWarnings("unchecked")
-                discountAmount = discountAmount.add(discountPlanItemService.getDiscountAmount(discountPlanItem, attributesValues == null ? Collections.emptyList() : attributesValues));
+
+                discountAmount = discountAmount.add(discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues));
                 if (discountAmount != null && discountAmount.abs().compareTo(BigDecimal.ZERO) > 0) {
                     String accountingArticleCode = discountAccountingArticle.getCode();
                     if (!quoteArticleLines.containsKey(accountingArticleCode)) {
