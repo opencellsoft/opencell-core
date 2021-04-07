@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * 
  * @author Tarik FAKHOURI
@@ -23,30 +25,42 @@ public class OfferProductsDto extends BaseEntityDto {
      /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7824004884683019697L;  
     @NotNull
+    @Schema(description = "code of offer template")
     private String offerTemplateCode;
+    @Schema(description = "product associated to this offer product")
     private ProductDto product;
     
     /** Discount plans allowed for this product. */
     @XmlElementWrapper(name = "allowedDiscountPlans")
     @XmlElement(name = "allowedDiscountPlans")
+    @Schema(description = "list of allowed discount plan")
     private List<DiscountPlanDto> allowedDiscountPlans;
-    
+
+    @Schema(description = "list of commercial rules")
     private List<CommercialRuleHeaderDTO> commercialRules=new ArrayList<CommercialRuleHeaderDTO>();
 
+    @Schema(description = "indicate if offer product is selectable", defaultValue = "true")
     private boolean selectable=Boolean.TRUE;
-    
+
+    @Schema(description = "sequence")
     private Integer sequence=0;
-    
+
+    @Schema(description = "indicated if offer product is ruled", defaultValue = "false")
     private boolean ruled=Boolean.FALSE;
-    
+
+    @Schema(description = "indicate of the offer product is mandatory", defaultValue = "false")
 	private boolean mandatory=Boolean.FALSE;
-	
+
+    @Schema(description = "indicate if the offer product can be displayed", defaultValue = "true")
 	private boolean display = Boolean.TRUE;
-	
+
+    @Schema(description = "minimun quantity")
 	private Integer quantityMin;
 
+    @Schema(description = "maximun quantity")
 	private Integer quantityMax;
 
+    @Schema(description = "default quantity")
 	private Integer quantityDefault;
     
     /**

@@ -4198,5 +4198,11 @@ public class OrderAdvancement extends ModuleScript {
         	<addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="account_entity" constraintName="fk_account_entity_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
             	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
     </changeSet>
+    
+    <changeSet id="#20210406_opencell-portal-593" author="TarikFA.">
+    	<dropForeignKeyConstraint baseTableName="billing_article_mapping_line" constraintName="fk_billing_article_mapping_line_service_template"/>
+    	<addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="billing_article_mapping_line" constraintName="fk_billing_article_mapping_line_offer_template" deferrable="false" initiallyDeferred="false"
+            	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+    </changeSet>
 
 </databaseChangeLog>

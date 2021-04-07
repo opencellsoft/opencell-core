@@ -28,8 +28,10 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
                 .mappingKeyEL(entity.getMappingKelEL())
                 .articleMapping(createResource(entity.getArticleMapping().getId()))
                 .accountingArticle(createResource(entity.getAccountingArticle().getId()))
-                .attributesMapping(getAttributesMappingResources(entity.getAttributesMapping())
-                        )
+                .attributesMapping(getAttributesMappingResources(entity.getAttributesMapping()))
+                .offer(createResource(entity.getOfferTemplate().getId()))
+                .product(createResource(entity.getProduct().getId()))
+                
                 .build();
     }
 

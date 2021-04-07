@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.CalendarDateInterval;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class CalendarDateIntervalDto.
  *
@@ -41,10 +43,12 @@ public class CalendarDateIntervalDto implements Serializable {
 
     /** The interval begin. */
     @XmlAttribute(required = true)
+    @Schema(description = "The interval begin")
     private Integer intervalBegin;
 
     /** The interval end. */
     @XmlAttribute(required = true)
+    @Schema(description = "The interval end")
     private Integer intervalEnd;
 
     /**
