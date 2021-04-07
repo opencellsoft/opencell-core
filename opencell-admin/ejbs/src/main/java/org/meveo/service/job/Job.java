@@ -250,13 +250,19 @@ public abstract class Job {
      * @param jobInstance Job instance to execute
      * @return Instantiated timer object
      */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    // @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Timer createTimer(ScheduleExpression scheduleExpression, JobInstance jobInstance) {
 
-        jobInstance.setProviderCode(currentUser.getProviderCode());
-
         TimerConfig timerConfig = new TimerConfig();
-        timerConfig.setInfo(jobInstance);
+
+        JobInstance jobInstanceSimple = new JobInstance();
+        jobInstanceSimple.setId(jobInstance.getId());
+        jobInstanceSimple.setCode(jobInstance.getCode());
+        jobInstanceSimple.setJobTemplate(jobInstance.getJobTemplate());
+        jobInstanceSimple.setProviderCode(currentUser.getProviderCode());
+        jobInstanceSimple.setAuditable(jobInstance.getAuditable());
+
+        timerConfig.setInfo(jobInstanceSimple);
         // timerConfig.setPersistent(false);
         // log.error("AKK creating a timer for {}", jobInstance.getCode());
         return timerService.createCalendarTimer(scheduleExpression, timerConfig);

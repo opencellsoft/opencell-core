@@ -65,46 +65,22 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
 
             // Not interested in tracking job execution history when no work was done
             if (result.getStatus() == JobExecutionResultStatusEnum.COMPLETED && (result.getNbItemsCorrectlyProcessed() + result.getNbItemsProcessedWithError() + result.getNbItemsProcessedWithWarning()) == 0) {
-
+                result.addReport("No items were processed");
                 log.info("{}/{}: No items were processed", result.getJobInstance().getJobTemplate(), result.getJobInstance().getCode());
+
                 if ("false".equals(paramBeanFactory.getInstance().getProperty("meveo.job.persistResult", "true"))) {
                     remove(result);
-                } else {
-                    // update the job result when there is no items to process
-                    result.addReport("No items were processed");
-                    updateJobResult(result, JobExecutionResultStatusEnum.COMPLETED);
+                    return;
                 }
-
-            } else if (result.getStatus() != JobExecutionResultStatusEnum.RUNNING) {
-                log.info("Job execution finished {}", result);
-
-                updateJobResult(result, result.getStatus());
-
-            } else {
-                getEntityManager().createNamedQuery("JobExecutionResult.updateProgress").setParameter("id", result.getId()).setParameter("nbItemsToProcess", result.getNbItemsToProcess())
-                    .setParameter("nbItemsCorrectlyProcessed", result.getNbItemsCorrectlyProcessed()).setParameter("nbItemsProcessedWithError", result.getNbItemsProcessedWithError())
-                    .setParameter("nbItemsProcessedWithWarning", result.getNbItemsProcessedWithWarning()).setParameter("report", result.getReport()).setParameter("status", result.getStatus()).executeUpdate();
             }
+            if (result.getStatus() != JobExecutionResultStatusEnum.RUNNING) {
+                log.info("Job execution finished {}", result);
+            }
+            getEntityManager().createNamedQuery("JobExecutionResult.updateProgress").setParameter("id", result.getId()).setParameter("endDate", result.getEndDate())
+                .setParameter("nbItemsToProcess", result.getNbItemsToProcess()).setParameter("nbItemsCorrectlyProcessed", result.getNbItemsCorrectlyProcessed())
+                .setParameter("nbItemsProcessedWithError", result.getNbItemsProcessedWithError()).setParameter("nbItemsProcessedWithWarning", result.getNbItemsProcessedWithWarning())
+                .setParameter("report", result.getReport()).setParameter("status", result.getStatus()).executeUpdate();
         }
-    }
-
-    /**
-     * Update job execution history result record
-     * 
-     * @param result Job execution result
-     * @param status Job execution status
-     */
-    private void updateJobResult(JobExecutionResultImpl result, JobExecutionResultStatusEnum status) {
-        JobExecutionResultImpl resultToUpdate = findById(result.getId(), true);
-
-        resultToUpdate.setEndDate(result.getEndDate());
-        resultToUpdate.setNbItemsToProcess(result.getNbItemsToProcess());
-        resultToUpdate.setNbItemsCorrectlyProcessed(result.getNbItemsCorrectlyProcessed());
-        resultToUpdate.setNbItemsProcessedWithError(result.getNbItemsProcessedWithError());
-        resultToUpdate.setNbItemsProcessedWithWarning(result.getNbItemsProcessedWithWarning());
-        resultToUpdate.setReport(result.getReport());
-        resultToUpdate.setStatus(status);
-        update(resultToUpdate);
     }
 
     /**

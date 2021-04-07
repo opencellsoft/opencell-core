@@ -20,6 +20,7 @@ package org.meveo.admin.job;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -207,7 +208,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                 try {
                     future.get();
 
-                } catch (InterruptedException e) {
+                } catch (InterruptedException | CancellationException e) {
                     wasKilled = true;
                     log.error("Thread/future for job {} was canceled", jobInstance);
 

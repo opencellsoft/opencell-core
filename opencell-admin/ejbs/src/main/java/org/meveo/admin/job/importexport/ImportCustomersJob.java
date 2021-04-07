@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -76,7 +77,7 @@ public class ImportCustomersJob extends Job {
             try {
                 future.get();
 
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | CancellationException e) {
                 // It was cancelled from outside - no interest
 
             } catch (ExecutionException e) {

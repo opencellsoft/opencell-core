@@ -37,6 +37,7 @@ import org.meveo.cache.CacheKeyLong;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
@@ -206,7 +207,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     @Override
     public void remove(JobInstance jobInstance) throws BusinessException {
 
-        log.info("remove jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
+        log.info("Remove jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
 
         String providerCode = currentUser.getProviderCode();
         if (jobInstance.getId() == null) {
@@ -319,7 +320,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
      */
     public void scheduleUnscheduleJob(Long jobInstanceId) {
 
-        JobInstance jobInstance = findById(jobInstanceId, Arrays.asList("timerEntity"));
+        JobInstance jobInstance = findById(jobInstanceId, Arrays.asList("timerEntity", "followingJob"));
         if (jobInstance == null) {
             unscheduleJob(jobInstanceId);
         } else {

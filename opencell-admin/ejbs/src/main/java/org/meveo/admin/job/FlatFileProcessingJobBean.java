@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -43,6 +44,7 @@ import org.meveo.commons.utils.FileParsers;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.model.bi.FlatFile;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.bi.impl.FlatFileService;
@@ -100,12 +102,13 @@ public class FlatFileProcessingJobBean extends BaseJobBean {
      * @param filenameVariableName Filename variable name as it will appear in the script context
      * @param formatTransfo Format to transform to
      * @param errorAction action to do on error : continue, stop or rollback after an error
-     * @param nbRuns Number of parallel executions
+     * @param nbThreads Number of parallel executions
      * @param waitingMills Number of milliseconds to wait between launching parallel processing threads
      */
+    @SuppressWarnings("rawtypes")
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, String inputDir, String outputDir, String archiveDir, String rejectDir, File file, String mappingConf, String scriptInstanceFlowCode,
-            String recordVariableName, Map<String, Object> context, String filenameVariableName, String formatTransfo, Long nbLinesToProcess, String errorAction, Long nbRuns, Long waitingMillis) {
+            String recordVariableName, Map<String, Object> context, String filenameVariableName, String formatTransfo, Long nbLinesToProcess, String errorAction, Long nbThreads, Long waitingMillis) {
 
         log.debug("Processing FlatFile in inputDir={}, file={}, scriptInstanceFlowCode={},formatTransfo={}, errorAction={}", inputDir, file.getAbsolutePath(), scriptInstanceFlowCode, formatTransfo, errorAction);
 
@@ -131,6 +134,10 @@ public class FlatFileProcessingJobBean extends BaseJobBean {
                 file = new File(inputDir + File.separator + fileName.replaceAll(".xlsx", ".csv").replaceAll(".xls", ".csv"));
             }
             currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
+            if (currentFile == null) {
+                log.debug("FlatFile file {} probably was processed already and failed to be renamed, will continue to another file", inputDir, file.getAbsolutePath());
+                return;
+            }
             FlatFile flatFile = flatFileService.getFlatFileByFileName(fileName);
             if (flatFile != null) {
                 flatFile.setFileCurrentName(currentFile.getName());
@@ -168,6 +175,8 @@ public class FlatFileProcessingJobBean extends BaseJobBean {
             File outputFile = new File(outputDir + File.separator + processedfileName);
             outputFileWriter = new PrintWriter(outputFile);
 
+            JobInstance jobInstance = jobExecutionResult.getJobInstance();
+
             // Launch parallel processing of a file
             List<Future> futures = new ArrayList<Future>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
@@ -176,35 +185,52 @@ public class FlatFileProcessingJobBean extends BaseJobBean {
             PrintWriter rejectFileWriterFinal = rejectFileWriter;
             PrintWriter outputFileWriterFinal = outputFileWriter;
 
-            for (long i = 0; i < nbRuns; i++) {
+            List<Runnable> tasks = new ArrayList<Runnable>(nbThreads.intValue());
+
+            for (int k = 0; k < nbThreads; k++) {
+
+                int finalK = k;
                 if (FlatFileProcessingJob.ROLLBACK.equals(errorAction)) {
-                    futures.add(executor.submit(() -> flatFileProcessing.processFileInOneTx(fileParserFinal, jobExecutionResult, scriptFinal, recordVariableName, fileName, filenameVariableName, nbLinesToProcess,
-                        errorAction, rejectFileWriterFinal, outputFileWriterFinal, lastCurrentUser)));
+
+                    tasks.add(() -> {
+                        Thread.currentThread().setName(jobInstance.getCode() + "-" + finalK);
+                        flatFileProcessing.processFileInOneTx(fileParserFinal, jobExecutionResult, scriptFinal, recordVariableName, fileName, filenameVariableName, nbLinesToProcess, errorAction, rejectFileWriterFinal,
+                            outputFileWriterFinal, lastCurrentUser);
+                    });
                 } else {
-                    futures.add(executor.submit(() -> flatFileProcessing.processFileOneLinePerTx(fileParserFinal, jobExecutionResult, scriptFinal, recordVariableName, fileName, filenameVariableName, nbLinesToProcess,
-                        errorAction, rejectFileWriterFinal, outputFileWriterFinal, lastCurrentUser)));
+                    tasks.add(() -> {
+                        Thread.currentThread().setName(jobInstance.getCode() + "-" + finalK);
+                        flatFileProcessing.processFileOneLinePerTx(fileParserFinal, jobExecutionResult, scriptFinal, recordVariableName, fileName, filenameVariableName, nbLinesToProcess, errorAction,
+                            rejectFileWriterFinal, outputFileWriterFinal, lastCurrentUser);
+                    });
                 }
-                if (waitingMillis > 0) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
+
+            }
+
+            int i = 0;
+            for (Runnable task : tasks) {
+                log.info("{}/{} Will submit task #{} to run", jobInstance.getJobTemplate(), jobInstance.getCode(), i++);
+                futures.add(executor.submit(task));
+                try {
+                    Thread.sleep(waitingMillis.longValue());
+                } catch (InterruptedException e) {
+                    log.error("", e);
                 }
             }
 
-            JobRunningStatusEnum jobStatus = jobExecutionService.markJobAsRunning(jobExecutionResult.getJobInstance(), false, jobExecutionResult.getId(), futures);
+            // Mark number of threads it will be running on
+            JobRunningStatusEnum jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), futures);
 
-            boolean wasCanceled = jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
+            boolean wasKilled = false;
 
             // Wait for all async methods to finish
             for (Future future : futures) {
                 try {
                     future.get();
 
-                } catch (InterruptedException e) {
-                    wasCanceled = true;
-                    log.error("Thread/future for job {} was canceled", jobExecutionResult.getJobInstance());
+                } catch (InterruptedException | CancellationException e) {
+                    wasKilled = true;
+                    log.error("Thread/future for job {} was canceled", jobInstance);
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
@@ -213,9 +239,16 @@ public class FlatFileProcessingJobBean extends BaseJobBean {
                 }
             }
 
-            jobStatus = jobExecutionService.markJobAsRunning(jobExecutionResult.getJobInstance(), false, jobExecutionResult.getId(), null);
+            // Mark job as stopped if task was killed
+            if (wasKilled) {
+                jobExecutionService.markJobToStop(jobInstance);
 
-            wasCanceled = wasCanceled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
+                // Mark that all threads are finished
+            } else {
+                jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
+            }
+
+            boolean wasCanceled = wasKilled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
 
             errors.addAll(jobExecutionResult.getErrors());
 

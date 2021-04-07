@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
@@ -190,7 +191,7 @@ public class IteratorBasedJobProcessing implements Serializable {
                 List<R> futureResult = (List<R>) future.get();
                 processingResult.addAll(futureResult);
 
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | CancellationException e) {
                 wasKilled = true;
                 log.error("Thread/future for job {} was canceled", jobInstance);
 
@@ -321,7 +322,7 @@ public class IteratorBasedJobProcessing implements Serializable {
             try {
                 future.get();
 
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | CancellationException e) {
                 wasKilled = true;
                 log.error("Thread/future for job {} was canceled", jobInstance);
 

@@ -239,6 +239,28 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     }
 
     /**
+     * Check if a job is running on any node
+     * 
+     * @param jobInstance JobInstance entity
+     * @return True if job is running on any node
+     */
+    public boolean isJobRunning(JobInstance jobInstance) {
+        JobRunningStatusEnum status = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+        return status != JobRunningStatusEnum.NOT_RUNNING;
+    }
+
+    /**
+     * Check if a job was requested to stop
+     * 
+     * @param jobInstance JobInstance entity
+     * @return True if job was requested to stop
+     */
+    public boolean isJobPausing(JobInstance jobInstance) {
+        JobRunningStatusEnum status = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+        return status == JobRunningStatusEnum.REQUEST_TO_STOP;
+    }
+
+    /**
      * Check if job can be run on a current server or cluster node if deployed in cluster environment
      * 
      * @param jobInstance JobInstance entity
