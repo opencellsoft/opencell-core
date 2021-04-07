@@ -18,15 +18,6 @@
 
 package org.meveo.api.rest.catalog;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
-
 import java.util.Date;
 
 import javax.ws.rs.Consumes;
@@ -46,6 +37,12 @@ import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.OneShotChargeTemplate}.

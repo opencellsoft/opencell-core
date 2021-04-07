@@ -25,7 +25,6 @@ import java.util.List;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
@@ -35,6 +34,8 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class ChargeTemplateDto.
@@ -50,12 +51,15 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     private static final long serialVersionUID = -5143285194077662656L;
 
     /** The invoice sub category. */ 
+    @Schema(description = "The invoice sub category")
     private String invoiceSubCategory;
 
     /** The amount editable. */
+    @Schema(description = "The amount can be editable")
     private Boolean amountEditable;
 
     /** The language descriptions. */
+    @Schema(description = "list of the language description")
     private List<LanguageDescriptionDto> languageDescriptions;
 
     /** The input unit description. */
@@ -70,74 +74,91 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     @Deprecated
     private BigDecimal unitMultiplicator;
 
+    @Schema(description = "code of unit  measure")
     private String inputUnitOfMeasureCode;
 
+    @Schema(description = "code of rating unit of measure")
     private String ratingUnitOfMeasureCode;
 
+    @Schema(description = "input unit expression language")
     private String inputUnitEL;
 
+    @Schema(description = "output unit expression language")
     private String outputUnitEL;
 
     /**
      * EDR and WO quantity field value precision
      */
+    @Schema(description = "EDR and WO quantity field value precision")
     private Integer unitNbDecimal = BaseEntity.NB_DECIMALS;
 
     /**
      * EDR and WO quantity field value rounding
      */
+    @Schema(description = "EDR and WO quantity field value rounding", example = "possible value are : NEAREST, DOWN, UP")
     private RoundingModeEnum roundingModeDtoEnum;
 
     /** The revenue recognition rule code. */
+    @Schema(description = "The revenue recognition rule code")
     private String revenueRecognitionRuleCode;
 
     /** The filter expression. */
     @Size(max = 2000)
+    @Schema(description = "The filter expression")
     private String filterExpression = null;
 
     /** The filter expression. */
     @Size(max = 2000)
+    @Schema(description = "The filter expression for spark")
     private String filterExpressionSpark;
 
     /**
      * Charge tax class code
      **/
+    @Schema(description = "code of tax class")
     private String taxClassCode;
 
     /**
      * Expression to determine tax class
      */
+    @Schema(description = "Expression to determine tax class")
     private String taxClassEl;
 
     /**
      * Expression to determine tax class - for Spark
      */
+    @Schema(description = "Expression to determine tax class - for Spark")
     private String taxClassElSpark;
 
     /**
      * Code of a rating script
      */
+    @Schema(description = "Code of a rating script")
     private String ratingScriptCode;
 
     /**
      * The custom fields.
      */
+    @Schema(description = "The custom fields")
     private CustomFieldsDto customFields;
 
     /**
      * The triggered edrs.
      */
+    @Schema(description = "The triggered edrs")
     private TriggeredEdrTemplatesDto triggeredEdrs = new TriggeredEdrTemplatesDto();
 
     /**
      * Enable/disable removing WO rated to 0.
      */
+    @Schema(description = "Enable/disable removing WO rated to 0")
     private boolean dropZeroWo;
 
     /**
      * Sorting index EL.
      */
     @Size(max = 2000)
+    @Schema(description = "Sorting index EL")
     private String sortIndexEl = null;
 
     /**

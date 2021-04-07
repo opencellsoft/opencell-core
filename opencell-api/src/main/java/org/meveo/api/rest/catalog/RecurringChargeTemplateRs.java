@@ -101,7 +101,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public GetRecurringChargeTemplateResponseDto find(@QueryParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
+    public GetRecurringChargeTemplateResponseDto find(@Parameter(required = true, description = "code of recurring charge template") @QueryParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
     /**
      * Update an existing recurring charge template.
@@ -149,7 +149,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public ActionStatus remove(@PathParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
+    public ActionStatus remove(@Parameter(required = true) @PathParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
     /**
      * Create new or update an existing recurring charge template
