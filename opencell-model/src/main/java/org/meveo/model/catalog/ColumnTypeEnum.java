@@ -29,6 +29,11 @@ public enum ColumnTypeEnum {
 
             }
         }
+
+        @Override
+        public boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue) {
+            return pricePlanMatrixValue.getStringValue() == null;
+        }
     },
     Long {
         @Override
@@ -53,6 +58,11 @@ public enum ColumnTypeEnum {
                     return false;
 
             }
+        }
+
+        @Override
+        public boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue) {
+            return pricePlanMatrixValue.getDoubleValue() == null;
         }
     },
     Double {
@@ -89,6 +99,11 @@ public enum ColumnTypeEnum {
 
             }
         }
+
+        @Override
+        public boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue) {
+            return pricePlanMatrixValue.getDoubleValue() == null && pricePlanMatrixValue.getLongValue() == null && pricePlanMatrixValue.getStringValue() == null;
+        }
     },
     Range_Date {
         @Override
@@ -103,6 +118,11 @@ public enum ColumnTypeEnum {
                 return attributeValue.getDateValue().after(pricePlanMatrixValue.getFromDateValue())
                         && attributeValue.getDateValue().before(pricePlanMatrixValue.getToDateValue());
             }
+        }
+
+        @Override
+        public boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue) {
+            return pricePlanMatrixValue.getFromDateValue() == null && pricePlanMatrixValue.getToDateValue() == null;
         }
     },
     Range_Numeric {
@@ -122,7 +142,14 @@ public enum ColumnTypeEnum {
             }
 
         }
+
+        @Override
+        public boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue) {
+            return pricePlanMatrixValue.getFromDoubleValue() == null && pricePlanMatrixValue.getToDoubleValue() == null;
+        }
     };
 
     public abstract boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue);
+
+    public abstract boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue);
 }
