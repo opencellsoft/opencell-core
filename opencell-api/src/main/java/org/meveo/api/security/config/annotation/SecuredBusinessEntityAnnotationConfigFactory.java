@@ -62,7 +62,7 @@ public class SecuredBusinessEntityAnnotationConfigFactory implements SecuredBusi
             config.setFilterResultsConfig(filterResultsConfig);
         }
 
-        log.debug("Secured business entity config is built: {}", config);
+        //log.debug("Secured business entity config is built: {}", config);
 
         return config;
     }

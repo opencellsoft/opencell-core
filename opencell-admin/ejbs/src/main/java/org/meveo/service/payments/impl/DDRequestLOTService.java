@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -265,8 +266,9 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		for (Future<String> future : futures) {
 			try {
 				future.get();
-			} catch (InterruptedException e) {
+			} catch (InterruptedException | CancellationException e) {
 				// It was cancelled from outside - no interest
+			    
 			} catch (ExecutionException e) {
 				Throwable cause = e.getCause();
 				if (result != null) {

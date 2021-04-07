@@ -18,6 +18,17 @@
 
 package org.meveo.admin.job.importexport;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.admin.async.ImportSubscriptionsAsync;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -28,15 +39,6 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.job.Job;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * @author Abdellatif BARI
@@ -74,7 +76,7 @@ public class ImportSubscriptionsJob extends Job {
             try {
                 future.get();
 
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | CancellationException e) {
                 // It was cancelled from outside - no interest
 
             } catch (ExecutionException e) {

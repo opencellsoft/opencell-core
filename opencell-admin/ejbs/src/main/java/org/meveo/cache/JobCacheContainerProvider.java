@@ -38,7 +38,6 @@ import org.infinispan.Cache;
 import org.infinispan.commons.CacheException;
 import org.infinispan.context.Flag;
 import org.infinispan.util.function.SerializableBiFunction;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ThreadUtils;
@@ -75,6 +74,12 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-running-jobs")
     private Cache<CacheKeyLong, JobExecutionStatus> runningJobsCache;
+
+    /**
+     * Futures executing the jobs. JobInstance id as a key and a list of futures as a value
+     */
+    @SuppressWarnings("rawtypes")
+    private static Map<Long, List<Future>> runningJobFutures = new HashMap<Long, List<Future>>();
 
     @Inject
     @CurrentUser
@@ -149,11 +154,23 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     private JobRunningStatusEnum getJobRunningStatus(JobExecutionStatus jobExecutionStatus) {
 
-        if (jobExecutionStatus == null || !jobExecutionStatus.isRunning()) {
+        if (jobExecutionStatus == null) {
             return JobRunningStatusEnum.NOT_RUNNING;
 
         } else if (jobExecutionStatus.isRequestedToStop()) {
             return JobRunningStatusEnum.REQUEST_TO_STOP;
+
+        } else if (jobExecutionStatus.getLockForNode() != null) {
+            String nodeToCheck = EjbUtils.getCurrentClusterNode();
+
+            if (jobExecutionStatus.getLockForNode().equals(nodeToCheck)) {
+                return JobRunningStatusEnum.LOCKED_THIS;
+            } else {
+                return JobRunningStatusEnum.LOCKED_OTHER;
+            }
+            
+        } else if (!jobExecutionStatus.isRunning()) {
+            return JobRunningStatusEnum.NOT_RUNNING;
 
         } else if (!EjbUtils.isRunningInClusterMode()) {
             return JobRunningStatusEnum.RUNNING_THIS;
@@ -196,7 +213,8 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     }
 
     /**
-     * Mark job, identified by a given job instance, as LOCKED to be running on current cluster node. Applies to cases when job is limited to run on a single node.
+     * Mark job, identified by a given job instance, as LOCKED to be running on current cluster node. Applies to cases when job is limited to run on a single node. For cases when job is not allowed to run in a current
+     * node, a previous status will be returned.
      * 
      * @param jobInstance Job instance
      * @param limitToSingleNode true if this job can be run on only one node.
@@ -207,6 +225,16 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         String currentNode = EjbUtils.getCurrentClusterNode();
         String currentProvider = currentUser.getProviderCode();
+
+        JobRunningStatusEnum previousStatus = isJobRunning(jobInstance.getId());
+        if (previousStatus == JobRunningStatusEnum.RUNNING_THIS) {
+            log.trace("Job {} of provider {} attempted to be marked as LOCKED in job cache for node {}. Job is already running on {} node.", jobInstance.getId(), currentProvider, currentNode, currentNode);
+            return previousStatus;
+        }
+
+        if (!jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())) {
+            return previousStatus;
+        }
 
         SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> remappingFunction = (jobInstIdFullKey, jobExecutionStatusOld) -> {
 
@@ -255,12 +283,6 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             }
         };
 
-        JobRunningStatusEnum previousStatus = isJobRunning(jobInstance.getId());
-        if (previousStatus == JobRunningStatusEnum.RUNNING_THIS) {
-            log.trace("Job {} of provider {} attempted to be marked as LOCKED in job cache for node {}. Job is already running on {} node.", jobInstance.getId(), currentProvider, currentNode, currentNode);
-            return previousStatus;
-        }
-
         CacheKeyLong cacheKey = new CacheKeyLong(currentProvider, jobInstance.getId());
 
         // if the param is not found in properties file then a default value will be set , and if it's not a valid number then also default value will be returned
@@ -271,7 +293,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         JobRunningStatusEnum currentStatus = getJobRunningStatus(jobStatus);
 
-        log.trace("Job {} of provider {} was marked as LOCKED in job cache for node {}. Job is current status is {}. Previous job running status is {}. Current cache value is {}", jobInstance.getId(), currentProvider,
+        log.trace("Job {} of provider {} was attempted to be marked as LOCKED in job cache for node {}. Job is current status is {}. Previous job running status is {}. Current cache value is {}", jobInstance.getId(), currentProvider,
             currentNode, currentStatus, previousStatus, jobStatus);
 
         if (currentStatus == JobRunningStatusEnum.LOCKED_OTHER || currentStatus == JobRunningStatusEnum.RUNNING_OTHER) {
@@ -297,6 +319,8 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         String currentNode = EjbUtils.getCurrentClusterNode();
         String currentProvider = currentUser.getProviderCode();
+
+        final Integer nrOfThreads = threads == null ? null : threads.size();
 
         SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> remappingFunction = (jobInstIdFullKey, jobExecutionStatusOld) -> {
 
@@ -340,7 +364,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
                 jobExecutionStatus = jobExecutionStatusOld.clone();
             }
 
-            jobExecutionStatus.markAsRunningOn(currentNode, jobExecutionResultId, threads);
+            jobExecutionStatus.markAsRunningOn(currentNode, jobExecutionResultId, nrOfThreads);
 
             return jobExecutionStatus;
         };
@@ -359,6 +383,10 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         JobExecutionStatus jobStatus = this.computeCacheWithRetry(cacheKey, remappingFunction, delay, times);
 
         JobRunningStatusEnum currentStatus = getJobRunningStatus(jobStatus);
+
+        if (threads != null) {
+            runningJobFutures.put(jobInstance.getId(), threads);
+        }
 
         log.trace("Job {} of provider {} was marked as RUNNING in job cache for node {}. Job is current status is {}. Previous job running status is {}. Current cache value is {}", jobInstance.getId(), currentProvider,
             currentNode, currentStatus, previousStatus, jobStatus);
@@ -461,6 +489,9 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         long times = ParamBean.getInstance().getPropertyAsInteger(CACHE_RETRY_TIMES, 3);
 
         JobExecutionStatus jobStatus = this.computeCacheWithRetry(new CacheKeyLong(currentProvider, jobInstance.getId()), remappingFunction, delay, times);
+        if (jobStatus.getNumberThreads(EjbUtils.getCurrentClusterNode()) > 0) {
+            runningJobFutures.remove(jobInstance.getId());
+        }
 
         log.trace("Job {} of provider {} was marked as FINISHED in job cache for a node {}. Current cache value is {}.", jobInstance.getId(), currentProvider, currentNode, jobStatus);
     }
@@ -482,7 +513,11 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         String currentProvider = currentUser.getProviderCode();
 
-        this.computeCacheWithRetry(new CacheKeyLong(currentProvider, jobInstance.getId()), remappingFunction, delay, times);
+        JobExecutionStatus jobStatus = this.computeCacheWithRetry(new CacheKeyLong(currentProvider, jobInstance.getId()), remappingFunction, delay, times);
+
+        if (jobStatus.getNumberThreads(EjbUtils.getCurrentClusterNode()) > 0) {
+            runningJobFutures.remove(jobInstance.getId());
+        }
 
         log.trace("Job {} of Provider {} was reset as not running in job cache", jobInstance.getId(), currentProvider);
     }
@@ -607,10 +642,14 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @return
      */
     @SuppressWarnings("rawtypes")
-    public List<Future> getJobExecutionThreads(long jobInstanceId) {
+    public List<Future> getJobExecutionThreads(Long jobInstanceId) {
         JobExecutionStatus jobExecutionStatus = runningJobsCache.get(new CacheKeyLong(currentUser.getProviderCode(), jobInstanceId));
         if (jobExecutionStatus != null) {
-            return jobExecutionStatus.getThreads(EjbUtils.getCurrentClusterNode());
+            if (jobExecutionStatus.getNumberThreads(EjbUtils.getCurrentClusterNode()) > 0 && runningJobFutures.containsKey(jobInstanceId)) {
+                return runningJobFutures.get(jobInstanceId);
+            } else {
+                runningJobFutures.remove(jobInstanceId);
+            }
         }
         return new ArrayList<Future>();
     }

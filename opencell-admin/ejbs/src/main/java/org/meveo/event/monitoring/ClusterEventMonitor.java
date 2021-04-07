@@ -24,13 +24,16 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Role;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
 import org.slf4j.Logger;
@@ -43,8 +46,7 @@ import org.slf4j.Logger;
  * @author Andrius Karpavicius
  */
 @MessageDriven(name = "ClusterEventMonitor", activationConfig = { @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = "topic/CLUSTEREVENTTOPIC"),
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
-        @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
+        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"), @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
 public class ClusterEventMonitor implements MessageListener {
 
     @Inject
@@ -64,6 +66,9 @@ public class ClusterEventMonitor implements MessageListener {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     /**
      * @see MessageListener#onMessage(Message)
@@ -100,7 +105,17 @@ public class ClusterEventMonitor implements MessageListener {
             scriptCompilerService.clearCompiledScripts(eventDto.getCode());
 
         } else if (eventDto.getClazz().equals(JobInstance.class.getSimpleName())) {
-            jobInstanceService.scheduleUnscheduleJob(eventDto.getId());
+
+            if (eventDto.getAction() == CrudActionEnum.execute) {
+                JobLauncherEnum jobLauncher = JobLauncherEnum.valueOf(eventDto.getAdditionalInfo());
+                jobExecutionService.executeJob(jobInstanceService.findById(eventDto.getId()), null, jobLauncher, false);
+
+            } else if (eventDto.getAction() == CrudActionEnum.stop) {
+                jobExecutionService.stopJobByForce(jobInstanceService.findById(eventDto.getId()), false);
+
+            } else {
+                jobInstanceService.scheduleUnscheduleJob(eventDto.getId());
+            }
 
         } else if (eventDto.getClazz().equals(Role.class.getSimpleName())) {
             currentUserProvider.invalidateRoleToPermissionMapping();

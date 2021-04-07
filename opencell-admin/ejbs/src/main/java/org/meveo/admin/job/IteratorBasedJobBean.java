@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
@@ -190,7 +191,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 try {
                     future.get();
 
-                } catch (InterruptedException e) {
+                } catch (InterruptedException | CancellationException e) {
                     wasKilled = true;
                     log.error("Thread/future for job {} was canceled", jobInstance);
 
@@ -210,7 +211,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
             }
 
-            wasCanceled = wasKilled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
+             wasCanceled = wasKilled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
 
             // Check if there are any more data to process and mark job as completed if there are none
             if (!wasCanceled && hasMoreFunction != null) {
@@ -218,7 +219,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             }
 
         } catch (Exception e) {
-            log.error("Failed to run a job", e);
+            log.error("Failed to run a job {}", jobInstance, e);
             jobExecutionResult.registerError(e.getMessage());
         }
 
