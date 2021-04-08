@@ -177,6 +177,17 @@ public class CommercialOrderRsImpl extends BaseRs implements CommercialOrderRs {
 			return errorResponse(e, result.getActionStatus());
 		}
 	}
+	  
 	
+	@Override
+	public Response updateOrderProgress (Long commercialOrderId,Integer updatedOrderProgress){
+		ActionStatus status = new ActionStatus();
+		try {
+			commercialOrderApi.updateOrderProgress(commercialOrderId,updatedOrderProgress);
+			return Response.ok(status).build();
+		}catch(MeveoApiException e) {
+			return errorResponse(e, status);
+		}
+	}
 
 }

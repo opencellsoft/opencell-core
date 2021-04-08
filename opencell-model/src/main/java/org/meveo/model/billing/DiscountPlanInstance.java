@@ -36,6 +36,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -59,7 +60,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
         @Parameter(name = "sequence_name", value = "billing_discount_plan_instance_seq"), })
 @NamedQueries({
         @NamedQuery(name = "discountPlanInstance.getExpired", query = "select d.id from DiscountPlanInstance d where d.endDate is not null and d.endDate<=:date and d.status in (:statuses)"),
-        @NamedQuery(name = "discountPlanInstance.getToActive", query = "select d.id from DiscountPlanInstance d where (d.startDate is not null and d.startDate<=:date or d.startDate is null) and (d.endDate is not null and d.endDate<:date or d.endDate is null) and d.status in (:statuses)") })
+        @NamedQuery(name = "discountPlanInstance.getToActive", query = "select d.id from DiscountPlanInstance d where (d.startDate is not null and d.startDate<=:date or d.startDate is null) and (d.endDate is not null and d.endDate>:date or d.endDate is null) and d.status in (:statuses)") })
 
 public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEntity {
 
@@ -122,6 +123,7 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private DiscountPlanInstanceStatusEnum status;
 
     /**
@@ -129,12 +131,14 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
      */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "status_date")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date statusDate;
 
     /**
      * How many times the discount has been used.
      */
     @Column(name = "application_count")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long applicationCount;
 
     public boolean isValid() {
@@ -317,16 +321,27 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
     }
 
     public void setDiscountPlanInstanceStatus(DiscountPlan dp) {
+        if (status != null && status.equals(DiscountPlanInstanceStatusEnum.EXPIRED)) {
+            return;
+        }
         Date now = new Date();
-        if (dp.getStartDate() == null && dp.getEndDate() == null) {
+        Date start = dp.getStartDate();
+        Date end = dp.getEndDate();
+        if (startDate != null) {
+            start = startDate;
+        }
+        if (endDate != null) {
+            end = endDate;
+        }
+        if (start == null && end == null) {
             this.status = DiscountPlanInstanceStatusEnum.ACTIVE;
             return;
         }
-        if (now.after(dp.getStartDate()) && now.before(dp.getEndDate())) {
+        if (now.after(start) && now.before(end)) {
             this.status = DiscountPlanInstanceStatusEnum.ACTIVE;
             return;
         }
-        if (now.before(dp.getStartDate())) {
+        if (now.before(start)) {
             this.status = DiscountPlanInstanceStatusEnum.APPLIED;
             return;
         }

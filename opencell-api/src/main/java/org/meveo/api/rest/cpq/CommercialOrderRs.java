@@ -217,6 +217,18 @@ public interface CommercialOrderRs {
 			@ApiResponse(responseCode = "404", description = "Order offer Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 	})
 	public Response findOrderOffer(@Parameter(required = true) @PathParam("id") Long id);
+	
+	
+	@PUT
+	@Path("/{commercialOrderId}/orderProgress/{updatedOrderProgress}")
+	@Operation(summary = "update order progress",
+			tags = { "Order management" },
+			description ="",
+			responses = {
+					@ApiResponse(responseCode="200", description = "The order is succeffully updated",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class))),
+					@ApiResponse(responseCode = "412", description = "Missing required parameters", content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
+			})
+	Response updateOrderProgress(@Parameter(required = true) @PathParam("commercialOrderId") Long commercialOrderId, @Parameter(required = true) @PathParam("updatedOrderProgress") Integer updatedOrderProgress);
 }
 	
 	

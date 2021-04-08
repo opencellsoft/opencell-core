@@ -60,7 +60,8 @@ public class DiscountPlanRsImpl extends BaseRs implements DiscountPlanRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            discountPlanApi.update(postData);
+            DiscountPlan discountPlan = discountPlanApi.update(postData);
+            result.setEntityId(discountPlan.getId());
         } catch (Exception e) {
             processException(e, result);
         }
