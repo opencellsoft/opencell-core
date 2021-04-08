@@ -177,9 +177,9 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
 
             // special handle for customerCategory
-            if ( pathIBaseRS.equals("/account/customer/category") ) {
+            if ( pathIBaseRS.equals("/account/customer") ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS + FORWARD_SLASH + entityCode);
+                        + API_REST + pathIBaseRS + "/category" + FORWARD_SLASH + entityCode);
             }
             // special handle for user
             else if ( pathIBaseRS.equals("/user") ) {
@@ -554,20 +554,28 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             entityClassName = Inflector.getInstance().singularize(segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 3 ));
             Class entityDtoClass = GenericHelper.getEntityDtoClass( entityClassName.toLowerCase() + DTO_SUFFIX );
             Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
-            if ( aDto instanceof BusinessEntityDto ) {
+            if ( aDto instanceof BusinessEntityDto )
                 ((BusinessEntityDto) aDto).setCode(entityCode);
-            }
-            else if ( aDto instanceof AccessDto ) {
+            else if ( aDto instanceof AccountHierarchyDto )
+                ((AccountHierarchyDto) aDto).setCustomerCode(entityCode);
+            else if ( aDto instanceof AccessDto )
                 ((AccessDto) aDto).setCode(entityCode);
-            }
 
             for ( int i = 0; i <= segmentsOfPathAPIv2.size() - 3; i++ )
                 aPathBd.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i) );
             String aPath = aPathBd.toString();
             if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey(aPath) ) {
                 pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get(aPath);
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS + METHOD_CREATE_OR_UPDATE );
+
+                if ( aPath.equals("/v1/accountManagement/customerCategories") )
+                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                            + API_REST + pathIBaseRS + "/createOrUpdateCategory" );
+                else if ( aPath.equals("/v1/accountManagement/customerBrands") )
+                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                            + API_REST + pathIBaseRS + "/createOrUpdateBrand" );
+                else
+                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                            + API_REST + pathIBaseRS + METHOD_CREATE_OR_UPDATE );
 
                 return AuthenticationFilter.httpClient.target( redirectURI ).request()
                         .post( Entity.entity( aDto, MediaType.APPLICATION_JSON ) );
