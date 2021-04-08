@@ -193,7 +193,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             }
             // special handle for jobReport, contact, taxCategory, taxClass
             else if ( pathIBaseRS.equals("/job/jobReport") || pathIBaseRS.equals("/contact")
-                    || pathIBaseRS.equals("/taxCategory") || pathIBaseRS.equals("/taxClass")) {
+                    || pathIBaseRS.equals("/taxCategory") || pathIBaseRS.equals("/taxClass")
+                    || pathIBaseRS.equals("/admin/fileFormat") ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "code=" + entityCode);
             }
