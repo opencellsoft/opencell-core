@@ -74,20 +74,20 @@ public class DiscountPlanInstanceResourceImpl implements DiscountPlanInstanceRes
 
 	@Override
 	public Response update(Long billingAccountId, Long id, String dto) {
-		BillingAccount billingAccount = (BillingAccount) PersistenceServiceHelper.getPersistenceService(BillingAccount.class).findById(id);
+		BillingAccount billingAccount = (BillingAccount) PersistenceServiceHelper.getPersistenceService(BillingAccount.class).findById(billingAccountId);
 		return discountPlanInstanceApiService.update(billingAccount, id, dto)
 				.map(entityId -> Response.ok().entity(Collections.singletonMap("id", entityId)).links(buildSingleResourceLink(ENTITY_NAME, entityId)).build()).get();
 	}
 
 	@Override
 	public Response delete(Long billingAccountId, Long id) {
-		BillingAccount billingAccount = (BillingAccount) PersistenceServiceHelper.getPersistenceService(BillingAccount.class).findById(id);
+		BillingAccount billingAccount = (BillingAccount) PersistenceServiceHelper.getPersistenceService(BillingAccount.class).findById(billingAccountId);
 		return Response.ok().entity(discountPlanInstanceApiService.delete(billingAccount, id)).links(buildSingleResourceLink(ENTITY_NAME, id)).build();
 	}
 
 	@Override
 	public Response expire(Long billingAccountId, Long id) {
-		BillingAccount billingAccount = (BillingAccount) PersistenceServiceHelper.getPersistenceService(BillingAccount.class).findById(id);
+		BillingAccount billingAccount = (BillingAccount) PersistenceServiceHelper.getPersistenceService(BillingAccount.class).findById(billingAccountId);
 		return discountPlanInstanceApiService.expire(billingAccount, id)
 				.map(entityId -> Response.ok().entity(Collections.singletonMap("id", entityId)).links(buildSingleResourceLink(ENTITY_NAME, entityId)).build()).get();
 	}

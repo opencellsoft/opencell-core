@@ -197,7 +197,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 		endDate = discountPlan.getEndDate();
 		defaultDuration = discountPlan.getDefaultDuration();
 		durationUnit = discountPlan.getDurationUnit();
-		expressionEl=discountPlan.getExpressionEl();
+		expressionEl = discountPlan.getExpressionEl();
 		customFields = customFieldInstances;
 		status = discountPlan.getStatus();
 		statusDate = discountPlan.getStatusDate();
@@ -205,8 +205,8 @@ public class DiscountPlanDto extends EnableBusinessDto {
 		usedQuantity = discountPlan.getUsedQuantity();
 		applicationLimit = discountPlan.getApplicationLimit();
 		applicationFilterEL = discountPlan.getApplicationFilterEL();
-		if (discountPlan.getApplicableEntities() != null && discountPlan.getApplicableEntities().isEmpty()) {
-			for (ApplicableEntity applicableEntity : discountPlan.getApplicableEntities()) {
+		if (discountPlan.getDiscountPlanaApplicableEntities() != null && discountPlan.getDiscountPlanaApplicableEntities().isEmpty()) {
+			for (ApplicableEntity applicableEntity : discountPlan.getDiscountPlanaApplicableEntities()) {
 				ApplicableEntityDto applicableEntityDto = new ApplicableEntityDto(applicableEntity);
 				applicableEntities.add(applicableEntityDto);
 			}
