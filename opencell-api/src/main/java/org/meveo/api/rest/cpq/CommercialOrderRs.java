@@ -220,15 +220,15 @@ public interface CommercialOrderRs {
 	
 	
 	@PUT
-	@Path("/{commercialOrderId}/orderProgress/{updatedOrderProgress}")
+	@Path("/{commercialOrderId}/orderProgress/{progressValue}")
 	@Operation(summary = "update order progress",
 			tags = { "Order management" },
 			description ="",
 			responses = {
-					@ApiResponse(responseCode="200", description = "The order is succeffully updated",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class))),
+					@ApiResponse(responseCode="200", description = "The order progress is succeffully updated",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class))),
 					@ApiResponse(responseCode = "412", description = "Missing required parameters", content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
 			})
-	Response updateOrderProgress(@Parameter(required = true) @PathParam("commercialOrderId") Long commercialOrderId, @Parameter(required = true) @PathParam("updatedOrderProgress") Integer updatedOrderProgress);
+	Response updateOrderProgress(@Parameter(required = true) @PathParam("commercialOrderId") Long commercialOrderId, @Parameter(required = true) @PathParam("progressValue") Integer progressValue);
 }
 	
 	
