@@ -37,6 +37,8 @@ import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class DiscountPlanDto.
  *
@@ -54,11 +56,13 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	/**
 	 * Effective start date
 	 */
+	@Schema(description = "Effective start date")
 	private Date startDate;
 
 	/**
 	 * Effective end date
 	 */
+	@Schema(description = "Effective end date")
 	private Date endDate;
 
 	/**
@@ -66,31 +70,38 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	 * If start date is not null and end date is null, we use the defaultDuration from the discount plan.
 	 * If start date is null, and defaultDuration is not null, defaultDuration is ignored.
 	 */
+	@Schema(description = "Length of effectivity."
+							+ "<br/> If start date is not null and end date is null, we use the defaultDuration from the discount plan."
+							+ "<br />If start date is null, and defaultDuration is not null, defaultDuration is ignored.")
 	private Integer defaultDuration;
 
 	/**
 	 * Unit of duration
 	 */
+	@Schema(description = "Unit of duration", example = "possible value are : MONTH, DAY")
 	private DurationPeriodUnitEnum durationUnit;
 
 	/**
 	 * The custom fields.
 	 */
 	@XmlElement(required = false)
+	@Schema(description = "The custom fields associated to discount plan")
 	private CustomFieldsDto customFields;
 
 	@XmlElementWrapper(name = "discountPlanItems")
 	@XmlElement(name = "discountPlanItem")
+	@Schema(description = "list of discount plan item", example = "discountPlanItem[]")
 	private List<DiscountPlanItemDto> discountPlanItems;
 
 
     /** expressionEl */
+	@Schema(description = "expression language")
     private String expressionEl;
 
 	/**
 	 * Type of the discount plan. Defines on which entity the discount plan can be applied.
 	 */
-
+	@Schema(description = "Type of the discount plan. Defines on which entity the discount plan can be applied", example = "possible value are : QUOTE, OFFER, PRODUCT, INVOICE, INVOICE_LINE, PROMO_CODE")
 	private DiscountPlanTypeEnum discountPlanType;
 
 	/**
@@ -101,12 +112,14 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	 * EXPIRED “Expired”: the discount plan has expired. Either because the end of validity date has been reach, or the used quantity has is equal to initial quantity.
 	 * Initialized with DRAFT
 	 */
+	@Schema(description = "Status of the discount plan. The default value is DRAFT", example = "possible value are : DRAFT, ACTIVE, INACTIVE, IN_USE, EXPIRED")
 	private DiscountPlanStatusEnum status = DiscountPlanStatusEnum.DRAFT;
 
 	/**
 	 * Datetime of last status update
 	 * Automatically filed at creation and status update
 	 */
+	@Schema(description = "Datetime of last status update, Automatically filed at creation and status update")
 	private Date statusDate;
 
 	/**
@@ -114,6 +127,7 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	 * Default value is 0 = infinite.
 	 * For types QUOTE, INVOICE, INVOICE_LINE, the value is forced to 0.
 	 */
+	@Schema(description = "The initial available quantity for the discount plan, For types QUOTE, INVOICE, INVOICE_LINE, the value is forced to 0")
 	private Long initialQuantity = 0L;
 
 	/**
@@ -122,6 +136,9 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	 * If intialQuantity is not 0, then reaching the initialQuantity expires the discount plan.
 	 * The value is incremented every time the discountPlan is instantiated on any Billing Account, Subscription, or ProductInstance
 	 */
+	@Schema(description = "How many times the discount plan has been used"
+			+ ".<br/> If intialQuantity is not 0, then reaching the initialQuantity expires the discount plan"
+			+ ".<br />The value is incremented every time the discountPlan is instantiated on any Billing Account, Subscription, or ProductInstance")
 	private Long usedQuantity = 0L;
 
 	/**
@@ -131,6 +148,9 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	 * See DiscountPlanInstance below for more details.
 	 * This has no real meaning for discounts applied to invoices or invoice lines.
 	 */
+	@Schema(description = "How many times the discount can be applied on a given entity (BillingAccount, Subscription, Product Instance)."
+			+ "<br />Default value is 0 = infinite."
+			+ "<br/>Useful for one-time discounts.")
 	private Long applicationLimit = 0L;
 
 	/**
@@ -139,18 +159,22 @@ public class DiscountPlanDto extends EnableBusinessDto {
 	 * entity: the entity on which we want to apply the discount
 	 * discountPlan: the discount plan itself
 	 */
+	@Schema(description = "A boolean EL that must evaluate to true to allow the discount plan to be applied"
+			+ "<br/>It will have access to the variables."
+			+ "<br />entity: the entity on which we want to apply the discount")
 	private String applicationFilterEL;
 
 	/**
 	 * A list of discounts plans that cannot be active at the same time on an entity instance.
 	 */
-
+	@Schema(description = "A list of discounts plans that cannot be active at the same time on an entity instance.")
 	private List<DiscountPlanDto> incompatibleDiscountPlans;
 
 	/**
 	 * A list of entities (CustomerCategory, Offer, Product, Article).
 	 * Only instances (Customer/BillingAccount, Subscription, ProductInstance, InvoiceLine) of these entities can have the discount applied to them.
 	 */
+	@Schema(description = "A list of entities (CustomerCategory, Offer, Product, Article).")
 	private List<ApplicableEntityDto> applicableEntities;
 
 	/**

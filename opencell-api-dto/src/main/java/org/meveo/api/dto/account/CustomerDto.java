@@ -21,7 +21,6 @@ package org.meveo.api.dto.account;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,6 +31,8 @@ import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.crm.AdditionalDetailsDto;
 import org.meveo.model.billing.ThresholdOptionsEnum;
 import org.meveo.model.crm.Customer;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class CustomerDto.
@@ -49,37 +50,46 @@ public class CustomerDto extends AccountDto {
 
     /** The customer category. */
     @XmlElement(required = true)
+    @Schema(description = "The customer category")
     private String customerCategory;
 
     /** The customer brand. */
     @XmlElement()
+    @Schema(description = "The customer brand")
     private String customerBrand;
 
     /** The seller. */
     @XmlElement()
+    @Schema(description = "the code of seller")
     private String seller;
 
     /** The mandate identification. */
+    @Schema(description = "The mandate identification")
     private String mandateIdentification = "";
     
     /** The mandate date. */
+    @Schema(description = "The mandate date")
     private Date mandateDate;
 
     /**
      * Use for GET / LIST only.
      */
+    @Schema(description = "Use for GET / LIST only")
     private CustomerAccountsDto customerAccounts = new CustomerAccountsDto();
 
+    @Schema(description = "additional detail")
     private AdditionalDetailsDto additionalDetails = new AdditionalDetailsDto();
 
     /**
      * Invoicing threshold - do not invoice for a lesser amount.
      */
+    @Schema(description = "Invoicing threshold - do not invoice for a lesser amount")
     private BigDecimal invoicingThreshold;
 
     /**
      * The option on how to check the threshold.
      */
+    @Schema(description = "The option on how to check the threshold", example = "possible value are :BEFORE_DISCOUNT, AFTER_DISCOUNT, POSITIVE_RT, POSITIVE_IL")
     private ThresholdOptionsEnum checkThreshold;
 
     /**
@@ -87,10 +97,12 @@ public class CustomerDto extends AccountDto {
      * check the threshold per entity/invoice.
      */
     @XmlElement
+    @Schema(description = "check the threshold per entity/invoice")
     private Boolean thresholdPerEntity;
     
 
     /** information GDPR **/
+    @Schema(description = "information GDPR")
     private List<GDPRInfoDto> infoGdpr;
 
     public Boolean isThresholdPerEntity() {

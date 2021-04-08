@@ -5,18 +5,25 @@ import javax.validation.constraints.NotNull;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.cpq.tags.Tag;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class TagDto extends BusinessEntityDto {
  
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L; 
+	@Schema(description = "code of the seller")
 	private String sellerCode;
     @NotNull
+	@Schema(description = "name of the tag")
 	private String name;
 	@NotNull
+	@Schema(description = "code of the type of the tag")
 	private String tagTypeCode;
+	@Schema(description = "code of the tag parent")
 	private String parentTagCode;
+	@Schema(description = "filter expression language")
 	private String filterEl;
 	
 	public TagDto() {}

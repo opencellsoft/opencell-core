@@ -1,31 +1,5 @@
 package org.meveo.api.billing;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.cpq.CommercialOrderApi;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
-import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.AttributeValue;
-import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.CommercialOrderEnum;
-import org.meveo.model.cpq.commercial.InvoiceLine;
-import org.meveo.model.cpq.commercial.InvoicingPlanItem;
-import org.meveo.model.cpq.commercial.OrderPrice;
-import org.meveo.model.cpq.commercial.OrderProduct;
-import org.meveo.service.billing.impl.InvoiceLinesService;
-import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.article.AccountingArticleService;
-import org.meveo.service.cpq.order.CommercialOrderService;
-import org.meveo.service.cpq.order.OrderPriceService;
-import org.meveo.service.script.module.ModuleScript;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -36,6 +10,34 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.cpq.CommercialOrderApi;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.cpq.commercial.InvoicingPlanItem;
+import org.meveo.model.cpq.commercial.OrderPrice;
+import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.service.billing.impl.InvoiceLinesService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.cpq.order.CommercialOrderService;
+import org.meveo.service.cpq.order.OrderPriceService;
+import org.meveo.service.script.module.ModuleScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @SuppressWarnings("serial")
 public class OrderAdvancementScript extends ModuleScript {
 
@@ -45,6 +47,7 @@ public class OrderAdvancementScript extends ModuleScript {
     private AccountingArticleService accountingArticleService = (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
     private InvoiceLinesService invoiceLinesService = (InvoiceLinesService) getServiceInterface(InvoiceLinesService.class.getSimpleName());
     private InvoiceService invoiceService = (InvoiceService) getServiceInterface(InvoiceService.class.getSimpleName());
+    private InvoiceTypeService invoiceTypeService = (InvoiceTypeService) getServiceInterface(InvoiceTypeService.class.getSimpleName());
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
 
@@ -122,7 +125,16 @@ public class OrderAdvancementScript extends ModuleScript {
                     BigDecimal taxAmountToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalTax);
 
                     createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
-                    invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
+                    List<Invoice> invoices=invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
+                    log.info("OrderAdvancementScript created invoices count={}",invoices.size());
+                    InvoiceType invoiceType=invoiceTypeService.findByCode("ADV");
+                    if(invoiceType!=null) {
+                    	 for(Invoice invoice:invoices) {
+                         	invoice.setInvoiceType(invoiceType);
+                         	invoiceService.update(invoice);
+                         }
+                    }
+                   
                 }
                 commercialOrder.setRateInvoiced(newRateInvoiced.intValue());
                 commercialOrder.setOrderProgressTmp(orderProgress);
@@ -155,6 +167,7 @@ public class OrderAdvancementScript extends ModuleScript {
 
         createInvoiceLine(commercialOrder, accountingArticle.get(), orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
         invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
+      
     }
 
     private AccountingArticle getDefaultAccountingArticle() {
@@ -167,7 +180,7 @@ public class OrderAdvancementScript extends ModuleScript {
     }
 
     private void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, OrderProduct orderProduct, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-        invoiceLinesService.createInvoiceLine(commercialOrder, accountingArticle, orderProduct, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
+        invoiceLinesService.createInvoiceLine(commercialOrder, accountingArticle, orderProduct.getProductVersion(),orderProduct.getOrderServiceCommercial(), amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
     }
 
     private boolean isPriceRelatedToOneShotChargeTemplateOfTypeOther(OrderPrice price) {

@@ -18,12 +18,15 @@
 
 package org.meveo.api.dto;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.security.Permission;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class PermissionDto.
@@ -37,10 +40,14 @@ public class PermissionDto extends BaseEntityDto {
 
     /** The permission. */
     @XmlAttribute(required = true)
+    @Schema(description = "the permission")
+    @NotNull
     private String permission;
 
     /** The name. */
     @XmlAttribute(required = true)
+    @Schema(description = "name of the persmission")
+    @NotNull
     private String name;
 
     /**

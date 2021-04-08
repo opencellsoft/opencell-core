@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.UsageChargeTemplate;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class UsageChargeTemplateDto.
  *
@@ -40,37 +42,46 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
     private static final long serialVersionUID = -192169359113319490L;
 
     /** The wilcard. */
+    @Schema(description = "The wilcard")
     static String WILCARD = null;
 
     /** The filter param 1. */
     @Size(min = 0, max = 255)
+    @Schema(description = "first filter parameter")
     private String filterParam1 = WILCARD;
 
     /** The filter param 2. */
     @Size(min = 0, max = 255)
+    @Schema(description = "second filter parameter")
     private String filterParam2 = WILCARD;
 
     /** The filter param 3. */
     @Size(min = 0, max = 255)
+    @Schema(description = "third filter parameter")
     private String filterParam3 = WILCARD;
 
     /** The filter param 4. */
     @Size(min = 0, max = 255)
+    @Schema(description = "fourth filter parameter")
     private String filterParam4 = WILCARD;
 
     /** The priority. */
+    @Schema(description = "The priority")
     private Integer priority = 1;
 
     /**
      * If true and (charge has no counter associated) then the next matching charge with the full quantity of the EDR.
      */
+    @Schema(description = "If set to true and (charge has no counter associated) then the next matching charge with the full quantity of the EDR")
     protected Boolean triggerNextCharge;
 
     /**
      * Overrides the triggerNextCharge switch.
      */
+    @Schema(description = "Overrides the triggerNextCharge switch")
     protected String triggerNextChargeEL;
-    
+
+    @Schema(description = "code of usage attribute quantity")
     private String usageQuantityAttributeCode;
 
     /**

@@ -20,6 +20,8 @@ package org.meveo.api.dto;
 
 import org.meveo.model.catalog.ApplicableEntity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -42,12 +44,14 @@ public class ApplicableEntityDto extends BaseEntityDto {
     /**
      * The code.
      */
+	@Schema(description = "code of the entity applicable")
     @XmlAttribute(required = true)
     private String code;
 
     /**
      * The entity class.
      */
+	@Schema(description = "name of the class applicable")
     @XmlAttribute(required = true)
     private String entityClass;
 

@@ -30,35 +30,50 @@ public class CommercialOrderDto extends BaseEntityDto {
 	@Schema(description = "description of the order")
 	private String label;
 	@NotNull
-	@Schema(description = "code of the billing account")
+	@Schema(description = "code of existing the billing account")
 	private String billingAccountCode;
+	@Schema(description = "code of existing quote")
 	private String quoteCode;
+	@Schema(description = "code of existing contract")
 	private String contractCode;
 	@NotNull
+	@Schema(description = "code of existing order type, must not be empty")
 	private String orderTypeCode;
+	@Schema(description = "code of existing invoicing plan")
 	private String invoicingPlanCode;
 	//@NotNull
+	@Schema(description = "status of the order")
 	private String status;
 //	@NotNull
 //	private Date statusDate;
 	@NotNull
+	@Schema(description = "order progress for the order")
 	private Integer orderProgress;
 	@JsonSerialize(using = CustomDateSerializer.class)
 	@NotNull
+	@Schema(description = "progress date of order, must not be empty")
 	private Date progressDate;
 	@JsonSerialize(using = CustomDateSerializer.class)
 	@NotNull
+	@Schema(description = "date of the order, must not be empty")
 	private Date orderDate;
 	@JsonSerialize(using = CustomDateSerializer.class)
+	@Schema(description = "date of resiliation of the order")
 	private Date realisationDate;
 	@JsonSerialize(using = CustomDateSerializer.class)
+	@Schema(description = "date begin of the customer service")
 	private Date customerServiceBegin;
+	@Schema(description = "duration customer service")
 	private int customerServiceDuration;
 	private String externalReference;
 	private String orderParentCode;
+	@Schema(description = "code of the user account")
 	private String userAccountCode;
+	@Schema(description = "information access for the order")
 	private AccessDto accessDto; 
+	@Schema(description = "list of order lot's code")
 	private Set<String> orderLotCodes;
+	@Schema(description = "custom field, if any")
     private CustomFieldsDto customFields;
 	
 	public CommercialOrderDto() {

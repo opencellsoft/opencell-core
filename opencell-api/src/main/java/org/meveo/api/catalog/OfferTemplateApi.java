@@ -376,7 +376,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                 offerTemplate.setMinimumChargeTemplate(minimumChargeTemplate);
             }
         }
-        if (postData.getLifeCycleStatus() != null) {
+        if (!StringUtils.isBlank(postData.getLifeCycleStatus())) {
             offerTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
         }
 

@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class LanguageDescriptionDto.
  *
@@ -41,9 +43,11 @@ public class LanguageDescriptionDto implements Serializable {
     private static final long serialVersionUID = -4686792860854718893L;
 
     /** The language code. */
+    @Schema(description = "The language code")
     private String languageCode;
 
     /** The description. */
+    @Schema(description = "The description")
     private String description;
 
     /**

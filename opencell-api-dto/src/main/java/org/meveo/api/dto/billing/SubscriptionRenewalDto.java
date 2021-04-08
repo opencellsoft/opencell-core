@@ -28,6 +28,8 @@ import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class SubscriptionRenewalDto.
  * 
@@ -39,39 +41,52 @@ public class SubscriptionRenewalDto implements Serializable {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 4718234196806858689L;
 
+    @Schema(description = "intial term type", example = "RECURRING, CALENDAR, FIXED")
     private SubscriptionRenewal.InitialTermTypeEnum initialTermType;
 
+    @Schema(description = "renewal term type", example = "possible value are : RECURRING, CALENDAR")
     private SubscriptionRenewal.RenewalTermTypeEnum renewalTermType;
 
     /** The initial period for which the subscription will be active - value. */
+    @Schema(description = "The initial period for which the subscription will be active")
     private Integer initialyActiveFor;
 
     /** The initial period for which the subscription will be active - unit. */
+    @Schema(description = "The initial period for which the subscription will be active", example = "possible value are : MONTH, DAY")
     private RenewalPeriodUnitEnum initialyActiveForUnit;
 
+    @Schema(description = "calendar initial for subscription")
     private CalendarDto calendarInitialyActiveFor;
 
     /** Should subscription be renewed automatically. */
+    @Schema(description = "Should subscription be renewed automatically")
     private boolean autoRenew;
 
     /** Number of days before the end of term to trigger notification event. */
+    @Schema(description = "Number of days before the end of term to trigger notification event")
     private Integer daysNotifyRenewal;
 
     /** Whether the Subscription should be suspended or terminated if not renewed. */
+    @Schema(description = "Whether the Subscription should be suspended or terminated if not renewed",example = "possible value are : SUSPEND, TERMINATE")
     private EndOfTermActionEnum endOfTermAction;
 
     /** TerminationReason used when terminating subscription if endOfTermAction is to terminate. */
+    @Schema(description = "terminating subscription if endOfTermAction is to terminate")
     private String terminationReasonCode;
 
     /** The period to renew subscription for - value. */
+    @Schema(description = "The period to renew subscription for")
     private Integer renewFor;
 
+    @Schema(description = "calendar associated to subscription renewal")
     private CalendarDto calendarRenewFor;
 
     /** The period to renew subscription for - units. */
+    @Schema(description = "he period to renew subscription for", example = "possible value are : MONTH, DAY")
     private RenewalPeriodUnitEnum renewForUnit;
 
     /** Whether end of agreement date should be matched to the active till date. */
+    @Schema(description = "Whether end of agreement date should be matched to the active till date")
     private boolean extendAgreementPeriodToSubscribedTillDate;
 
     /**
