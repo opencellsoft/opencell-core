@@ -35,10 +35,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -48,18 +44,15 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.cpq.Product;
 
 /**
  * Discount plan
@@ -212,7 +205,7 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 	@CollectionTable(name = "cat_discount_applicable_entity", joinColumns = { @JoinColumn(name = "disount_plan_id") })
 	@AttributeOverrides(value = { @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
 			@AttributeOverride(name = "entityClass", column = @Column(name = "entity_class", nullable = false, length = 255)) })
-	private List<ApplicableEntity> applicableEntities;
+	private List<ApplicableEntity> discountPlanaApplicableEntities;
 
 	/**
 	 * A list of discounts plans that cannot be active at the same time on an entity instance.
@@ -420,12 +413,12 @@ public class DiscountPlan extends EnableBusinessCFEntity implements ISearchable 
 		this.applicationFilterEL = applicationFilterEL;
 	}
 
-	public List<ApplicableEntity> getApplicableEntities() {
-		return applicableEntities;
+	public List<ApplicableEntity> getDiscountPlanaApplicableEntities() {
+		return discountPlanaApplicableEntities;
 	}
 
-	public void setApplicableEntities(List<ApplicableEntity> applicableEntities) {
-		this.applicableEntities = applicableEntities;
+	public void setDiscountPlanaApplicableEntities(List<ApplicableEntity> applicableEntities) {
+		this.discountPlanaApplicableEntities = applicableEntities;
 	}
 
 	public List<DiscountPlan> getIncompatibleDiscountPlans() {
