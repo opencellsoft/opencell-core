@@ -126,15 +126,6 @@ public class OrderAdvancementScript extends ModuleScript {
 
                     createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
                     List<Invoice> invoices=invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false,true);
-                    log.info("OrderAdvancementScript created invoices count={}",invoices.size());
-                    InvoiceType invoiceType=invoiceTypeService.findByCode("ADV");
-                    if(invoiceType!=null) {
-                    	 for(Invoice invoice:invoices) {
-                         	invoice.setInvoiceType(invoiceType);
-                         	invoiceService.update(invoice);
-                         }
-                    }
-                   
                 }
                 commercialOrder.setRateInvoiced(newRateInvoiced.intValue());
                 commercialOrder.setOrderProgressTmp(orderProgress);
