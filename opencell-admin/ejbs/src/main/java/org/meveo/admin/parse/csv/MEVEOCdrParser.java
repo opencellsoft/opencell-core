@@ -266,8 +266,8 @@ public class MEVEOCdrParser implements ICdrParser {
         
     @Override
     public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
-        List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
-        if (accesses == null || accesses.size() == 0) {
+        List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode()); // get the access code of the customer
+        if (accesses == null || accesses.isEmpty()) {
             rejectededCdrEventProducer.fire(cdr);
             throw new InvalidAccessException(cdr);
         }
@@ -287,10 +287,10 @@ public class MEVEOCdrParser implements ICdrParser {
             
             Subscription subscription;
             for (Access accessPoint : accessPoints) {
-                if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime())
-                        && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
+                if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime()) // if the start date of the subscription is less than the cdr event date
+                        && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) { // if the cdr event date is lesss
                     foundMatchingAccess = true; 
-                    subscription =  accessPoint.getSubscription() != null ? subscriptionService.findById(accessPoint.getSubscription().getId()) : null;
+                    subscription =  accessPoint.getSubscription() != null ? accessPoint.getSubscription() : null;
                     EDR edr = cdrToEdr(cdr, accessPoint, subscription);
                     edrs.add(edr);
                 }
