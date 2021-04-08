@@ -2606,7 +2606,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException General business exception
      */
     private InvoiceType determineInvoiceType(boolean isPrepaid, boolean isDraft, BillingCycle billingCycle, BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
-    	determineInvoiceType(isPrepaid, isDraft, false, billingCycle, billingRun, billingAccount);
+    	return determineInvoiceType(isPrepaid, isDraft, false, billingCycle, billingRun, billingAccount);
     }
     /**
      * Determine invoice type given the following criteria
