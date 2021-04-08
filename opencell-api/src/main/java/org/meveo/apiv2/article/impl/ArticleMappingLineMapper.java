@@ -4,6 +4,7 @@ import org.meveo.apiv2.article.ImmutableArticleMappingLine;
 import org.meveo.apiv2.article.ImmutableAttributeMapping;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMapping;
 import org.meveo.model.article.ArticleMappingLine;
@@ -26,11 +27,11 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
                 .parameter2(entity.getParameter2())
                 .parameter3(entity.getParameter3())
                 .mappingKeyEL(entity.getMappingKelEL())
-                .articleMapping(createResource(entity.getArticleMapping().getId()))
-                .accountingArticle(createResource(entity.getAccountingArticle().getId()))
+                .articleMapping(createResource(entity.getArticleMapping()))
+                .accountingArticle(createResource(entity.getAccountingArticle()))
                 .attributesMapping(getAttributesMappingResources(entity.getAttributesMapping()))
-                .offer(createResource(entity.getOfferTemplate().getId()))
-                .product(createResource(entity.getProduct().getId()))
+                .offer(createResource(entity.getOfferTemplate()))
+                .product(createResource(entity.getProduct()))
                 
                 .build();
     }
@@ -79,7 +80,7 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
                 : null;
     }
 
-    private ImmutableResource createResource(Long id) {
-        return ImmutableResource.builder().id(id).build();
+    private ImmutableResource createResource(BaseEntity baseEntity) {
+        return baseEntity != null ? ImmutableResource.builder().id(baseEntity.getId()).build() : null;
     }
 }
