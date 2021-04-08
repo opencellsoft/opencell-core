@@ -291,10 +291,13 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/customers", aMapRestful );
 
                             // Handling requests related to customerCategory
-                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customers/categories",
-                                    ((Path) anAnnotation).value() + "/category" );
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customerCategories",
+                                    ((Path) anAnnotation).value() );
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customerBrands",
+                                    ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMapWithSpecialURL( ACCOUNT_MANAGEMENT + "/customers/categories", aMapRestful, "customer" );
+                            fillUpRestfulURLsMapWithSpecialURL( ACCOUNT_MANAGEMENT + "/customerCategories", aMapRestful, "customer" );
+                            fillUpRestfulURLsMapWithSpecialURL( ACCOUNT_MANAGEMENT + "/customerBrands", aMapRestful, "customer" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/customerAccount" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customerAccounts",
@@ -683,6 +686,11 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             fillUpRestfulURLsMapWithSpecialURL( "/payment/paymentMethods/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "paymentMethod" );
 
                             fillUpRestfulURLsMapWithSpecialURL( "/payment/paymentMethods/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "paymentMethod" );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/account/providerContact" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/providerContacts", ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/providerContacts", aMapRestful );
                         }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
