@@ -139,6 +139,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -3808,4 +3809,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         return sequence;
     }
+    
+    /**
+     * Detach AO From invoice.
+     *
+     * @param ao account operation
+     */
+    public void detachAOFromInvoice(AccountOperation ao) {
+        getEntityManager().createNamedQuery("Invoice.detachAOFromInvoice").setParameter("ri", ao).executeUpdate();
+    }
+
 }
