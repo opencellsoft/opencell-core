@@ -32,7 +32,7 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
                 .attributesMapping(getAttributesMappingResources(entity.getAttributesMapping()))
                 .offer(createResource(entity.getOfferTemplate()))
                 .product(createResource(entity.getProduct()))
-                
+                .charge(createResource(entity.getChargeTemplate()))
                 .build();
     }
 

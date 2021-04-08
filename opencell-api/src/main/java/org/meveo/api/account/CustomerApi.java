@@ -248,7 +248,7 @@ public class CustomerApi extends AccountEntityApi {
 
         boolean isNew = customer.getId() == null;
 
-        if (Strings.isEmpty(postData.getCustomerCategory())) {
+        if (!Strings.isEmpty(postData.getCustomerCategory())) {
             CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory());
             if (customerCategory == null) {
                 throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
@@ -256,7 +256,7 @@ public class CustomerApi extends AccountEntityApi {
             customer.setCustomerCategory(customerCategory);
         }
 
-        if (Strings.isEmpty(postData.getCustomerBrand())) {
+        if (!Strings.isEmpty(postData.getCustomerBrand())) {
             if (StringUtils.isBlank(postData.getCustomerBrand())) {
                 customer.setCustomerBrand(null);
             } else {
@@ -268,7 +268,7 @@ public class CustomerApi extends AccountEntityApi {
             }
         }
 
-        if (Strings.isEmpty(postData.getSeller())) {
+        if (!Strings.isEmpty(postData.getSeller())) {
             Seller seller = sellerService.findByCode(postData.getSeller());
             if (seller == null) {
                 throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
