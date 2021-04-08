@@ -589,6 +589,32 @@ public class CommercialOrderApi extends BaseApi {
     	return orderOfferDto;
     }
 	
+	public void updateOrderProgress(Long commercialOrderId,Integer updatedOrderProgress) throws MeveoApiException { 
+		
+		if (commercialOrderId==null) {
+    		missingParameters.add("commercialOrderId");
+    	}
+		if (updatedOrderProgress==null) {
+    		missingParameters.add("updatedOrderProgress");
+    	}
+		handleMissingParameters();
+    	CommercialOrder commercialOrder=null;
+    	if(commercialOrderId!=null) {
+    	 commercialOrder = commercialOrderService.findById(commercialOrderId);
+    	if ( commercialOrder== null)
+    		throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
+    	} 
+    	if(!CommercialOrderEnum.FINALIZED.toString().equals(commercialOrder.getStatus())) {
+    		throw new MeveoApiException("Commercial order status should be FINALIZED");
+    	}
+    	if(commercialOrder.getOrderProgress()!=null && commercialOrder.getOrderProgress()>updatedOrderProgress) {
+    		throw new MeveoApiException("updatedOrderProgress should be greater than orderProgress");
+    	} 
+    	commercialOrder.setOrderProgress(updatedOrderProgress);
+    	commercialOrderService.update(commercialOrder);
+    	
+    }
+	
 	private void processOrderProductFromOffer(OrderOfferDto orderOfferDTO, OrderOffer orderOffer) {
         List<OrderProductDto> orderProductDtos = orderOfferDTO.getOrderProducts(); 
         var existencOrderProducts = orderOffer.getProducts();
