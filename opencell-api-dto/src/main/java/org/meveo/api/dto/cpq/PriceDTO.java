@@ -64,6 +64,8 @@ public class PriceDTO extends BaseEntityDto {
     
     private Long recurrenceDuration;
     private String recurrencePeriodicity;
+    private String chargeCode;
+    private String chargeLabel;
     
     
 	public PriceDTO(QuotePrice quotePrice) {
@@ -79,6 +81,8 @@ public class PriceDTO extends BaseEntityDto {
 	    currencyCode=quotePrice.getCurrencyCode();
 	    recurrenceDuration=quotePrice.getRecurrenceDuration();
 	    recurrencePeriodicity=quotePrice.getRecurrencePeriodicity();
+	    chargeCode=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getCode():null;
+	    chargeLabel=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getDescription():null;
 		
 	}
 	
@@ -158,6 +162,34 @@ public class PriceDTO extends BaseEntityDto {
 	 */
 	public void setPriceOverCharged(Boolean priceOverCharged) {
 		this.priceOverCharged = priceOverCharged;
+	}
+
+	/**
+	 * @return the chargeCode
+	 */
+	public String getChargeCode() {
+		return chargeCode;
+	}
+
+	/**
+	 * @param chargeCode the chargeCode to set
+	 */
+	public void setChargeCode(String chargeCode) {
+		this.chargeCode = chargeCode;
+	}
+
+	/**
+	 * @return the chargeLabel
+	 */
+	public String getChargeLabel() {
+		return chargeLabel;
+	}
+
+	/**
+	 * @param chargeLabel the chargeLabel to set
+	 */
+	public void setChargeLabel(String chargeLabel) {
+		this.chargeLabel = chargeLabel;
 	}
     
     
