@@ -4388,5 +4388,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), toCancel);
 		invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
 	}
+	
+	/**
+     * Detach AO From invoice.
+     *
+     * @param ao account operation
+     */
+    public void detachAOFromInvoice(AccountOperation ao) {
+        getEntityManager().createNamedQuery("Invoice.detachAOFromInvoice").setParameter("ri", ao).executeUpdate();
+    }
 
 }
