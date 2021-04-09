@@ -211,6 +211,10 @@ public class FlatFileProcessingJob extends Job {
             if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
+            // File might have been processed by another mediation job, so continue with a next file
+            if (!file.exists()) {
+                continue;
+            }
 
             String fileName = file.getName();
             flatFileProcessingJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext, filenameVariableName, formatTransfo,

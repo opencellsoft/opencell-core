@@ -1,14 +1,11 @@
 package org.meveo.cache;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.Future;
 
 import org.meveo.model.shared.DateUtils;
 
@@ -139,16 +136,15 @@ public class JobExecutionStatus implements Serializable {
      * Mark as running on a cluster node. Remove lock.
      * 
      * @param node Cluster node name
-     * @param threads A list of threads/futures that are running a job
+     * @param numberOfThreads A number of threads/futures that are running a job
      */
-    @SuppressWarnings("rawtypes")
-    public void markAsRunningOn(String node, Long jobExecutionResultId, List<Future> threads) {
+    public void markAsRunningOn(String node, Long jobExecutionResultId, Integer numberOfThreads) {
 
         this.lockForNode = null;
-        if (jobExecutionResultId == null && threads == null) {
+        if (jobExecutionResultId == null && numberOfThreads == null) {
             this.nodesAndThreads.put(node, new JobExecutionInfo());
         } else {
-            this.nodesAndThreads.put(node, new JobExecutionInfo(jobExecutionResultId, threads));
+            this.nodesAndThreads.put(node, new JobExecutionInfo(jobExecutionResultId, numberOfThreads == null ? 0 : numberOfThreads));
         }
     }
 
@@ -158,6 +154,7 @@ public class JobExecutionStatus implements Serializable {
      * @param node Cluster node name
      */
     public void markAsFinished(String node) {
+        this.lockForNode = null;
         this.nodesAndThreads.remove(node);
 
         // In multi cluster environment remove "requested to stop" flag only when ALL clusters are finished running a job
@@ -222,14 +219,13 @@ public class JobExecutionStatus implements Serializable {
      * @param node Cluster node name
      * @return A list of threads/futures or an empty list if not found
      */
-    @SuppressWarnings("rawtypes")
-    public List<Future> getThreads(String node) {
+    public int getNumberThreads(String node) {
 
         JobExecutionInfo jobExecutionInfo = this.nodesAndThreads.get(node);
-        if (jobExecutionInfo != null && jobExecutionInfo.threads != null) {
-            return jobExecutionInfo.threads;
+        if (jobExecutionInfo != null) {
+            return jobExecutionInfo.getNumberOfThreads();
         }
-        return new ArrayList<>();
+        return 0;
     }
 
     /**
@@ -291,8 +287,7 @@ public class JobExecutionStatus implements Serializable {
         /**
          * Threads/futures that job is running on
          */
-        @SuppressWarnings("rawtypes")
-        private List<Future> threads;
+        private int numberOfThreads;
 
         /**
          * Constructor
@@ -304,13 +299,12 @@ public class JobExecutionStatus implements Serializable {
          * Constructor
          * 
          * @param jobExecutionId Job execution result identifier
-         * @param threads Threads/Futures that job is run on
+         * @param numberOfThreads Number of threads/futures that job is run on
          */
-        @SuppressWarnings("rawtypes")
-        public JobExecutionInfo(Long jobExecutionId, List<Future> threads) {
+        public JobExecutionInfo(Long jobExecutionId, int numberOfThreads) {
             super();
             this.jobExecutionId = jobExecutionId;
-            this.threads = threads;
+            this.numberOfThreads = numberOfThreads;
         }
 
         /**
@@ -318,13 +312,13 @@ public class JobExecutionStatus implements Serializable {
          * 
          * @return Number of threads
          */
-        public Integer getNumberOfThreads() {
-            return threads != null ? threads.size() : 0;
+        public int getNumberOfThreads() {
+            return numberOfThreads;
         }
 
         @Override
         public String toString() {
-            return (jobExecutionId != null ? "id:" + jobExecutionId : "") + "|threads:" + (threads != null ? threads.size() : "0") + "|to stop:" + requestedToStop;
+            return (jobExecutionId != null ? "id:" + jobExecutionId : "") + "|threads:" + numberOfThreads + "|to stop:" + requestedToStop;
         }
     }
 }

@@ -154,10 +154,13 @@ public class MediationJob extends Job {
                 break;
             }
 
+            // File might have been processed by another mediation job, so continue with a next file
+            if (!file.exists()) {
+                continue;
+            }
             String fileName = file.getName();
             mediationJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, jobInstance.getParametres(), readerCode, parserCode, mappingConf, recordName);
 
-            result.addReport("Processed file: " + fileName);
             if (oneFilePerJob) {
                 break;
             }

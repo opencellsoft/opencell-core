@@ -281,8 +281,7 @@ public class JobInstance extends EnableBusinessCFEntity {
      * @return the run on nodes
      */
     public String getRunOnNodes() {
-        Object value = this.getParamValue("runOnNodes");
-        return value != null ? String.valueOf(value) : runOnNodes;
+        return runOnNodes;
     }
 
     /**
@@ -346,7 +345,10 @@ public class JobInstance extends EnableBusinessCFEntity {
      */
     public boolean isRunnableOnNode(String currentNode) {
 
-        String runOnNodesValue = this.getRunOnNodes();
+        String runOnNodesValue = (String) this.getParamValue("runOnNodes");
+        if (runOnNodesValue == null) {
+            runOnNodesValue = runOnNodes;
+        }
 
         if (currentNode == null || runOnNodesValue == null) {
             return true;
@@ -368,8 +370,7 @@ public class JobInstance extends EnableBusinessCFEntity {
      */
     @Override
     public String toString() {
-        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]", super.toString(), jobTemplate, parametres, jobCategoryEnum,
-            timerEntity != null ? timerEntity.getId() : null, followingJob != null ? followingJob.getId() : null);
+        return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s]", super.toString(), jobTemplate, parametres);
     }
 
     /**
