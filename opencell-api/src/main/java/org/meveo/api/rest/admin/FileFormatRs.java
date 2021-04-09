@@ -18,18 +18,6 @@
 
 package org.meveo.api.rest.admin;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.admin.FileFormatDto;
 import org.meveo.api.dto.admin.FileFormatListResponseDto;
@@ -37,6 +25,9 @@ import org.meveo.api.dto.admin.FileFormatResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * File format resource
@@ -114,6 +105,15 @@ public interface FileFormatRs extends IBaseRs {
     @Path("/list")
     public FileFormatListResponseDto searchGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List fileFormats matching a given criteria
+     *
+     * @return List of fileFormats
+     */
+    @GET
+    @Path("/listGetAll")
+    FileFormatListResponseDto listGetAll();
 
     /**
      * Search for File formats by matching a given criteria
