@@ -24,6 +24,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
@@ -46,7 +47,7 @@ import org.meveo.model.order.Order;
 @WorkflowedEntity
 @Entity
 @Table(name = "cpq_commercial_order")
-@CustomFieldEntity(cftCodePrefix = "CommercialOrder")
+@CustomFieldEntity(cftCodePrefix = "CommercialOrder",inheritCFValuesFrom = "quote")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_commercial_order_seq")})
 public class CommercialOrder extends AuditableCFEntity  {
@@ -205,6 +206,16 @@ public class CommercialOrder extends AuditableCFEntity  {
     @Column(name = "oneshot_total_amount")
     private BigDecimal oneShotTotalAmount;
 	
+    
+    @Override
+	public ICustomFieldEntity[] getParentCFEntities() {
+		if (quote != null) {
+			return new ICustomFieldEntity[] { quote };
+		}
+		return null;
+	}
+    
+    
 	/**
 	 * @return the seller
 	 */

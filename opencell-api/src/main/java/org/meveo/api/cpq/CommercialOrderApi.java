@@ -46,6 +46,7 @@ import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.OrderType;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
@@ -201,7 +202,7 @@ public class CommercialOrderApi extends BaseApi {
 		processOrderLot(orderDto, order);
 		commercialOrderService.create(order);
 		CommercialOrderDto dto = new CommercialOrderDto(order);
-		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order));
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order,CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 		return dto;
 	}
 
@@ -333,7 +334,7 @@ public class CommercialOrderApi extends BaseApi {
 		processOrderLot(orderDto, order);
 		commercialOrderService.update(order);
 		CommercialOrderDto dto = new CommercialOrderDto(order);
-		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order));
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order,CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 		return dto;
 	}
 	
@@ -446,7 +447,7 @@ public class CommercialOrderApi extends BaseApi {
 		if(commercialOrder == null)
 			throw new EntityDoesNotExistsException("No Commercial order found for order number = " + orderNumber);
 		CommercialOrderDto dto = new CommercialOrderDto(commercialOrder);
-		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(commercialOrder));
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(commercialOrder,CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 		return dto;
 	}
 	
