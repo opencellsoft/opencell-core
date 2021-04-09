@@ -45,9 +45,9 @@
                 <hftl:column label="#{messages['timer.active']}" field="disabled" isDisabledMessage="true" />
                 <p:column headerText="#{messages['timer.isRunning']}">
                     <h:outputText styleClass="ui-icon ui-icon-circle-check" title="#{messages['timer.isRunning.this']}"
-                        rendered="#{jobInstanceListBean.isTimerRunning(entity)== JobRunningStatusEnum.RUNNING_THIS}" />
+                        rendered="#{jobInstanceListBean.isJobRunningOnThisNode(entity)}" />
                     <h:outputText styleClass="ui-icon ui-icon-check" title="#{messages['timer.isRunning.other']}"
-                        rendered="#{jobInstanceListBean.isTimerRunning(entity)== JobRunningStatusEnum.RUNNING_OTHER}" />
+                        rendered="#{jobInstanceListBean.isJobRunningOnAnotherNode(entity)}" />
                 </p:column>
                 <hftl:actionsColumn permission="#{currentUser.hasRole('administrationManagement')}" renderEnableLink="#{currentUser.hasRole('useJob')}"
                     renderDeleteLink="#{currentUser.hasRole('useJob')}" />

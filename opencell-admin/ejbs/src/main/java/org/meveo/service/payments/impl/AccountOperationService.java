@@ -221,7 +221,7 @@ public class AccountOperationService extends PersistenceService<AccountOperation
             return (List<AccountOperation>) query.getResultList();
 
         } catch (NoResultException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
             return null;
         }
     }
@@ -260,18 +260,6 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         qb.endOrClause();
 
         return (List<AccountOperation>) qb.getQuery(getEntityManager()).getResultList();
-    }
-
-    /**
-     * Bulk delete.
-     *
-     * @param inactiveAccountOps the inactive account ops
-     * @throws BusinessException the business exception
-     */
-    public void bulkDelete(List<AccountOperation> inactiveAccountOps) throws BusinessException {
-        for (AccountOperation e : inactiveAccountOps) {
-            remove(e);
-        }
     }
 
     /**

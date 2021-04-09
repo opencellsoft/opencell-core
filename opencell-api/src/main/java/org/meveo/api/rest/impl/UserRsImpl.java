@@ -18,12 +18,6 @@
 
 package org.meveo.api.rest.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-
 import org.meveo.api.UserApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.UserDto;
@@ -34,6 +28,13 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.UserRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 
 /**
  * @author Mohamed Hamidi
@@ -131,6 +132,19 @@ public class UserRsImpl extends BaseRs implements UserRs {
     @Override
     public UsersDto listGetV2(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
         return listGet(query, fields, offset, limit, sortBy, sortOrder);
+    }
+
+    public UsersDto list() {
+
+        UsersDto result = new UsersDto();
+
+        try {
+            result = userApi.list(httpServletRequest, GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
     }
 
     @Override

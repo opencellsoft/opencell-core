@@ -72,6 +72,9 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
 
     @Override
     public ReportExtract create(ReportExtractDto postData) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(ReportExtract.class.getName(), postData);
+        }
         if (StringUtils.isBlank(postData.getScriptType())) {
             missingParameters.add("scriptType");
         }
@@ -167,6 +170,7 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         reportExtract.setDescription(dto.getDescription());
         reportExtract.setEndDate(dto.getEndDate());
         reportExtract.setFilenameFormat(dto.getFilenameFormat());
+        reportExtract.setFileSeparator(dto.getFileSeparator());
         reportExtract.setParams(dto.getParams());
         reportExtract.setStartDate(dto.getStartDate());
         reportExtract.setScriptType(dto.getScriptType());

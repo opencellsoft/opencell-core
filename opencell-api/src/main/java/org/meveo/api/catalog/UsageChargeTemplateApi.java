@@ -28,17 +28,18 @@ import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.UsageChargeTemplateResponseDto;
+import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.cpq.AttributeService;
+
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -56,9 +57,15 @@ public class UsageChargeTemplateApi extends ChargeTemplateApi<UsageChargeTemplat
     public UsageChargeTemplate create(UsageChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        } 
-        
+            addGenericCodeIfAssociated(UsageChargeTemplate.class.getName(), postData);
+        }
+        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
+            missingParameters.add("invoiceSubCategory");
+        }
+        if (StringUtils.isBlank(postData.getTaxClassCode())) {
+            missingParameters.add("taxClassCode");
+        }
+
         handleMissingParametersAndValidate(postData);
 
         UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(postData.getCode());
@@ -158,6 +165,21 @@ public class UsageChargeTemplateApi extends ChargeTemplateApi<UsageChargeTemplat
         }
 
         result = new UsageChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+
+        return result;
+    }
+
+    public UsageChargeTemplateResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        UsageChargeTemplateResponseDto result = new UsageChargeTemplateResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<UsageChargeTemplate> usageChargeTemplates = usageChargeTemplateService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (usageChargeTemplates != null) {
+            for (UsageChargeTemplate chargeTemplate : usageChargeTemplates) {
+                result.getUsageChargeTemplates().getUsageChargeTemplates()
+                        .add(new UsageChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+        }
 
         return result;
     }

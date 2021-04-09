@@ -77,6 +77,9 @@ public class RevenueRecognitionRuleApi extends BaseCrudApi<RevenueRecognitionRul
                 postData.getScript().setCode(fullClassname);
             }
         }
+        if(StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(RevenueRecognitionRule.class.getName(), postData);
+        }
         handleMissingParameters();
 
         if (revenueRecognitionRuleService.findByCode(postData.getCode()) != null) {

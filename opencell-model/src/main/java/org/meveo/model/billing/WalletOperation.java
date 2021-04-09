@@ -88,8 +88,7 @@ import org.meveo.model.tax.TaxClass;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "operation_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
-@NamedQueries({
-        @NamedQuery(name = "WalletOperation.listByIds", query = "SELECT o FROM WalletOperation o where o.id IN :idList"),
+@NamedQueries({ @NamedQuery(name = "WalletOperation.listByIds", query = "SELECT o FROM WalletOperation o where o.id IN :idList"),
         @NamedQuery(name = "WalletOperation.getWalletOperationsBilled", query = "SELECT o.id FROM WalletOperation o join o.ratedTransaction rt WHERE rt.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND o.id IN :walletIdList"),
         @NamedQuery(name = "WalletOperation.listByRatedTransactionId", query = "SELECT o FROM WalletOperation o WHERE o.status='TREATED' and o.ratedTransaction.id=:ratedTransactionId"),
 
@@ -137,6 +136,8 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount"),
 
         @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select o.status, count(o.id) from WalletOperation o group by o.status"),
+        
+        @NamedQuery(name = "WalletOperation.detachWOsFromSubscription", query = "UPDATE WalletOperation set chargeInstance = null, serviceInstance = null where chargeInstance.id IN (SELECT id from ChargeInstance where subscription=:subscription)"),
 
         @NamedQuery(name = "WalletOperation.listNotOpenedWObetweenTwoDates", query = "SELECT o FROM WalletOperation o WHERE o.status != 'OPEN' AND :firstTransactionDate<o.operationDate AND o.operationDate<:lastTransactionDate and o.id >:lastId order by o.id asc"),
         @NamedQuery(name = "WalletOperation.listWObetweenTwoDatesByStatus", query = "SELECT o FROM WalletOperation o WHERE o.status in (:status) AND :firstTransactionDate<=o.operationDate AND o.operationDate<=:lastTransactionDate and o.id >:lastId order by o.id asc"),
@@ -219,7 +220,6 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "charge_instance_id", nullable = false)
-    @NotNull
     private ChargeInstance chargeInstance;
 
     /**
@@ -1386,12 +1386,20 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     }
 
     /**
-     * Was this operation applied in advance - that is operation date start dates match
+     * Was this operation applied in advance - that is operation date start dates match. In case that operation date does not match neither start nor end dates, consider as apply
+     * in advance
      *
      * @return True if it was applied in advance.
      */
     public boolean isApplyInAdvance() {
-        return operationDate.equals(startDate);
+        
+        if (operationDate.equals(startDate)) {
+            return true;
+        } else if (operationDate.equals(endDate)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**

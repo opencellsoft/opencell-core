@@ -85,6 +85,10 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     @Column(name = "filename_format", length = 100, nullable = false)
     private String filenameFormat;
 
+    @NotNull
+    @Column(name = "file_separator", length = 1, nullable = false)
+    private String fileSeparator;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
@@ -122,6 +126,14 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
         this.filenameFormat = filenameFormat;
     }
 
+    public String getFileSeparator() {
+        return fileSeparator;
+    }
+    
+    public void setFileSeparator(String fileSeparator) {
+        this.fileSeparator = fileSeparator;
+    }
+    
     public ReportExtractScriptTypeEnum getScriptType() {
         return scriptType;
     }

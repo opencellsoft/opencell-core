@@ -3697,7 +3697,36 @@ END $$;]]>
 		<sql>DROP INDEX IF EXISTS customer_code</sql>
     </changeSet>
 
-    <changeSet id="#5621_20201104_offer_template" author="NabilOUACHI">
+    <changeSet id="#5621_20201104_offer_template_fix" author="NabilOUACHI" failOnError="false">
+        <addColumn tableName="billing_subscription">
+            <column name="valid_from" type="datetime"/>
+            <column name="valid_to" type="datetime"/>
+        </addColumn>
+        <dropUniqueConstraint tableName="billing_subscription" constraintName="uk_9fnf93rp352nkw2kpd4oq5xp9"/>
+        <addUniqueConstraint columnNames="code, valid_from, valid_to" constraintName="uk_9fnf93rp352nkw2kpd4oq5xp9" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_subscription" />
+
+        <addColumn tableName="cat_offer_template">
+            <column name="is_offer_change_restricted" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+
+        <createTable tableName="cat_offer_allowed_offer_change">
+            <column name="offer_tmpl_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="allowed_offer_change_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="offer_tmpl_id, allowed_offer_change_id" constraintName="cat_offer_allowed_offer_change_pkey" tableName="cat_offer_allowed_offer_change" />
+        <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="offer_tmpl_id"
+                                 constraintName="cat_offer_allowed_offer_change_fk1" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="allowed_offer_change_id"
+                                 constraintName="cat_offer_allowed_offer_change_fk2" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="#5621_20201104_offer_template" author="NabilOUACHI" failOnError="false">
         <addColumn tableName="billing_subscription">
             <column name="valid_from" type="datetime"/>
             <column name="valid_to" type="datetime"/>
@@ -3714,6 +3743,31 @@ END $$;]]>
                                  constraintName="offer_template_offer_template_fk" referencedTableName="cat_offer_template"
                                  referencedColumnNames="id"/>
     </changeSet>
+    
+    <changeSet id="#5975_20210225_offer_template_allowed_offer_change_should_be_many_to_many" author="MounirBOUKAYOUA" failOnError="false">
+        <dropColumn tableName="cat_offer_template">
+            <column name="offer_template_id"></column>
+        </dropColumn>
+
+        <createTable tableName="cat_offer_allowed_offer_change">
+            <column name="offer_tmpl_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="allowed_offer_change_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="offer_tmpl_id, allowed_offer_change_id" constraintName="cat_offer_allowed_offer_change_pkey" tableName="cat_offer_allowed_offer_change" />
+
+        <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="offer_tmpl_id"
+                                 constraintName="cat_offer_allowed_offer_change_fk1" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="allowed_offer_change_id"
+                                 constraintName="cat_offer_allowed_offer_change_fk2" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+    </changeSet>   
 
 
     <changeSet id="#5599_20201029" author="AndriusKarpavicius">
@@ -4246,6 +4300,26 @@ END $$;]]>
     			defaultValueNumeric="0" />
 		</addColumn>
     </changeSet>
+    
+    <changeSet id="#5960_20210212" author="AndriusKarpavicius">
+        <sql>CREATE INDEX flat_file_orig_name_index on ${db.schema.adapted}flat_file (lower(file_original_name))</sql>
+        <sql>CREATE INDEX job_execution_job_id_index on ${db.schema.adapted}job_execution (job_instance_id)</sql>
+        <sql>CREATE INDEX medina_access_lower_uid_index on ${db.schema.adapted}medina_access (lower(acces_user_id))</sql>
+        <sql>CREATE INDEX ord_order_status_index on ${db.schema.adapted}ord_order (status)</sql>
+        <sql>CREATE INDEX billing_service_instance_st_index on ${db.schema.adapted}billing_service_instance (service_template_id)</sql>
+        <sql>CREATE INDEX billing_wallet_operation_sub_index on ${db.schema.adapted}billing_wallet_operation (subscription_id)</sql>
+    </changeSet>
+    
+    <changeSet id="#5993_20210304" author="HatimOUDAD">
+        <addUniqueConstraint columnNames="country_code" constraintName="UniqueConstraint_adm__country_code" tableName="adm_country" />
+    </changeSet>
+    
+    <changeSet id="#5863_22122020" author="AbdelmounaimAkadid">
+		<addColumn tableName="ar_ddrequest_lot_op">
+            <column name="generate_payment_lines" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="payment_status" type="varchar(25)" />
+        </addColumn>
+	</changeSet>
 
     <changeSet id="#5960_20210212" author="AndriusKarpavicius">
         <sql>CREATE INDEX flat_file_orig_name_index on ${db.schema.adapted}flat_file (lower(file_original_name))</sql>
@@ -4286,6 +4360,79 @@ END $$;]]>
     	</addColumn>
     	<addForeignKeyConstraint constraintName="fk_invoice_configuration_invoice_minimum_article_id" referencedTableName="billing_accounting_article"
                                  baseColumnNames="default_invoice_minimum_article_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="#5999_20210305" author="AndriusKarpavicius">
+        <sql>CREATE INDEX billing_invoice_br_index on ${db.schema.adapted}billing_invoice (billing_run_id)</sql>
+        <sql>CREATE INDEX billing_invoice_agregate_br_index on ${db.schema.adapted}billing_invoice_agregate (billing_run_id)</sql>
+        <sql>CREATE INDEX rt_br_index ON billing_rated_transaction (billing_run_id) where status='BILLED'</sql>
+    </changeSet>
+    
+    <changeSet id="#6040_20210323" author="amineTazi">
+        <addColumn tableName="dwh_report_extract">
+            <column name="file_separator" type="varchar(1)" defaultValue=","/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#6012_20210323" author="MohamedAliHammal">
+        <dropForeignKeyConstraint baseTableName="adm_inbound_resp_cookies" constraintName="fk_1kyctwmlumac9aoikhb3kmc02"/>
+        <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_resp_cookies" constraintName="fk_1kyctwmlumac9aoikhb3kmc02" deferrable="false" initiallyDeferred="false"
+                                 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+        <dropForeignKeyConstraint baseTableName="adm_inbound_req_headers" constraintName="fk_5l2gy0e4dol6gtr05sq929hnx"/>
+        <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_headers" constraintName="fk_5l2gy0e4dol6gtr05sq929hnx" deferrable="false" initiallyDeferred="false"
+                                 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+        <dropForeignKeyConstraint baseTableName="adm_notif_history" constraintName="fk_8k2sxhjmrswxnecfo74bdmnsa"/>
+        <addForeignKeyConstraint baseColumnNames="inbound_request_id" baseTableName="adm_notif_history" constraintName="fk_8k2sxhjmrswxnecfo74bdmnsa" deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+        <dropForeignKeyConstraint baseTableName="adm_inbound_req_cookies" constraintName="fk_cfd55de59w792gxpcd478ujfq"/>
+        <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_cookies" constraintName="fk_cfd55de59w792gxpcd478ujfq" deferrable="false" initiallyDeferred="false"
+                                 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+        <dropForeignKeyConstraint baseTableName="adm_inbound_req_params" constraintName="fk_djmbjb6ja9fapeadjyj395020"/>
+        <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_params" constraintName="fk_djmbjb6ja9fapeadjyj395020" deferrable="false" initiallyDeferred="false"
+                                 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+        <dropForeignKeyConstraint baseTableName="adm_inbound_resp_headers" constraintName="fk_h07be9b84xmmx5ypkbunkxwxt"/>
+        <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_resp_headers" constraintName="fk_h07be9b84xmmx5ypkbunkxwxt" deferrable="false" initiallyDeferred="false"
+                                 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+    </changeSet>
+    <changeSet id="4756_20191104" author="Andrius">
+        <!-- <dropColumn tableName="job_execution" columnName="job_done"/>  -->
+        <addColumn tableName="job_execution">
+            <column name="job_status" type="varchar(14)"/>
+        </addColumn>
+    </changeSet>    
+        
+    <changeSet id="4756_20210311" author="Andrius">
+    	<addColumn tableName="meveo_job_instance">
+    		<column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
+    	</addColumn>
+    	<sql>update ${db.schema.adapted}job_execution set job_launcher='TRIGGER' where job_launcher='TRIGER'</sql>
+    </changeSet>
+    
+    
+    <changeSet id="6055_20210330" author="Andrius" dbms="postgresql">
+    	<sql>CREATE OPERATOR ^|(
+			  PROCEDURE = jsonb_exists_any,
+			  LEFTARG = jsonb,
+			  RIGHTARG = _text,
+			  RESTRICT = contsel,
+			  JOIN = contjoinsel)</sql>
+		
+		<sql>CREATE OPERATOR CLASS jsonb_ops_custom
+			   FOR TYPE jsonb USING gin AS
+			   OPERATOR 10  ^|(jsonb, _text),
+			   FUNCTION 1  gin_compare_jsonb(text, text),
+			   FUNCTION 2  gin_extract_jsonb(jsonb, internal, internal),
+			   FUNCTION 3  gin_extract_jsonb_query(jsonb, internal, smallint, internal, internal, internal, internal),
+			   FUNCTION 4  gin_consistent_jsonb(internal, smallint, jsonb, integer, internal, internal, internal, internal),
+			   FUNCTION 6  gin_triconsistent_jsonb(internal, smallint, jsonb, integer, internal, internal, internal);
+			   </sql>
+    </changeSet>
+    
+    
+    <changeSet id="#5622_20210406" author="AbdelmounaimAkadid">
+	    <sql>
+            ALTER TABLE ${db.schema.adapted}billing_wallet_operation ALTER COLUMN charge_instance_id DROP NOT NULL
+        </sql>
     </changeSet>
 
 </databaseChangeLog>

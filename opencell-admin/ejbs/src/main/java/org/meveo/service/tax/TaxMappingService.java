@@ -357,8 +357,11 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             sellersCountry != null ? sellersCountry.getId() : null, buyersCountry.getCode(), buyersCountry.getId(), DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
 
         throw new IncorrectChargeTemplateException(
-            "No Tax mapping matched for tax category=" + taxCategory.getCode() + "/" + taxCategory.getId() + ", tax class=" + taxClass.getCode() + "/" + taxClass.getId() + ", seller's country=" + sellersCountry.getCode()
-                    + "/" + sellersCountry.getId() + ", buyer's country=" + buyersCountry.getCode() + "/" + buyersCountry.getId() + ", date=" + DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
+            "No Tax mapping matched for tax category="+ (taxCategory != null ? taxCategory.getCode() : null )+ "/" + (taxCategory != null ? taxCategory.getId() : null)
+            		+ ", tax class=" + (taxClass != null ? taxClass.getCode() : null )+ "/" + (taxClass != null ? taxClass.getId() : null) 
+            		+ ", seller's country=" + (sellersCountry != null ? sellersCountry.getCode() : null)+ "/" + (sellersCountry != null ? sellersCountry.getId() : null)
+                    + ", buyer's country=" + buyersCountry.getCode() + "/" + buyersCountry.getId() 
+                    + ", date=" + DateUtils.formatDateWithPattern(applicationDate, DateUtils.DATE_PATTERN));
     }
 
     /**

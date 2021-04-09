@@ -62,7 +62,7 @@ public class DiscountPlanInstanceStatusJob extends Job {
     @Override
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         String activateDiscountPlanInstanceFromDateEl = (String) this.getParamOrCFValue(jobInstance, "activateDiscountPlanInstanceFromDateEl");
         String expireDiscountPlanInstanceToDateEl = (String) this.getParamOrCFValue(jobInstance, "expireDiscountPlanInstanceToDateEl");
         boolean expireDiscountPlanInstance = (boolean) this.getParamOrCFValue(jobInstance, "expireDiscountPlanInstance");
@@ -71,6 +71,7 @@ public class DiscountPlanInstanceStatusJob extends Job {
         } else {
             activateDiscountPlanInstance(result, jobInstance, activateDiscountPlanInstanceFromDateEl);
         }
+        return result;
 
     }
 
@@ -135,7 +136,7 @@ public class DiscountPlanInstanceStatusJob extends Job {
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
-        Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
+        Map<String, CustomFieldTemplate> result = new HashMap<>();
 
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode(CF_NB_RUNS);

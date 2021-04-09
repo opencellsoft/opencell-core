@@ -24,13 +24,14 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.elasticsearch.common.Strings;
+
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.RecurringChargeTemplateResponseDto;
+import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.LevelEnum;
@@ -38,12 +39,11 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.CalendarService;
-import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
-import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.cpq.AttributeService;
-import org.meveo.service.finance.RevenueRecognitionRuleService;
-import org.meveo.service.tax.TaxClassService;
+
+import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * @author Edward P. Legaspi
@@ -64,8 +64,11 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
     public RecurringChargeTemplate create(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        } 
+            addGenericCodeIfAssociated(RecurringChargeTemplate.class.getName(), postData);
+        }
+        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
+            missingParameters.add("invoiceSubCategory");
+        }
         if (StringUtils.isBlank(postData.getCalendar())) {
             missingParameters.add("calendar");
         } 
@@ -208,5 +211,25 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         RecurringChargeTemplateDto result = new RecurringChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 
         return result;
+    }
+
+    public RecurringChargeTemplateResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        RecurringChargeTemplateResponseDto result = new RecurringChargeTemplateResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<RecurringChargeTemplate> recurringChargeTemplates = recurringChargeTemplateService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (recurringChargeTemplates != null) {
+            for (RecurringChargeTemplate chargeTemplate : recurringChargeTemplates) {
+                result.getRecurringChargeTemplates().getRecurringChargeTemplates()
+                        .add(new RecurringChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    protected BiFunction<RecurringChargeTemplate, CustomFieldsDto, RecurringChargeTemplateDto> getEntityToDtoFunction() {
+        return RecurringChargeTemplateDto::new;
     }
 }

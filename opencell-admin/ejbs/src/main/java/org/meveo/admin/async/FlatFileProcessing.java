@@ -26,20 +26,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.FlatFileProcessingJob;
 import org.meveo.admin.job.UnitFlatFileProcessingJobBean;
-import org.meveo.admin.job.logging.JobMultithreadingHistoryInterceptor;
 import org.meveo.admin.util.FlatFileValidator;
 import org.meveo.commons.parsers.IFileParser;
 import org.meveo.commons.parsers.RecordContext;
@@ -49,10 +45,12 @@ import org.meveo.model.bi.FileStatusEnum;
 import org.meveo.model.bi.FlatFile;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.bi.impl.FlatFileService;
+import org.meveo.service.job.JobExecutionResultService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInterface;
@@ -80,6 +78,9 @@ public class FlatFileProcessing {
     /** The job execution service. */
     @Inject
     private JobExecutionService jobExecutionService;
+
+    @Inject
+    private JobExecutionResultService jobExecutionResultService;
 
     @Inject
     @CurrentUser
@@ -113,19 +114,15 @@ public class FlatFileProcessing {
      * @param rejectFileWriter File writer to output failed data
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
-     * @return Future
      * @throws BusinessException General exception
      */
-    @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
-    public Future<String> processFileAsync(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName, String fileName, String filenameVariableName, Long nbLinesToProcess,
+    public void processFileOneLinePerTx(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName, String fileName, String filenameVariableName, Long nbLinesToProcess,
             String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         processFile(fileParser, result, script, recordVariableName, fileName, filenameVariableName, nbLinesToProcess, actionOnError, rejectFileWriter, outputFileWriter);
-        return new AsyncResult<String>("OK");
     }
 
     /**
@@ -143,27 +140,23 @@ public class FlatFileProcessing {
      * @param rejectFileWriter File writer to output failed data
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
-     * @return Future
      * @throws BusinessException General exception
      */
-    @Asynchronous
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    @Interceptors({ JobMultithreadingHistoryInterceptor.class })
-    public Future<String> processFileAsyncInOneTx(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName, String fileName, String filenameVariableName,
-            Long nbLinesToProcess, String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter, MeveoUser lastCurrentUser) throws BusinessException {
+    public void processFileInOneTx(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName, String fileName, String filenameVariableName, Long nbLinesToProcess,
+            String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter, MeveoUser lastCurrentUser) throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         processFile(fileParser, result, script, recordVariableName, fileName, filenameVariableName, nbLinesToProcess, actionOnError, rejectFileWriter, outputFileWriter);
-        return new AsyncResult<String>("OK");
     }
 
     /**
      * Read/parse file and execute script for each line.
      *
      * @param fileParser FlatFile parser
-     * @param result Job execution result
+     * @param jobExecutionResult Job execution result
      * @param script Script to execute
      * @param recordVariableName Record variable name as it will appear in the script context
      * @param fileName File name being processed
@@ -174,7 +167,7 @@ public class FlatFileProcessing {
      * @return Future
      * @throws BusinessException General exception
      */
-    private void processFile(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName, String fileName, String filenameVariableName, long nbLinesToProcess,
+    private void processFile(IFileParser fileParser, JobExecutionResultImpl jobExecutionResult, ScriptInterface script, String recordVariableName, String fileName, String filenameVariableName, long nbLinesToProcess,
             String actionOnError, PrintWriter rejectFileWriter, PrintWriter outputFileWriter) throws BusinessException {
 
         int i = 0;
@@ -186,13 +179,24 @@ public class FlatFileProcessing {
         RecordContext recordContext = null;
         Boolean scannedAllRecords = false;
 
-        mainLoop:
-        while (true) {
+        JobSpeedEnum jobSpeed = jobExecutionResult.getJobInstance().getJobSpeed();
+        mainLoop: while (true) {
 
-            i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR_SLOW == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            if (i % jobSpeed.getCheckNb() == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
                 break;
             }
+
+            try {
+                // Record progress
+                if (i > 0 && i % jobSpeed.getUpdateNb() == 0) {
+                    jobExecutionResultService.persistResult(jobExecutionResult);
+                }
+            } catch (EJBTransactionRolledbackException e) {
+                // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
+            } catch (Exception e) {
+                log.error("Failed to update job progress", e);
+            }
+
             List<RecordContext> recordContexts = new ArrayList<>();
             List<Object> records = new ArrayList<>();
             try {
@@ -202,7 +206,7 @@ public class FlatFileProcessing {
                     if (recordContext == null && nbLinesToProcess > 1) {
                         scannedAllRecords = true;
                         break;
-                    } else if(recordContext == null && nbLinesToProcess == 1) {
+                    } else if (recordContext == null && nbLinesToProcess == 1) {
                         break mainLoop;
                     }
 
@@ -215,7 +219,7 @@ public class FlatFileProcessing {
                     records.add(recordContext.getRecord());
                 }
 
-                if(records.isEmpty()) {
+                if (records.isEmpty()) {
                     break mainLoop;
                 }
 
@@ -232,37 +236,36 @@ public class FlatFileProcessing {
                 }
 
                 synchronized (outputFileWriter) {
-                    if(nbLinesToProcess == 1) {
+                    if (nbLinesToProcess == 1) {
                         outputFileWriter.println(recordContext.getLineContent());
-                        jobExecutionService.registerSucces(result);
+                        jobExecutionResult.registerSucces();
                     } else {
-                        for(RecordContext rContext : recordContexts) {
+                        for (RecordContext rContext : recordContexts) {
                             outputFileWriter.println(rContext.getLineContent());
-                            jobExecutionService.registerSucces(result);
-                        }                   
+                            jobExecutionResult.registerSucces();
+                        }
                     }
                 }
-                if(scannedAllRecords) {
+                if (scannedAllRecords) {
                     break mainLoop;
                 }
             } catch (Exception e) {
-                if(nbLinesToProcess == 1) {
+                if (nbLinesToProcess == 1) {
                     String errorReason = ((recordContext == null || recordContext.getRejectReason() == null) ? e.getMessage() : recordContext.getRejectReason().getMessage());
-                    log.error("Failed to process a record line content:{} from file {} error {}", recordContext != null ? recordContext.getLineContent() : null, fileName, errorReason,
-                            e);
-    
+                    log.error("Failed to process a record line content:{} from file {} error {}", recordContext != null ? recordContext.getLineContent() : null, fileName, errorReason, e);
+
                     synchronized (rejectFileWriter) {
                         rejectFileWriter.println(recordContext.getLineContent() + "=>" + errorReason);
                     }
-                    jobExecutionService.registerError(result, "file=" + fileName + ", line=" + recordContext.getLineNumber() + ": " + errorReason);
-                } else if(nbLinesToProcess > 1) {
+                    jobExecutionResult.registerError("file=" + fileName + ", line=" + recordContext.getLineNumber() + ": " + errorReason);
+                } else if (nbLinesToProcess > 1) {
                     synchronized (rejectFileWriter) {
-                        for(RecordContext rContext : recordContexts) {
+                        for (RecordContext rContext : recordContexts) {
                             rejectFileWriter.println(rContext.getLineContent());
-                            jobExecutionService.registerError(result);
+                            jobExecutionResult.registerError();
                         }
                     }
-                    result.getErrors().add("--> " + e.getMessage());
+                    jobExecutionResult.getErrors().add("--> " + e.getMessage());
                 }
 
                 if (FlatFileProcessingJob.STOP.equals(actionOnError)) {
@@ -273,10 +276,11 @@ public class FlatFileProcessing {
                     log.warn("Processing of file {} will stop and any changes will be reverted as error was encountered", fileName);
                     throw new BusinessException(e.getMessage());
                 }
-                if(scannedAllRecords) {
+                if (scannedAllRecords) {
                     break mainLoop;
                 }
             }
+            i++;
         }
 
     }
@@ -320,14 +324,14 @@ public class FlatFileProcessing {
                 flatFile = flatFileService.find(rejectDir, rejectedfileName);
             }
             if (flatFile == null) {
-                flatFileService.create(fileOriginalName, fileCurrentName, currentDirectory, null, errorMessage, status, jobCode, 1, new Long(processSuccess).intValue(), new Long(processedError).intValue());
+                flatFileService.create(fileOriginalName, fileCurrentName, currentDirectory, null, errorMessage, status, jobCode, 1, Long.valueOf(processSuccess).intValue(), Long.valueOf(processedError).intValue());
             } else {
                 flatFile.setFileCurrentName(fileCurrentName);
                 flatFile.setCurrentDirectory(currentDirectory);
                 flatFile.setFlatFileJobCode(jobCode);
                 flatFile.setProcessingAttempts(flatFile.getProcessingAttempts() != null ? flatFile.getProcessingAttempts() + 1 : 1);
-                flatFile.setLinesInSuccess(new Long(processSuccess).intValue());
-                flatFile.setLinesInError(new Long(processedError).intValue());
+                flatFile.setLinesInSuccess(Long.valueOf(processSuccess).intValue());
+                flatFile.setLinesInError(Long.valueOf(processedError).intValue());
                 flatFile.setStatus(status);
                 flatFile.setErrorMessage(errorMessage);
                 flatFileService.update(flatFile);

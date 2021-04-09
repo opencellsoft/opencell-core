@@ -61,20 +61,20 @@ import org.meveo.service.medina.impl.InvalidFormatException;
  */
 @Named
 public class MEVEOCdrParser implements ICdrParser {
-    
+
     @Inject
     CDRParsingService cdrParsingService;
-    
+
     @Inject
     private EdrService edrService;
 
     @Inject
     private AccessService accessService;
-    
+
     @Inject
     @RejectedCDR
     private Event<Serializable> rejectededCdrEventProducer;
-    
+
     @Inject
     private SubscriptionService subscriptionService;
 
@@ -86,7 +86,7 @@ public class MEVEOCdrParser implements ICdrParser {
         }
 
         CDR cdr = new CDR();
-        if(line instanceof String) {
+        if (line instanceof String) {
             String sLine = (String) line;
             cdr.setLine(sLine);
             try {
@@ -99,8 +99,8 @@ public class MEVEOCdrParser implements ICdrParser {
 
                 } else {
 
-                    DateTimeFormatter formatter1 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                    DateTimeFormatter formatter2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    DateTimeFormatter formatter1 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                    DateTimeFormatter formatter2 = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZ");
 
                     try {
                         DateTime dt = formatter1.parseDateTime(fields[0]);
@@ -252,10 +252,10 @@ public class MEVEOCdrParser implements ICdrParser {
                 cdr.setRejectReason(e.getMessage());
             }
         }
-        
+
         return cdr;
     }
-    
+
     @Override
     public CDR parseByApi(String line, String userName, String ipAddress) {
         CDR cdr = parse(line);
@@ -263,7 +263,7 @@ public class MEVEOCdrParser implements ICdrParser {
         cdr.setOriginRecord(userName + "_" + new Date().getTime());
         return cdr;
     }
-        
+
     @Override
     public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
         List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
@@ -276,7 +276,7 @@ public class MEVEOCdrParser implements ICdrParser {
 
     @Override
     public List<EDR> convertCdrToEdr(CDR cdr, List<Access> accessPoints) throws CDRParsingException {
-        try {            
+        try {
             if (cdr.getRejectReason() != null) {
                 throw (CDRParsingException) cdr.getRejectReasonException();
             }
@@ -284,13 +284,13 @@ public class MEVEOCdrParser implements ICdrParser {
             deduplicate(cdr);
             List<EDR> edrs = new ArrayList<EDR>();
             boolean foundMatchingAccess = false;
-            
+
             Subscription subscription;
             for (Access accessPoint : accessPoints) {
                 if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime())
                         && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
-                    foundMatchingAccess = true; 
-                    subscription =  accessPoint.getSubscription() != null ? subscriptionService.findById(accessPoint.getSubscription().getId()) : null;
+                    foundMatchingAccess = true;
+                    subscription = accessPoint.getSubscription();
                     EDR edr = cdrToEdr(cdr, accessPoint, subscription);
                     edrs.add(edr);
                 }
@@ -306,12 +306,12 @@ public class MEVEOCdrParser implements ICdrParser {
             throw e;
         }
     }
-    
+
     /**
      * Convert CDR to EDR
      * 
-     * @param cdr          CDR to convert
-     * @param accessPoint  Access point to bind to
+     * @param cdr CDR to convert
+     * @param accessPoint Access point to bind to
      * @param subscription Subscription to bind to
      * @return EDR
      */
@@ -346,10 +346,7 @@ public class MEVEOCdrParser implements ICdrParser {
         if (accessPoint != null) {
             edr.setAccessCode(accessPoint.getAccessUserId());
         }
-        
-        if(subscription != null && !subscription.getStatus().equals(SubscriptionStatusEnum.ACTIVE)) {
-            throw new BusinessException("The subscription " + subscription.getCode() + " is not active");
-        }
+
         edr.setSubscription(subscription);
 
         return edr;
@@ -374,7 +371,7 @@ public class MEVEOCdrParser implements ICdrParser {
 
     @Override
     public boolean isApplicable(String type) {
-        //TODO Add implementation of this method
+        // TODO Add implementation of this method
         return false;
-    }      
+    }
 }

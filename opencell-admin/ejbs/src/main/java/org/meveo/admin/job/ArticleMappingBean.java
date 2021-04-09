@@ -1,10 +1,8 @@
 package org.meveo.admin.job;
 
 import org.apache.commons.collections.map.HashedMap;
-import org.meveo.admin.async.FiltringJobAsync;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.dto.LanguageIsoDto;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingRun;
@@ -39,9 +37,6 @@ public class ArticleMappingBean extends BaseJobBean {
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
-
-    @Inject
-    private FiltringJobAsync filtringJobAsync;
 
     @Inject
     private BeanManager manager;

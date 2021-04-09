@@ -18,23 +18,14 @@
 
 package org.meveo.api.catalog;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.dto.response.OneShotChargeTemplateResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.Amounts;
@@ -47,6 +38,15 @@ import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.RealtimeChargingService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.function.BiFunction;
 
 @Stateless
 public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTemplate, OneShotChargeTemplateDto> {
@@ -70,8 +70,11 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
     public OneShotChargeTemplate create(OneShotChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        } 
+            addGenericCodeIfAssociated(OneShotChargeTemplate.class.getName(), postData);
+        }
+        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
+            missingParameters.add("invoiceSubCategory");
+        }
         if (StringUtils.isBlank(postData.getOneShotChargeTemplateType())) {
             missingParameters.add("oneShotChargeTemplateType");
         } 
@@ -196,5 +199,25 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
         }
 
         return oneShotChargeTemplatesWPrice;
+    }
+
+    public OneShotChargeTemplateResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        OneShotChargeTemplateResponseDto result = new OneShotChargeTemplateResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<OneShotChargeTemplate> oneShotChargeTemplates = oneShotChargeTemplateService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (oneShotChargeTemplates != null) {
+            for (OneShotChargeTemplate chargeTemplate : oneShotChargeTemplates) {
+                result.getOneShotChargeTemplates().getOneShotChargeTemplates()
+                        .add(new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    protected BiFunction<OneShotChargeTemplate, CustomFieldsDto, OneShotChargeTemplateDto> getEntityToDtoFunction() {
+        return OneShotChargeTemplateDto::new;
     }
 }

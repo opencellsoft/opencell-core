@@ -18,6 +18,17 @@
 
 package org.meveo.admin.job.importexport;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.admin.async.ImportSubscriptionsAsync;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -28,15 +39,6 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.job.Job;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * @author Abdellatif BARI
@@ -49,47 +51,42 @@ public class ImportSubscriptionsJob extends Job {
     private ImportSubscriptionsAsync importSubscriptionsAsync;
 
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 
         Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, CF_NB_RUNS, -1L);
         if (nbRuns == -1) {
             nbRuns = (long) Runtime.getRuntime().availableProcessors();
         }
-        jobExecutionService.counterRunningThreads(result, nbRuns);
         Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
-        try {
-            List<Future<String>> futures = new ArrayList<Future<String>>();
-            MeveoUser lastCurrentUser = currentUser.unProxy();
-            for (int i = 0; i < nbRuns.intValue(); i++) {
-                futures.add(importSubscriptionsAsync.launchAndForget(result, lastCurrentUser));
-                if (i > 0) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-            }
-            // Wait for all async methods to finish
-            for (Future<String> future : futures) {
+        List<Future<String>> futures = new ArrayList<Future<String>>();
+        MeveoUser lastCurrentUser = currentUser.unProxy();
+        for (int i = 0; i < nbRuns.intValue(); i++) {
+            futures.add(importSubscriptionsAsync.launchAndForget(result, lastCurrentUser));
+            if (i > 0) {
                 try {
-                    future.get();
-
+                    Thread.sleep(waitingMillis.longValue());
                 } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
-
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    jobExecutionService.registerError(result, cause.getMessage());
-                    log.error("Failed to execute async method", cause);
+                    log.error("", e);
                 }
             }
-
-        } catch (Exception e) {
-            log.error("Failed to import subscriptions", e);
-            jobExecutionService.registerError(result, e.getMessage());
         }
+        // Wait for all async methods to finish
+        for (Future<String> future : futures) {
+            try {
+                future.get();
+
+            } catch (InterruptedException | CancellationException e) {
+                // It was cancelled from outside - no interest
+
+            } catch (ExecutionException e) {
+                Throwable cause = e.getCause();
+                result.registerError(cause.getMessage());
+                log.error("Failed to execute async method", cause);
+            }
+        }
+
+        return result;
     }
 
     @Override

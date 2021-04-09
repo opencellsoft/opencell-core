@@ -18,15 +18,6 @@
 
 package org.meveo.api.account;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.GDPRInfoDto;
@@ -36,31 +27,21 @@ import org.meveo.api.dto.account.CustomerAccountsDto;
 import org.meveo.api.dto.account.TransferCustomerAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.exception.BusinessApiException;
-import org.meveo.api.exception.DeleteReferencedEntityException;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
+import org.meveo.api.exception.*;
 import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.billing.*;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.CreditCategory;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.*;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingLanguageService;
@@ -69,6 +50,14 @@ import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * CRUD API for {@link CustomerAccount}.
@@ -125,6 +114,9 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     public CustomerAccount create(CustomerAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(CustomerAccount.class.getName(), postData);
+        }
         if (StringUtils.isBlank(postData.getCustomer())) {
             missingParameters.add("customer");
         }
@@ -451,10 +443,24 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         CustomerAccountsDto result = new CustomerAccountsDto();
-        List<CustomerAccount> customerAccounts = customerAccountService.listByCustomer(customer);
+        List<CustomerAccount> customerAccounts = customerAccountService.listByCustomer(customer, GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         if (customerAccounts != null) {
             for (CustomerAccount ca : customerAccounts) {
                 result.getCustomerAccount().add(accountHierarchyApi.customerAccountToDto(ca));
+            }
+        }
+
+        return result;
+    }
+
+    public CustomerAccountsResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        CustomerAccountsResponseDto result = new CustomerAccountsResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<CustomerAccount> customerAccounts = customerAccountService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (customerAccounts != null) {
+            for (CustomerAccount customerAccount : customerAccounts) {
+                result.getCustomerAccounts().getCustomerAccount().add(new CustomerAccountDto(customerAccount));
             }
         }
 
@@ -543,13 +549,11 @@ public class CustomerAccountApi extends AccountEntityApi {
     }
 
     public CustomerAccount createOrUpdate(CustomerAccountDto postData) throws MeveoApiException, BusinessException {
-        CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode());
-        if (customerAccount == null) {
-            customerAccount = create(postData);
+        if (!StringUtils.isBlank(postData.getCode()) && customerAccountService.findByCode(postData.getCode()) != null) {
+            return update(postData);
         } else {
-            customerAccount = update(postData);
+            return create(postData);
         }
-        return customerAccount;
     }
 
     public CustomerAccount closeAccount(CustomerAccountDto postData) throws EntityDoesNotExistsException, BusinessException {

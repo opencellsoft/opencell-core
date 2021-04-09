@@ -199,13 +199,13 @@
                 <hftl:column label="#{messages['invoice.amountWithoutTax']}"
                              field="amountWithoutTax" converterParam="4digits"/>
                 <hftl:column label="#{messages['invoice.amountTax']}"
-                             field="amountTax" converterParam="4digits"/>
+                             field="amountTax" converterParam="4digits" width="7%"/>
                 <hftl:column label="#{messages['invoice.amountWithTax']}"
                              field="amountWithTax" converterParam="4digits"/>
                 <hftl:column label="#{messages['invoice.invoiceDate']}"
-                             field="invoiceDate"/>
+                             field="invoiceDate" isDate="true" width="7%"/>
                 <hftl:column label="#{messages['invoice.status']}"
-                             field="status"/>
+                             field="status" width="5%"/>
                 <hftl:column label="#{messages['invoice.rejectReason']}"
                              field="rejectReason"/>
                 <p:column width="55">

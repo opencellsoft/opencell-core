@@ -18,23 +18,24 @@
 
 package org.meveo.api.rest.catalog.impl;
 
-import java.util.Date;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.ws.rs.POST;
-
 import org.meveo.api.catalog.OneShotChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
+import org.meveo.api.dto.response.OneShotChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.OneShotChargeTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.ws.rs.POST;
+import java.util.Date;
 
 /**
  * @author Edward P. Legaspi
@@ -79,6 +80,20 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
 
         try {
             result.setOneShotChargeTemplateDtos(oneShotChargeTemplateApi.listWithPrice(languageCode, countryCode, currencyCode, sellerCode, date));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public OneShotChargeTemplateResponseDto list() {
+
+        OneShotChargeTemplateResponseDto result = new OneShotChargeTemplateResponseDto();
+
+        try {
+            result = oneShotChargeTemplateApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

@@ -35,6 +35,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.meveo.service.base.PersistenceService.FROM_JSON_FUNCTION;
+
 /**
  * Query builder class for building JPA queries.
  * 
@@ -76,7 +78,7 @@ public class QueryBuilder {
     private Class<?> clazz;
 
     static final String FROM = "from ";
-    
+
     public static final String  JOIN_AS = " as ";
     
     private static Set<String> joinAlias = new TreeSet<String>();
@@ -1132,6 +1134,9 @@ public class QueryBuilder {
     }
 
     private String createExplicitInnerJoins(String concatenatedFields) {
+        if(concatenatedFields.contains(FROM_JSON_FUNCTION)){
+            return concatenatedFields;
+        }
         String alias = this.alias + ".";
         if(concatenatedFields.startsWith(alias)){
             concatenatedFields = concatenatedFields.substring(alias.length());

@@ -18,22 +18,14 @@
 
 package org.meveo.api.rest;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
 import org.meveo.api.dto.response.InvoiceSubCategoryResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.InvoiceSubCategory}.
@@ -45,6 +37,15 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
 public interface InvoiceSubCategoryRs extends IBaseRs {
+
+    /**
+     * Search for list of invoiceSubCategories.
+     *
+     * @return list of invoiceSubCategories
+     */
+    @GET
+    @Path("/list")
+    InvoiceSubCategoryResponseDto list();
 
     /**
      * Create invoice sub category.
@@ -104,6 +105,6 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
      */
     @POST
     @Path("/list")
-    public InvoiceSubCategoryResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+    InvoiceSubCategoryResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

@@ -146,7 +146,7 @@ public class PDFParametersConstruction {
 
     public String getCustomerAddress(Invoice invoice) {
 
-        String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+    	String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
         CustomerAccount customerAccount = invoice.getBillingAccount().getCustomerAccount();
         String name = "";
         if (customerAccount.getName() != null) {
@@ -185,7 +185,6 @@ public class PDFParametersConstruction {
 
         if (invoice != null && invoice.getBillingAccount() != null) {
             BillingAccount billingAccount = invoice.getBillingAccount();
-
             String languageCode = billingAccount.getTradingLanguage() != null ? billingAccount.getTradingLanguage().getLanguageCode() : null;
             if (languageCode == null) {
                 return Locale.getDefault();

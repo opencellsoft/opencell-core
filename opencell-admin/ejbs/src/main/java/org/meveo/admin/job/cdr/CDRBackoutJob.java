@@ -44,8 +44,9 @@ public class CDRBackoutJob extends Job {
 
     @Override
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    public void execute(JobExecutionResultImpl result,JobInstance jobInstance) throws BusinessException {
+    public JobExecutionResultImpl execute(JobExecutionResultImpl result,JobInstance jobInstance) throws BusinessException {
         cdrBackoutJobBean.execute(result, jobInstance);
+        return result;
     }
 
     @Override

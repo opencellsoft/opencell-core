@@ -18,20 +18,13 @@
 
 package org.meveo.api.rest;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.BillingCycleDto;
+import org.meveo.api.dto.response.BillingCyclesResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * @author Edward P. Legaspi
@@ -43,6 +36,15 @@ import org.meveo.api.dto.response.GetBillingCycleResponse;
 public interface BillingCycleRs extends IBaseRs {
 
     /**
+     * Search for list of billingCycles.
+     *
+     * @return list of billingCycles
+     */
+    @GET
+    @Path("/list")
+    BillingCyclesResponseDto list();
+
+    /**
      * Create a new billing cycle.
      * 
      * @param postData billing cycle dto
@@ -50,7 +52,7 @@ public interface BillingCycleRs extends IBaseRs {
      */
     @POST
     @Path("/")
-    public ActionStatus create(BillingCycleDto postData);
+    ActionStatus create(BillingCycleDto postData);
 
     /**
      * Update an existing billing cycle.
@@ -60,7 +62,7 @@ public interface BillingCycleRs extends IBaseRs {
      */
     @PUT
     @Path("/")
-    public ActionStatus update(BillingCycleDto postData);
+    ActionStatus update(BillingCycleDto postData);
 
     /**
      * Search for billing cycle with a given code.
@@ -70,7 +72,7 @@ public interface BillingCycleRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    public GetBillingCycleResponse find(@QueryParam("billingCycleCode") String billingCycleCode);
+    GetBillingCycleResponse find(@QueryParam("billingCycleCode") String billingCycleCode);
 
     /**
      * Remove an existing billing cycle with a given code.
@@ -80,7 +82,7 @@ public interface BillingCycleRs extends IBaseRs {
      */
     @DELETE
     @Path("/{billingCycleCode}")
-    public ActionStatus remove(@PathParam("billingCycleCode") String billingCycleCode);
+    ActionStatus remove(@PathParam("billingCycleCode") String billingCycleCode);
 
     /**
      * Create new or update an existing billing cycle with a given code
@@ -90,6 +92,6 @@ public interface BillingCycleRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(BillingCycleDto postData);
+    ActionStatus createOrUpdate(BillingCycleDto postData);
 
 }

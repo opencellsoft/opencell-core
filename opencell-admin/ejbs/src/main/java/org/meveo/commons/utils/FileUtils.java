@@ -130,9 +130,9 @@ public final class FileUtils {
      * Move file. In case a file with the same name exists, create a name with a timestamp
      *
      * @param dest the destination
-     * @param file the file
-     * @param name the file name
-     * @return the file name
+     * @param file the file to move
+     * @param name the new file name to give
+     * @return the new file name
      */
     public static String moveFileDontOverwrite(String dest, File file, String name) {
         String destName = name;
@@ -750,12 +750,12 @@ public final class FileUtils {
      * Count lines of file '\n'
      * 
      * @param file
-     * @return
-     * @throws IOException
+     * @return A number of lines in a file
+     * @throws IOException Unable to access a file
      */
     public static int countLines(File file) throws IOException {
-        InputStream is = new BufferedInputStream(new FileInputStream(file));
-        try {
+
+        try (InputStream is = new BufferedInputStream(new FileInputStream(file));) {
             byte[] c = new byte[1024];
 
             int readChars = is.read(c);
@@ -786,8 +786,10 @@ public final class FileUtils {
             }
 
             return count == 0 ? 1 : count;
-        } finally {
-            is.close();
+
+        } catch (IOException e) {
+            logger.error("Failed to count number of lines in a file {}", file.getName(), e);
+            throw e;
         }
     }
 }

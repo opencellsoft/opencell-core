@@ -141,7 +141,7 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/list47")
-    public CustomersResponseDto list47(@Deprecated CustomerDto postData, @QueryParam("firstRow") @Deprecated Integer firstRow,
+    CustomersResponseDto list47(@Deprecated CustomerDto postData, @QueryParam("firstRow") @Deprecated Integer firstRow,
             @QueryParam("numberOfRows") @Deprecated Integer numberOfRows, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("c.code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -161,9 +161,18 @@ public interface CustomerRs extends IBaseRs {
     @Path("/list")
     @Operation(summary = "List customers matching a given criteria", deprecated = true,
     tags = { "Deprecated" })
-    public CustomersResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
+    CustomersResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+
+    /**
+     * List customers matching a given criteria
+     *
+     * @return List of customers
+     */
+    @GET
+    @Path("/listGetAll")
+    CustomersResponseDto list();
 
     /**
      * List customers matching a given criteria
@@ -175,7 +184,7 @@ public interface CustomerRs extends IBaseRs {
     @Path("/list")
     @Operation(summary = "List customers matching a given criteria", deprecated = true,
     tags = { "Deprecated" })
-    public CustomersResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+    CustomersResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
      * List customers matching a given criteria
@@ -187,7 +196,7 @@ public interface CustomerRs extends IBaseRs {
     @Path("/filtering")
     @Operation(summary = "List customers matching a given criteria",
             tags = { "Customer management" })
-    public CustomersResponseDto listPostV2(PagingAndFiltering pagingAndFiltering);
+    CustomersResponseDto listPostV2(PagingAndFiltering pagingAndFiltering);
 
     /**
      * Create a new customer brand

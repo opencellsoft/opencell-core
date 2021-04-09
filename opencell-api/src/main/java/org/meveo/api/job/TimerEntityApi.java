@@ -66,6 +66,9 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
             if (StringUtils.isBlank(timerEntityDto.getDayOfWeek())) {
                 missingParameters.add("dayOfWeek");
             }
+            if (StringUtils.isBlank(timerEntityDto.getCode())) {
+                addGenericCodeIfAssociated(TimerEntity.class.getName(), timerEntityDto);
+            }
 
             handleMissingParameters();
 

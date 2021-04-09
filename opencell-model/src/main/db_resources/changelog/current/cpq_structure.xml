@@ -4218,4 +4218,160 @@ public class OrderAdvancement extends ModuleScript {
             	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
     </changeSet>
 
+	<changeSet id="rebuild-str-tbl_5946_20210110" author="ZBariki">
+		<addColumn tableName="cat_discount_plan">
+			<column name="status" type="varchar(50)"/>
+			<column name="status_date" type="datetime"/>
+			<column name="initial_quantity" type="bigint" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="used_quantity" type="bigint" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="application_limit" type="bigint" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="application_filter_el" type="varchar(2000)"/>
+			<column name="discount_plan_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cat_discount_plan"
+								 constraintName="fk_discount_plan_id"
+								 referencedColumnNames="id" referencedTableName="cat_discount_plan"/>
+		<addColumn tableName="cat_discount_plan_item">
+			<column name="allow_to_negate" type="${type.boolean}"/>
+		</addColumn>
+		<addColumn tableName="billing_discount_plan_instance">
+			<column name="status" type="varchar(50)"/>
+			<column name="status_date" type="datetime"/>
+			<column name="application_count" type="bigint" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+		<sql>UPDATE ${db.schema.adapted}cat_discount_plan set status='DRAFT', status_date= now() WHERE status IS NULL</sql>
+		<createTable tableName="cat_discount_applicable_entity">
+			<column name="disount_plan_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="code" type="varchar(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="entity_class" type="varchar(255)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		<addPrimaryKey columnNames="disount_plan_id, code, entity_class" constraintName="cat_discount_applicable_entity_pkey" tableName="cat_discount_applicable_entity"/>
+	</changeSet>
+
+	<changeSet id="rebuild-str-tbl_5884_20210119" author="ZBariki">
+		<addColumn tableName="billing_invoice">
+			<column name="status_date" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="xml_date" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="pdf_date" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="email_sent_date" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="payment_status" type="varchar(255)"/>
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="payment_status_date" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="start_date" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="end_date" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="raw_amount" type="numeric(23, 12)">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="discount_amount" type="numeric(23, 12)">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="discount_rate" type="numeric(3, 3)">
+			</column>
+		</addColumn>
+
+		<addColumn tableName="billing_invoice">
+			<column name="is_already_applied_minimum" type="${type.boolean}"/>
+		</addColumn>
+		<addColumn tableName="billing_invoice">
+			<column name="is_already_added_discount" type="${type.boolean}"/>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="rebuild-str-col_5991_20210224" author="HatimOUDAD">
+		<addColumn tableName="billing_invoice_configuration">
+			<column name="default_invoice_subcategory_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint constraintName="fk_invoice_configuration_invoice_subcategory_id" referencedTableName="billing_invoice_sub_cat"
+								 baseColumnNames="default_invoice_subcategory_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
+
+		<addColumn tableName="billing_invoice_configuration">
+			<column name="default_generic_article_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint constraintName="fk_invoice_configuration_generic_article_id" referencedTableName="billing_accounting_article"
+								 baseColumnNames="default_generic_article_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
+
+		<addColumn tableName="billing_invoice_configuration">
+			<column name="default_discount_article_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint constraintName="fk_invoice_configuration_discount_article_id" referencedTableName="billing_accounting_article"
+								 baseColumnNames="default_discount_article_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
+
+		<addColumn tableName="billing_invoice_configuration">
+			<column name="default_advanced_payment_article_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint constraintName="fk_invoice_configuration_advanced_payment_article_id" referencedTableName="billing_accounting_article"
+								 baseColumnNames="default_advanced_payment_article_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
+
+		<addColumn tableName="billing_invoice_configuration">
+			<column name="default_invoice_minimum_article_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint constraintName="fk_invoice_configuration_invoice_minimum_article_id" referencedTableName="billing_accounting_article"
+								 baseColumnNames="default_invoice_minimum_article_id" baseTableName="billing_invoice_configuration" referencedColumnNames="id"/>
+	</changeSet>
+
+
+
+	<changeSet id="rebuild-str-fk_6012_20210323" author="MohamedAliHammal">
+		<dropForeignKeyConstraint baseTableName="adm_inbound_resp_cookies" constraintName="fk_1kyctwmlumac9aoikhb3kmc02"/>
+		<addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_resp_cookies" constraintName="fk_1kyctwmlumac9aoikhb3kmc02" deferrable="false" initiallyDeferred="false"
+								 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+		<dropForeignKeyConstraint baseTableName="adm_inbound_req_headers" constraintName="fk_5l2gy0e4dol6gtr05sq929hnx"/>
+		<addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_headers" constraintName="fk_5l2gy0e4dol6gtr05sq929hnx" deferrable="false" initiallyDeferred="false"
+								 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+		<dropForeignKeyConstraint baseTableName="adm_notif_history" constraintName="fk_8k2sxhjmrswxnecfo74bdmnsa"/>
+		<addForeignKeyConstraint baseColumnNames="inbound_request_id" baseTableName="adm_notif_history" constraintName="fk_8k2sxhjmrswxnecfo74bdmnsa" deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+								 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+		<dropForeignKeyConstraint baseTableName="adm_inbound_req_cookies" constraintName="fk_cfd55de59w792gxpcd478ujfq"/>
+		<addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_cookies" constraintName="fk_cfd55de59w792gxpcd478ujfq" deferrable="false" initiallyDeferred="false"
+								 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+		<dropForeignKeyConstraint baseTableName="adm_inbound_req_params" constraintName="fk_djmbjb6ja9fapeadjyj395020"/>
+		<addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_params" constraintName="fk_djmbjb6ja9fapeadjyj395020" deferrable="false" initiallyDeferred="false"
+								 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+		<dropForeignKeyConstraint baseTableName="adm_inbound_resp_headers" constraintName="fk_h07be9b84xmmx5ypkbunkxwxt"/>
+		<addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_resp_headers" constraintName="fk_h07be9b84xmmx5ypkbunkxwxt" deferrable="false" initiallyDeferred="false"
+								 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+	</changeSet>
+	<changeSet id="rebuild_5621_20201104_offer_template" author="NabilOUACHI">
+		<addColumn tableName="cat_offer_template">
+			<column name="offer_template_id" type="bigint"/>
+		</addColumn>
+
+		<addForeignKeyConstraint baseTableName="cat_offer_template" baseColumnNames="offer_template_id"
+								 constraintName="offer_template_offer_template_fk" referencedTableName="cat_offer_template"
+								 referencedColumnNames="id"/>
+	</changeSet>
+
 </databaseChangeLog>

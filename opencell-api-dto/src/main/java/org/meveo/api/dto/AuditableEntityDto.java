@@ -18,20 +18,15 @@
 
 package org.meveo.api.dto;
 
-import java.util.List;
-
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.api.dto.audit.AuditableFieldDto;
 import org.meveo.model.AuditableEntity;
 
-import io.swagger.v3.oas.annotations.Hidden;
-import io.swagger.v3.oas.annotations.media.Schema;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.*;
+import java.util.List;
 
 /**
  * Equivalent of AuditableEntity in DTO
@@ -50,6 +45,7 @@ public abstract @Hidden class AuditableEntityDto extends BaseEntityDto {
     private static final long serialVersionUID = 1040133977061424749L;
 
     @Schema(hidden = true)
+    @JsonIgnore
     private AuditableDto auditable;
 
     @XmlElementWrapper(name = "auditableFields")

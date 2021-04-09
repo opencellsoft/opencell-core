@@ -18,21 +18,21 @@
 
 package org.meveo.api.billing;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.RatedTransactionListResponseDto;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.primefaces.model.SortOrder;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * RatedTransactionApi : An API for Rated transaction services.
@@ -62,6 +62,35 @@ public class RatedTransactionApi extends BaseApi {
         }
 
         PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, RatedTransaction.class);
+        Long totalCount = ratedTransactionService.count(paginationConfig);
+
+        RatedTransactionListResponseDto result = new RatedTransactionListResponseDto();
+        result.setPaging(pagingAndFiltering);
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        boolean returnUserAccountCode = pagingAndFiltering.hasFieldOption("userAccountCode");
+        boolean returnSellerCode = pagingAndFiltering.hasFieldOption("sellerCode");
+        boolean returnInvoiceSubCategoryCode = pagingAndFiltering.hasFieldOption("invoiceSubCategoryCode");
+
+        if (totalCount > 0) {
+            List<RatedTransaction> ratedTransactions = ratedTransactionService.list(paginationConfig);
+            for (RatedTransaction rt : ratedTransactions) {
+                result.getRatedTransactions().add(new RatedTransactionDto(rt, returnUserAccountCode, returnSellerCode, returnInvoiceSubCategoryCode));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * List Rated transactions given the filtering criteria
+     *
+     * @param pagingAndFiltering Search and paging criteria. Pass "userAccountCode" as field option to retrieve associated User account's code.
+     * @return A list of Rated transactions
+     * @throws InvalidParameterException
+     */
+    public RatedTransactionListResponseDto listGetAll(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
+
+        PaginationConfiguration paginationConfig = GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration();
         Long totalCount = ratedTransactionService.count(paginationConfig);
 
         RatedTransactionListResponseDto result = new RatedTransactionListResponseDto();

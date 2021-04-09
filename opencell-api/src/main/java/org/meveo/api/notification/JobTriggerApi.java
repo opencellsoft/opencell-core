@@ -70,6 +70,9 @@ public class JobTriggerApi extends BaseCrudApi<JobTrigger, JobTriggerDto> {
         if (postData.getEventTypeFilter() == null) {
             missingParameters.add("eventTypeFilter");
         }
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(JobTrigger.class.getName(), postData);
+        }
         handleMissingParameters();
 
         if (jobTriggerService.findByCode(postData.getCode()) != null) {

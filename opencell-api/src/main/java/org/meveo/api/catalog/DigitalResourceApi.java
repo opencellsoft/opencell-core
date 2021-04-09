@@ -57,7 +57,7 @@ public class DigitalResourceApi extends BaseCrudApi<DigitalResource, DigitalReso
     public DigitalResource create(DigitalResourceDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(DigitalResource.class.getName(), postData);
         }
 
         handleMissingParametersAndValidate(postData);
