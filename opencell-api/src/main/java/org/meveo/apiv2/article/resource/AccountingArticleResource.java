@@ -22,7 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
-@Path("/article")
+@Path("/articles")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public interface AccountingArticleResource {
@@ -73,7 +73,7 @@ public interface AccountingArticleResource {
     Response delete(@Parameter(description = "accounting article code", required = true) @PathParam("accountingArticleCode") String accountingArticleCode, @Context Request request);
     
     @POST
-    @Path("/list")
+    @Path("/filtering")
     @Operation(summary = "This endpoint allows to find list of accounting article resource",
     tags = { "AccountingArticle" },
     description ="find list of an existing accounting article",
@@ -89,7 +89,7 @@ public interface AccountingArticleResource {
             @Context Request request);
     
     @GET
-    @Path("/product/{productCode}")
+    @Path("/products/{productCode}")
     @Operation(summary = "This endpoint allows to find accounting article resource with product and list of attributes",
     tags = { "AccountingArticle" },
     description ="find  an existing accounting article",
