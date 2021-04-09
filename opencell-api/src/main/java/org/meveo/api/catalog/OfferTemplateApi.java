@@ -92,6 +92,7 @@ import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.scripts.ScriptInstance;
@@ -105,6 +106,7 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.AttributeService;
+import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -393,6 +395,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         processOfferProductDtos(postData, offerTemplate);
         processAttributes(postData, offerTemplate);
         processMedias(postData, offerTemplate);
+        processCommercialRule(postData, offerTemplate);
         try {
         	String imagePath = postData.getImagePath();
 			if(StringUtils.isBlank(imagePath) && StringUtils.isBlank(postData.getImageBase64())) {
@@ -478,6 +481,19 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 			offerTemplate.setMedias(medias);
 		}
 	}
+
+    @Inject private CommercialRuleHeaderService commercialRuleHeaderService;
+    
+    private void processCommercialRule(OfferTemplateDto postData, OfferTemplate offerTemplate) {
+		Set<String> commercialRuleCodes = new HashSet<String>(postData.getCommercialRuleCodes());
+		offerTemplate.getCommercialRules().clear();
+		if(commercialRuleCodes!= null && !commercialRuleCodes.isEmpty()) {
+			for (String commercialCode : commercialRuleCodes) {
+				CommercialRuleHeader commercialRuleHeader = loadEntityByCode(commercialRuleHeaderService, commercialCode, CommercialRuleHeader.class);
+				offerTemplate.getCommercialRules().add(commercialRuleHeader);
+			}
+		}
+    }
 
     private void processOfferServiceTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
         List<OfferServiceTemplateDto> offerServiceTemplateDtos = postData.getOfferServiceTemplates();

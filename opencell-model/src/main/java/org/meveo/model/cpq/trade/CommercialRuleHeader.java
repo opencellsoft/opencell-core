@@ -89,7 +89,7 @@ public class CommercialRuleHeader extends BusinessEntity {
 	/**
 	 * offer code
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name = "offer_template_id", referencedColumnName = "id")
 	private OfferTemplate targetOfferTemplate;
 
