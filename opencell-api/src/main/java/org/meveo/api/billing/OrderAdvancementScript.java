@@ -125,16 +125,7 @@ public class OrderAdvancementScript extends ModuleScript {
                     BigDecimal taxAmountToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalTax);
 
                     createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
-                    List<Invoice> invoices=invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
-                    log.info("OrderAdvancementScript created invoices count={}",invoices.size());
-                    InvoiceType invoiceType=invoiceTypeService.findByCode("ADV");
-                    if(invoiceType!=null) {
-                    	 for(Invoice invoice:invoices) {
-                         	invoice.setInvoiceType(invoiceType);
-                         	invoiceService.update(invoice);
-                         }
-                    }
-                   
+                    List<Invoice> invoices=invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false,true);
                 }
                 commercialOrder.setRateInvoiced(newRateInvoiced.intValue());
                 commercialOrder.setOrderProgressTmp(orderProgress);
@@ -166,7 +157,7 @@ public class OrderAdvancementScript extends ModuleScript {
         }
 
         createInvoiceLine(commercialOrder, accountingArticle.get(), orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
-        invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
+        invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false,false);
       
     }
 

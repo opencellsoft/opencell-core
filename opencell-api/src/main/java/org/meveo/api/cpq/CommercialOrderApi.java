@@ -46,6 +46,7 @@ import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.OrderType;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.admin.impl.SellerService;
@@ -201,7 +202,7 @@ public class CommercialOrderApi extends BaseApi {
 		processOrderLot(orderDto, order);
 		commercialOrderService.create(order);
 		CommercialOrderDto dto = new CommercialOrderDto(order);
-		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order));
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order,CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 		return dto;
 	}
 
@@ -333,7 +334,7 @@ public class CommercialOrderApi extends BaseApi {
 		processOrderLot(orderDto, order);
 		commercialOrderService.update(order);
 		CommercialOrderDto dto = new CommercialOrderDto(order);
-		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order));
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order,CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 		return dto;
 	}
 	
@@ -446,7 +447,7 @@ public class CommercialOrderApi extends BaseApi {
 		if(commercialOrder == null)
 			throw new EntityDoesNotExistsException("No Commercial order found for order number = " + orderNumber);
 		CommercialOrderDto dto = new CommercialOrderDto(commercialOrder);
-		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(commercialOrder));
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(commercialOrder,CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 		return dto;
 	}
 	
@@ -589,13 +590,13 @@ public class CommercialOrderApi extends BaseApi {
     	return orderOfferDto;
     }
 	
-	public void updateOrderProgress(Long commercialOrderId,Integer updatedOrderProgress) throws MeveoApiException { 
+	public void updateOrderProgress(Long commercialOrderId,Integer progressValue) throws MeveoApiException { 
 		
 		if (commercialOrderId==null) {
     		missingParameters.add("commercialOrderId");
     	}
-		if (updatedOrderProgress==null) {
-    		missingParameters.add("updatedOrderProgress");
+		if (progressValue==null) {
+    		missingParameters.add("progressValue");
     	}
 		handleMissingParameters();
     	CommercialOrder commercialOrder=null;
@@ -607,10 +608,10 @@ public class CommercialOrderApi extends BaseApi {
     	if(!CommercialOrderEnum.FINALIZED.toString().equals(commercialOrder.getStatus())) {
     		throw new MeveoApiException("Commercial order status should be FINALIZED");
     	}
-    	if(commercialOrder.getOrderProgress()!=null && commercialOrder.getOrderProgress()>updatedOrderProgress) {
-    		throw new MeveoApiException("updatedOrderProgress should be greater than orderProgress");
+    	if(commercialOrder.getOrderProgress()!=null && commercialOrder.getOrderProgress()>progressValue) {
+    		throw new MeveoApiException("new progress value should be greater than orderProgress");
     	} 
-    	commercialOrder.setOrderProgress(updatedOrderProgress);
+    	commercialOrder.setOrderProgress(progressValue);
     	commercialOrderService.update(commercialOrder);
     	
     }
