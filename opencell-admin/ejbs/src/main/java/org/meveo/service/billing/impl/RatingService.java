@@ -147,7 +147,6 @@ public class RatingService extends PersistenceService<WalletOperation> {
     @Inject
     private ChargeTemplateService<ChargeTemplate> chargeTemplateService;
 
-//    private Map<String, String> descriptionMap = new HashMap<>();
 
     /**
      * @param level level enum
@@ -292,21 +291,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
         }
         walletOperation.setChargeMode(chargeMode);
-        walletOperation.setFullRatingPeriod(fullRatingPeriod);
 
-        // String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
-        //
-        // String translationKey = "CT_" + chargeTemplate.getCode() + languageCode;
-        // String descTranslated = descriptionMap.get(translationKey);
-        // if (descTranslated == null) {
-        // descTranslated = (chargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : chargeInstance.getDescription();
-        // if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().get(languageCode) != null) {
-        // descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
-        // }
-        // descriptionMap.put(translationKey, descTranslated);
-        // }
-        //
-        // walletOperation.setDescription(descTranslated);
         Integer sortIndex = getSortIndex(walletOperation);
         walletOperation.setSortIndex(sortIndex);
         walletOperation.setEdr(edr);
@@ -428,7 +413,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
                     if (!StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
                         String subCode = evaluateStringExpression(triggeredEDRTemplate.getSubscriptionEl(), walletOperation, ua, null, edr);
-                        sub = subscriptionService.findByCode(subCode);
+                        sub = subscriptionService.findByCode(subCode); // why do we use the Service layer ?
                         if (sub == null) {
                             log.info("Could not find subscription for code={} (EL={}) in triggered EDR with code {}", subCode, triggeredEDRTemplate.getSubscriptionEl(), triggeredEDRTemplate.getCode());
                         }
@@ -450,11 +435,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
                         triggredEDRs.add(newEdr);
 
-                    } else {
-                        // removed for the case of product instance on user account without subscription
-                        // throw new BusinessException("cannot find subscription for the trigerred EDR with code " + triggeredEDRTemplate.getCode());
                     }
-
                 } else {
                     if (StringUtils.isBlank(triggeredEDRTemplate.getSubscriptionEl())) {
                         throw new BusinessException("TriggeredEDRTemplate.subscriptionEl must not be null and must point to an existing Access.");
@@ -477,7 +458,6 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
                     if (actionStatus != null && ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
                         throw new ChargingEdrOnRemoteInstanceErrorException("Error charging EDR. Error code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
-
                     } else if (actionStatus == null) {
                         throw new ChargingEdrOnRemoteInstanceErrorException("Error charging EDR. No response code from API.");
                     }
