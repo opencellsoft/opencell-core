@@ -257,7 +257,6 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         qb.addCriterionDateRangeToTruncatedToDay("transactionDate", higherBound);
         qb.startOrClause();
         qb.addCriterionEnum("matchingStatus", MatchingStatusEnum.O);
-        qb.addCriterionEnum("matchingStatus", MatchingStatusEnum.C);
         qb.addCriterionEnum("matchingStatus", MatchingStatusEnum.I);
         qb.addCriterionEnum("matchingStatus", MatchingStatusEnum.R);
         qb.endOrClause();
