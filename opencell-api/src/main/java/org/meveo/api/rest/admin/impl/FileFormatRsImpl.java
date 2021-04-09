@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.admin.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.admin.FileFormatApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -33,6 +29,11 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.admin.FileFormatRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * File format resource
@@ -123,6 +124,20 @@ public class FileFormatRsImpl extends BaseRs implements FileFormatRs {
             result = new FileFormatListResponseDto(fileFormatApi.search(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder)));
         } catch (Exception e) {
             result = new FileFormatListResponseDto();
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public FileFormatListResponseDto listGetAll() {
+
+        FileFormatListResponseDto result = new FileFormatListResponseDto();
+
+        try {
+            result = new FileFormatListResponseDto( fileFormatApi.search(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering()) );
+        } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
 
