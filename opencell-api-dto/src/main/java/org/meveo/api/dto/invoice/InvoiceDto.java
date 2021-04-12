@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -41,6 +40,8 @@ import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * DTO equivalent of Invoice entity.
  * 
@@ -54,256 +55,312 @@ public class InvoiceDto extends AuditableEntityDto {
     private static final long serialVersionUID = 1072382628068718580L;
 
     /** The invoice id. */
+    @Schema(description = "The invoice id")
     protected Long invoiceId;
 
     /** The invoice type. */
     @XmlElement(required = true)
+    @Schema(description = "The invoice type")
     protected String invoiceType;
 
     /** The billing account code. */
     @XmlElement(required = true)
+    @Schema(description = "The billing account code")
     protected String billingAccountCode;
 
     /**
      * Code of the Seller
      */
+    @Schema(description = "Code of the Seller")
     protected String sellerCode;
 
     /**
      * Code of the subscription
      */
+    @Schema(description = "Code of the subscription")
     protected String subscriptionCode;
 
     /**
      * Id of the subscription
      */
+    @Schema(description = "Id of the subscription")
     protected Long subscriptionId;
 
     /**
      * Order number
      */
+    @Schema(description = "Order number of the invoice")
     protected String orderNumber;
 
     /** The invoice status. */
+    @Schema(description = "The invoice status", example = "possible value are : NEW, SUSPECT, REJECTED, DRAFT, CANCELED, VALIDATED")
     private InvoiceStatusEnum status;
 
     /** The due date. */
     @XmlElement(required = true)
+    @Schema(description = "The due date")
     protected Date dueDate;
 
     /** The invoice date. */
     @XmlElement(required = true)
+    @Schema(description = "The invoice date")
     protected Date invoiceDate;
 
     /** The category invoice aggregates. */
     @XmlElementWrapper
     @XmlElement(name = "categoryInvoiceAgregate")
+    @Schema(description = "The category invoice aggregates")
     protected List<CategoryInvoiceAgregateDto> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregateDto>();
 
     /** The tax aggregates */
     @XmlElementWrapper
     @XmlElement(name = "taxAggregate", required = true)
+    @Schema(description = "The tax aggregates")
     protected List<TaxInvoiceAggregateDto> taxAggregates = new ArrayList<TaxInvoiceAggregateDto>();
 
     /** The list invoice id to link. */
     @XmlElementWrapper
     @XmlElement(name = "invoiceIdToLink")
+    @Schema(description = "The list invoice id to link")
     protected List<Long> listInvoiceIdToLink = new ArrayList<Long>();
 
     /** The invoice number. */
+    @Schema(description = "The invoice number")
     protected String invoiceNumber;
 
     /** The discount. */
+    @Schema(description = "discount applied to this invoice")
     protected BigDecimal discount;
 
     /** The amount without tax. */
+    @Schema(description = "The amount without tax")
     protected BigDecimal amountWithoutTax;
 
     /** The amount tax. */
+    @Schema(description = "The amount tax")
     protected BigDecimal amountTax;
 
     /** The amount with tax. */
+    @Schema(description = "The amount with tax")
     protected BigDecimal amountWithTax;
 
     /** The payment method. */
+    @Schema(description = "The payment method", example = "possible value are : CHECK, DIRECTDEBIT, WIRETRANSFER, CARD, PAYPAL, STRIPE, CASH")
     protected PaymentMethodEnum paymentMethod;
 
     /** The xml filename. */
+    @Schema(description = "The xml filename")
     protected String xmlFilename;
 
     /** The xml. */
+    @Schema(description = "The xml")
     protected String xml;
 
     /** The pdf filename. */
+    @Schema(description = "he pdf filename")
     protected String pdfFilename;
 
     /** The pdf. */
+    @Schema(description = "content of the pdf")
     protected byte[] pdf;
 
     /**
      * A request-only parameter. True if invoice should be assigned a number. Defaults to True.
      */
+    @Schema(description = "A request-only parameter. True if invoice should be assigned a number", defaultValue = "true")
     protected Boolean autoValidation;
 
     /**
      * A request-only parameter. True if XML invoice should be generated and returned.
      */
+    @Schema(description = "A request-only parameter. True if XML invoice should be generated and returned")
     protected Boolean returnXml;
 
     /**
      * A request-only parameter. True if PDF invoice should be generated and returned.
      */
+    @Schema(description = "A request-only parameter. True if PDF invoice should be generated and returned")
     protected Boolean returnPdf;
 
     /**
      * A request-only parameter. True if PDF should be delivered by email. Defaults to True.
      */
+    @Schema(description = "A request-only parameter. True if PDF should be delivered by email. Defaults to True")
     private Boolean sendByEmail;
 
     /**
      * A request-only parameter. True if currently due balance should be returned
      */
+    @Schema(description = "A request-only parameter. True if currently due balance should be returned")
     protected Boolean includeBalance;
 
     /** The recorded invoice dto. */
+    @Schema(description = "The recorded invoice dto")
     protected RecordedInvoiceDto recordedInvoiceDto;
 
     /** The net to pay. */
+    @Schema(description = "The net to pay")
     protected BigDecimal netToPay;
 
     /** The invoice mode. */
     @XmlElement(required = true)
+    @Schema(description = "The invoice mode", example = "possible value are: AGGREGATED, DETAILLED")
     protected InvoiceModeEnum invoiceMode;
 
     /** The custom fields. */
+    @Schema(description = "")
     protected CustomFieldsDto customFields;
 
     /**
      * The total due is a snapshot at invoice generation time of the due balance (not exigible) before invoice calculation+invoice amount. Due balance is a "future" dueBalance (the
      * due balance at the invoice due date).
      */
+    @Schema(description = "The total due is a snapshot at invoice generation time of the due balance (not exigible) before invoice calculation+invoice amount. Due balance is a 'future' dueBalance (the due balance at the invoice due date)")
     protected BigDecimal dueBalance;
 
     /**
      * A flag to generate a draft invoice
      */
+    @Schema(description = "A flag to generate a draft invoice")
     protected Boolean isDraft;
 
     /**
      * Before sending the invoice, check if not already sent
      */
+    @Schema(description = "Before sending the invoice, check if not already sent")
     protected boolean checkAlreadySent;
 
     /**
      * Override Email defined in the billing entity
      */
+    @Schema(description = "Override Email defined in the billing entity")
     protected String overrideEmail;
 
     /**
      * True if the invoice was sent by email or delibered by some other electronic means, false otherwise
      */
+    @Schema(description = "True if the invoice was sent by email or delibered by some other electronic means, false otherwise", defaultValue = "false")
     protected boolean sentByEmail;
 
     /**
      * list of related payment schedule instances
      *
      */
+    @Schema(description = "list of related payment schedule instances")
     protected PaymentScheduleInstancesDto paymentScheduleInstancesDto;
 
     /**
      * associated dunning creation date
      *
      */
+    @Schema(description = "associated dunning creation date")
     protected Date dunningEntryDate;
 
     /**
      * associated dunning last update date
      *
      */
+    @Schema(description = "associated dunning last update date")
     protected Date dunningLastModification;
 
     /**
      * associated dunning current status
      *
      */
+    @Schema(description = "associated dunning current status")
     protected String dunningStatus;
 
     /**
      * The invoice real time status.
      */
+    @Schema(description = "The invoice real time status", example = "possible value are: NONE, PENDING, PAID, PPAID, UNPAID, ABANDONED, REFUNDED, DISPUTED")
     private InvoicePaymentStatusEnum realTimeStatus;
 
     /**
      * list of existing RTs to include, identified by id This option is allowed only if invoiceMode=="DETAILLED"
      *
      */
+    @Schema(description = "List of existing RTs to include, identified by id This option is allowed only if invoiceMode=='DETAILLED'")
     protected List<Long> ratedTransactionsToLink;
     /**
      * paymentIncident
      *
      */
+    @Schema(description = "List of payment incidents")
     protected List<String> paymentIncidents;
 
     /**
      * sendPaymentDate
      *
      */
+    @Schema(description = "Date of send payment")
     protected Date sendPaymentDate;
 
     /**
      * Invoice payment collection date.
      */
+    @Schema(description = "Invoice payment collection date")
     private Date initialCollectionDate;
     /**
      * sum off writeOff accountOperations amounts
      */
+    @Schema(description = "Sum off writeOff accountOperations amounts")
     protected BigDecimal writeOffAmount;
 
     /**
      * last payment Date
      */
+    @Schema(description = "last payment Date")
     protected Date paymentDate;
 
 
     /**
      * Invoice status change date
      */
+    @Schema(description = "Invoice status change date")
     protected Date statusDate;
 
     /**
      * Date when the XML has been produced on a validated invoice.
      */
+    @Schema(description = "Date when the XML has been produced on a validated invoice")
     protected Date xmlDate;
 
     /**
      * Date when the PDf has been produced on a validated invoice.
      */
+    @Schema(description = "Date when the PDf has been produced on a validated invoice")
     protected Date pdfDate;
 
     /**
      * Date when the invoice has been sent for a validated invoice
      */
+    @Schema(description = "Date when the invoice has been sent for a validated invoice")
     protected Date emailSentDate;
 
     /**
      *
      */
+    @Schema(description = "payment status", example = "possible value are: NONE, PENDING, PAID, PPAID, UNPAID, ABANDONED, REFUNDED, DISPUTED")
 	protected InvoicePaymentStatusEnum paymentStatus;
 
     /**
      * Payment status change date
      */
+    @Schema(description = "Payment status change date")
 	protected Date paymentStatusDate;
 
     /**
      * Beginning of the billed period (based on billing cycle period whenever possible or min(invoiceLine.valueDate))
      */
+    @Schema(description = "Beginning of the billed period (based on billing cycle period whenever possible or min(invoiceLine.valueDate))")
     protected Date startDate;
 
 
     /**
      * End of the billed period (based on billing cycle period whenever possible or applied lastTransactionDate or max(invoiceLine.valueDate))
      */
+    @Schema(description = "End of the billed period (based on billing cycle period whenever possible or applied lastTransactionDate or max(invoiceLine.valueDate))")
     protected Date endDate;
      
 
@@ -313,12 +370,14 @@ public class InvoiceDto extends AuditableEntityDto {
      *      -With or without tax depending on provider setting (isEnterprise).
      */
     @XmlElement(required = true)
+    @Schema(description = "Total raw amount from invoice lines. <ul><li>Does not include discount</li><li>With or without tax depending on provider setting (isEnterprise)</li></ul>")
     protected BigDecimal rawAmount;
 
     /**
      * Discount rate to apply (in %).
      * Initialize with discount rate from linked invoice discount plan.
      */
+    @Schema(description = "Discount rate to apply (in %).<p>Initialize with discount rate from linked invoice discount plan</p>")
     protected BigDecimal discountRate;
 
 	/**
@@ -327,22 +386,26 @@ public class InvoiceDto extends AuditableEntityDto {
 	 * discountAmount has precedence over discountRate
      */
     @XmlElement(required = true)
+    @Schema(description = "Total discount amount with or without tax depending on provider settings.<p>Can be inconsistent with discountRate.</p><p>discountAmount has precedence over discountRate</p>")
     protected BigDecimal discountAmount=BigDecimal.ZERO;
 
     /**
      * Indicates if the invoicing minimum has already been applied
      */
+    @Schema(description = "Indicates if the invoicing minimum has already been applied")
     protected boolean isAlreadyAppliedMinimum;
 
     /**
      * Indicates if the invoice discounts have already been applied
      */
+    @Schema(description = "Indicates if the invoice discounts have already been applied")
     protected boolean isAlreadyAddedDiscount;
     
     /**
      * Discount plan code
      */
     @XmlElement
+    @Schema(description = "Discount plan code")
     private String discountPlanCode;
 
     public List<String> getPaymentIncidents() {

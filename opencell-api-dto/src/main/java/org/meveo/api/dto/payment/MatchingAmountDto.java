@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.AuditableEntityDto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class MatchingAmountDto.
  * 
@@ -41,12 +43,15 @@ public class MatchingAmountDto extends AuditableEntityDto {
     private static final long serialVersionUID = 8509128338503816584L;
 
     /** The matching code. */
+    @Schema(description = "The matching code")
     private String matchingCode;
     
     /** The matching amount. */
+    @Schema(description = "The matching amount")
     private BigDecimal matchingAmount;
     
     /** The matching codes. */
+    @Schema(description = "The matching codes")
     private MatchingCodesDto matchingCodes;
 
     /**

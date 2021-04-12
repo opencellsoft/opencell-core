@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.meveo.model.payments.RejectedPayment;
 import org.meveo.model.payments.RejectedType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class RejectedPaymentDto.
  *
@@ -39,15 +41,19 @@ public class RejectedPaymentDto extends AccountOperationDto implements Serializa
     private static final long serialVersionUID = 4498720672406401363L;
 
     /** The rejected type. */
+    @Schema(description = "The rejected type", example = "possible value are: A, M")
     private RejectedType rejectedType;
     
     /** The rejected date. */
+    @Schema(description = "The rejected date")
     private Date rejectedDate;
     
     /** The rejected description. */
+    @Schema(description = "The rejected description")
     private String rejectedDescription;
     
     /** The rejected code. */
+    @Schema(description = "")
     private String rejectedCode;
 
     /**

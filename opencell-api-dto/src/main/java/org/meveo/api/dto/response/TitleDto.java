@@ -29,6 +29,8 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.shared.Title;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class TitleDto.
  *
@@ -42,9 +44,11 @@ public class TitleDto extends BusinessEntityDto {
     private static final long serialVersionUID = -1332916104721562522L;
 
     /** The is company. */
+    @Schema(description = "indicate if the title is a  company", defaultValue = "false")
     private Boolean isCompany = Boolean.FALSE;
 
     /** The language descriptions. */
+    @Schema(description = "list of the language description")
     private List<LanguageDescriptionDto> languageDescriptions;
 
     /**

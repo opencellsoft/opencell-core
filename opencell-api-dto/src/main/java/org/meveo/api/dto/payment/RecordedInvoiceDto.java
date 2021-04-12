@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.meveo.model.payments.RecordedInvoice;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class RecordedInvoiceDto.
  *
@@ -39,12 +41,15 @@ public class RecordedInvoiceDto extends AccountOperationDto implements Serializa
     private static final long serialVersionUID = -6965598553420278018L;
 
     /** The production date. */
+    @Schema(description = "The production date")
     private Date productionDate;
 
     /** The invoice date. */
+    @Schema(description = "The invoice date")
     private Date invoiceDate;
 
     /** The net to pay. */
+    @Schema(description = "The net to pay")
     private BigDecimal netToPay;
 
     /**
