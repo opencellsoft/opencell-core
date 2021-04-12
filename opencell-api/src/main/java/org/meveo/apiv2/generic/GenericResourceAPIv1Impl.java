@@ -14,6 +14,7 @@ import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
 import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.util.Inflector;
+import org.meveo.util.Version;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.RequestScoped;
@@ -24,10 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -619,6 +617,14 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity(notFoundStatus).type(MediaType.APPLICATION_JSON_TYPE).build();
         }
+    }
+
+    @Override
+    public Response getApiVersion() {
+        ActionStatus successfulStatus = new ActionStatus(ActionStatusEnum.SUCCESS,
+                "Opencell Rest API version " + GenericOpencellRestfulAPIv1.API_VERSION.substring(1) + " commit " + Version.buildNumber );
+
+        return Response.status(Response.Status.OK).entity(successfulStatus).build();
     }
 
     @PreDestroy
