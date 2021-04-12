@@ -57,25 +57,6 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	 * @return
 	 */
 	public RatedTransaction create(org.meveo.apiv2.billing.RatedTransactionInput input) {
-		String errors = "";
-		if (input.getBillingAccountCode() == null) {
-			errors = errors + " billingAccountCode,";
-		}
-
-		if (input.getSubscriptionCode() == null) {
-			errors = errors + " subscriptionCode,";
-		}
-
-		if (input.getServiceInstanceCode() == null) {
-			errors = errors + " sericeInstanceCode,";
-		}
-
-		if (input.getChargeInstanceCode() == null) {
-			errors = errors + " chargeInstanceCode,";
-		}
-		if (!errors.isBlank()) {
-			throw new ValidationException("Missing fields to create RatedTransaction : " + errors);
-		}
 		return ratedTransactionService.createRatedTransaction(input.getBillingAccountCode(), input.getUserAccountCode(),
 				input.getSubscriptionCode(), input.getServiceInstanceCode(), input.getChargeInstanceCode(),
 				input.getUnitAmountWithoutTax(), input.getQuantity());

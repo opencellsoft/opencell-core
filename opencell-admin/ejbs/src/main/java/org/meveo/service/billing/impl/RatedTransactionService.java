@@ -42,6 +42,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -1583,17 +1584,34 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 			String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode,
 			BigDecimal unitAmountWithoutTax, BigDecimal quantity) {
 
+		String errors = "";
+		if (billingAccountCode == null) {
+			errors = errors + " billingAccountCode,";
+		}
+		if (subscriptionCode == null) {
+			errors = errors + " subscriptionCode,";
+		}
+		if (serviceInstanceCode == null) {
+			errors = errors + " sericeInstanceCode,";
+		}
+		if (chargeInstanceCode == null) {
+			errors = errors + " chargeInstanceCode,";
+		}
+		if (!errors.isBlank()) {
+			throw new ValidationException("Missing fields to create RatedTransaction : " + errors);
+		}
+		
 		BillingAccount billingAccount = (BillingAccount) tryToFindByEntityClassAndCode(BillingAccount.class,
 				billingAccountCode);
 		
 		UserAccount userAccount = userAccountCode!=null? (UserAccount) tryToFindByEntityClassAndCode(UserAccount.class, userAccountCode) : billingAccount.getUsersAccounts().get(0);
 		
-		Map subscriptionCriterions = ImmutableMap.of("code", subscriptionCode, "userAccount", userAccount, "status", SubscriptionStatusEnum.ACTIVE);
+		Map<String, Object> subscriptionCriterions = ImmutableMap.of("code", subscriptionCode, "userAccount", userAccount, "status", SubscriptionStatusEnum.ACTIVE);
 		Subscription subscription = (Subscription) tryToFindByEntityClassAndMap(Subscription.class, subscriptionCriterions);
 		
-		Map serviceInstanceCriterions = ImmutableMap.of("code", serviceInstanceCode, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
+		Map<String, Object> serviceInstanceCriterions = ImmutableMap.of("code", serviceInstanceCode, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
 		ServiceInstance serviceInstance = (ServiceInstance) tryToFindByEntityClassAndMap(ServiceInstance.class, serviceInstanceCriterions );
-		Map chargeInstanceCriterions = ImmutableMap.of("code", chargeInstanceCode, "serviceInstance", serviceInstance, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
+		Map<String, Object> chargeInstanceCriterions = ImmutableMap.of("code", chargeInstanceCode, "serviceInstance", serviceInstance, "subscription", subscription, "status", InstanceStatusEnum.ACTIVE);
 		ChargeInstance chargeInstance = (ChargeInstance) tryToFindByEntityClassAndMap(ChargeInstance.class, chargeInstanceCriterions);
 
 		TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, new Date());
