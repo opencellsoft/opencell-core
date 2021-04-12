@@ -267,7 +267,7 @@ public class MEVEOCdrParser implements ICdrParser {
     @Override
     public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
         List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
-        if (accesses == null || accesses.size() == 0) {
+        if (accesses == null || accesses.isEmpty()) {
             rejectededCdrEventProducer.fire(cdr);
             throw new InvalidAccessException(cdr);
         }
@@ -290,7 +290,7 @@ public class MEVEOCdrParser implements ICdrParser {
                 if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getEventDate().getTime())
                         && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getEventDate().getTime())) {
                     foundMatchingAccess = true; 
-                    subscription =  accessPoint.getSubscription() != null ? subscriptionService.findById(accessPoint.getSubscription().getId()) : null;
+                    subscription =  accessPoint.getSubscription() != null ? accessPoint.getSubscription() : null;
                     EDR edr = cdrToEdr(cdr, accessPoint, subscription);
                     edrs.add(edr);
                 }
