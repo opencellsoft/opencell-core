@@ -468,6 +468,9 @@ public class BillingAccountApi extends AccountEntityApi {
         if (postData.getMinimumLabelElSpark() != null) {
             billingAccount.setMinimumLabelElSpark(postData.getMinimumLabelElSpark());
         }
+        if (postData.getStatus() != null) {
+        	billingAccount.setStatus(postData.getStatus());
+        }
 
         if (businessAccountModel != null) {
             billingAccount.setBusinessAccountModel(businessAccountModel);

@@ -187,6 +187,9 @@ public class UserAccountApi extends AccountEntityApi {
         if (postData.getSubscriptionDate() != null) {
             userAccount.setSubscriptionDate(postData.getSubscriptionDate());
         }
+        if (postData.getStatus() != null) {
+        	userAccount.setStatus(postData.getStatus());
+        }
         if (businessAccountModel != null) {
             userAccount.setBusinessAccountModel(businessAccountModel);
         }
