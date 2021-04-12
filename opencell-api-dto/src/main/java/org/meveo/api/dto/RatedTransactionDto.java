@@ -31,6 +31,8 @@ import org.meveo.model.billing.RatedTransactionStatusEnum;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * A Dto class for Rated Transaction informations
  *
@@ -55,120 +57,152 @@ public class RatedTransactionDto extends BaseEntityDto implements IEntityDto {
 
     /** The usage date. */
     @XmlElement(required = true)
+    @Schema(description = "The usage date", required = true)
     private Date usageDate;
 
     /** The unit amount without tax. */
+    @Schema(description = "The unit amount without tax")
     private BigDecimal unitAmountWithoutTax;
 
     /** The unit amount with tax. */
+    @Schema(description = "The unit amount with tax")
     private BigDecimal unitAmountWithTax;
 
     /** The unit amount tax. */
+    @Schema(description = "The unit amount tax")
     private BigDecimal unitAmountTax;
 
     /** The quantity. */
+    @Schema(description = "The quantity")
     private BigDecimal quantity;
 
     /** The quantity. */
+    @Schema(description = "The quantity")
     private BigDecimal inputQuantity;
 
     /** The raw amount without tax. */
+    @Schema(description = "The raw amount without tax")
     private BigDecimal rawAmountWithoutTax;
 
     /** The raw amount with tax. */
+    @Schema(description = "The raw amount with tax")
     private BigDecimal rawAmountWithTax;
 
     /** The amount without tax. */
     @XmlElement(required = true)
+    @Schema(description = "The amount without tax", required = true)
     private BigDecimal amountWithoutTax;
 
     /** The amount with tax. */
     @XmlElement(required = true)
+    @Schema(description = "The amount with tax", required = true)
     private BigDecimal amountWithTax;
 
     /** The amount tax. */
     @XmlElement(required = true)
+    @Schema(description = "The amount tax", required = true)
     private BigDecimal amountTax;
 
     /** The code. */
     @XmlElement(required = true)
+    @Schema(description = "The code", required = true)
     private String code;
 
     /** The status. */
+    @Schema(description = "The status", example = "possible value are: OPEN, BILLED, REJECTED, RERATED, CANCELED")
     private RatedTransactionStatusEnum status;
 
     /** The description. */
+    @Schema(description = "The description")
     private String description;
 
     /** The unity description. */
+    @Schema(description = "The unity description")
     private String unityDescription;
 
     /** The priceplan code. */
+    @Schema(description = "The price plan code")
     private String priceplanCode;
 
     /** The do not trigger invoicing. */
+    @Schema(description = "indicate if we don't want to trigger invoicing", defaultValue = "false")
     private boolean doNotTriggerInvoicing = false;
 
     /** The start date. */
+    @Schema(description = "The start date")
     private Date startDate;
 
     /** The end date. */
+    @Schema(description = "The end date")
     private Date endDate;
 
     /** parameter1 : used to set more onformations in case of "DETAILLED" invoice. */
+    @Schema(description = "used to set more onformations in case of \"DETAILLED\" invoice")
     private String parameter1;
 
     /** parameter2 : used to set more onformations in case of "DETAILLED" invoice. */
+    @Schema(description = "used to set more onformations in case of \"DETAILLED\" invoice")
     private String parameter2;
 
     /** parameter2 : used to set more onformations in case of "DETAILLED" invoice. */
+    @Schema(description = "used to set more onformations in case of \"DETAILLED\" invoice")
     private String parameter3;
 
     /** The user account code. */
+    @Schema(description = "The user account code")
     private String userAccountCode;
 
     /**
      * Tax applied - code
      */
+    @Schema(description = "Tax applied - code")
     private String taxCode;
 
     /**
      * Tax percent
      */
+    @Schema(description = "Tax percent")
     private BigDecimal taxPercent;
 
     /**
      * Invoice subcategory code
      */
+    @Schema(description = "Invoice sub category code")
     private String invoiceSubCategoryCode;
 
     /**
      * Seller code
      */
+    @Schema(description = "Seller code")
     private String sellerCode;
     /**
      * BillingAccount code
      */
+    @Schema(description = "BillingAccount code")
     private String billingAccountCode;
 
     /**
      * Charge tax class code
      */
+    @Schema(description = "Charge tax class code")
     private String taxClassCode;
 
     /**
      * input_unit_unitOfMeasure
      */
+    @Schema(description = "The input unit of measure")
     private String inputUnitOfMeasure;
 
     /**
      * rating_unit_unitOfMeasure
      */
+    @Schema(description = "The rating unit of measure")
     private String ratingUnitOfMeasure;
 
     /**
      * Sorting index.
      */
+    @Schema(description = "Sorting index")
     private Integer sortIndex;
 
     /**

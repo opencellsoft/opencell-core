@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class BankCoordinatesDto.
  *
@@ -44,57 +46,69 @@ public class BankCoordinatesDto implements Serializable {
     /** The bank code. */
     @NotNull
     @Size(max = 5)
+    @Schema(description = "The bank code", required = true)
     private String bankCode;
 
     /** The branch code. */
     @NotNull
     @Size(max = 5)
+    @Schema(description = "The branch code", required = true)
     private String branchCode;
 
     /** The account number. */
     @NotNull
     @Size(max = 11)
+    @Schema(description = "The account number", required = true)
     private String accountNumber;
 
     /** The key. */
     @NotNull
     @Size(max = 2)
+    @Schema(description = "The key", required = true)
     private String key;
 
     /** The iban. */
     @NotNull
     @Size(max = 34)
+    @Schema(description = "The iban", required = true)
     private String iban;
 
     /** The bic. */
     @NotNull
     @Size(max = 11)
+    @Schema(description = "The bic", required = true)
     private String bic;
 
     /** The account owner. */
     @NotNull
     @Size(max = 50)
+    @Schema(description = "The account owner", required = true)
     private String accountOwner;
 
     /** The bank name. */
     @NotNull
     @Size(max = 50)
+    @Schema(description = "The bank name", required = true)
     private String bankName;
 
     /** The bank id. */
     @Size(max = 50)
+    @Schema(description = "The bank id")
     private String bankId;
 
     /** The issuer number. */
     @Size(max = 50)
+    @Schema(description = "The issuer number")
     private String issuerNumber;
 
     /** The issuer name. */
     @Size(max = 50)
+    @Schema(description = "The issuer name")
     private String issuerName;
 
     /** The ics. */
     @Size(max = 35)
+    @Schema(description = "The ics")
     private String ics;
 
     /**

@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.TaxInvoiceAgregate;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Invoice category invoice aggregate DTO
  */
@@ -36,27 +38,35 @@ public class TaxInvoiceAggregateDto extends BaseEntityDto {
     private static final long serialVersionUID = 6165612614574594919L;
 
     /** The description */
+    @Schema(description = "The description")
     private String description;
 
     /** The item number */
+    @Schema(description = "The item number")
     private Integer itemNumber;
 
     /** The amount without tax */
+    @Schema(description = "The amount without tax")
     private BigDecimal amountWithoutTax;
 
     /** The amount tax */
+    @Schema(description = "The amount tax")
     private BigDecimal amountTax;
 
     /** The amount with tax */
+    @Schema(description = "The amount with tax")
     private BigDecimal amountWithTax;
 
     /** The taxes code */
+    @Schema(description = "The taxes code")
     private String taxCode;
 
     /** The tax percent applied */
+    @Schema(description = "The tax percent applied")
     private BigDecimal taxPercent;
 
     /** The accounting code. */
+    @Schema(description = "The accounting code")
     private String accountingCode;
 
     /**

@@ -67,58 +67,58 @@ public class BillingAccountDto extends AccountDto {
 
     /** The customer account. */
     @XmlElement(required = true)
-    @Schema(description = "")
+    @Schema(description = "The customer account")
     protected String customerAccount;
 
     /** The billing cycle. */
     @XmlElement(required = true)
-    @Schema(description = "")
+    @Schema(description = "The billing cycle")
     protected String billingCycle;
 
     /** The country. */
     @XmlElement(required = true)
-    @Schema(description = "")
+    @Schema(description = "The country")
     protected String country;
 
     /** The language. */
     @XmlElement(required = true)
-    @Schema(description = "")
+    @Schema(description = "The language")
     protected String language;
 
     /** The next invoice date. */
     @XmlElement
-    @Schema(description = "")
+    @Schema(description = "The next invoice date")
     protected Date nextInvoiceDate;
 
     /** The subscription date. */
     @XmlElement
-    @Schema(description = "")
+    @Schema(description = "The subscription date")
     protected Date subscriptionDate;
 
     /** The termination date. */
     @XmlElement
-    @Schema(description = "")
+    @Schema(description = "The termination date")
     protected Date terminationDate;
 
     /** The electronic billing. */
-    @Schema(description = "")
+    @Schema(description = "The electronic billing")
     protected Boolean electronicBilling;
 
     /** The status. */
-    @Schema(description = "")
+    @Schema(description = "The status of billing account", example = "possible value are : ACTIVE, CANCELED, TERMINATED, CLOSED")
     protected AccountStatusEnum status;
 
     /** The status date. */
     @XmlElement
-    @Schema(description = "")
+    @Schema(description = "The status date, it set automatically when the status was changed")
     protected Date statusDate;
 
     /** The termination reason. */
-    @Schema(description = "")
+    @Schema(description = "The termination reason")
     protected String terminationReason;
 
     /** The email. */
-    @Schema(description = "")
+    @Schema(description = "The email")
     protected String email;
 
     /** The invoices. */

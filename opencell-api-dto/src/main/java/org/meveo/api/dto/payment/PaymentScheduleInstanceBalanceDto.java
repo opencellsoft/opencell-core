@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class PaymentScheduleInstanceDto.
  * 
@@ -37,15 +39,19 @@ public class PaymentScheduleInstanceBalanceDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** The nb schedule paid. */
+    @Schema(description = "The number schedule paid")
     private int nbSchedulePaid;
     
     /** The nb schedule incoming. */
+    @Schema(description = "The number schedule incoming")
     private int nbScheduleIncoming;
     
     /** The sum amount paid. */
+    @Schema(description = "The sum amount paid")
     private BigDecimal sumAmountPaid;
     
     /** The sum amount incoming. */
+    @Schema(description = "The sum amount incoming")
     private BigDecimal sumAmountIncoming;
 
     /**

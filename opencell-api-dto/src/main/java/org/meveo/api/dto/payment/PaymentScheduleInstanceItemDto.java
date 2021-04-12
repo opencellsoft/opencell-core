@@ -33,6 +33,8 @@ import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.IEntityDto;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class PaymentScheduleInstanceItemDto.
  *
@@ -47,18 +49,22 @@ public class PaymentScheduleInstanceItemDto extends AuditableEntityDto implement
     private static final long serialVersionUID = 1L;
     
     /** The id. */
+    @Schema(description = "The id of the payment schedule instance item")
     private Long id;
     
     /** The due date. */
+    @Schema(description = "The due date")
     private Date dueDate;
     
     /** The request payment date. */
     @NotNull
+    @Schema(description = "The request payment date", required = true)
     private Date requestPaymentDate;
 
     /**
      * The recorded invoice.
      */
+    @Schema(description = "The recorded invoice")
     private RecordedInvoiceDto recordedInvoice;
 
     /**

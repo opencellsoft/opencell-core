@@ -27,7 +27,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.AccountEntity;
-import org.meveo.model.catalog.OneShotChargeTemplate;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class AccountDto.
@@ -43,25 +44,32 @@ public abstract class AccountDto extends BusinessEntityDto {
     private static final long serialVersionUID = -8818317499795113026L;
 
     /** The external ref 1. */
+    @Schema(description = "The external ref 1")
     private String externalRef1;
     
     /** The external ref 2. */
+    @Schema(description = "The external ref 2")
     private String externalRef2;
     
     /** The name. */
+    @Schema(description = "The name")
     private NameDto name;
     
     /** The address. */
+    @Schema(description = "The address related to account")
     private AddressDto address;
     
     /** The job title. */
+    @Schema(description = "The job title")
     private String jobTitle;
 
     /** The business account model. */
     @XmlElement(name = "businessAccountModel")
+    @Schema(description = "The business account model")
     private BusinessEntityDto businessAccountModel;
     
     /** The custom fields. */
+    @Schema(description = "The custom fields")
     private CustomFieldsDto customFields;
 
     /** The loaded. */
@@ -69,42 +77,51 @@ public abstract class AccountDto extends BusinessEntityDto {
     protected boolean loaded = false;
     
     /** The vat no. */
+    @Schema(description = "The vat no")
     private String vatNo;
     
     /** The registration no. */
+    @Schema(description = "The registration no")
     private String registrationNo;
 
     /** The contact information. */
+    @Schema(description = "The contact information")
     private ContactInformationDto contactInformation;
 
     /**
      * Expression to determine minimum amount value
      */
+    @Schema(description = "Expression to determine minimum amount value")
     private String minimumAmountEl;
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value
      */
+    @Schema(description = "Expression to determine rated transaction description to reach minimum amount value")
     private String minimumLabelEl;
 
     /**
      * The billing account code to be used when calculating the min amount billable for Customer and CA.
      */
+    @Schema(description = "The billing account code to be used when calculating the min amount billable for Customer and CA")
     private String minimumTargetAccount;
 
     /**
      * Expression to determine minimum amount value - for Spark.
      */
+    @Schema(description = "Expression to determine minimum amount value - for Spark")
     private String minimumAmountElSpark;
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value - for Spark.
      */
+    @Schema(description = "Expression to determine rated transaction description to reach minimum amount value - for Spark")
     private String minimumLabelElSpark;
 
     /**
      * Corresponding to minimum one shot charge template code.
      */
+    @Schema(description = "Corresponding to minimum one shot charge template code")
     private String minimumChargeTemplate;
 
     /**

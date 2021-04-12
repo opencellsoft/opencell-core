@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class AddressDto.
  *
@@ -38,24 +40,31 @@ public class AddressDto implements Serializable {
     private static final long serialVersionUID = 3064994876758578132L;
 
     /** The address 1. */
+    @Schema(description = "First address")
     protected String address1;
     
     /** The address 2. */
+    @Schema(description = "Second address")
     protected String address2;
     
     /** The address 3. */
+    @Schema(description = "Third address")
     protected String address3;
     
     /** The zip code. */
+    @Schema(description = "The zip code")
     protected String zipCode;
     
     /** The city. */
+    @Schema(description = "The city")
     protected String city;
     
     /** The country. */
+    @Schema(description = "The country")
     protected String country;
     
     /** The state. */
+    @Schema(description = "The state")
     protected String state;
 
     /**
