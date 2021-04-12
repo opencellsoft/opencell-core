@@ -337,12 +337,12 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * DD request item
      */
-    @ManyToOne(optional = true, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(optional = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "ddrequest_item_id")
     private DDRequestItem ddRequestItem;
 
 
-    @ManyToOne(optional = true, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(optional = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "rejected_payment_id")
     private RejectedPayment rejectedPayment;
 
