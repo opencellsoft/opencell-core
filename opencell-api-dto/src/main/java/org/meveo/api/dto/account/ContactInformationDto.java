@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class ContactInformationDto.
  *
@@ -39,18 +41,23 @@ public class ContactInformationDto implements Serializable {
     private static final long serialVersionUID = -5401291437074205081L;
 
     /** The email. */
+    @Schema(description = "The email")
     protected String email;
     
     /** The phone. */
+    @Schema(description = "The phone")
     protected String phone;
     
     /** The mobile. */
+    @Schema(description = "The mobile")
     protected String mobile;
     
     /** The fax. */
+    @Schema(description = "The fax")
     protected String fax;
     
     /** address **/
+    @Schema(description = "The address related to the contact information")
     protected AddressDto address;
     
     

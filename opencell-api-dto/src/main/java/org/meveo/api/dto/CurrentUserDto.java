@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.security.MeveoUser;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class UserDto.
  *
@@ -44,18 +46,22 @@ public class CurrentUserDto extends BaseEntityDto {
 
     /** The username. */
     @XmlElement(required = true)
+    @Schema(description = "The username", required = true)
     private String username;
 
     /** The email. */
     @XmlElement(required = true)
+    @Schema(description = "The email", required = true)
     private String email;
 
     /** The full name. */
+    @Schema(description = "The full name")
     private String fullName;
 
     /** The roles. */
     @XmlElementWrapper(name = "rolesByApplication")
     @XmlElement(name = "role")
+    @Schema(description = "List of the roles", example = "role: [ { KEY_1 : [{ROLE_1:VALUE_1}] }]")
     private Map<String, Set<String>> rolesByApplication;
 
     /**

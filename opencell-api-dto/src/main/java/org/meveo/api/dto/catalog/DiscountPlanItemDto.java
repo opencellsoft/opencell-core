@@ -37,6 +37,8 @@ import org.meveo.api.dto.IEnableDto;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Discount plan item
  *
@@ -56,6 +58,7 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      */
     @NotNull
     @XmlAttribute(required = true)
+    @Schema(description = "The code", required = true)
     private String code;
 
     /**
@@ -63,22 +66,26 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      */
     @NotNull
     @XmlElement(required = true)
+    @Schema(description = "Discount plan code", required = true)
     private String discountPlanCode;
 
     /**
      * Invoice category code
      */
+    @Schema(description = "Invoice category code")
     private String invoiceCategoryCode;
 
     /**
      * Invoice sub category code
      */
+    @Schema(description = "Invoice sub category code")
     private String invoiceSubCategoryCode;
 
     /**
      * Accounting code
      */
     @Deprecated // until further analysis
+    @Schema(description = "Accounting code", deprecated = true)
     private String accountingCode;
 
     /**
@@ -87,51 +94,61 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     /**
      * Expression to determine if discount applies
      */
+    @Schema(description = "Expression to determine if discount applies")
     private String expressionEl;
 
     /**
      * Expression to determine if discount applies - for Spark
      */
+    @Schema(description = "Expression to determine if discount applies - for Spark")
     private String expressionElSpark;
 
     /**
      * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
      */
+    @Schema(description = "Is entity disabled. Value is ignored in Update action - use enable/disable API instead")
     private Boolean disabled;
 
     /**
      * Type of discount, whether absolute or percentage.
      */
+    @Schema(description = "Type of discount, whether absolute or percentage", defaultValue = "PERCENTAGE")
     private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
 
     /**
      * The absolute or percentage discount amount.
      */
+    @Schema(description = "The absolute or percentage discount amount")
     private BigDecimal discountValue;
 
     /**
      * The absolute or percentage discount amount EL.
      */
+    @Schema(description = "The absolute or percentage discount amount EL")
     private String discountValueEL;
 
     /**
      * Expression to calculate discount percentage - for Spark
      */
+    @Schema(description = "Expression to calculate discount percentage - for Spark")
 	private String discountValueElSpark;
 	
 
     /** The accountingArticle */
     @XmlElementWrapper(name = "targetAccountingArticleCodes")
     @XmlElement(name = "targetAccountingArticleCodes")
+    @Schema(description = "The target accounting article codes")
     protected Set<String> targetAccountingArticleCodes = new HashSet<String>();
 
 	/**
      * pricePlanMatrix code
      */
+    @Schema(description = "Price plan matrix code")
 	 private String pricePlanMatrixCode;
 
 	/** The custom fields. */
     @XmlElement(required = false)
+    @Schema(description = "The custom fields")
     private CustomFieldsDto customFields;
 
     /**
@@ -139,8 +156,10 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      * If fase, then amount for the discount line produce by the discount plan item cannot exceed the amount of discounted lines.
      * Default: false
      */
+    @Schema(description = "<ul><li>If true, then allows to negate the amount of affected invoice lines</li><li>If fase, then amount for the discount line produce by the discount plan item cannot exceed the amount of discounted lines</li></ul>", defaultValue = "false")
     private Boolean allowToNegate;
 
+    @Schema(description = "description of discount plan item")
 	private String description;
     /**
      * Instantiates a new discount plan item dto.

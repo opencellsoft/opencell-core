@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class SubCategoryInvoiceAgregateDto.
  *
@@ -42,32 +44,41 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
     private static final long serialVersionUID = 6165612614574594919L;
 
     /** The item number. */
+    @Schema(description = "The item number")
     private Integer itemNumber;
 
     /** The accounting code. */
+    @Schema(description = "The accounting code")
     private String accountingCode;
 
     /** The description. */
+    @Schema(description = "The description")
     private String description;
 
     /** The quantity. Deprecated in v5.2 */
     @Deprecated
+    @Schema(description = "The quantity. Deprecated in v5.2", deprecated = true)
     private BigDecimal quantity;
 
     /** The amount without tax. */
+    @Schema(description = "The amount without tax")
     private BigDecimal amountWithoutTax;
 
     /** The amount tax. */
+    @Schema(description = "The amount tax")
     private BigDecimal amountTax;
 
     /** The amount with tax. */
+    @Schema(description = "The amount with tax")
     private BigDecimal amountWithTax;
 
     /** The invoice sub category code. */
     @XmlElement(required = true)
+    @Schema(description = "The invoice sub category code", required = true)
     private String invoiceSubCategoryCode;
 
     /** The user account code */
+    @Schema(description = "The user account code")
     private String userAccountCode;
 
     /**
@@ -75,11 +86,13 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
      */
     @XmlElementWrapper
     @XmlElement(name = "amountByTax", required = true)
+    @Schema(description = "List of amounts broken down by tax", required = true)
     private List<SubcategoryInvoiceAgregateAmountDto> amountsByTax;
 
     /** The rated transactions. */
     @XmlElementWrapper
     @XmlElement(name = "ratedTransaction")
+    @Schema(description = "List the rated transactions")
     private List<RatedTransactionDto> ratedTransactions;
 
     /**
