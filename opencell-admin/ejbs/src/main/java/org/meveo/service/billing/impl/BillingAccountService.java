@@ -87,8 +87,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * @throws BusinessException the business exception
      */
     public void createBillingAccount(BillingAccount billingAccount) throws BusinessException {
-
-        billingAccount.setStatus(AccountStatusEnum.ACTIVE);
+    	
+    	if (billingAccount.getStatus() == null) {
+    		billingAccount.setStatus(AccountStatusEnum.ACTIVE);
+    	}
         if (billingAccount.getSubscriptionDate() == null) {
             billingAccount.setSubscriptionDate(new Date());
         }
