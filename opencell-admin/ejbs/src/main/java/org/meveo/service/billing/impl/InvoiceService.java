@@ -3932,4 +3932,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public List<Object[]> getTotalInvoiceableAmountByBR(BillingRun billingRun) {
         return getEntityManager().createNamedQuery("Invoice.sumInvoiceableAmountByBR").setParameter("billingRunId", billingRun.getId()).getResultList();
     }
+    
+    /**
+     * Detach AO From invoice.
+     *
+     * @param ao account operation
+     */
+    public void detachAOFromInvoice(AccountOperation ao) {
+        getEntityManager().createNamedQuery("Invoice.detachAOFromInvoice").setParameter("ri", ao).executeUpdate();
+    }
 }

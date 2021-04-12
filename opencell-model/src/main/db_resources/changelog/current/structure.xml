@@ -3312,4 +3312,10 @@ END $$;]]>
         <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_resp_headers" constraintName="fk_h07be9b84xmmx5ypkbunkxwxt" deferrable="false" initiallyDeferred="false"
                                  onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
     </changeSet>
+    
+    <changeSet id="#5622_20210406" author="AbdelmounaimAkadid">
+	    <sql>
+            ALTER TABLE ${db.schema.adapted}billing_wallet_operation ALTER COLUMN charge_instance_id DROP NOT NULL
+        </sql>
+    </changeSet>
 </databaseChangeLog>
