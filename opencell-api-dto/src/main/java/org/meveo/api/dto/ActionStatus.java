@@ -29,6 +29,8 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Determine the status of the MEVEO API web service response.
  * 
@@ -45,36 +47,42 @@ public class ActionStatus {
      * Tells whether the instance of this <code>ActionStatus</code> object ok or not.
      */
     @XmlElement(required = true)
+    @Schema(description = "Tells whether the instance of this status object is ok or not", example = "possible value are : SUCCESS, FAIL")
     private ActionStatusEnum status;
 
     /**
      * An error code.
      */
     @XmlElement(type = MeveoApiErrorCodeEnum.class)
+    @Schema(description = "error code")
     private ApiErrorCodeEnum errorCode;
 
     /**
      * A detailed error message if applicable, can contain the entity id that was created.
      */
     @XmlElement(required = true)
+    @Schema(description = "A detailed error message if applicable, can contain the entity id that was created")
     private String message;
 
     /**
      * The entity identifier
      */
     @XmlElement
+    @Schema(description = "The entity identifier after creation of an entity")
     private Long entityId;
 
     /**
      * The entity code
      */
     @XmlElement
+    @Schema(description = "The entity code after creation of an entity")
     private String entityCode;
 
     /**
      * Number of items/records affected by the action
      */
     @XmlElement
+    @Schema(description = "Number of items/records affected by the action")
     private Integer nrAffected;
     
     private String json;
