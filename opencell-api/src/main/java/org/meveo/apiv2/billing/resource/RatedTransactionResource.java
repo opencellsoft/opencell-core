@@ -6,9 +6,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.meveo.apiv2.billing.RatedTransactionInput;
@@ -36,7 +34,8 @@ public interface RatedTransactionResource {
 	@Operation(summary = "This endpoint allows to update an existing ratedTransaction resource", tags = {
 			"RatedTransaction" }, description = "update an existing ratedTransaction", responses = {
 					@ApiResponse(responseCode = "200", description = "the ratedTransaction successfully updated, and the id is returned in the response"),
-					@ApiResponse(responseCode = "400", description = "bad request, ratedTransaction information contains an error") })
+					@ApiResponse(responseCode = "400", description = "bad request, ratedTransaction is not eligible for update"),
+					@ApiResponse(responseCode = "404", description = "bad request, ratedTransaction is not found") })
 	Response updateRatedTransaction(
 			@Parameter(description = "id of ratedTransaction", required = true) @PathParam("id") Long id,
 			@Parameter(description = "the ratedTransaction object", required = true) RatedTransactionInput RatedTransaction);
@@ -46,9 +45,9 @@ public interface RatedTransactionResource {
 	@Operation(summary = "This endpoint allows to cancel an existing ratedTransaction resource", tags = {
 			"RatedTransaction" }, description = "cancel an existing ratedTransaction", responses = {
 					@ApiResponse(responseCode = "200", description = "the ratedTransaction successfully canceled"),
-					@ApiResponse(responseCode = "400", description = "bad request, ratedTransaction is not found") })
+					@ApiResponse(responseCode = "400", description = "bad request, ratedTransaction is not eligible for update"),
+					@ApiResponse(responseCode = "404", description = "bad request, ratedTransaction is not found") })
 	Response cancel(
-			@Parameter(description = " ratedTransaction id", required = true) @PathParam("id") Long id,
-			@Context Request request);
+			@Parameter(description = " ratedTransaction id", required = true) @PathParam("id") Long id);
 
 }

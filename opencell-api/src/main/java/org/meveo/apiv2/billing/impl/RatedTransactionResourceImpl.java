@@ -48,7 +48,7 @@ public class RatedTransactionResourceImpl implements RatedTransactionResource {
 	}
 	
 	@Override
-	public Response cancel(Long id, Request request) {
+	public Response cancel(Long id) {
 		findRatedTransactionEligibleToUpdate(id);
 		ratedTransactionApiService.cancelRatedTransaction(id);
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(RatedTransactionResource.class, id).build())
