@@ -42,4 +42,8 @@ public interface GenericResourceAPIv1 {
     @Path("/restEndpoints/{entityName}")
     Response getListRestEndpointsForEntity(@Parameter(description = "the entity name", required = true) @PathParam("entityName") String entityName);
 
+    @GET
+    @Path("/version")
+    Response getApiVersion();
+
 }
