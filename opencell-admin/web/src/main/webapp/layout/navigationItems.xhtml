@@ -273,6 +273,9 @@
 			<p:menuitem id="detailedInvoices" outcome="detailedInvoiceDetail"
 				value="#{messages['menu.invoice.createDetailed']}"
 				rendered="#{currentUser.hasRole('createInvoice') }" />
+			<p:menuitem id="detailedInvoicesWithServices" outcome="detailedInvoiceDetailWithServices"
+				value="#{messages['menu.invoice.createDetailedWithServices']}"
+				rendered="#{currentUser.hasRole('createInvoice') }" />
 		</p:submenu>
 	</p:submenu>
 

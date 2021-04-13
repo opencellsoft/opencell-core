@@ -4075,14 +4075,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         rt.changeStatus(RatedTransactionStatusEnum.BILLED);
         rt.setInvoice(invoice);
         rt.setInvoiceAgregateF(invoiceAgregateSubcat);
-        invoiceAgregateSubcat.addRatedTransaction(rt, isEntreprise, false);
-        addRTAmountsToSubcategoryInvoiceAggregate(invoiceAgregateSubcat, rt);
-    }
-
-    private void addRTAmountsToSubcategoryInvoiceAggregate(SubCategoryInvoiceAgregate invoiceAgregateSubcat, RatedTransaction rt) {
-        invoiceAgregateSubcat.addAmountWithoutTax(rt.getAmountWithoutTax());
-        invoiceAgregateSubcat.addAmountTax(rt.getAmountTax());
-        invoiceAgregateSubcat.addAmountWithTax(rt.getAmountWithTax());
+        invoiceAgregateSubcat.addRatedTransaction(rt, isEntreprise, true);
     }
 
     private RatedTransaction constructRatedTransaction(Seller seller, BillingAccount billingAccount, boolean isEnterprise, int invoiceRounding, RoundingModeEnum invoiceRoundingMode, UserAccount userAccount,
