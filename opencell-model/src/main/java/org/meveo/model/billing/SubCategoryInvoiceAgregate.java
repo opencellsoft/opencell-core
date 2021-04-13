@@ -241,8 +241,9 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
      * 
      * @param ratedTransaction Rated transaction to associate
      * @param isEnterprise Is it enterprise/b2b installation - interested to track
+     * @param updateAmounts Shall Subcategory aggregate amounts be updated with values of rated transaction amounts
      */
-    public void addRatedTransaction(RatedTransaction ratedTransaction, boolean isEnterprise, boolean addAmounts) {
+    public void addRatedTransaction(RatedTransaction ratedTransaction, boolean isEnterprise, boolean updateAmounts) {
 
         if (this.itemNumber == null) {
             this.itemNumber = 0;
@@ -250,22 +251,60 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         this.itemNumber++;
         this.ratedtransactionsToAssociate.add(ratedTransaction);
 
-        BigDecimal amount = isEnterprise ? ratedTransaction.getAmountWithoutTax() : ratedTransaction.getAmountWithTax();
-        if (addAmounts) {
+        if (updateAmounts) {
             if (isEnterprise) {
                 addAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
             } else {
                 addAmountWithTax(ratedTransaction.getAmountWithTax());
             }
             addAmountTax(ratedTransaction.getAmountTax());
+
+            if (amountsByTax == null) {
+                amountsByTax = new LinkedHashMap<>();
+            }
+            if (!amountsByTax.containsKey(ratedTransaction.getTax())) {
+                amountsByTax.put(ratedTransaction.getTax(), new SubcategoryInvoiceAgregateAmount(ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax()));
+            } else {
+                amountsByTax.get(ratedTransaction.getTax()).addAmounts(ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax());
+            }
         }
-        if (amountsByTax == null) {
-            amountsByTax = new LinkedHashMap<>();
+    }
+
+    /**
+     * Disassociate Rated transaction to an aggregate, decrement the itemNumber field value and deduce amounts.
+     * 
+     * @param ratedTransaction Rated transaction to associate
+     * @param isEnterprise Is it enterprise/b2b installation - interested to track
+     * @param updateAmounts Shall Subcategory aggregate amounts be updated with values of rated transaction amounts
+     */
+    public void removeRatedTransaction(RatedTransaction ratedTransaction, boolean isEnterprise, boolean updateAmounts) {
+
+        if (this.itemNumber == null) {
+            this.itemNumber = 0;
         }
-        if (!amountsByTax.containsKey(ratedTransaction.getTax())) {
-            amountsByTax.put(ratedTransaction.getTax(), new SubcategoryInvoiceAgregateAmount(ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax()));
-        } else {
-            amountsByTax.get(ratedTransaction.getTax()).addAmounts(ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax());
+        this.itemNumber--;
+        if (this.itemNumber < 0) {
+            this.itemNumber = 0;
+        }
+        this.ratedtransactionsToAssociate.remove(ratedTransaction);
+
+        if (updateAmounts) {
+            if (isEnterprise) {
+                subtractAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
+            } else {
+                subtractAmountWithTax(ratedTransaction.getAmountWithTax());
+            }
+            subtractAmountTax(ratedTransaction.getAmountTax());
+
+            if (amountsByTax == null) {
+                amountsByTax = new LinkedHashMap<>();
+            }
+            if (amountsByTax.containsKey(ratedTransaction.getTax())) {
+                amountsByTax.get(ratedTransaction.getTax()).subtractAmounts(ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax());
+                if (amountsByTax.get(ratedTransaction.getTax()).checkIsAllZeroAmounts()) {
+                    amountsByTax.remove(ratedTransaction.getTax());
+                }
+            }
         }
     }
 
@@ -546,8 +585,7 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
     }
 
     /**
-     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax. If taxPercent is null, or ZERO returned amountWithoutTax and amountWithTax values will be the same (which
-     * one, depending on isEnterprise value)
+     * Compute derived amounts amountWithoutTax/amountWithTax/amountTax. If taxPercent is null, or ZERO returned amountWithoutTax and amountWithTax values will be the same (which one, depending on isEnterprise value)
      * 
      * @param isEnterprise Is application used used in B2B (base prices are without tax) or B2C mode (base prices are with tax)
      * @param rounding Rounding precision to apply for amounts by tax amounts

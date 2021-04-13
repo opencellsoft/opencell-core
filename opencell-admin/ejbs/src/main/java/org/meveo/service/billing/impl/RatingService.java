@@ -625,7 +625,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         // Execute a final rating script set on offer template
         if (bareWalletOperation.getOfferTemplate() != null && bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance() != null) {
-            log.debug("Will execute an offer level rating script for offer {}", bareWalletOperation.getOfferTemplate());
+            log.trace("Will execute an offer level rating script for offer {}", bareWalletOperation.getOfferTemplate());
             executeRatingScript(bareWalletOperation, bareWalletOperation.getOfferTemplate().getGlobalRatingScriptInstance());
         }
 
@@ -1241,8 +1241,8 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         String scriptInstanceCode = scriptInstance.getCode();
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("Will execute {} script {} for charge {}", bareWalletOperation.getPriceplan() != null ? "priceplan" : "rating", scriptInstanceCode, bareWalletOperation.getChargeInstance().getId());
+            if (log.isTraceEnabled()) {
+                log.trace("Will execute {} script {} for charge {}", bareWalletOperation.getPriceplan() != null ? "priceplan" : "rating", scriptInstanceCode, bareWalletOperation.getChargeInstance().getId());
             }
 
             scriptInstanceService.executeCached(bareWalletOperation, scriptInstanceCode, null);
