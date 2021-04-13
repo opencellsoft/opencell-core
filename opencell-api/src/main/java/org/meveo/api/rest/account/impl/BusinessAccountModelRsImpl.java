@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.account.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.account.AccountHierarchyApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -34,7 +30,12 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.rest.account.BusinessAccountModelRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.model.crm.BusinessAccountModel;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Edward P. Legaspi
@@ -107,6 +108,20 @@ public class BusinessAccountModelRsImpl extends BaseRs implements BusinessAccoun
         try {
             result = moduleApi.list(BusinessAccountModel.class);
 
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public MeveoModuleDtosResponse listGetAll() {
+
+        MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
+
+        try {
+            result = moduleApi.list(BusinessAccountModel.class, GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

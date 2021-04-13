@@ -25,7 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -131,7 +134,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/account/customerAccount" ) || pathIBaseRS.equals( "/account/billingAccount" )
                     || pathIBaseRS.equals( "/account/userAccount" ) || pathIBaseRS.equals( "/catalog/serviceTemplate" )
                     || pathIBaseRS.equals( "/catalog/pricePlan" ) || pathIBaseRS.equals( "/billing/wallet/operation" )
-                    || pathIBaseRS.equals( "/admin/fileFormat" ) )
+                    || pathIBaseRS.equals( "/admin/fileFormat" ) || pathIBaseRS.equals( "/account/businessAccountModel" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 )
@@ -160,7 +163,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( "/account/customerAccount" ) || pathIBaseRS.equals( "/account/billingAccount" )
                     || pathIBaseRS.equals( "/account/userAccount" ) || pathIBaseRS.equals( "/catalog/serviceTemplate" )
                     || pathIBaseRS.equals( "/catalog/pricePlan" ) || pathIBaseRS.equals( "/billing/wallet/operation" )
-                    || pathIBaseRS.equals( "/admin/fileFormat" ) )
+                    || pathIBaseRS.equals( "/admin/fileFormat" ) || pathIBaseRS.equals( "/account/businessAccountModel" ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
