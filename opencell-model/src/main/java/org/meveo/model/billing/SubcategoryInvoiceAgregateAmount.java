@@ -141,6 +141,7 @@ public class SubcategoryInvoiceAgregateAmount implements Serializable, Cloneable
      * 
      * @param amountWithoutTaxToAdd Amount without tax
      * @param amountWithTaxToAdd Amount with tax
+     * @param amountTaxToAdd Amount tax
      */
     public void addAmounts(BigDecimal amountWithoutTaxToAdd, BigDecimal amountWithTaxToAdd, BigDecimal amountTaxToAdd) {
 
@@ -154,6 +155,28 @@ public class SubcategoryInvoiceAgregateAmount implements Serializable, Cloneable
 
         if (amountTaxToAdd != null) {
             this.amountTax = this.amountTax.add(amountTaxToAdd);
+        }
+    }
+
+    /**
+     * Subtract given amounts
+     * 
+     * @param amountWithoutTaxToSubtract Amount without tax
+     * @param amountWithTaxToSubtract Amount with tax
+     * @param amountTaxToSubtract Amount tax
+     */
+    public void subtractAmounts(BigDecimal amountWithoutTaxToSubtract, BigDecimal amountWithTaxToSubtract, BigDecimal amountTaxToSubtract) {
+
+        if (amountWithoutTaxToSubtract != null) {
+            this.amountWithoutTax = this.amountWithoutTax.subtract(amountWithoutTaxToSubtract);
+        }
+
+        if (amountWithTaxToSubtract != null) {
+            this.amountWithTax = this.amountWithTax.subtract(amountWithTaxToSubtract);
+        }
+
+        if (amountTaxToSubtract != null) {
+            this.amountTax = this.amountTax.subtract(amountTaxToSubtract);
         }
     }
 
@@ -204,5 +227,15 @@ public class SubcategoryInvoiceAgregateAmount implements Serializable, Cloneable
         this.amountWithTax = this.amountWithTax.negate();
         this.amountTax = this.amountTax.negate();
         return this;
+    }
+
+    /**
+     * Check if all amounts are ZERO
+     * 
+     * @return True if all amounts are set to Zero
+     */
+    public boolean checkIsAllZeroAmounts() {
+
+        return amountWithoutTax == BigDecimal.ZERO && amountWithTax == BigDecimal.ZERO && amountTax == BigDecimal.ZERO;
     }
 }

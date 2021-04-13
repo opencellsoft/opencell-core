@@ -693,6 +693,16 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
 		</redirect>
 	</navigation-case>
 	<navigation-case>
+		<from-outcome>detailedInvoiceDetailWithServices</from-outcome>
+		<to-view-id>/pages/billing/invoices/createInvoiceDetail.xhtml</to-view-id>
+		<redirect include-view-params="true">
+			<view-param>
+				<name>mode</name>
+				<value>detailedWithServices</value>
+			</view-param>
+		</redirect>
+	</navigation-case>
+	<navigation-case>
 		<from-outcome>wallets</from-outcome>
 		<to-view-id>/pages/billing/wallets/wallets.xhtml</to-view-id>
 		<redirect />

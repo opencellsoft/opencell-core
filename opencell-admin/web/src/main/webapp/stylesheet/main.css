@@ -674,6 +674,11 @@ form.formNoBottomBorder {
 	border-bottom: none;
 }
 
+button.noBorderBackground {
+	border: 0px !important;
+	background: none !important;
+}
+
 .Red { color: #ff0000; }
 
 .ListNoStyle { list-style-type: none; }

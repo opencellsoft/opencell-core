@@ -223,7 +223,7 @@ public class InvoiceAggregateHandler {
 
         SubCategoryInvoiceAgregate subCategoryInvoiceAgregate = subCatInvAgregateMap.get(invoiceSubCategory.getCode());
         CategoryInvoiceAgregate categoryInvoiceAgregate = null;
-        if (subCategoryInvoiceAgregate != null && subCategoryInvoiceAgregate.getCategoryInvoiceAgregate()!=null) {
+        if (subCategoryInvoiceAgregate != null && subCategoryInvoiceAgregate.getCategoryInvoiceAgregate() != null) {
             categoryInvoiceAgregate = subCategoryInvoiceAgregate.getCategoryInvoiceAgregate();
 
         } else {
@@ -263,10 +263,6 @@ public class InvoiceAggregateHandler {
             }
         }
 
-        categoryInvoiceAgregate.setAmountWithoutTax(addOrSubtract(categoryInvoiceAgregate.getAmountWithoutTax(), amountWithoutTax, isToAdd));
-        categoryInvoiceAgregate.setAmountWithTax(addOrSubtract(categoryInvoiceAgregate.getAmountWithTax(), amountWithTax, isToAdd));
-        categoryInvoiceAgregate.setAmountTax(addOrSubtract(categoryInvoiceAgregate.getAmountTax(), amountTax, isToAdd));
-
         subCategoryInvoiceAgregate.setAmountWithoutTax(addOrSubtract(subCategoryInvoiceAgregate.getAmountWithoutTax(), amountWithoutTax, isToAdd));
         subCategoryInvoiceAgregate.setAmountWithTax(addOrSubtract(subCategoryInvoiceAgregate.getAmountWithTax(), amountWithTax, isToAdd));
         subCategoryInvoiceAgregate.setAmountTax(addOrSubtract(subCategoryInvoiceAgregate.getAmountTax(), amountTax, isToAdd));
@@ -277,16 +273,24 @@ public class InvoiceAggregateHandler {
 
         boolean removeSubcategory = !isToAdd && ratedTransaction == null;
 
-        if (ratedTransaction != null) {
+        if (ratedTransaction == null) {
+
+            categoryInvoiceAgregate.setAmountWithoutTax(addOrSubtract(categoryInvoiceAgregate.getAmountWithoutTax(), amountWithoutTax, isToAdd));
+            categoryInvoiceAgregate.setAmountWithTax(addOrSubtract(categoryInvoiceAgregate.getAmountWithTax(), amountWithTax, isToAdd));
+            categoryInvoiceAgregate.setAmountTax(addOrSubtract(categoryInvoiceAgregate.getAmountTax(), amountTax, isToAdd));
+
+        } else {
+
             categoryInvoiceAgregate.setItemNumber(categoryInvoiceAgregate.getItemNumber() + (isToAdd ? 1 : -1));
-            subCategoryInvoiceAgregate.setItemNumber(subCategoryInvoiceAgregate.getItemNumber() + (isToAdd ? 1 : -1));
 
             if (isToAdd) {
-                subCategoryInvoiceAgregate.getRatedtransactionsToAssociate().add(ratedTransaction);
-            } else if (subCategoryInvoiceAgregate.getItemNumber().intValue() == 0) {
-                removeSubcategory = true;
+                subCategoryInvoiceAgregate.addRatedTransaction(ratedTransaction, appProvider.isEntreprise(), true);
             } else {
-                subCategoryInvoiceAgregate.getRatedtransactionsToAssociate().remove(ratedTransaction);
+                subCategoryInvoiceAgregate.removeRatedTransaction(ratedTransaction, appProvider.isEntreprise(), true);
+            }
+
+            if (!isToAdd && subCategoryInvoiceAgregate.getItemNumber().intValue() == 0) {
+                removeSubcategory = true;
             }
         }
 
@@ -298,7 +302,7 @@ public class InvoiceAggregateHandler {
             Set newSet = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates().stream().filter(subCat -> !subCat.equals(subCategoryInvoiceAgregateFinal)).collect(Collectors.toSet());
             categoryInvoiceAgregate.setSubCategoryInvoiceAgregates(newSet);
             if (categoryInvoiceAgregate.getSubCategoryInvoiceAgregates().isEmpty()) {
-            	invoiceSubCategory = invoiceSubCategoryService.retrieveIfNotManaged(invoiceSubCategory);
+                invoiceSubCategory = invoiceSubCategoryService.retrieveIfNotManaged(invoiceSubCategory);
                 catInvAgregateMap.remove(invoiceSubCategory.getInvoiceCategory().getCode());
             }
         }
