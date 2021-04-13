@@ -72,7 +72,7 @@ public class RecordedInvoice extends AccountOperation {
     /**
      * if an invoice becomes unpaid then, it's associated with a dunning doc
      */
-    @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
 
