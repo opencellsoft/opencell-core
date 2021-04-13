@@ -151,8 +151,7 @@ public class InvoicingJobBean extends BaseJobBean {
      * 
      * @param billingRun Billing run
      * @param jobExecutionResult Job execution result
-     * @return Job execution results corresponding to the last stage of current job run. In case of manual processing, Job execution result passed as argument to the method and teh
-     *         method result, will be the same object.
+     * @return Job execution results corresponding to the last stage of current job run. In case of manual processing, Job execution result passed as argument to the method and teh method result, will be the same object.
      */
     @SuppressWarnings({ "unchecked" })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -260,8 +259,7 @@ public class InvoicingJobBean extends BaseJobBean {
     }
 
     /**
-     * Calculate amounts to invoice, link with Billing run and update Billing account with amount to invoice (if it is a billable entity). One billable entity at a time in a
-     * separate transaction.
+     * Calculate amounts to invoice, link with Billing run and update Billing account with amount to invoice (if it is a billable entity). One billable entity at a time in a separate transaction.
      * 
      * @param billingCycle Billing cycle
      * @param billingRun Billing run
@@ -302,8 +300,8 @@ public class InvoicingJobBean extends BaseJobBean {
 
                 Function<IBillableEntity, IBillableEntity> task = (billableEntity) -> ratedTransactionService.updateEntityTotalAmountsAndLinkToBR(billableEntity, billingRun, minAmountForAccounts);
 
-                entitiesToBill = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult, new SynchronizedIterator<IBillableEntity>(entities), task, nbRuns, waitingMillis, false,
-                    JobSpeedEnum.NORMAL, true);
+                entitiesToBill = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult, new SynchronizedIterator<IBillableEntity>(entities), task, nbRuns, waitingMillis, false, JobSpeedEnum.NORMAL,
+                    true);
             }
 
             // A simplified form of calculating of total amounts when no need to worry about minimum amounts
@@ -320,7 +318,8 @@ public class InvoicingJobBean extends BaseJobBean {
                 Function<AmountsToInvoice, IBillableEntity> task = (amountsToInvoice) -> ratedTransactionService.updateEntityTotalAmountsAndLinkToBR(amountsToInvoice.getEntityToInvoiceId(), billingRun,
                     amountsToInvoice.getAmountsToInvoice());
 
-                entitiesToBill = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult, new SynchronizedIterator<>(billableAmountSummary), task, nbRuns, waitingMillis, false, JobSpeedEnum.NORMAL, true);
+                entitiesToBill = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult, new SynchronizedIterator<>(billableAmountSummary), task, nbRuns, waitingMillis, false, JobSpeedEnum.NORMAL,
+                    true);
 
                 log.info("Will update BR amount totals for Billing run {}. Will invoice {} out of {} entities of type {}", billingRun.getId(), (entitiesToBill != null ? entitiesToBill.size() : 0), totalEntityCount,
                     type);
@@ -376,13 +375,19 @@ public class InvoicingJobBean extends BaseJobBean {
     }
 
     /**
-     * Reject Billing accounts from invoicing that have no billable transactions and increment their next invoice date
+     * Reject Billing accounts from invoicing that have no billable transactions (that means they were not included in this BR) and increment their next invoice date. This applies only when processing a Billing run with
+     * a billing cycle set
      *
      * @param billingRun The billing run
      * @param jobExecutionResult the Job execution result
      * @throws BusinessException the business exception
      */
     private void rejectBAWithoutBillableTransactions(BillingRun billingRun, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
+
+        // Does not apply when processing a Billing run without a billing cycle set
+        if (billingRun.getBillingCycle() == null) {
+            return;
+        }
 
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
 

@@ -725,7 +725,9 @@ public class BillingRunDto extends AuditableEntityDto {
         setProcessDate(billingRunEntity.getProcessDate());
         setStatus(billingRunEntity.getStatus());
         setStatusDate(billingRunEntity.getStatusDate());
-        setBillingCycle(new BillingCycleDto(billingRunEntity.getBillingCycle(), new CustomFieldsDto()));
+        if (billingRunEntity.getBillingCycle() != null) {
+            setBillingCycle(new BillingCycleDto(billingRunEntity.getBillingCycle(), new CustomFieldsDto()));
+        }
         setBillingAccountNumber(billingRunEntity.getBillingAccountNumber());
         setBillableBillingAcountNumber(billingRunEntity.getBillableBillingAcountNumber());
         setProducibleInvoiceNumber(billingRunEntity.getProducibleInvoiceNumber());
