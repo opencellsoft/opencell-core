@@ -26,13 +26,16 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
+import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.job.Job;
 
 /**
@@ -49,10 +52,28 @@ public class RatedTransactionsJob extends Job {
     @Inject
     private RatedTransactionsJobBean ratedTransactionsJobBean;
 
+    /** The rated transactions aggregation job bean. */
+    @Inject
+    private RatedTransactionsAggregatedJobBean ratedTransactionsAggregatedJobBean;
+
+    @Inject
+    private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
+
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        ratedTransactionsJobBean.execute(result, jobInstance);
+
+        EntityReferenceWrapper aggregationSettingsWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woAggregationSettings", null);
+        WalletOperationAggregationSettings aggregationSettings = null;
+        if (aggregationSettingsWrapper != null) {
+            aggregationSettings = walletOperationAggregationSettingsService.findByCode(aggregationSettingsWrapper.getCode());
+        }
+
+        if (aggregationSettings == null) {
+            ratedTransactionsJobBean.execute(result, jobInstance);
+        } else {
+            ratedTransactionsAggregatedJobBean.execute(result, jobInstance);
+        }
         return result;
     }
 
