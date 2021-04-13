@@ -30,6 +30,7 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.SubscriptionService;
@@ -111,6 +112,9 @@ public class UnitGDPRJobBean {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void accountOperationRemove(AccountOperation accountOperation) {
+        if(accountOperation instanceof RecordedInvoice) {
+            invoiceService.detachAOFromInvoice(accountOperation);
+        }
         accountOperationService.remove(accountOperation);
     }
 

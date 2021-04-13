@@ -48,8 +48,7 @@ import org.meveo.model.AuditableEntity;
 @DiscriminatorColumn(name = "type")
 @NamedQueries({ @NamedQuery(name = "InvoiceAgregate.deleteByBR", query = "delete from InvoiceAgregate ia where ia.billingRun.id=:billingRunId"),
         @NamedQuery(name = "InvoiceAgregate.deleteByInvoiceIds", query = "delete from InvoiceAgregate ia where ia.invoice.id IN (:invoicesIds)") })
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "billing_invoice_agregate_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "billing_invoice_agregate_seq"), })
 public abstract class InvoiceAgregate extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
@@ -264,28 +263,57 @@ public abstract class InvoiceAgregate extends AuditableEntity {
         amount = amount.add(amountToAdd);
     }
 
-    public void addAmountWithTax(BigDecimal amountToAdd) {
-        if (amountWithTax == null) {
-            amountWithTax = new BigDecimal("0");
+    public void addAmountWithTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (amountWithTax == null) {
+                amountWithTax = new BigDecimal("0");
+            }
+            amountWithTax = amountWithTax.add(deltaAmount);
         }
-        amountWithTax = amountWithTax.add(amountToAdd);
     }
 
-    public void addAmountWithoutTax(BigDecimal amountToAdd) {
-        if (amountToAdd != null) {
+    public void subtractAmountWithTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (amountWithTax == null) {
+                amountWithTax = new BigDecimal("0");
+            }
+            amountWithTax = amountWithTax.subtract(deltaAmount);
+        }
+    }
+
+    public void addAmountWithoutTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
             if (amountWithoutTax == null) {
                 amountWithoutTax = new BigDecimal("0");
             }
-            amountWithoutTax = amountWithoutTax.add(amountToAdd);
+            amountWithoutTax = amountWithoutTax.add(deltaAmount);
         }
     }
 
-    public void addAmountTax(BigDecimal amountToAdd) {
-        if (amountToAdd != null) {
+    public void subtractAmountWithoutTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (amountWithoutTax == null) {
+                amountWithoutTax = new BigDecimal("0");
+            }
+            amountWithoutTax = amountWithoutTax.subtract(deltaAmount);
+        }
+    }
+
+    public void addAmountTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
             if (amountTax == null) {
                 amountTax = new BigDecimal("0");
             }
-            amountTax = amountTax.add(amountToAdd);
+            amountTax = amountTax.add(deltaAmount);
+        }
+    }
+
+    public void subtractAmountTax(BigDecimal deltaAmount) {
+        if (deltaAmount != null) {
+            if (amountTax == null) {
+                amountTax = new BigDecimal("0");
+            }
+            amountTax = amountTax.subtract(deltaAmount);
         }
     }
 

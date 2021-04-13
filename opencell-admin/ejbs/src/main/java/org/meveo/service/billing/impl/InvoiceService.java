@@ -148,6 +148,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -4074,14 +4075,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         rt.changeStatus(RatedTransactionStatusEnum.BILLED);
         rt.setInvoice(invoice);
         rt.setInvoiceAgregateF(invoiceAgregateSubcat);
-        invoiceAgregateSubcat.addRatedTransaction(rt, isEntreprise, false);
-        addRTAmountsToSubcategoryInvoiceAggregate(invoiceAgregateSubcat, rt);
-    }
-
-    private void addRTAmountsToSubcategoryInvoiceAggregate(SubCategoryInvoiceAgregate invoiceAgregateSubcat, RatedTransaction rt) {
-        invoiceAgregateSubcat.addAmountWithoutTax(rt.getAmountWithoutTax());
-        invoiceAgregateSubcat.addAmountTax(rt.getAmountTax());
-        invoiceAgregateSubcat.addAmountWithTax(rt.getAmountWithTax());
+        invoiceAgregateSubcat.addRatedTransaction(rt, isEntreprise, true);
     }
 
     private RatedTransaction constructRatedTransaction(Seller seller, BillingAccount billingAccount, boolean isEnterprise, int invoiceRounding, RoundingModeEnum invoiceRoundingMode, UserAccount userAccount,
@@ -4160,7 +4154,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoiceAgregateCat.setBillingAccount(billingAccount);
         invoiceAgregateCat.setInvoiceCategory(invoiceCategory);
         invoiceAgregateCat.setUserAccount(userAccount);
-        invoice.addInvoiceAggregate(invoiceAgregateCat);
+        //invoice.addInvoiceAggregate(invoiceAgregateCat);
         return invoiceAgregateCat;
     }
 
@@ -4178,7 +4172,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         invoiceAgregateSubcat.setAccountingCode(invoiceSubCategory.getAccountingCode());
         invoiceAgregateSubcat.setAuditable(auditable);
-        invoice.addInvoiceAggregate(invoiceAgregateSubcat);
+        //invoice.addInvoiceAggregate(invoiceAgregateSubcat);
         return invoiceAgregateSubcat;
     }
 
@@ -4479,6 +4473,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public void cancelInvoicesByStatus(BillingRun billingRun, List<InvoiceStatusEnum> toCancel) {
         List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), toCancel);
         invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
+    }
+    
+    /**
+     * Detach AO From invoice.
+     *
+     * @param ao account operation
+     */
+    public void detachAOFromInvoice(AccountOperation ao) {
+        getEntityManager().createNamedQuery("Invoice.detachAOFromInvoice").setParameter("ri", ao).executeUpdate();
     }
 
 }
