@@ -2666,10 +2666,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void recalculateDates(Long invoiceId) {
         Invoice invoice = invoiceService.findById(invoiceId);
-        BillingAccount billingAccount = billingAccountService.retrieveIfNotManaged(invoice.getBillingAccount());
+        BillingAccount billingAccount = invoice.getBillingAccount();
         BillingCycle billingCycle = billingAccount.getBillingCycle();
-        BillingRun billingRun = billingRunService.retrieveIfNotManaged(invoice.getBillingRun());
-        if (billingRun != null) {
+        BillingRun billingRun = invoice.getBillingRun();
+        if (billingRun != null && billingRun.getBillingCycle() != null) {
             billingCycle = billingRun.getBillingCycle();
         }
         billingCycle = PersistenceUtils.initializeAndUnproxy(billingCycle);
@@ -3395,8 +3395,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             for (DiscountPlanItem discountPlanItem : billingAccountApplicableDiscountPlanItems) {
-                SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise,
-                        rounding, roundingMode, invoiceRounding, invoiceRoundingMode, scAggregate, amountAsDiscountBase,
+                SubCategoryInvoiceAgregate discountAggregate = getDiscountAggregates(billingAccount, invoice, isEnterprise, rounding, roundingMode, invoiceRounding, invoiceRoundingMode, scAggregate, amountAsDiscountBase,
                     cAggregate, discountPlanItem);
                 if (discountAggregate != null) {
                     addAmountsToMap(amountCumulativeForTax, discountAggregate.getAmountsByTax());
@@ -3630,14 +3629,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private List<DiscountPlanInstance> findSubscriptionDPs(List<UserAccount> userAccounts) {
-        if(!userAccounts.isEmpty()) {
-            String query = "FROM DiscountPlanInstance dp WHERE dp.subscription.id IN " +
-                    "(SELECT rt.subscription.id FROM RatedTransaction rt LEFT JOIN rt.subscription WHERE rt.subscription.id IN( " +
-                    "SELECT sub.id FROM Subscription sub WHERE sub.userAccount IN :userAccounts AND sub.status = :status))";
-            return getEntityManager().createQuery(query, DiscountPlanInstance.class)
-                    .setParameter("userAccounts", userAccounts)
-                    .setParameter("status", SubscriptionStatusEnum.ACTIVE)
-                    .getResultList();
+        if (!userAccounts.isEmpty()) {
+            String query = "FROM DiscountPlanInstance dp WHERE dp.subscription.id IN " + "(SELECT rt.subscription.id FROM RatedTransaction rt LEFT JOIN rt.subscription WHERE rt.subscription.id IN( "
+                    + "SELECT sub.id FROM Subscription sub WHERE sub.userAccount IN :userAccounts AND sub.status = :status))";
+            return getEntityManager().createQuery(query, DiscountPlanInstance.class).setParameter("userAccounts", userAccounts).setParameter("status", SubscriptionStatusEnum.ACTIVE).getResultList();
         }
         return Collections.emptyList();
     }
@@ -4154,7 +4149,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoiceAgregateCat.setBillingAccount(billingAccount);
         invoiceAgregateCat.setInvoiceCategory(invoiceCategory);
         invoiceAgregateCat.setUserAccount(userAccount);
-        //invoice.addInvoiceAggregate(invoiceAgregateCat);
+        // invoice.addInvoiceAggregate(invoiceAgregateCat);
         return invoiceAgregateCat;
     }
 
@@ -4172,7 +4167,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         invoiceAgregateSubcat.setAccountingCode(invoiceSubCategory.getAccountingCode());
         invoiceAgregateSubcat.setAuditable(auditable);
-        //invoice.addInvoiceAggregate(invoiceAgregateSubcat);
+        // invoice.addInvoiceAggregate(invoiceAgregateSubcat);
         return invoiceAgregateSubcat;
     }
 
@@ -4474,7 +4469,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<Invoice> invoices = findInvoicesByStatusAndBR(billingRun.getId(), toCancel);
         invoices.stream().forEach(invoice -> cancelInvoiceWithoutDelete(invoice));
     }
-    
+
     /**
      * Detach AO From invoice.
      *
