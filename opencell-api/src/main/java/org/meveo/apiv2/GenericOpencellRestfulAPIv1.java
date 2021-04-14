@@ -717,6 +717,23 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/counterTemplates/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "counterTemplate" );
                         }
+                        else if ( ((Path) anAnnotation).value().equals( "/catalog/discountPlan" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/discountPlans",
+                                    ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( CATALOG + "/discountPlans", aMapRestful );
+
+                            // Handling enable and disable a discountPlan
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/discountPlans\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/discountPlans\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/discountPlans/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "discountPlan" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/discountPlans/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "discountPlan" );
+                        }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
                                     API_VERSION + Inflector.getInstance().pluralize( ((Path) anAnnotation).value() ),

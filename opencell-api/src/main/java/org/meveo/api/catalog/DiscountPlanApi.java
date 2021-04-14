@@ -18,28 +18,26 @@
 
 package org.meveo.api.catalog;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.catalog.DiscountPlansDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetDiscountPlansResponseDto;
+import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlan.DurationPeriodUnitEnum;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.DiscountPlanService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Said Ramli
@@ -208,5 +206,20 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 		}
 
         return discountPlansDto;
+    }
+
+    public GetDiscountPlansResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        GetDiscountPlansResponseDto result = new GetDiscountPlansResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<DiscountPlan> discountPlans = discountPlanService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (discountPlans != null) {
+            for (DiscountPlan discountPlan : discountPlans) {
+                result.getDiscountPlan().getDiscountPlan().add(new DiscountPlanDto(discountPlan,
+                        entityToDtoConverter.getCustomFieldsDTO(discountPlan, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+        }
+
+        return result;
     }
 }

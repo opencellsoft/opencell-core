@@ -18,11 +18,11 @@
 
 package org.meveo.api.dto.catalog;
 
-import java.io.Serializable;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class DiscountPlansDto.
@@ -42,6 +42,8 @@ public class DiscountPlansDto implements Serializable {
      * @return the discount plan
      */
     public List<DiscountPlanDto> getDiscountPlan() {
+        if ( discountPlan == null )
+            discountPlan = new ArrayList<>();
         return discountPlan;
     }
 
