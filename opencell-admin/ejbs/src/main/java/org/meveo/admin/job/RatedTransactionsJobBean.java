@@ -118,7 +118,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         List<Future<String>> futures = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
-            futures.add(ratedTransactionAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
+            futures.add(ratedTransactionAsync.launchAndForget(subListCreator.getNextWorkSet(), result, lastCurrentUser));
             try {
                 Thread.sleep(waitingMillis.longValue());
 
@@ -163,7 +163,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         List<Future<String>> asyncReturns = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
-            asyncReturns.add(ratedTransactionAsync.launchAndForget((List<AggregatedWalletOperation>) subListCreator.getNextWorkSet(), result, lastCurrentUser, aggregationSetting,
+            asyncReturns.add(ratedTransactionAsync.launchAndForget(subListCreator.getNextWorkSet(), result, lastCurrentUser, aggregationSetting,
                 invoicingDate));
             try {
                 Thread.sleep(waitingMillis.longValue());

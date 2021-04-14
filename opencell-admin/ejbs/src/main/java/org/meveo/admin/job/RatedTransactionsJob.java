@@ -63,10 +63,10 @@ public class RatedTransactionsJob extends Job {
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
-
+        String Appliesto =  "JobInstance_RatedTransactionsJob";
         CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
         customFieldNbRuns.setCode(CF_NB_RUNS);
-        customFieldNbRuns.setAppliesTo("JobInstance_RatedTransactionsJob");
+        customFieldNbRuns.setAppliesTo(Appliesto);
         customFieldNbRuns.setActive(true);
         customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -77,7 +77,7 @@ public class RatedTransactionsJob extends Job {
 
         CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
         customFieldNbWaiting.setCode(Job.CF_WAITING_MILLIS);
-        customFieldNbWaiting.setAppliesTo("JobInstance_RatedTransactionsJob");
+        customFieldNbWaiting.setAppliesTo(Appliesto);
         customFieldNbWaiting.setActive(true);
         customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);

@@ -240,7 +240,7 @@ public class CardPaymentMethod extends PaymentMethod {
      */
     public boolean isValidForDate(Date date) {
         if(yearExpiration != null && monthExpiration != null) {
-            int year = new Integer(DateUtils.getYearFromDate(date).toString().substring(2, 4));
+            int year = Integer.valueOf(DateUtils.getYearFromDate(date).toString().substring(2, 4));
             int month = DateUtils.getMonthFromDate(new Date());
             return yearExpiration.intValue() > year || (yearExpiration.intValue() == year && monthExpiration >= month);
         }

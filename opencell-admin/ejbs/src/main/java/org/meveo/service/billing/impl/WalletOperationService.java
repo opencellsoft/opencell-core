@@ -375,8 +375,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         RecurringChargeTemplate recurringChargeTemplate = chargeInstance.getRecurringChargeTemplate();
 
-        Date applyChargeFromDate = null;
-        Date applyChargeToDate = null;
+        Date applyChargeFromDate;
+        Date applyChargeToDate;
 
         boolean prorateFirstPeriod = false;
         Date prorateFirstPeriodFromDate = null;
@@ -723,7 +723,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     public void applyAccumulatorCounter(ChargeInstance chargeInstance, List<WalletOperation> walletOperations, boolean isVirtual) {
 
         for (CounterInstance counterInstance : chargeInstance.getCounterInstances()) {
-            CounterPeriod counterPeriod = null;
+            CounterPeriod counterPeriod;
             if (counterInstance != null) {
                 // get the counter period of charge instance
                 log.debug("Get accumulator counter period for counter instance {}", counterInstance);
@@ -771,17 +771,17 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @return A list of wallet operations
      */
     public List<WalletOperation> listToRate(IBillableEntity entityToInvoice, Date invoicingDate) {
-
+        String InvDate = "invoicingDate";
         if (entityToInvoice instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery("WalletOperation.listToRateByBA", WalletOperation.class).setParameter("invoicingDate", invoicingDate).setParameter("billingAccount", entityToInvoice)
+            return getEntityManager().createNamedQuery("WalletOperation.listToRateByBA", WalletOperation.class).setParameter(InvDate, invoicingDate).setParameter("billingAccount", entityToInvoice)
                 .getResultList();
 
         } else if (entityToInvoice instanceof Subscription) {
-            return getEntityManager().createNamedQuery("WalletOperation.listToRateBySubscription", WalletOperation.class).setParameter("invoicingDate", invoicingDate).setParameter("subscription", entityToInvoice)
+            return getEntityManager().createNamedQuery("WalletOperation.listToRateBySubscription", WalletOperation.class).setParameter(InvDate, invoicingDate).setParameter("subscription", entityToInvoice)
                 .getResultList();
 
         } else if (entityToInvoice instanceof Order) {
-            return getEntityManager().createNamedQuery("WalletOperation.listToRateByOrderNumber", WalletOperation.class).setParameter("invoicingDate", invoicingDate)
+            return getEntityManager().createNamedQuery("WalletOperation.listToRateByOrderNumber", WalletOperation.class).setParameter(InvDate, invoicingDate)
                 .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber()).getResultList();
         }
 
@@ -1284,7 +1284,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 chargeInstance = (ChargeInstance) chargeInstanceService.findByCode(dto.getChargeInstance());
             }
 
-            WalletOperation wo = null;
+            WalletOperation wo;
             if (chargeInstance != null) {
                 BigDecimal ratingQuantity = chargeTemplateService.evaluateRatingQuantity(chargeInstance.getChargeTemplate(), dto.getQuantity());
 
