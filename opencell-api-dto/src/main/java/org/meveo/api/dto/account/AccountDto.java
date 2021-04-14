@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.response.TitleDto;
 import org.meveo.model.AccountEntity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -124,6 +125,11 @@ public abstract class AccountDto extends BusinessEntityDto {
     @Schema(description = "Corresponding to minimum one shot charge template code")
     private String minimumChargeTemplate;
 
+    @Schema(description = "indicate if this is a company")
+    protected Boolean isCompany;
+
+    @Schema(description = "The legal entity type")
+    protected TitleDto legalEntityType;
     /**
      * Instantiates a new account dto.
      */
@@ -437,4 +443,31 @@ public abstract class AccountDto extends BusinessEntityDto {
     public void setMinimumChargeTemplate(String minimumChargeTemplate) {
         this.minimumChargeTemplate = minimumChargeTemplate;
     }
+    /**
+	 * @return the isCompany
+	 */
+	public Boolean getIsCompany() {
+		return isCompany;
+	}
+
+	/**
+	 * @param isCompany the isCompany to set
+	 */
+	public void setIsCompany(Boolean isCompany) {
+		this.isCompany = isCompany;
+	}
+
+	/**
+	 * @return the legalEntityType
+	 */
+	public TitleDto getLegalEntityType() {
+		return legalEntityType;
+	}
+
+	/**
+	 * @param legalEntityType the legalEntityType to set
+	 */
+	public void setLegalEntityType(TitleDto legalEntityType) {
+		this.legalEntityType = legalEntityType;
+	}
 }
