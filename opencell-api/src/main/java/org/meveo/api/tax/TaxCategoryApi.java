@@ -18,23 +18,23 @@
 
 package org.meveo.api.tax;
 
-import java.util.function.BiFunction;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.tax.TaxCategoryListResponseDto;
 import org.meveo.api.dto.tax.TaxCategoryDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.tax.TaxCategoryService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * CRUD API for {@link TaxCategory} - Tax category
@@ -62,7 +62,7 @@ public class TaxCategoryApi extends BaseCrudApi<TaxCategory, TaxCategoryDto> {
         String code = dto.getCode();
 
         if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(TaxCategory.class.getName(), dto);
         }
 
         handleMissingParametersAndValidate(dto);
@@ -79,6 +79,21 @@ public class TaxCategoryApi extends BaseCrudApi<TaxCategory, TaxCategoryDto> {
         entityService.create(entity);
 
         return entity;
+    }
+
+    public TaxCategoryListResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        TaxCategoryListResponseDto result = new TaxCategoryListResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<TaxCategory> taxCategories = entityService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (taxCategories != null) {
+            for (TaxCategory taxCategory : taxCategories) {
+                result.getDtos().add(new TaxCategoryDto(taxCategory,
+                        entityToDtoConverter.getCustomFieldsDTO(taxCategory, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+        }
+
+        return result;
     }
 
     /**

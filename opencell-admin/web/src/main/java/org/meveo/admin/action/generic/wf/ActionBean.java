@@ -131,7 +131,7 @@ public class ActionBean extends BaseBean<Action> {
             FacesContext.getCurrentInstance().getExternalContext()
                     .redirect("/opencell/pages/admin/workflow/genericWorkflows.xhtml");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
         return null;
     }
@@ -215,7 +215,7 @@ public class ActionBean extends BaseBean<Action> {
                     .map(field -> current.getSimpleName() + "." + field.getName())
                     .collect(toList());
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
         return EMPTY_LIST;
     }

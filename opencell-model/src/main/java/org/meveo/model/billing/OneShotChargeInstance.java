@@ -81,18 +81,23 @@ public class OneShotChargeInstance extends ChargeInstance {
      * @param amountWithoutTax Amount without tax
      * @param amountWithTax Amount with tax
      * @param quantity Quantity
-     * @param orderNumber Order number
+     * @param orderNumberOverride Order number to override. If not provided, a value from subscription will be used. A value of ChargeInstance.NO_ORDER_NUMBER will set a value to
+     *        null.
      * @param subscription Subscription
      * @param chargeTemplate Charge template
      */
-    public OneShotChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumber, Subscription subscription,
+    public OneShotChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumberOverride, Subscription subscription,
             OneShotChargeTemplate chargeTemplate) {
 
         super(amountWithoutTax, amountWithTax, chargeTemplate, subscription, InstanceStatusEnum.ACTIVE);
 
         this.chargeDate = chargeDate;
         this.quantity = quantity == null ? BigDecimal.ONE : quantity;
-        this.orderNumber = orderNumber;
+        if (ChargeInstance.NO_ORDER_NUMBER.equals(orderNumberOverride)) {
+            this.orderNumber = null;
+        } else if (orderNumberOverride != null) {
+            this.orderNumber = orderNumberOverride;
+        }
         if (description != null) {
             this.description = description;
         }
@@ -106,18 +111,23 @@ public class OneShotChargeInstance extends ChargeInstance {
      * @param amountWithoutTax Amount without tax
      * @param amountWithTax Amount with tax
      * @param quantity Quantity
-     * @param orderNumber Order number
+     * @param orderNumberOverride Order number to override. If not provided, a value from service will be used. A value of ChargeInstance.NO_ORDER_NUMBER will set a value to null.
      * @param serviceInstance Service instance
      * @param chargeTemplate Charge template
      */
-    public OneShotChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumber, ServiceInstance serviceInstance,
-            OneShotChargeTemplate chargeTemplate) {
+    public OneShotChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumberOverride,
+            ServiceInstance serviceInstance, OneShotChargeTemplate chargeTemplate) {
 
         super(amountWithoutTax, amountWithTax, chargeTemplate, serviceInstance, InstanceStatusEnum.ACTIVE);
 
         this.chargeDate = chargeDate;
         this.quantity = quantity == null ? BigDecimal.ONE : quantity;
-        this.orderNumber = orderNumber;
+        if (ChargeInstance.NO_ORDER_NUMBER.equals(orderNumberOverride)) {
+            this.orderNumber = null;
+        } else if (orderNumberOverride != null) {
+            this.orderNumber = orderNumberOverride;
+        }
+        
         if (description != null) {
             this.description = description;
         }
@@ -154,7 +164,7 @@ public class OneShotChargeInstance extends ChargeInstance {
     public void setCounter(CounterInstance counter) {
         this.counter = counter;
     }
-    
+
     @Override
     public ChargeMainTypeEnum getChargeMainType() {
         return ChargeMainTypeEnum.ONESHOT;

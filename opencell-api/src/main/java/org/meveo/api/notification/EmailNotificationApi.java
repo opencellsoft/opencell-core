@@ -75,6 +75,9 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         if (StringUtils.isBlank(postData.getSubject())) {
             missingParameters.add("subject");
         }
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(EmailNotification.class.getName(), postData);
+        }
 
         handleMissingParameters();
 

@@ -270,11 +270,22 @@ public interface OfferTemplateRs extends IBaseRs {
 									schema = @Schema(implementation = InvalidParameterException.class)))	
 			}
 	)
-    public GetListOfferTemplateResponseDto listGet(@Deprecated @QueryParam("offerTemplateCode") String code, @Deprecated @QueryParam("validFrom") @RestDateParam Date validFrom,
+    GetListOfferTemplateResponseDto listGet(@Deprecated @QueryParam("offerTemplateCode") String code, @Deprecated @QueryParam("validFrom") @RestDateParam Date validFrom,
             @Deprecated @QueryParam("validTo") @RestDateParam Date validTo, @QueryParam("query") String query, @QueryParam("fields") String fields,
             @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy,
             @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+
+    /**
+     * List Offer templates matching a given criteria
+     *
+     * @return List of Offer templates
+     */
+    @GET
+    @Path("/listGetAll")
+    GetListOfferTemplateResponseDto list(@Deprecated @QueryParam("offerTemplateCode") String code, @Deprecated @QueryParam("validFrom") @RestDateParam Date validFrom,
+                                         @Deprecated @QueryParam("validTo") @RestDateParam Date validTo,
+                                         @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * List offerTemplates matching a given criteria
@@ -304,7 +315,7 @@ public interface OfferTemplateRs extends IBaseRs {
 									schema = @Schema(implementation = InvalidParameterException.class)))	
 			}
 	)
-    public GetListOfferTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+    GetListOfferTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering);
     
     
     /**
@@ -327,7 +338,7 @@ public interface OfferTemplateRs extends IBaseRs {
 					content = @Content(
 								schema = @Schema(implementation = InvalidParameterException.class)))	
     })
-    public Response listPost(@Parameter(description = "The customer context information", required = false) CustomerContextDTO customerContextDTO);
+    Response listPost(@Parameter(description = "The customer context information", required = false) CustomerContextDTO customerContextDTO);
 
     /**
      * Remove offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be deleted.

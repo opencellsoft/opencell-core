@@ -18,6 +18,8 @@
 
 package org.meveo.api.dto.billing;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.meveo.api.dto.AuditableDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.ChartOfAccountTypeEnum;
@@ -52,6 +54,9 @@ public class AccountingCodeDto extends EnableBusinessDto {
 
     /** The migrated. */
     private boolean migrated = false;
+
+    @JsonIgnore
+    private AuditableDto auditableNullSafe;
 
     /**
      * Instantiates a new AccountingCodeDto

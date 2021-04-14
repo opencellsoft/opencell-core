@@ -860,8 +860,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     private Subscription getActiveOrLastUpdated(List<Subscription> subscriptions) {
-        if(subscriptions.isEmpty())
+        if(subscriptions.isEmpty()) {
             return null;
+            
+        } else if (subscriptions.size()==1) {
+            return subscriptions.get(0);
+        }
 
         Optional<Subscription> activeSubscription = subscriptions.stream()
                 .filter(s -> SubscriptionStatusEnum.ACTIVE.equals(s.getStatus()))

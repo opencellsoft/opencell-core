@@ -46,8 +46,9 @@ public class UpdateUnpaidInvoiceStatusJob extends Job {
      * @throws BusinessException Any exception
      */
     @Override
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
     	unpaidInvoiceStatusJobBean.execute(result, jobInstance);
+        return result;
     }
 
     /**

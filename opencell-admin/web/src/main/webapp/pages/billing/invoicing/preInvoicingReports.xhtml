@@ -129,22 +129,21 @@
                 <hftl:customFields backingBean="#{billingRunBean}" messagesId=":formId:messages"/>
             </p:tabView>
 
-		</hftl:formPanel>
-
-
-		<h:form id="operationsForm" rendered="#{!edit}">
-			<h:panelGroup layout="block" styleClass="form-panel-actions">
+			<ui:param name="buttons" value="true" />
+			<ui:define name="buttons">
 				<p:commandButton action="#{billingRunBean.confirmInvoicing()}"
-					value="#{messages['action.confirm']}" />
+					value="#{messages['action.confirm']}" immediate="true" process="@this" />
 				<p:commandButton action="#{billingRunBean.cancel()}"
-					value="#{messages['action.cancel']}"
+					value="#{messages['action.cancel']}" immediate="true" process="@this"
 					onclick="if(confirm('#{messages['commons.confirmCancelInvoiceProcess']}')){return true;}else{return false;}" />
 				<p:button id="backButton" value="#{messages['action.back']}"
-					outcome="billingRuns" includeViewParams="true">
+					outcome="billingRuns" includeViewParams="true" immediate="true" process="@this">
 					<f:param name="cid"
 						value="#{javax.enterprise.context.conversation.id}" />
 				</p:button>
-			</h:panelGroup>
-		</h:form>
+			</ui:define>
+			
+		</hftl:formPanel>
+
 	</ui:define>
 </ui:composition>

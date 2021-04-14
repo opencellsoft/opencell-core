@@ -39,6 +39,8 @@ import org.meveo.model.jaxb.subscription.Services;
 import org.meveo.model.jaxb.subscription.Status;
 import org.meveo.model.jaxb.subscription.Subscription;
 import org.meveo.model.jaxb.subscription.Subscriptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GenerateImportXml {
 
@@ -60,6 +62,8 @@ public class GenerateImportXml {
 	private static String billingCycle = "CYC_INV_MT";
 
 	/***********************************************************************/
+	
+	private static final Logger log = LoggerFactory.getLogger(GenerateImportXml.class);
 
 	/**
 	 * @param args argumrents
@@ -191,9 +195,9 @@ public class GenerateImportXml {
 			JAXBUtils.marshaller(billingAccounts, new File(accountsFile));
 			JAXBUtils.marshaller(subscriptions, new File(subscriptionsFile));
 
-			System.out.println("Import effetué avec succes");
+			log.info("Import effectué avec succes");
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 		}
 	}
 

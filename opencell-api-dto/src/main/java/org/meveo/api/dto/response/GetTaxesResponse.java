@@ -18,24 +18,24 @@
 
 package org.meveo.api.dto.response;
 
+import org.meveo.api.dto.TaxesDto;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.TaxesDto;
 
 /**
  * The Class GetTaxesResponse.
  */
 @XmlRootElement(name = "GetTaxesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetTaxesResponse extends BaseResponse {
+public class GetTaxesResponse extends SearchResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
     /** The taxes dto. */
-    private TaxesDto taxesDto;
+    private TaxesDto taxesDto = new TaxesDto();
 
     /**
      * Gets the taxes dto.

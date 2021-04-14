@@ -145,8 +145,8 @@
                                     <h:outputText value="#{aSubCatInvAgregate.invoiceSubCategory.description}" />
 
                                     <span style="width: 5px;"> </span>
-                                    <p:commandButton icon="ui-icon-trash" immediate="true" action="#{creationInvoiceBean.deleteLinkedInvoiceCategoryDetaild}"
-                                        update="ratedTransactionTable :formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary">
+                                    <p:commandButton icon="ui-icon-trash"  process=":formId:tabView:detailedInvoicePanel" action="#{creationInvoiceBean.deleteLinkedInvoiceCategoryDetaild}"
+                                         update=":formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary">
                                         <f:setPropertyActionListener value="#{aSubCatInvAgregate}" target="#{creationInvoiceBean.selectedSubCategoryInvoiceAgregateDetaild}" />
                                     </p:commandButton>
                                 </p:column>

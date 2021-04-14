@@ -435,7 +435,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
             }
             persistenceService.update(entity);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
     }
 }

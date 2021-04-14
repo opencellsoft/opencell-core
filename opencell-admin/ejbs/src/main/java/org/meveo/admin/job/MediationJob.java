@@ -44,7 +44,7 @@ import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.job.Job;
 
 /**
- * The Class MediationJob consume standard cdr files.
+ * Job definition to process CDR files converting CDRs to EDR records
  * 
  * @author Wassim Drira
  * @author HORRI khalid
@@ -61,7 +61,7 @@ public class MediationJob extends Job {
     private static final String MEDIATION_JOB_READER = "MediationJob_reader";
 
     private static final String MEDIATION_JOB_FILE_FORMAT = "MediationJob_fileFormat";
-    
+
     private static final String EMPTY_STRING = "";
 
     private static final String TWO_POINTS_PARENT_DIR = "\\..";
@@ -71,115 +71,107 @@ public class MediationJob extends Job {
 
     @Inject
     private ParamBeanFactory paramBeanFactory;
-    
+
     @Inject
     FileFormatService fileFormatService;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, CF_NB_RUNS, -1L);
-        if (nbRuns == -1) {
-            nbRuns = (long) Runtime.getRuntime().availableProcessors();
-        }
-        jobExecutionService.counterInc(result, "running_threads", nbRuns);
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
 
         Boolean oneFilePerJob = (Boolean) this.getParamOrCFValue(jobInstance, "oneFilePerJob", Boolean.FALSE);
-        
+
 //        EntityReferenceWrapper reader = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
 //        String readerCode = reader != null ? reader.getCode() : null;
 //        
 //        EntityReferenceWrapper parser = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
 //        String parserCode = parser != null ? parser.getCode() : null;
         String readerCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_READER);
-        
+
         String parserCode = (String) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_PARSER);
         ParamBean parambean = paramBeanFactory.getInstance();
         String cdrExtension = parambean.getProperty("mediation.extensions", "csv");
         ArrayList<String> cdrExtensions = new ArrayList<String>();
         cdrExtensions.add(cdrExtension);
-        try {            
-            String inputDir = null;
-            String outputDir = null;
-            String rejectDir = null;
-            String archiveDir = null;
-            String mappingConf = null;
-            String recordName = null;
-            EntityReferenceWrapper fileFormatWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_FILE_FORMAT);
-            FileFormat fileFormat = null;
-            if (fileFormatWrapper != null && fileFormatWrapper.getCode() != null) {
-                fileFormat = fileFormatService.findByCode(fileFormatWrapper.getCode());
-            } 
-            String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator;
-            if( fileFormat != null) {
-                inputDir = meteringDir + fileFormat.getInputDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-                outputDir = meteringDir + fileFormat.getOutputDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-                rejectDir = meteringDir + fileFormat.getRejectDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-                archiveDir = meteringDir + fileFormat.getArchiveDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
-                mappingConf = fileFormat.getConfigurationTemplate();
-                recordName = fileFormat.getRecordName();
-            } else {                
-                meteringDir = meteringDir + "imports" + File.separator + "metering" + File.separator;
-                inputDir = meteringDir + "input";
-                outputDir = meteringDir + "output";
-                rejectDir = meteringDir + "reject";
-                archiveDir = meteringDir + "archive";
-            }
-            File f = new File(inputDir);
-            if (!f.exists()) {
-                f.mkdirs();
-            }                                          
-            f = new File(outputDir);
-            if (!f.exists()) {
-                log.debug("outputDir {} not exist", outputDir);
-                f.mkdirs();
-                log.debug("outputDir {} creation ok", outputDir);
-            }
-            f = new File(rejectDir);
-            if (!f.exists()) {
-                log.debug("rejectDir {} not exist", rejectDir);
-                f.mkdirs();
-                log.debug("rejectDir {} creation ok", rejectDir);
-            }
-            f = new File(archiveDir);
-            if (!f.exists()) {
-                log.debug("archiveDir {} not exist", archiveDir);
-                f.mkdirs();
-                log.debug("archiveDir {} creation ok", archiveDir);
-            }
 
-            File[] files = FileUtils.listFiles(inputDir, cdrExtensions);
-            if (files == null || files.length == 0) {
-                log.debug("There is no file in {} with extension {} to by processed by Mediation {} job", inputDir, cdrExtensions, result.getJobInstance().getCode());
-                return;
-            }
-            for (File file : files) {
-                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
-                    break;
-                }
-                
-                int countLines = FileUtils.countLines(file);
-                jobExecutionService.initCounterElementsRemaining(result, countLines);
-                String fileName = file.getName();
-                mediationJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, jobInstance.getParametres(), nbRuns, waitingMillis, readerCode, parserCode, mappingConf,recordName);
-                
-                result.addReport("Processed file: " + fileName);
-                if (oneFilePerJob) {
-                    break;
-                }
-            }
-
-            // Process one file at a time
-            if (oneFilePerJob && files.length > 1) {
-                result.setDone(false);
-            }
-
-        } catch (Exception e) {
-            log.error("Failed to run mediation job", e);
-            jobExecutionService.registerError(result, e.getMessage());
+        String inputDir = null;
+        String outputDir = null;
+        String rejectDir = null;
+        String archiveDir = null;
+        String mappingConf = null;
+        String recordName = null;
+        EntityReferenceWrapper fileFormatWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, MEDIATION_JOB_FILE_FORMAT);
+        FileFormat fileFormat = null;
+        if (fileFormatWrapper != null && fileFormatWrapper.getCode() != null) {
+            fileFormat = fileFormatService.findByCode(fileFormatWrapper.getCode());
         }
+        String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator;
+        if (fileFormat != null) {
+            inputDir = meteringDir + fileFormat.getInputDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+            outputDir = meteringDir + fileFormat.getOutputDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+            rejectDir = meteringDir + fileFormat.getRejectDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+            archiveDir = meteringDir + fileFormat.getArchiveDirectory().replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
+            mappingConf = fileFormat.getConfigurationTemplate();
+            recordName = fileFormat.getRecordName();
+        } else {
+            meteringDir = meteringDir + "imports" + File.separator + "metering" + File.separator;
+            inputDir = meteringDir + "input";
+            outputDir = meteringDir + "output";
+            rejectDir = meteringDir + "reject";
+            archiveDir = meteringDir + "archive";
+        }
+        File f = new File(inputDir);
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+        f = new File(outputDir);
+        if (!f.exists()) {
+            log.debug("outputDir {} not exist", outputDir);
+            f.mkdirs();
+            log.debug("outputDir {} creation ok", outputDir);
+        }
+        f = new File(rejectDir);
+        if (!f.exists()) {
+            log.debug("rejectDir {} not exist", rejectDir);
+            f.mkdirs();
+            log.debug("rejectDir {} creation ok", rejectDir);
+        }
+        f = new File(archiveDir);
+        if (!f.exists()) {
+            log.debug("archiveDir {} not exist", archiveDir);
+            f.mkdirs();
+            log.debug("archiveDir {} creation ok", archiveDir);
+        }
+
+        File[] files = FileUtils.listFiles(inputDir, cdrExtensions);
+        if (files == null || files.length == 0) {
+            log.debug("There is no file in {} with extension {} to by processed by Mediation {} job", inputDir, cdrExtensions, result.getJobInstance().getCode());
+            return result;
+        }
+
+        for (File file : files) {
+            if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
+                break;
+            }
+
+            // File might have been processed by another mediation job, so continue with a next file
+            if (!file.exists()) {
+                continue;
+            }
+            String fileName = file.getName();
+            mediationJobBean.execute(result, inputDir, outputDir, archiveDir, rejectDir, file, jobInstance.getParametres(), readerCode, parserCode, mappingConf, recordName);
+
+            if (oneFilePerJob) {
+                break;
+            }
+        }
+
+        // Process one file at a time
+        if (oneFilePerJob && files.length > 1) {
+            result.setMoreToProcess(true);
+        }
+
+        return result;
     }
 
     @Override
@@ -223,7 +215,7 @@ public class MediationJob extends Job {
         oneFilePerJob.setValueRequired(false);
         oneFilePerJob.setGuiPosition("tab:Configuration:0;field:2");
         result.put("oneFilePerJob", oneFilePerJob);
-        
+
         CustomFieldTemplate fileFormatCF = new CustomFieldTemplate();
         fileFormatCF.setCode(MEDIATION_JOB_FILE_FORMAT);
         fileFormatCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
@@ -236,7 +228,7 @@ public class MediationJob extends Job {
         fileFormatCF.setMaxValue(256L);
         fileFormatCF.setGuiPosition("tab:Configuration:0;field:3");
         result.put(MEDIATION_JOB_FILE_FORMAT, fileFormatCF);
-        
+
         CustomFieldTemplate parserCF = new CustomFieldTemplate();
         parserCF.setCode(MEDIATION_JOB_PARSER);
         parserCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);
@@ -250,7 +242,7 @@ public class MediationJob extends Job {
         parserCF.setMaxValue(256L);
         parserCF.setGuiPosition("tab:Configuration:0;field:4");
         result.put(MEDIATION_JOB_PARSER, parserCF);
-        
+
         CustomFieldTemplate readerCF = new CustomFieldTemplate();
         readerCF.setCode(MEDIATION_JOB_READER);
         readerCF.setAppliesTo(JOB_INSTANCE_MEDIATION_JOB);

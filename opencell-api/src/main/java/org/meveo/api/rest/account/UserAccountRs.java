@@ -33,6 +33,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import io.swagger.v3.oas.annotations.Operation;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
@@ -134,6 +135,15 @@ public interface UserAccountRs extends IBaseRs {
     @Path("/billingAccounts/{billingAccountCode}")
     @Operation(summary = "List user accounts filtered by a billing account's code", tags = { "User account management" })
     UserAccountsResponseDto listByBillingAccountV2(@QueryParam("billingAccountCode") String billingAccountCode);
+
+    /**
+     * List user accounts matching a given criteria
+     *
+     * @return List of user accounts
+     */
+    @GET
+    @Path("/listGetAll")
+    UserAccountsResponseDto listGetAll();
 
     /**
      * Create new or update an existing user account.

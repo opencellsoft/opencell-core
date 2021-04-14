@@ -18,20 +18,22 @@
 
 package org.meveo.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.LanguageIsoDto;
+import org.meveo.api.dto.response.GetLanguagesIsoResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Language;
 import org.meveo.service.admin.impl.LanguageService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -44,11 +46,8 @@ public class LanguageIsoApi extends BaseApi {
     private LanguageService languageService;
 
     public void create(LanguageIsoDto postData) throws MeveoApiException, BusinessException {
+        validateCode(postData);
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
- 
         handleMissingParameters();
 
         if (languageService.findByCode(postData.getCode()) != null) {
@@ -60,6 +59,17 @@ public class LanguageIsoApi extends BaseApi {
         language.setDescriptionEn(postData.getDescription());
         languageService.create(language);
 
+    }
+
+    private void validateCode(LanguageIsoDto postData) {
+        if (StringUtils.isBlank(postData.getCode())) {
+            String generatedCode = getGenericCode(Language.class.getName());
+            if (generatedCode != null) {
+                postData.setCode(generatedCode);
+            } else {
+                missingParameters.add("code");
+            }
+        }
     }
 
     public void update(LanguageIsoDto postData) throws MeveoApiException, BusinessException {
@@ -115,11 +125,10 @@ public class LanguageIsoApi extends BaseApi {
 
     public void createOrUpdate(LanguageIsoDto postData) throws MeveoApiException, BusinessException {
 
-        Language language = languageService.findByCode(postData.getCode());
-        if (language == null) {
-            create(postData);
-        } else {
+        if(StringUtils.isBlank(postData.getCode()) && languageService.findByCode(postData.getCode()) != null) {
             update(postData);
+        } else {
+            create(postData);
         }
     }
     
@@ -135,4 +144,18 @@ public class LanguageIsoApi extends BaseApi {
 
 		return result;
 	}
+
+    public GetLanguagesIsoResponse list(PagingAndFiltering pagingAndFiltering) {
+        GetLanguagesIsoResponse result = new GetLanguagesIsoResponse();
+        result.setPaging( pagingAndFiltering );
+
+        List<Language> languages = languageService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (languages != null) {
+            for (Language language : languages) {
+                result.getLanguages().add(new LanguageIsoDto(language));
+            }
+        }
+
+        return result;
+    }
 }

@@ -43,7 +43,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 /**
@@ -68,9 +67,6 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
     @Inject
     private RatedTransactionService ratedTransactionService;
 
-    @Inject
-    protected JobExecutionService jobExecutionService;
-    
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -129,7 +125,7 @@ public class PurgeMediationDataJobBean extends BaseJobBean {
             result.addReport(report);
         } catch (Exception e) {
             log.error("Failed to run purge EDR/WO/RT job", e);
-            jobExecutionService.registerError(result, e.getMessage());
+            result.registerError(e.getMessage());
             result.addReport(e.getMessage());
         }
     }

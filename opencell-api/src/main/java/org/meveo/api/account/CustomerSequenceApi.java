@@ -116,7 +116,8 @@ public class CustomerSequenceApi extends BaseApi {
 		String sequenceNumber = StringUtils.getLongAsNChar(genericSequence.getCurrentSequenceNb(),
 				genericSequence.getSequenceSize());
 		result.setSequence(GenericSequenceApi.fromGenericSequence(genericSequence));
-		result.setValue(genericSequence.getPrefix() + sequenceNumber);
+		String prefix = genericSequence.getPrefix();
+		result.setValue((prefix == null ? "" : prefix) + sequenceNumber);
 
 		return result;
 	}

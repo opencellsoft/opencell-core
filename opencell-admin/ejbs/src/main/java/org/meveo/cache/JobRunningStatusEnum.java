@@ -25,5 +25,33 @@ package org.meveo.cache;
  */
 public enum JobRunningStatusEnum {
 
-    NOT_RUNNING, RUNNING_THIS, RUNNING_OTHER;
+    /**
+     * Job is not currently running on any cluster node
+     */
+    NOT_RUNNING,
+
+    /**
+     * Job was requested to start on this cluster node
+     */
+    LOCKED_THIS,
+
+    /**
+     * Job was requested to start on another cluster node
+     */
+    LOCKED_OTHER,
+
+    /**
+     * Job was requested to stop
+     */
+    REQUEST_TO_STOP,
+
+    /**
+     * Job is currently running on this cluster node
+     */
+    RUNNING_THIS,
+
+    /**
+     * Job is currently running on another cluster nodes
+     */
+    RUNNING_OTHER;
 }

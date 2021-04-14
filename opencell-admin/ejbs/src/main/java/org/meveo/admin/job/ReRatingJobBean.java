@@ -18,25 +18,28 @@
 
 package org.meveo.admin.job;
 
-import java.io.Serializable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.RatingService;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.job.JobExecutionService;
-import org.slf4j.Logger;
 
+/**
+ * Job implementation to rerate wallet operations
+ * 
+ * @author Andrius Karpavicius
+ */
 @Stateless
-public class ReRatingJobBean extends BaseJobBean implements Serializable {
+public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
 
     private static final long serialVersionUID = 2226065462536318643L;
 
@@ -46,41 +49,37 @@ public class ReRatingJobBean extends BaseJobBean implements Serializable {
     @Inject
     private RatingService ratingService;
 
-    @Inject
-    protected Logger log;
+    private boolean useSamePricePlan;
 
-    @Inject
-    private JobExecutionService jobExecutionService;
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::rerate, null, null);
+    }
 
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void execute(JobExecutionResultImpl result, boolean useSamePricePlan) {
-        log.debug("Running useSamePricePlan={}", useSamePricePlan);
+    /**
+     * Initialize job settings and retrieve data to process
+     * 
+     * @param jobExecutionResult Job execution result
+     * @return An iterator over a list of Wallet operation Ids to re-rate
+     */
+    private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
-        try {
-            List<Long> walletOperationIds = walletOperationService.listToRerate();
+        List<Long> ids = walletOperationService.listToRerate();
 
-            log.info("rerate with useSamePricePlan={} ,#operations={}", useSamePricePlan, walletOperationIds.size());
-            result.setNbItemsToProcess(walletOperationIds.size());
-            jobExecutionService.initCounterElementsRemaining(result, walletOperationIds.size());
-            int i = 0;
-            for (Long walletOperationId : walletOperationIds) {
-                i++;
-                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
-                    break;
-                }
-                try {
-                    ratingService.reRateInNewTx(walletOperationId, useSamePricePlan);
-                    jobExecutionService.registerSucces(result);
-                } catch (Exception e) {
-                    // rejectededOperationProducer.fire(walletOperationId);
-                    log.error("Failed to rerate operation {}", walletOperationId, e.getMessage());
-                    jobExecutionService.registerError(result, e.getMessage());
-                }
-                jobExecutionService.decCounterElementsRemaining(result);
-            }
-        } catch (Exception e) {
-            log.error("Failed to rerate operations", e);
-        }
+        useSamePricePlan = "justPrice".equalsIgnoreCase(jobExecutionResult.getJobInstance().getParametres());
+
+        return Optional.of(new SynchronizedIterator<Long>(ids));
+    }
+
+    /**
+     * Re-rate wallet operation
+     * 
+     * @param walletOperationId Wallet operation id
+     * @param jobExecutionResult Job execution result
+     */
+    private void rerate(Long walletOperationId, JobExecutionResultImpl jobExecutionResult) {
+
+        ratingService.reRate(walletOperationId, useSamePricePlan);
     }
 }

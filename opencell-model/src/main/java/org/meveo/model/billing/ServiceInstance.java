@@ -167,7 +167,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     /**
      * Charges instances associated with a service instance
      */
-    @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "serviceInstance", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ChargeInstance> chargeInstances = new ArrayList<>();
 
     /**

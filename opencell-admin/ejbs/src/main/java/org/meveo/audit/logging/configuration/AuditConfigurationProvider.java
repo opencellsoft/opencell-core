@@ -24,15 +24,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
+import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 
 import org.meveo.audit.logging.annotations.IgnoreAudit;
 import org.meveo.audit.logging.dto.MethodWithParameter;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.service.base.PersistenceService;
-import org.meveo.service.base.local.IPersistenceService;
-import org.reflections.Reflections;
 
 /**
  * @author Edward P. Legaspi
@@ -40,61 +39,43 @@ import org.reflections.Reflections;
 @Stateless
 public class AuditConfigurationProvider {
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<Class<? extends IPersistenceService>> getServiceClasses() {
-		List<Class<? extends IPersistenceService>> result = new ArrayList<>();
+    public List<Class<?>> getServiceClasses() {
+        List<Class<?>> result = new ArrayList<>();
 
-		Reflections reflections = new Reflections("org.meveo.service");
-		List<Class<? extends IPersistenceService>> classes = new ArrayList(
-				reflections.getSubTypesOf(IPersistenceService.class));
-		for (Class<? extends IPersistenceService> clazz : classes) {
-			if (!Modifier.isAbstract(clazz.getModifiers())) {
-				result.add(clazz);
-			}
-		}
+        Set<Class<?>> classes = ReflectionUtils.getClassesAnnotatedWith("org.meveo.service", Stateless.class, Stateful.class);
+        for (Class<?> clazz : classes) {
+            if (!Modifier.isAbstract(clazz.getModifiers())) {
+                result.add(clazz);
+            }
+        }
 
-		Collections.sort(result, new Comparator<Class<? extends IPersistenceService>>() {
-			@Override
-			public int compare(Class<? extends IPersistenceService> lhs, Class<? extends IPersistenceService> rhs) {
-				return lhs.getName().compareTo(rhs.getName());
-			}
-		});
+        Collections.sort(result, new Comparator<Class<?>>() {
+            @Override
+            public int compare(Class<?> lhs, Class<?> rhs) {
+                return lhs.getName().compareTo(rhs.getName());
+            }
+        });
 
-		return result;
-	}
+        return result;
+    }
 
-	@SuppressWarnings("rawtypes")
-	public List<MethodWithParameter> getMethods(Class<? extends IPersistenceService> clazz) {
-		List<MethodWithParameter> result = new ArrayList<>();
-		for (Method m : clazz.getMethods()) {
-			if (!m.isAnnotationPresent(IgnoreAudit.class)
-					&& ReflectionUtils.isMethodImplemented(clazz, m.getName(), m.getParameterTypes())) {
-				MethodWithParameter methodWithParameter = new MethodWithParameter(m.getName());
-				if (!result.contains(methodWithParameter)) {
-					result.add(methodWithParameter);
-				}
-			}
-		}
-		
-		// get PersistenceService public methods
-		Method[] allMethods = PersistenceService.class.getDeclaredMethods();
-		for (Method m : allMethods) {
-		    if (Modifier.isPublic(m.getModifiers())) {
-				MethodWithParameter methodWithParameter = new MethodWithParameter(m.getName());
-				if (!result.contains(methodWithParameter)) {
-					result.add(methodWithParameter);
-				}
-		    }
-		}
-		
-		Collections.sort(result, new Comparator<MethodWithParameter>() {
-			@Override
-			public int compare(MethodWithParameter o1, MethodWithParameter o2) {
-				return o1.getMethodName().compareTo(o2.getMethodName());
-			}
-		});
+    public List<MethodWithParameter> getMethods(Class<?> clazz) {
+        List<MethodWithParameter> result = new ArrayList<>();
+        for (Method m : clazz.getMethods()) {
+            if (!m.isAnnotationPresent(IgnoreAudit.class) && Modifier.isPublic(m.getModifiers())) {
+                MethodWithParameter methodWithParameter = new MethodWithParameter(m.getName());
+                result.add(methodWithParameter);
+            }
+        }
 
-		return result;
-	}
+        Collections.sort(result, new Comparator<MethodWithParameter>() {
+            @Override
+            public int compare(MethodWithParameter o1, MethodWithParameter o2) {
+                return o1.getMethodName().compareTo(o2.getMethodName());
+            }
+        });
+
+        return result;
+    }
 
 }

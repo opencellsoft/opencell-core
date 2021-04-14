@@ -40,6 +40,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.message.exception.InvalidDTOException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.document.Document;
 import org.meveo.model.payments.CreditCardTypeEnum;
@@ -47,11 +48,17 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.*;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.document.DocumentService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 import org.primefaces.model.SortOrder;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The CRUD Api for PaymentMethod.
@@ -108,7 +115,7 @@ public class PaymentMethodApi extends BaseApi {
         }
 
         PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount, document, currentUser);
-        	paymentMethod.setTokenId(paymentMethodDto.getTokenId()); 
+        	paymentMethod.setTokenId(paymentMethodDto.getTokenId());
         paymentMethodService.create(paymentMethod);
         return paymentMethod.getId();
     }
@@ -216,7 +223,21 @@ public class PaymentMethodApi extends BaseApi {
         }
         return result;
     }
-    
+
+    public PaymentMethodTokensDto listGet(PagingAndFiltering pagingAndFiltering) {
+        PaymentMethodTokensDto result = new PaymentMethodTokensDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<PaymentMethod> paymentMethods = paymentMethodService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (paymentMethods != null) {
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                result.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
+            }
+        }
+
+        return result;
+    }
+
     /**
      * List By Customer Account Code.
      * 
@@ -389,27 +410,27 @@ public class PaymentMethodApi extends BaseApi {
     public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException {
         return paymentMethodService.getHostedCheckoutUrl(hostedCheckoutInput);
     }
-    
-   
-    	
+
+
+
     public MandatInfoDto checkMandate(String mandateReference,String mandateId,String customerAccountCode)  throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
     	if (StringUtils.isBlank(mandateReference)) {
     		missingParameters.add("mandateReference");
     	}
     	if (StringUtils.isBlank(customerAccountCode)) {
     		missingParameters.add("customerAccountCode");
-    	} 
-    	handleMissingParameters(); 
+    	}
+    	handleMissingParameters();
     	MandatInfoDto mandateInfoDto=paymentMethodService.checkMandate(mandateReference, mandateId,customerAccountCode);
     	return mandateInfoDto;
 
     }
     public void approveSepaDDMandate(String customerAccountCode,String tokenId)  throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
-    
+
     	if (StringUtils.isBlank(customerAccountCode)) {
     		missingParameters.add("customerAccountCode");
-    	} 
-    	handleMissingParameters(); 
+    	}
+    	handleMissingParameters();
     	paymentMethodService.approveSepaDDMandate(customerAccountCode,tokenId);
 
     }

@@ -51,8 +51,8 @@ public class InvoicingJob extends Job {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        invoicingJobBean.execute(result, jobInstance);
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+       return invoicingJobBean.execute(result, jobInstance);
     }
 
 

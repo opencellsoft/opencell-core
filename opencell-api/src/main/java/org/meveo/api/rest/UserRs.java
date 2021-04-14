@@ -18,18 +18,6 @@
 
 package org.meveo.api.rest;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.UsersDto;
@@ -39,6 +27,8 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 import io.swagger.v3.oas.annotations.Operation;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Web service for managing {@link org.meveo.model.admin.User}. User has a unique username that is use for update, search and remove operation.
@@ -207,6 +197,15 @@ public interface UserRs extends IBaseRs {
                      @DefaultValue("userName") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
+     * List users matching a given criteria
+     *
+     * @return List of users
+     */
+    @GET
+    @Path("/listGetAll")
+    UsersDto list();
+
+    /**
      * List users matching a given criteria.
      * 
      * @param pagingAndFiltering Pagination and filtering criteria. Specify "securedEntities" in fields to include the secured entities.
@@ -229,7 +228,4 @@ public interface UserRs extends IBaseRs {
     @Operation(summary = "List users matching a given criteria.",
             tags = { "User management" })
     UsersDto listPostV2(PagingAndFiltering pagingAndFiltering);
-
-
-
 }

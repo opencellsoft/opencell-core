@@ -33,7 +33,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.CounterInstanceService;
-import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobExecutionResultService;
 import org.meveo.service.notification.InboundRequestService;
 import org.meveo.service.notification.NotificationHistoryService;
 import org.slf4j.Logger;
@@ -47,7 +47,7 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
     private CounterInstanceService counterInstanceService;
 
     @Inject
-    private JobExecutionService jobExecutionService;
+    private JobExecutionResultService jobExecutionResultService;
     
     @Inject
     private InboundRequestService inboundRequestService;
@@ -68,10 +68,10 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
             Long nbDays = (Long) this.getParamOrCFValue(jobInstance, "PurgeJob_jobExecHistory_nbDays");
             if (jobname != null || nbDays != null) {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
-                long nbItemsToProcess = jobExecutionService.countJobExecutionHistoryToDelete(jobname, date);
+                long nbItemsToProcess = jobExecutionResultService.countJobExecutionHistoryToDelete(jobname, date);
                 if (nbItemsToProcess > 0) {
                     result.setNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
-                    long nbSuccess = jobExecutionService.deleteJobExecutionHistory(jobname, date);
+                    long nbSuccess = jobExecutionResultService.deleteJobExecutionHistory(jobname, date);
                     result.setNbItemsCorrectlyProcessed(nbSuccess);
                     result.setNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {
@@ -88,8 +88,8 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
                 if (nbItemsToProcess > 0) {
                     result.addNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
                     long nbSuccess = counterInstanceService.deleteCounterPeriods(date);
-                    jobExecutionService.addNbItemsCorrectlyProcessed(result, nbSuccess);
-                    jobExecutionService.addNbItemsProcessedWithError(result, nbItemsToProcess - nbSuccess);
+                    result.addNbItemsCorrectlyProcessed(nbSuccess);
+                    result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {
                         result.addReport("Purged " + nbSuccess + " counter periods");
                     }
@@ -105,8 +105,8 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
                 if (nbItemsToProcess > 0) {
                     result.addNbItemsToProcess(nbItemsToProcess);
                     long nbSuccess = notificationHistoryService.deleteHistory(notificationCode, date);
-                    jobExecutionService.addNbItemsCorrectlyProcessed(result, nbSuccess);
-                    jobExecutionService.addNbItemsProcessedWithError(result, nbItemsToProcess - nbSuccess);
+                    result.addNbItemsCorrectlyProcessed(nbSuccess);
+                    result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {
                         result.addReport("Purged " + nbSuccess + (notificationCode != null ? " " + notificationCode : "") + " notification history records");
                     }
@@ -121,8 +121,8 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
                 if (nbItemsToProcess > 0) {
                     result.addNbItemsToProcess(nbItemsToProcess);
                     long nbSuccess = inboundRequestService.deleteRequests(date);
-                    jobExecutionService.addNbItemsCorrectlyProcessed(result, nbSuccess);
-                    jobExecutionService.addNbItemsProcessedWithError(result, nbItemsToProcess - nbSuccess);
+                    result.addNbItemsCorrectlyProcessed(nbSuccess);
+                    result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {
                         result.addReport("Purged " + nbSuccess + " inbound request records");
                     }
@@ -131,7 +131,7 @@ public class PurgeJobBean extends BaseJobBean implements Serializable {
 
         } catch (Exception e) {
             log.error("Failed to purge database", e);
-            jobExecutionService.registerError(result, e.getClass().getName() + " " + e.getMessage());
+            result.registerError(e.getClass().getName() + " " + e.getMessage());
         }
     }
 }

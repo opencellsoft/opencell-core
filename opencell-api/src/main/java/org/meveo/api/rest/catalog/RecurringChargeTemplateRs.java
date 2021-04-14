@@ -18,19 +18,9 @@
 
 package org.meveo.api.rest.catalog;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
+import org.meveo.api.dto.response.RecurringChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetRecurringChargeTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
@@ -40,6 +30,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.RecurringChargeTemplate}.
@@ -75,7 +68,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public ActionStatus create(RecurringChargeTemplateDto postData);
+    ActionStatus create(RecurringChargeTemplateDto postData);
 
     /**
      * Find a recurring charge template with a given code.
@@ -99,7 +92,16 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public GetRecurringChargeTemplateResponseDto find(@Parameter(required = true, description = "code of recurring charge template") @QueryParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
+    GetRecurringChargeTemplateResponseDto find(@Parameter(required = true, description = "code of recurring charge template") @QueryParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
+
+    /**
+     * Return the list of recurringChargeTemplates.
+     *
+     * @return list of recurringChargeTemplates
+     */
+    @GET
+    @Path("/listGetAll")
+    RecurringChargeTemplateResponseDto list();
 
     /**
      * Update an existing recurring charge template.
@@ -123,7 +125,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public ActionStatus update(RecurringChargeTemplateDto postData);
+    ActionStatus update(RecurringChargeTemplateDto postData);
 
     /**
      * Remove an existing recurring charge template with a given code.
@@ -147,7 +149,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public ActionStatus remove(@Parameter(required = true) @PathParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
+    ActionStatus remove(@Parameter(required = true) @PathParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
     /**
      * Create new or update an existing recurring charge template
@@ -171,7 +173,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public ActionStatus createOrUpdate(RecurringChargeTemplateDto postData);
+    ActionStatus createOrUpdate(RecurringChargeTemplateDto postData);
 
     /**
      * Enable a Recurring charge template with a given code

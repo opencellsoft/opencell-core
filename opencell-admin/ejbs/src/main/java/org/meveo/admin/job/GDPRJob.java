@@ -29,8 +29,7 @@ import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
 /**
- * Checks for data records that have exceeded the maximum storage duration
- * specified in GDPRConfiguration. This job runs monthly.
+ * Checks for data records that have exceeded the maximum storage duration specified in GDPRConfiguration. This job runs monthly.
  * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.2
@@ -38,17 +37,18 @@ import org.meveo.service.job.Job;
 @Stateless
 public class GDPRJob extends Job {
 
-	@Inject
-	private GDPRJobBean gdprJobBean;
+    @Inject
+    private GDPRJobBean gdprJobBean;
 
-	@Override
-	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-		gdprJobBean.execute(result, jobInstance.getParametres());
-	}
+    @Override
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+        gdprJobBean.execute(result, jobInstance.getParametres());
+        return result;
+    }
 
-	@Override
-	public JobCategoryEnum getJobCategory() {
-		return MeveoJobCategoryEnum.DWH;
-	}
+    @Override
+    public JobCategoryEnum getJobCategory() {
+        return MeveoJobCategoryEnum.DWH;
+    }
 
 }

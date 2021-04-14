@@ -18,17 +18,19 @@
 
 package org.meveo.api.rest.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.BillingCycleApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.BillingCycleDto;
+import org.meveo.api.dto.response.BillingCyclesResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.BillingCycleRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Edward P. Legaspi
@@ -39,6 +41,20 @@ public class BillingCycleRsImpl extends BaseRs implements BillingCycleRs {
 
     @Inject
     private BillingCycleApi billingCycleApi;
+
+    @Override
+    public BillingCyclesResponseDto list() {
+        BillingCyclesResponseDto result = new BillingCyclesResponseDto();
+
+        try {
+            result = new BillingCyclesResponseDto(
+                    billingCycleApi.search( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() ) );
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
 
     @Override
     public ActionStatus create(BillingCycleDto postData) {

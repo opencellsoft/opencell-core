@@ -151,7 +151,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * List of associated accounting writing
      */
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accountOperations")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accountOperations", cascade = CascadeType.REMOVE)
     private List<AccountingEntry> accountingEntries = new ArrayList<>();
 
     /**
@@ -277,7 +277,7 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     /**
      * Associated invoices
      */
-    @OneToMany(mappedBy = "recordedInvoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "recordedInvoice", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
     private List<Invoice> invoices;
 
     /**

@@ -18,23 +18,23 @@
 
 package org.meveo.api.tax;
 
-import java.util.function.BiFunction;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.tax.TaxClassListResponseDto;
 import org.meveo.api.dto.tax.TaxClassDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.tax.TaxClassService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * CRUD API for {@link TaxClass} - Tax class
@@ -62,7 +62,7 @@ public class TaxClassApi extends BaseCrudApi<TaxClass, TaxClassDto> {
         String code = dto.getCode();
 
         if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(TaxClass.class.getName(), dto);
         }
 
         handleMissingParametersAndValidate(dto);
@@ -79,6 +79,21 @@ public class TaxClassApi extends BaseCrudApi<TaxClass, TaxClassDto> {
         entityService.create(entity);
 
         return entity;
+    }
+
+    public TaxClassListResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        TaxClassListResponseDto result = new TaxClassListResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<TaxClass> taxClasses = entityService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (taxClasses != null) {
+            for (TaxClass taxClass : taxClasses) {
+                result.getDtos().add(new TaxClassDto(taxClass,
+                        entityToDtoConverter.getCustomFieldsDTO(taxClass, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+        }
+
+        return result;
     }
 
     /**

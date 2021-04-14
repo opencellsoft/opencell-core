@@ -32,11 +32,13 @@
 				field="paymentCreated" />
 		</hftl:searchPanel>
 
-		<hftl:dataList backingBean="#{ddRequestLOTListBean}" deleteManyButton="false">
+		<hftl:dataList backingBean="#{ddRequestLOTListBean}" deleteManyButton="false" sortBy="sendDate" sortOrder="DESCENDING">
 			<hftl:column label="#{messages['ddrequestLot.fileName']}"
 				field="fileName" />
+			<hftl:column label="#{messages['ddrequestLot.createdDate']}"
+				field="auditable.created" isDate="true" time="true" />
 			<hftl:column label="#{messages['ddrequestLot.sendDate']}"
-				field="sendDate" />
+				field="sendDate" isDate="true" />
 			<hftl:column label="#{messages['ddrequestLot.invoicesNumber']}"
 				field="nbItemsOk" />
 			<hftl:column label="#{messages['ddrequestLot.invoicesAmount']}"

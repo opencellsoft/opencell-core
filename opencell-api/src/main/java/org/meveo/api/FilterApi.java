@@ -48,7 +48,7 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
     public Filter create(FilterDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(Filter.class.getName(), postData);
         }
         if (StringUtils.isBlank(postData.getInputXml()) && StringUtils.isBlank(postData.getPollingQuery())) {
             missingParameters.add("inputXml or pollingQuery");

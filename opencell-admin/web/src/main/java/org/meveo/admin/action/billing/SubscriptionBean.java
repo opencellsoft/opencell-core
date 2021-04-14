@@ -17,26 +17,6 @@
  */
 package org.meveo.admin.action.billing;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.faces.component.UIInput;
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.proxy.HibernateProxy;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -54,6 +34,8 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.*;
+import org.meveo.model.catalog.*;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
@@ -87,27 +69,24 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.CounterInstanceService;
-import org.meveo.service.billing.impl.OneShotChargeInstanceService;
-import org.meveo.service.billing.impl.ProductChargeInstanceService;
-import org.meveo.service.billing.impl.ProductInstanceService;
-import org.meveo.service.billing.impl.RecurringChargeInstanceService;
-import org.meveo.service.billing.impl.ServiceInstanceService;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.billing.impl.UsageChargeInstanceService;
-import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.billing.impl.WalletTemplateService;
-import org.meveo.service.catalog.impl.CalendarService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
-import org.meveo.service.catalog.impl.ProductTemplateService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.billing.impl.*;
+import org.meveo.service.catalog.impl.*;
 import org.meveo.service.medina.impl.AccessService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.LazyDataModel;
+
+import javax.faces.component.UIInput;
+import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
@@ -763,7 +742,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         entity = subscriptionService.refreshOrRetrieve(entity);
         selectedServiceInstance = entity.getServiceInstances().get(entity.getServiceInstances().indexOf(selectedServiceInstance));
 
-        serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, terminationReason, entity.getOrderNumber());
+        serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, terminationReason, null);
 
         subscriptionService.refresh(entity);
 
@@ -786,7 +765,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         log.debug("selected subscriptionTerminationReason={}, terminationDate={}, subscriptionId={}, status={}", terminationReason, terminationDate, entity.getCode(), entity.getStatus());
 
-        subscriptionService.terminateSubscription(entity, terminationDate, terminationReason, entity.getOrderNumber());
+        subscriptionService.terminateSubscription(entity, terminationDate, terminationReason, null);
 
         terminationReason = null;
         terminationDate = null;

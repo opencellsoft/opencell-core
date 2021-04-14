@@ -392,7 +392,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
         try {
             return (Long) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.countIncomingItems").setParameter("serviceInstanceIdIN", paymentScheduleInstance.getServiceInstance().getId()).getSingleResult();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
             return null;
         }
     }
@@ -408,7 +408,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             return (BigDecimal) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.amountPaidItems").setParameter("serviceInstanceIdIN", paymentScheduleInstance.getServiceInstance().getId())
                 .getSingleResult();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
             return null;
         }
     }
@@ -424,7 +424,7 @@ public class PaymentScheduleInstanceItemService extends PersistenceService<Payme
             return (BigDecimal) getEntityManager().createNamedQuery("PaymentScheduleInstanceItem.amountIncomingItems").setParameter("serviceInstanceIdIN", paymentScheduleInstance.getServiceInstance().getId())
                 .getSingleResult();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
             return null;
         }
     }

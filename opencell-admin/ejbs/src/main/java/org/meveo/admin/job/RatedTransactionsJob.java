@@ -36,7 +36,7 @@ import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
 /**
- * The Class RatedTransactionsJob create RatedTransaction for all OPEN WalletOperations.
+ * Job definition to convert Open Wallet operations to Rated transactions
  * 
  * @author Edward P. Legaspi
  * @author Abdellatif BARI
@@ -51,8 +51,9 @@ public class RatedTransactionsJob extends Job {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         ratedTransactionsJobBean.execute(result, jobInstance);
+        return result;
     }
 
     @Override

@@ -56,13 +56,13 @@ public class SecuredBusinessEntityJsonConfigFactory implements SecuredBusinessEn
         SecuredBusinessEntityConfig config = configMap.get(keyConfig);
 
         if (config == null) {
-            log.warn("No Secured entities configuration found for entity.method={}", keyConfig);
+            //log.warn("No Secured entities configuration found for entity.method={}", keyConfig);
         } else {
             // fill fields that were not set with defautl values
             fillConfigDefaultValues(config);
         }
 
-        log.debug("Secured entities configuration for entity.method={} is found: {}", keyConfig, config);
+        //log.debug("Secured entities configuration for entity.method={} is found: {}", keyConfig, config);
         return config;
     }
 

@@ -53,6 +53,8 @@ import org.meveo.model.jaxb.account.WarningBillingAccount;
 import org.meveo.model.jaxb.account.WarningUserAccount;
 import org.meveo.model.jaxb.account.Warnings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.service.admin.impl.AccountImportHistoService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -141,7 +143,7 @@ public class ImportAccountsJobBean {
         log.info("InputFiles job " + numberOfFiles + " to import");
 
         for (File file : files) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
             File currentFile = null;
@@ -149,7 +151,7 @@ public class ImportAccountsJobBean {
                 log.info("InputFiles job " + file.getName() + " in progres");
                 currentFile = FileUtils.addExtension(file, ".processing");
 
-                importFile(currentFile, file.getName(), result.getJobInstance().getId());
+                importFile(currentFile, file.getName(), result.getJobInstance());
 
                 FileUtils.moveFile(dirOK, currentFile, file.getName());
                 log.info("InputFiles job " + file.getName() + " done");
@@ -187,7 +189,7 @@ public class ImportAccountsJobBean {
         return files;
     }
 
-    private void importFile(File file, String fileName, Long jobInstanceId) throws JAXBException, Exception {
+    private void importFile(File file, String fileName, JobInstance jobInstance) throws JAXBException, Exception {
 
         log.info("start import file : {}", fileName);
 
@@ -239,9 +241,9 @@ public class ImportAccountsJobBean {
             nbUserAccounts += billAccount.getUserAccounts().getUserAccount().size();
         }
 
+        int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
         for (org.meveo.model.jaxb.account.BillingAccount billingAccountDto : billingAccounts.getBillingAccount()) {
-            i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
                 break;
             }
 
@@ -252,6 +254,7 @@ public class ImportAccountsJobBean {
             }
 
             createBillingAccount(seller, billingAccountDto, fileName, i);
+            i++;
         }
 
         generateReport(fileName);

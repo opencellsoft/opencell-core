@@ -28,7 +28,7 @@ import org.meveo.api.job.JobApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@WebListener
+//@WebListener
 public class GenericAPIPermissionListener implements ServletContextListener {
 
     @Inject

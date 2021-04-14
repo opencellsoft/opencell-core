@@ -45,7 +45,8 @@ public class InboundRequestService extends BusinessService<InboundRequest> {
 
     /**
      * Remove Inbound requests which date is older than a given date.
-     * 
+     *
+     * @author Mohamed Ali Hammal
      * @param date Date to check
      * @return A number of Inbound requests that were removed
      */
@@ -53,15 +54,10 @@ public class InboundRequestService extends BusinessService<InboundRequest> {
     public long deleteRequests(Date date) {
         log.debug("Removing Inbound requests which date is older then a {} date", date);
 
-        // Can not delete with a single bulk query as need to remove associated NotificationHistory records and header, cookies records
         long itemsDeleted = 0;
         EntityManager em = getEntityManager();
-        List<InboundRequest> requests = em.createNamedQuery("InboundRequest.getRequestsToPurgeByDate", InboundRequest.class).setParameter("date", date).getResultList();
-        for (InboundRequest request : requests) {
-            em.remove(request);
-            itemsDeleted++;
-        }
-
+        String query = "delete from InboundRequest ir WHERE ir.auditable.created<=:date";
+        itemsDeleted = em.createQuery(query).setParameter("date", date).executeUpdate();
         log.info("Removed {} Inbound requests which date is older then a {} date", itemsDeleted, date);
 
         return itemsDeleted;

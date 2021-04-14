@@ -1,168 +1,200 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:s="http://jboss.org/seam/faces" xmlns:p="http://primefaces.org/ui"
-    template="/layout/template.xhtml" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+	xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:s="http://jboss.org/seam/faces" xmlns:p="http://primefaces.org/ui"
+	template="/layout/template.xhtml" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
-    <ui:define name="metadata">
-        <f:metadata>
-            <f:viewParam name="objectId" value="#{jobInstanceBean.objectId}" />
-            <f:viewParam name="tab" value="#{jobInstanceBean.activeTab}" />
-        </f:metadata>
-    </ui:define>
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:viewParam name="objectId" value="#{jobInstanceBean.objectId}" />
+			<f:viewParam name="tab" value="#{jobInstanceBean.activeTab}" />
+		</f:metadata>
+	</ui:define>
 
-    <ui:param name="pageTitle" value="#{messages['job.page.title']}" />
-    <ui:define name="body">
-        <p:importEnum type="org.meveo.cache.JobRunningStatusEnum" var="JobRunningStatusEnum" />
-        <h:form id="crumbmenuForm">
-            <p:breadCrumb homeDisplay="text" id="crumbmenu">
-                <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-                <p:menuitem outcome="jobInstances" value="#{messages['menu.jobInstances']}" />
-                <p:menuitem value="#{messages['commons.new']} #{messages['jobInstance.title']}" disabled="true" rendered="#{jobInstanceBean.entity.transient}" />
-                <p:menuitem value="#{messages['jobInstance.title']} - #{jobInstanceBean.entity.code}" disabled="true" rendered="#{!jobInstanceBean.entity.transient}" />
-            </p:breadCrumb>
-        </h:form>
+	<ui:param name="pageTitle" value="#{messages['job.page.title']}" />
+	<ui:define name="body">
+		<p:importEnum type="org.meveo.cache.JobRunningStatusEnum" var="JobRunningStatusEnum" />
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+				<p:menuitem outcome="jobInstances" value="#{messages['menu.jobInstances']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['jobInstance.title']}" disabled="true" rendered="#{jobInstanceBean.entity.transient}" />
+				<p:menuitem value="#{messages['jobInstance.title']} - #{jobInstanceBean.entity.code}" disabled="true" rendered="#{!jobInstanceBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
 
-        <p:panel>
-            <f:facet name="header">
-                <h:outputText value="#{messages['jobInstance.title']}" />
-            </f:facet>
+		<p:panel>
+			<f:facet name="header">
+				<h:outputText value="#{messages['jobInstance.title']}" />
+			</f:facet>
 
-            <hftl:formPanel backingBean="#{jobInstanceBean}" showFormButtons="false">
+			<hftl:formPanel backingBean="#{jobInstanceBean}" showFormButtons="false">
 
-                <p:tabView id="tabView" activeIndex="#{jobInstanceBean.activeTab}">
-                    <p:tab title="#{messages['job.info']}">
-                        <hftl:formField label="#{messages['timer.jobCategory']}" field="jobCategoryEnum" required="true" edit="#{jobInstanceBean.entity.id==null}"
-                            listenerUpdate="@form" />
-                        <hftl:decorateFormField fieldId="timerJobName" label="#{messages['timer.jobName']}">
-                            <p:selectOneMenu id="timerJobName" value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id == null}" required="true">
-                                <f:selectItem itemLabel="#{messages['commons.select']}" />
-                                <f:selectItems value="#{jobInstanceBean.jobNames}" />
-                                <p:ajax event="valueChange" listener="#{jobInstanceBean.refreshCustomFieldsAndActions}" update="@form" />
-                            </p:selectOneMenu>
-                            <h:outputText value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id!=null}" />
-                        </hftl:decorateFormField>
-                        <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" validateUnique="true" />
-                        <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
-
-
-                        <hftl:decorateFormField fieldId="timer" label="#{messages['jobInstance.timer']}">
-                            <p:selectOneMenu id="timer" value="#{jobInstanceBean.entity.timerEntity}" rendered="#{jobInstanceBean.edit}">
-                                <hftl:objectConverter />
-                                <f:selectItem itemLabel="#{messages['commons.select']}" />
-                                <f:selectItems value="#{timerEntityBean.listAll()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
-                            </p:selectOneMenu>
-                        </hftl:decorateFormField>
-
-                        <hftl:formField label="#{messages['jobInstance.parametres']}" field="parametres" />
-                        <hftl:formField label="#{messages['jobInstance.verboseReport']}" field="verboseReport" />
-                        <hftl:formField label="#{messages['jobInstance.stopOnError']}" field="stopOnError" />
-                        <hftl:decorateFormField fieldId="timerFollowingJob" label="#{messages['timer.followingJob']}">
-                            <p:selectOneMenu id="timerFollowingJob" value="#{jobInstanceBean.entity.followingJob}" rendered="#{jobInstanceBean.edit}">
-                                <hftl:objectConverter />
-                                <f:selectItem itemLabel="#{messages['commons.select']}" />
-                                <f:selectItems value="#{jobInstanceBean.getFollowingJobList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
-                            </p:selectOneMenu>
-                        </hftl:decorateFormField>
-                        <hftl:formField label="#{messages['jobInstance.runOnNodes']}" field="runOnNodes" listenerUpdate="clusterInfo" />
-                        <h:panelGroup id="clusterInfo">
-                            <hftl:formField label="#{messages['jobInstance.limitToSingleNode']}" field="limitToSingleNode" disabled="#{jobInstanceBean.entity.runOnNodes==null}" />
-                        </h:panelGroup>
-
-                        <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!jobInstanceBean.entity.transient}">
-                            <h:outputText value="#{jobInstanceBean.getPartOfModules()}" />
-                        </hftl:decorateFormField>
-                        <hftl:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true" field="disabled" isMessage="true" newLine="true" />
-                        <h:panelGroup id="invoiceInfo">
-                            <hftl:formField label="#{messages['jobInstance.invoiceWithZeroAmount']}" field="excludeInvoicesWithoutAmount"
-                                rendered="#{jobInstanceBean.entity != null and (jobInstanceBean.entity.jobTemplate eq 'AccountOperationsGenerationJob')}" />
-                        </h:panelGroup>
-                    </p:tab>
-
-                    <hftl:customFields backingBean="#{jobInstanceBean}" messagesId=":formId:messages" />
-
-                </p:tabView>
-
-                <hf:formButtons execute="#{jobInstanceBean.isAllowedToExecute(jobInstanceBean.entity) and currentUser.hasRole('useJob')}"
-                    stop="#{jobInstanceBean.isTimerRunning(jobInstanceBean.entity)== JobRunningStatusEnum.RUNNING_THIS}" executeLabel="#{messages['job.executeJobNow']}"
-                    stopLabel="#{messages['job.stopJobNow']}" backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true"
-                    submitPartialProcess=":formId:tabView" showEnableDisableButton="#{currentUser.hasRole('useJob')}" showDeleteButton="#{currentUser.hasRole('useJob')}"
-                    killConversationOnSave="false" killConversationOnBack="false" />
+				<p:tabView id="tabView" activeIndex="#{jobInstanceBean.activeTab}">
+					<p:tab title="#{messages['job.info']}">
+						<hftl:formField label="#{messages['timer.jobCategory']}" field="jobCategoryEnum" required="true" edit="#{jobInstanceBean.entity.id==null}" listenerUpdate="@form" />
+						<hftl:decorateFormField fieldId="timerJobName" label="#{messages['timer.jobName']}">
+							<p:selectOneMenu id="timerJobName" value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id == null}" required="true">
+								<f:selectItem itemLabel="#{messages['commons.select']}" />
+								<f:selectItems value="#{jobInstanceBean.jobNames}" />
+								<p:ajax event="valueChange" listener="#{jobInstanceBean.refreshCustomFieldsAndActions}" update="@form" />
+							</p:selectOneMenu>
+							<h:outputText value="#{jobInstanceBean.entity.jobTemplate}" rendered="#{jobInstanceBean.entity.id!=null}" />
+						</hftl:decorateFormField>
+						<hftl:formField label="#{messages['BusinessEntity.code']}" field="code" validateUnique="true" />
+						<hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
 
 
-            </hftl:formPanel>
+						<hftl:decorateFormField fieldId="timer" label="#{messages['jobInstance.timer']}">
+							<p:selectOneMenu id="timer" value="#{jobInstanceBean.entity.timerEntity}" rendered="#{jobInstanceBean.edit}">
+								<hftl:objectConverter />
+								<f:selectItem itemLabel="#{messages['commons.select']}" />
+								<f:selectItems value="#{timerEntityBean.listAll()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
+							</p:selectOneMenu>
+						</hftl:decorateFormField>
+
+						<hftl:formField label="#{messages['jobInstance.parametres']}" field="parametres" />
+						<hftl:formField label="#{messages['jobInstance.verboseReport']}" field="verboseReport" />
+						<hftl:formField label="#{messages['jobInstance.stopOnError']}" field="stopOnError" />
+						<hftl:decorateFormField fieldId="timerFollowingJob" label="#{messages['timer.followingJob']}">
+							<p:selectOneMenu id="timerFollowingJob" value="#{jobInstanceBean.entity.followingJob}" rendered="#{jobInstanceBean.edit}">
+								<hftl:objectConverter />
+								<f:selectItem itemLabel="#{messages['commons.select']}" />
+								<f:selectItems value="#{jobInstanceBean.getFollowingJobList()}" var="t_" itemLabel="#{t_.code}" itemValue="#{t_}" />
+							</p:selectOneMenu>
+						</hftl:decorateFormField>
+						<hftl:formField label="#{messages['jobInstance.jobSpeed']}" field="jobSpeed" />
+						
+						<hftl:formField label="#{messages['jobInstance.limitToSingleNode']}" field="limitToSingleNode" newLine="true" />
+						<hftl:formField label="#{messages['jobInstance.runOnNodes']}" field="runOnNodes" />
+
+						<hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!jobInstanceBean.entity.transient}">
+							<h:outputText value="#{jobInstanceBean.getPartOfModules()}" />
+						</hftl:decorateFormField>
+						<hftl:formField label="#{messages['enableEntity.disabled']}" allowEdit="false" doNotShowOnNew="true" field="disabled" isMessage="true" newLine="true" />
+						<h:panelGroup id="invoiceInfo">
+							<hftl:formField label="#{messages['jobInstance.invoiceWithZeroAmount']}" field="excludeInvoicesWithoutAmount"
+								rendered="#{jobInstanceBean.entity != null and (jobInstanceBean.entity.jobTemplate eq 'AccountOperationsGenerationJob')}" />
+						</h:panelGroup>
+
+						<p:fieldset legend="#{messages['jobExecution.status']}" styleClass="clearLeft">
+							<hftl:decorateFormField label="#{messages['jobExecution.status']}">
+								<h:outputText value="#{messages['JobRunningStatusEnum.'.concat(jobInstanceBean.jobExecutionStatus)]}" styleClass="field-value" />
+							</hftl:decorateFormField>
+							<hftl:decorateFormField label="#{messages['jobExecution.runningOnNodes']}" rendered="#{!jobInstanceBean.jobExecutionStatusDetails.nodesAndThreads.isEmpty()}">
+								<h:dataTable value="#{jobInstanceBean.jobExecutionStatusDetails.nodesAndThreads.entrySet()}" var="nodeInfo">
+									<h:column>
+										<f:facet name="header">
+											<h:outputText value="#{messages['jobExecution.node']}" />
+										</f:facet>
+										<h:outputText value="#{nodeInfo.getKey()}" styleClass="field-value" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<h:outputText value="#{messages['jobExecution.nbOfThreads']}" />
+										</f:facet>
+										<h:outputText value="#{nodeInfo.getValue().getNumberOfThreads()}" styleClass="field-value" />
+									</h:column>
+								</h:dataTable>
+							</hftl:decorateFormField>
+						</p:fieldset>
+					</p:tab>
+
+					<hftl:customFields backingBean="#{jobInstanceBean}" messagesId=":formId:messages" />
+
+				</p:tabView>
+
+				<hf:formButtons execute="#{jobInstanceBean.isAllowedToExecute(jobInstanceBean.entity) and currentUser.hasRole('useJob')}"
+					stop="#{jobInstanceBean.isJobRunning(jobInstanceBean.entity) and !jobInstanceBean.isJobPausing(jobInstanceBean.entity)}"
+					stopByForce="#{jobInstanceBean.isJobRunning(jobInstanceBean.entity)}" executeLabel="#{messages['job.executeJobNow']}" stopLabel="#{messages['action.stop']}"
+					stopConfirmationMessage="#{messages['jobInstance.job.stopConfirmation']}" stopByForceLabel="#{messages['action.stopNow']}"
+					stopByForceConfirmationMessage="#{messages['jobInstance.job.stopNowConfirmation']}" backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true"
+					submitPartialProcess=":formId:tabView" showEnableDisableButton="#{currentUser.hasRole('useJob')}" showDeleteButton="#{currentUser.hasRole('useJob')}"
+					killConversationOnSave="false" killConversationOnBack="false" />
 
 
-            <!-- ===================================== JOB EXECUTION RESULTS ===================================== -->
-
-            <p:panel id="jobExecutions" rendered="#{!jobInstanceBean.entity.transient}">
-
-                <p:fieldset legend="#{messages['jobInstance.jobHistory']}" styleClass="clearLeft">
-
-                    <h:form id="jobExecutionsDatatable_frm" prependId="false" onkeypress="if (event.keyCode == 13) {return false;}">
-                        <p:dataTable id="jobExecutionsDatatable" var="entity" sortBy="#{entity.id}" sortOrder="descending" paginator="true"
-                            paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                            value="#{jobInstanceBean.getExecutionHistory()}" rows="10" rowKey="#{entity.id}" resizableColumns="true" lazy="true" styleClass="custom-grid"
-                            rowsPerPageTemplate="10,15,20,50" reflow="true" paginatorAlwaysVisible="true" paginatorPosition="both">
-
-                            <p:column sortBy="#{entity.startDate}" headerText="#{messages['jobExecution.startDate']}" width="10%">
-                                <h:outputText value="#{entity.startDate}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-                                </h:outputText>
-                            </p:column>
-
-                            <p:column sortBy="#{entity.endDate}" headerText="#{messages['jobExecution.endDate']}" width="10%">
-                                <h:outputText value="#{entity.endDate}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-                                </h:outputText>
-                            </p:column>
-
-                            <p:column sortBy="#{entity.nbItemsCorrectlyProcessed}" headerText="#{messages['jobExecution.nbOk']}" width="5%">
-                                <h:outputText value="#{entity.nbItemsCorrectlyProcessed}" />
-                            </p:column>
-
-                            <p:column sortBy="#{entity.nbItemsProcessedWithWarning}" headerText="#{messages['jobExecution.nbWarn']}" width="5%">
-                                <h:outputText value="#{entity.nbItemsProcessedWithWarning}" />
-                            </p:column>
-
-                            <p:column sortBy="#{entity.nbItemsProcessedWithError}" headerText="#{messages['jobExecution.nbKo']}" width="5%">
-                                <h:outputText value="#{entity.nbItemsProcessedWithError}" />
-                            </p:column>
-
-                            <hftl:column label="#{messages['jobExecution.report']}" field="report" showTruncated="true" truncateToSize="10000" truncateToInListSize="160" />
-
-                        </p:dataTable>
-                    </h:form>
-                </p:fieldset>
-            </p:panel>
+			</hftl:formPanel>
 
 
-            <!-- ===================================== JOB ERROR DETAILS ===================================== -->
+			<!-- ===================================== JOB EXECUTION RESULTS ===================================== -->
+
+			<p:panel id="jobExecutions" rendered="#{!jobInstanceBean.entity.transient}">
+
+				<p:fieldset legend="#{messages['jobInstance.jobHistory']}" styleClass="clearLeft">
+
+					<h:form id="jobExecutionsDatatable_frm" prependId="false" onkeypress="if (event.keyCode == 13) {return false;}">
+						<p:dataTable id="jobExecutionsDatatable" var="entity" sortBy="#{entity.id}" sortOrder="descending" paginator="true"
+							paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+							value="#{jobInstanceBean.getExecutionHistory()}" rows="10" rowKey="#{entity.id}" resizableColumns="true" lazy="true" styleClass="custom-grid"
+							rowsPerPageTemplate="10,15,20,50" reflow="true" paginatorAlwaysVisible="true" paginatorPosition="both">
+
+							<p:column sortBy="#{entity.startDate}" headerText="#{messages['jobExecution.startDate']}" width="10%">
+								<h:outputText value="#{entity.startDate}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+								</h:outputText>
+							</p:column>
+
+							<p:column sortBy="#{entity.endDate}" headerText="#{messages['jobExecution.endDate']}" width="10%">
+								<h:outputText value="#{entity.endDate}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+								</h:outputText>
+							</p:column>
 
 
-            <h:panelGroup id="jobErrors" rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null}">
+							<p:column sortBy="#{entity.nbItemsToProcess}" headerText="#{messages['jobExecution.nbToProcess']}" width="10%">
+								<h:outputText value="#{entity.nbItemsToProcess}" />
+							</p:column>
 
-                <p:fieldset legend="#{messages['jobInstance.jobErrors']}" styleClass="clearLeft">
+
+							<p:column sortBy="#{entity.nbItemsCorrectlyProcessed}" headerText="#{messages['jobExecution.nbOk']}" width="5%">
+								<h:outputText value="#{entity.nbItemsCorrectlyProcessed}" />
+							</p:column>
+
+							<p:column sortBy="#{entity.nbItemsProcessedWithWarning}" headerText="#{messages['jobExecution.nbWarn']}" width="5%">
+								<h:outputText value="#{entity.nbItemsProcessedWithWarning}" />
+							</p:column>
+
+							<p:column sortBy="#{entity.nbItemsProcessedWithError}" headerText="#{messages['jobExecution.nbKo']}" width="5%">
+								<h:outputText value="#{entity.nbItemsProcessedWithError}" />
+							</p:column>
+
+							<hftl:column label="#{messages['jobExecution.status']}" field="status.label" isMessage="true" width="10%" />
+							<hftl:column label="#{messages['jobExecution.report']}" field="report" showTruncated="true" truncateToSize="10000" truncateToInListSize="160" />
+
+						</p:dataTable>
+					</h:form>
+				</p:fieldset>
+			</p:panel>
 
 
-                    <hftl:dataList backingBean="#{recurringChargeJobExecutionErrorBean}" dataModel="#{jobInstanceBean.getJobExecutionErrors()}" resultsId="error_list_results"
-                        exportButton="false" exportXlsxButton="false" checkMany="false" sortBy="id">
-                        <hftl:column label="#{messages['jobInstance.error.created']}" field="created" isDate="true" width="10%" />
-                        <hftl:column label="#{messages['charge.label']}" field="entity.code" entityView="subscriptionDetailRecChargeTab" objectIdParamName="subscriptionId"
-                            backView="jobInstances" valueIdField="entity.subscription.id" width="20%"
-                            rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
-                        <hftl:column label="#{messages['subscription.label']}" field="entity.subscription.code" entityView="subscriptionDetail" objectIdParamName="subscriptionId"
-                            backView="jobInstances" valueIdField="entity.subscription.id" width="15%"
-                            rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
-                        <hftl:column label="#{messages['invoice.invoiceNumber']}" field="entity.invoiceNumberOrTemporaryNumber" entityView="invoiceDetail" backView="jobInstances"
-                            valueIdField="entity.id" width="20%" rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='Invoice'}" />
-                        <hftl:column label="#{messages['invoice.invoiceDate']}" field="entity.invoiceDate" isDate="true" width="10%" rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='Invoice'}" />
-                        <hftl:column label="#{messages['jobInstance.error.periodFrom']}" field="periodFrom" isDate="true" width="7%"
-                            rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
-                        <hftl:column label="#{messages['jobInstance.error.periodTo']}" field="periodTo" isDate="true" width="7%"
-                            rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
-                        <hftl:column label="#{messages['jobInstance.error.errorReason']}" field="errorReason" showTruncated="true" truncateToSize="3000" truncateToInListSize="120" />
-                    </hftl:dataList>
-                </p:fieldset>
-            </h:panelGroup>
-        </p:panel>
-    </ui:define>
+			<!-- ===================================== JOB ERROR DETAILS ===================================== -->
+
+
+			<h:panelGroup id="jobErrors" rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null}">
+
+				<p:fieldset legend="#{messages['jobInstance.jobErrors']}" styleClass="clearLeft">
+
+
+					<hftl:dataList backingBean="#{recurringChargeJobExecutionErrorBean}" dataModel="#{jobInstanceBean.getJobExecutionErrors()}" resultsId="error_list_results" exportButton="false"
+						exportXlsxButton="false" checkMany="false" sortBy="id">
+						<hftl:column label="#{messages['jobInstance.error.created']}" field="created" isDate="true" width="10%" />
+						<hftl:column label="#{messages['charge.label']}" field="entity.code" entityView="subscriptionDetailRecChargeTab" objectIdParamName="subscriptionId" backView="jobInstances"
+							valueIdField="entity.subscription.id" width="20%"
+							rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
+						<hftl:column label="#{messages['subscription.label']}" field="entity.subscription.code" entityView="subscriptionDetail" objectIdParamName="subscriptionId"
+							backView="jobInstances" valueIdField="entity.subscription.id" width="15%"
+							rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
+						<hftl:column label="#{messages['invoice.invoiceNumber']}" field="entity.invoiceNumberOrTemporaryNumber" entityView="invoiceDetail" backView="jobInstances"
+							valueIdField="entity.id" width="20%"
+							rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='Invoice'}" />
+						<hftl:column label="#{messages['invoice.invoiceDate']}" field="entity.invoiceDate" isDate="true" width="10%"
+							rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='Invoice'}" />
+						<hftl:column label="#{messages['jobInstance.error.periodFrom']}" field="periodFrom" isDate="true" width="7%"
+							rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
+						<hftl:column label="#{messages['jobInstance.error.periodTo']}" field="periodTo" isDate="true" width="7%"
+							rendered="#{!jobInstanceBean.entity.transient and jobInstanceBean.getTargetEntityClassForErrorLog()!=null and jobInstanceBean.getTargetEntityClassForErrorLog().getSimpleName()=='RecurringChargeInstance'}" />
+						<hftl:column label="#{messages['jobInstance.error.errorReason']}" field="errorReason" showTruncated="true" truncateToSize="3000" truncateToInListSize="120" />
+					</hftl:dataList>
+				</p:fieldset>
+			</h:panelGroup>
+		</p:panel>
+	</ui:define>
 </ui:composition>

@@ -50,7 +50,7 @@ public class JobTriggerLauncher {
 
     @Inject
     private JobExecutionService jobExecutionService;
-    
+
     @Inject
     private JobInstanceService jobInstanceService;
 
@@ -59,7 +59,7 @@ public class JobTriggerLauncher {
 
     @Inject
     private CurrentUserProvider currentUserProvider;
-    
+
     /**
      * Launch job as fired notification result
      * 
@@ -70,7 +70,7 @@ public class JobTriggerLauncher {
      */
     @Asynchronous
     public void launchAsync(JobTrigger jobTrigger, Object entityOrEvent, MeveoUser lastCurrentUser) {
-    	launch(jobTrigger, entityOrEvent, lastCurrentUser);
+        launch(jobTrigger, entityOrEvent, lastCurrentUser);
     }
 
     /**
@@ -82,17 +82,16 @@ public class JobTriggerLauncher {
      *        expirations), current user might be lost, thus there is a need to reestablish.
      */
     public void launch(JobTrigger jobTrigger, Object entityOrEvent, MeveoUser lastCurrentUser) {
-        
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-        
+
         try {
             log.info("launch jobTrigger:{}", jobTrigger);
-            HashMap<Object, Object> params = new HashMap<Object, Object>();
+            HashMap<String, Object> params = new HashMap<String, Object>();
             params.put("event", entityOrEvent);
-            
-            jobExecutionService.executeJob(jobInstanceService.retrieveIfNotManaged(jobTrigger.getJobInstance()), params);
-            
+
+            jobExecutionService.executeJob(jobInstanceService.retrieveIfNotManaged(jobTrigger.getJobInstance()), params, null);
+
             log.debug("launch jobTrigger:{} launched", jobTrigger);
             if (jobTrigger.isSaveSuccessfulNotifications()) {
                 notificationHistoryService.create(jobTrigger, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);

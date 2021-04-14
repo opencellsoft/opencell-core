@@ -20,7 +20,9 @@ package org.meveo.service.billing.impl;
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.audit.logging.annotations.MeveoAudit;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.Customer;
@@ -28,6 +30,7 @@ import org.meveo.service.base.AccountService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import java.util.Date;
 import java.util.List;
 
@@ -69,7 +72,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		}
 		List<Subscription> subscriptions = userAccount.getSubscriptions();
 		for (Subscription subscription : subscriptions) {		
-			subscriptionService.terminateSubscription(subscription, terminationDate, terminationReason, subscription.getOrderNumber());
+			subscriptionService.terminateSubscription(subscription, terminationDate, terminationReason, null);
 		}
 		userAccount.setTerminationReason(terminationReason);
 		userAccount.setTerminationDate(terminationDate);
@@ -116,7 +119,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 
     /**
      * Get a count of user accounts by a parent billing account
-     * 
+     *
      * @param parent Parent billing account
      * @return A number of child user accounts
      */
@@ -124,4 +127,24 @@ public class UserAccountService extends AccountService<UserAccount> {
 
         return getEntityManager().createNamedQuery("UserAccount.getCountByParent", Long.class).setParameter("parent", parent).getSingleResult();
     }
+
+	/**
+	 * List userAccounts by billing account with paginationConfiguration
+	 *
+	 * @param billingAccount the billing account
+	 * @param config paginationConfiguration
+	 * @return the list of userAccounts
+	 */
+	public List<UserAccount> listByBillingAccount(BillingAccount billingAccount, PaginationConfiguration config) {
+		QueryBuilder qb = getQuery(config);
+		qb.addCriterionEntity("billingAccount", billingAccount);
+
+		try {
+			return (List<UserAccount>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			log.warn("error while getting list by billing account", e);
+			return null;
+		}
+	}
+
 }

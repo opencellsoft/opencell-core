@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.TaxApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -30,6 +26,11 @@ import org.meveo.api.dto.response.GetTaxResponse;
 import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.TaxRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Edward P. Legaspi
@@ -115,6 +116,20 @@ public class TaxRsImpl extends BaseRs implements TaxRs {
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
+        return result;
+    }
+
+    @Override
+    public GetTaxesResponse listGetAll() {
+
+        GetTaxesResponse result = new GetTaxesResponse();
+
+        try {
+            result = taxApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
         return result;
     }
 }

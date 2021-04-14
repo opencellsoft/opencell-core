@@ -146,16 +146,19 @@ public class ImportCatalogJobBean {
                         }
                     }
                     result.setNbItemsToProcess(rowsObj.length - 1);
+                    
+                    int checkJobStatusEveryNr = result.getJobInstance().getJobSpeed().getCheckNb();
+                    
                     for (int rowIndex = 1; rowIndex < rowsObj.length; rowIndex++) {         
-                        if (rowIndex % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+                        if (rowIndex % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                             break;
                         }
                         Row row = (Row) rowsObj[rowIndex];
                         try {
                             pricePlanService.importExcelLine(row);
-                            jobExecutionService.registerSucces(result);
+                            result.registerSucces();
                         } catch (BusinessException ex) {
-                            jobExecutionService.registerError(result, ex.getMessage() + ";");
+                            result.registerError(ex.getMessage() + ";");
                         }
                     }
 
@@ -174,10 +177,10 @@ public class ImportCatalogJobBean {
                     }
                     throw new BusinessException("Error while parsing the excel file." + e.getMessage());
                 }
-                report += result.getErrorsAString();
+                report += result.getReport();
 
                 if (FileUtils.getFirstFile(inputDir, fileExtensions) != null) {
-                    result.setDone(false);
+                    result.setMoreToProcess(true);
                 }
 
                 if (processed > 0) {

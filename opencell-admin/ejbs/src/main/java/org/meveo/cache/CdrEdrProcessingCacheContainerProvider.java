@@ -110,8 +110,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
         int maxRecordsPerProvider = maxRecords / nbProviders;
         for (int from = 0; from < maxRecordsPerProvider; from = from + pageSize) {
             List<String> edrCacheKeys = edrService.getUnprocessedEdrsForCache(from, pageSize);
-            List<String> distinct = edrCacheKeys.stream().distinct().collect(Collectors.toList());
-            Map<CacheKeyStr, Boolean> mappedEdrCacheKeys = distinct.stream().collect(Collectors.toMap(p -> new CacheKeyStr(currentProvider, p), p -> true));
+            Map<CacheKeyStr, Boolean> mappedEdrCacheKeys = edrCacheKeys.stream().distinct().collect(Collectors.toMap(p -> new CacheKeyStr(currentProvider, p), p -> true));
 
             edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).putAll(mappedEdrCacheKeys);
 

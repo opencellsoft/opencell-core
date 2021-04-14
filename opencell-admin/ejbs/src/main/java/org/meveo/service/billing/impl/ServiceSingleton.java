@@ -18,13 +18,31 @@
 
 package org.meveo.service.billing.impl;
 
-import static java.time.Instant.*;
+import static java.time.Instant.now;
 import static java.util.Optional.ofNullable;
 import static java.util.UUID.randomUUID;
-import static org.meveo.model.sequence.SequenceTypeEnum.*;
+import static org.meveo.model.sequence.SequenceTypeEnum.ALPHA_UP;
+import static org.meveo.model.sequence.SequenceTypeEnum.CUSTOMER_NO;
+import static org.meveo.model.sequence.SequenceTypeEnum.NUMERIC;
+import static org.meveo.model.sequence.SequenceTypeEnum.REGEXP;
+import static org.meveo.model.sequence.SequenceTypeEnum.RUM;
+import static org.meveo.model.sequence.SequenceTypeEnum.SEQUENCE;
+import static org.meveo.model.sequence.SequenceTypeEnum.UUID;
 import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 
-import com.mifmif.common.regex.Generex;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
@@ -58,10 +76,7 @@ import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
-import javax.ejb.*;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import java.util.*;
+import com.mifmif.common.regex.Generex;
 
 /**
  * A singleton service to handle synchronized calls. DO not change lock mode to Write
@@ -525,7 +540,7 @@ public class ServiceSingleton {
         String invoiceNumber = StringUtils.getLongAsNChar(nextInvoiceNb, sequenceSize);
         // request to store invoiceNo in alias field
         invoice.setAlias(invoiceNumber);
-        invoice.setInvoiceNumber(prefix + invoiceNumber);
+        invoice.setInvoiceNumber((prefix == null ? "" : prefix) + invoiceNumber);
         if (isVirtual) {
 
             invoiceNumberAssignedEventProducer.fire(invoice);

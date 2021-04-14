@@ -55,6 +55,9 @@ public class ProviderContactApi extends BaseApi {
     private  CountryService countryService;
 
     public ProviderContact create(ProviderContactDto providerContactDto) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(providerContactDto.getCode())) {
+            addGenericCodeIfAssociated(ProviderContact.class.getName(), providerContactDto);
+        }
         if (StringUtils.isBlank(providerContactDto.getDescription())) {
             missingParameters.add("description");
         }
@@ -180,12 +183,11 @@ public class ProviderContactApi extends BaseApi {
     }
 
     public ProviderContact createOrUpdate(ProviderContactDto providerContactDto) throws MeveoApiException, BusinessException {
-        ProviderContact providerContact = providerContactService.findByCode(providerContactDto.getCode());
-        if (providerContact == null) {
-            providerContact = create(providerContactDto);
+        if (!StringUtils.isBlank(providerContactDto.getCode())
+                && providerContactService.findByCode(providerContactDto.getCode()) != null) {
+            return update(providerContactDto);
         } else {
-            providerContact = update(providerContactDto);
+            return create(providerContactDto);
         }
-        return providerContact;
     }
 }
