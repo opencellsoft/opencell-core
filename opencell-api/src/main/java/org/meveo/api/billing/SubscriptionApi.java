@@ -2497,6 +2497,7 @@ public class SubscriptionApi extends BaseApi {
             throw new InvalidParameterException("A version already exists for effectiveDate=" + formatter.format(effectiveDate) + " (Subscription[code=" + code + ", validFrom=" + from + " validTo=" + to + "])). Only last version can be updated.");
         }
 
+        // terminaison code
         SubscriptionTerminationReason subscriptionTerminationReason = terminationReasonService.findByCode(subscriptionPatchDto.getTerminationReason());
         if (subscriptionTerminationReason == null) {
             throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, subscriptionPatchDto.getTerminationReason());
@@ -2512,8 +2513,9 @@ public class SubscriptionApi extends BaseApi {
             existingSubscriptionDto.setOfferTemplate(subscriptionPatchDto.getOfferTemplate());
         }
 
-        subscriptionService.terminateSubscription(existingSubscription, effectiveDate, subscriptionTerminationReason, existingSubscription.getOrderNumber());
-
+        Subscription terminateSubscription = subscriptionService.terminateSubscription(existingSubscription, effectiveDate, subscriptionTerminationReason, existingSubscription.getOrderNumber());
+        boolean isImmediateTermination = SubscriptionStatusEnum.RESILIATED == terminateSubscription.getStatus();
+        // fin terminaison
 
         existingSubscriptionDto.setValidityDate(effectiveDate);
         if (subscriptionPatchDto.getUpdateSubscriptionDate()) {
@@ -2549,6 +2551,11 @@ public class SubscriptionApi extends BaseApi {
                     .stream()
                     .forEach(s -> s.setSubscriptionDate(effectiveDate));
             activateServices(subscriptionPatchDto.getServicesToActivate(), newSubscription, null, null, null);
+        }
+
+        if (isImmediateTermination) {
+            // set subscription to status activate and activate its instantiated services
+            subscriptionService.activateInstantiatedService(newSubscription);
         }
 
         versionCreatedEvent.fire(newSubscription);
