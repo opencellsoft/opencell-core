@@ -153,6 +153,7 @@ import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -172,6 +173,7 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -331,6 +333,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
+    
+    @Inject
+    private CommercialOrderService commercialOrderService;
 
     /**
      * folder for pdf .
@@ -4933,7 +4938,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 ba = (BillingAccount) entityToInvoice;
             } else if (entityToInvoice instanceof Order) {
                 entityToInvoice = orderService.retrieveIfNotManaged((Order) entityToInvoice);
-            }
+            }else if (entityToInvoice instanceof CommercialOrder) {
+                entityToInvoice = commercialOrderService.retrieveIfNotManaged((CommercialOrder) entityToInvoice);
+                ba = ((CommercialOrder) entityToInvoice).getBillingAccount();
+            } 
 
             if (billingRun != null) {
                 billingRun = billingRunService.retrieveIfNotManaged(billingRun);
