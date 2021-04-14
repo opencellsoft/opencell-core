@@ -332,17 +332,23 @@ public class QueryBuilder {
         endOrClause();
     }
 
-    public void addSearchWildcardOrFilters(String tableNameAlias, String[] fields, Object value){
+    public void addSearchWildcardOrFilters(String tableNameAlias, String[] fields, Object value) {
         startOrClause();
-        Stream.of(fields)
-                .forEach(field -> addSql(tableNameAlias + "." + field + " like '%" + value + "%'"));
+        Stream.of(fields).forEach(field -> {
+            String param = convertFieldToParam(tableNameAlias + "." + field);
+            addSqlCriterion(tableNameAlias + "." + field + " like :" + param, param, "%" + value + "%");
+        });
         endOrClause();
     }
 
-    public void addSearchWildcardOrIgnoreCasFilters(String tableNameAlias, String[] fields, Object value){
+    public void addSearchWildcardOrIgnoreCasFilters(String tableNameAlias, String[] fields, Object value) {
+
+        String valueStr = "%" + String.valueOf(value).toLowerCase() + "%";
         startOrClause();
-        Stream.of(fields)
-                .forEach(field -> addSql("lower(" + tableNameAlias + "." + field + ") like '%" + String.valueOf(value).toLowerCase() + "%'"));
+        Stream.of(fields).forEach(field -> {
+            String param = convertFieldToParam(tableNameAlias + "." + field);
+            addSqlCriterion("lower(" + tableNameAlias + "." + field + ") like :" + param, param, valueStr);
+        });
         endOrClause();
     }
 
