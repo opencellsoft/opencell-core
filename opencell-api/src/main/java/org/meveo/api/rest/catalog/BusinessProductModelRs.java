@@ -97,7 +97,7 @@ public interface BusinessProductModelRs extends IBaseRs {
     public MeveoModuleDtosResponse list();
 
     /**
-     * List Business Account Models matching a given criteria
+     * List Business Product Models matching a given criteria
      *
      * @return List of Business Account Models
      */
