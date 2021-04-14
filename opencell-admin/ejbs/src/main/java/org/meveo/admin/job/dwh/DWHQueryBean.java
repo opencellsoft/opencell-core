@@ -35,6 +35,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.BaseJobBean;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
@@ -45,13 +46,14 @@ import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.service.job.JobExecutionService;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.slf4j.Logger;
 
 @Stateless
-public class DWHQueryBean {
+public class DWHQueryBean extends BaseJobBean{
 
     @Inject
     private MeasurableQuantityService mqService;
@@ -108,25 +110,25 @@ public class DWHQueryBean {
         } else {
             MeasurableQuantity mq = mqService.findByCode(measurableQuantityCode);
             if (mq == null) {
-                jobExecutionService.registerError(result, "Cannot find measurable quantity with code " + measurableQuantityCode);
+                result.registerError("Cannot find measurable quantity with code " + measurableQuantityCode);
                 return;
             }
             mqList.add(mq);
         }
         result.setNbItemsToProcess(mqList.size());
-        jobExecutionService.initCounterElementsRemaining(result, mqList.size());
         
         
         EntityManager em = emWrapper.getEntityManager();
         
+        int checkJobStatusEveryNr = result.getJobInstance().getJobSpeed().getCheckNb();
+        
         int ji = 0;
         for (MeasurableQuantity mq : mqList) {
-            ji++;
-            if (ji % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            if (ji % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
             if (StringUtils.isBlank(mq.getSqlQuery())) {
-                jobExecutionService.registerError(result, "Measurable quantity with code " + measurableQuantityCode + " has no SQL query set.");
+                result.registerError("Measurable quantity with code " + measurableQuantityCode + " has no SQL query set.");
                 log.info("Measurable quantity with code {} has no SQL query set.", measurableQuantityCode);
                 continue;
             }
@@ -201,14 +203,13 @@ public class DWHQueryBean {
                         }
                     }
                     mq.increaseMeasureDate();
-                    jobExecutionService.registerSucces(result);
+                    result.registerSucces();
                 }
             } catch (Exception e) {
-                jobExecutionService.registerError(result, "Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query: " + e.getMessage());
+                result.registerError("Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query: " + e.getMessage());
                 log.error("Measurable quantity with code " + measurableQuantityCode + " contain invalid SQL query", e);
             }
-
-            jobExecutionService.decCounterElementsRemaining(result);
+            ji++;
         }
     }
 }

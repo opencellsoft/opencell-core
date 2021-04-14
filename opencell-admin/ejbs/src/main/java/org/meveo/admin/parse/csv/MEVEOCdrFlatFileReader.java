@@ -32,6 +32,7 @@ import javax.inject.Named;
 
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.RecordContext;
+import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.rating.CDR;
 import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
@@ -64,31 +65,38 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
     private String batchName;
     private String username;
     private CDR_ORIGIN_ENUM origin;
-    
+
+    private Integer totalNumberOfRecords;
+
     @Inject
     MEVEOCdrParser meveoCdrParser;
 
     @Override
-    public void init(File cdrFile) throws FileNotFoundException {        
+    public void init(File cdrFile) throws FileNotFoundException {
         batchName = "CDR_" + cdrFile.getName();
-        this.origin = CDR_ORIGIN_ENUM.JOB;       
+        this.origin = CDR_ORIGIN_ENUM.JOB;
+
+        try {
+            totalNumberOfRecords = FileUtils.countLines(cdrFile);
+        } catch (IOException e) {
+        }
     }
 
     @Override
     public void init(String user, String ip) {
         this.batchName = "API_" + ip;
         this.origin = CDR_ORIGIN_ENUM.API;
-        this.username = user;        
+        this.username = user;
     }
 
     public String getBatchName() {
         return batchName;
     }
-        
+
     public String getUsername() {
         return username;
     }
-        
+
     public CDR_ORIGIN_ENUM getOrigin() {
         return origin;
     }
@@ -97,9 +105,9 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
     public synchronized CDR getNextRecord(ICdrParser cdrParser) throws IOException {
         RecordContext recordContext = getNextRecord();
         CDR cdr = null;
-        if(recordContext != null) {
+        if (recordContext != null) {
             cdr = cdrParser.parse(recordContext.getRecord());
-            if(cdr != null) {
+            if (cdr != null) {
                 cdr.setSource(RecordContext.serializeRecord(recordContext.getRecord()));
                 cdr.setType(recordContext.getRecord().getClass().getName());
                 String line = recordContext.getLineContent();
@@ -107,14 +115,11 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
                 cdr.setOriginBatch(batchName);
                 cdr.setOriginRecord(getOriginRecord(line));
             }
-        }        
-        
-        
+        }
+
         return cdr;
     }
-    
-    
-    
+
     /**
      * Build and return a unique identifier from the CDR in order. To avoid importing twice the same CDR.
      * 
@@ -153,5 +158,10 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
     public List<CDR> getRecords(ICdrParser cdrParser, List<String> cdrLines) {
         // TODO Auto-generated method stub
         return null;
-    }     
+    }
+
+    @Override
+    public Integer getNumberOfRecords() {
+        return totalNumberOfRecords;
+    }
 }

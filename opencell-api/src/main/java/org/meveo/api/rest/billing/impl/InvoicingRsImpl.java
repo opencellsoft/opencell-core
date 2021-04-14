@@ -18,15 +18,13 @@
 
 package org.meveo.api.rest.billing.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.billing.InvoicingApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.billing.CancelBillingRunRequestDto;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
 import org.meveo.api.dto.billing.InvoiceValidationDto;
+import org.meveo.api.dto.billing.ValidateBillingRunRequestDto;
 import org.meveo.api.dto.response.billing.GetBillingAccountListInRunResponseDto;
 import org.meveo.api.dto.response.billing.GetBillingRunInfoResponseDto;
 import org.meveo.api.dto.response.billing.GetPostInvoicingReportsResponseDto;
@@ -34,6 +32,10 @@ import org.meveo.api.dto.response.billing.GetPreInvoicingReportsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.InvoicingRs;
 import org.meveo.api.rest.impl.BaseRs;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -132,6 +134,19 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
     }
 
     @Override
+    public ActionStatus validateBillingRun(ValidateBillingRunRequestDto putData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            invoicingApi.validateBillingRun(putData.getBillingRunId());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
     public ActionStatus cancelBillingRun(Long billingRunId) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.info("cancelBillingRun request={}", billingRunId);
@@ -143,6 +158,19 @@ public class InvoicingRsImpl extends BaseRs implements InvoicingRs {
             processException(e, result);
         }
         log.info("cancelBillingRun Response={}", result);
+        return result;
+    }
+
+    @Override
+    public ActionStatus cancelBillingRun(CancelBillingRunRequestDto putData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            invoicingApi.cancelBillingRun(putData.getBillingRunId());
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
         return result;
     }
 

@@ -18,22 +18,14 @@
 
 package org.meveo.api.rest;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
 import org.meveo.api.dto.response.InvoiceCategoryResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.InvoiceCategory}.
@@ -45,6 +37,15 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
 public interface InvoiceCategoryRs extends IBaseRs {
+
+    /**
+     * Search for list of invoice categories.
+     *
+     * @return list of invoice categories
+     */
+    @GET
+    @Path("/list")
+    InvoiceCategoryResponseDto list();
 
     /**
      * Create invoice category. Description per language can be defined
@@ -104,6 +105,6 @@ public interface InvoiceCategoryRs extends IBaseRs {
      */
     @POST
     @Path("/list")
-    public InvoiceCategoryResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+    InvoiceCategoryResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

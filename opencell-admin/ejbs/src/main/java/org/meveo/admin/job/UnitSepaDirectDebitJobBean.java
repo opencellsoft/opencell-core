@@ -56,7 +56,6 @@ import org.meveo.model.payments.PaymentOrRefundEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.Refund;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.DDRequestItemService;
 import org.meveo.service.payments.impl.MatchingCodeService;
@@ -106,9 +105,6 @@ public class UnitSepaDirectDebitJobBean {
 	@Rejected
 	private Event<Serializable> rejectededEdrProducer;
 
-	@Inject
-    protected JobExecutionService jobExecutionService;
-	
 	/**
 	 * Execute processing one ddRequestItem.
 	 *
@@ -120,13 +116,12 @@ public class UnitSepaDirectDebitJobBean {
 	 */
 	@JpaAmpNewTx
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, DDRequestItem ddrequestItem) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+	public void execute(JobExecutionResultImpl result, DDRequestItem ddrequestItem, boolean isToMatching, PaymentStatusEnum paymentStatusEnum) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 		ddrequestItem = dDRequestItemService.refreshOrRetrieve(ddrequestItem);
 		DDRequestLOT ddRequestLOT = ddrequestItem.getDdRequestLOT();
 		log.debug("processing DD requestItem id  : " + ddrequestItem.getId());
 		AccountOperation automatedPayment = null;
 		PaymentErrorTypeEnum paymentErrorTypeEnum = null;
-		PaymentStatusEnum paymentStatusEnum = PaymentStatusEnum.ACCEPTED;
 		String errorMsg = null;
 		if (!ddrequestItem.hasError()) {
 			if (BigDecimal.ZERO.compareTo(ddrequestItem.getAmount()) == 0) {
@@ -134,8 +129,8 @@ public class UnitSepaDirectDebitJobBean {
 			} else {
 				automatedPayment = createPaymentOrRefund(ddrequestItem, PaymentMethodEnum.DIRECTDEBIT, ddrequestItem.getAmount(),
 						ddrequestItem.getAccountOperations().get(0).getCustomerAccount(), "ddItem" + ddrequestItem.getId(), ddRequestLOT.getFileName(), ddRequestLOT.getSendDate(),
-						DateUtils.addDaysToDate(new Date(), ArConfig.getDateValueAfter()), ddrequestItem.getDueDate(), ddRequestLOT.getSendDate(),
-						ddrequestItem.getAccountOperations(), true, MatchingTypeEnum.A_DERICT_DEBIT);
+						DateUtils.addDaysToDate(new Date(), ArConfig.getDateValueAfter()), ddrequestItem.getDueDate(), new Date(),
+						ddrequestItem.getAccountOperations(), isToMatching, MatchingTypeEnum.A_DERICT_DEBIT);
 				if (ddrequestItem.getDdRequestLOT().getPaymentOrRefundEnum().getOperationCategoryToProcess() == OperationCategoryEnum.CREDIT) {
 					ddrequestItem.setAutomatedRefund((AutomatedRefund) automatedPayment);
 				} else {
@@ -144,14 +139,14 @@ public class UnitSepaDirectDebitJobBean {
 				}
 			}
 			if (result != null) {
-				jobExecutionService.registerSucces(result);
+				result.registerSucces();
 			}
 		} else {
 			paymentErrorTypeEnum = PaymentErrorTypeEnum.ERROR;
 			paymentStatusEnum = PaymentStatusEnum.ERROR;
 			errorMsg = ddrequestItem.getErrorMsg();
 			if (result != null) {
-				jobExecutionService.registerError(result, errorMsg);
+				result.registerError(errorMsg);
 			}
 		}
 

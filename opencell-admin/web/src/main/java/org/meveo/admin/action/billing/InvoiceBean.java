@@ -354,7 +354,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         try {
 
             entity = invoiceService.refreshOrRetrieve(entity);
-            entity = invoiceService.produceInvoicePdf(entity);
+            entity = invoiceService.produceInvoicePdf(entity, null);
             pdfGenerated.put(entity.getId(), true);
 
             messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
@@ -396,7 +396,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     public void generateXmlInvoice() throws BusinessException {
         try {
             entity = invoiceService.refreshOrRetrieve(entity);
-            entity = invoiceService.produceInvoiceXml(entity);
+            entity = invoiceService.produceInvoiceXml(entity, null);
             xmlGenerated = true;
             messages.info(new BundleKey("messages", "invoice.xmlGeneration"));
 

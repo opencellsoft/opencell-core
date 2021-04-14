@@ -75,6 +75,9 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
         if (postData.getHttpMethod() == null) {
             missingParameters.add("httpMethod");
         }
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(WebHook.class.getName(), postData);
+        }
 
         handleMissingParameters();
 

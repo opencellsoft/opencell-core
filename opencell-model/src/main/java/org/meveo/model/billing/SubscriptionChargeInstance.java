@@ -60,13 +60,13 @@ public class SubscriptionChargeInstance extends OneShotChargeInstance {
      * @param amountWithoutTax Amount without tax
      * @param amountWithTax Amount with tax
      * @param quantity Quantity
-     * @param orderNumber Order number
+     * @param orderNumberOverride Order number to override. If not provided, a value from service instance will be used. A value of ChargeInstance.NO_ORDER_NUMBER will set a value to null.
      * @param serviceInstance Service instance
      * @param chargeTemplate Charge template
      */
-    public SubscriptionChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumber, ServiceInstance serviceInstance,
+    public SubscriptionChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumberOverride, ServiceInstance serviceInstance,
             OneShotChargeTemplate chargeTemplate) {
-        super(description, chargeDate, amountWithoutTax, amountWithTax, quantity, orderNumber, serviceInstance, chargeTemplate);
+        super(description, chargeDate, amountWithoutTax, amountWithTax, quantity, orderNumberOverride, serviceInstance, chargeTemplate);
     }
 
     /**
@@ -77,13 +77,13 @@ public class SubscriptionChargeInstance extends OneShotChargeInstance {
      * @param amountWithoutTax Amount without tax
      * @param amountWithTax Amount with tax
      * @param quantity Quantity
-     * @param orderNumber Order number
+     * @param orderNumberOverride Order number to override. If not provided, a value from subscription will be used. A value of ChargeInstance.NO_ORDER_NUMBER will set a value to null.
      * @param subscription Subscription
      * @param chargeTemplate Charge template
      */
-    public SubscriptionChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumber, Subscription subscription,
+    public SubscriptionChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumberOverride, Subscription subscription,
             OneShotChargeTemplate chargeTemplate) {
-        super(description,  chargeDate,  amountWithoutTax,  amountWithTax,  quantity,  orderNumber,  subscription,
+        super(description,  chargeDate,  amountWithoutTax,  amountWithTax,  quantity,  orderNumberOverride,  subscription,
              chargeTemplate);
     }
 }

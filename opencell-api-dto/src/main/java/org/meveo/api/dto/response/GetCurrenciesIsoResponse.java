@@ -18,13 +18,13 @@
 
 package org.meveo.api.dto.response;
 
-import java.util.List;
+import org.meveo.api.dto.CurrencyIsoDto;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.CurrencyIsoDto;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class GetCurrenciesIsoResponse.
@@ -34,13 +34,13 @@ import org.meveo.api.dto.CurrencyIsoDto;
  */
 @XmlRootElement(name = "GetCurrenciesIsoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetCurrenciesIsoResponse extends BaseResponse {
+public class GetCurrenciesIsoResponse extends SearchResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 12269486818856166L;
 
     /** The currencies. */
-    private List<CurrencyIsoDto> currencies;
+    private List<CurrencyIsoDto> currencies = new ArrayList<>();
 
     /**
      * Instantiates a new gets the currencies iso response.

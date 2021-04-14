@@ -68,8 +68,8 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
-import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.WalletTemplateService;
@@ -89,7 +89,6 @@ import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.TagService;
-import org.primefaces.model.SortOrder;
 
 /**
  * @author Edward P. Legaspi
@@ -298,7 +297,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     public ServiceTemplate create(ServiceTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(ServiceTemplate.class.getName(), postData);
         }
         
        /* if (StringUtils.isBlank(postData.getServiceTypeCode())) {
@@ -626,7 +625,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
             sortBy = pagingAndFiltering.getSortBy();
         }
 
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, ServiceTemplate.class);
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, pagingAndFiltering.getMultiSortOrder(), null, pagingAndFiltering, ServiceTemplate.class);
 
         Long totalCount = serviceTemplateService.count(paginationConfiguration);
 
@@ -641,7 +640,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         return result;
 
     }
-    
+
     /**
 	 * <ul>
 	 *  <li>check if groupedServiceCode already exist if no throw an exception</li>
@@ -696,5 +695,18 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
 		return result;	
 	}
-	
+
+    public GetListServiceTemplateResponseDto listGetAll(PagingAndFiltering pagingAndFiltering) {
+        GetListServiceTemplateResponseDto result = new GetListServiceTemplateResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<ServiceTemplate> serviceTemplates = serviceTemplateService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (serviceTemplates != null) {
+            for (ServiceTemplate serviceTemplate : serviceTemplates) {
+                result.getListServiceTemplate().add(new ServiceTemplateDto(serviceTemplate));
+            }
+        }
+
+        return result;
+    }
 }

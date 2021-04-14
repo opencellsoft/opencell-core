@@ -59,7 +59,7 @@ public class MeveoInstanceApi extends BaseApi{
 	public void create(MeveoInstanceDto postData) throws MeveoApiException, BusinessException {
 		log.debug("meveo instance api create by code {}",postData.getCode());
 		if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+			addGenericCodeIfAssociated(MeveoInstance.class.getName(), postData);
         }
 		if (StringUtils.isBlank(postData.getUrl())) {
             missingParameters.add("url");
@@ -213,11 +213,11 @@ public class MeveoInstanceApi extends BaseApi{
     }
 
     public void createOrUpdate(MeveoInstanceDto meveoInstanceDto) throws MeveoApiException, BusinessException {
-    	MeveoInstance meveoInstance=meveoInstanceService.findByCode(meveoInstanceDto.getCode());
-        if (meveoInstance == null) {
-            create(meveoInstanceDto);
-        } else {
-            update(meveoInstanceDto);
+        if (!StringUtils.isBlank(meveoInstanceDto.getCode())
+				&& meveoInstanceService.findByCode(meveoInstanceDto.getCode()) != null) {
+			update(meveoInstanceDto);
+		} else {
+			create(meveoInstanceDto);
         }
     }
 }

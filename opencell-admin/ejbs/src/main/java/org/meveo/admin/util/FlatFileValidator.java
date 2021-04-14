@@ -36,6 +36,7 @@ import org.meveo.model.admin.FileType;
 import org.meveo.model.bi.FileStatusEnum;
 import org.meveo.model.bi.FlatFile;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.bi.impl.FlatFileService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -564,7 +565,7 @@ public class FlatFileValidator {
 
                 if (flatFileExist) {
                     log.info("Execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate());
-                    jobExecutionService.executeJob(jobInstance, null);
+                    jobExecutionService.executeJob(jobInstance, null, JobLauncherEnum.TRIGGER);
                 }
             } catch (Exception e) {
                 log.error("Failed to execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate(), e);

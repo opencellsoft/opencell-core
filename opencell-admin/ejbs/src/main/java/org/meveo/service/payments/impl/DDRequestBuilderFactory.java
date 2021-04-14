@@ -19,10 +19,12 @@
 package org.meveo.service.payments.impl;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.payments.DDRequestBuilder;
 import org.meveo.model.payments.DDRequestBuilderTypeEnum;
 import org.meveo.model.scripts.ScriptInstance;
@@ -42,7 +44,7 @@ public class DDRequestBuilderFactory implements Serializable {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public DDRequestBuilderInterface getInstance(DDRequestBuilder ddRequestBuilder) throws Exception {
+    public DDRequestBuilderInterface getInstance(DDRequestBuilder ddRequestBuilder) throws ElementNotFoundException {
         DDRequestBuilderInterface ddRequestBuilderInterface = null;
 
         DDRequestBuilderTypeEnum ddRequestBuilderType = ddRequestBuilder.getType();
@@ -51,8 +53,13 @@ public class DDRequestBuilderFactory implements Serializable {
             ddRequestBuilderInterface = new CustomDDRequestBuilder((DDRequestBuilderScriptInterface) scriptInstanceService.getScriptInstance(scriptInstance.getCode()));
         }
         if (ddRequestBuilderType == DDRequestBuilderTypeEnum.NATIF) {
-            Class<?> clazz = Class.forName(ddRequestBuilder.getImplementationClassName());
-            ddRequestBuilderInterface = (DDRequestBuilderInterface) clazz.newInstance();
+            try {
+                Class<?> clazz = Class.forName(ddRequestBuilder.getImplementationClassName());
+
+                ddRequestBuilderInterface = (DDRequestBuilderInterface) clazz.getDeclaredConstructor().newInstance();
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                throw new ElementNotFoundException(ddRequestBuilder.getImplementationClassName(), "DDRequestBuilderInterface");
+            }
         }
 
         return ddRequestBuilderInterface;

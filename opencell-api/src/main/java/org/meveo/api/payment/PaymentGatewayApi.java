@@ -89,7 +89,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
 
         code = paymentGatewayDto.getCode();
         if (StringUtils.isBlank(code)) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(PaymentGateway.class.getName(), paymentGatewayDto);
         }
 
         if (paymentGatewayDto.getType() == null) {

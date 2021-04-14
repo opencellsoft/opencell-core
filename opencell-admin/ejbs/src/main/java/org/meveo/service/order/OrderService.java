@@ -31,6 +31,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.ParamBean;
@@ -163,7 +164,7 @@ public class OrderService extends BusinessService<Order> {
             UserAccount userAccount = userAccountService.retrieveIfNotManaged(order.getOrderItems().get(0).getUserAccount());
             paymentMethodService.obtainAndSetCardToken((CardPaymentMethod) order.getPaymentMethod(), userAccount.getBillingAccount().getCustomerAccount());
         }
-        if (order.getPaymentMethod() != null) {
+        if (order.getPaymentMethod() != null && !(order.getPaymentMethod() instanceof HibernateProxy && ((HibernateProxy) order.getPaymentMethod()).getHibernateLazyInitializer().isUninitialized())) {
             order.getPaymentMethod().updateAudit(currentUser);
         }
 

@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.billing.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.billing.AccountingCodeApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -35,6 +31,10 @@ import org.meveo.api.rest.billing.AccountingCodeRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * REST API to manage AccountingCode or Chart of accounts.
@@ -116,6 +116,20 @@ public class AccountingCodeRsImpl extends BaseRs implements AccountingCodeRs {
 
         try {
             return accountingCodeApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public AccountingCodeListResponseDto list() {
+
+        AccountingCodeListResponseDto result = new AccountingCodeListResponseDto();
+
+        try {
+            result = accountingCodeApi.list();
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

@@ -18,21 +18,13 @@
 
 package org.meveo.api.rest;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.LanguageIsoDto;
 import org.meveo.api.dto.response.GetLanguageIsoResponse;
 import org.meveo.api.dto.response.GetLanguagesIsoResponse;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * * Web service for managing {@link org.meveo.model.billing.Language}.
@@ -103,4 +95,13 @@ public interface LanguageIsoRs extends IBaseRs {
     @GET
     @Path("/list")
     GetLanguagesIsoResponse list();
+
+    /**
+     * List languages ISO matching a given criteria
+     *
+     * @return List of languages ISO
+     */
+    @GET
+    @Path("/listGetAll")
+    GetLanguagesIsoResponse listGetAll();
 }

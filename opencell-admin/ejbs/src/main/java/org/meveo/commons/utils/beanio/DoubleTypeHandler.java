@@ -21,8 +21,12 @@ package org.meveo.commons.utils.beanio;
 import org.beanio.types.TypeConversionException;
 import org.beanio.types.TypeHandler;
 import org.meveo.commons.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DoubleTypeHandler implements TypeHandler {
+	
+	private static final Logger log = LoggerFactory.getLogger(DoubleTypeHandler.class);
 
 	public Object parse(String text) throws TypeConversionException {
 		if(StringUtils.isBlank(text)){
@@ -32,7 +36,7 @@ public class DoubleTypeHandler implements TypeHandler {
 		try{
 			d = new Double(text.replaceAll(",", "."));
 		}catch(Exception e){
-			e.printStackTrace();
+			log.error("error = {}", e);
 			throw new TypeConversionException("Cant parse double '"+text+"'");
 		}
 		

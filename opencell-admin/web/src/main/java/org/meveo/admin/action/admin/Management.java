@@ -18,7 +18,6 @@
 package org.meveo.admin.action.admin;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
@@ -61,7 +60,7 @@ public class Management implements Serializable {
     /**
      * Input stream for network communication.
      */
-    private transient ObjectInputStream ois = null;
+    private transient SecureObjectInputStream ois = null;
 
     /**
      * Client socket. (A socket is an endpoint for communication between two machines. )
@@ -89,7 +88,7 @@ public class Management implements Serializable {
             connectionEstablished = true;
             // open I/O streams for objects
             oos = new ObjectOutputStream(socket.getOutputStream());
-            ois = new ObjectInputStream(socket.getInputStream());
+            ois = new SecureObjectInputStream(socket.getInputStream());
 
         } catch (UnknownHostException e) {
             log.error("Unknown Host Exception", e);
@@ -216,7 +215,7 @@ public class Management implements Serializable {
             oos.writeObject("init");
             oos.writeObject(application);
             String text = (String) ois.readObject();
-            System.out.println(text);
+            log.info(text);
             close();
 
         } catch (Exception e) {

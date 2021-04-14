@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -31,10 +32,11 @@ import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.commons.utils.PersistenceUtils;
+import org.meveo.service.crm.impl.ProviderService;
 import org.slf4j.Logger;
 
 /**
@@ -60,6 +62,9 @@ public class TenantCacheContainerProvider implements Serializable { // CacheCont
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-tenant-cache")
     private Cache<String, Provider> tenants;
+
+    @EJB
+    private ProviderService providerService;
 
     @Inject
     @CurrentUser
@@ -106,8 +111,11 @@ public class TenantCacheContainerProvider implements Serializable { // CacheCont
     // @Override
     public void populateCache(String cacheName) {
 
-        // if (cacheName == null || cacheName.equals(tenants.getName()) || cacheName.contains(tenants.getName())) {
-        // }
+        if (cacheName == null || cacheName.equals(tenants.getName()) || cacheName.contains(tenants.getName())) {
+
+            Provider provider = providerService.getProviderNoCache();
+            addUpdateTenant(provider);
+        }
     }
 
     /**

@@ -18,13 +18,6 @@
 
 package org.meveo.api.rest.account.impl;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.account.UserAccountApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -37,10 +30,17 @@ import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.UserAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Abdellatif BARI
@@ -117,6 +117,7 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
     @Override
     public UserAccountsResponseDto listByBillingAccount(String billingAccountCode) {
         UserAccountsResponseDto result = new UserAccountsResponseDto();
+        result.setPaging( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
 
         try {
             result.setUserAccounts(userAccountApi.listByBillingAccount(billingAccountCode));
@@ -130,6 +131,20 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
     @Override
     public UserAccountsResponseDto listByBillingAccountV2(String billingAccountCode) {
         return listByBillingAccount(billingAccountCode);
+    }
+
+    @Override
+    public UserAccountsResponseDto listGetAll() {
+
+        UserAccountsResponseDto result = new UserAccountsResponseDto();
+
+        try {
+            result = userAccountApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
     }
 
     @Override

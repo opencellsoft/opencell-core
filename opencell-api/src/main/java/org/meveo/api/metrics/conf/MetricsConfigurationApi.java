@@ -126,7 +126,7 @@ public class MetricsConfigurationApi extends BaseCrudApi<MetricsConfiguration, M
 
     private void validate(MetricsConfigurationDto dataDto) {
         if (StringUtils.isBlank(dataDto.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(MetricsConfiguration.class.getName(), dataDto);
         }
         if (StringUtils.isBlank(dataDto.getFullPath())) {
             missingParameters.add("fullPath");

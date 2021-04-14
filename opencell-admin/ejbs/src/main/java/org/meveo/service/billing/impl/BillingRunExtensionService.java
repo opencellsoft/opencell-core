@@ -67,7 +67,7 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void updateBillingRun(Long billingRunId, Integer sizeBA, Integer billableBA, BillingRunStatusEnum status, Date dateStatus) throws BusinessException {
+    public BillingRun updateBillingRun(Long billingRunId, Integer sizeBA, Integer billableBA, BillingRunStatusEnum status, Date dateStatus) throws BusinessException {
 
         log.debug("Update BillingRun {} to status {}", billingRunId, status);
         BillingRun billingRun = findById(billingRunId);
@@ -82,6 +82,6 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
             billingRun.setProcessDate(dateStatus);
         }
         billingRun.setStatus(status);
-        updateNoCheck(billingRun);
+        return updateNoCheck(billingRun);
     }
 }

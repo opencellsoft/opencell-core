@@ -231,7 +231,7 @@ public class MinAmountForAccounts {
      * @param entity the billable entity.
      * @return true if Minimum amount is activated false otherwise.
      */
-    public boolean isMinAmountForAccountsActivated(Class accountClass, IBillableEntity entity) {
+    public boolean isMinAmountForAccountsActivated(@SuppressWarnings("rawtypes") Class accountClass, IBillableEntity entity) {
         BillingAccount billingAccount = null;
         if (entity instanceof Subscription) {
             billingAccount = ((Subscription) entity).getUserAccount().getBillingAccount();

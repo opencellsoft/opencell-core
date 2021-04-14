@@ -43,7 +43,6 @@ import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.rest.PATCH;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -147,6 +146,15 @@ public interface PricePlanRs extends IBaseRs {
             @ApiResponse(responseCode = "400", description = "Internat error")
     })
     PricePlanMatrixesResponseDto listPricePlanByEventCode(@QueryParam("eventCode") String eventCode);
+
+    /**
+     * List PricePlanMatrixes
+     *
+     * @return List of PricePlanMatrixes
+     */
+    @GET
+    @Path("/listGetAll")
+    PricePlanMatrixesResponseDto listGetAll();
 
     /**
      * Create new or update an existing price plan matrix

@@ -18,23 +18,25 @@
 
 package org.meveo.api.payment;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.service.payments.impl.CreditCategoryService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The CRUD Api for CreditCategory Entity.
@@ -72,7 +74,7 @@ public class CreditCategoryApi extends BaseApi {
 
 	public CreditCategory create(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+			addGenericCodeIfAssociated(CreditCategory.class.getName(), postData);
         }
 
         handleMissingParameters();
@@ -111,13 +113,11 @@ public class CreditCategoryApi extends BaseApi {
 	}
 
 	public CreditCategory createOrUpdate(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
-		CreditCategory creditCategory = creditCategoryService.findByCode(postData.getCode());
-		if (creditCategory == null) {
-			creditCategory = create(postData);
+		if (!StringUtils.isBlank(postData.getCode()) && creditCategoryService.findByCode(postData.getCode()) != null) {
+			return update(postData);
 		} else {
-			creditCategory = update(postData);
+			return create(postData);
 		}
-		return creditCategory;
 	}
 
 	public CreditCategoryDto find(String creditCategoryCode) throws MeveoApiException {
@@ -135,6 +135,20 @@ public class CreditCategoryApi extends BaseApi {
 		List<CreditCategory> creditCategories = creditCategoryService.listActive();
 		if (creditCategories != null && !creditCategories.isEmpty()) {
 			result = creditCategories.stream().map(c -> entityToDto(c)).collect(Collectors.toList());
+		}
+
+		return result;
+	}
+
+	public CreditCategoriesResponseDto list(PagingAndFiltering pagingAndFiltering) {
+		CreditCategoriesResponseDto result = new CreditCategoriesResponseDto();
+		result.setPaging( pagingAndFiltering );
+
+		List<CreditCategory> creditCategories = creditCategoryService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+		if (creditCategories != null) {
+			for (CreditCategory creditCategory : creditCategories) {
+				result.getCreditCategories().add(new CreditCategoryDto(creditCategory));
+			}
 		}
 
 		return result;

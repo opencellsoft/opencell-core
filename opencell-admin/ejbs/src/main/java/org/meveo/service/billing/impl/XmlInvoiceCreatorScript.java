@@ -174,6 +174,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
     @Inject
     protected WalletOperationService walletOperationService;
+ 
 
     /** transformer factory. */
     protected TransformerFactory transfac = TransformerFactory.newInstance();
@@ -305,7 +306,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected Element createUserAccountsSection(Document doc, Invoice invoice, List<RatedTransaction> ratedTransactions, boolean isVirtual, InvoiceConfiguration invoiceConfiguration) {
 
         Element userAccountsTag = doc.createElement("userAccounts");
-
+        
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
 
         for (UserAccount userAccount : invoice.getBillingAccount().getUsersAccounts()) {
@@ -1105,7 +1106,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
 
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
         String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
-
+        
         String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
 
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<>();
@@ -1151,7 +1152,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         } else {
 
             taxes.setAttribute("total", toPlainString(invoice.getAmountTax()));
-
+            
             String invoiceLanguageCode = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
 
             List<TaxInvoiceAgregate> taxInvoiceAgregates = new ArrayList<TaxInvoiceAgregate>();
@@ -1221,8 +1222,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      */
     protected Element createHeaderCategoriesSection(Document doc, Invoice invoice, InvoiceConfiguration invoiceConfiguration) {
 
-        String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguageCode();
-
+    	String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguageCode();
         LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO> headerCategories = new LinkedHashMap<String, XMLInvoiceHeaderCategoryDTO>();
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
         // List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<SubCategoryInvoiceAgregate>();
@@ -1550,7 +1550,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             email.appendChild(emailTxt);
             billingAccountTag.appendChild(email);
         }
-
+        
         Element nameTag = createNameSection(doc, billingAccount, invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode());
         if (nameTag != null) {
             billingAccountTag.appendChild(nameTag);
@@ -1617,7 +1617,6 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         if (paymentMethodTag != null) {
             customerAccountTag.appendChild(paymentMethodTag);
         }
-
         Element nameTag = createNameSection(doc, customerAccount, invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode());
         if (nameTag != null) {
             customerAccountTag.appendChild(nameTag);
@@ -1676,8 +1675,8 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
      * @return DOM element
      */
     protected Element createCustomerSection(Document doc, Invoice invoice, InvoiceConfiguration invoiceConfiguration) {
-
-        Customer customer = invoice.getBillingAccount().getCustomerAccount().getCustomer();
+    	
+    	Customer customer = invoice.getBillingAccount().getCustomerAccount().getCustomer();
         CustomerBrand customerBrand = customer.getCustomerBrand();
         Seller customerSeller = customer.getSeller();
         CustomerCategory customerCategory = customer.getCustomerCategory();
@@ -1698,7 +1697,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         customerTag.setAttribute("jobTitle", getDefaultIfNull(customer.getJobTitle(), ""));
 
         addCustomFields(customer, doc, customerTag);
-
+        
         Element nameTag = createNameSection(doc, customer, invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode());
         if (nameTag != null) {
             customerTag.appendChild(nameTag);

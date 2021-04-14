@@ -58,7 +58,7 @@ public class UserPermissionCheckInterceptor {
         Set<String> userRoles = currentUser.getRoles();
 
         if (userRoles.contains(opPermission) || userRoles.contains(allPermission) || userRoles.contains("APIv2_FULL_ACCESS")) {
-            log.debug("Current user has the right permission to execute method={} on entity={}", methodName, entityName);
+            //log.debug("Current user has the right permission to execute method={} on entity={}", methodName, entityName);
             return context.proceed();
 
         } else {

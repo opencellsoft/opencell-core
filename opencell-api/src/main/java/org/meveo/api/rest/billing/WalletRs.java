@@ -18,30 +18,17 @@
 
 package org.meveo.api.rest.billing;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.billing.FindWalletOperationsDto;
-import org.meveo.api.dto.billing.WalletBalanceDto;
-import org.meveo.api.dto.billing.WalletOperationDto;
-import org.meveo.api.dto.billing.WalletReservationDto;
-import org.meveo.api.dto.billing.WalletTemplateDto;
+import org.meveo.api.dto.billing.*;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
 import org.meveo.api.dto.response.billing.WalletBalanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Wallet operation and balance related REST API
@@ -189,7 +176,7 @@ public interface WalletRs extends IBaseRs {
     @Deprecated
     @POST
     @Path("/operation/find")
-    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+    FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
@@ -206,13 +193,22 @@ public interface WalletRs extends IBaseRs {
      */
     @GET
     @Path("/operation/list")
-    public FindWalletOperationsResponseDto listOperationsGet(@QueryParam("query") String query, 
+    FindWalletOperationsResponseDto listOperationsGet(@QueryParam("query") String query,
                                             @QueryParam("fields") String fields, 
                                             @QueryParam("offset") Integer offset,
                                             @QueryParam("limit") Integer limit, 
                                             @DefaultValue("id") @QueryParam("sortBy") String sortBy, 
                                             @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder, 
                                             @DefaultValue("false") @QueryParam("withRTs") Boolean withRTs);
+
+    /**
+     * List wallet operations matching a given criteria
+     *
+     * @return List of wallet operations
+     */
+    @GET
+    @Path("/operation/listGetAll")
+    FindWalletOperationsResponseDto list( @DefaultValue("false") @QueryParam("withRTs") Boolean withRTs );
 
     /**
      * List wallet operations matching a given criteria
@@ -223,7 +219,7 @@ public interface WalletRs extends IBaseRs {
      */
     @POST
     @Path("/operation/list")
-    public FindWalletOperationsResponseDto listOperationsPost(PagingAndFiltering pagingAndFiltering, @DefaultValue("false") @QueryParam("withRTs") Boolean withRTs);
+    FindWalletOperationsResponseDto listOperationsPost(PagingAndFiltering pagingAndFiltering, @DefaultValue("false") @QueryParam("withRTs") Boolean withRTs);
 
     /**
      * Create new or update an existing wallet template

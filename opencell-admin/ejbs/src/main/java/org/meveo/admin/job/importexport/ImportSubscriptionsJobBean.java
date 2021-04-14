@@ -50,6 +50,7 @@ import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.jaxb.subscription.WarningSubscription;
 import org.meveo.model.jaxb.subscription.Warnings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.admin.impl.SubscriptionImportHistoService;
 import org.meveo.service.crm.impl.CheckedSubscription;
 import org.meveo.service.crm.impl.ImportIgnoredException;
@@ -121,7 +122,7 @@ public class ImportSubscriptionsJobBean {
         log.info("InputFiles job to import={}", numberOfFiles);
 
         for (File file : files) {
-            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isShouldJobContinue(result.getJobInstance().getId())) {
                 break;
             }
             File currentFile = null;
@@ -129,7 +130,7 @@ public class ImportSubscriptionsJobBean {
                 log.info("InputFiles job {} in progress...", file.getName());
                 currentFile = FileUtils.addExtension(file, ".processing");
 
-                importFile(currentFile, file.getName(), result.getJobInstance().getId());
+                importFile(currentFile, file.getName(), result.getJobInstance());
                 FileUtils.moveFile(dirOK, currentFile, file.getName());
                 log.info("InputFiles job {} done.", file.getName());
             } catch (Exception e) {
@@ -156,7 +157,7 @@ public class ImportSubscriptionsJobBean {
     }
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    private void importFile(File file, String fileName, Long jobInstanceId) throws JAXBException, Exception {
+    private void importFile(File file, String fileName, JobInstance jobInstance) throws JAXBException, Exception {
         log.info("start import file :" + fileName);
 
         subscriptionsError = new Subscriptions();
@@ -187,9 +188,10 @@ public class ImportSubscriptionsJobBean {
             createSubscriptionWarning(null, "Empty file.");
         }
 
+        int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
+        
         for (org.meveo.model.jaxb.subscription.Subscription jaxbSubscription : jaxbSubscriptions.getSubscription()) {
-            i++;
-            if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+            if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
                 break;
             }
             try {
@@ -219,6 +221,7 @@ public class ImportSubscriptionsJobBean {
                 nbSubscriptionsError++;
                 log.info("File:" + fileName + ", typeEntity:Subscription, index:" + i + ", code:" + jaxbSubscription.getCode() + ", status:Error");
             }
+            i++;
         }
 
         generateReport(fileName);

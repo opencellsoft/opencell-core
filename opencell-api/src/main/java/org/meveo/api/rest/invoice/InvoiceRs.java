@@ -18,31 +18,16 @@
 
 package org.meveo.api.rest.invoice;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.invoice.CreateInvoiceResponseDto;
-import org.meveo.api.dto.invoice.GenerateInvoiceRequestDto;
-import org.meveo.api.dto.invoice.GenerateInvoiceResponseDto;
-import org.meveo.api.dto.invoice.GetInvoiceResponseDto;
-import org.meveo.api.dto.invoice.GetPdfInvoiceRequestDto;
-import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
-import org.meveo.api.dto.invoice.GetXmlInvoiceRequestDto;
-import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
-import org.meveo.api.dto.invoice.InvoiceDto;
+import org.meveo.api.dto.invoice.*;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
 import org.meveo.api.dto.response.InvoicesDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.Invoice}.
@@ -191,6 +176,16 @@ public interface InvoiceRs extends IBaseRs {
     ActionStatus cancel(Long invoiceId);
 
     /**
+     * Cancel an invoice based on invoice id.
+     *
+     * @param putData CancelInvoiceRequestDto
+     * @return action status.
+     */
+    @PUT
+    @Path("/cancel")
+    ActionStatus cancel(CancelInvoiceRequestDto putData);
+
+    /**
      * Validate an invoice based on the invoice id.
      * 
      * @param invoiceId Invoice id
@@ -199,6 +194,16 @@ public interface InvoiceRs extends IBaseRs {
     @POST
     @Path("/validate")
     ActionStatus validate(@FormParam("invoiceId") Long invoiceId);
+
+    /**
+     * Validate an invoice based on invoice id.
+     *
+     * @param putData ValidateInvoiceRequestDto
+     * @return action status.
+     */
+    @PUT
+    @Path("/validate")
+    ActionStatus validate(ValidateInvoiceRequestDto putData);
 
     /**
      * List invoices with account operation for a given customer account
@@ -239,6 +244,15 @@ public interface InvoiceRs extends IBaseRs {
     @Path("/list")
     InvoicesDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List invoices matching a given criteria
+     *
+     * @return List of invoices
+     */
+    @GET
+    @Path("/listGetAll")
+    InvoicesDto list();
 
     /**
      * List invoices matching a given criteria.

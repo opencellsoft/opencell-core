@@ -18,20 +18,14 @@
 
 package org.meveo.api.rest.billing;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.RatedTransactionListResponseDto;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Rated transactions related REST API
@@ -62,6 +56,15 @@ public interface RatedTransactionRs extends IBaseRs {
     RatedTransactionListResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("false") @QueryParam("returnUserAccountCode") Boolean returnUserAccountCode);
+
+    /**
+     * List ratedTransactions matching a given criteria
+     *
+     * @return List of ratedTransactions
+     */
+    @GET
+    @Path("/listGetAll")
+    RatedTransactionListResponseDto list();
 
     /**
      * Get a list of rated transactions

@@ -14,6 +14,9 @@
 	<artifactId>opencell-api</artifactId>
 	<name>Opencell API</name>
 	<properties>
+		<swagger.version>2.0.7</swagger.version>
+		<springfox.swagger.version>3.0.0</springfox.swagger.version>
+		<swagger.ui.version>2.8.0</swagger.ui.version>
 		<swagger.server.link>http://localhost:8080/opencell/api/rest</swagger.server.link>
 	</properties>
 	<dependencies>

@@ -18,10 +18,11 @@
 
 package org.meveo.api.dto.response.payment;
 
-import java.util.List;
-
 import org.meveo.api.dto.account.CreditCategoryDto;
-import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.api.dto.response.SearchResponse;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class CreditCategoriesResponseDto.
@@ -29,13 +30,13 @@ import org.meveo.api.dto.response.BaseResponse;
  * @author Edward P. Legaspi
  * @since 22 Aug 2017
  */
-public class CreditCategoriesResponseDto extends BaseResponse {
+public class CreditCategoriesResponseDto extends SearchResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 2074397196583085935L;
 
     /** The credit categories. */
-    private List<CreditCategoryDto> creditCategories;
+    private List<CreditCategoryDto> creditCategories = new ArrayList<>();
 
     /**
      * Gets the credit categories.

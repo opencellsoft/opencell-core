@@ -56,7 +56,7 @@ public class InvoiceCategoryApi extends BaseCrudApi<InvoiceCategory, InvoiceCate
     public InvoiceCategory create(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(InvoiceCategory.class.getName(), postData);
         }
 
         handleMissingParametersAndValidate(postData);
@@ -205,12 +205,13 @@ public class InvoiceCategoryApi extends BaseCrudApi<InvoiceCategory, InvoiceCate
      * @throws BusinessException business exception.
      */
     public InvoiceCategory createOrUpdate(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
-        InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(postData.getCode());
 
-        if (invoiceCategory == null) {
-            return create(postData);
-        } else {
+        if(!StringUtils.isBlank(postData.getCode())
+                && invoiceCategoryService.findByCode(postData.getCode()) != null) {
             return update(postData);
+        } else {
+            return create(postData);
+
         }
     }
     

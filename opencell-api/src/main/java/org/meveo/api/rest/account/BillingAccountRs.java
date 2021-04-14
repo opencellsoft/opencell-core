@@ -33,6 +33,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import io.swagger.v3.oas.annotations.Operation;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
@@ -133,6 +134,15 @@ public interface BillingAccountRs extends IBaseRs {
     @Path("/customerAccounts/{customerAccountCode}")
     @Operation(summary = "List BillingAccount filter by customerAccountCode", tags = { "Billing account management" })
     BillingAccountsResponseDto listByCustomerAccountV2(@PathParam("customerAccountCode") String customerAccountCode);
+
+    /**
+     * List BillingAccounts matching a given criteria
+     *
+     * @return List of BillingAccounts
+     */
+    @GET
+    @Path("/listGetAll")
+    BillingAccountsResponseDto listGetAll();
 
     /**
      * Create or update Billing Account based on code.

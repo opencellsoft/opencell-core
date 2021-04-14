@@ -26,6 +26,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.dto.response.tax.TaxCategoryListResponseDto;
 import org.meveo.api.dto.response.tax.TaxClassListResponseDto;
 import org.meveo.api.dto.response.tax.TaxClassResponseDto;
 import org.meveo.api.dto.tax.TaxClassDto;
@@ -33,6 +34,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tax.TaxClassRs;
 import org.meveo.api.tax.TaxClassApi;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 
 /**
  * REST interface definition of Tax class API
@@ -118,6 +120,20 @@ public class TaxClassRsImpl extends BaseRs implements TaxClassRs {
             result = new TaxClassListResponseDto(apiService.search(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder)));
         } catch (Exception e) {
             result = new TaxClassListResponseDto();
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public TaxClassListResponseDto listGetAll() {
+
+        TaxClassListResponseDto result = new TaxClassListResponseDto();
+
+        try {
+            result = apiService.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
 

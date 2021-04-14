@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.meveo.commons.utils.StringUtils;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,6 +34,7 @@ import java.util.Map;
  *
  * @author anasseh
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PagingAndFiltering implements Serializable {
     
@@ -159,6 +161,11 @@ public class PagingAndFiltering implements Serializable {
      */
     @Schema(description = "Sorting - sort ordee")
     private SortOrder sortOrder;
+
+    /**
+     * Sorting - sort order.
+     */
+    private String multiSortOrder;
 
     /**
      * Total number of records. Note - filled on response only.
@@ -364,6 +371,24 @@ public class PagingAndFiltering implements Serializable {
      */
     public void setSortOrder(SortOrder sortOrder) {
         this.sortOrder = sortOrder;
+    }
+
+    /**
+     * Gets the multi sort order.
+     *
+     * @return the multi sort order
+     */
+    public String getMultiSortOrder() {
+        return multiSortOrder;
+    }
+
+    /**
+     * Sets the multi sort order.
+     *
+     * @param multiSortOrder the new sort order
+     */
+    public void setMultiSortOrder(String multiSortOrder) {
+        this.multiSortOrder = multiSortOrder;
     }
     
     /**

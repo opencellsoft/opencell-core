@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -142,7 +141,7 @@ public class PaymentScheduleApi extends BaseApi {
     public Long createPaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto) throws BusinessException, MeveoApiException {
 
         if (StringUtils.isBlank(paymentScheduleTemplateDto.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(PaymentScheduleTemplate.class.getName(), paymentScheduleTemplateDto);
         }
         if (StringUtils.isBlank(paymentScheduleTemplateDto.getCalendarCode())) {
             missingParameters.add("calendarCode");

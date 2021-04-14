@@ -18,11 +18,11 @@
 
 package org.meveo.api.dto.response;
 
+import org.meveo.api.dto.SellersDto;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.SellersDto;
 
 /**
  * The Class SellerResponseDto.
@@ -31,7 +31,7 @@ import org.meveo.api.dto.SellersDto;
  */
 @XmlRootElement(name = "SellerResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SellerResponseDto extends BaseResponse {
+public class SellerResponseDto extends SearchResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 6134470575443721802L;

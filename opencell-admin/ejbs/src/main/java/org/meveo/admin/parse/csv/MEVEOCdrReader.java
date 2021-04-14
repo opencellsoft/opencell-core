@@ -34,6 +34,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.rating.CDR;
 import org.meveo.service.medina.impl.CDRParsingService.CDR_ORIGIN_ENUM;
@@ -52,13 +53,12 @@ import org.slf4j.LoggerFactory;
 @Named
 public class MEVEOCdrReader implements ICdrCsvReader {
 
-    private static Logger log = LoggerFactory.getLogger(MEVEOCdrReader.class);
-
     static MessageDigest messageDigest = null;
     static {
         try {
             messageDigest = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
+            Logger log = LoggerFactory.getLogger(MEVEOCdrReader.class);
             log.error("No message digest of type MD5", e);
         }
     }
@@ -67,51 +67,58 @@ public class MEVEOCdrReader implements ICdrCsvReader {
     private String username;
     private CDR_ORIGIN_ENUM origin;
     private BufferedReader cdrReader = null;
-    
+
     @Inject
     MEVEOCdrParser meveoCdrParser;
+
+    private Integer totalNumberOfRecords;
 
     @Override
     public void init(File cdrFile) throws FileNotFoundException {
         batchName = "CDR_" + cdrFile.getName();
         this.origin = CDR_ORIGIN_ENUM.JOB;
-        cdrReader = new BufferedReader(new InputStreamReader(new FileInputStream(cdrFile)));        
+
+        try {
+            totalNumberOfRecords = FileUtils.countLines(cdrFile);
+        } catch (IOException e) {
+        }
+        cdrReader = new BufferedReader(new InputStreamReader(new FileInputStream(cdrFile)));
     }
 
     @Override
     public void init(String user, String ip) {
         this.batchName = "API_" + ip;
         this.origin = CDR_ORIGIN_ENUM.API;
-        this.username = user;        
+        this.username = user;
     }
 
     public String getBatchName() {
         return batchName;
     }
-        
+
     public String getUsername() {
         return username;
     }
-        
+
     public CDR_ORIGIN_ENUM getOrigin() {
         return origin;
     }
 
     @Override
     public synchronized CDR getNextRecord(ICdrParser cdrParser) throws IOException {
-        if(cdrReader == null) {
+        if (cdrReader == null) {
             return null;
         }
         String line = cdrReader.readLine();
         CDR cdr = cdrParser.parse(line);
-        if(cdr == null) {
+        if (cdr == null) {
             return null;
         }
         cdr.setOriginBatch(batchName);
         cdr.setOriginRecord(getOriginRecord(line));
         return cdr;
     }
-        
+
     @Override
     public void close() throws IOException {
         if (cdrReader != null) {
@@ -122,9 +129,9 @@ public class MEVEOCdrReader implements ICdrCsvReader {
     @Override
     public void init(String originBatch) {
         batchName = originBatch;
-        
+
     }
-    
+
     /**
      * Build and return a unique identifier from the CDR in order. To avoid importing twice the same CDR.
      * 
@@ -164,5 +171,10 @@ public class MEVEOCdrReader implements ICdrCsvReader {
             cdrs.add(cdr);
         }
         return cdrs;
+    }
+
+    @Override
+    public Integer getNumberOfRecords() {
+        return totalNumberOfRecords;
     }
 }

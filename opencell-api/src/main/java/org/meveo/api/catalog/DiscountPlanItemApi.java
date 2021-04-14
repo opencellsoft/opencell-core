@@ -39,6 +39,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.PricePlanMatrix;
@@ -89,8 +90,14 @@ public class DiscountPlanItemApi extends BaseApi {
      */
     public DiscountPlanItem create(DiscountPlanItemDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("discountPlanItemCode");
+            String generatedCode = getGenericCode(DiscountPlanItem.class.getName());
+            if (generatedCode != null) {
+                postData.setCode(generatedCode);
+            } else {
+                missingParameters.add("discountPlanItemCode");
+            }
         }
+
         if (StringUtils.isBlank(postData.getDiscountPlanCode())) {
             missingParameters.add("discountPlanCode");
         }
@@ -217,14 +224,10 @@ public class DiscountPlanItemApi extends BaseApi {
      */
     public void createOrUpdate(DiscountPlanItemDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("discountPlanItemCode");
-            handleMissingParameters();
-        }
-        if (discountPlanItemService.findByCode(postData.getCode()) == null) {
-            create(postData);
-        } else {
+        if (!StringUtils.isBlank(postData.getCode()) && discountPlanItemService.findByCode(postData.getCode()) != null) {
             update(postData);
+        } else {
+            create(postData);
         }
     }
 

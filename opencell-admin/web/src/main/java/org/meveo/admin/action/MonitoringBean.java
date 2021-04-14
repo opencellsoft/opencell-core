@@ -95,7 +95,7 @@ public class MonitoringBean implements Serializable {
 
                         if (sb.toString().isEmpty()) {
                             addressByNetwork.put(network.getName(), sb.toString());
-                            // System.out.println("Address = "+sb.toString()+" @ ["+network.getName()+"] "+network.getDisplayName());
+                            
                         }
 
                         if (sb.toString().isEmpty() && firstInterface == null) {

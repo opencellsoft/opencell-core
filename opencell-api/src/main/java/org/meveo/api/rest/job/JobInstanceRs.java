@@ -18,22 +18,16 @@
 
 package org.meveo.api.rest.job;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.JobInstanceDto;
+import org.meveo.api.dto.response.job.JobInstanceListResponseDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 import io.swagger.v3.oas.annotations.Operation;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * 
@@ -45,6 +39,15 @@ import io.swagger.v3.oas.annotations.Operation;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
 public interface JobInstanceRs extends IBaseRs {
+
+    /**
+     * Search for list of jobInstances.
+     *
+     * @return list of jobInstances
+     */
+    @GET
+    @Path("/list")
+    JobInstanceListResponseDto list();
 
     /**
      * Create a new job instance
@@ -69,6 +72,16 @@ public interface JobInstanceRs extends IBaseRs {
     @Operation(summary = "Update an existing job",
     tags = { "Jobs management" })
     ActionStatus update(JobInstanceDto postData);
+
+    /**
+     * Update an existing job instance
+     *
+     * @param putData The job instance's data
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/")
+    ActionStatus updatePut(JobInstanceDto putData);
 
     /**
      * Create new or update an existing job instance with a given code

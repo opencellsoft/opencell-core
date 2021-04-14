@@ -70,6 +70,17 @@ public class ClusterEventPublisher implements Serializable {
      * @param action Action performed
      */
     public void publishEvent(IEntity entity, CrudActionEnum action) {
+        publishEvent(entity, action, null);
+    }
+
+    /**
+     * Publish event about some action on a given entity
+     * 
+     * @param entity Entity that triggered event
+     * @param action Action performed
+     * @param additionalInformation Additional information about the action
+     */
+    public void publishEvent(IEntity entity, CrudActionEnum action, String additionalInformation) {
 
         if (!EjbUtils.isRunningInClusterMode()) {
             return;
@@ -77,8 +88,8 @@ public class ClusterEventPublisher implements Serializable {
 
         try {
             String code = entity instanceof BusinessEntity ? ((BusinessEntity) entity).getCode() : null;
-            ClusterEventDto eventDto = new ClusterEventDto(ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()), (Long) entity.getId(), code, action,
-                EjbUtils.getCurrentClusterNode(), currentUser.getProviderCode(), currentUser.getUserName());
+            ClusterEventDto eventDto = new ClusterEventDto(ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()), (Long) entity.getId(), code, action, EjbUtils.getCurrentClusterNode(),
+                currentUser.getProviderCode(), currentUser.getUserName(), additionalInformation);
             log.trace("Publishing data synchronization between cluster nodes event {}", eventDto);
 
             context.createProducer().send(topic, eventDto);
