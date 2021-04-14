@@ -161,6 +161,15 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 
     @Schema(description = "description of discount plan item")
 	private String description;
+    
+    
+    /**
+     * The lower number, the higher the priority is
+     */
+    @Schema(description = "The lower number, the higher the priority is")
+    protected Long priority ;
+    
+    
     /**
      * Instantiates a new discount plan item dto.
      */
@@ -193,6 +202,7 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.allowToNegate = discountPlanItem.isAllowToNegate();
         customFields = customFieldInstances;
         this.description = discountPlanItem.getDescription();
+        this.priority=discountPlanItem.getPriority();
     }
 
     /**
@@ -460,6 +470,16 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public Long getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Long priority) {
+		this.priority = priority;
+	}
+	
+	
 
 
 
