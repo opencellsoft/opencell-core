@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.catalog.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BusinessProductModelDto;
@@ -31,7 +27,12 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.rest.catalog.BusinessProductModelRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.model.catalog.BusinessProductModel;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Edward P. Legaspi
@@ -114,6 +115,20 @@ public class BusinessProductModelRsImpl extends BaseRs implements BusinessProduc
         try {
             result = moduleApi.list(BusinessProductModel.class);
 
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public MeveoModuleDtosResponse listGetAll() {
+
+        MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
+
+        try {
+            result = moduleApi.list(BusinessProductModel.class, GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

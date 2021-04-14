@@ -58,6 +58,41 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String ENABLE_SERVICE = "enable";
     private static final String DISABLE_SERVICE = "disable";
 
+    // business final string variables
+    private static final String WALLET_OPERATION = "/billing/wallet/operation";
+    private static final String PRICE_PLAN = "/catalog/pricePlan";
+    private static final String COUNTRY_ISO = "/countryIso";
+    private static final String CURRENCY_ISO = "/currencyIso";
+    private static final String LANGUAGE_ISO = "/languageIso";
+    private static final String CUSTOMER = "/account/customer";
+    private static final String USER = "/user";
+    private static final String INVOICE = "/invoice";
+    private static final String ACCOUNTING_CODE = "/billing/accountingCode";
+    private static final String CONTACT = "/contact";
+    private static final String TAX_CATEGORY = "/taxCategory";
+    private static final String TAX_CLASS = "/taxClass";
+    private static final String TAX_MAPPING = "/taxMapping";
+    private static final String PAYMENT_METHOD = "/payment/paymentMethod";
+    private static final String FILE_FORMAT = "/admin/fileFormat";
+    private static final String OSC_TEMPLATE = "/catalog/oneShotChargeTemplate";
+    private static final String RC_TEMPLATE = "/catalog/recurringChargeTemplate";
+    private static final String UC_TEMPLATE = "/catalog/usageChargeTemplate";
+    private static final String SUBSCRIPTION = "/billing/subscription";
+    private static final String RATED_TRANSACTION = "/billing/ratedTransaction";
+    private static final String WALLET = "/billing/wallet";
+    private static final String OFFER_TEMPLATE = "/catalog/offerTemplate";
+    private static final String CALENDAR = "/calendar";
+    private static final String UNIT_MEASURE = "/catalog/unitOfMeasure";
+    private static final String TAX = "/tax";
+    private static final String CREDIT_CATEGORY = "/payment/creditCategory";
+    private static final String CUSTOMER_ACCOUNT = "/account/customerAccount";
+    private static final String TITLE = "/account/title";
+    private static final String BILLING_ACCOUNT = "/account/billingAccount";
+    private static final String USER_ACCOUNT = "/account/userAccount";
+    private static final String SERVICE_TEMPLATE = "/catalog/serviceTemplate";
+    private static final String BUSINESS_ACCOUNT_MODEL = "/account/businessAccountModel";
+    private static final String BUSINESS_PRODUCT_MODEL = "/catalog/businessProductModel";
+
     private static final String API_REST = "api/rest";
 
     private List<PathSegment> segmentsOfPathAPIv2;
@@ -91,15 +126,15 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         // to get all entities
         if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( aGetPath ) ) {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( aGetPath );
-            if ( pathIBaseRS.equals( "/billing/wallet/operation" ) )
+            if ( pathIBaseRS.equals( WALLET_OPERATION ) )
                 entityClassName = "WalletOperation";
-            else if ( pathIBaseRS.equals( "/catalog/pricePlan" ) )
+            else if ( pathIBaseRS.equals( PRICE_PLAN ) )
                 entityClassName = "pricePlanMatrix";
-            else if ( pathIBaseRS.equals( "/countryIso" ) )
+            else if ( pathIBaseRS.equals( COUNTRY_ISO ) )
                 entityClassName = "country";
-            else if ( pathIBaseRS.equals( "/currencyIso" ) )
+            else if ( pathIBaseRS.equals( CURRENCY_ISO ) )
                 entityClassName = "currency";
-            else if ( pathIBaseRS.equals( "/languageIso" ) )
+            else if ( pathIBaseRS.equals( LANGUAGE_ISO ) )
                 entityClassName = "language";
             else if ( pathIBaseRS.equals( "/job/jobReport" ) )
                 entityClassName = "Job";
@@ -119,22 +154,23 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                             + PAIR_QUERY_PARAM_SEPARATOR );
                 }
 
-                if ( pathIBaseRS.equals( "/catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/catalog/recurringChargeTemplate" )
-                    || pathIBaseRS.equals( "/catalog/usageChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
-                    || pathIBaseRS.equals( "/billing/subscription" ) || pathIBaseRS.equals( "/billing/ratedTransaction" )
-                    || pathIBaseRS.equals( "/billing/wallet" ) || pathIBaseRS.equals( "/catalog/offerTemplate")
-                    || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" )
-                    || pathIBaseRS.equals( "/billing/accountingCode" ) || pathIBaseRS.equals( "/calendar" )
-                    || pathIBaseRS.equals( "/catalog/unitOfMeasure" ) || pathIBaseRS.equals( "/contact" )
-                    || pathIBaseRS.equals( "/countryIso" ) || pathIBaseRS.equals( "/currencyIso" )
-                    || pathIBaseRS.equals( "/languageIso" ) || pathIBaseRS.equals( "/tax" )
-                    || pathIBaseRS.equals( "/taxCategory" ) || pathIBaseRS.equals( "/taxClass" )
-                    || pathIBaseRS.equals( "/taxMapping" ) || pathIBaseRS.equals( "/payment/creditCategory" )
-                    || pathIBaseRS.equals( "/payment/paymentMethod" ) || pathIBaseRS.equals( "/account/title" )
-                    || pathIBaseRS.equals( "/account/customerAccount" ) || pathIBaseRS.equals( "/account/billingAccount" )
-                    || pathIBaseRS.equals( "/account/userAccount" ) || pathIBaseRS.equals( "/catalog/serviceTemplate" )
-                    || pathIBaseRS.equals( "/catalog/pricePlan" ) || pathIBaseRS.equals( "/billing/wallet/operation" )
-                    || pathIBaseRS.equals( "/admin/fileFormat" ) || pathIBaseRS.equals( "/account/businessAccountModel" ) )
+                if ( pathIBaseRS.equals( OSC_TEMPLATE ) || pathIBaseRS.equals( RC_TEMPLATE )
+                    || pathIBaseRS.equals( UC_TEMPLATE ) || pathIBaseRS.equals( CUSTOMER )
+                    || pathIBaseRS.equals( SUBSCRIPTION ) || pathIBaseRS.equals( RATED_TRANSACTION )
+                    || pathIBaseRS.equals( WALLET ) || pathIBaseRS.equals( OFFER_TEMPLATE )
+                    || pathIBaseRS.equals( USER ) || pathIBaseRS.equals( INVOICE )
+                    || pathIBaseRS.equals( ACCOUNTING_CODE ) || pathIBaseRS.equals( CALENDAR )
+                    || pathIBaseRS.equals( UNIT_MEASURE ) || pathIBaseRS.equals( CONTACT )
+                    || pathIBaseRS.equals( COUNTRY_ISO ) || pathIBaseRS.equals( CURRENCY_ISO )
+                    || pathIBaseRS.equals( LANGUAGE_ISO ) || pathIBaseRS.equals( TAX )
+                    || pathIBaseRS.equals( TAX_CATEGORY ) || pathIBaseRS.equals( TAX_CLASS )
+                    || pathIBaseRS.equals( TAX_MAPPING ) || pathIBaseRS.equals( CREDIT_CATEGORY )
+                    || pathIBaseRS.equals( PAYMENT_METHOD ) || pathIBaseRS.equals( TITLE )
+                    || pathIBaseRS.equals( CUSTOMER_ACCOUNT ) || pathIBaseRS.equals( BILLING_ACCOUNT )
+                    || pathIBaseRS.equals( USER_ACCOUNT ) || pathIBaseRS.equals( SERVICE_TEMPLATE )
+                    || pathIBaseRS.equals( PRICE_PLAN ) || pathIBaseRS.equals( WALLET_OPERATION )
+                    || pathIBaseRS.equals( FILE_FORMAT ) || pathIBaseRS.equals( BUSINESS_ACCOUNT_MODEL )
+                    || pathIBaseRS.equals( BUSINESS_PRODUCT_MODEL ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 )
@@ -148,22 +184,23 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                             .replace( GenericPagingAndFilteringUtils.QUOTE, GenericPagingAndFilteringUtils.QUOTE_ENCODED ) );
             }
             else {
-                if ( pathIBaseRS.equals( "/catalog/oneShotChargeTemplate" ) || pathIBaseRS.equals( "/catalog/recurringChargeTemplate" )
-                    || pathIBaseRS.equals( "/catalog/usageChargeTemplate" ) || pathIBaseRS.equals( "/account/customer" )
-                    || pathIBaseRS.equals( "/billing/subscription" ) || pathIBaseRS.equals( "/billing/ratedTransaction" )
-                    || pathIBaseRS.equals( "/billing/wallet" ) || pathIBaseRS.equals( "/catalog/offerTemplate" )
-                    || pathIBaseRS.equals( "/user" ) || pathIBaseRS.equals( "/invoice" )
-                    || pathIBaseRS.equals( "/billing/accountingCode" ) || pathIBaseRS.equals( "/calendar" )
-                    || pathIBaseRS.equals( "/catalog/unitOfMeasure" ) || pathIBaseRS.equals( "/contact" )
-                    || pathIBaseRS.equals( "/countryIso" ) || pathIBaseRS.equals( "/currencyIso" )
-                    || pathIBaseRS.equals( "/languageIso" ) || pathIBaseRS.equals( "/tax" )
-                    || pathIBaseRS.equals( "/taxCategory" ) || pathIBaseRS.equals( "/taxClass" )
-                    || pathIBaseRS.equals( "/taxMapping" ) || pathIBaseRS.equals( "/payment/creditCategory" )
-                    || pathIBaseRS.equals( "/payment/paymentMethod" ) || pathIBaseRS.equals( "/account/title" )
-                    || pathIBaseRS.equals( "/account/customerAccount" ) || pathIBaseRS.equals( "/account/billingAccount" )
-                    || pathIBaseRS.equals( "/account/userAccount" ) || pathIBaseRS.equals( "/catalog/serviceTemplate" )
-                    || pathIBaseRS.equals( "/catalog/pricePlan" ) || pathIBaseRS.equals( "/billing/wallet/operation" )
-                    || pathIBaseRS.equals( "/admin/fileFormat" ) || pathIBaseRS.equals( "/account/businessAccountModel" ) )
+                if ( pathIBaseRS.equals( OSC_TEMPLATE ) || pathIBaseRS.equals( RC_TEMPLATE )
+                    || pathIBaseRS.equals( UC_TEMPLATE ) || pathIBaseRS.equals( CUSTOMER )
+                    || pathIBaseRS.equals( SUBSCRIPTION ) || pathIBaseRS.equals( RATED_TRANSACTION )
+                    || pathIBaseRS.equals( WALLET ) || pathIBaseRS.equals( OFFER_TEMPLATE )
+                    || pathIBaseRS.equals( USER ) || pathIBaseRS.equals( INVOICE )
+                    || pathIBaseRS.equals( ACCOUNTING_CODE ) || pathIBaseRS.equals( CALENDAR )
+                    || pathIBaseRS.equals( UNIT_MEASURE ) || pathIBaseRS.equals( CONTACT )
+                    || pathIBaseRS.equals( COUNTRY_ISO ) || pathIBaseRS.equals( CURRENCY_ISO )
+                    || pathIBaseRS.equals( LANGUAGE_ISO ) || pathIBaseRS.equals( TAX )
+                    || pathIBaseRS.equals( TAX_CATEGORY ) || pathIBaseRS.equals( TAX_CLASS )
+                    || pathIBaseRS.equals( TAX_MAPPING ) || pathIBaseRS.equals( CREDIT_CATEGORY )
+                    || pathIBaseRS.equals( PAYMENT_METHOD ) || pathIBaseRS.equals( TITLE )
+                    || pathIBaseRS.equals( CUSTOMER_ACCOUNT ) || pathIBaseRS.equals( BILLING_ACCOUNT )
+                    || pathIBaseRS.equals( USER_ACCOUNT ) || pathIBaseRS.equals( SERVICE_TEMPLATE )
+                    || pathIBaseRS.equals( PRICE_PLAN ) || pathIBaseRS.equals( WALLET_OPERATION )
+                    || pathIBaseRS.equals( FILE_FORMAT ) || pathIBaseRS.equals( BUSINESS_ACCOUNT_MODEL )
+                    || pathIBaseRS.equals( BUSINESS_PRODUCT_MODEL ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
@@ -180,12 +217,12 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
 
             // special handle for customerCategory
-            if ( pathIBaseRS.equals("/account/customer") ) {
+            if ( pathIBaseRS.equals(CUSTOMER) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + "/category" + FORWARD_SLASH + entityCode);
             }
             // special handle for user
-            else if ( pathIBaseRS.equals("/user") ) {
+            else if ( pathIBaseRS.equals(USER) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "username=" + entityCode);
             }
@@ -195,39 +232,39 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "jobInstanceCode=" + entityCode);
             }
             // special handle for jobReport, contact, taxCategory, taxClass
-            else if ( pathIBaseRS.equals("/job/jobReport") || pathIBaseRS.equals("/contact")
-                    || pathIBaseRS.equals("/taxCategory") || pathIBaseRS.equals("/taxClass")
-                    || pathIBaseRS.equals("/admin/fileFormat") ) {
+            else if ( pathIBaseRS.equals("/job/jobReport") || pathIBaseRS.equals(CONTACT)
+                    || pathIBaseRS.equals(TAX_CATEGORY) || pathIBaseRS.equals(TAX_CLASS)
+                    || pathIBaseRS.equals(FILE_FORMAT) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "code=" + entityCode);
             }
             // special handle for invoice
-            else if ( pathIBaseRS.equals("/invoice") ) {
+            else if ( pathIBaseRS.equals(INVOICE) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode);
             }
             // special handle for accountingCode
-            else if ( pathIBaseRS.equals("/billing/accountingCode") ) {
+            else if ( pathIBaseRS.equals(ACCOUNTING_CODE) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "accountingCode=" + entityCode);
             }
             // special handle for countryIso
-            else if ( pathIBaseRS.equals("/countryIso") ) {
+            else if ( pathIBaseRS.equals(COUNTRY_ISO) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "countryCode=" + entityCode);
             }
             // special handle for currencyIso
-            else if ( pathIBaseRS.equals("/currencyIso") ) {
+            else if ( pathIBaseRS.equals(CURRENCY_ISO) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "currencyCode=" + entityCode);
             }
             // special handle for languageIso
-            else if ( pathIBaseRS.equals("/languageIso") ) {
+            else if ( pathIBaseRS.equals(LANGUAGE_ISO) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "languageCode=" + entityCode);
             }
             // special handle for taxMapping, paymentMethod
-            else if ( pathIBaseRS.equals("/taxMapping") || pathIBaseRS.equals("/payment/paymentMethod") ) {
+            else if ( pathIBaseRS.equals(TAX_MAPPING) || pathIBaseRS.equals(PAYMENT_METHOD) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "id=" + entityCode);
             }
@@ -535,7 +572,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( deletePath );
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
 
-            if ( pathIBaseRS.equals( "/payment/paymentMethod" ) )
+            if ( pathIBaseRS.equals( PAYMENT_METHOD ) )
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "id=" + entityCode);
             else
@@ -552,7 +589,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         StringBuilder aPathBd = new StringBuilder(GenericOpencellRestfulAPIv1.API_VERSION);
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
 
-        String entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).toString();
+        entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).toString();
 
         if ( segmentsOfPathAPIv2.size() >= 3 ) {
             entityClassName = Inflector.getInstance().singularize(segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 3 ));
@@ -610,7 +647,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     public Response getListRestEndpointsForEntity(String entityName) {
         if ( GenericOpencellRestfulAPIv1.RESTFUL_ENTITIES_MAP.containsKey( StringUtils.capitalizeFirstLetter(entityName) ) ) {
             entityName = StringUtils.capitalizeFirstLetter(entityName);
-            Map responseMap = new HashMap();
+            Map<String, Object> responseMap = new HashMap<>();
             responseMap.put( entityName, GenericOpencellRestfulAPIv1.RESTFUL_ENTITIES_MAP.get( entityName ) );
             return Response.ok().entity(responseMap).type(MediaType.APPLICATION_JSON_TYPE).build();
         }
@@ -625,7 +662,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     @Override
     public Response getApiVersion() {
         ActionStatus successfulStatus = new ActionStatus(ActionStatusEnum.SUCCESS,
-                "Opencell Rest API version " + GenericOpencellRestfulAPIv1.API_VERSION.substring(1) + " commit " + Version.buildNumber );
+                "Opencell core version " + Version.appVersion + ", Opencell Rest API version " + GenericOpencellRestfulAPIv1.API_VERSION.substring(1)
+                        + ", commit " + Version.buildNumber + " , build at " + Version.build_time );
 
         return Response.status(Response.Status.OK).entity(successfulStatus).build();
     }
