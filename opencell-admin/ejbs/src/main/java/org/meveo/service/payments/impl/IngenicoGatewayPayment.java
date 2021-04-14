@@ -321,18 +321,18 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		}
     		MandateAddress address=new MandateAddress();
     		if (customerAccount.getAddress() != null) {
-    		address.setCity(customerAccount.getAddress().getCity());
+    		address.setCity(formatIngenicoData(customerAccount.getAddress().getCity(), true));
     		address.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode()); 
-    		String address1=customerAccount.getAddress().getAddress1().replaceAll("/", "-");// Ingenico doesn't authorize "/" in street field
-    		address.setStreet(address1);
+    		String address1=customerAccount.getAddress().getAddress1();
+    		address.setStreet(formatIngenicoData(address1, false));
     		address.setZip(customerAccount.getAddress().getZipCode());
     		}
     		MandatePersonalName name = new MandatePersonalName();
     		MandatePersonalInformation  personalInformation =new MandatePersonalInformation();
     		
     		if (customerAccount.getName() != null) {
-    			name.setFirstName(isEntreprise?"-":customerAccount.getName().getFirstName());
-    			name.setSurname(customerAccount.getName().getLastName()); 
+    			name.setFirstName(isEntreprise?"-":formatIngenicoData(customerAccount.getName().getFirstName(), false));
+    			name.setSurname(formatIngenicoData(customerAccount.getName().getLastName(), false)); 
     			personalInformation.setTitle(isEntreprise?"Mr":(customerAccount.getName().getTitle() == null ? "" : customerAccount.getName().getTitle().getDescription()));
     		}  
     		
@@ -343,7 +343,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     		customer.setMandateAddress(address);
     		customer.setPersonalInformation(personalInformation);
     		if(isEntreprise) {
-    			customer.setCompanyName(customerAccount.getName().getLastName());
+    			customer.setCompanyName(formatIngenicoData(customerAccount.getName().getLastName(), false));
     		}
     		
     		CreateMandateRequest body = new CreateMandateRequest();
@@ -395,7 +395,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     
     @Override
     public PaymentResponseDto doPaymentSepa(DDPaymentMethod ddPaymentMethod, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        return doPayment(ddPaymentMethod, null, ctsAmount, ddPaymentMethod.getCustomerAccount(), null, null, null, null, null, null, additionalParams);
+    	return doPayment(ddPaymentMethod, null, ctsAmount, ddPaymentMethod.getCustomerAccount(), null, null, null, null, null, null, additionalParams);
     }
 
     /**
@@ -828,5 +828,28 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 	@Override
 	public String createInvoice(Invoice invoice) throws BusinessException {
 		 throw new UnsupportedOperationException();
+	}
+	
+	
+	/**
+	 * Ingenico Sepa does not support some characters when creating the mandate, it throws invalid format if data contains "/","&",digits (in the city field), and accents
+	 * @param data
+	 * @param stripDigits
+	 */
+	private String formatIngenicoData(String data, boolean stripDigits) {
+		String formatData = paramBean().getProperty("ingenico.formatData", "true");
+		String insuportedCharaters = paramBean().getProperty("ingenico.formatData.insupportedCharacters.", "/,&");
+		if(Boolean.parseBoolean(formatData)) {
+			for(String character:insuportedCharaters.split(",")) {
+				data=data.replaceAll(character, " ");
+				data = org.apache.commons.lang3.StringUtils.stripAccents(data);
+			}
+			
+			data = org.apache.commons.lang3.StringUtils.stripAccents(data);
+			if(stripDigits) {
+				data=data.replaceAll("\\d", "");
+			}
+		}
+		return data;
 	}
 }
