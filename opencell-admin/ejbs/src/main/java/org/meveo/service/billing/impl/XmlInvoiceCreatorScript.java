@@ -1202,7 +1202,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
                 tax.appendChild(amountWithoutTax);
 
                 Element amountWithTax = doc.createElement("amountWithTax");
-                amountWithTax.appendChild(doc.createTextNode(toPlainString(taxInvoiceAgregate.getAmountWithoutTax())));
+                amountWithTax.appendChild(doc.createTextNode(toPlainString(taxInvoiceAgregate.getAmountWithTax())));
                 tax.appendChild(amountWithTax);
 
                 taxes.appendChild(tax);
