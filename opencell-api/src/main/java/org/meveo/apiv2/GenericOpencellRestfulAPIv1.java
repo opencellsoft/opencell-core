@@ -701,6 +701,23 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/businessAccountModels", aMapRestful );
                         }
+                        else if ( ((Path) anAnnotation).value().equals( "/catalog/counterTemplate" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/counterTemplates",
+                                    ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( CATALOG + "/counterTemplates", aMapRestful );
+
+                            // Handling enable and disable a counterTemplate
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/counterTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/counterTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/counterTemplates/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "counterTemplate" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/counterTemplates/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "counterTemplate" );
+                        }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
                                     API_VERSION + Inflector.getInstance().pluralize( ((Path) anAnnotation).value() ),
