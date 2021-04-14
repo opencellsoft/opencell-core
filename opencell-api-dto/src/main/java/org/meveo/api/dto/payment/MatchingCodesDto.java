@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class MatchingCodesDto.
  *
@@ -39,6 +41,7 @@ public class MatchingCodesDto implements Serializable {
     private static final long serialVersionUID = 5230851336194617883L;
 
     /** The matching code. */
+    @Schema(description = "List of the matching code")
     private List<MatchingCodeDto> matchingCode;
 
     /**

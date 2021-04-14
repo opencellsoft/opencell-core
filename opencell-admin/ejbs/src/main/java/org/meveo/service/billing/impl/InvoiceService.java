@@ -155,6 +155,7 @@ import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -174,6 +175,7 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -333,6 +335,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
+    
+    @Inject
+    private CommercialOrderService commercialOrderService;
 
     /**
      * folder for pdf .
@@ -2298,7 +2303,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if(useV11Process) {
             MinAmountForAccounts minAmountForAccounts = invoiceLinesService.isMinAmountForAccountsActivated(entity, applyMinimumModeEnum);
             invoices = createAggregatesAndInvoiceWithIL(entity, null, filter, invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft,
-                    !generateInvoiceRequestDto.getSkipValidation());
+                    !generateInvoiceRequestDto.getSkipValidation(),false);
         } else {
             MinAmountForAccounts minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated(entity, applyMinimumModeEnum);
             invoices = createAgregatesAndInvoice(entity, null, filter, invoiceDate,
@@ -2595,7 +2600,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         return null;
     }
-
     /**
      * Determine invoice type given the following criteria
      *
@@ -2615,6 +2619,27 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException General business exception
      */
     private InvoiceType determineInvoiceType(boolean isPrepaid, boolean isDraft, BillingCycle billingCycle, BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
+    	return determineInvoiceType(isPrepaid, isDraft, false, billingCycle, billingRun, billingAccount);
+    }
+    /**
+     * Determine invoice type given the following criteria
+     *
+     * If is a prepaid invoice, default prepaid type is used.<br/>
+     * If is a draft invoice, default draft type is used.<br/>
+     * Otherwise invoice type is determined in the following order:<br/>
+     * 1. billingCycle.invoiceTypeEl expression evaluated with billingRun and billingAccount a parameters, <br/>
+     * 2. bilingCycle.invoiceType, <br/>
+     * 3. Default commercial invoice type
+     *
+     * @param isPrepaid Is it for prepaid invoice. If True, default prepaid type is used. Excludes other criteria.
+     * @param isDraft Is it a draft invoice. If true, default draft type is used. Excludes other criteria.
+     * @param billingCycle Billing cycle
+     * @param billingRun Billing run
+     * @param billingAccount Billing account
+     * @return Applicable invoice type
+     * @throws BusinessException General business exception
+     */
+    private InvoiceType determineInvoiceType(boolean isPrepaid, boolean isDraft,boolean isDepositInvoice, BillingCycle billingCycle, BillingRun billingRun, BillingAccount billingAccount) throws BusinessException {
         InvoiceType invoiceType = null;
 
         if (isPrepaid) {
@@ -2622,6 +2647,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         } else if (isDraft) {
             invoiceType = invoiceTypeService.getDefaultDraft();
+
+        } else if (isDepositInvoice) {
+            invoiceType = invoiceTypeService.getDefaultDeposit();
 
         } else {
             if (!StringUtils.isBlank(billingCycle.getInvoiceTypeEl())) {
@@ -4881,9 +4909,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                                                           Date invoiceDate, Date firstTransactionDate,
                                                                           Date lastTransactionDate,
                                                                           MinAmountForAccounts minAmountForAccounts,
-                                                                          boolean isDraft, boolean automaticInvoiceCheck) throws BusinessException {
+                                                                          boolean isDraft, boolean automaticInvoiceCheck,boolean isDepositInvoice) throws BusinessException {
         return createAggregatesAndInvoiceWithIL(entityToInvoice, billingRun, filter,
-                invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft, automaticInvoiceCheck);
+                invoiceDate, firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft, automaticInvoiceCheck,isDepositInvoice);
     }
 
     /**
@@ -4904,7 +4932,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public List<Invoice> createAggregatesAndInvoiceWithIL(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter,
                                                           Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate,
                                                           MinAmountForAccounts minAmountForAccounts, boolean isDraft,
-                                                          boolean automaticInvoiceCheck) throws BusinessException {
+                                                          boolean automaticInvoiceCheck,boolean isDepositInvoice) throws BusinessException {
         log.debug("Will create invoice and aggregates for {}/{}",
                 entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId());
 
@@ -4930,7 +4958,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 ba = (BillingAccount) entityToInvoice;
             } else if (entityToInvoice instanceof Order) {
                 entityToInvoice = orderService.retrieveIfNotManaged((Order) entityToInvoice);
-            }
+            }else if (entityToInvoice instanceof CommercialOrder) {
+                entityToInvoice = commercialOrderService.retrieveIfNotManaged((CommercialOrder) entityToInvoice);
+                ba = ((CommercialOrder) entityToInvoice).getBillingAccount();
+            } 
 
             if (billingRun != null) {
                 billingRun = billingRunService.retrieveIfNotManaged(billingRun);
@@ -4977,7 +5008,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     balance = customerAccountService.customerAccountBalanceDueWithoutLitigation(ba.getCustomerAccount(), isBalanceDue ? invoiceDate : null);
                 }
 
-                invoiceType = determineInvoiceType(false, isDraft, billingCycle, billingRun, ba);
+                invoiceType = determineInvoiceType(false, isDraft,isDepositInvoice, billingCycle, billingRun, ba);
             }
 
             boolean hasMin = false;

@@ -1336,7 +1336,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             try {
                 invoiceService.createAggregatesAndInvoiceWithILInNewTransaction(entityToInvoice, billingRun,
                         null, null, null, null,
-                        minAmountForAccounts, false, automaticInvoiceCheck);
+                        minAmountForAccounts, false, automaticInvoiceCheck, false);
             } catch (Exception e1) {
                 log.error("Failed to create invoices for entity {}/{}",
                         entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);

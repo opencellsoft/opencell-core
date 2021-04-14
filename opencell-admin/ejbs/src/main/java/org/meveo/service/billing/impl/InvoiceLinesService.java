@@ -121,6 +121,14 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
                     .setHint("org.hibernate.readOnly", true)
                     .setMaxResults(pageSize)
                     .getResultList();
+        }else if (entityToInvoice instanceof CommercialOrder) {
+            return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByCommercialOrder", InvoiceLine.class)
+                    .setParameter("commercialOrderId", ((CommercialOrder) entityToInvoice).getId())
+                    .setParameter("firstTransactionDate", firstTransactionDate)
+                    .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setHint("org.hibernate.readOnly", true)
+                    .setMaxResults(pageSize)
+                    .getResultList();
         }
         return emptyList();
     }

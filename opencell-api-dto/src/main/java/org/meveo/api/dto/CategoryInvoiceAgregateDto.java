@@ -20,7 +20,6 @@ package org.meveo.api.dto;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,8 +28,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Invoice category invoice aggregate DTO
@@ -45,24 +43,31 @@ public class CategoryInvoiceAgregateDto extends BaseEntityDto {
      * The category invoice code
      */
     @XmlElement(required = true)
+    @Schema(description = "The category invoice code")
     private String categoryInvoiceCode;
 
     /** The description */
+    @Schema(description = "The description")
     private String description;
 
     /** The user account code */
+    @Schema(description = "The user account code")
     private String userAccountCode;
 
     /** The item number */
+    @Schema(description = "The item number")
     private Integer itemNumber;
 
     /** The amount without tax */
+    @Schema(description = "The amount without tax")
     private BigDecimal amountWithoutTax;
 
     /** The amount tax */
+    @Schema(description = "The amount tax")
     private BigDecimal amountTax;
 
     /** The amount with tax */
+    @Schema(description = "The amount with tax")
     private BigDecimal amountWithTax;
 
     /**
@@ -70,6 +75,7 @@ public class CategoryInvoiceAgregateDto extends BaseEntityDto {
      */
     @XmlElementWrapper
     @XmlElement(name = "subCategoryInvoiceAgregateDto", required = true)
+    @Schema(description = "List of Sub category invoice aggregates")
     private List<SubCategoryInvoiceAgregateDto> listSubCategoryInvoiceAgregateDto = new ArrayList<SubCategoryInvoiceAgregateDto>();
 
     /**
@@ -77,6 +83,7 @@ public class CategoryInvoiceAgregateDto extends BaseEntityDto {
      */
     @XmlElementWrapper
     @XmlElement(name = "discountAggregate")
+    @Schema(description = "List of Discount aggregates")
     private List<DiscountInvoiceAggregateDto> discountAggregates;
 
     /**

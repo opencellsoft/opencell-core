@@ -25,6 +25,8 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.DiscountPlanInstanceStatusEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.3
@@ -36,45 +38,54 @@ public class DiscountPlanInstanceDto extends BaseEntityDto {
 	/**
 	 * The discount plan code.
 	 */
+	@Schema(description = "The discount plan code")
 	private String discountPlan;
 
 	/**
 	 * The billingAccount code.
 	 */
+	@Schema(description = "The billingAccount code")
 	private String billingAccount;
 	/**
 	 * The subscription code.
 	 */
+	@Schema(description = "The subscription code")
 	private String subscription;
 
 	/**
 	 * Effectivity start date
 	 */
+	@Schema(description = "Effectivity start date")
 	private Date startDate;
 
 	/**
 	 * Effectivity end date
 	 */
+	@Schema(description = "Effectivity end date")
 	private Date endDate;
 
 	/**
 	 * The custom fields.
 	 */
+	@Schema(description = "The custom fields")
 	private CustomFieldsDto customFields;
 
 	/**
 	 * Status of this specific discount plan instance
 	 */
+	@Schema(description = "Status of this specific discount plan instance")
 	private DiscountPlanInstanceStatusEnum status;
 
 	/**
 	 * Datetime of last status change.
 	 */
+	@Schema(description = "Datetime of last status change")
 	private Date statusDate;
 
 	/**
 	 * How many times the discount has been used.
 	 */
+	@Schema(description = "How many times the discount has been used")
 	private Long applicationCount;
 
 	/**

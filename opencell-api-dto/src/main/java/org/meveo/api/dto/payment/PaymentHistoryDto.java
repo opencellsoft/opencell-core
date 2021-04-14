@@ -34,6 +34,8 @@ import org.meveo.model.payments.PaymentErrorTypeEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Class to represent payments that was initiated from OC, we find payment done, ,pending,rejected and error.
  *
@@ -48,70 +50,92 @@ public class PaymentHistoryDto extends AuditableEntityDto {
     private static final long serialVersionUID = 1L;
 
     /** The customer Account Code. */
+    @Schema(description = "The customer Account Code")
     private String customerAccountCode;
 
     /** The seller Code. */
+    @Schema(description = "The seller Code")
     private String sellerCode;
     
     /** The customer Code. */
     @XmlTransient
+    @Schema(description = "The customer Code")
     private String customerCode;    
 
     /** The customer Account Name. */
+    @Schema(description = "The customer Account Name")
     private String customerAccountName;
 
     /** The operation date. */
+    @Schema(description = "The operation date")
     private Date operationDate;
 
     /** The updated status date. */
+    @Schema(description = "The updated status date")
     private Date updatedStatusDate;
 
     /** The last Update Date. */
+    @Schema(description = "The last Update Date")
     private Date lastUpdateDate;
 
     /** The amount in cts. */
+    @Schema(description = "The amount in cts")
     private Long amountCts;
 
     /** The synchrone status. */
+    @Schema(description = "The synchrone status", example = "possible value are : ACCEPTED, PENDING, REJECTED, ERROR, NOT_PROCESSED")
     private PaymentStatusEnum syncStatus;
 
     /** The asynchrone status. */
+    @Schema(description = "The asynchrone status", example = "possible value are : ACCEPTED, PENDING, REJECTED, ERROR, NOT_PROCESSED")
     private PaymentStatusEnum asyncStatus;
 
     /** The status. */
+    @Schema(description = "The status", example = "possible value are : ACCEPTED, PENDING, REJECTED, ERROR, NOT_PROCESSED")
     private PaymentStatusEnum status;
 
     /** The external payment id. */
+    @Schema(description = "he external payment id")
     private String externalPaymentId;
 
     /** The error code. */
+    @Schema(description = "The error code")
     private String errorCode;
 
     /** The error message. */
+    @Schema(description = "The error message")
     private String errorMessage;
 
     /** The error type, rejected or error. */
+    @Schema(description = "The error type, rejected or error", example = "possible value are :  ERROR, REJECT" )
     private PaymentErrorTypeEnum errorType;
 
     /** The payment gateway. */
+    @Schema(description = "The payment gateway")
     private String paymentGatewayCode;
 
     /** The payment method. */
+    @Schema(description = "The payment method", example = "possible value are : CHECK, DIRECTDEBIT, WIRETRANSFER, CARD, PAYPAL, STRIPE, CASH")
     private PaymentMethodEnum paymentMethodType;
 
     /** The payment method name: card number or mandat. */
+    @Schema(description = "The payment method name: card number or mandat")
     private String paymentMethodName;
 
     /** The operation category, credit for payment or debit for refund. */
+    @Schema(description = "The operation category, credit for payment or debit for refund", example = "possible valye are : DEBIT, CREDIT")
     private OperationCategoryEnum operationCategory;
 
     /** The payment. */
+    @Schema(description = "The payment")
     private AccountOperationDto payment;
 
     /** The refund. */
+    @Schema(description = "The refund")
     private AccountOperationDto refund;
 
     /** The list ao paid. */
+    @Schema(description = "The list ao paid")
     private AccountOperationsDto listAoPaid;
 
     /**

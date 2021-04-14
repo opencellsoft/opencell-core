@@ -32,6 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.response.SearchResponse;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class PaymentScheduleInstancesDto.
  *
@@ -47,6 +49,7 @@ public class PaymentScheduleInstancesDto extends SearchResponse {
     /** The PaymentScheduleInstances Dtos. */
     @XmlElementWrapper
     @XmlElement(name = "instance")
+    @Schema(description = "list of payment schedule instance")
     private List<PaymentScheduleInstanceDto> instances = new ArrayList<>();
     
     

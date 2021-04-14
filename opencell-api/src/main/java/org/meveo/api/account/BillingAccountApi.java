@@ -523,17 +523,18 @@ public class BillingAccountApi extends AccountEntityApi {
         }
         
         if(postData.getLegalEntityType() != null) {
-        	if(Strings.isEmpty(postData.getLegalEntityType().getCode()))
+        	var titleDto = postData.getLegalEntityType();
+        	if(Strings.isEmpty(titleDto.getCode()))
         		missingParameters.add("legalEntityType.code");
         	handleMissingParameters();
-        	var titleCode = postData.getLegalEntityType().getCode();
-        	Title title = titleService.findByCode(titleCode);
+        	Title title = titleService.findByCode(titleDto.getCode());
         	if(title == null)
-        		title = new Title(titleCode, postData.getIsCompany());
-        	title.setDescription(postData.getDescription());
-        	if(postData.getLegalEntityType().getLanguageDescriptions() != null && !postData.getLegalEntityType().getLanguageDescriptions().isEmpty()) {
+        		title = new Title(titleDto.getCode(), titleDto.getIsCompany());
+        	if(!Strings.isEmpty(titleDto.getDescription()))
+        		title.setDescription(titleDto.getDescription());
+        	if(titleDto.getLanguageDescriptions() != null && !titleDto.getLanguageDescriptions().isEmpty()) {
         		title.setDescriptionI18n(
-        								postData.getLegalEntityType().getLanguageDescriptions()
+        								titleDto.getLanguageDescriptions()
         											.stream().collect(Collectors.toMap(LanguageDescriptionDto::getLanguageCode, LanguageDescriptionDto::getDescription)));
         	}
         	if(title.getId() == null)

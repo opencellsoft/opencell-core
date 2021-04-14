@@ -40,6 +40,8 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentHistory;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class AccountOperationDto.
  *
@@ -56,157 +58,197 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
     private static final long serialVersionUID = 4329241417200680028L;
 
     /** The id. */
+    @Schema(description = "The id of account operation")
     private Long id;
 
     /** The due date. */
+    @Schema(description = "The due date")
     private Date dueDate;
 
     /** The type. */
+    @Schema(description = "The type")
     private String type;
 
     /** The transaction date. */
+    @Schema(description = "he transaction date")
     private Date transactionDate;
 
     /** The transaction category. */
+    @Schema(description = "The transaction category", example = "possible value are : DEBIT, CREDIT")
     private OperationCategoryEnum transactionCategory;
 
     /** The reference. */
+    @Schema(description = "The reference")
     private String reference;
 
     /** The account code. */
     @Deprecated
+    @Schema(description = "The account code", deprecated = true)
     private String accountCode;
 
     /** The accounting code. */
+    @Schema(description = "The accounting code")
     private String accountingCode;
 
     /** The account code client side. */
     @Deprecated
+    @Schema(description = "The account code client side", deprecated = true)
     private String accountCodeClientSide;
 
     /** The amount. */
+    @Schema(description = "The amount")	
     private BigDecimal amount;
 
     /** The amount without tax. */
+    @Schema(description = "The amount without tax")
     private BigDecimal amountWithoutTax;
 
     /** The tax amount. */
+    @Schema(description = "The tax amount")
     private BigDecimal taxAmount;
 
     /** The matching amount. */
+    @Schema(description = "The matching amount")
     private BigDecimal matchingAmount;
 
     /** The un matching amount. */
+    @Schema(description = "The un matching amount")
     private BigDecimal unMatchingAmount;
 
     /** The matching status. */
+    @Schema(description = "The matching status", example = "possible value are: O, L, P, C, I, R")
     private MatchingStatusEnum matchingStatus;
 
     /** The occ code. */
+    @Schema(description = "The occ code")
     private String code;
 
     /** The occ description. */
+    @Schema(description = "The occ description")
     private String description;
 
     /** The customer account. */
+    @Schema(description = "The customer account")
     private String customerAccount;
 
     /** The excluded from dunning. */
+    @Schema(description = "The excluded from dunning")
     private Boolean excludedFromDunning;
 
     /** The order number. */
     // order number, '|' is used as seperator if many orders
+    @Schema(description = "The order number", example = "ORDER_1|ORDER_2|ORDER_3")
     private String orderNumber;
 
     /** The matching amounts. */
+    @Schema(description = "The matching amounts")
     private MatchingAmountsDto matchingAmounts;
 
     /** The other credit and charge. */
+    @Schema(description = "The other credit and charge")
     private OtherCreditAndChargeDto otherCreditAndCharge;
 
     /** The recorded invoice. */
+    @Schema(description = "The recorded invoice")
     private RecordedInvoiceDto recordedInvoice;
 
     /** The rejected payment. */
+    @Schema(description = "The rejected paymen")
     private RejectedPaymentDto rejectedPayment;
 
     /**
      * The bank lot.
      */
+    @Schema(description = "The bank lot")
     private String bankLot;
 
     /**
      * The bank reference.
      */
+    @Schema(description = "The bank reference")
     private String bankReference;
 
     /**
      * The bank collection date.
      */
+    @Schema(description = "The bank collection date")
     private Date bankCollectionDate;
 
     /**
      * The deposit date.
      */
+    @Schema(description = "The deposit date")
     private Date depositDate;
 
     /**
      * The payment method.
      */
+    @Schema(description = "The payment method")
     private String paymentMethod;
 
     /**
      * The custom fields.
      */
+    @Schema(description = "The custom fields")
     private CustomFieldsDto customFields;
 
     /**
      * The payment info.
      */
+    @Schema(description = "The payment info")
     private String paymentInfo;// IBAN for direct debit
 
     /**
      * The payment info 1.
      */
+    @Schema(description = "bank code")
     private String paymentInfo1;// bank code
 
     /**
      * The payment info 2.
      */
+    @Schema(description = "code guichet")
     private String paymentInfo2;// code guichet
 
     /**
      * The payment info 3.
      */
+    @Schema(description = "Num compte")
     private String paymentInfo3;// Num compte
 
     /**
      * The payment info 4.
      */
+    @Schema(description = "RIB")
     private String paymentInfo4;// RIB
 
     /**
      * The payment info 5.
      */
+    @Schema(description = "bankName")
     private String paymentInfo5;// bankName
 
     /**
      * The payment info 6.
      */
+    @Schema(description = "bic")
     private String paymentInfo6;// bic
 
     /**
      * The billing account name.
      */
+    @Schema(description = "The billing account name")
     private String billingAccountName;
 
     @XmlElementWrapper(name = "paymentHistories")
     @XmlElement(name = "paymentHistory")
+    @Schema(description = "list of the payment history")
     private List<PaymentHistoryDto> paymentHistories = new ArrayList<PaymentHistoryDto>();
 
     /**
      * A collection date.
      */
+    @Schema(description = "A collection date")
     private Date collectionDate;
 
     /**
