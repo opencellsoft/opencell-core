@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,11 +32,12 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.Auditable;
-import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
@@ -62,9 +64,7 @@ public class InvoiceAggregateHandler {
     private Map<String, SubCategoryInvoiceAgregate> subCatInvAgregateMap = new HashMap<String, SubCategoryInvoiceAgregate>();
     private Map<String, TaxInvoiceAgregate> taxInvAgregateMap = new HashMap<String, TaxInvoiceAgregate>();
 
-    private BigDecimal invoiceAmountWithoutTax = BigDecimal.ZERO;
-    private BigDecimal invoiceAmountTax = BigDecimal.ZERO;
-    private BigDecimal invoiceAmountWithTax = BigDecimal.ZERO;
+    private Amounts invoiceAmounts = new Amounts();
 
     @Inject
     @CurrentUser
@@ -85,9 +85,7 @@ public class InvoiceAggregateHandler {
         subCatInvAgregateMap = new HashMap<>();
         taxInvAgregateMap = new HashMap<>();
 
-        invoiceAmountWithoutTax = BigDecimal.ZERO;
-        invoiceAmountTax = BigDecimal.ZERO;
-        invoiceAmountWithTax = BigDecimal.ZERO;
+        invoiceAmounts = new Amounts();
 
     }
 
@@ -187,32 +185,57 @@ public class InvoiceAggregateHandler {
         addRemoveOrUpdateSubCategoryInvoiceAggregate(ratedTransaction.getInvoiceSubCategory(), ratedTransaction.getUserAccount(), ratedTransaction.getInvoiceSubCategory().getDescription(), isToAdd,
             ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction);
 
-        updateInvoiceAgregateTax(ratedTransaction.getBillingAccount(), isToAdd, ratedTransaction.getAmountWithoutTax(), ratedTransaction.getAmountWithTax(), ratedTransaction.getAmountTax(), ratedTransaction.getTax());
     }
 
-    private void updateInvoiceAgregateTax(BillingAccount billingAccount, boolean isToAdd, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, Tax currentTax) {
-        TaxInvoiceAgregate invoiceAgregateTax = taxInvAgregateMap.get(currentTax.getCode());
-        if (invoiceAgregateTax == null) {
-            invoiceAgregateTax = new TaxInvoiceAgregate();
-            invoiceAgregateTax.setBillingRun(null);
-            invoiceAgregateTax.setTax(currentTax);
-            invoiceAgregateTax.setAccountingCode(currentTax.getAccountingCode());
-            invoiceAgregateTax.setTaxPercent(currentTax.getPercent());
-            invoiceAgregateTax.setAmountWithoutTax(BigDecimal.ZERO);
-            invoiceAgregateTax.setAmountWithTax(BigDecimal.ZERO);
-            invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
-            invoiceAgregateTax.setBillingAccount(billingAccount);
-            invoiceAgregateTax.setItemNumber(0);
-        }
-        invoiceAgregateTax.setAmountWithoutTax(addOrSubtract(invoiceAgregateTax.getAmountWithoutTax(), amountWithoutTax, isToAdd));
-        invoiceAgregateTax.setAmountWithTax(addOrSubtract(invoiceAgregateTax.getAmountWithTax(), amountWithTax, isToAdd));
-        invoiceAgregateTax.setAmountTax(addOrSubtract(invoiceAgregateTax.getAmountTax(), amountTax, isToAdd));
-        invoiceAgregateTax.setItemNumber(invoiceAgregateTax.getItemNumber() + (isToAdd ? 1 : -1));
+    public void updateSubCategoryCategoryAndTaxAggregateAmounts() {
 
-        if (invoiceAgregateTax.getItemNumber() > 0) {
-            taxInvAgregateMap.put(currentTax.getCode(), invoiceAgregateTax);
-        } else {
-            taxInvAgregateMap.remove(currentTax.getCode());
+        int rounding = appProvider.getRounding();
+        RoundingModeEnum roundingMode = appProvider.getRoundingMode();
+        int invoiceRounding = appProvider.getInvoiceRounding();
+        RoundingModeEnum invoiceRoundingMode = appProvider.getInvoiceRoundingMode();
+
+        taxInvAgregateMap.clear();
+
+        invoiceAmounts = new Amounts();
+
+        for (CategoryInvoiceAgregate catAggregate : catInvAgregateMap.values()) {
+            catAggregate.resetAmounts();
+        }
+        // Calculate derived amounts
+        for (SubCategoryInvoiceAgregate scAggregate : subCatInvAgregateMap.values()) {
+            scAggregate.computeDerivedAmounts(appProvider.isEntreprise(), rounding, roundingMode.getRoundingMode(), invoiceRounding, invoiceRoundingMode.getRoundingMode());
+
+            scAggregate.getCategoryInvoiceAgregate().addAmountWithoutTax(scAggregate.getAmountWithoutTax());
+            scAggregate.getCategoryInvoiceAgregate().addAmountWithTax(scAggregate.getAmountWithTax());
+            scAggregate.getCategoryInvoiceAgregate().addAmountTax(scAggregate.getAmountTax());
+
+            invoiceAmounts.addAmounts(scAggregate.getAmountWithoutTax(), scAggregate.getAmountWithTax(), scAggregate.getAmountTax());
+
+            updateInvoiceAgregateTax(scAggregate);
+        }
+    }
+
+    private void updateInvoiceAgregateTax(SubCategoryInvoiceAgregate scAggregate) {
+        if (scAggregate.getAmountsByTax() != null) {
+            for (Entry<Tax, SubcategoryInvoiceAgregateAmount> amountInfo : scAggregate.getAmountsByTax().entrySet()) {
+                Tax tax = amountInfo.getKey();
+
+                TaxInvoiceAgregate invoiceAgregateTax = taxInvAgregateMap.get(tax.getCode());
+                if (invoiceAgregateTax == null) {
+                    invoiceAgregateTax = new TaxInvoiceAgregate();
+                    invoiceAgregateTax.setBillingRun(null);
+                    invoiceAgregateTax.setTax(tax);
+                    invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
+                    invoiceAgregateTax.setTaxPercent(tax.getPercent());
+                    invoiceAgregateTax.setAmountWithoutTax(BigDecimal.ZERO);
+                    invoiceAgregateTax.setAmountWithTax(BigDecimal.ZERO);
+                    invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
+                    taxInvAgregateMap.put(tax.getCode(), invoiceAgregateTax);
+                }
+                invoiceAgregateTax.addAmountWithoutTax(amountInfo.getValue().getAmountWithoutTax());
+                invoiceAgregateTax.addAmountWithTax(amountInfo.getValue().getAmountWithTax());
+                invoiceAgregateTax.addAmountTax(amountInfo.getValue().getAmountTax());
+            }
         }
     }
 
@@ -263,21 +286,13 @@ public class InvoiceAggregateHandler {
             }
         }
 
-        subCategoryInvoiceAgregate.setAmountWithoutTax(addOrSubtract(subCategoryInvoiceAgregate.getAmountWithoutTax(), amountWithoutTax, isToAdd));
-        subCategoryInvoiceAgregate.setAmountWithTax(addOrSubtract(subCategoryInvoiceAgregate.getAmountWithTax(), amountWithTax, isToAdd));
-        subCategoryInvoiceAgregate.setAmountTax(addOrSubtract(subCategoryInvoiceAgregate.getAmountTax(), amountTax, isToAdd));
-
-        invoiceAmountWithoutTax = addOrSubtract(invoiceAmountWithoutTax, amountWithoutTax, isToAdd);
-        invoiceAmountTax = addOrSubtract(invoiceAmountTax, amountTax, isToAdd);
-        invoiceAmountWithTax = addOrSubtract(invoiceAmountWithTax, amountWithTax, isToAdd);
-
         boolean removeSubcategory = !isToAdd && ratedTransaction == null;
 
         if (ratedTransaction == null) {
 
-            categoryInvoiceAgregate.setAmountWithoutTax(addOrSubtract(categoryInvoiceAgregate.getAmountWithoutTax(), amountWithoutTax, isToAdd));
-            categoryInvoiceAgregate.setAmountWithTax(addOrSubtract(categoryInvoiceAgregate.getAmountWithTax(), amountWithTax, isToAdd));
-            categoryInvoiceAgregate.setAmountTax(addOrSubtract(categoryInvoiceAgregate.getAmountTax(), amountTax, isToAdd));
+            subCategoryInvoiceAgregate.setAmountWithoutTax(addOrSubtract(subCategoryInvoiceAgregate.getAmountWithoutTax(), amountWithoutTax, isToAdd));
+            subCategoryInvoiceAgregate.setAmountWithTax(addOrSubtract(subCategoryInvoiceAgregate.getAmountWithTax(), amountWithTax, isToAdd));
+            subCategoryInvoiceAgregate.setAmountTax(addOrSubtract(subCategoryInvoiceAgregate.getAmountTax(), amountTax, isToAdd));
 
         } else {
 
@@ -365,44 +380,9 @@ public class InvoiceAggregateHandler {
     }
 
     /**
-     * @return the invoiceAmountWithoutTax
+     * @return Invoice total amounts
      */
-    public BigDecimal getInvoiceAmountWithoutTax() {
-        return invoiceAmountWithoutTax;
-    }
-
-    /**
-     * @param invoiceAmountWithoutTax the invoiceAmountWithoutTax to set
-     */
-    public void setInvoiceAmountWithoutTax(BigDecimal invoiceAmountWithoutTax) {
-        this.invoiceAmountWithoutTax = invoiceAmountWithoutTax;
-    }
-
-    /**
-     * @return the invoiceAmountTax
-     */
-    public BigDecimal getInvoiceAmountTax() {
-        return invoiceAmountTax;
-    }
-
-    /**
-     * @param invoiceAmountTax the invoiceAmountTax to set
-     */
-    public void setInvoiceAmountTax(BigDecimal invoiceAmountTax) {
-        this.invoiceAmountTax = invoiceAmountTax;
-    }
-
-    /**
-     * @return the invoiceAmountWithTax
-     */
-    public BigDecimal getInvoiceAmountWithTax() {
-        return invoiceAmountWithTax;
-    }
-
-    /**
-     * @param invoiceAmountWithTax the invoiceAmountWithTax to set
-     */
-    public void setInvoiceAmountWithTax(BigDecimal invoiceAmountWithTax) {
-        this.invoiceAmountWithTax = invoiceAmountWithTax;
+    public Amounts getInvoiceAmounts() {
+        return invoiceAmounts;
     }
 }

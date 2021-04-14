@@ -661,12 +661,15 @@ public class QueryBuilder {
             sql.append(field);
         }
         sql.append(addNot ? " not like " : " like ");
-        sql.append("'" + v + "'");
 
+        String param = convertFieldToParam(field);
+        sql.append(":"+param);
+
+        
         if (isFieldValueOptional) {
-            return addSqlCriterion("(" + field + " IS NULL or (" + sql.toString() + "))", null, null);
+            return addSqlCriterion("(" + field + " IS NULL or (" + sql.toString() + "))", param, v);
         } else {
-            return addSqlCriterion(sql.toString(), null, null);
+            return addSqlCriterion(sql.toString(), param, v);
         }
     }
 

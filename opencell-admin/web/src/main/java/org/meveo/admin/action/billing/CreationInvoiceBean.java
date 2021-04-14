@@ -418,12 +418,14 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
         BillingAccount billingAccount = billingAccountService.retrieveIfNotManaged(entity.getBillingAccount());
 
+        aggregateHandler.updateSubCategoryCategoryAndTaxAggregateAmounts();
+
         subCategoryInvoiceAggregates = new ArrayList<SubCategoryInvoiceAgregate>(aggregateHandler.getSubCatInvAgregateMap().values());
         categoryInvoiceAggregates = new ArrayList<CategoryInvoiceAgregate>(aggregateHandler.getCatInvAgregateMap().values());
 
-        entity.setAmountWithoutTax(round(aggregateHandler.getInvoiceAmountWithoutTax(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode()));
-        entity.setAmountTax(round(aggregateHandler.getInvoiceAmountTax(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode()));
-        entity.setAmountWithTax(round(aggregateHandler.getInvoiceAmountWithTax(), appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode()));
+        entity.setAmountWithoutTax(aggregateHandler.getInvoiceAmounts().getAmountWithoutTax());
+        entity.setAmountTax(aggregateHandler.getInvoiceAmounts().getAmountTax());
+        entity.setAmountWithTax(aggregateHandler.getInvoiceAmounts().getAmountWithTax());
 
         BigDecimal netToPay = entity.getAmountWithTax();
         if (appProvider != null && !appProvider.isEntreprise() && isIncludeBalance()) {
@@ -679,22 +681,26 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) {
+
+        BillingAccount billingAccount = getFreshBA();
+
         List<RatedTransaction> rts = null;
         for (Entry<String, TaxInvoiceAgregate> entry : aggregateHandler.getTaxInvAgregateMap().entrySet()) {
             TaxInvoiceAgregate taxInvAgr = entry.getValue();
             taxInvAgr.setInvoice(entity);
+            taxInvAgr.setBillingAccount(billingAccount);
             taxInvAgr.updateAudit(currentUser);
         }
 
         for (Entry<String, CategoryInvoiceAgregate> entry : aggregateHandler.getCatInvAgregateMap().entrySet()) {
             CategoryInvoiceAgregate catInvAgr = entry.getValue();
             catInvAgr.setInvoice(entity);
+            catInvAgr.setBillingAccount(billingAccount);
             catInvAgr.updateAudit(currentUser);
-            catInvAgr.setSubCategoryInvoiceAgregates(new HashSet<SubCategoryInvoiceAgregate>());
+//            catInvAgr.setSubCategoryInvoiceAgregates(new HashSet<SubCategoryInvoiceAgregate>());
         }
         rts = saveRTs();
         if (entity.getId() == null) {
-            BillingAccount billingAccount = getFreshBA();
             Customer customer = billingAccount.getCustomerAccount().getCustomer();
             entity.setBillingAccount(billingAccount);
             entity.setDetailedInvoice(isDetailed());
