@@ -24,12 +24,17 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.IBillableEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.contract.Contract;
@@ -49,7 +54,7 @@ import org.meveo.model.order.Order;
 @CustomFieldEntity(cftCodePrefix = "CommercialOrder")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_commercial_order_seq")})
-public class CommercialOrder extends AuditableCFEntity  {
+public class CommercialOrder extends AuditableCFEntity implements IBillableEntity  {
 
 
 	@Transient
@@ -624,6 +629,90 @@ public class CommercialOrder extends AuditableCFEntity  {
 	 */
 	public void setOneShotTotalAmount(BigDecimal oneShotTotalAmount) {
 		this.oneShotTotalAmount = oneShotTotalAmount;
+	}
+
+	@Override
+	public BillingRun getBillingRun() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setBillingRun(BillingRun billingRun) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<RatedTransaction> getMinRatedTransactions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BigDecimal getTotalInvoicingAmountWithoutTax() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public BigDecimal getTotalInvoicingAmountWithTax() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public BigDecimal getTotalInvoicingAmountTax() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getCode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BillingCycle getBillingCycle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<InvoiceLine> getMinInvoiceLines() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setMinInvoiceLines(List<InvoiceLine> invoiceLines) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	
