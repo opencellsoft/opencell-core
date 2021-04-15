@@ -267,6 +267,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
         fillUpRestfulURLsMap( "/catalog/businessProductModels", aMapRestful );
         fillUpRestfulURLsMap( "/catalog/businessOfferModels", aMapRestful );
         fillUpRestfulURLsMap( "/catalog/businessServiceModels", aMapRestful );
+        fillUpRestfulURLsMap( "/catalog/triggeredEdrs", aMapRestful );
 
         for ( Class<? extends IBaseRs> aClass : classes ) {
             if ( aClass.isInterface() ) {

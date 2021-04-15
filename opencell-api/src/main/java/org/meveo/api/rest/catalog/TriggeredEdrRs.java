@@ -18,21 +18,14 @@
 
 package org.meveo.api.rest.catalog;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
+import org.meveo.api.dto.response.TriggeredEdrsResponseDto;
 import org.meveo.api.dto.response.catalog.GetTriggeredEdrResponseDto;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * @author Edward P. Legaspi
@@ -92,4 +85,13 @@ public interface TriggeredEdrRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(TriggeredEdrTemplateDto postData);
+
+    /**
+     * Gets a service template list.
+     *
+     * @return Return serviceTemplate list
+     */
+    @GET
+    @Path("/listGetAll")
+    TriggeredEdrsResponseDto listGetAll();
 }
