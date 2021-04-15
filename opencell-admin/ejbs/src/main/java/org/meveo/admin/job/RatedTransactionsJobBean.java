@@ -109,7 +109,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         walletOperationService.removeZeroWalletOperation();
     }
 
-    private void executeWithoutAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis) throws Exception {
+    private void executeWithoutAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis) {
         List<Long> walletOperations = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
         log.info("WalletOperations to convert into rateTransactions={}", walletOperations.size());
         result.setNbItemsToProcess(walletOperations.size());
