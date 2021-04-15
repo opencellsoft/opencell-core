@@ -702,8 +702,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/businessAccountModels", aMapRestful );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/counterTemplate" ) ) {
-                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/counterTemplates",
-                                    ((Path) anAnnotation).value() );
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/counterTemplates", ((Path) anAnnotation).value() );
 
                             fillUpRestfulURLsMap( CATALOG + "/counterTemplates", aMapRestful );
 
@@ -719,8 +718,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/counterTemplates/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "counterTemplate" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalog/discountPlan" ) ) {
-                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/discountPlans",
-                                    ((Path) anAnnotation).value() );
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/discountPlans", ((Path) anAnnotation).value() );
 
                             fillUpRestfulURLsMap( CATALOG + "/discountPlans", aMapRestful );
 
@@ -734,6 +732,22 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/discountPlans/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "discountPlan" );
 
                             fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/discountPlans/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "discountPlan" );
+                        }
+                        else if ( ((Path) anAnnotation).value().equals( "/catalog/discountPlanItem" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/discountPlanItems", ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( CATALOG + "/discountPlanItems", aMapRestful );
+
+                            // Handling enable and disable a discountPlanItem
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/discountPlanItems\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/discountPlanItems\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/discountPlanItems/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "discountPlanItem" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/discountPlanItems/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "discountPlanItem" );
                         }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(

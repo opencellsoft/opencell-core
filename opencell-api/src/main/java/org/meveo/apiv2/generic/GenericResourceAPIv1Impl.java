@@ -8,6 +8,7 @@ import org.meveo.api.dto.*;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.AccountHierarchyDto;
 import org.meveo.api.dto.billing.*;
+import org.meveo.api.dto.catalog.DiscountPlanItemDto;
 import org.meveo.api.dto.invoice.CancelInvoiceRequestDto;
 import org.meveo.api.dto.invoice.ValidateInvoiceRequestDto;
 import org.meveo.apiv2.GenericOpencellRestfulAPIv1;
@@ -95,6 +96,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String BUSINESS_SERVICE_MODEL = "/catalog/businessServiceModel";
     private static final String COUNTER_TEMPLATE = "/catalog/counterTemplate";
     private static final String DISCOUNT_PLAN = "/catalog/discountPlan";
+    private static final String DISCOUNT_PLAN_ITEM = "/catalog/discountPlanItem";
 
     private static final String API_REST = "api/rest";
 
@@ -174,7 +176,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( PRICE_PLAN ) || pathIBaseRS.equals( WALLET_OPERATION )
                     || pathIBaseRS.equals( FILE_FORMAT ) || pathIBaseRS.equals( BUSINESS_ACCOUNT_MODEL )
                     || pathIBaseRS.equals( BUSINESS_PRODUCT_MODEL ) || pathIBaseRS.equals( BUSINESS_SERVICE_MODEL )
-                    || pathIBaseRS.equals( COUNTER_TEMPLATE ) || pathIBaseRS.equals( DISCOUNT_PLAN ) )
+                    || pathIBaseRS.equals( COUNTER_TEMPLATE ) || pathIBaseRS.equals( DISCOUNT_PLAN )
+                    || pathIBaseRS.equals( DISCOUNT_PLAN_ITEM ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 )
@@ -205,7 +208,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( PRICE_PLAN ) || pathIBaseRS.equals( WALLET_OPERATION )
                     || pathIBaseRS.equals( FILE_FORMAT ) || pathIBaseRS.equals( BUSINESS_ACCOUNT_MODEL )
                     || pathIBaseRS.equals( BUSINESS_PRODUCT_MODEL ) || pathIBaseRS.equals( BUSINESS_SERVICE_MODEL )
-                    || pathIBaseRS.equals( COUNTER_TEMPLATE ) || pathIBaseRS.equals( DISCOUNT_PLAN ) )
+                    || pathIBaseRS.equals( COUNTER_TEMPLATE ) || pathIBaseRS.equals( DISCOUNT_PLAN )
+                    || pathIBaseRS.equals( DISCOUNT_PLAN_ITEM ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
@@ -553,6 +557,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 ((CurrencyDto) aDto).setCode(entityCode);
             else if ( aDto instanceof UserDto )
                 ((UserDto) aDto).setUsername(entityCode);
+            else if ( aDto instanceof DiscountPlanItemDto )
+                ((DiscountPlanItemDto) aDto).setCode(entityCode);
 
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_UPDATE );
@@ -609,6 +615,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 ((AccountHierarchyDto) aDto).setCustomerCode(entityCode);
             else if ( aDto instanceof AccessDto )
                 ((AccessDto) aDto).setCode(entityCode);
+            else if ( aDto instanceof DiscountPlanItemDto )
+                ((DiscountPlanItemDto) aDto).setCode(entityCode);
 
             for ( int i = 0; i <= segmentsOfPathAPIv2.size() - 3; i++ )
                 aPathBd.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i) );
