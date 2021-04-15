@@ -167,6 +167,8 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 					log.trace("Entity status will be updated to {}. Entity {}", workflowInstance, gWFTransition.getToStatus());
 					workflowInstance = workflowInstanceService.update(workflowInstance);
 					executedTransition.add(gWFTransition);
+					
+					executeWorkflow(iwfEntity, workflowInstance, genericWorkflow);
 				}
 			}
 
