@@ -87,9 +87,9 @@ public interface TriggeredEdrRs extends IBaseRs {
     ActionStatus createOrUpdate(TriggeredEdrTemplateDto postData);
 
     /**
-     * Gets a service template list.
+     * Gets a triggeredEdrs list.
      *
-     * @return Return serviceTemplate list
+     * @return Return triggeredEdrs list
      */
     @GET
     @Path("/listGetAll")
