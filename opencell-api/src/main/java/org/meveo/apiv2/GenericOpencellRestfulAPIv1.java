@@ -765,6 +765,22 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/offerTemplateCategories/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "offerTemplateCategory" );
                         }
+                        else if ( ((Path) anAnnotation).value().equals( "/catalogManagement" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/productChargeTemplates", ((Path) anAnnotation).value() + "/productChargeTemplate" );
+
+                            fillUpRestfulURLsMap( CATALOG + "/productChargeTemplates", aMapRestful );
+
+                            // Handling enable and disable a productChargeTemplate
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/productChargeTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/productChargeTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/productChargeTemplates/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "productChargeTemplate" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/productChargeTemplates/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "productChargeTemplate" );
+                        }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
                                     API_VERSION + Inflector.getInstance().pluralize( ((Path) anAnnotation).value() ),

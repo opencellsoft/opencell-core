@@ -18,9 +18,22 @@
 
 package org.meveo.api.rest.tmforum.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.meveo.api.catalog.*;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.catalog.*;
+import org.meveo.api.dto.response.ProductChargeTemplatesResponseDto;
+import org.meveo.api.dto.response.catalog.GetListProductTemplateResponseDto;
+import org.meveo.api.logging.WsRestApiInterceptor;
+import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.api.rest.tmforum.CatalogRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.ProductTemplate;
+import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
+import org.tmf.dsmapi.catalog.resource.category.Category;
+import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
+import org.tmf.dsmapi.catalog.resource.product.ProductSpecification;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -28,33 +41,9 @@ import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
-import org.meveo.api.catalog.BusinessOfferApi;
-import org.meveo.api.catalog.CatalogApi;
-import org.meveo.api.catalog.OfferTemplateCategoryApi;
-import org.meveo.api.catalog.ProductChargeTemplateApi;
-import org.meveo.api.catalog.ProductTemplateApi;
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.catalog.BomOfferDto;
-import org.meveo.api.dto.catalog.BpmProductDto;
-import org.meveo.api.dto.catalog.BsmServiceDto;
-import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
-import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
-import org.meveo.api.dto.catalog.ProductTemplateDto;
-import org.meveo.api.dto.response.catalog.GetListProductTemplateResponseDto;
-import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.api.rest.tmforum.CatalogRs;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.ProductChargeTemplate;
-import org.meveo.model.catalog.ProductTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
-import org.tmf.dsmapi.catalog.resource.category.Category;
-import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
-import org.tmf.dsmapi.catalog.resource.product.ProductSpecification;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author phung
@@ -447,6 +436,20 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         }
 
         return getResponse(responseBuilder);
+    }
+
+    @Override
+    public ProductChargeTemplatesResponseDto listGetAllPCTemplates() {
+
+        ProductChargeTemplatesResponseDto result = new ProductChargeTemplatesResponseDto();
+
+        try {
+            result = productChargeTemplateApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
     }
 
     @Override
