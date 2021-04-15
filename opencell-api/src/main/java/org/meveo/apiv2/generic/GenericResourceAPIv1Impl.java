@@ -99,6 +99,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String DISCOUNT_PLAN_ITEM = "/catalog/discountPlanItem";
     private static final String OFFER_TEMPLATE_CATEGORY = "/catalog/offerTemplateCategory";
     private static final String TRIGGERED_EDR = "/catalog/triggeredEdr";
+    private static final String PRODUCT_CHARGE_TEMPLATE = "/catalogManagement/productChargeTemplate";
 
     private static final String API_REST = "api/rest";
 
@@ -182,7 +183,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( BUSINESS_PRODUCT_MODEL ) || pathIBaseRS.equals( BUSINESS_SERVICE_MODEL )
                     || pathIBaseRS.equals( COUNTER_TEMPLATE ) || pathIBaseRS.equals( DISCOUNT_PLAN )
                     || pathIBaseRS.equals( DISCOUNT_PLAN_ITEM ) || pathIBaseRS.equals( OFFER_TEMPLATE_CATEGORY )
-                    || pathIBaseRS.equals( TRIGGERED_EDR ) )
+                    || pathIBaseRS.equals( TRIGGERED_EDR ) || pathIBaseRS.equals( PRODUCT_CHARGE_TEMPLATE ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 )
@@ -219,7 +220,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( BUSINESS_PRODUCT_MODEL ) || pathIBaseRS.equals( BUSINESS_SERVICE_MODEL )
                     || pathIBaseRS.equals( COUNTER_TEMPLATE ) || pathIBaseRS.equals( DISCOUNT_PLAN )
                     || pathIBaseRS.equals( DISCOUNT_PLAN_ITEM ) || pathIBaseRS.equals( OFFER_TEMPLATE_CATEGORY )
-                    || pathIBaseRS.equals( TRIGGERED_EDR ) )
+                    || pathIBaseRS.equals( TRIGGERED_EDR ) || pathIBaseRS.equals( PRODUCT_CHARGE_TEMPLATE ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
@@ -286,6 +287,11 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             else if ( pathIBaseRS.equals(TAX_MAPPING) || pathIBaseRS.equals(PAYMENT_METHOD) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "id=" + entityCode);
+            }
+            // special handle for productChargeTemplate
+            else if ( pathIBaseRS.equals(PRODUCT_CHARGE_TEMPLATE) ) {
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + FORWARD_SLASH + entityCode);
             }
             else {
                 entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
