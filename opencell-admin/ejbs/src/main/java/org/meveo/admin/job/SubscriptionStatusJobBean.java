@@ -118,16 +118,21 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 				} else if (subscription.getSubscriptionRenewal()
 						.getEndOfTermAction() == EndOfTermActionEnum.TERMINATE) {
 
+					Date validTo = subscription.getValidity() != null ? subscription.getValidity().getTo() : null;
+
+					log.debug("Terminate subscription {}", subscription.getId());
 					subscriptionService.terminateSubscription(subscription,
 							subscription.getSubscribedTillDate(),
 							subscription.getSubscriptionRenewal().getTerminationReason(), null);
 
 					//if sub has new next version with status created, then activate it
-					if (subscription.getValidity() != null && subscription.getValidity().getTo() != null) {
+					if (validTo != null) {
 						Subscription subNextVersion = subscriptionService
-								.findByCodeAndValidityDate(subscription.getCode(), subscription.getValidity().getTo());
-
+								.findByCodeAndValidityDate(subscription.getCode(), validTo);
 						if (subNextVersion != null && subNextVersion.getStatus() == SubscriptionStatusEnum.CREATED) {
+							log.debug("Subscription {} has new version sub {} with status CREATED. will be activated",
+									subscription.getId(), subNextVersion.getId());
+
 							subscriptionService.activateInstantiatedService(subNextVersion);
 						}
 					}
