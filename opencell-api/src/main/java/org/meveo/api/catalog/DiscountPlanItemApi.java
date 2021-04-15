@@ -30,11 +30,10 @@ import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.DiscountPlanItemDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
+import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
@@ -51,6 +50,11 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -267,6 +271,21 @@ public class DiscountPlanItemApi extends BaseApi {
 		}
 	}
 
+    public DiscountPlanItemsResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        DiscountPlanItemsResponseDto result = new DiscountPlanItemsResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<DiscountPlanItem> discountPlanItems = discountPlanItemService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (discountPlanItems != null) {
+            for (DiscountPlanItem discountPlanItem : discountPlanItems) {
+                result.getDiscountPlanItems().add(new DiscountPlanItemDto(discountPlanItem,
+                        entityToDtoConverter.getCustomFieldsDTO(discountPlanItem, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+        }
+
+        return result;
+    }
+
     public DiscountPlanItem toDiscountPlanItem(DiscountPlanItemDto source, DiscountPlanItem target) throws MeveoApiException {
         DiscountPlanItem discountPlanItem = target;
         if (discountPlanItem == null) {
@@ -310,7 +329,7 @@ public class DiscountPlanItemApi extends BaseApi {
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, source.getPricePlanMatrixCode());
         discountPlanItem.setPricePlanMatrix(pricePlanMatrix);
         }
-        
+
         processAccountingArticles(source,discountPlanItem);
 
         if (source.getExpressionEl() != null) {
