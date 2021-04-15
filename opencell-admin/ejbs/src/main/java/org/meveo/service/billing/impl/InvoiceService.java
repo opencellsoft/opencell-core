@@ -5706,6 +5706,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			toUpdate.setDiscountPlan(discountPlan);
 		}
 		
+		if(invoiceRessource.getCommercialOrder()!=null) {
+			final Long commercialorderId = invoiceRessource.getCommercialOrder().getId();
+			CommercialOrder commercialOrder = (CommercialOrder)tryToFindByEntityClassAndId(CommercialOrder.class, commercialorderId);
+			toUpdate.setCommercialOrder(commercialOrder);
+		}
+		
 		if(input.getCfValues()!=null) {
 			toUpdate.setCfValues(input.getCfValues());
 		}
