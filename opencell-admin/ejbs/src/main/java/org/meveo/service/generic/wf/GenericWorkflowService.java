@@ -51,7 +51,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.customEntities.CustomEntityInstance;
-import org.meveo.model.generic.wf.Action;
+import org.meveo.model.generic.wf.GWFTransitionAction;
 import org.meveo.model.generic.wf.GWFTransition;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
@@ -173,11 +173,6 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 						workflowInstanceHistoryService.create(wfHistory);
 					}
 
-					if (gWFTransition.getActionScript() != null) {
-						ScriptInstance scriptInstance = gWFTransition.getActionScript();
-						String scriptCode = scriptInstance.getCode();
-						executeActionScript(iwfEntity, workflowInstance, genericWorkflow, gWFTransition, scriptCode);
-					}
 					if(gWFTransition.getActions() != null && !gWFTransition.getActions().isEmpty()) {
                         executeActions(iwfEntity, workflowInstance, genericWorkflow, gWFTransition);
                     }
@@ -309,11 +304,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
             WorkflowInstanceHistory workflowInstanceHistory = processTransition(workflowInstance, transition);
             workflowInstanceHistoryService.create(workflowInstanceHistory);
         }
-        if (transition.getActionScript() != null) {
-            ScriptInstance scriptInstance = transition.getActionScript();
-            String scriptCode = scriptInstance.getCode();
-            executeActionScript(entity, workflowInstance, genericWorkflow, transition, scriptCode);
-        }
+        
         if(transition.getActions() != null) {
             executeActions(entity, workflowInstance, genericWorkflow, transition);
         }
@@ -340,7 +331,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
         context.put("transition", transition);
         context.put("workflowInstance ", workflowInstance);
 
-        for (Action action : transition.getActions()) {
+        for (GWFTransitionAction action : transition.getActions()) {
             try {
                 if(action.isAsynchronous()) {
                     asyncExecution(entity, workflowInstance, genericWorkflow, transition, action, context);
@@ -357,7 +348,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
     @Asynchronous
     private void asyncExecution(BusinessEntity entity, WorkflowInstance workflowInstance,
-                                           GenericWorkflow genericWorkflow, GWFTransition transition, Action action,
+                                           GenericWorkflow genericWorkflow, GWFTransition transition, GWFTransitionAction action,
                                            Map<Object, Object> context) {
         try {
             if(action.getType().equalsIgnoreCase(ACTION_SCRIPT.name())) {
@@ -383,7 +374,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
     }
 
     private void syncExecution(BusinessEntity entity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow,
-                                GWFTransition transition, Action action, Map<Object, Object> context) {
+                                GWFTransition transition, GWFTransitionAction action, Map<Object, Object> context) {
 
         if(action.getType().equalsIgnoreCase(ACTION_SCRIPT.name())) {
             ScriptInstance scriptInstance = action.getActionScript();

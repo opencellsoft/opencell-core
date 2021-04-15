@@ -30,11 +30,11 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.generic.wf.ActionTypesEnum;
 import org.meveo.model.BaseEntity;
-import org.meveo.model.generic.wf.Action;
+import org.meveo.model.generic.wf.GWFTransitionAction;
 import org.meveo.model.generic.wf.GWFTransition;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.generic.wf.ActionsService;
+import org.meveo.service.generic.wf.GWFTransitionActionService;
 import org.meveo.service.generic.wf.GWFTransitionService;
 import org.meveo.service.generic.wf.GenericWorkflowService;
 
@@ -50,7 +50,7 @@ import java.util.*;
 @Named
 @ViewScoped
 @ViewBean
-public class ActionBean extends BaseBean<Action> {
+public class ActionBean extends BaseBean<GWFTransitionAction> {
 
     private static final long serialVersionUID = 1L;
 
@@ -61,7 +61,7 @@ public class ActionBean extends BaseBean<Action> {
     private GenericWorkflowService genericWorkflowService;
 
     @Inject
-    private ActionsService actionsService;
+    private GWFTransitionActionService actionsService;
 
     private List<String> actionTypes = stream(ActionTypesEnum.values()).map(ActionTypesEnum::name).collect(toList());
     private List<String> logLevel = asList("DEBUG", "TRACE", "INFO");
@@ -69,19 +69,19 @@ public class ActionBean extends BaseBean<Action> {
     private GWFTransition transition;
     private GenericWorkflow genericWorkflow;
 
-    private List<Action> actions = new ArrayList<>();
+    private List<GWFTransitionAction> actions = new ArrayList<>();
 
     public ActionBean() {
-        super(Action.class);
+        super(GWFTransitionAction.class);
     }
 
     @Override
-    protected IPersistenceService<Action> getPersistenceService() {
+    protected IPersistenceService<GWFTransitionAction> getPersistenceService() {
         return actionsService;
     }
 
     @Override
-    public Action initEntity() {
+    public GWFTransitionAction initEntity() {
         super.initEntity();
         String uuid = extractPathParam("transition");
         String wfCode = extractPathParam("wfCode");
@@ -137,7 +137,7 @@ public class ActionBean extends BaseBean<Action> {
     }
 
     @ActionMethod
-    public void deleteAction(Action action) {
+    public void deleteAction(GWFTransitionAction action) {
         try {
             actionsService.remove(action.getId());
             messages.info(new BundleKey("messages", "delete.successful"));
@@ -151,8 +151,8 @@ public class ActionBean extends BaseBean<Action> {
     }
 
     @ActionMethod
-    public void moveUpAction(Action selectedAction) throws BusinessException {
-        Action needUpdate = actionsService.refreshOrRetrieve(selectedAction);
+    public void moveUpAction(GWFTransitionAction selectedAction) throws BusinessException {
+        GWFTransitionAction needUpdate = actionsService.refreshOrRetrieve(selectedAction);
         if (needUpdate.getPriority() > 0) {
             needUpdate.setPriority(needUpdate.getPriority() - 1);
             actionsService.update(needUpdate);
@@ -160,8 +160,8 @@ public class ActionBean extends BaseBean<Action> {
     }
 
     @ActionMethod
-    public void moveDownAction(Action selectedAction) throws BusinessException {
-        Action needUpdate = actionsService.refreshOrRetrieve(selectedAction);
+    public void moveDownAction(GWFTransitionAction selectedAction) throws BusinessException {
+        GWFTransitionAction needUpdate = actionsService.refreshOrRetrieve(selectedAction);
         needUpdate.setPriority(needUpdate.getPriority() + 1);
         actionsService.update(needUpdate);
     }
@@ -198,11 +198,11 @@ public class ActionBean extends BaseBean<Action> {
         this.fields = fields;
     }
 
-    public List<Action> getActions() {
+    public List<GWFTransitionAction> getActions() {
         return actions;
     }
 
-    public void setActions(List<Action> actions) {
+    public void setActions(List<GWFTransitionAction> actions) {
         this.actions = actions;
     }
 

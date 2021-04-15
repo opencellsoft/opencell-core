@@ -17,16 +17,16 @@
  */
 package org.meveo.api.dto.generic.wf;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.generic.wf.GWFTransition;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * The Class GWFTransitionDto
@@ -86,10 +86,6 @@ public class GWFTransitionDto extends BaseEntityDto {
         this.conditionEl = gwfTransition.getConditionEl();
         this.priority = gwfTransition.getPriority();
         this.description = gwfTransition.getDescription();
-
-        if (gwfTransition.getActionScript() != null) {
-            this.actionScriptCode = gwfTransition.getActionScript().getCode();
-        }
         this.getActions().addAll(gwfTransition.getActions().stream().map(GWFActionDto::new).collect(Collectors.toList()));
     }
 

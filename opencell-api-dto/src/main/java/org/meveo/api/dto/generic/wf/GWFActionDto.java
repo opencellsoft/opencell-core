@@ -4,7 +4,7 @@ import static java.util.Optional.ofNullable;
 import static javax.xml.bind.annotation.XmlAccessType.FIELD;
 
 import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.model.generic.wf.Action;
+import org.meveo.model.generic.wf.GWFTransitionAction;
 import org.meveo.model.notification.Notification;
 
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -46,7 +46,7 @@ public class GWFActionDto extends BaseEntityDto {
     public GWFActionDto() {
     }
 
-    public GWFActionDto(Action action) {
+    public GWFActionDto(GWFTransitionAction action) {
         this.setUuid(action.getUuid());
         this.setDescription(action.getDescription());
         this.setConditionEl(action.getConditionEl());

@@ -33,7 +33,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.generic.wf.Action;
+import org.meveo.model.generic.wf.GWFTransitionAction;
 import org.meveo.model.generic.wf.GWFTransition;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.notification.Notification;
@@ -198,18 +198,14 @@ public class GWFTransitionApi extends BaseApi {
         gwfTransition.setPriority(dto.getPriority());
         gwfTransition.setDescription(dto.getDescription());
 
-        if (dto.getActionScriptCode() != null) {
-            ScriptInstance actionScript = scriptInstanceService.findByCode(dto.getActionScriptCode());
-            gwfTransition.setActionScript(actionScript);
-        }
         for (GWFActionDto action : dto.getActions()) {
             gwfTransition.getActions().add(from(action, gwfTransition));
         }
         return gwfTransition;
     }
 
-    public Action from(GWFActionDto actionDto, GWFTransition gwfTransition) {
-        Action action = new Action();
+    public GWFTransitionAction from(GWFActionDto actionDto, GWFTransition gwfTransition) {
+        GWFTransitionAction action = new GWFTransitionAction();
         if(actionDto.getUuid() == null) {
             action.setUuid(randomUUID().toString());
         } else {
