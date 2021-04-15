@@ -18,29 +18,26 @@
 
 package org.meveo.api.catalog;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.core.UriInfo;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidImageData;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.dto.response.OfferTemplateCategoriesResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.exception.*;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.ws.rs.core.UriInfo;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Stateless
 public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory, OfferTemplateCategoryDto> {
@@ -248,6 +245,22 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         }
 
         return offerTemplateCategoryDtos;
+    }
+
+    public OfferTemplateCategoriesResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        OfferTemplateCategoriesResponseDto result = new OfferTemplateCategoriesResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<OfferTemplateCategory> offerTemplateCategories = offerTemplateCategoryService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (offerTemplateCategories != null) {
+            for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
+                result.getOfferTemplateCategories().add(
+                        new OfferTemplateCategoryDto(offerTemplateCategory,
+                                entityToDtoConverter.getCustomFieldsDTO(offerTemplateCategory, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+        }
+
+        return result;
     }
 
     /**
