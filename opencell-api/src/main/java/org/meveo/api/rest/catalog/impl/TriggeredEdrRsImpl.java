@@ -18,18 +18,20 @@
 
 package org.meveo.api.rest.catalog.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.catalog.TriggeredEdrApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
+import org.meveo.api.dto.response.TriggeredEdrsResponseDto;
 import org.meveo.api.dto.response.catalog.GetTriggeredEdrResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.TriggeredEdrRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Edward P. Legaspi
@@ -101,6 +103,20 @@ public class TriggeredEdrRsImpl extends BaseRs implements TriggeredEdrRs {
             triggeredEdrApi.createOrUpdate(postData);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public TriggeredEdrsResponseDto listGetAll() {
+
+        TriggeredEdrsResponseDto result = new TriggeredEdrsResponseDto();
+
+        try {
+            result = triggeredEdrApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;

@@ -98,6 +98,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String DISCOUNT_PLAN = "/catalog/discountPlan";
     private static final String DISCOUNT_PLAN_ITEM = "/catalog/discountPlanItem";
     private static final String OFFER_TEMPLATE_CATEGORY = "/catalog/offerTemplateCategory";
+    private static final String TRIGGERED_EDR = "/catalog/triggeredEdr";
 
     private static final String API_REST = "api/rest";
 
@@ -144,6 +145,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 entityClassName = "language";
             else if ( pathIBaseRS.equals( "/job/jobReport" ) )
                 entityClassName = "Job";
+            else if ( pathIBaseRS.equals( TRIGGERED_EDR ) )
+                entityClassName = "triggeredEDRTemplate";
             else
                 entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
@@ -178,7 +181,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( FILE_FORMAT ) || pathIBaseRS.equals( BUSINESS_ACCOUNT_MODEL )
                     || pathIBaseRS.equals( BUSINESS_PRODUCT_MODEL ) || pathIBaseRS.equals( BUSINESS_SERVICE_MODEL )
                     || pathIBaseRS.equals( COUNTER_TEMPLATE ) || pathIBaseRS.equals( DISCOUNT_PLAN )
-                    || pathIBaseRS.equals( DISCOUNT_PLAN_ITEM ) || pathIBaseRS.equals( OFFER_TEMPLATE_CATEGORY ) )
+                    || pathIBaseRS.equals( DISCOUNT_PLAN_ITEM ) || pathIBaseRS.equals( OFFER_TEMPLATE_CATEGORY )
+                    || pathIBaseRS.equals( TRIGGERED_EDR ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
                             + queryParams.substring( 0, queryParams.length() - 1 )
@@ -214,7 +218,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     || pathIBaseRS.equals( FILE_FORMAT ) || pathIBaseRS.equals( BUSINESS_ACCOUNT_MODEL )
                     || pathIBaseRS.equals( BUSINESS_PRODUCT_MODEL ) || pathIBaseRS.equals( BUSINESS_SERVICE_MODEL )
                     || pathIBaseRS.equals( COUNTER_TEMPLATE ) || pathIBaseRS.equals( DISCOUNT_PLAN )
-                    || pathIBaseRS.equals( DISCOUNT_PLAN_ITEM ) || pathIBaseRS.equals( OFFER_TEMPLATE_CATEGORY ) )
+                    || pathIBaseRS.equals( DISCOUNT_PLAN_ITEM ) || pathIBaseRS.equals( OFFER_TEMPLATE_CATEGORY )
+                    || pathIBaseRS.equals( TRIGGERED_EDR ) )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                             + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
                 else
@@ -542,6 +547,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 entityClassName = "jobInstance";
             else if ( entityClassName.equals( "timer" ) )
                 entityClassName = "timerEntity";
+            else if ( pathIBaseRS.equals( TRIGGERED_EDR ) )
+                entityClassName = "triggeredEDRTemplate";
 
             Class entityDtoClass = GenericHelper.getEntityDtoClass( entityClassName.toLowerCase() + DTO_SUFFIX );
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
@@ -614,23 +621,26 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 2 ).toString();
 
         if ( segmentsOfPathAPIv2.size() >= 3 ) {
-            entityClassName = Inflector.getInstance().singularize(segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 3 ));
-            Class entityDtoClass = GenericHelper.getEntityDtoClass( entityClassName.toLowerCase() + DTO_SUFFIX );
-            Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
-            if ( aDto instanceof BusinessEntityDto )
-                ((BusinessEntityDto) aDto).setCode(entityCode);
-            else if ( aDto instanceof AccountHierarchyDto )
-                ((AccountHierarchyDto) aDto).setCustomerCode(entityCode);
-            else if ( aDto instanceof AccessDto )
-                ((AccessDto) aDto).setCode(entityCode);
-            else if ( aDto instanceof DiscountPlanItemDto )
-                ((DiscountPlanItemDto) aDto).setCode(entityCode);
-
             for ( int i = 0; i <= segmentsOfPathAPIv2.size() - 3; i++ )
                 aPathBd.append( FORWARD_SLASH + segmentsOfPathAPIv2.get(i) );
             String aPath = aPathBd.toString();
             if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey(aPath) ) {
                 pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get(aPath);
+                entityClassName = Inflector.getInstance().singularize(segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 3 ));
+
+                if ( pathIBaseRS.equals( TRIGGERED_EDR ) )
+                    entityClassName = "triggeredEDRTemplate";
+
+                Class entityDtoClass = GenericHelper.getEntityDtoClass( entityClassName.toLowerCase() + DTO_SUFFIX );
+                Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
+                if ( aDto instanceof BusinessEntityDto )
+                    ((BusinessEntityDto) aDto).setCode(entityCode);
+                else if ( aDto instanceof AccountHierarchyDto )
+                    ((AccountHierarchyDto) aDto).setCustomerCode(entityCode);
+                else if ( aDto instanceof AccessDto )
+                    ((AccessDto) aDto).setCode(entityCode);
+                else if ( aDto instanceof DiscountPlanItemDto )
+                    ((DiscountPlanItemDto) aDto).setCode(entityCode);
 
                 if ( aPath.equals("/v1/accountManagement/customerCategories") )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
