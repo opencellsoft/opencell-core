@@ -332,17 +332,23 @@ public class QueryBuilder {
         endOrClause();
     }
 
-    public void addSearchWildcardOrFilters(String tableNameAlias, String[] fields, Object value){
+    public void addSearchWildcardOrFilters(String tableNameAlias, String[] fields, Object value) {
         startOrClause();
-        Stream.of(fields)
-                .forEach(field -> addSql(tableNameAlias + "." + field + " like '%" + value + "%'"));
+        Stream.of(fields).forEach(field -> {
+            String param = convertFieldToParam(tableNameAlias + "." + field);
+            addSqlCriterion(tableNameAlias + "." + field + " like :" + param, param, "%" + value + "%");
+        });
         endOrClause();
     }
 
-    public void addSearchWildcardOrIgnoreCasFilters(String tableNameAlias, String[] fields, Object value){
+    public void addSearchWildcardOrIgnoreCasFilters(String tableNameAlias, String[] fields, Object value) {
+
+        String valueStr = "%" + String.valueOf(value).toLowerCase() + "%";
         startOrClause();
-        Stream.of(fields)
-                .forEach(field -> addSql("lower(" + tableNameAlias + "." + field + ") like '%" + String.valueOf(value).toLowerCase() + "%'"));
+        Stream.of(fields).forEach(field -> {
+            String param = convertFieldToParam(tableNameAlias + "." + field);
+            addSqlCriterion("lower(" + tableNameAlias + "." + field + ") like :" + param, param, valueStr);
+        });
         endOrClause();
     }
 
@@ -661,12 +667,15 @@ public class QueryBuilder {
             sql.append(field);
         }
         sql.append(addNot ? " not like " : " like ");
-        sql.append("'" + v + "'");
 
+        String param = convertFieldToParam(field);
+        sql.append(":"+param);
+
+        
         if (isFieldValueOptional) {
-            return addSqlCriterion("(" + field + " IS NULL or (" + sql.toString() + "))", null, null);
+            return addSqlCriterion("(" + field + " IS NULL or (" + sql.toString() + "))", param, v);
         } else {
-            return addSqlCriterion(sql.toString(), null, null);
+            return addSqlCriterion(sql.toString(), param, v);
         }
     }
 
