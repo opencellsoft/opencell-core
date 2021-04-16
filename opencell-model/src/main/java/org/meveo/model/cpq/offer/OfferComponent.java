@@ -14,7 +14,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -27,7 +26,7 @@ import org.meveo.model.cpq.tags.Tag;
 
 /**
  * @author Tarik FAKHOURI.
- * @author Mbarek-Ay
+ * s@author Mbarek-Ay
  * @version 10.0
  */
 @Entity
@@ -91,6 +90,9 @@ public class OfferComponent extends BaseEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "display")
     protected boolean display = Boolean.TRUE;
+
+    @Column(name = "product_set", length = 255)
+    private String productSet;
 
 	public OfferComponent() {
 		
@@ -258,6 +260,20 @@ public class OfferComponent extends BaseEntity {
 	 */
 	public void setQuantityDefault(Integer quantityDefault) {
 		this.quantityDefault = quantityDefault;
+	}
+
+	/**
+	 * @return the productSet
+	 */
+	public String getProductSet() {
+		return productSet;
+	}
+
+	/**
+	 * @param productSet the productSet to set
+	 */
+	public void setProductSet(String productSet) {
+		this.productSet = productSet;
 	}
 
 	
