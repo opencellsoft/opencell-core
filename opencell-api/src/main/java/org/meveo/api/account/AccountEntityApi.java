@@ -59,6 +59,8 @@ public class AccountEntityApi extends BaseApi {
             address.setAddress1(postData.getAddress().getAddress1());
             address.setAddress2(postData.getAddress().getAddress2());
             address.setAddress3(postData.getAddress().getAddress3());
+            address.setAddress4(postData.getAddress().getAddress4());
+            address.setAddress5(postData.getAddress().getAddress5());
             address.setZipCode(postData.getAddress().getZipCode());
             address.setCity(postData.getAddress().getCity());
             if (!StringUtils.isBlank(postData.getAddress().getCountry())) {
@@ -125,6 +127,12 @@ public class AccountEntityApi extends BaseApi {
             }
             if (postData.getAddress().getAddress3() != null) {
                 address.setAddress3(StringUtils.isEmpty(postData.getAddress().getAddress3()) ? null : postData.getAddress().getAddress3());
+            }
+            if (postData.getAddress().getAddress4() != null) {
+                address.setAddress3(StringUtils.isEmpty(postData.getAddress().getAddress4()) ? null : postData.getAddress().getAddress4());
+            }
+            if (postData.getAddress().getAddress5() != null) {
+                address.setAddress3(StringUtils.isEmpty(postData.getAddress().getAddress5()) ? null : postData.getAddress().getAddress5());
             }
             if (postData.getAddress().getZipCode() != null) {
                 address.setZipCode(StringUtils.isEmpty(postData.getAddress().getZipCode()) ? null : postData.getAddress().getZipCode());
