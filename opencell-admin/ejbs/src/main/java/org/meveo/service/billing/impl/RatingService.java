@@ -596,9 +596,11 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 if (pricePlan == null) {
                     throw new NoPricePlanException("No price plan matched for charge code " + bareWalletOperation.getCode());
 
-                } else if ((pricePlan.getAmountWithoutTax() == null && appProvider.isEntreprise()) || (pricePlan.getAmountWithTax() == null && !appProvider.isEntreprise())) {
-                    throw new NoPricePlanException("Price plan " + pricePlan.getId() + " does not contain amounts for charge " + bareWalletOperation.getCode());
-                }
+                } 
+                //for V11 needs
+//                else if ((pricePlan.getAmountWithoutTax() == null && appProvider.isEntreprise()) || (pricePlan.getAmountWithTax() == null && !appProvider.isEntreprise())) {
+//                    throw new NoPricePlanException("Price plan " + pricePlan.getId() + " does not contain amounts for charge " + bareWalletOperation.getCode());
+//                }
                 log.debug("Will apply priceplan {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
 
                 PricePlanMatrixVersion ppmVersion = pricePlanMatrixVersionService.getLastPublishedVersion(pricePlan.getCode());
