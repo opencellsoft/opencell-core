@@ -111,24 +111,32 @@ public class GenericPagingAndFilteringUtils {
     }
 
     public PaginationConfiguration getPaginationConfiguration(){
-        PaginationConfiguration aPagingConfig = paginationConfig;
-        reinitializePaginationConfiguration();
-        return aPagingConfig;
-    }
-
-    public void reinitializePaginationConfiguration(){
-        paginationConfig = new PaginationConfiguration(null );
+        return paginationConfig;
     }
 
     public PagingAndFiltering getPagingAndFiltering(){
-        PagingAndFiltering aPagingAndFiltering = pagingAndFiltering;
-        reinitializePagingAndFiltering();
-        return aPagingAndFiltering;
+        return pagingAndFiltering;
     }
 
-    public void reinitializePagingAndFiltering(){
-        pagingAndFiltering = new PagingAndFiltering();
-    }
+//    public PaginationConfiguration getPaginationConfiguration(){
+//        PaginationConfiguration aPagingConfig = paginationConfig;
+//        reinitializePaginationConfiguration();
+//        return aPagingConfig;
+//    }
+//
+//    public void reinitializePaginationConfiguration(){
+//        paginationConfig = new PaginationConfiguration(null );
+//    }
+//
+//    public PagingAndFiltering getPagingAndFiltering(){
+//        PagingAndFiltering aPagingAndFiltering = pagingAndFiltering;
+//        reinitializePagingAndFiltering();
+//        return aPagingAndFiltering;
+//    }
+//
+//    public void reinitializePagingAndFiltering(){
+//        pagingAndFiltering = new PagingAndFiltering();
+//    }
 
     public void generatePagingConfig(Class entityClass){
         Map<String, Object> filters = pagingAndFiltering.getFilters();
