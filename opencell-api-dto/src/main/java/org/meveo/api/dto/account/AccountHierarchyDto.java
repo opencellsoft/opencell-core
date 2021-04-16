@@ -127,6 +127,14 @@ public class AccountHierarchyDto implements Serializable {
     /** Address 3. */
 	@Schema(description = "the third adresse, to be used for account")
     private String address3;
+	
+	 /** Address 2. */
+    @Schema(description = "the 4 adresse, to be used for account")
+	private String address4;
+
+	    /** Address 3. */
+	@Schema(description = "the 5 adresse, to be used for account")
+	private String address5;
 
     /** Zip Code. */
 	@Schema(description = "zip code")
@@ -1125,4 +1133,34 @@ public class AccountHierarchyDto implements Serializable {
     public void setTaxCategoryCode(String taxCategoryCode) {
         this.taxCategoryCode = taxCategoryCode;
     }
+
+	/**
+	 * @return the address4
+	 */
+	public String getAddress4() {
+		return address4;
+	}
+
+	/**
+	 * @param address4 the address4 to set
+	 */
+	public void setAddress4(String address4) {
+		this.address4 = address4;
+	}
+
+	/**
+	 * @return the address5
+	 */
+	public String getAddress5() {
+		return address5;
+	}
+
+	/**
+	 * @param address5 the address5 to set
+	 */
+	public void setAddress5(String address5) {
+		this.address5 = address5;
+	}
+    
+    
 }
