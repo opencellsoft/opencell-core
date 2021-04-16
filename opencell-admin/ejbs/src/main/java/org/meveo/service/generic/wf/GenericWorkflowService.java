@@ -125,7 +125,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
      *
      * @param workflowInstance
      * @param genericWorkflow
-     * @return
+     * @return workflowInstance
      * @throws BusinessException
      */
 	public WorkflowInstance executeWorkflow(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
@@ -143,29 +143,12 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 			
 			log.trace("listByFromStatus: {}",  listByFromStatus);
 			
-
 			List<GWFTransition> executedTransition = getExecutedTransitions(genericWorkflow, workflowInstance, listByFromStatus);
 			log.trace("executedTransition: {}",  executedTransition);
 
 			for (GWFTransition gWFTransition : listByFromStatus) {
-
 				if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransition, genericWorkflow)) {
-					log.debug("Processing transition: {} on entity {}", gWFTransition, workflowInstance);
-					WorkflowInstanceHistory wfHistory;
-					if (genericWorkflow.isEnableHistory()) {
-						wfHistory = processTransition(workflowInstance, gWFTransition);
-						workflowInstanceHistoryService.create(wfHistory);
-					}
-
-					if (gWFTransition.getActionScript() != null) {
-						executeActionScript(iwfEntity, workflowInstance, genericWorkflow, gWFTransition);
-					}
-
-					WFStatus toStatus = wfStatusService.findByCodeAndGWF(gWFTransition.getToStatus(), genericWorkflow);
-					workflowInstance.setCurrentStatus(toStatus);
-
-					log.trace("Entity status will be updated to {}. Entity {}", workflowInstance, gWFTransition.getToStatus());
-					workflowInstance = workflowInstanceService.update(workflowInstance);
+				    workflowInstance = gWFTransitionService.executeTransition(gWFTransition, iwfEntity, workflowInstance, genericWorkflow);
 					executedTransition.add(gWFTransition);
 					
 					executeWorkflow(iwfEntity, workflowInstance, genericWorkflow);
@@ -179,34 +162,6 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
 		return workflowInstance;
 	}
-
-    private WorkflowInstanceHistory processTransition(WorkflowInstance workflowInstance, GWFTransition gWFTransition) {
-        WorkflowInstanceHistory wfHistory = new WorkflowInstanceHistory();
-        wfHistory.setActionDate(new Date());
-        wfHistory.setWorkflowInstance(workflowInstance);
-        wfHistory.setFromStatus(gWFTransition.getFromStatus());
-        wfHistory.setToStatus(gWFTransition.getToStatus());
-        wfHistory.setTransitionName(gWFTransition.getDescription());
-        wfHistory.setWorkflowInstance(workflowInstance);
-        return wfHistory;
-    }
-
-    private void executeActionScript(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow, GWFTransition gWFTransition) {
-        ScriptInstance scriptInstance = gWFTransition.getActionScript();
-        String scriptCode = scriptInstance.getCode();
-        ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
-        Map<String, Object> methodContext = new HashMap<>();
-        methodContext.put(GENERIC_WF, genericWorkflow);
-        methodContext.put(WF_INS, workflowInstance);
-        methodContext.put(IWF_ENTITY, iwfEntity);
-        methodContext.put(Script.CONTEXT_ACTION, scriptCode);
-        methodContext.put(WF_ACTUAL_TRANSITION, gWFTransition);
-        if (script == null) {
-            log.error("Script is null");
-            throw new BusinessException("script is null");
-        }
-        script.execute(methodContext);
-    }
 
     private List<GWFTransition> getExecutedTransitions(GenericWorkflow genericWorkflow, WorkflowInstance workflowInstance, List<GWFTransition> listByFromStatus) {
         List<GWFTransition> executedTransition = new ArrayList<>();
@@ -276,31 +231,16 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
         WorkflowInstance workflowInstance = ofNullable(workflowInstanceService.findByEntityIdAndGenericWorkflow(entity.getId(), genericWorkflow))
                 .orElseThrow(() -> new BusinessException("No workflow instance found for business entity " + entity.getId()));
         if (ignoreConditionEL) {
-            return executeTransition(transition, entity, workflowInstance, genericWorkflow);
+            return gWFTransitionService.executeTransition(transition, entity, workflowInstance, genericWorkflow);
         } else {
             return executeTransitionWithConditionEL(transition, entity, workflowInstance, genericWorkflow);
         }
     }
 
-    public WorkflowInstance executeTransition(GWFTransition transition, BusinessEntity entity,
-                                                                WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
-        if (genericWorkflow.isEnableHistory()) {
-            WorkflowInstanceHistory workflowInstanceHistory = processTransition(workflowInstance, transition);
-            workflowInstanceHistoryService.create(workflowInstanceHistory);
-        }
-        if (transition.getActionScript() != null) {
-            executeActionScript(entity, workflowInstance, genericWorkflow, transition);
-        }
-        WFStatus toStatus = wfStatusService.findByCodeAndGWF(transition.getToStatus(), genericWorkflow);
-        workflowInstance.setCurrentStatus(toStatus);
-        workflowInstance = workflowInstanceService.update(workflowInstance);
-        return workflowInstance;
-    }
-
     public WorkflowInstance executeTransitionWithConditionEL(GWFTransition transition, BusinessEntity entity,
                                                                        WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
         if (matchExpression(transition.getConditionEl(), entity)) {
-            return executeTransition(transition, entity, workflowInstance, genericWorkflow);
+            return gWFTransitionService.executeTransition(transition, entity, workflowInstance, genericWorkflow);
         } else {
             return null;
         }
