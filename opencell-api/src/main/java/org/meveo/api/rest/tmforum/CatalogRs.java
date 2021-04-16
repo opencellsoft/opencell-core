@@ -20,6 +20,7 @@ package org.meveo.api.rest.tmforum;
 
 import org.meveo.api.dto.catalog.*;
 import org.meveo.api.dto.response.ProductChargeTemplatesResponseDto;
+import org.meveo.api.dto.response.catalog.GetListProductTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
 
@@ -210,6 +211,15 @@ public interface CatalogRs extends IBaseRs {
     @Path("/productTemplate/list")
     public Response listProductTemplate(@QueryParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom,
             @QueryParam("validTo") @RestDateParam Date validTo);
+
+    /**
+     * Gets a productTemplates list.
+     *
+     * @return Return productTemplates list
+     */
+    @GET
+    @Path("/productTemplate/listGetAll")
+    GetListProductTemplateResponseDto listGetAllProductTemplates();
 
     /**
      * Enable a Product template with a given code
