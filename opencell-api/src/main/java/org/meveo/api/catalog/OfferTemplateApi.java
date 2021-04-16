@@ -642,6 +642,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerComponent.setQuantityDefault(offerComponentDto.getQuantityDefault());
         offerComponent.setQuantityMin(offerComponentDto.getQuantityMin());
         offerComponent.setQuantityMax(offerComponentDto.getQuantityMax());
+        offerComponent.setProductSet(offerComponentDto.getProductSet());
         return offerComponent;
     }
 
@@ -791,6 +792,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         				offerProductsDto.setQuantityDefault(offerComponent.getQuantityDefault());
         				offerProductsDto.setQuantityMin(offerComponent.getQuantityMin());
         				offerProductsDto.setQuantityMax(offerComponent.getQuantityMax());
+        				offerProductsDto.setProductSet(offerComponent.getProductSet());
         				offerProducts.add(offerProductsDto);
         			} 
 
