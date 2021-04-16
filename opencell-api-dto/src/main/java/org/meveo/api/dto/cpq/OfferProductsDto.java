@@ -48,6 +48,9 @@ public class OfferProductsDto extends BaseEntityDto {
 	private Integer quantityMax;
 
 	private Integer quantityDefault;
+
+    @Schema(description = "product set regroup product in the pack")
+    private String productSet;
     
     /**
      * Instantiates a new Offer Component dto.
@@ -248,6 +251,24 @@ public class OfferProductsDto extends BaseEntityDto {
 	 */
 	public void setQuantityDefault(Integer quantityDefault) {
 		this.quantityDefault = quantityDefault;
+	}
+
+
+
+	/**
+	 * @return the productSet
+	 */
+	public String getProductSet() {
+		return productSet;
+	}
+
+
+
+	/**
+	 * @param productSet the productSet to set
+	 */
+	public void setProductSet(String productSet) {
+		this.productSet = productSet;
 	}
 
 	
