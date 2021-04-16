@@ -348,6 +348,20 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
     }
 
     @Override
+    public GetListProductTemplateResponseDto listGetAllProductTemplates() {
+
+        GetListProductTemplateResponseDto result = new GetListProductTemplateResponseDto();
+
+        try {
+            result = productTemplateApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
     public Response getProductChargeTemplate(String code) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.debug("getProductChargeTemplate by code {}", code);

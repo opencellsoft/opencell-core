@@ -18,33 +18,21 @@
 
 package org.meveo.api.catalog;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.security.config.annotation.FilterProperty;
-import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListProductTemplateResponseDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidImageData;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.exception.*;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.filter.ObjectFilter;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
@@ -57,6 +45,13 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.primefaces.model.SortOrder;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi(edward.legaspi@manaty.net)
@@ -365,6 +360,25 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
             List<ProductTemplate> productTemplates = productTemplateService.list(paginationConfig);
             for (ProductTemplate productTemplate : productTemplates) {
                 result.addProductTemplate(convertProductTemplateToDto(productTemplate));
+            }
+        }
+
+        return result;
+    }
+
+    public GetListProductTemplateResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        GetListProductTemplateResponseDto result = new GetListProductTemplateResponseDto();
+        Long totalCount = productTemplateService.count(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
+        result.setPaging( pagingAndFiltering );
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        List<ProductTemplate> productTemplates = productTemplateService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (productTemplates != null) {
+            for (ProductTemplate productTemplate : productTemplates) {
+                result.getListProductTemplate().add(
+                        new ProductTemplateDto(productTemplate,
+                                entityToDtoConverter.getCustomFieldsDTO(productTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE),
+                                false, true));
             }
         }
 

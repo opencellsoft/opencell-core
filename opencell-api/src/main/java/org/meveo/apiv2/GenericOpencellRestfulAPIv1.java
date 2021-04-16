@@ -278,15 +278,13 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + ((Path) anAnnotation).value() + "s",
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/sellers",
-                                    aMapRestful );
+                            fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/sellers", aMapRestful );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/title" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/titles",
                                     ((Path) anAnnotation).value() );
 
-                            fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/titles",
-                                    aMapRestful );
+                            fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/titles", aMapRestful );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/customer" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customers",
@@ -766,20 +764,37 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/offerTemplateCategories/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "offerTemplateCategory" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/catalogManagement" ) ) {
+                            // Handle entity ProductChargeTemplate
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/productChargeTemplates", ((Path) anAnnotation).value() + "/productChargeTemplate" );
 
                             fillUpRestfulURLsMap( CATALOG + "/productChargeTemplates", aMapRestful );
 
                             // Handling enable and disable a productChargeTemplate
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/productChargeTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
-                                    ((Path) anAnnotation).value() );
+                                    ((Path) anAnnotation).value() + "/productChargeTemplate" );
 
                             MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/productChargeTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
-                                    ((Path) anAnnotation).value() );
+                                    ((Path) anAnnotation).value() + "/productChargeTemplate" );
 
                             fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/productChargeTemplates/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "productChargeTemplate" );
 
                             fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/productChargeTemplates/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "productChargeTemplate" );
+
+                            // Handle entity ProductTemplate
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + CATALOG + "/productTemplates", ((Path) anAnnotation).value() + "/productTemplate" );
+
+                            fillUpRestfulURLsMap( CATALOG + "/productTemplates", aMapRestful );
+
+                            // Handling enable and disable a productTemplate
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/productTemplates\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() + "/productTemplate" );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/catalog\\/productTemplates\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() + "/productTemplate" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/productTemplates/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "productTemplate" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( CATALOG + "/productTemplates/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "productTemplate" );
                         }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
