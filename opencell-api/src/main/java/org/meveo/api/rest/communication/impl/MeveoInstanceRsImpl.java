@@ -18,8 +18,6 @@
 
 package org.meveo.api.rest.communication.impl;
 
-import javax.inject.Inject;
-
 import org.meveo.api.communication.MeveoInstanceApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -28,6 +26,9 @@ import org.meveo.api.dto.response.communication.MeveoInstanceResponseDto;
 import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
 import org.meveo.api.rest.communication.MeveoInstanceRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.inject.Inject;
 
 /**
  * 
@@ -93,6 +94,7 @@ public class MeveoInstanceRsImpl extends BaseRs implements MeveoInstanceRs {
     @Override
     public MeveoInstancesResponseDto list() {
         MeveoInstancesResponseDto result = new MeveoInstancesResponseDto();
+        result.setPaging(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
 
         try {
             result.setMeveoInstances(meveoInstanceApi.list());
