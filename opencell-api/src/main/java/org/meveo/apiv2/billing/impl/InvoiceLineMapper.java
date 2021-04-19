@@ -1,11 +1,15 @@
 package org.meveo.apiv2.billing.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.apiv2.billing.ImmutableInvoiceLine;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.commons.utils.QueryBuilder;
@@ -34,6 +38,7 @@ public class InvoiceLineMapper extends ResourceMapper<org.meveo.apiv2.billing.In
 		return ImmutableInvoiceLine.builder().billingAccountCode(getCode(entity.getBillingAccount()))
 				.amountWithoutTax(entity.getAmountWithoutTax())
 				.amountTax(entity.getAmountTax()).amountWithTax(entity.getAmountWithTax())
+				.id(entity.getId())
 				/*
 				.billingRun(getCode(entity.getBillingRun())).recordedInvoiceLine(getCode(entity.getRecordedInvoiceLine()))
 				.status(entity.getStatus()).paymentStatus(entity.getPaymentStatus())

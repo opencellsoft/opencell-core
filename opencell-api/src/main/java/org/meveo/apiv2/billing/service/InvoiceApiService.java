@@ -3,6 +3,7 @@
  */
 package org.meveo.apiv2.billing.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -12,6 +13,8 @@ import javax.inject.Inject;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.billing.BasicInvoice;
+import org.meveo.apiv2.billing.ImmutableInvoiceLine;
+import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
 import org.meveo.apiv2.billing.InvoiceLine;
 import org.meveo.apiv2.billing.InvoiceLineInput;
 import org.meveo.apiv2.billing.InvoiceLinesInput;
@@ -141,11 +144,17 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 * @param invoice
 	 * @param invoiceLines
 	 */
-	public void createLines(Invoice invoice, InvoiceLinesInput invoiceLinesInput) {
+	public InvoiceLinesInput createLines(Invoice invoice, InvoiceLinesInput invoiceLinesInput) {
+		ImmutableInvoiceLinesInput.Builder result = ImmutableInvoiceLinesInput.builder();
 		for(InvoiceLine invoiceLineRessource: invoiceLinesInput.getInvoiceLines()) {
-			invoiceLinesService.create(invoice, invoiceLineRessource);
+			org.meveo.model.cpq.commercial.InvoiceLine invoiceLine  = invoiceLinesService.create(invoice, invoiceLineRessource);
+			invoiceLineRessource =  ImmutableInvoiceLine.copyOf(invoiceLineRessource).withId(invoiceLine.getId());
+			result.addInvoiceLines(invoiceLineRessource);
 		}
+		result.skipValidation(invoiceLinesInput.getSkipValidation());
+		return result.build();
 	}
+	
 
 	/**
 	 * @param invoice

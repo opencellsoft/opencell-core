@@ -1,5 +1,7 @@
 package org.meveo.apiv2.billing.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -15,8 +17,13 @@ import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.ImmutableFile;
 import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.billing.ImmutableInvoices;
+import org.meveo.apiv2.billing.ImmutableInvoiceLine;
+import org.meveo.apiv2.billing.ImmutableInvoiceLines;
+import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
 import org.meveo.apiv2.billing.InvoiceInput;
+import org.meveo.apiv2.billing.InvoiceLine;
 import org.meveo.apiv2.billing.InvoiceLineInput;
+import org.meveo.apiv2.billing.InvoiceLines;
 import org.meveo.apiv2.billing.InvoiceLinesInput;
 import org.meveo.apiv2.billing.InvoiceLinesToRemove;
 import org.meveo.apiv2.billing.Invoices;
@@ -76,6 +83,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 						.offset(offset).limit(limit).total(invoiceCount).build());
 		return Response.ok().cacheControl(cc).tag(etag).entity(invoices).build();
 	}
+	
 
 	private org.meveo.apiv2.billing.Invoice toResourceInvoiceWithLink(org.meveo.apiv2.billing.Invoice invoice) {
 		return ImmutableInvoice.copyOf(invoice)
@@ -138,13 +146,13 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	@Override
 	public Response addInvoiceLines(Long id, InvoiceLinesInput invoiceLinesInput) {
 		Invoice invoice = findInvoiceEligibleToUpdate(id);
-		invoiceApiService.createLines(invoice, invoiceLinesInput);
+		invoiceLinesInput = invoiceApiService.createLines(invoice, invoiceLinesInput);
 		if(invoiceLinesInput.getSkipValidation()==null || !invoiceLinesInput.getSkipValidation()) {
 			invoiceApiService.rebuildInvoice(invoice);
 		}
-		return Response.created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
-                .build();
+		return Response.ok().entity(invoiceLinesInput).build();
 	}
+	
 	
 	@Override
 	public Response updateInvoiceLine(Long id, Long lineId, InvoiceLineInput invoiceLineInput) {
