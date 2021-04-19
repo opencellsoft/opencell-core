@@ -100,6 +100,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String PRODUCT_TEMPLATE = "/catalogManagement/productTemplate";
     private static final String CHART = "/chart";
     private static final String EMAIL_TEMPLATE = "/communication/emailTemplate";
+    private static final String MEVEO_INSTANCE = "/communication/meveoInstance";
 
     private static final Set<String> SET_GET_ALL = new HashSet<>(Arrays.asList(WALLET_OPERATION, PRICE_PLAN, COUNTRY_ISO,
                                                     CURRENCY_ISO, LANGUAGE_ISO, CUSTOMER, USER, INVOICE, ACCOUNTING_CODE,
@@ -222,7 +223,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             // special handle for jobReport, contact, taxCategory, taxClass
             else if ( pathIBaseRS.equals("/job/jobReport") || pathIBaseRS.equals(CONTACT)
                     || pathIBaseRS.equals(TAX_CATEGORY) || pathIBaseRS.equals(TAX_CLASS)
-                    || pathIBaseRS.equals(FILE_FORMAT) || pathIBaseRS.equals(EMAIL_TEMPLATE) ) {
+                    || pathIBaseRS.equals(FILE_FORMAT) || pathIBaseRS.equals(EMAIL_TEMPLATE)
+                    || pathIBaseRS.equals(MEVEO_INSTANCE) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "code=" + entityCode);
             }

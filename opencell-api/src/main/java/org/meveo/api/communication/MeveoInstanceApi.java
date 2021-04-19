@@ -18,12 +18,6 @@
 
 package org.meveo.api.communication;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
@@ -31,12 +25,18 @@ import org.meveo.api.dto.communication.MeveoInstanceDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.crm.impl.CustomerService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -202,7 +202,7 @@ public class MeveoInstanceApi extends BaseApi{
     public List<MeveoInstanceDto> list() throws MeveoApiException {
 
         List<MeveoInstanceDto> result = new ArrayList<MeveoInstanceDto>();
-        List<MeveoInstance> meveoInstances = meveoInstanceService.list();
+        List<MeveoInstance> meveoInstances = meveoInstanceService.list(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         if (meveoInstances != null) {
             for (MeveoInstance meveoInstance : meveoInstances) {
                 result.add(new MeveoInstanceDto(meveoInstance));
