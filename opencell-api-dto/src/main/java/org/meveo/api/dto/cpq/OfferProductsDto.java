@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * 
  * @author Tarik FAKHOURI
