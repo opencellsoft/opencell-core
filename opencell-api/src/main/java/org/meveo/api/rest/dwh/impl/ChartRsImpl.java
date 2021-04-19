@@ -18,21 +18,23 @@
 
 package org.meveo.api.rest.dwh.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.dwh.BarChartDto;
 import org.meveo.api.dto.dwh.ChartDto;
 import org.meveo.api.dto.dwh.LineChartDto;
 import org.meveo.api.dto.dwh.PieChartDto;
+import org.meveo.api.dto.response.ChartsResponseDto;
 import org.meveo.api.dto.response.dwh.GetChartResponse;
 import org.meveo.api.dwh.ChartApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.dwh.ChartRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -86,6 +88,20 @@ public class ChartRsImpl extends BaseRs implements ChartRs {
 
         try {
             result.setChartDto(chartApi.find(chartCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ChartsResponseDto listGetAll() {
+
+        ChartsResponseDto result = new ChartsResponseDto();
+
+        try {
+            result = chartApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

@@ -18,18 +18,28 @@
 
 package org.meveo.api.dto.dwh;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.model.dwh.Chart;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.EnableBusinessDto;
-import org.meveo.model.dwh.Chart;
 
 /**
  * The Class ChartDto.
  *
  * @author Edward P. Legaspi
  */
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    property = "chartType")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = PieChartDto.class, name = "pieChartDto"),
+        @JsonSubTypes.Type(value = LineChartDto.class, name = "lineChartDto"),
+        @JsonSubTypes.Type(value = BarChartDto.class, name = "barChartDto")
+})
 @XmlRootElement(name = "Chart")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChartDto extends EnableBusinessDto {

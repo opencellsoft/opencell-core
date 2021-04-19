@@ -98,6 +98,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String TRIGGERED_EDR = "/catalog/triggeredEdr";
     private static final String PRODUCT_CHARGE_TEMPLATE = "/catalogManagement/productChargeTemplate";
     private static final String PRODUCT_TEMPLATE = "/catalogManagement/productTemplate";
+    private static final String CHART = "/chart";
 
     private static final Set<String> SET_GET_ALL = new HashSet<>(Arrays.asList(WALLET_OPERATION, PRICE_PLAN, COUNTRY_ISO,
                                                     CURRENCY_ISO, LANGUAGE_ISO, CUSTOMER, USER, INVOICE, ACCOUNTING_CODE,
@@ -107,7 +108,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                                                     CUSTOMER_ACCOUNT, TITLE, BILLING_ACCOUNT, USER_ACCOUNT, SERVICE_TEMPLATE,
                                                     BUSINESS_ACCOUNT_MODEL, BUSINESS_PRODUCT_MODEL, BUSINESS_SERVICE_MODEL,
                                                     COUNTER_TEMPLATE, DISCOUNT_PLAN, DISCOUNT_PLAN_ITEM, OFFER_TEMPLATE_CATEGORY,
-                                                    TRIGGERED_EDR, PRODUCT_CHARGE_TEMPLATE, PRODUCT_TEMPLATE));
+                                                    TRIGGERED_EDR, PRODUCT_CHARGE_TEMPLATE, PRODUCT_TEMPLATE, CHART));
 
     private static final String API_REST = "api/rest";
 
@@ -576,6 +577,9 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             else if ( pathIBaseRS.equals( OFFER_TEMPLATE_CATEGORY ) )
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "offerTemplateCategoryCode=" + entityCode);
+            else if ( pathIBaseRS.equals( CHART ) )
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "chartCode=" + entityCode);
             else
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + METHOD_DELETE + entityCode);
