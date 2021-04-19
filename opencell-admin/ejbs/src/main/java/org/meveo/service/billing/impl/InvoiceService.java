@@ -3206,6 +3206,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.trace("ratedTransactions.totalAmountWithoutTax={}", ratedTransactions != null ? ratedTransactions.stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum() : "0");
         }
 
+        boolean linkInvoiceToOrders = ParamBean.getInstance().getBooleanValue("order.linkInvoiceToOrders", true);
+
         boolean taxWasRecalculated = false;
         for (RatedTransaction ratedTransaction : ratedTransactions) {
 
@@ -3264,7 +3266,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.addInvoiceAggregate(scAggregate);
             }
 
-            if (!(entityToInvoice instanceof Order) && ratedTransaction.getOrderNumber() != null) {
+            if (!(entityToInvoice instanceof Order) && linkInvoiceToOrders && ratedTransaction.getOrderNumber() != null) {
                 orderNumbers.add(ratedTransaction.getOrderNumber());
             }
 

@@ -93,13 +93,6 @@ public class GWFTransition extends BaseEntity implements Comparable<GWFTransitio
     private GenericWorkflow genericWorkflow;
 
     /**
-     * The action script
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "action_script_id")
-    private ScriptInstance actionScript;
-
-    /**
      * Expression to check if transition applies
      */
     @Column(name = "condition_el", length = 2000)
@@ -108,7 +101,7 @@ public class GWFTransition extends BaseEntity implements Comparable<GWFTransitio
 
     @OneToMany(mappedBy = "transition", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("priority ASC")
-    private List<Action> actions = new ArrayList<>();
+    private List<GWFTransitionAction> actions = new ArrayList<>();
 
     public String getUuid() {
         return uuid;
@@ -184,19 +177,11 @@ public class GWFTransition extends BaseEntity implements Comparable<GWFTransitio
         this.genericWorkflow = genericWorkflow;
     }
 
-    public ScriptInstance getActionScript() {
-        return actionScript;
-    }
-
-    public void setActionScript(ScriptInstance actionScript) {
-        this.actionScript = actionScript;
-    }
-
-    public List<Action> getActions() {
+    public List<GWFTransitionAction> getActions() {
         return actions;
     }
 
-    public void setActions(List<Action> actions) {
+    public void setActions(List<GWFTransitionAction> actions) {
         this.actions = actions;
     }
 

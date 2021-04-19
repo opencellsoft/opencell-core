@@ -277,7 +277,6 @@ public class GenericWorkflowBean extends CustomFieldBean<GenericWorkflow> {
             wfTrs.setToStatus(gWFTransition.getToStatus());
             wfTrs.setConditionEl(gWFTransition.getConditionEl());
             wfTrs.setDescription(gWFTransition.getDescription());
-            wfTrs.setActionScript(gWFTransition.getActionScript());
 
             gWFTransitionService.update(wfTrs);
 

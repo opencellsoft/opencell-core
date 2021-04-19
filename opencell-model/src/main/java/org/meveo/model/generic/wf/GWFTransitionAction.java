@@ -16,7 +16,7 @@ import java.util.Objects;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "wf_generic_action_seq") })
 
-public class Action extends BaseEntity implements Comparable<Action> {
+public class GWFTransitionAction extends BaseEntity implements Comparable<GWFTransitionAction> {
 
     @Column(name = "uuid", nullable = false, updatable = false, length = 60)
     @Size(max = 60)
@@ -160,7 +160,7 @@ public class Action extends BaseEntity implements Comparable<Action> {
     }
 
     @Override
-    public int compareTo(Action action) {
+    public int compareTo(GWFTransitionAction action) {
         return this.priority - action.priority;
     }
 
@@ -170,10 +170,10 @@ public class Action extends BaseEntity implements Comparable<Action> {
             return true;
         } else if (obj == null) {
             return false;
-        } else if (!(obj instanceof Action)) {
+        } else if (!(obj instanceof GWFTransitionAction)) {
             return false;
         }
-        Action other = (Action) obj;
+        GWFTransitionAction other = (GWFTransitionAction) obj;
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }

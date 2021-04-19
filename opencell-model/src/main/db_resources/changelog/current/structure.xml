@@ -3885,6 +3885,7 @@ END $$;]]>
         <addForeignKeyConstraint baseColumnNames="action_script_id" baseTableName="wf_generic_action" constraintName="fk_wf_generic_action_script_id"
                                  deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+                                 
     </changeSet>
     <changeSet id="#5680_20201126" author="khalidHORRI">
         <addColumn tableName="billing_invoice">
@@ -4232,5 +4233,13 @@ END $$;]]>
         </sql>
     </changeSet>
     
+    <changeSet id="#5214_20200415_migration" author="AbdelmounaimAkadid">
+    	<sql>INSERT INTO ${db.schema.adapted}wf_generic_action(id, version, priority, action_script_id, type, condition_el, transition_id) 
+        		SELECT nextval('wf_generic_action_seq'), 0, 0, action_script_id, 'ACTION_SCRIPT', '#{true}', id from wf_generic_transition</sql>
+        		
+        <sql>update ${db.schema.adapted}wf_generic_action set uuid = id</sql>
+        
+    	<dropColumn columnName="action_script_id" tableName="wf_generic_transition" />
+    </changeSet>    
     
 </databaseChangeLog>

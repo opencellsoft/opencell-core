@@ -3,6 +3,7 @@ package org.meveo.apiv2.generic.core.filter.filtermapper;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 import org.apache.commons.lang.reflect.FieldUtils;
@@ -32,6 +33,7 @@ public class ObjectMapper extends FilterMapper {
             if(value instanceof Map && !((Map) value).containsKey("id")){
                 final Object targetInstanceHolder = type.newInstance();
                 Map<String, Object> innerValue = (Map) value;
+                Map<String, Object> castMap = new TreeMap<String, Object>();
                 innerValue.keySet()
                         .stream()
                         .map(key -> Collections.singletonMap(key, new FactoryFilterMapper().create(key.replaceFirst("[a-zA-Z]* ",""), innerValue.get(key), null, serviceFunction, type).map()))
@@ -39,14 +41,17 @@ public class ObjectMapper extends FilterMapper {
                         .forEach(entry -> {
                             try {
                                 FieldUtils.writeField(targetInstanceHolder, entry.getKey().replaceFirst("[a-zA-Z]* ",""), entry.getValue(), true);
+                                if(innerValue.get(entry.getKey()).getClass()!=entry.getValue().getClass()){
+                                	castMap.put(entry.getKey(), entry.getValue());
+                                }
                             } catch (IllegalAccessException e) {
                                 log.error("error = {}", e);
                             }
                         });
                 target = targetInstanceHolder;
-
+                castMap.entrySet().stream().forEach(entry->innerValue.put(entry.getKey(), entry.getValue()));
                 if(target instanceof BaseEntity && ((BaseEntity) target).isTransient()){// handel inlist in the reference filters by verifing if the map value is a list or single value
-                    target = serviceFunction.apply(target.getClass()).list(new PaginationConfiguration((Map) value));
+                    target = serviceFunction.apply(target.getClass()).list(new PaginationConfiguration(innerValue));
                 }
             } else{
                 target = new FactoryFilterMapper().create("id", value, null, serviceFunction, type).map();
