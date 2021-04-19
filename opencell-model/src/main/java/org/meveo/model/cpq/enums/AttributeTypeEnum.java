@@ -165,6 +165,12 @@ public enum AttributeTypeEnum {
 		public ColumnTypeEnum getColumnType(Boolean isRange) {
 			return ColumnTypeEnum.String;
 		}
+	},
+	BOOLEAN {
+		@Override
+		public ColumnTypeEnum getColumnType(Boolean isRange) {
+			return ColumnTypeEnum.Boolean;
+		}
 	};
 
 	public abstract ColumnTypeEnum getColumnType(Boolean isRange);

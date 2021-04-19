@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -56,6 +57,7 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
@@ -66,6 +68,7 @@ import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
@@ -79,6 +82,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.rating.RatingResult;
@@ -587,7 +591,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 boolean chargeDatesAlreadyAdvanced = false;
 
                 // If charge is not applicable for current period, skip it
-                if (!isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
+                if (!isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression()) || ignoreChargeTemplate(chargeInstance)) {
                     log.debug("IPIEL: not rating chargeInstance with id={}, filter expression evaluated to FALSE", chargeInstance.getId());
 
                 } else {
@@ -1492,5 +1496,21 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      */
     public void detachWOsFromSubscription(Subscription subscription) {
         getEntityManager().createNamedQuery("WalletOperation.detachWOsFromSubscription").setParameter("subscription", subscription).executeUpdate();
+    }
+
+    public boolean ignoreChargeTemplate(ChargeInstance chargeInstance){
+        ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
+        if(serviceInstance.getProductVersion() != null){
+            boolean dontApplyCharge = serviceInstance.getAttributeInstances()
+                    .stream()
+                    .filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
+                    .filter(attributeInstance -> attributeInstance.getAttribute().getChargeTemplates().contains(chargeInstance.getChargeTemplate()))
+                    .anyMatch(attributeInstance -> !Boolean.valueOf(attributeInstance.getStringValue()));
+            if(dontApplyCharge){
+                log.debug(String.format("charge %s will be ignored, cause it was ignored by an attribute", chargeInstance.getChargeTemplate().getCode()));
+                return true;
+            }
+        }
+        return false;
     }
 }

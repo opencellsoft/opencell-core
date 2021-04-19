@@ -147,6 +147,17 @@ public enum ColumnTypeEnum {
         public boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue) {
             return pricePlanMatrixValue.getFromDoubleValue() == null && pricePlanMatrixValue.getToDoubleValue() == null;
         }
+    },
+    Boolean {
+        @Override
+        public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
+            return true;
+        }
+
+        @Override
+        public boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue) {
+            return true;
+        }
     };
 
     public abstract boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue);
