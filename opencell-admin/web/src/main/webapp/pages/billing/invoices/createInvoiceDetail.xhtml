@@ -157,7 +157,8 @@
                                             <p:row>
                                                 <p:column headerText="#{messages['ratedTransaction.usageDate']}" width="90" />
                                                 <p:column headerText="#{messages['BusinessEntity.description']}" width="130" />
-                                                <p:column headerText="#{messages['ratedTransaction.unitAmountWithoutTax']}" width="100" />
+                                                <p:column headerText="#{messages['ratedTransaction.unitAmountWithoutTax']}" width="100" rendered="#{appProvider.isEntreprise()}" />
+                                                <p:column headerText="#{messages['ratedTransaction.unitAmountWithTax']}" width="100" rendered="#{!appProvider.isEntreprise()}" />
                                                 <p:column headerText="#{messages['invoice.quantity']}" width="60" />
                                                 <p:column headerText="#{messages['ratedTransaction.param1']}" width="100" />
                                                 <p:column headerText="#{messages['ratedTransaction.param2']}" width="100" />
@@ -185,8 +186,15 @@
                                             </h:inputText>
 
                                         </p:column>
-                                        <p:column>
+                                        <p:column rendered="#{appProvider.isEntreprise()}">
                                             <p:inputText value="#{rated.unitAmountWithoutTax}" label="#{messages['ratedTransaction.unitAmountWithoutTax']}" size="10">
+                                                <p:keyFilter mask="num" />
+                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
+                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column rendered="#{!appProvider.isEntreprise()}">
+                                            <p:inputText value="#{rated.unitAmountWithTax}" label="#{messages['ratedTransaction.unitAmountWithTax']}" size="10">
                                                 <p:keyFilter mask="num" />
                                                 <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
                                                     update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
