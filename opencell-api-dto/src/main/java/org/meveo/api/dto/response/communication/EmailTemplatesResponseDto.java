@@ -18,16 +18,11 @@
 
 package org.meveo.api.dto.response.communication;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.meveo.api.dto.communication.EmailTemplateDto;
-import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.api.dto.response.SearchResponse;
+
+import javax.xml.bind.annotation.*;
+import java.util.List;
 
 /**
  * The Class EmailTemplatesResponseDto.
@@ -36,7 +31,7 @@ import org.meveo.api.dto.response.BaseResponse;
  */
 @XmlRootElement(name = "EmailTemplatesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EmailTemplatesResponseDto extends BaseResponse {
+public class EmailTemplatesResponseDto extends SearchResponse {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -7682857831421991842L;
