@@ -1586,7 +1586,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 	 * @return
 	 */
 	public RatedTransaction createRatedTransaction(String billingAccountCode, String userAccountCode,
-			String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode,
+			String subscriptionCode, String serviceInstanceCode, String chargeInstanceCode, Date usageDate,
 			BigDecimal unitAmountWithoutTax, BigDecimal quantity) {
 
 		String errors = "";
@@ -1605,6 +1605,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		if (!errors.isBlank()) {
 			throw new ValidationException("Missing fields to create RatedTransaction : " + errors);
 		}
+		usageDate = usageDate == null? new Date() : usageDate;
 		
 		BillingAccount billingAccount = (BillingAccount) tryToFindByEntityClassAndCode(BillingAccount.class,
 				billingAccountCode);
@@ -1628,7 +1629,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 		BigDecimal AmountWithoutTax = unitAmountWithoutTax.multiply(quantity);
 		BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(AmountWithoutTax, AmountWithoutTax, taxPercent,
 				appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-		RatedTransaction rt = new RatedTransaction(new Date(), unitAmounts[0], unitAmounts[1], unitAmounts[2], quantity,
+		RatedTransaction rt = new RatedTransaction(usageDate, unitAmounts[0], unitAmounts[1], unitAmounts[2], quantity,
 				amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, userAccount,
 				null, null, null, null, null, null, subscription, null, null, null, subscription.getOffer(), null,
 				serviceInstance.getCode(), serviceInstance.getCode(), null, null, subscription.getSeller(), taxInfo.tax,

@@ -58,7 +58,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	 */
 	public RatedTransaction create(org.meveo.apiv2.billing.RatedTransactionInput input) {
 		return ratedTransactionService.createRatedTransaction(input.getBillingAccountCode(), input.getUserAccountCode(),
-				input.getSubscriptionCode(), input.getServiceInstanceCode(), input.getChargeInstanceCode(),
+				input.getSubscriptionCode(), input.getServiceInstanceCode(), input.getChargeInstanceCode(), input.getUsageDate(),
 				input.getUnitAmountWithoutTax(), input.getQuantity());
 	}
 
