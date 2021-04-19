@@ -53,7 +53,6 @@ public class InvoiceTypeDto extends BusinessEntityDto {
     private static final long serialVersionUID = 1L;
 
     /** The occ template code. */
-    @XmlElement(required = true)
     private String occTemplateCode;
 
     /** The occ template negative code. */
