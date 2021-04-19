@@ -18,24 +18,17 @@
 
 package org.meveo.api.rest.dwh;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.dwh.BarChartDto;
 import org.meveo.api.dto.dwh.ChartDto;
 import org.meveo.api.dto.dwh.LineChartDto;
 import org.meveo.api.dto.dwh.PieChartDto;
+import org.meveo.api.dto.response.ChartsResponseDto;
 import org.meveo.api.dto.response.dwh.GetChartResponse;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 @Path("/chart")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -142,6 +135,15 @@ public interface ChartRs extends IBaseRs {
     @GET
     @Path("/")
     GetChartResponse find(@QueryParam("chartCode") String chartCode);
+
+    /**
+     * List Calendars matching a given criteria
+     *
+     * @return List of Calendars
+     */
+    @GET
+    @Path("/listGetAll")
+    ChartsResponseDto listGetAll();
 
     /**
      * Create new or update an existing chart with a given code
