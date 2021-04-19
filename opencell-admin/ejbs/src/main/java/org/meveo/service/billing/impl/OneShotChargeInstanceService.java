@@ -23,8 +23,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
@@ -51,7 +49,6 @@ import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
-import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.service.base.BusinessService;
@@ -287,7 +284,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
         create(oneShotChargeInstance);
 
-        if (!walletOperationService.isChargeMatch(oneShotChargeInstance, chargeTemplate.getFilterExpression())) {
+        if (!walletOperationService.isChargeMatch(oneShotChargeInstance, chargeTemplate.getFilterExpression()) || walletOperationService.ignoreChargeTemplate(oneShotChargeInstance)) {
             log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", oneShotChargeInstance.getCode());
             return oneShotChargeInstance;
         }
@@ -332,6 +329,10 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             return;
         }
 
+        if(walletOperationService.ignoreChargeTemplate(oneShotChargeInstance)){
+            return;
+        }
+
         walletOperationService.applyOneShotWalletOperation(oneShotChargeInstance.getSubscription(), oneShotChargeInstance, quantity, null, chargeDate, false, orderNumberOverride, chargeMode);
 
         oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
@@ -356,6 +357,10 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeInstance.getChargeTemplate().getFilterExpression())) {
             log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", oneShotChargeInstance.getCode());
             return null;
+        }
+
+        if(walletOperationService.ignoreChargeTemplate(oneShotChargeInstance)){
+           return null;
         }
 
         WalletOperation wo = walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effectiveDate, true, subscription.getOrderNumber(),

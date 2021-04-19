@@ -283,6 +283,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
     public List<WalletOperation> applyRecurringCharge(RecurringChargeInstance recurringChargeInstance, Date maxDate, boolean isMaxDateInclusive, boolean isVirtual, ChargeApplicationModeEnum applicationMode)
             throws BusinessException {
 
+        if(walletOperationService.ignoreChargeTemplate(recurringChargeInstance)){
+            return new ArrayList<>();
+        }
+
         if (applicationMode == null) {
             applicationMode = ChargeApplicationModeEnum.SUBSCRIPTION;
         }
