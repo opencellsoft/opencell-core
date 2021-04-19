@@ -1,6 +1,7 @@
 package org.meveo.apiv2.billing;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.annotation.Nullable;
 
@@ -28,6 +29,9 @@ public interface RatedTransactionInput extends Resource {
 
 	@Nullable
 	String getChargeInstanceCode();
+
+	@Nullable
+	Date getUsageDate();
 
 	BigDecimal getUnitAmountWithoutTax();
 
