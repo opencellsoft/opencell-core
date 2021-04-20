@@ -832,6 +832,22 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             fillUpRestfulURLsMapWithSpecialURL( "/entityCustomization/entities/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "entity" );
                         }
+                        else if ( ((Path) anAnnotation).value().equals( "/customEntityInstance" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/customEntityInstances", ((Path) anAnnotation).value() );
+
+                            fillUpRestfulURLsMap( "/customEntityInstances", aMapRestful );
+
+                            // Handling enable and disable a customEntityInstance
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/customEntityInstances\\/" + CODE_REGEX + "\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() + "/entity" );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/customEntityInstances\\/" + CODE_REGEX + "\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() + "/entity" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( "/customEntityInstances/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "customEntityInstance" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( "/customEntityInstances/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "customEntityInstance" );
+                        }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
                                     API_VERSION + Inflector.getInstance().pluralize( ((Path) anAnnotation).value() ),

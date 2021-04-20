@@ -20,7 +20,7 @@ public interface GenericResourceAPIv1 {
 
     @POST
     @Path("/{segments:.*}")
-    Response postRequest( String postData ) throws URISyntaxException;
+    Response postRequest( String postData ) throws URISyntaxException, JsonProcessingException;
 
     @PUT
     @Path("/{segments:.*}")

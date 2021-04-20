@@ -102,6 +102,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String EMAIL_TEMPLATE = "/communication/emailTemplate";
     private static final String MEVEO_INSTANCE = "/communication/meveoInstance";
     private static final String CUSTOM_ENTITY_TEMPLATE = "/entityCustomization/entity";
+    private static final String CUSTOM_ENTITY_INSTANCE = "/customEntityInstance";
 
     private static final Set<String> SET_GET_ALL = new HashSet<>(Arrays.asList(WALLET_OPERATION, PRICE_PLAN, COUNTRY_ISO,
                                                     CURRENCY_ISO, LANGUAGE_ISO, CUSTOMER, USER, INVOICE, ACCOUNTING_CODE,
@@ -402,7 +403,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     }
 
     @Override
-    public Response postRequest( String jsonDto ) throws URISyntaxException {
+    public Response postRequest( String jsonDto ) throws URISyntaxException, JsonProcessingException {
         String postPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
         URI redirectURI = null;
         segmentsOfPathAPIv2 = uriInfo.getPathSegments();
@@ -423,6 +424,11 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             else if ( pathIBaseRS.equals( "/invoice/sendByEmail" ) )
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS );
+            else if ( pathIBaseRS.equals( CUSTOM_ENTITY_INSTANCE ) ) {
+                CustomEntityInstanceDto aDto = new ObjectMapper().readValue( jsonDto, CustomEntityInstanceDto.class );
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
+                        + API_REST + pathIBaseRS + FORWARD_SLASH + aDto.getCetCode() );
+            }
             else
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + METHOD_CREATE );
