@@ -285,6 +285,8 @@ public class OrderApi extends BaseApi {
                 shippingAddress.setAddress1(productOrderItem.getProduct().getPlace().getAddress().getAddress1());
                 shippingAddress.setAddress2(productOrderItem.getProduct().getPlace().getAddress().getAddress2());
                 shippingAddress.setAddress3(productOrderItem.getProduct().getPlace().getAddress().getAddress3());
+                shippingAddress.setAddress4(productOrderItem.getProduct().getPlace().getAddress().getAddress4());
+                shippingAddress.setAddress5(productOrderItem.getProduct().getPlace().getAddress().getAddress5());
                 shippingAddress.setCity(productOrderItem.getProduct().getPlace().getAddress().getCity());
                 shippingAddress.setCountry(countryService.findByCode(productOrderItem.getProduct().getPlace().getAddress().getCountry()));
                 shippingAddress.setZipCode(productOrderItem.getProduct().getPlace().getAddress().getZipCode());
