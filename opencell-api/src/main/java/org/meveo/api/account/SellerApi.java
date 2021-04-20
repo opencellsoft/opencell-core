@@ -202,6 +202,14 @@ public class SellerApi extends AccountEntityApi {
             if (address3 != null) {
                 address.setAddress3(address3);
             }
+            final String address4 = addressDto.getAddress4();
+            if (address4 != null) {
+                address.setAddress4(address4);
+            }
+            final String address5 = addressDto.getAddress5();
+            if (address5 != null) {
+                address.setAddress5(address5);
+            }
             final String city = addressDto.getCity();
             if (city != null) {
                 address.setCity(city);

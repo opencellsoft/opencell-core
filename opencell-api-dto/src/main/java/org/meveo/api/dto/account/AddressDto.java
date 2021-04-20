@@ -50,6 +50,14 @@ public class AddressDto implements Serializable {
     /** The address 3. */
     @Schema(description = "Third address")
     protected String address3;
+
+    /** The address 4 */
+    @Schema(description = "forth address")
+    protected String address4;
+
+    /** The address 5. */
+    @Schema(description = "fifth address")
+    protected String address5;
     
     /** The zip code. */
     @Schema(description = "The zip code")
@@ -143,6 +151,22 @@ public class AddressDto implements Serializable {
      */
     public void setAddress3(String address3) {
         this.address3 = address3;
+    }
+
+    public String getAddress4() {
+        return address4;
+    }
+
+    public void setAddress4(String address4) {
+        this.address4 = address4;
+    }
+
+    public String getAddress5() {
+        return address5;
+    }
+
+    public void setAddress5(String address5) {
+        this.address5 = address5;
     }
 
     /**
