@@ -92,6 +92,8 @@ public class ProviderContactApi extends BaseApi {
             address.setAddress1(addressDto.getAddress1());
             address.setAddress2(addressDto.getAddress2());
             address.setAddress3(addressDto.getAddress3());
+            address.setAddress4(addressDto.getAddress4());
+            address.setAddress5(addressDto.getAddress5());
             address.setZipCode(addressDto.getZipCode());
             address.setCity(addressDto.getCity());
             address.setCountry(countryService.findByCode(addressDto.getCountry()));
@@ -137,6 +139,8 @@ public class ProviderContactApi extends BaseApi {
             address.setAddress1(addressDto.getAddress1());
             address.setAddress2(addressDto.getAddress2());
             address.setAddress3(addressDto.getAddress3());
+            address.setAddress4(addressDto.getAddress4());
+            address.setAddress5(addressDto.getAddress5());
             address.setZipCode(addressDto.getZipCode());
             address.setCity(addressDto.getCity());
             address.setCountry(countryService.findByCode(addressDto.getCountry()));

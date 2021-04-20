@@ -948,6 +948,8 @@ public class AccountHierarchyApi extends BaseApi {
             address.setAddress1(postData.getAddress().getAddress1());
             address.setAddress2(postData.getAddress().getAddress2());
             address.setAddress3(postData.getAddress().getAddress3());
+            address.setAddress4(postData.getAddress().getAddress4());
+            address.setAddress5(postData.getAddress().getAddress5());
             address.setCity(postData.getAddress().getCity());
             address.setCountry(countryService.findByCode(postData.getAddress().getCountry()));
             address.setState(postData.getAddress().getState());
@@ -1697,6 +1699,12 @@ public class AccountHierarchyApi extends BaseApi {
             }
             if (!StringUtils.isBlank(accountDto.getAddress().getAddress3())) {
                 accountEntity.getAddress().setAddress3(accountDto.getAddress().getAddress3());
+            }
+            if (!StringUtils.isBlank(accountDto.getAddress().getAddress4())) {
+                accountEntity.getAddress().setAddress3(accountDto.getAddress().getAddress4());
+            }
+            if (!StringUtils.isBlank(accountDto.getAddress().getAddress5())) {
+                accountEntity.getAddress().setAddress3(accountDto.getAddress().getAddress5());
             }
             if (!StringUtils.isBlank(accountDto.getAddress().getZipCode())) {
                 accountEntity.getAddress().setZipCode(accountDto.getAddress().getZipCode());
