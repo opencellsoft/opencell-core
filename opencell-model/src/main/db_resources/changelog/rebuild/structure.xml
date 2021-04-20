@@ -6974,6 +6974,11 @@
             <column name="cf_values_accum" type="${type.json}" />
             <column name="output_dir" type="varchar(255)" />
             <column name="file_separator" type="varchar(1)" defaultValue="," />
+            <column name="custom_table_code" type="varchar(255)" />
+            <column name="accumulate" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="decimal_separator" type="character" defaultValue="." />
+            <column name="generate_empty_report" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="maximum_line" type="bigint" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-360">
@@ -15284,6 +15289,9 @@ $$ LANGUAGE plpgsql;
     </changeSet>
 
     <changeSet id="#4742_20191030" author="MohamedSTITANE">
+    </changeSet>
+
+    <changeSet id="#6076_20210419" author="Zbariki">
     </changeSet>
 
 

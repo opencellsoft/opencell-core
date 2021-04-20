@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,6 +34,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ReportExtractExecutionException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.finance.ReportExtract;
@@ -129,12 +132,16 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
     }
 
     @ActionMethod
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public String runReport() {
         String result = null;
         try {
             result = saveOrUpdate(true);
             reportExtractService.runReport(entity);
             messages.info(new BundleKey("messages", "reportExtract.message.generate.ok"));
+        } catch (ValidationException validationException) {
+            log.error("Custom table structure does not match data structure: {}", validationException.getMessage());
+            messages.error("Custom table structure does not match data structure :" + validationException.getMessage());
         } catch (BusinessException | ReportExtractExecutionException e) {
             log.error("Failed running report: {}", e.getMessage());
             messages.error(e.getMessage());

@@ -8691,4 +8691,22 @@ public class OrderAdvancement extends ModuleScript {
         </createTable>
     </changeSet>
 
+    <changeSet id="#6076_20210419" author="Zbariki">
+        <addColumn tableName="dwh_report_extract">
+            <column name="custom_table_code" type="varchar(255)" />
+        </addColumn>
+        <addColumn tableName="dwh_report_extract">
+            <column name="accumulate" type="${type.boolean}" defaultValueNumeric="1"/>
+        </addColumn>
+        <addColumn tableName="dwh_report_extract">
+            <column name="decimal_separator" type="character" defaultValue="."/>
+        </addColumn>
+        <addColumn tableName="dwh_report_extract">
+            <column name="generate_empty_report" type="${type.boolean}" defaultValueNumeric="0" />
+        </addColumn>
+        <addColumn tableName="dwh_report_extract">
+            <column name="maximum_line" type="bigint" defaultValueNumeric="0" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

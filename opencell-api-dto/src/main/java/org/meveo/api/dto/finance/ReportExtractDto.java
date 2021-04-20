@@ -79,6 +79,36 @@ public class ReportExtractDto extends EnableBusinessDto {
     private String imagePath;
 
     /**
+     * Custom table code
+     */
+    private String customTableCode;
+
+    /**
+     * add new entry or reset the custom table each time
+     */
+    private boolean accumulate;
+
+    /**
+     *  Field separator by default “;”
+     */
+    private String separator;
+
+    /**
+     *  Decimal separator by default “.”
+     */
+    private Character decimalSeparator;
+
+    /**
+     * Allow empty file Generation
+     */
+    private boolean generateEmptyReport;
+
+    /**
+     * Maximum line per file, by default 0 (no limit)
+     */
+    private Long maximumLine;
+
+    /**
      * Instantiate a new ReportExtract DTO
      */
     public ReportExtractDto() {
@@ -105,6 +135,10 @@ public class ReportExtractDto extends EnableBusinessDto {
         setReportExtractResultType(reportExtract.getReportExtractResultType());
         setStyle(reportExtract.getStyle());
         setImagePath(reportExtract.getImagePath());
+        setAccumulate(reportExtract.isAccumulate());
+        setGenerateEmptyReport(reportExtract.isGenerateEmptyReport());
+        setCustomTableCode(reportExtract.getCustomTableCode());
+        setMaximumLine(reportExtract.getMaximumLine());
         if (reportExtract.getScriptType().equals(ReportExtractScriptTypeEnum.JAVA)) {
             if (reportExtract.getScriptInstance() != null) {
                 setScriptInstanceCode(reportExtract.getScriptInstance().getCode());
@@ -318,5 +352,53 @@ public class ReportExtractDto extends EnableBusinessDto {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public String getCustomTableCode() {
+        return customTableCode;
+    }
+
+    public void setCustomTableCode(String customTableCode) {
+        this.customTableCode = customTableCode;
+    }
+
+    public boolean isAccumulate() {
+        return accumulate;
+    }
+
+    public void setAccumulate(boolean accumulate) {
+        this.accumulate = accumulate;
+    }
+
+    public String getSeparator() {
+        return separator;
+    }
+
+    public void setSeparator(String separator) {
+        this.separator = separator;
+    }
+
+    public boolean isGenerateEmptyReport() {
+        return generateEmptyReport;
+    }
+
+    public void setGenerateEmptyReport(boolean generateEmptyReport) {
+        this.generateEmptyReport = generateEmptyReport;
+    }
+
+    public Long getMaximumLine() {
+        return maximumLine;
+    }
+
+    public void setMaximumLine(Long maximumLine) {
+        this.maximumLine = maximumLine;
+    }
+
+    public Character getDecimalSeparator() {
+        return decimalSeparator;
+    }
+
+    public void setDecimalSeparator(Character decimalSeparator) {
+        this.decimalSeparator = decimalSeparator;
     }
 }

@@ -59,7 +59,7 @@
 					</p:outputPanel>
 					<hftl:formField label="#{messages['reportExtract.category']}" field="category" />
 					<hftl:formField label="#{messages['reportExtract.outputDir']}" field="outputDir" />
-					<hftl:formField label="#{messages['reportExtract.filenameFormat']}" field="filenameFormat" />
+					<hftl:formField label="#{messages['reportExtract.filenameFormat']}" field="filenameFormat" maxlength="100"/>
 					<hftl:formField label="#{messages['reportExtract.fileSeparator']}" field="fileSeparator" size="1" maxlength="1"/>
 					<p:outputPanel id="scriptTypeSQL">
 						<hftl:decorateFormField label="#{messages['reportExtract.sqlQuery']}" fieldId="sqlQuery" componentWidth="100" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}">
@@ -73,7 +73,12 @@
 		            	<hftl:formField textArea="true" label="#{messages['reportExtract.style']}" field="style" rendered="#{reportExtractBean.entity.reportExtractResultType eq ReportExtractResultTypeEnum.HTML}" rows="10" maxlength="2000" />
 		            </p:outputPanel>
 		            <hftl:formField label="#{messages['entity.notification.params']}" field="params" newLine="true" componentWidth="100%" />
-	            </p:panel>
+					<hftl:formField label="#{messages['reportExtract.customTableCode']}" field="customTableCode" />
+					<hftl:formField label="#{messages['reportExtract.generateEmptyReport']}" field="generateEmptyReport" />
+					<hftl:formField label="#{messages['reportExtract.accumulate']}" field="accumulate" />
+					<hftl:formField label="#{messages['reportExtract.maximumLine']}" field="maximumLine" />
+					<hftl:formField label="#{messages['reportExtract.decimalSeparator']}" field="decimalSeparator" />
+				</p:panel>
             </p:panelGrid>
             <ui:param name="buttons" value="true" />
             <ui:define name="buttons">
