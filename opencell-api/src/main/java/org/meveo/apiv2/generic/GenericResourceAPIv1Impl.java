@@ -101,6 +101,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     private static final String CHART = "/chart";
     private static final String EMAIL_TEMPLATE = "/communication/emailTemplate";
     private static final String MEVEO_INSTANCE = "/communication/meveoInstance";
+    private static final String CUSTOM_ENTITY_TEMPLATE = "/entityCustomization/entity";
 
     private static final Set<String> SET_GET_ALL = new HashSet<>(Arrays.asList(WALLET_OPERATION, PRICE_PLAN, COUNTRY_ISO,
                                                     CURRENCY_ISO, LANGUAGE_ISO, CUSTOMER, USER, INVOICE, ACCOUNTING_CODE,
@@ -159,6 +160,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 entityClassName = "Job";
             else if ( pathIBaseRS.equals( TRIGGERED_EDR ) )
                 entityClassName = "triggeredEDRTemplate";
+            else if ( pathIBaseRS.equals( CUSTOM_ENTITY_TEMPLATE ) )
+                entityClassName = "customEntityTemplate";
             else
                 entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
@@ -259,7 +262,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                         + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "id=" + entityCode);
             }
             // special handle for productChargeTemplate
-            else if ( pathIBaseRS.equals(PRODUCT_CHARGE_TEMPLATE) || pathIBaseRS.equals(PRODUCT_TEMPLATE) ) {
+            else if ( pathIBaseRS.equals(PRODUCT_CHARGE_TEMPLATE) || pathIBaseRS.equals(PRODUCT_TEMPLATE)
+            || pathIBaseRS.equals(CUSTOM_ENTITY_TEMPLATE) ) {
                 redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                         + API_REST + pathIBaseRS + FORWARD_SLASH + entityCode);
             }
@@ -525,6 +529,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 entityClassName = "timerEntity";
             else if ( pathIBaseRS.equals( TRIGGERED_EDR ) )
                 entityClassName = "triggeredEDRTemplate";
+            else if ( pathIBaseRS.equals( CUSTOM_ENTITY_TEMPLATE ) )
+                entityClassName = "customEntityTemplate";
 
             Class entityDtoClass = GenericHelper.getEntityDtoClass( entityClassName.toLowerCase() + DTO_SUFFIX );
             entityCode = segmentsOfPathAPIv2.get( segmentsOfPathAPIv2.size() - 1 ).getPath();
@@ -617,6 +623,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     entityClassName = "countryIso";
                 else if ( pathIBaseRS.equals( CURRENCY_ISO ) )
                     entityClassName = "currencyIso";
+                else if ( pathIBaseRS.equals( CUSTOM_ENTITY_TEMPLATE ) )
+                    entityClassName = "customEntityTemplate";
 
                 Class entityDtoClass = GenericHelper.getEntityDtoClass( entityClassName.toLowerCase() + DTO_SUFFIX );
                 Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );

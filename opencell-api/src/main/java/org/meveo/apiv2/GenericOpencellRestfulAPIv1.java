@@ -815,6 +815,23 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             fillUpRestfulURLsMapWithSpecialURL( "/charts/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "chart" );
                         }
+                        else if ( ((Path) anAnnotation).value().equals( "/entityCustomization" ) ) {
+                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/entityCustomization/entities",
+                                    ((Path) anAnnotation).value() + "/entity" );
+
+                            fillUpRestfulURLsMap( "/entityCustomization/entities", aMapRestful );
+
+                            // Handling enable and disable a customEntity
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/entityCustomization/entities\\/" + CODE_REGEX + ENABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() + "/entity" );
+
+                            MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/entityCustomization/entities\\/" + CODE_REGEX + DISABLE_SERVICE ) ,
+                                    ((Path) anAnnotation).value() + "/entity" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( "/entityCustomization/entities/" + CODE_REGEX + ENABLE_SERVICE, aMapRestful, "entity" );
+
+                            fillUpRestfulURLsMapWithSpecialURL( "/entityCustomization/entities/" + CODE_REGEX + DISABLE_SERVICE, aMapRestful, "entity" );
+                        }
                         else {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put(
                                     API_VERSION + Inflector.getInstance().pluralize( ((Path) anAnnotation).value() ),
