@@ -65,10 +65,10 @@ public class ProductDto extends BaseEntityDto{
 	@Schema(description = "Current product version for product")
     protected ProductVersionDto currentProductVersion;
     
-    @XmlElementWrapper(name = "chargeTemplateCodes")
-    @XmlElement(name = "chargeTemplateCodes") 
-	@Schema(description = "List charge template code")
-    protected List<String> chargeTemplateCodes = new ArrayList<String>();
+    @XmlElementWrapper(name = "productChargeTemplateMappingDto")
+    @XmlElement(name = "productChargeTemplateMappingDto") 
+	@Schema(description = "List product charge template mapping")
+    protected List<ProductChargeTemplateMappingDto> productChargeTemplateMappingDto = new ArrayList<>();
     
     
     @XmlElementWrapper(name = "commercialRuleCodes")
@@ -293,20 +293,6 @@ public class ProductDto extends BaseEntityDto{
 	}
 
 	/**
-	 * @return the chargeTemplateCodes
-	 */
-	public List<String> getChargeTemplateCodes() {
-		return chargeTemplateCodes;
-	}
-
-	/**
-	 * @param chargeTemplateCodes the chargeTemplateCodes to set
-	 */
-	public void setChargeTemplateCodes(List<String> chargeTemplateCodes) {
-		this.chargeTemplateCodes = chargeTemplateCodes;
-	}
-
-	/**
 	 * @return the id
 	 */
 	public Long getId() {
@@ -367,5 +353,19 @@ public class ProductDto extends BaseEntityDto{
 
 	public void setDiscountListCodes(List<String> discountListCodes) {
 		this.discountListCodes = discountListCodes;
+	}
+
+	/**
+	 * @return the productChargeTemplateMappingDto
+	 */
+	public List<ProductChargeTemplateMappingDto> getProductChargeTemplateMappingDto() {
+		return productChargeTemplateMappingDto;
+	}
+
+	/**
+	 * @param productChargeTemplateMappingDto the productChargeTemplateMappingDto to set
+	 */
+	public void setProductChargeTemplateMappingDto(List<ProductChargeTemplateMappingDto> productChargeTemplateMappingDto) {
+		this.productChargeTemplateMappingDto = productChargeTemplateMappingDto;
 	}
 }
