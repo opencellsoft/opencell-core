@@ -27,6 +27,7 @@ import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
 import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
+import org.meveo.api.dto.cpq.ProductChargeTemplateMappingDto;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -42,6 +43,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductChargeTemplateMapping;
@@ -60,6 +62,7 @@ import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
+import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
@@ -133,6 +136,9 @@ public class ProductApi extends BaseApi {
 	 
 	 @Inject
     private CommercialRuleLineService commercialRuleLineService;
+	 
+	 @Inject
+	 private CounterTemplateService counterTemplateService;
 	
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 	
@@ -254,7 +260,7 @@ public class ProductApi extends BaseApi {
 			product.setModelChildren(productDto.getModelChildren());
 			product.setDiscountFlag(productDto.isDiscountFlag());
 			product.setPackageFlag(productDto.isPackageFlag());
-			createProductChargeTemplateMappings(product, productDto.getChargeTemplateCodes());
+			createProductChargeTemplateMappings(product, productDto.getProductChargeTemplateMappingDto());
 			
 			//set current product version 
 			var versions = productVersionService.findLastVersionByCode(productCode);
@@ -587,7 +593,7 @@ public class ProductApi extends BaseApi {
 		product.setModel(productDto.getModel());
 		product.setModelChildren(productDto.getModelChildren());
 		product.setDiscountFlag(productDto.isDiscountFlag());
-		createProductChargeTemplateMappings(product, productDto.getChargeTemplateCodes());
+		createProductChargeTemplateMappings(product, productDto.getProductChargeTemplateMappingDto());
 		/***@TODO : update product chargeTemplates
 		 * Use this method to get them by code : chargeTemplateService.getChargeTemplatesByCodes(productDto.getChargeTemplateCodes())***/
 		populateCustomFields(productDto.getCustomFields(), product, isNewEntity);
@@ -607,14 +613,23 @@ public class ProductApi extends BaseApi {
 		return discountPlan;
 	}
 
-	private void createProductChargeTemplateMappings(Product product, List<String> chargeTemplateCodes) {
+	private void createProductChargeTemplateMappings(Product product, List<ProductChargeTemplateMappingDto> productChargeTemplateMappingDtos) {
     	product.getProductCharges().clear();
-		Set<ChargeTemplate> chargeTemplates = chargeTemplateService.getChargeTemplatesByCodes(chargeTemplateCodes);
-		List<ProductChargeTemplateMapping> productCharges = chargeTemplates.stream()
-				.map(ch -> {
+		//Set<ChargeTemplate> chargeTemplates = chargeTemplateService.getChargeTemplatesByCodes(chargeTemplateCodes);
+		List<ProductChargeTemplateMapping> productCharges = productChargeTemplateMappingDtos.stream()
+				.map(pctm -> {
 					ProductChargeTemplateMapping<ChargeTemplate> chargeTemplateProductChargeTemplateMapping = new ProductChargeTemplateMapping<>();
 					chargeTemplateProductChargeTemplateMapping.setProduct(product);
-					chargeTemplateProductChargeTemplateMapping.setChargeTemplate(ch);
+					if(!Strings.isEmpty(pctm.getChargeCode()))
+						chargeTemplateProductChargeTemplateMapping.setChargeTemplate(loadEntityByCode(chargeTemplateService, pctm.getChargeCode(), ChargeTemplate.class));
+					if(!Strings.isEmpty(pctm.getCounterCode()))
+						chargeTemplateProductChargeTemplateMapping.setCounterTemplate(loadEntityByCode(counterTemplateService, pctm.getCounterCode(), CounterTemplate.class));
+					if(pctm.getAccumulatorCounterCodes() != null && !pctm.getAccumulatorCounterCodes().isEmpty()) {
+						var accumulator = pctm.getAccumulatorCounterCodes().stream()
+											.map(counterCode -> loadEntityByCode(counterTemplateService, counterCode, CounterTemplate.class))
+												.collect(Collectors.toList());
+						chargeTemplateProductChargeTemplateMapping.setAccumulatorCounterTemplates(accumulator);
+					}
 					return chargeTemplateProductChargeTemplateMapping;
 
 				}).collect(Collectors.toList());
