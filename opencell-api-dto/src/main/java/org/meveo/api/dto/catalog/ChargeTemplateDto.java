@@ -21,6 +21,7 @@ package org.meveo.api.dto.catalog;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -161,6 +162,10 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     @Schema(description = "Sorting index EL")
     private String sortIndexEl = null;
 
+
+
+    private List<String> linkedAttributes;
+
     /**
      * Instantiates a new charge template dto.
      */
@@ -210,6 +215,12 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
 
         if (chargeTemplate.getRatingScript() != null) {
             ratingScriptCode = chargeTemplate.getRatingScript().getCode();
+        }
+        if(chargeTemplate.getAttributes() != null && !chargeTemplate.getAttributes().isEmpty()){
+            this.linkedAttributes = chargeTemplate.getAttributes()
+                    .stream()
+                    .map(att -> att.getCode())
+                    .collect(Collectors.toList());
         }
         dropZeroWo = chargeTemplate.isDropZeroWo();
         sortIndexEl = chargeTemplate.getSortIndexEl();
@@ -594,5 +605,13 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
      */
     public void setSortIndexEl(String sortIndexEl) {
         this.sortIndexEl = sortIndexEl;
+    }
+
+    public List<String> getLinkedAttributes() {
+        return linkedAttributes;
+    }
+
+    public void setLinkedAttributes(List<String> linkedAttributes) {
+        this.linkedAttributes = linkedAttributes;
     }
 }
