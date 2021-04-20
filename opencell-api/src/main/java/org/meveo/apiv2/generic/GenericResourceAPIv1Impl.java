@@ -549,6 +549,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                 ((DiscountPlanItemDto) aDto).setCode(entityCode);
             else if ( aDto instanceof CountryIsoDto )
                 ((CountryIsoDto) aDto).setCountryCode(entityCode);
+            else if ( aDto instanceof CurrencyIsoDto )
+                ((CurrencyIsoDto) aDto).setCode(entityCode);
 
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
                     + API_REST + pathIBaseRS + METHOD_UPDATE );
@@ -613,6 +615,8 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     entityClassName = "triggeredEDRTemplate";
                 else if ( pathIBaseRS.equals( COUNTRY_ISO ) )
                     entityClassName = "countryIso";
+                else if ( pathIBaseRS.equals( CURRENCY_ISO ) )
+                    entityClassName = "currencyIso";
 
                 Class entityDtoClass = GenericHelper.getEntityDtoClass( entityClassName.toLowerCase() + DTO_SUFFIX );
                 Object aDto = new ObjectMapper().readValue( jsonDto, entityDtoClass );
@@ -628,6 +632,10 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     ((CountryDto) aDto).setCountryCode(entityCode);
                 else if ( aDto instanceof CountryIsoDto )
                     ((CountryIsoDto) aDto).setCountryCode(entityCode);
+                else if ( aDto instanceof CurrencyDto )
+                    ((CurrencyDto) aDto).setCode(entityCode);
+                else if ( aDto instanceof CurrencyIsoDto )
+                    ((CurrencyIsoDto) aDto).setCode(entityCode);
 
                 if ( aPath.equals("/v1/accountManagement/customerCategories") )
                     redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
