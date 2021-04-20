@@ -32,7 +32,7 @@ import java.util.Date;
         @Parameter(name = "sequence_name", value = "cpq_invoice_line_seq")})
 @NamedQueries({
 		@NamedQuery(name = "InvoiceLine.listToInvoiceByBillingAccountAndIDs", query = "FROM InvoiceLine il where il.billingAccount.id=:billingAccountId AND il.status='OPEN' AND id in (:listOfIds) "),
-		@NamedQuery(name = "InvoiceLine.InvoiceLinesByInvoiceID", query = "FROM InvoiceLine il WHERE il.invoice =:invoiceId"),
+		@NamedQuery(name = "InvoiceLine.InvoiceLinesByInvoiceID", query = "FROM InvoiceLine il WHERE il.invoice.id =:invoiceId"),
 		@NamedQuery(name = "InvoiceLine.InvoiceLinesByBRs", query = "FROM InvoiceLine il WHERE il.billingRun IN (:BillingRus)"),
         @NamedQuery(name="InvoiceLine.findByCommercialOrder", query = "select il from InvoiceLine il where il.commercialOrder = :commercialOrder"),
 		@NamedQuery(name = "InvoiceLine.InvoiceLinesByBRID", query = "FROM InvoiceLine il WHERE il.billingRun.id = :billingRunId"),
@@ -65,6 +65,7 @@ import java.util.Date;
 })
 public class InvoiceLine extends BusinessEntity {
 
+	
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "invoice_id")
 	private Invoice invoice;
