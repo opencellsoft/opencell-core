@@ -59,14 +59,6 @@ public class AddressDto implements Serializable {
     @Schema(description = "fifth address")
     protected String address5;
     
-    /** The address 2. */
-    @Schema(description = "Second address")
-    protected String address4;
-    
-    /** The address 3. */
-    @Schema(description = "Third address")
-    protected String address5;
-    
     /** The zip code. */
     @Schema(description = "The zip code")
     protected String zipCode;
@@ -256,34 +248,4 @@ public class AddressDto implements Serializable {
         return "Address [address1=" + address1 + ", address2=" + address2 + ", address3=" + address3 + ", zipCode=" + zipCode + ", city=" + city + ", country=" + country
                 + ", state=" + state + "]";
     }
-
-	/**
-	 * @return the address4
-	 */
-	public String getAddress4() {
-		return address4;
-	}
-
-	/**
-	 * @param address4 the address4 to set
-	 */
-	public void setAddress4(String address4) {
-		this.address4 = address4;
-	}
-
-	/**
-	 * @return the address5
-	 */
-	public String getAddress5() {
-		return address5;
-	}
-
-	/**
-	 * @param address5 the address5 to set
-	 */
-	public void setAddress5(String address5) {
-		this.address5 = address5;
-	}
-    
-
 }
