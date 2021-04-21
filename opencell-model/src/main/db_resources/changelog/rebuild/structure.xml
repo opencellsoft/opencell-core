@@ -224,6 +224,20 @@
         <createSequence sequenceName="wf_generic_action_seq" startValue="1" />
         <createSequence sequenceName="generic_sequence_seq" startValue="1" />
         <createSequence sequenceName="meveo_metrics_config_seq" />
+        <createSequence sequenceName="cpq_product_seq" />
+        <createSequence sequenceName="cpq_product_line_seq" />
+        <createSequence sequenceName="cpq_product_version_seq" />
+        <createSequence sequenceName="cpq_tag_seq" />
+        <createSequence sequenceName="cpq_tag_filter_seq" />
+        <createSequence sequenceName="cpq_tag_type_seq" />
+        <createSequence sequenceName="cpq_media_seq" />
+        <createSequence sequenceName="cpq_offer_component_seq" />
+        <createSequence sequenceName="cpq_commercial_rule_header_seq" />
+        <createSequence sequenceName="cpq_commercial_rule_item_seq" />
+        <createSequence sequenceName="cpq_commercial_rule_line_seq" />
+        <createSequence sequenceName="cpq_grouped_service_seq" />
+        <createSequence sequenceName="cpq_product_mapping_seq" />
+        <createSequence sequenceName="cpq_accounting_article_seq" />
     </changeSet>
     
      
@@ -3645,6 +3659,34 @@
             <column name="rating_script_id" type="bigint"/>
             <column name="sort_index_el" type="varchar(2000)"/>
             <column name="apply_terminated_charge_to_date_el" type="varchar(2000)"/>
+            <column name="offer_template_id" type="bigint" />
+            <column name="product_id" type="bigint" />
+            <column name="service_template_id" type="bigint" />
+            <column name="price_plan_matrix_id" type="bigint" />
+            <column name="recurrence_duration_enum" type="varchar(20)"/>
+            <column name="duration_service" type="bigint" />
+            <column name="recurrence_calendar" type="bigint" />
+            <column name="calendar_service" type="bigint" />
+            <column name="usage_service_template_id" type="bigint" />
+            <column name="surcharge" type="${type.boolean}"/>
+            <column name="price_matrix" type="${type.boolean}"/>
+            <column name="param1" type="varchar(50)"/>
+            <column name="param1_service_id" type="bigint"/>
+            <column name="param2" type="varchar(50)"/>
+            <column name="param2_service_id" type="bigint"/>
+            <column name="param3" type="varchar(50)"/>
+            <column name="param3_service_id" type="bigint"/>
+            <column name="param4" type="varchar(50)"/>
+            <column name="param4_service_id" type="bigint"/>
+            <column name="dim1_matrix" type="varchar(50)"/>
+            <column name="dim1_matrix_bystep" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="dim1_matrix_service" type="bigint" />
+            <column name="dim2_matrix" type="varchar(50)"/>
+            <column name="dim2_matrix_bystep" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="dim2_matrix_service" type="bigint" />
+            <column name="dim3_matrix" type="varchar(50)"/>
+            <column name="dim3_matrix_bystep" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="dim3_matrix_service" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-208">
@@ -3903,6 +3945,8 @@
             <column name="minimum_invoice_sub_category_id" type="bigint" />
             <column name="minimum_charge_template_id" type="bigint"/>
             <column name="is_offer_change_restricted" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="product_status" type="varchar(50)"/>
+            <column name="status_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-217">
@@ -4142,6 +4186,15 @@
             <column name="description_i18n" type="text">
                 <constraints nullable="true" />
             </column>
+            <column name="offer_template_id" type="bigint" />
+            <column name="product_id" type="bigint" />
+            <column name="grouped_service_id" type="bigint" />
+            <column name="service_type_id" type="bigint" />
+            <column name="mandatory" type="${type.boolean}" />
+            <column name="priority" type="int4" defaultValueNumeric="0" />
+            <column name="param" type="text" />
+            <column name="material" type="${type.boolean}" />
+            <column name="accounting_article_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-228">
@@ -8254,6 +8307,623 @@
             <column name="updater" type="varchar(100)" />
         </createTable>
     </changeSet>
+
+    <!--  Media Post -->
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-01">
+        <createTable tableName="cpq_product">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="status" type="varchar(255)" />
+            <column name="status_date" type="datetime" />
+            <column name="product_line_id" type="bigint" />
+            <column name="customer_brand_id" type="bigint" />
+            <column name="reference" type="varchar(50)"/>
+            <column name="model" type="varchar(20)"/>
+            <column name="discount_flag" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="package_flag" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="uuid" type="varchar(60)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="cf_values" type="${type.json}" />
+            <column name="cf_values_accum" type="${type.json}" />
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-04">
+        <createTable tableName="cpq_product_line">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_line_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="long_description" type="text" />
+
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="seller_id" type="bigint" />
+            <column name="parent_line" type="bigint" />
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-05">
+        <createTable tableName="cpq_product_version">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_pkey" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="version" type="int4" />
+            <column name="status" type="varchar(255)" />
+            <column name="status_date" type="datetime" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="short_description" type="varchar(255)" />
+            <column name="long_description" type="text" />
+            <column name="start_date" type="datetime" />
+            <column name="end_date" type="datetime" />
+            <column name="product_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="current_version" type="int4" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-06">
+        <createTable tableName="cpq_tag">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_tag_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="seller_id" type="bigint" />
+            <column name="name" type="varchar(255)" />
+            <column name="tag_type_id" type="bigint" />
+            <column name="parent_tag_id" type="bigint" />
+            <column name="filter_el" type="varchar(2000)"/>
+            <column name="attribute_id" type="bigint" />
+            <column name="product_version_id" type="bigint" />
+            <column name="service_template_id" type="bigint" />
+            <column name="offer_template_id" type="bigint" />
+        </createTable>
+    </changeSet>
+
+
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-07">
+        <createTable tableName="cpq_tag_filter">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_tag_filter_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="tag_id" type="bigint" />
+            <column name="operator" type="varchar(255)" />
+            <column name="entity" type="varchar(255)" />
+            <column name="field" type="varchar(255)" />
+            <column name="comparaison" type="varchar(255)" />
+            <column name="value" type="varchar(255)" />
+        </createTable>
+    </changeSet>
+
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-08">
+        <createTable tableName="cpq_tag_type">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_tag_type_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="seller_id" type="bigint" />
+        </createTable>
+    </changeSet>
+
+
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-10">
+        <createTable tableName="cpq_media">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="cpq_media_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="offer_id" type="bigint" />
+            <column name="product_id" type="bigint" />
+            <column name="attribute_id" type="bigint" />
+            <column name="service_template_id" type="bigint" />
+            <column name="media_name" type="varchar(50)" />
+            <column name="label" type="varchar(255)" />
+            <column name="main" type="${type.boolean}" defaultValueNumeric="1">
+                <constraints nullable="false" />
+            </column>
+            <column name="media_type" type="varchar(50)" />
+            <column name="media_path" type="varchar(50)" />
+        </createTable>
+    </changeSet>
+
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-13">
+        <createTable tableName="cpq_offer_component">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="cpq_offer_component_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="offer_template_id" type="bigint" />
+            <column name="product_id" type="bigint" />
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-14">
+        <createTable tableName="cpq_commercial_rule_header">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="cpq_commercial_rule_header_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="rule_type" type="varchar(50)" />
+            <column name="offer_template_id" type="bigint" />
+            <column name="product_id" type="bigint" />
+            <column name="product_version_id" type="bigint" />
+            <column name="grouped_service_id" type="bigint" />
+            <column name="service_template_id" type="bigint" />
+            <column name="grouped_attributes_id" type="bigint" />
+            <column name="attribute_id" type="bigint" />
+            <column name="target_attribute_value" type="varchar(255)" />
+            <column name="tag_id" type="bigint" />
+            <column name="rule_el" type="varchar(2000)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-15">
+        <createTable tableName="cpq_commercial_rule_item">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="cpq_commercial_rule_item_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="commercial_rule_header_id" type="bigint" />
+            <column name="operator" type="varchar(255)" />
+            <column name="rule_item_el" type="varchar(2000)" />
+        </createTable>
+    </changeSet>
+
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-16">
+        <createTable tableName="cpq_commercial_rule_line">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="cpq_commercial_rule_line_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="offer_template_id" type="bigint" />
+            <column name="grouped_attributes_id" type="bigint" />
+            <column name="commercial_rule_item_id" type="bigint" />
+            <column name="product_id" type="bigint" />
+            <column name="product_version_id" type="bigint" />
+            <column name="attribute_id" type="bigint" />
+            <column name="tag_id" type="bigint" />
+            <column name="operator" type="varchar(255)" />
+            <column name="source_attribute_value" type="varchar(255)" />
+            <column name="source_grouped_attribute_value" type="varchar(255)" />
+            <column name="value" type="varchar(255)" />
+        </createTable>
+    </changeSet>
+
+
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-19">
+        <createTable tableName="cpq_offer_component_tags">
+            <column name="offer_component_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="tag_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addUniqueConstraint columnNames="offer_component_id,tag_id" constraintName="cpq_offer_component_tags_pkey" tableName="cpq_offer_component_tags" />
+
+        <addForeignKeyConstraint baseTableName="cpq_offer_component_tags" baseColumnNames="offer_component_id"
+                                 constraintName="cpq_offer_component_tags_offer_component_id_fk" referencedTableName="cat_offer_template"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="cpq_offer_component_tags" baseColumnNames="tag_id"
+                                 constraintName="cpq_offer_component_tags_tag_id_fk" referencedTableName="cpq_tag"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-20">
+        <createTable tableName="cpq_grouped_service">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="cpq_grouped_service_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="product_version_id" type="bigint" />
+            <column name="mandatory" type="${type.boolean}" >
+                <constraints nullable="false" />
+            </column>
+            <column name="display" type="${type.boolean}" >
+                <constraints nullable="false" />
+            </column>
+            <column name="sequence" type="INT4" />
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-29">
+        <createTable tableName="cpq_product_mapping">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="cpq_product_mapping_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="service1Value" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="product_id" type="bigint" />
+            <column name="attribute_1" type="bigint" />
+            <column name="attribute_1_value" type="varchar(100)" />
+            <column name="attribute_2" type="bigint" />
+            <column name="attribute_2_value" type="varchar(100)" />
+            <column name="attribute_3" type="bigint" />
+            <column name="attribute_3_value" type="varchar(100)" />
+            <column name="accounting_article_id" type="bigint" />
+            <column name="charge_template_id" type="bigint" />
+
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-tbl-30">
+        <createTable tableName="cpq_accounting_article">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="cpq_accounting_article_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="21112020-540-23-entity-quoteCustomerService" author="TarikFAKHOURI">
+        <createTable tableName="cpq_quote_lot">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_quote_lot_pkey" />
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="quote_version" type="int4" >
+                <constraints nullable="false" />
+            </column>
+            <column name="name" type="varchar(50)" />
+            <column name="duration" type="int4" />
+            <column name="execution_date" type="datetime" />
+            <column name="cpq_quote_version_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+
+
+    <changeSet id="21112020-540-23-entity-quoteProduct" author="TarikFAKHOURI">
+        <createTable tableName="cpq_quote_product">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_quote_product_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="updater" type="varchar(100)" />
+            <column name="quote_version_id" type="bigint" />
+            <column name="quote_lot_id" type="bigint" />
+            <column name="offer_component_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="product_version_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="numeric(23, 12)" />
+            <column name="cpq_quote_id" type="bigint" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="21112020-540-23-entity-quoteVersion" author="TarikFAKHOURI">
+        <createTable tableName="cpq_quote_version">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_quote_version_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="cpq_quote_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="quote_version" type="int4" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(20)"  >
+                <constraints nullable="false"/>
+            </column>
+            <column name="status_date" type="datetime" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="datetime" />
+            <column name="end_date" type="datetime" />
+            <column name="billing_plan_code" type="varchar(20)" />
+            <column name="short_description" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="22112020-540-23-entity-contract" author="TarikFAKHOURI">
+        <createTable tableName="cpq_contract">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_contract_pkey" />
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="seller_id" type="bigint" />
+            <column name="billing_account_id" type="bigint" />
+            <column name="customer_account_id" type="bigint" />
+            <column name="customer_id" type="bigint" />
+            <column name="status" type="varchar(20)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="status_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="contract_date" type="date">
+                <constraints nullable="false" />
+            </column>
+            <column name="begin_date" type="date">
+                <constraints nullable="false" />
+            </column>
+            <column name="end_date" type="date">
+                <constraints nullable="false" />
+            </column>
+            <column name="renewal" type="${type.boolean}">
+                <constraints nullable="false" />
+            </column>
+            <column name="contract_duration" type="int4" />
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="22112020-540-23-entity-contract-item" author="TarikFAKHOURI">
+        <createTable tableName="cpq_contract_item">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_contract_item_pkey" />
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="updater" type="varchar(100)" />
+
+            <column name="cpq_contract_id" type="bigint" />
+            <column name="offer_template_id" type="bigint" />
+            <column name="cpq_product_id" type="bigint" />
+            <column name="price_plan_id" type="bigint" />
+            <column name="charge_template_id" type="bigint" />
+            <column name="service_template_id" type="bigint" />
+            <column name="rate" type="int4" />
+            <column name="amount_without_tax" type="numeric(23, 12)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="540-30_20201023_PricePlanMatrixItem" author="TarikF">
+        <createTable tableName="cpq_price_plan_matrix_item">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_price_plan_matrix_item_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="dim1_value" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="dim2_value" type="varchar(50)" />
+            <column name="dim3_value" type="varchar(50)" />
+            <column name="price_without_tax" type="numeric(23, 12)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="540-31_20201023_PricePlanVersion" author="TarikF">
+        <createTable tableName="cpq_price_plan_version">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_price_plan_version_pkey" />
+            </column>
+            <column name="label" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="current_version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="updater" type="varchar(100)" />
+            <column name="ppm_id" type="bigint" />
+            <column name="status" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="status_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="valid_from" type="datetime" />
+            <column name="valid_to" type="datetime" />
+            <column name="amount_without_tax" type="numeric(23, 12)" />
+            <column name="amount_with_tax" type="numeric(23, 12)" />
+            <column name="amount_without_tax_el" type="varchar(255)" />
+            <column name="amount_with_tax_el" type="varchar(255)" />
+            <column name="is_matrix" type="${type.boolean}"/>
+            <column name="priority" type="int4" defaultValueNumeric="0"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="540-15_20201019_servicetype" author="TarikF">
+        <createTable tableName="cpq_service_type">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_service_type_pkey" />
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="creator" type="varchar(100)" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="updater" type="varchar(100)" />
+            <column name="service_type" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="#5595_18_20201102" author="Mbarek-Ay">
+        <createTable tableName="cpq_offer_template_tags">
+            <column name="offer_template_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="tag_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+
+    </changeSet>
+
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1" dbms="postgresql">
@@ -10701,6 +11371,123 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="generic_sequence" />
     </changeSet>
+
+    <!-- media post FK -->
+
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1373">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cat_service_template" constraintName="fk-product-service_template" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+    </changeSet>
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1374">
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cat_service_template" constraintName="fk-product-offer_template" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+    </changeSet>
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1375">
+        <addForeignKeyConstraint baseColumnNames="grouped_service_id" baseTableName="cat_service_template" constraintName="fk-product-grouped_service" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_grouped_service" />
+    </changeSet>
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1376">
+        <addForeignKeyConstraint baseColumnNames="service_type_id" baseTableName="cat_service_template" constraintName="fk-product-service_type" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_service_type" />
+    </changeSet>
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1377">
+        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="cat_service_template" constraintName="fk-product-accounting_article" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_accounting_article" />
+    </changeSet>
+
+     <changeSet author="NabilOuachi" id="rebuild-str-fk-1378">
+         <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cat_charge_template" constraintName="fk-product-charge_template" deferrable="false" initiallyDeferred="false"
+                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+    </changeSet>
+     <changeSet author="NabilOuachi" id="rebuild-str-fk-1379">
+         <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cat_charge_template" constraintName="fk-offer_template-charge_template" deferrable="false" initiallyDeferred="false"
+                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+    </changeSet>
+     <changeSet author="NabilOuachi" id="rebuild-str-fk-1380">
+         <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cat_charge_template" constraintName="fk1-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+     <changeSet author="NabilOuachi" id="rebuild-str-fk-1381">
+         <addForeignKeyConstraint baseColumnNames="price_plan_matrix_id" baseTableName="cat_charge_template" constraintName="fk-price_plan-charge_template" deferrable="false" initiallyDeferred="false"
+                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />
+     </changeSet>
+     <changeSet author="NabilOuachi" id="rebuild-str-fk-1382">
+         <addForeignKeyConstraint baseColumnNames="duration_service" baseTableName="cat_charge_template" constraintName="fk2-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+     </changeSet>
+     <changeSet author="NabilOuachi" id="rebuild-str-fk-1383">
+         <addForeignKeyConstraint baseColumnNames="recurrence_calendar" baseTableName="cat_charge_template" constraintName="fk-cat_calendar-charge_template" deferrable="false" initiallyDeferred="false"
+                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+     </changeSet>
+     <changeSet author="NabilOuachi" id="rebuild-str-fk-1384">
+         <addForeignKeyConstraint baseColumnNames="calendar_service" baseTableName="cat_charge_template" constraintName="fk3-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+     <changeSet author="NabilOuachi" id="rebuild-str-fk-1385">
+         <addForeignKeyConstraint baseColumnNames="usage_service_template_id" baseTableName="cat_charge_template" constraintName="fk4-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+     </changeSet>
+     <changeSet author="NabilOuachi" id="rebuild-str-fk-1386">
+         <addForeignKeyConstraint baseColumnNames="param1_service_id" baseTableName="cat_charge_template" constraintName="fk5-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+     </changeSet>
+     <changeSet author="NabilOuachi" id="rebuild-str-fk-1387">
+         <addForeignKeyConstraint baseColumnNames="param2_service_id" baseTableName="cat_charge_template" constraintName="fk6-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+     </changeSet>
+     <changeSet author="NabilOuachi" id="rebuild-str-fk-1388">
+         <addForeignKeyConstraint baseColumnNames="param2_service_id" baseTableName="cat_charge_template" constraintName="fk7-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+     </changeSet>
+     <changeSet author="NabilOuachi" id="rebuild-str-fk-1389">
+         <addForeignKeyConstraint baseColumnNames="dim3_matrix_service" baseTableName="cat_charge_template" constraintName="fk12-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+     </changeSet>
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1390">
+        <addForeignKeyConstraint baseColumnNames="param3_service_id" baseTableName="cat_charge_template" constraintName="fk8-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1391">
+        <addForeignKeyConstraint baseColumnNames="param4_service_id" baseTableName="cat_charge_template" constraintName="fk9-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1392">
+        <addForeignKeyConstraint baseColumnNames="dim1_matrix_service" baseTableName="cat_charge_template" constraintName="fk10-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1393">
+        <addForeignKeyConstraint baseColumnNames="dim2_matrix_service" baseTableName="cat_charge_template" constraintName="fk11-service_template-charge_template" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+
+
+
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1394">
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_tag" constraintName="fk_product_version_tag" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+    </changeSet>
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1395">
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_tag" constraintName="fk_service_template_tag" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1396">
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_tag" constraintName="fk_offer_template_version_tag" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+    </changeSet>
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1397">
+        <
+    </changeSet>
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1398">
+        <
+    </changeSet>
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1399">
+        <
+    </changeSet>
+    <changeSet author="NabilOuachi" id="rebuild-str-fk-1400">
+        <
+    </changeSet>
+
+
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -11438,10 +12225,242 @@ $$ LANGUAGE plpgsql;
 	    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
         <delete tableName="DATABASECHANGELOG" />
     </changeSet>
-    
+
+
+
+    <!-- Media Post Foreign keys -->
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-01">
+        <addForeignKeyConstraint baseColumnNames="product_line_id" baseTableName="cpq_product" constraintName="fk_1y8p1q0o8tw5u0vcodfukdbez" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_line" />
+    </changeSet>
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-02">
+        <addForeignKeyConstraint baseColumnNames="customer_brand_id" baseTableName="cpq_product" constraintName="fk_5iap1p3o8tw5u0vcodazokdub" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_customer_brand" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-03">
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_product_line" constraintName="fk_1ykj5q0o8tw5u0vcodpoqljca" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-04">
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_tag_type" constraintName="fk_9axk5q0o8nddo2vcodpoqlopq" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-05">
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_tag" constraintName="fk_oop625q0o8tw5u0vcodospq5c" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-06">
+        <addForeignKeyConstraint baseColumnNames="parent_line" baseTableName="cpq_product_line" constraintName="fk_bnrqyk9sqqcnt5m298cpbfrqo3" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+                                 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_line" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-07">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_product_version" constraintName="fk_pomyp8vq0o8t5u0vcodpoaopq" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-08">
+        <addForeignKeyConstraint baseColumnNames="tag_type_id" baseTableName="cpq_tag" constraintName="fk_pomyppo52t5u0vcodpolcm" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag_type" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-09">
+        <addForeignKeyConstraint baseColumnNames="parent_tag_id" baseTableName="cpq_tag" constraintName="fk_pomjqq6n5u0vcodkopm" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-10">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_media" constraintName="fk_co5zjq6jdn5vcovooi1" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-11">
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_media" constraintName="fk_op1zppqjdn5vabcipq5" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-17">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_offer_component" constraintName="fk_sspl5q1jj6jdakklqp" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+    </changeSet>
+
+
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-19">
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_iw510u1o6ndaphf4" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-20">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_ii50ihu1qzsqikh2bo" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-21">
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_nh50ihuoo32sqijo5v" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-22">
+        <addForeignKeyConstraint baseColumnNames="commercial_rule_item_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_rule_item_rule_line" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_rule_item" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-23">
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_commercial_rule_header" constraintName="fk_nhi85o6nnipl087" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk_commercial_rule_header_rule_item">
+        <addForeignKeyConstraint baseColumnNames="commercial_rule_header_id" baseTableName="cpq_commercial_rule_item" constraintName="fk_commercial_rule_header_rule_item" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_rule_header" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-24">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_commercial_rule_header" constraintName="fk_ggi871iihn0ii77" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-25">
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_commercial_rule_header" constraintName="fk_omk25ihukik058ijj20" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-26">
+        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_commercial_rule_header" constraintName="fk_hhokb05o32yhp50" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+    </changeSet>
+
+    <changeSet author="Rachid-Ay" id="rebuild-mediapost-fk-28">
+        <addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="cpq_media" constraintName="fk_co5zjq6jdn5vcovoo52" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+    </changeSet>
+
+    <changeSet id="current-str-fk-32" author="TarikFAKHOURI">
+        <addForeignKeyConstraint baseColumnNames="quote_lot_id" baseTableName="cpq_quote_product" constraintName="fk_quote_lot_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
+    </changeSet>
+
+    <changeSet id="current-str-fk-33" author="TarikFAKHOURI">
+        <addForeignKeyConstraint baseColumnNames="offer_component_id" baseTableName="cpq_quote_product" constraintName="fk_offer_component_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_offer_component" />
+    </changeSet>
+
+    <changeSet id="current-str-fk-34" author="TarikFAKHOURI">
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_quote_product" constraintName="fk_product_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+    </changeSet>
+
+    <changeSet id="current-str-fk-43" author="TarikFAKHOURI">
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cpq_contract" constraintName="fk_cpq_contract_seller_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+    </changeSet>
+
+    <changeSet id="current-str-fk-44" author="TarikFAKHOURI">
+        <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="cpq_contract" constraintName="fk_cpq_contract_billing_account_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_account" />
+    </changeSet>
+
+    <changeSet id="current-str-fk-45" author="TarikFAKHOURI">
+        <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="cpq_contract" constraintName="fk_cpq_contract_customer_account_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
+    </changeSet>
+
+    <changeSet id="current-str-fk-46" author="TarikFAKHOURI">
+        <addForeignKeyConstraint baseColumnNames="customer_id" baseTableName="cpq_contract" constraintName="fk_cpq_contract_customer_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_customer" />
+    </changeSet>
+
+
+    <changeSet id="current-str-fk-47" author="TarikFAKHOURI">
+        <addForeignKeyConstraint baseColumnNames="cpq_contract_id" baseTableName="cpq_contract_item" constraintName="fk_cpq_contract_item_cpq_contract_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_contract" />
+    </changeSet>
+    <changeSet id="current-str-fk-48" author="TarikFAKHOURI">
+        <addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="cpq_contract_item" constraintName="fk_cpq_contract_item_offer_template_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+    </changeSet>
+    <changeSet id="current-str-fk-49" author="TarikFAKHOURI">
+        <addForeignKeyConstraint baseColumnNames="cpq_product_id" baseTableName="cpq_contract_item" constraintName="fk_cpq_contract_item_cpq_product_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+    </changeSet>
+    <changeSet id="current-str-fk-50" author="TarikFAKHOURI">
+        <addForeignKeyConstraint baseColumnNames="price_plan_id" baseTableName="cpq_contract_item" constraintName="fk_cpq_contract_item_price_plan_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />
+    </changeSet>
+    <changeSet id="current-str-fk-51" author="TarikFAKHOURI">
+        <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cpq_contract_item" constraintName="fk_cpq_contract_item_charge_template_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
+    </changeSet>
+    <changeSet id="current-str-fk-52" author="TarikFAKHOURI">
+        <addForeignKeyConstraint baseColumnNames="service_template_id" baseTableName="cpq_contract_item" constraintName="fk_cpq_contract_item_service_template_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-28">
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_grouped_service" constraintName="fk-product-grouped_service" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-29">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cpq_product_mapping" constraintName="fk-product-product_mapping" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-30">
+        <addForeignKeyConstraint baseColumnNames="attribute_1" baseTableName="cpq_product_mapping" constraintName="fk1-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-31">
+        <addForeignKeyConstraint baseColumnNames="attribute_2" baseTableName="cpq_product_mapping" constraintName="fk2-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-32">
+        <addForeignKeyConstraint baseColumnNames="attribute_2" baseTableName="cpq_product_mapping" constraintName="fk3-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-33">
+        <addForeignKeyConstraint baseColumnNames="attribute_3" baseTableName="cpq_product_mapping" constraintName="fk4-service_template-product_mapping" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_service_template" />
+    </changeSet>
+
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-35">
+        <addForeignKeyConstraint baseColumnNames="charge_template_id" baseTableName="cpq_product_mapping" constraintName="fk-charge_template-product_mapping" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_charge_template" />
+    </changeSet>
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-36">
+        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_tag_filter" constraintName="fk-tag-tag_filter" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+    </changeSet>
+
+
+    <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-40">
+        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_commercial_rule_line" constraintName="fk_cpq_tag_rule_line" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
+    </changeSet>
+
+    <changeSet author="NabilOuachi" id="rebuild-mediapost-fk-41">
+        <addForeignKeyConstraint baseColumnNames="ppm_id" baseTableName="cpq_price_plan_version" constraintName="fk_cpq_price_pla_version_price_plan_matrix" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />
+    </changeSet>
+
+
+
+
+
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
-	
+
 	<changeSet id="#4127_10042019" author="AbdelmounaimAkadid">
 	</changeSet>
 
@@ -11450,43 +12469,43 @@ $$ LANGUAGE plpgsql;
 
 	<changeSet id="#4107_20190515" author="EdwardPLegaspi">
 	</changeSet>
-    
+
     <changeSet id="#4117_20190405" author="AmineBENAICHA">
     </changeSet>
 
     <changeSet id="#4179_20190417" author="AndriusKarpavicius">
     </changeSet>
-    
+
     <changeSet id="#4148_20190418 - Add runAsync on notification" author="EdwardPLegaspi">
     </changeSet>
-    
+
     <changeSet id="#3683_20190415" author="YoussefIZEM">
     </changeSet>
-     
+
     <changeSet id="#4208_2019042601" author="MohamedElYoussoufi" dbms="postgresql" >
     </changeSet>
-     
+
     <changeSet id="#4208_2019042602" author="MohamedElYoussoufi" dbms="mysql">
     </changeSet>
-     
+
     <changeSet id="#3692_20190426" author="AndriusKarpavicius">
     </changeSet>
-    
+
     <changeSet id="#4207_2019042901" author="MohamedElYoussoufi">
     </changeSet>
-      
+
     <changeSet id="#4207_2019042902" author="MohamedElYoussoufi" dbms="postgresql">
     </changeSet>
-      
+
     <changeSet id="#4207_2019042903" author="MohamedElYoussoufi" dbms="mysql">
     </changeSet>
-      
+
     <changeSet id="#4207_2019042904" author="MohamedElYoussoufi">
 	</changeSet>
 
 	<changeSet id="#4156_20190423" author="EdwardPLegaspi">
 	</changeSet>
-    
+
     <changeSet id="#4198_03052019" author="SaidRamli">
     </changeSet>
 
@@ -11511,16 +12530,16 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#4290_20190520-M" author="AndriusKarpavicius" dbms="mysql">
     </changeSet>
-    
+
     <changeSet id="#4326_20190530-P" author="AndriusKarpavicius" dbms="postgresql">
     </changeSet>
-    
+
     <changeSet id="#4326_20190530-M" author="AndriusKarpavicius" dbms="mysql">
     </changeSet>
-    
+
     <changeSet id="#4326_20190530" author="AndriusKarpavicius">
     </changeSet>
-    
+
     <changeSet id="#4278_20190520_partitions" author="mohamed.el.youssoufi" dbms="postgresql">
     </changeSet>
 
@@ -11532,19 +12551,19 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#4192_20190506 - add counter for subscription and service" author="KhalidHorri">
     </changeSet>
-    
+
     <changeSet id="#4303_300520191" author="mohamed.el.youssoufi" dbms="postgresql">
     </changeSet>
-    
+
     <changeSet id="#4303_300520192" author="mohamed.el.youssoufi" dbms="mysql">
 	</changeSet>
 
     <changeSet id="#4322_20190612 - Add a filter to GenericWorkflow" author="MounirBahije">
     </changeSet>
-    
+
     <changeSet id="#4054_201917061 - Encryption" author="MohamedElYoussoufi" dbms="postgresql">
     </changeSet>
-    
+
     <changeSet id="#4054_201917062 - Encryption" author="mohamed.el.youssoufi" dbms="mysql">
     </changeSet>
 
@@ -11592,15 +12611,15 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#4468_20190631_1" author="AbdellatifBARI">
     </changeSet>
-    
-    <changeSet id="#4326_20190709" author="AndriusKarpavicius" failOnError="false"> 
+
+    <changeSet id="#4326_20190709" author="AndriusKarpavicius" failOnError="false">
     </changeSet>
 
     <changeSet id="#4457_20190728" author="AndriusKarpavicius">
-    </changeSet> 
+    </changeSet>
 
 	<changeSet id="#4472_20190807" author="AndriusKarpavicius">
-    </changeSet> 
+    </changeSet>
 
     <changeSet id="#4392_20190625" author="AndriusKarpavicius" dbms="postgres">
     </changeSet>
@@ -11609,24 +12628,24 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#4392_20190625-UPDATED-20190827" author="MohamedSTITANE" dbms="mysql">
     </changeSet>
 
-    <changeSet id="#4326_20190811" author="AndriusKarpavicius"> 
+    <changeSet id="#4326_20190811" author="AndriusKarpavicius">
     </changeSet>
 
     <changeSet id="#4512_20190819" author="AbdellatifBARI">
     </changeSet>
-    
+
  	<changeSet id="#4480_250919" author="MohammedElAzzouzi">
     </changeSet>
 
     <changeSet id="#4480_210819" author="SaidRamli">
-    </changeSet>                          
+    </changeSet>
 
     <changeSet id="#4538_20190829" author="AbdellatifBARI">
     </changeSet>
 
     <changeSet id="#4550_20190904" author="AbdellatifBARI">
     </changeSet>
-    
+
     <changeSet id="#4313_17062019" author="mohamed.el.youssoufi">
 	</changeSet>
 
@@ -11636,34 +12655,34 @@ $$ LANGUAGE plpgsql;
 	<changeSet id="#4064_11092019" author="AbdelmounaimAkadid">
 	</changeSet>
 
-   	<changeSet id="#4606_260919" author="AbdelmounaimAkadid"> 	
+   	<changeSet id="#4606_260919" author="AbdelmounaimAkadid">
     </changeSet>
-    
+
     <changeSet id="#4555_20190903" author="AndriusKarpavicius">
-    </changeSet>         
-        
+    </changeSet>
+
     <changeSet id="#4555_20190903-M" author="AndriusKarpavicius" dbms="mysql">
     </changeSet>
-    
-    <changeSet id="#4555_20190903-end" author="AndriusKarpavicius">        
-    </changeSet> 
-    
-    <changeSet id="#4555_20190905" author="AndriusKarpavicius"> 
+
+    <changeSet id="#4555_20190903-end" author="AndriusKarpavicius">
     </changeSet>
-    
+
+    <changeSet id="#4555_20190905" author="AndriusKarpavicius">
+    </changeSet>
+
     <changeSet id="#4555_20190905-M" author="AndriusKarpavicius" dbms="mysql">
     </changeSet>
-    
-    <changeSet id="#4555_20190905-end" author="AndriusKarpavicius">        
-    </changeSet>    
-    
-    <changeSet id="#4511_20190919-M" author="AndriusKarpavicius" dbms="mysql"> 
+
+    <changeSet id="#4555_20190905-end" author="AndriusKarpavicius">
     </changeSet>
-        
-    <changeSet id="#4511_20190919-P" author="AndriusKarpavicius" dbms="postgresql"> 
+
+    <changeSet id="#4511_20190919-M" author="AndriusKarpavicius" dbms="mysql">
     </changeSet>
-    
-    <changeSet id="#4511_20190919-P-end" author="AndriusKarpavicius" dbms="postgresql">       
+
+    <changeSet id="#4511_20190919-P" author="AndriusKarpavicius" dbms="postgresql">
+    </changeSet>
+
+    <changeSet id="#4511_20190919-P-end" author="AndriusKarpavicius" dbms="postgresql">
     </changeSet>
 
     <changeSet id="#4490_31102019" author="AbdelmounaimAkadid">
@@ -11677,7 +12696,7 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#4766_20191111" author="MohammedELAZZOUZI">
     </changeSet>
-    
+
     <changeSet id="#4765_20191112" author="MohammedELAZZOUZI">
     </changeSet>
 
@@ -11717,7 +12736,7 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#500X_20200218" author="mohamed.el.youssoufi" dbms="postgresql">
     </changeSet>
-    
+
     <changeSet id="#4787_20200224" author="khalidHORRI">
     </changeSet>
 
@@ -11729,10 +12748,10 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#4096_2020-02-07_3" author="AndriusKarpavicius">
     </changeSet>
-    
+
     <changeSet id="#4201_20200225" author="khalidHORRI">
     </changeSet>
- 
+
     <changeSet id="#4071_20200227" author="khalidHORRI">
     </changeSet>
 
@@ -11750,7 +12769,7 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#5064_2020-03-15" author="AndriusKarpavicius">
     </changeSet>
-  
+
     <changeSet author="abdelkader.bouazza" id="#4891-Copy-recurrence-calendar-and-applyInAdvance-to-RecurringChargeInstance-from-a-RecurringChargeTemplate">
     </changeSet>
 
@@ -11768,7 +12787,7 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#4879_20190121" author="AmineBENAICHA">
     </changeSet>
-    
+
     <changeSet id="#5052_20200323" author="MohammedELAZZOUZI">
     </changeSet>
 
@@ -11813,16 +12832,16 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#5206_20200505" author="AndriusKarpavicius" dbms="postgresql" >
     </changeSet>
-    
+
     <changeSet id="#5257_20200527" author="AndriusKarpavicius" dbms="postgresql" >
     </changeSet>
 
-    <changeSet id="#4895_20200515" author="MohammedAmineTazi">        
+    <changeSet id="#4895_20200515" author="MohammedAmineTazi">
     </changeSet>
 
     <changeSet id="#5279_20200608_Cancellation of a billing run is impossible" author="anasseh">
     </changeSet>
-    
+
     <changeSet id="#5266_20200622" author="AbdelmounaimAkadid">
     </changeSet>
 
@@ -11840,10 +12859,10 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#5372_20190630" author="AndriusKarpavicius">
     </changeSet>
-    
+
     <changeSet id="#5372_20200711" author="AndriusKarpavicius">
     </changeSet>
-    
+
     <changeSet id="#5303_20200629" author="hznibar" >
     </changeSet>
 
@@ -11852,13 +12871,13 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#5241_20200721" author="khalidHORRI">
     </changeSet>
- 
+
     <changeSet id="#5388_20200715" author="AndriusKarpavicius">
     </changeSet>
 
     <changeSet id="#FEAT-777_20200728j" author="AbdelkaderBouazza">
     </changeSet>
-    
+
     <changeSet id="#4764_20200720" author="MohammedELAZZOUZI">
     </changeSet>
 
@@ -11870,10 +12889,10 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#5404_20200728" author="khalidHORRI">
     </changeSet>
-    
+
     <changeSet id="#5400_23072020" author="KhalidHORRI">
     </changeSet>
-    
+
     <changeSet id="#4156_20120719" author="anasseh">
     </changeSet>
 
@@ -11885,16 +12904,16 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#5442_CET_ES" author="AndriusKarpavicius">
     </changeSet>
-    
+
     <changeSet id="#5454_20200824" author="khalidHORRI">
     </changeSet>
 
     <changeSet id="#5303_Update_CDR_Table_20200826" author="MohammedAmineTazi">
     </changeSet>
-       
+
     <changeSet id="#CORE-5215_11082020" author="AbdelkaderBouazza">
     </changeSet>
-    
+
 	<changeSet id="#5303_20200831" author="hznibar" >
     </changeSet>
 
@@ -11906,7 +12925,7 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#CORE-5457_20200825" author="AbdelkaderBouazza">
     </changeSet>
-    
+
     <changeSet id="#5303_20200902" author="hznibar" >
     </changeSet>
 
@@ -11915,7 +12934,7 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#5489-2020-09-14" author="AndriusKarpavicius">
     </changeSet>
-    
+
     <changeSet id="#5510_20200923" author="anasseh">
     </changeSet>
 
@@ -11933,7 +12952,7 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#5501_20201007" author="MohammedELAZZOUZI">
     </changeSet>
-    
+
     <changeSet id="#5155_20200928" author="Mbarek-Ay">
     </changeSet>
 
@@ -11942,16 +12961,16 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#5621_20201104_offer_template_fix" author="NabilOUACHI" failOnError="false">
     </changeSet>
-    
+
     <changeSet id="#5621_20201104_offer_template" author="NabilOUACHI" failOnError="false">
     </changeSet>
-    
+
     <changeSet id="#5975_20210225_offer_template_allowed_offer_change_should_be_many_to_many" author="MounirBOUKAYOUA" failOnError="false">
-    </changeSet>   
+    </changeSet>
 
     <changeSet id="#5599_20201029" author="AndriusKarpavicius">
     </changeSet>
-    
+
     <changeSet id="#5416_20120809" author="anasseh">
 	</changeSet>
 
@@ -11969,13 +12988,13 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#5214_20201117" author="ZBariki">
     </changeSet>
-    
+
     <changeSet id="#5680_20201126" author="khalidHORRI">
     </changeSet>
 
     <changeSet id="5687_20203011" author="khalidHORRI">
     </changeSet>
-    
+
     <changeSet id="5697_20201208" author="khalidHORRI">
     </changeSet>
 
@@ -11984,71 +13003,71 @@ $$ LANGUAGE plpgsql;
 
 	<changeSet id="#5627_20201212" author="MohammedELAZZOUZI">
     </changeSet>
-    
+
     <changeSet id="#4427_20201202" author="ZBariki">
     </changeSet>
-    
+
     <changeSet id="#4427_20201216" author="ZBariki">
     </changeSet>
-    
+
     <changeSet id="#5627_20210112" author="MohammedELAZZOUZI">
     </changeSet>
 
     <changeSet id="#5627_20210107" author="AndriusKarpavicius">
     </changeSet>
-    
+
     <changeSet id="#5872_20210104" author="AmineBENAICHA" dbms="postgresql">
     </changeSet>
-    
+
     <changeSet id="#5700_20210118" author="AmineBENAICHA" dbms="postgresql">
-    </changeSet>        
-    
+    </changeSet>
+
     <changeSet id="#5909_20210118" author="AndriusKarpavicius">
     </changeSet>
-    
+
     <changeSet id="#5904_20210129" author="AmineBENAICHA">
     </changeSet>
-    
+
     <changeSet id="#5960_20210212" author="AndriusKarpavicius">
     </changeSet>
-    
+
     <changeSet id="#5993_20210304" author="HatimOUDAD">
     </changeSet>
-    
+
     <changeSet id="#5863_22122020" author="AbdelmounaimAkadid">
 	</changeSet>
 
     <changeSet id="#5999_20210305" author="AndriusKarpavicius">
     </changeSet>
-    
+
     <changeSet id="#6040_20210323" author="amineTazi">
     </changeSet>
-    
+
     <changeSet id="#6012_20210323" author="MohamedAliHammal">
     </changeSet>
-    
+
     <changeSet id="4756_20191104" author="Andrius">
-    </changeSet>    
-        
+    </changeSet>
+
     <changeSet id="4756_20210311" author="Andrius">
     </changeSet>
-    
+
     <changeSet id="6055_20210330" author="Andrius" dbms="postgresql">
     </changeSet>
-    
+
     <changeSet id="#5622_20210406" author="AbdelmounaimAkadid">
     </changeSet>
-    
+
     <changeSet id="#5214_20200415_migration" author="AbdelmounaimAkadid">
-    </changeSet>    
-    
+    </changeSet>
+
     <changeSet id="#4742_20191030" author="MohamedSTITANE">
-    </changeSet>   
-    
-    
+    </changeSet>
+
+
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
-		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>    
+		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>
     </changeSet>
-    
+
 </databaseChangeLog>
