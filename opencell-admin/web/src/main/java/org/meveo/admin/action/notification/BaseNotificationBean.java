@@ -82,7 +82,7 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
         String queryLc = query.toLowerCase();
         List<String> classNames = new ArrayList<String>();
         for (Class clazz : classes) {
-            if (Proxy.isProxyClass(clazz) || clazz.getName().contains("$$")) {
+            if (Proxy.isProxyClass(clazz) || clazz.getName().contains("$")) {
                 continue;
             }
             if (((clazz.isAnnotationPresent(Entity.class) && clazz.isAnnotationPresent(ObservableEntity.class)) || clazz.isAnnotationPresent(NotifiableEntity.class)) && clazz.getName().toLowerCase().contains(queryLc)) {
