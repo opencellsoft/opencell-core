@@ -74,8 +74,16 @@ public class SubscriptionDto extends BusinessEntityDto {
     /** The status date. */
     private Date statusDate;
 
-    /** The validity date. */
+    /** The validity date.
+     * This field is used as input
+     */
     private Date validityDate;
+
+    /** The valid from date */
+    private Date validFrom;
+
+    /** The valid from to */
+    private Date validTo;
 
     /** The custom fields. */
     @XmlElement(required = false)
@@ -272,6 +280,11 @@ public class SubscriptionDto extends BusinessEntityDto {
         setElectronicBilling(e.getElectronicBilling());
         if (e.getMinimumChargeTemplate() != null) {
             setMinimumChargeTemplate(e.getMinimumChargeTemplate().getCode());
+        }
+
+        if (e.getValidity() != null) {
+            setValidFrom(e.getValidity().getFrom());
+            setValidTo(e.getValidity().getTo());
         }
     }
 
@@ -836,5 +849,21 @@ public class SubscriptionDto extends BusinessEntityDto {
 
     public void setValidityDate(Date validityDate) {
         this.validityDate = validityDate;
+    }
+
+    public Date getValidFrom() {
+        return validFrom;
+    }
+
+    public void setValidFrom(Date validFrom) {
+        this.validFrom = validFrom;
+    }
+
+    public Date getValidTo() {
+        return validTo;
+    }
+
+    public void setValidTo(Date validTo) {
+        this.validTo = validTo;
     }
 }
