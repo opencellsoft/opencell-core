@@ -26,7 +26,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
-import org.meveo.api.dto.response.tax.TaxCategoryListResponseDto;
 import org.meveo.api.dto.response.tax.TaxClassListResponseDto;
 import org.meveo.api.dto.response.tax.TaxClassResponseDto;
 import org.meveo.api.dto.tax.TaxClassDto;
@@ -34,7 +33,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tax.TaxClassRs;
 import org.meveo.api.tax.TaxClassApi;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 
 /**
  * REST interface definition of Tax class API

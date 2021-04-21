@@ -27,7 +27,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.CreditCategoryApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.CreditCategoryRs;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CreditCategory;
 

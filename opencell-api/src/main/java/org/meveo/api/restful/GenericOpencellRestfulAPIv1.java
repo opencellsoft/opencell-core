@@ -1,4 +1,4 @@
-package org.meveo.apiv2;
+package org.meveo.api.restful;
 
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import org.apache.commons.collections.map.HashedMap;
@@ -10,10 +10,10 @@ import org.meveo.api.dto.invoice.CancelInvoiceRequestDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.invoice.ValidateInvoiceRequestDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.apiv2.GenericJacksonProvider;
 import org.meveo.apiv2.document.DocumentResourceImpl;
-import org.meveo.apiv2.generic.GenericResourceAPIv1Impl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
-import org.meveo.apiv2.generic.RegExHashMap;
+import org.meveo.api.restful.util.RegExHashMap;
 import org.meveo.apiv2.generic.exception.*;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
@@ -296,12 +296,9 @@ public class GenericOpencellRestfulAPIv1 extends Application {
 
                             // Handling requests related to customerCategory
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customerCategories",
-                                    ((Path) anAnnotation).value() );
-                            MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customerBrands",
-                                    ((Path) anAnnotation).value() );
+                                    ((Path) anAnnotation).value() + "/category" );
 
                             fillUpRestfulURLsMapWithSpecialURL( ACCOUNT_MANAGEMENT + "/customerCategories", aMapRestful, "customer" );
-                            fillUpRestfulURLsMapWithSpecialURL( ACCOUNT_MANAGEMENT + "/customerBrands", aMapRestful, "customer" );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/account/customerAccount" ) ) {
                             MAP_NEW_PATH_AND_IBASE_RS_PATH.put( API_VERSION + ACCOUNT_MANAGEMENT + "/customerAccounts",
