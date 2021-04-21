@@ -18,20 +18,22 @@
 
 package org.meveo.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CurrencyIsoDto;
+import org.meveo.api.dto.response.GetCurrenciesIsoResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.service.admin.impl.CurrencyService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -46,7 +48,12 @@ public class CurrencyIsoApi extends BaseApi {
     public void create(CurrencyIsoDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            String generatedCode = getGenericCode(Currency.class.getName());
+            if (generatedCode != null) {
+                postData.setCode(generatedCode);
+            } else {
+                missingParameters.add("code");
+            }
         }
  
         handleMissingParameters();
@@ -115,11 +122,10 @@ public class CurrencyIsoApi extends BaseApi {
 
     public void createOrUpdate(CurrencyIsoDto postData) throws MeveoApiException, BusinessException {
 
-        Currency currency = currencyService.findByCode(postData.getCode());
-        if (currency == null) {
-            create(postData);
-        } else {
+        if(!StringUtils.isBlank(postData.getCode()) && currencyService.findByCode(postData.getCode()) != null) {
             update(postData);
+        } else {
+            create(postData);
         }
     }
     
@@ -135,5 +141,19 @@ public class CurrencyIsoApi extends BaseApi {
 
 		return result;
 	}
+
+    public GetCurrenciesIsoResponse list(PagingAndFiltering pagingAndFiltering) {
+        GetCurrenciesIsoResponse result = new GetCurrenciesIsoResponse();
+        result.setPaging( pagingAndFiltering );
+
+        List<Currency> currencies = currencyService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (currencies != null) {
+            for (Currency currency : currencies) {
+                result.getCurrencies().add(new CurrencyIsoDto(currency));
+            }
+        }
+
+        return result;
+    }
 	
 }

@@ -54,9 +54,10 @@ public class DiscountPlanInstanceStatusJobBean extends BaseJobBean {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateDiscountPlanInstanceStatus(JobExecutionResultImpl result, Long discountPlanInstanceId, DiscountPlanInstanceStatusEnum status) {
         try {
+
             DiscountPlanInstance discountPlanInstance = discountPlanInstanceService.findById(discountPlanInstanceId);
             discountPlanInstance.setStatus(status);
-            discountPlanInstanceService.update(discountPlanInstance);
+            discountPlanInstanceService.updateStatus(discountPlanInstance);
             jobExecutionService.registerSucces(result);
         } catch (Exception e) {
             log.error("Failed to process status of discountPlanInstance {} ", discountPlanInstanceId, e);

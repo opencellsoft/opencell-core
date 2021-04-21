@@ -18,52 +18,43 @@
 
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 
-import org.meveo.admin.async.FiltringJobAsync;
-import org.meveo.admin.async.SubListCreator;
+import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.InvalidScriptException;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.filter.FilterService;
-import org.meveo.service.job.Job;
-import org.meveo.service.job.JobExecutionErrorService;
-import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
-import org.slf4j.Logger;
 
 /**
- * The FilteringJobBean have 2 mains inputs :ScriptInstance and Filter. For each filtered entity the scriptInstance are executed.
+ * Job implementation to execute the given script for each entity returned from the given filter.
  * 
  * @author anasseh
- *
+ * @author Andrius Karpavicius
  */
 @Stateless
-public class FilteringJobBean extends BaseJobBean {
+public class FilteringJobBean extends IteratorBasedJobBean<IEntity> {
 
-    @Inject
-    private Logger log;
+    private static final long serialVersionUID = 3279519649411448927L;
 
     @Inject
     private FilterService filterService;
@@ -72,141 +63,139 @@ public class FilteringJobBean extends BaseJobBean {
     private ScriptInstanceService scriptInstanceService;
 
     @Inject
-    private FiltringJobAsync filtringJobAsync;
-
-    @Inject
     private BeanManager manager;
 
-    @Inject
-    private JobExecutionErrorService jobExecutionErrorService;
-
-    @Inject
-    protected JobExecutionService jobExecutionService;
+    /**
+     * Script to run - Job execution parameter
+     */
+    private ScriptInterface scriptInterface;
 
     /**
-     * Execute the jobInstance.
-     * 
-     * @param result The result execution
-     * @param jobInstance the jobInstance to execute
+     * Script context - Job execution parameter
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    private Map<String, Object> scriptContext;
+
+    /**
+     * Script record variable name - Job execution parameter
+     */
+    private String recordVariableName;
+
+    @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::applyScriptOnEntity, null, this::finalizeScript);
 
-        jobExecutionErrorService.purgeJobErrors(jobInstance);
+        scriptInterface = null;
+        scriptContext = null;
+        recordVariableName = null;
+    }
 
-        ScriptInterface scriptInterface = null;
-        Map<String, Object> scriptContext = new HashMap<String, Object>();
+    /**
+     * Initialize job settings and retrieve data to process
+     * 
+     * @param jobExecutionResult Job execution result
+     * @return An iterator over a list of entities to execute the script on
+     */
+    @SuppressWarnings("unchecked")
+    private Optional<Iterator<IEntity>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbRuns == -1) {
-            nbRuns = (long) Runtime.getRuntime().availableProcessors();
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
+
+        scriptInterface = null;
+        scriptContext = new HashMap<String, Object>();
+
+        String filterCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "FilteringJob_filter")).getCode();
+        String scriptCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "FilteringJob_script")).getCode();
+        recordVariableName = (String) this.getParamOrCFValue(jobInstance, "FilteringJob_recordVariableName");
+
+        Filter filter = filterService.findByCode(filterCode);
+        if (filter == null) {
+            jobExecutionResult.registerError("Cant find filter : " + filterCode);
+            return Optional.empty();
         }
-        jobExecutionService.counterRunningThreads(result, nbRuns);
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         try {
+            scriptInterface = scriptInstanceService.getScriptInstance(scriptCode);
 
-            String filterCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "FilteringJob_filter")).getCode();
-            String scriptCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "FilteringJob_script")).getCode();
-            String recordVariableName = (String) this.getParamOrCFValue(jobInstance, "FilteringJob_recordVariableName");
+        } catch (EntityNotFoundException | InvalidScriptException e) {
+            jobExecutionResult.registerError(e.getMessage());
+            return Optional.empty();
+        }
 
-            Filter filter = filterService.findByCode(filterCode);
-            if (filter == null) {
-                jobExecutionService.registerError(result, "Cant find filter : " + filterCode);
-                return;
-            }
+        Map<String, Object> scriptParams = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "FilteringJob_variables");
+        if (scriptParams != null) {
+            Map<Object, Object> elContext = new HashMap<>();
+            elContext.put("manager", manager);
+            elContext.put("currentUser", currentUser);
+            elContext.put("appProvider", appProvider);
 
-            try {
-                scriptInterface = scriptInstanceService.getScriptInstance(scriptCode);
-
-            } catch (EntityNotFoundException | InvalidScriptException e) {
-                jobExecutionService.registerError(result, e.getMessage());
-                return;
-            }
-
-            Map<String, Object> scriptParams = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "FilteringJob_variables");
-            if (scriptParams != null) {
-                Map<Object, Object> elContext = new HashMap<>();
-                elContext.put("manager", manager);
-                elContext.put("currentUser", currentUser);
-                elContext.put("appProvider", appProvider);
-
-                for (Map.Entry<String, Object> entry : scriptParams.entrySet()) {
-                    if (entry.getValue() instanceof String) {
-                        scriptContext.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), elContext, Object.class));
-                    } else {
-                        scriptContext.put(entry.getKey(), entry.getValue());
-                    }
+            for (Map.Entry<String, Object> entry : scriptParams.entrySet()) {
+                if (entry.getValue() instanceof String) {
+                    scriptContext.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), elContext, Object.class));
+                } else {
+                    scriptContext.put(entry.getKey(), entry.getValue());
                 }
             }
+        }
 
-            scriptInterface.init(scriptContext);
+        scriptInterface.init(scriptContext);
 
-            Map<String, Object> sqlVariables = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "FilteringJob_sql_variables");
+        Map<String, Object> sqlVariables = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "FilteringJob_sql_variables");
 
-            Map<String, Object> sqlParams = new HashMap<String, Object>();
+        Map<String, Object> sqlParams = new HashMap<String, Object>();
 
-            if (sqlVariables != null) {
-                Map<Object, Object> elContext = new HashMap<>();
-                elContext.put("manager", manager);
-                elContext.put("currentUser", currentUser);
-                elContext.put("appProvider", appProvider);
+        if (sqlVariables != null) {
+            Map<Object, Object> elContext = new HashMap<>();
+            elContext.put("manager", manager);
+            elContext.put("currentUser", currentUser);
+            elContext.put("appProvider", appProvider);
 
-                for (Map.Entry<String, Object> entry : sqlVariables.entrySet()) {
-                    if (entry.getValue() instanceof String) {
-                        sqlParams.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), elContext, Object.class));
-                    } else {
-                        sqlParams.put(entry.getKey(), entry.getValue());
-                    }
+            for (Map.Entry<String, Object> entry : sqlVariables.entrySet()) {
+                if (entry.getValue() instanceof String) {
+                    sqlParams.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), elContext, Object.class));
+                } else {
+                    sqlParams.put(entry.getKey(), entry.getValue());
                 }
             }
+        }
 
-            List<? extends IEntity> filtredEntities = filterService.filteredListAsObjects(filter, sqlParams);
-            int nbItemsToProcess = filtredEntities == null ? 0 : filtredEntities.size();
-            result.setNbItemsToProcess(nbItemsToProcess);
-            List<Future<String>> futures = new ArrayList<Future<String>>();
-            SubListCreator subListCreator = new SubListCreator(filtredEntities, nbRuns.intValue());
-            log.debug("NbItemsToProcess:{}, block to run{}, nbThreads:{}.", nbItemsToProcess, subListCreator.getBlocToRun(), nbRuns);
-            jobExecutionService.initCounterElementsRemaining(result, nbItemsToProcess);
+        List filtredEntities = filterService.filteredListAsObjects(filter, sqlParams);
 
-            MeveoUser lastCurrentUser = currentUser.unProxy();
-            while (subListCreator.isHasNext()) {
-                futures.add(filtringJobAsync.launchAndForget((List<? extends IEntity>) subListCreator.getNextWorkSet(), result, scriptInterface, recordVariableName, lastCurrentUser));
-                if (subListCreator.isHasNext()) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-            }
-            // Wait for all async methods to finish
-            for (Future<String> future : futures) {
-                try {
-                    future.get();
-                } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    jobExecutionService.registerError(result, cause.getMessage());
-                    result.addReport(cause.getMessage());
-                    log.error("Failed to execute async method", cause);
-                }
-            }
+        EntityManager em = filterService.getEntityManager();
+        
+        filtredEntities.stream().forEach(x -> em.detach(x));
+
+        return Optional.of(new SynchronizedIterator<IEntity>(filtredEntities));
+    }
+
+    /**
+     * Apply script on entity
+     * 
+     * @param entity Entity
+     * @param jobExecutionResult Job execution result
+     */
+    private void applyScriptOnEntity(IEntity entity, JobExecutionResultImpl jobExecutionResult) {
+
+        Map<String, Object> context = new HashMap<String, Object>();
+        context.put(recordVariableName, entity);
+        context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+        context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+
+        scriptInterface.execute(context);
+    }
+
+    /**
+     * Finalize script
+     * 
+     * @param jobExecutionResult Job execution result
+     */
+    private void finalizeScript(JobExecutionResultImpl jobExecutionResult) {
+        try {
+            scriptInterface.terminate(scriptContext);
+
         } catch (Exception e) {
-            log.error("Error on execute", e);
-            result.setReport("error:" + e.getMessage());
-
-        } finally {
-            try {
-                scriptInterface.terminate(scriptContext);
-
-            } catch (Exception e) {
-                log.error("Error on finally execute", e);
-                result.setReport("finalize error:" + e.getMessage());
-            }
+            log.error("Error on script finalize execute", e);
+            jobExecutionResult.setReport("Finalize error:" + e.getMessage());
         }
     }
 }

@@ -43,7 +43,7 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.tax.TaxMappingService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +75,7 @@ public class InvoiceAggregateHandler {
     private Provider appProvider;
 
     @Inject
-    private TaxMappingService taxMappingService;
+    private InvoiceSubCategoryService invoiceSubCategoryService;
 
     /**
      * reset default values.
@@ -298,6 +298,7 @@ public class InvoiceAggregateHandler {
             Set newSet = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates().stream().filter(subCat -> !subCat.equals(subCategoryInvoiceAgregateFinal)).collect(Collectors.toSet());
             categoryInvoiceAgregate.setSubCategoryInvoiceAgregates(newSet);
             if (categoryInvoiceAgregate.getSubCategoryInvoiceAgregates().isEmpty()) {
+            	invoiceSubCategory = invoiceSubCategoryService.retrieveIfNotManaged(invoiceSubCategory);
                 catInvAgregateMap.remove(invoiceSubCategory.getInvoiceCategory().getCode());
             }
         }

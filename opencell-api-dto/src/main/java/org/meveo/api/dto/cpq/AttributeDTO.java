@@ -36,6 +36,8 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class ServiceDto.
  *
@@ -53,65 +55,84 @@ public class AttributeDTO extends EnableBusinessDto {
      * Corresponding to minimum one shot charge template code.
      */
     @NotNull
+    @Schema(description = "Corresponding to minimum one shot charge template code",
+    		example = "possible value are : INFO, LIST_TEXT, LIST_MULTIPLE_TEXT, LIST_NUMERIC, "
+    				+ "LIST_MULTIPLE_NUMERIC, TEXT, NUMERIC, INTEGER, DATE, CALENDAR, EMAIL, PHONE, TOTAL, COUNT, EXPRESSION_LANGUAGE")
     protected AttributeTypeEnum attributeType;
     
     /**
      * Corresponding to predefined allowed values
      */
+    @Schema(description = "Corresponding to predefined allowed values")
     protected Set<String> allowedValues;
 	  /**
      * Display
      */
+    @Schema(description = "diplay the attribute")
     protected boolean display;
     /**
      * attribute order in the GUI
      */
+    @Schema(description = "attribute order in the GUI")
     protected Integer sequence;
     
     /**
      * The lower number, the higher the priority is
      */
+    @Schema(description = "The lower number, the higher the priority is")
     protected Integer priority ;
     /**
      * Mandatory
      */
     @NotNull
+    @Schema(description = "indicate if the attribute is mandatory")
     protected boolean mandatory=Boolean.FALSE;
-    
+
+    @Schema(description = "indicate if the attribute is selectable")
    protected boolean selectable=Boolean.TRUE;
-    
+
+    @Schema(description = "indicate if the attribute is ruled")
     protected boolean ruled=Boolean.FALSE;
     
     @XmlElementWrapper(name = "chargeTemplateCodes")
     @XmlElement(name = "chargeTemplateCodes") 
+    @Schema(description = "list of charge template code", example = "chargeTemplateCodes : [CODE_1, CODE_2,..]")
     private List<String> chargeTemplateCodes = new ArrayList<String>();
  
     @XmlElementWrapper(name = "commercialRuleCodes")
     @XmlElement(name = "commercialRuleCodes") 
+    @Schema(description = "list of commercial rule code", example = "commercialRuleCodes : [CODE_1, CODE_2,..]")
     protected List<String> commercialRuleCodes=new ArrayList<String>();
      
     /** The media codes. */
     @XmlElementWrapper(name = "mediaCodes")
     @XmlElement(name = "mediaCodes")
+    @Schema(description = "list of media code", example = "mediaCodes : [CODE_1, CODE_2,..]")
     protected Set<String> mediaCodes = new HashSet<String>();
     
     
     /** The tags */
     @XmlElementWrapper(name = "tags")
     @XmlElement(name = "tags")
+    @Schema(description = "list of tag code", example = "tags : [CODE_1, CODE_2,..]")
     protected List<String> tagCodes=new ArrayList<String>();
     
     @XmlElementWrapper(name = "assignedAttributeCodes")
     @XmlElement(name = "assignedAttributeCodes")
+    @Schema(description = "list of assigned attribute code", example = "assignedAttributeCodes : [CODE_1, CODE_2,..]")
     private List<String> assignedAttributeCodes=new ArrayList<String>();
-    
+
+    @Schema(description = "number of decimal for attribute if the type of attribute is a NUMBER")
     private Integer unitNbDecimal = BaseEntity.NB_DECIMALS;
-    
+
+    @Schema(description = "indicate if the attribute is read only")
     protected boolean readOnly = Boolean.FALSE;
     
 
+    @Schema(description = "list of custom field associated to attribute")
     protected CustomFieldsDto customFields;
-    
+
+    @Schema(description = "default value for attribute")
     protected String defaultValue;
     
     public AttributeDTO() {

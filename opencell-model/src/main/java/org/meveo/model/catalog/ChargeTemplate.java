@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -58,6 +59,7 @@ import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxClass;
@@ -274,6 +276,9 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Column(name = "sort_index_el")
     @Size(max = 2000)
     private String sortIndexEl;
+
+    @ManyToMany(mappedBy = "chargeTemplates", cascade = CascadeType.ALL)
+    private Set<Attribute> attributes;
 
     // Calculated values
     @Transient
@@ -603,8 +608,12 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
         this.sortIndexEl = sortIndexEl;
     }
 
-	
-	 
 
-    
+    public Set<Attribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Set<Attribute> attributes) {
+        this.attributes = attributes;
+    }
 }

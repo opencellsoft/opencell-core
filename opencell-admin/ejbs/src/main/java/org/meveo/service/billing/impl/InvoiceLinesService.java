@@ -44,7 +44,6 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.MinAmountData;
 import org.meveo.model.billing.MinAmountForAccounts;
 import org.meveo.model.billing.MinAmountsResult;
-import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
@@ -58,7 +57,6 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.cpq.commercial.OrderLot;
-import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
@@ -121,6 +119,14 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
                     .setHint("org.hibernate.readOnly", true)
                     .setMaxResults(pageSize)
                     .getResultList();
+        }else if (entityToInvoice instanceof CommercialOrder) {
+            return getEntityManager().createNamedQuery("InvoiceLine.listToInvoiceByCommercialOrder", InvoiceLine.class)
+                    .setParameter("commercialOrderId", ((CommercialOrder) entityToInvoice).getId())
+                    .setParameter("firstTransactionDate", firstTransactionDate)
+                    .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setHint("org.hibernate.readOnly", true)
+                    .setMaxResults(pageSize)
+                    .getResultList();
         }
         return emptyList();
     }
@@ -135,17 +141,18 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
             return emptyList();
         }
     }
+    
 
-    public void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, OrderProduct orderProduct, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
+    public void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
         InvoiceLine invoiceLine = new InvoiceLine();
         invoiceLine.setCode("COMMERCIAL-GEN");
         invoiceLine.setCode(findDuplicateCode(invoiceLine));
         invoiceLine.setAccountingArticle(accountingArticle);
         invoiceLine.setLabel(accountingArticle.getDescription());
-        invoiceLine.setProduct(orderProduct.getProductVersion().getProduct());
-        invoiceLine.setProductVersion(orderProduct.getProductVersion());
+        invoiceLine.setProduct(productVersion.getProduct());
+        invoiceLine.setProductVersion(productVersion);
         invoiceLine.setCommercialOrder(commercialOrder);
-        invoiceLine.setOrderLot(orderProduct.getOrderServiceCommercial());
+        invoiceLine.setOrderLot(orderLot);
         invoiceLine.setQuantity(BigDecimal.valueOf(1));
         invoiceLine.setUnitPrice(amountWithoutTaxToBeInvoiced);
         invoiceLine.setAmountWithoutTax(amountWithoutTaxToBeInvoiced);
@@ -315,11 +322,12 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
 	 * @param invoiceLineRessource
 	 * @return 
 	 */
-	public void create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource) {
+	public InvoiceLine create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource) {
 		InvoiceLine invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, null);
 		invoiceLine.setCode(invoice.getCode());
 		invoiceLine.setInvoice(invoice);
 		create(invoiceLine);
+		return invoiceLine;
 	}
 	
 	public InvoiceLine initInvoiceLineFromRessource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {

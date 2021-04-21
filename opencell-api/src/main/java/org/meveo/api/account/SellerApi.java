@@ -18,13 +18,6 @@
 
 package org.meveo.api.account;
 
-import java.util.List;
-import java.util.Map.Entry;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.SellerDto;
@@ -33,27 +26,17 @@ import org.meveo.api.dto.SequenceDto;
 import org.meveo.api.dto.account.AddressDto;
 import org.meveo.api.dto.account.ContactInformationDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
-import org.meveo.api.exception.DeleteReferencedEntityException;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.exception.*;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
-import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
-import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.Country;
-import org.meveo.model.billing.InvoiceSequence;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.InvoiceTypeSellerSequence;
-import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.TradingLanguage;
+import org.meveo.model.billing.*;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.Address;
@@ -66,6 +49,12 @@ import org.meveo.service.billing.impl.InvoiceSequenceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.List;
+import java.util.Map.Entry;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -212,6 +201,14 @@ public class SellerApi extends AccountEntityApi {
             final String address3 = addressDto.getAddress3();
             if (address3 != null) {
                 address.setAddress3(address3);
+            }
+            final String address4 = addressDto.getAddress4();
+            if (address4 != null) {
+                address.setAddress4(address4);
+            }
+            final String address5 = addressDto.getAddress5();
+            if (address5 != null) {
+                address.setAddress5(address5);
             }
             final String city = addressDto.getCity();
             if (city != null) {
@@ -536,7 +533,7 @@ public class SellerApi extends AccountEntityApi {
     public SellersDto list() {
         SellersDto result = new SellersDto();
 
-        List<Seller> sellers = sellerService.list();
+        List<Seller> sellers = sellerService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
         if (sellers != null) {
             for (Seller seller : sellers) {
                 result.getSeller().add(new SellerDto(seller, entityToDtoConverter.getCustomFieldsDTO(seller, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));

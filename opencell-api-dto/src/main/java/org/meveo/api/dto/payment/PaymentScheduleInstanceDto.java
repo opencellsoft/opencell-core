@@ -34,6 +34,8 @@ import org.meveo.model.payments.PaymentScheduleInstance;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.PaymentScheduleStatusEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class PaymentScheduleInstanceDto.
  * 
@@ -47,47 +49,61 @@ public class PaymentScheduleInstanceDto extends BusinessEntityDto {
     private static final long serialVersionUID = 1L;
 
     /** The end date. */
+    @Schema(description = "The end date")
     private Date endDate;
 
     /** The start date. */
+    @Schema(description = "The start date")
     private Date startDate;
 
     /** The amount. */
+    @Schema(description = "The amount")
     private BigDecimal amount;
 
     /** The calendar code. */
+    @Schema(description = "The calendar code")
     private String calendarCode;
 
     /** The status. */
+    @Schema(description = "The status of the payment schedule instance", example = "possible value are: IN_PROGRESS, OBSOLETE, DONE, CANCELLED, TERMINATED")
     private PaymentScheduleStatusEnum status;
 
     /** The status date. */
+    @Schema(description = "The status date")
     private Date statusDate;
 
     /** The payment schedule template code. */
+    @Schema(description = "The payment schedule template code")
     private String paymentScheduleTemplateCode;
 
     /** The payment day in month. */
+    @Schema(description = "The payment day in month")
     private Integer paymentDayInMonth;
 
     /** The service instance template code. */
+    @Schema(description = "The service instance template code")
     private String serviceInstanceTemplateCode;
 
     /** The service instance id. */
+    @Schema(description = "The service instance id")
     private Long serviceInstanceId;
 
     /** The subscription code. */
+    @Schema(description = "The subscription code")
     private String subscriptionCode;
 
     /** The payment schedule instance balance dto. */
+    @Schema(description = "The payment schedule instance balance")
     private PaymentScheduleInstanceBalanceDto paymentScheduleInstanceBalanceDto;
 
     /** The items. */
     @XmlElementWrapper
     @XmlElement(name = "item")
+    @Schema(description = "List of the payment schedule instance item", example = "item: []")
     private List<PaymentScheduleInstanceItemDto> items = new ArrayList<PaymentScheduleInstanceItemDto>();
 
     /** The custom fields. */
+    @Schema(description = "The custom fields")
     private CustomFieldsDto customFields;
 
     /**

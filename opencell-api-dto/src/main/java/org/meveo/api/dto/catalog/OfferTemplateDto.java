@@ -37,6 +37,8 @@ import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplate;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class OfferTemplateDto.
  *
@@ -52,6 +54,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
     protected static final long serialVersionUID = 9156372453581362595L;
 
     /** The bom code. */
+    @Schema(description = "the bom code")
     protected String bomCode;
 
     /** The offer template category code. */
@@ -61,6 +64,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
     /** The offer service templates. */
     @XmlElementWrapper(name = "offerServiceTemplates")
     @XmlElement(name = "offerServiceTemplate")
+    @Schema(description = "list of the offer service templates")
     protected List<OfferServiceTemplateDto> offerServiceTemplates;
 
     /** The offer product templates. */
@@ -72,74 +76,91 @@ public class OfferTemplateDto extends ProductOfferingDto {
     /** The offer component. */
     @XmlElementWrapper(name = "offerProducts")
     @XmlElement(name = "offerProducts")
+    @Schema(description = "list of The offer component")
     protected List<OfferProductsDto> offerProducts=new ArrayList<OfferProductsDto>();
 
     /** The offer product templates. */
     @XmlElementWrapper(name = "allowedDiscountPlans")
     @XmlElement(name = "allowedDiscountPlans")
+    @Schema(description = "list of The offer product template")
     protected List<DiscountPlanDto> allowedDiscountPlans;
 
 
     /** The  attribute */
     @XmlElementWrapper(name = "attributes")
     @XmlElement(name = "attributes")
+    @Schema(description = "list of attributes")
     protected List<AttributeDTO> attributes=new ArrayList<AttributeDTO>();
  
     @XmlElementWrapper(name = "commercialRuleCodes")
     @XmlElement(name = "commercialRuleCodes")
+    @Schema(description = "list of codes of commercial rules")
     protected List<String> commercialRuleCodes=new ArrayList<String>();
     
     /** The media codes. */
     @XmlElementWrapper(name = "mediaCodes")
     @XmlElement(name = "mediaCodes")
+    @Schema(description = "list of the codes media")
     protected Set<String> mediaCodes = new HashSet<String>();
 
 
+    @Schema(description = "indicat if offer change is restricted")
     private boolean isOfferChangeRestricted;
 
+    @Schema(description = "list of allowed offer change")
     private List<String> allowedOfferChange;
 
     /** The renewal rule. */
+    @Schema(description = "The renewal rule")
     protected SubscriptionRenewalDto renewalRule;
 
     /**
      * Expression to determine minimum amount value
      */
+    @Schema(description = "Expression to determine minimum amount value")
     protected String minimumAmountEl;
 
     /**
      * Expression to determine minimum amount value - for Spark
      */
+    @Schema(description = "Expression to determine minimum amount value - for Spark")
     protected String minimumAmountElSpark;
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value
      */
+    @Schema(description = "Expression to determine labe value")
     protected String minimumLabelEl;
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
      */
+    @Schema(description = "Expression to determine labe value for Spark")
     protected String minimumLabelElSpark;
 
     /**
      * Corresponding to minimum invoice subcategory
      */
+    @Schema(description = "Corresponding to minimum invoice subcategory")
     protected String minimumInvoiceSubCategory;
 
 
+    @Schema(description = "indicate end of engagement")
     protected Boolean autoEndOfEngagement;
 
     /**
      * Corresponding to minimum one shot charge template code.
      */
+    @Schema(description = "Corresponding to minimum one shot charge template code")
     protected String minimumChargeTemplate;
 
     /** The tags. */
     @XmlElementWrapper(name = "tagCodes")
     @XmlElement(name = "tagCodes")
+    @Schema(description = "list of tag code")
     protected Set<String> tagCodes = new HashSet<String>();
 
+    @Schema(description = "last update status datetime")
     protected Date statusDate;
 
     /**

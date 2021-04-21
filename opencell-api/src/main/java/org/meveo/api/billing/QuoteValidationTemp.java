@@ -73,8 +73,10 @@ public class QuoteValidationTemp extends ModuleScript {
 		if(quotesVersions.size() > 1)
 			throw new BusinessException("More than one quote version is published !!");
 		var quoteVersion = quotesVersions.get(0);
+		LOGGER.info("current quote {} with version : {}", cpqQuote.getCode(), quoteVersion.getQuoteVersion());
 		var orderByBillingAccount = new Hashtable<String, List<QuoteOffer>>();
 		var billingAccount = new Hashtable<String, BillingAccount>();
+		LOGGER.info("current quote version contain {} quote offer.", quoteVersion.getQuoteOffers().size());
 		quoteVersion.getQuoteOffers().forEach(quoteOffer -> {
 			if(quoteOffer.getBillableAccount() == null) {
 				quoteOffer.setBillableAccount(cpqQuote.getBillableAccount());
@@ -88,6 +90,7 @@ public class QuoteValidationTemp extends ModuleScript {
 			billingAccount.put(quoteOffer.getBillableAccount().getCode(), quoteOffer.getBillableAccount());
 			
 		});
+		LOGGER.info("Number of order by billing account is {}", orderByBillingAccount.size() );
 		orderByBillingAccount.keySet().forEach(ba -> {
 			List<QuoteOffer> offers = orderByBillingAccount.get(ba);
 			BillingAccount billableAccount = billingAccount.get(ba);

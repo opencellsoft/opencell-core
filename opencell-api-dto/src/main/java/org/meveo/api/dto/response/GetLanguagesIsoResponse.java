@@ -18,13 +18,13 @@
 
 package org.meveo.api.dto.response;
 
-import java.util.List;
+import org.meveo.api.dto.LanguageIsoDto;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.LanguageIsoDto;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class GetLanguagesIsoResponse.
@@ -34,13 +34,13 @@ import org.meveo.api.dto.LanguageIsoDto;
  */
 @XmlRootElement(name = "GetLanguagesIsoResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetLanguagesIsoResponse extends BaseResponse {
+public class GetLanguagesIsoResponse extends SearchResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -1697478352703038101L;
 
     /** The languages. */
-    private List<LanguageIsoDto> languages;
+    private List<LanguageIsoDto> languages = new ArrayList<>();
 
     /**
      * Instantiates a new gets the languages iso response.

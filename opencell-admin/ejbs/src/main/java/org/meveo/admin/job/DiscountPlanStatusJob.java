@@ -63,7 +63,7 @@ public class DiscountPlanStatusJob extends Job {
     @Override
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         String expireDiscountPlanToDateEl = (String) this.getParamOrCFValue(jobInstance, "expireDiscountPlanToDateEl");
         Date expireDiscountPlanToDate = new Date();
         if (!StringUtils.isBlank(expireDiscountPlanToDateEl)) {
@@ -89,6 +89,7 @@ public class DiscountPlanStatusJob extends Job {
             log.error("Failed to run discount plan status job {}", jobInstance.getCode(), e);
             jobExecutionService.registerError(result, e.getMessage());
         }
+        return result;
 
     }
 

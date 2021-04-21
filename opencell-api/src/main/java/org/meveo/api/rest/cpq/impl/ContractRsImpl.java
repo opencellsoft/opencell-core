@@ -18,7 +18,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.rest.cpq.ContractRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
-import org.meveo.model.cpq.enums.ProductStatusEnum;
+import org.meveo.model.cpq.enums.ContractStatusEnum;
 
 public class ContractRsImpl  extends BaseRs implements ContractRs {
 
@@ -80,7 +80,7 @@ public class ContractRsImpl  extends BaseRs implements ContractRs {
 	}
 
 	@Override
-	public Response updateStatus(String contractCode, ProductStatusEnum status) {
+	public Response updateStatus(String contractCode, ContractStatusEnum status) {
 		ActionStatus result = new ActionStatus();
 		try {
 			contractApi.updateStatus(contractCode, status);

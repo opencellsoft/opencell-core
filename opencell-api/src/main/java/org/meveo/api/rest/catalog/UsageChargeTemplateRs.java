@@ -18,32 +18,22 @@
 
 package org.meveo.api.rest.catalog;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.UsageChargeTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetUsageChargeTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.UsageChargeTemplate}.
@@ -79,7 +69,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public ActionStatus create(UsageChargeTemplateDto postData);
+    ActionStatus create(UsageChargeTemplateDto postData);
 
     /**
      * Update usage charge template.
@@ -103,7 +93,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public ActionStatus update(UsageChargeTemplateDto postData);
+    ActionStatus update(UsageChargeTemplateDto postData);
 
     /**
      * Find an existing usage charge template with a given code.
@@ -127,7 +117,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public GetUsageChargeTemplateResponseDto find(@QueryParam("usageChargeTemplateCode") String usageChargeTemplateCode);
+    GetUsageChargeTemplateResponseDto find(@Parameter(required = true) @QueryParam("usageChargeTemplateCode") String usageChargeTemplateCode);
 
     /**
      * Remove usage charge template with a given code.
@@ -151,7 +141,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public ActionStatus remove(@PathParam("usageChargeTemplateCode") String usageChargeTemplateCode);
+    ActionStatus remove(@Parameter(required = true) @PathParam("usageChargeTemplateCode") String usageChargeTemplateCode);
 
     /**
      * Create new or update an existing charge template with a given code.
@@ -175,7 +165,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public ActionStatus createOrUpdate(UsageChargeTemplateDto postData);
+    ActionStatus createOrUpdate(UsageChargeTemplateDto postData);
 
     /**
      * Enable a Usage charge template with a given code
@@ -199,7 +189,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus enable(@PathParam("code") String code);
+    ActionStatus enable(@Parameter(required = true)  @PathParam("code") String code);
 
     /**
      * Disable a Usage charge template with a given code
@@ -223,7 +213,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus disable(@PathParam("code") String code);
+    ActionStatus disable(@Parameter(required = true)  @PathParam("code") String code);
     
     /**
      * List UsageChargeTemplate matching a given criteria
@@ -247,5 +237,14 @@ public interface UsageChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    public UsageChargeTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+    UsageChargeTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+
+    /**
+     * List UsageChargeTemplate
+     *
+     * @return List of UsageChargeTemplate
+     */
+    @GET
+    @Path("/listGetAll")
+    UsageChargeTemplateResponseDto listGetAll();
 }

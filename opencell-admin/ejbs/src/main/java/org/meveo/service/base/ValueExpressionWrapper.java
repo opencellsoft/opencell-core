@@ -206,6 +206,11 @@ public class ValueExpressionWrapper {
      * EL expression variable - dpi - 'dpi'
      */
     public static final String VAR_DISCOUNT_PLAN_INSTANCE = "dpi";
+    
+    /**
+     * EL expression variable - dpi - 'dpi'
+     */
+    public static final String VAR_DISCOUNT_PLAN = "dp";
 
     /**
      * EL expression variable - EDR - 'edr'

@@ -15,6 +15,8 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 /**
  * 
  * @author Mbarek-Ay
@@ -30,36 +32,46 @@ public class ProductVersionDto extends BaseEntityDto {
     /** The shortDescription. */
     @XmlAttribute()
     @NotNull
+    @Schema(description = "The short description of the product version", required = true)
     protected String shortDescription;
     /** The product code. */
     @NotNull
     @XmlElement(required = true)
+    @Schema(description = "The product code", required = true)
     protected String productCode;
     
     @NotNull
     /** The currentVersion. */
+    @Schema(description = "The current version of the product")
     protected int currentVersion;
     /** The status. */
+    @Schema(description = "The status of the product version")
     protected VersionStatusEnum status;
     /** The statusDate. */
+    @Schema(description = "The statusDate : is set automatically when the status was changed")
     protected Date statusDate;
     /** The longDescription */
+    @Schema(description = "The long description")
     protected String longDescription ;
     /**The validity Date*/
+    @Schema(description = "The validity Date")
     protected DatePeriod validity = new DatePeriod();
  
     /** The attributeCodes. */
     @XmlElementWrapper(name = "attributeCodes")
     @XmlElement(name = "attributeCodes")
+    @Schema(description = "List of the attribute codes")
     protected Set<String> attributeCodes=new HashSet<String>();
     
     @XmlElementWrapper(name = "groupedAttributeCodes")
     @XmlElement(name = "groupedAttributeCodes")
+    @Schema(description = "List of the grouped attribute codes")
     protected Set<String> groupedAttributeCodes = new HashSet<String>();
     
     /** The services template. */
     @XmlElementWrapper(name = "tagCodes")
     @XmlElement(name = "tagCodes")
+    @Schema(description = "List of tag codes")
     protected Set<String> tagCodes = new HashSet<String>();
     
 

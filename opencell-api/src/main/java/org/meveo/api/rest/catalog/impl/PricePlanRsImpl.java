@@ -54,6 +54,7 @@ import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 
 /**
  * @author Edward P. Legaspi
@@ -129,6 +130,20 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
 
         try {
             result.getPricePlanMatrixes().setPricePlanMatrix(pricePlanApi.list(eventCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public PricePlanMatrixesResponseDto listGetAll() {
+
+        PricePlanMatrixesResponseDto result = new PricePlanMatrixesResponseDto();
+
+        try {
+            result = pricePlanApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

@@ -71,7 +71,7 @@ public class UserHierarchyLevelApi extends BaseApi {
         String hierarchyLevelCode = postData.getCode();
 
         if (StringUtils.isBlank(hierarchyLevelCode)) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(UserHierarchyLevel.class.getName(), postData);
         }
 
         handleMissingParameters();
@@ -196,7 +196,7 @@ public class UserHierarchyLevelApi extends BaseApi {
     public void createOrUpdate(UserHierarchyLevelDto postData) throws MeveoApiException, BusinessException {
         String hierarchyLevelCode = postData.getCode();
         if (StringUtils.isBlank(hierarchyLevelCode)) {
-            missingParameters.add("hierarchyLevelCode");
+            addGenericCodeIfAssociated(UserHierarchyLevel.class.getName(), postData);
         }
         handleMissingParameters();
         UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(hierarchyLevelCode);

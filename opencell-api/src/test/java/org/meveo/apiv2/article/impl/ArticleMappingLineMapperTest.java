@@ -13,6 +13,8 @@ import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMapping;
 import org.meveo.model.article.ArticleMappingLine;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.Product;
 
 public class ArticleMappingLineMapperTest {
 
@@ -55,6 +57,14 @@ public class ArticleMappingLineMapperTest {
 
         articleMappingLine.setArticleMapping(articleMapping);
         articleMappingLine.setMappingKelEL("Mapping EL");
+
+        OfferTemplate offerTemplate = new OfferTemplate();
+        offerTemplate.setId(1L);
+        articleMappingLine.setOfferTemplate(offerTemplate);
+
+        Product product = new Product();
+        product.setId(1L);
+        articleMappingLine.setProduct(product);
 
         return articleMappingLine;
     }

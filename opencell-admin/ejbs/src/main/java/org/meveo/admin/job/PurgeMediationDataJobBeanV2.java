@@ -47,7 +47,6 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.EdrService;
-import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 /**
@@ -65,9 +64,6 @@ public class PurgeMediationDataJobBeanV2 extends BaseJobBean {
 
     @Inject
     private EdrService edrService;
-    
-    @Inject
-    protected JobExecutionService jobExecutionService;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -126,7 +122,7 @@ public class PurgeMediationDataJobBeanV2 extends BaseJobBean {
             
         } catch (Exception e) {
             log.error("Failed to run purge EDR/WO/RT job", e);
-            jobExecutionService.registerError(result, e.getMessage());
+            result.registerError(e.getMessage());
             result.addReport(e.getMessage());
         }
     }

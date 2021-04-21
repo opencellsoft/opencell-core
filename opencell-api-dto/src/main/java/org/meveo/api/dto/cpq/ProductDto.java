@@ -18,9 +18,10 @@ import javax.xml.bind.annotation.XmlType;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
-import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "CpqProductDto")
 @XmlType(name = "CpqProductDto")
@@ -31,39 +32,58 @@ public class ProductDto extends BaseEntityDto{
 	 * 
 	 */
 	private static final long serialVersionUID = -2483466298983716926L;
+	@Schema(description = "List of discount plan")
 	private Set<DiscountPlanDto> discountList;
+	@Schema(description = "Id of the product")
 	protected Long id;
     @NotNull
+	@Schema(description = "Code of the product", required = true)
     protected String code;
+	@Schema(description = "Description of the product")
     protected String label;
+	@Schema(description = "Status of the product")
 	protected ProductStatusEnum status;
+	@Schema(description = "Datetime of the status")
 	protected Date statusDate;
+	@Schema(description = "Product line code related to product")
 	protected String productLineCode;
+	@Schema(description = "Bran code related to product")
 	protected String brandCode;
+	@Schema(description = "The reference")
 	protected String reference;
+	@Schema(description = "The model of the product")
 	protected String model;
+	@Schema(description = "List of model children")
 	protected Set<String> modelChildren;
+	@Schema(description = "Indicate if the discount is activate", defaultValue = "false")
 	protected boolean discountFlag=Boolean.FALSE;
+	@Schema(description = "Indicate if the product packaged", defaultValue = "false")
 	protected boolean packageFlag=Boolean.FALSE;
     /** The custom fields. */
+	@Schema(description = "The custom fields")
     protected CustomFieldsDto customFields;
+	@Schema(description = "Current product version for product")
     protected ProductVersionDto currentProductVersion;
     
-    @XmlElementWrapper(name = "chargeTemplateCodes")
-    @XmlElement(name = "chargeTemplateCodes") 
-    protected List<String> chargeTemplateCodes = new ArrayList<String>();
+    @XmlElementWrapper(name = "productChargeTemplateMappingDto")
+    @XmlElement(name = "productChargeTemplateMappingDto") 
+	@Schema(description = "List product charge template mapping")
+    protected List<ProductChargeTemplateMappingDto> productChargeTemplateMappingDto = new ArrayList<>();
     
     
     @XmlElementWrapper(name = "commercialRuleCodes")
     @XmlElement(name = "commercialRuleCodes") 
+	@Schema(description = "List commercial rule codes")
     protected List<String> commercialRuleCodes=new ArrayList<String>();
 
+	@Schema(description = "List discount list code")
 	protected List<String> discountListCodes=new ArrayList<String>();
     
    
 	  /** The media codes. */
     @XmlElementWrapper(name = "mediaCodes")
     @XmlElement(name = "mediaCodes")
+	@Schema(description = "List of media codes")
     protected Set<String> mediaCodes = new HashSet<String>();
     
     
@@ -273,20 +293,6 @@ public class ProductDto extends BaseEntityDto{
 	}
 
 	/**
-	 * @return the chargeTemplateCodes
-	 */
-	public List<String> getChargeTemplateCodes() {
-		return chargeTemplateCodes;
-	}
-
-	/**
-	 * @param chargeTemplateCodes the chargeTemplateCodes to set
-	 */
-	public void setChargeTemplateCodes(List<String> chargeTemplateCodes) {
-		this.chargeTemplateCodes = chargeTemplateCodes;
-	}
-
-	/**
 	 * @return the id
 	 */
 	public Long getId() {
@@ -347,5 +353,19 @@ public class ProductDto extends BaseEntityDto{
 
 	public void setDiscountListCodes(List<String> discountListCodes) {
 		this.discountListCodes = discountListCodes;
+	}
+
+	/**
+	 * @return the productChargeTemplateMappingDto
+	 */
+	public List<ProductChargeTemplateMappingDto> getProductChargeTemplateMappingDto() {
+		return productChargeTemplateMappingDto;
+	}
+
+	/**
+	 * @param productChargeTemplateMappingDto the productChargeTemplateMappingDto to set
+	 */
+	public void setProductChargeTemplateMappingDto(List<ProductChargeTemplateMappingDto> productChargeTemplateMappingDto) {
+		this.productChargeTemplateMappingDto = productChargeTemplateMappingDto;
 	}
 }

@@ -223,7 +223,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
 
         if (dto.getType() == ScriptSourceTypeEnum.JAVA_CLASS) {
             if (StringUtils.isBlank(dto.getCode())) {
-                missingParameters.add("code");
+                addGenericCodeIfAssociated(ScriptInstance.class.getName(), dto);
             }
 
             handleMissingParameters();

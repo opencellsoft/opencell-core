@@ -33,9 +33,11 @@ import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.job.cdr.CDRBackoutJob;
+import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.service.base.local.IPersistenceService;
@@ -52,30 +54,29 @@ public class CdrBean extends BaseBean<CDR> {
 
     @Inject
     private CDRService cdrService;
-    
+
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
-    
+
     @Inject
     JobInstanceService jobInstanceService;
-    
+
     @Inject
     CDRBackoutJob cdrBackoutJob;
-    
+
     @Inject
     JobExecutionService jobExecutionService;
 
     private Set<String> params;
-        
-    private String writeOffReason;
-    
-    private Map<String,CustomFieldTemplate> cfs;
 
+    private String writeOffReason;
+
+    private Map<String, CustomFieldTemplate> cfs;
 
     public CdrBean() {
         super(CDR.class);
     }
-    
+
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
      * 
@@ -86,16 +87,17 @@ public class CdrBean extends BaseBean<CDR> {
     public CDR init() {
         return initEntity();
     }
-    
+
     @PostConstruct
     public void initParams() {
         cfs = customFieldTemplateService.findByAppliesTo("CDR");
-        params = cfs.keySet();  
+        params = cfs.keySet();
     }
-    
+
     public boolean isDate(String param) {
         return cfs.get(param).getFieldType().equals(CustomFieldTypeEnum.DATE);
     }
+
     public String getParamLabel(String param) {
         return cfs.get(param).getDescription(getProviderLanguageCode());
     }
@@ -104,17 +106,19 @@ public class CdrBean extends BaseBean<CDR> {
     public String getEditViewName() {
         return "cdrDetail";
     }
-    
+
+    @ActionMethod
     public void reprocess(CDR cdr) {
         cdrService.reprocess(Arrays.asList(cdr.getId()));
     }
-    
+
     public List<CDR> getCDRFileNames() {
         return cdrService.getCDRFileNames();
     }
 
+    @ActionMethod
     public void writeOff() {
-        if(StringUtils.isBlank(writeOffReason)) {
+        if (StringUtils.isBlank(writeOffReason)) {
             return;
         }
         cdrService.writeOff(Arrays.asList(getEntity().getId()), writeOffReason);
@@ -122,30 +126,32 @@ public class CdrBean extends BaseBean<CDR> {
     }
 
     public boolean canReprocess(CDR cdr) {
-        if(currentUser.hasRole("cdrRateManager") && (CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()))) {
+        if (currentUser.hasRole("cdrRateManager") && (CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()))) {
             return true;
         }
         return false;
     }
+
     public boolean canWriteOff(CDR cdr) {
-        if(currentUser.hasRole("cdrManager") && (CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()))) {
+        if (currentUser.hasRole("cdrManager") && (CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()))) {
             return true;
         }
         return false;
     }
+
+    @ActionMethod
     public void massReprocessing() {
         if (getSelectedEntities() == null) {
             return;
         }
         log.debug("Reprocessing {} cdrs", getSelectedEntities().size());
 
-        List<Long> selectedIds = getSelectedEntities().parallelStream()
-                                        .filter(cdr -> CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus()))
-                                        .map(CDR::getId)
-                                        .collect(Collectors.toList());
+        List<Long> selectedIds = getSelectedEntities().parallelStream().filter(cdr -> CDRStatusEnum.OPEN.equals(cdr.getStatus()) || CDRStatusEnum.ERROR.equals(cdr.getStatus())).map(CDR::getId)
+            .collect(Collectors.toList());
         cdrService.reprocess(selectedIds);
     }
-    
+
+    @ActionMethod
     public void massWritingOff() {
         if (getSelectedEntities() == null) {
             return;
@@ -155,25 +161,26 @@ public class CdrBean extends BaseBean<CDR> {
         cdrService.writeOff(selectedIds, writeOffReason);
         writeOffReason = "";
     }
-        
+
+    @ActionMethod
     public void backout() {
         log.debug("Backing-out CDR File : {}", getEntity().getOriginBatch());
-        
+
         JobInstance jobInstance = jobInstanceService.findByCode("CDR_BACK_OUT_JOB");
         jobInstance.setParametres(getEntity().getOriginBatch());
 
-        log.debug("Execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate());
-        jobExecutionService.manualExecute(jobInstance);       
-    }      
-    
+        jobExecutionService.executeJob(jobInstance, null, JobLauncherEnum.GUI);
+    }
+
     @Override
     protected IPersistenceService<CDR> getPersistenceService() {
         return cdrService;
     }
-    
+
     public Set<String> getParams() {
         return params;
     }
+
     public void setParams(Set<String> params) {
         this.params = params;
     }
@@ -181,6 +188,7 @@ public class CdrBean extends BaseBean<CDR> {
     public String getWriteOffReason() {
         return writeOffReason;
     }
+
     public void setWriteOffReason(String writeOffReason) {
         this.writeOffReason = writeOffReason;
     }

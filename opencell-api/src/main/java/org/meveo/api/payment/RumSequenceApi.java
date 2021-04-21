@@ -61,7 +61,8 @@ public class RumSequenceApi extends BaseApi {
 		GenericSequence rumSequence = providerService.getNextMandateNumber();
 		String rumSequenceNumber = StringUtils.getLongAsNChar(rumSequence.getCurrentSequenceNb(), rumSequence.getSequenceSize());
 		result.setSequence(GenericSequenceApi.fromGenericSequence(rumSequence));
-		result.setValue(rumSequence.getPrefix() + rumSequenceNumber);
+		String prefix = rumSequence.getPrefix();
+		result.setValue((prefix == null ? "" : prefix) + rumSequenceNumber);
 
 		return result;
 	}

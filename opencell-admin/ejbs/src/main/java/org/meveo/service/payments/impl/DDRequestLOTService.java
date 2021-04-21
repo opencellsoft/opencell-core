@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -39,6 +40,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.sepa.DDRejectFileInfos;
+import org.meveo.admin.util.ArConfig;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
@@ -57,7 +59,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.catalog.impl.CalendarBankingService;
 
 /**
  * The Class DDRequestLOTService.
@@ -90,7 +92,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	private PaymentGatewayService paymentGatewayService;
 
 	@Inject
-    protected JobExecutionService jobExecutionService;
+	private CalendarBankingService calendarBankingService;
 
 	/**
 	 * Creates the DDRequest lot.
@@ -119,7 +121,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			ddRequestLOT.setSendDate(new Date());
 			ddRequestLOT.setPaymentOrRefundEnum(ddrequestLotOp.getPaymentOrRefundEnum());
 			ddRequestLOT.setSeller(ddrequestLotOp.getSeller());
-			ddRequestLOT.setSendDate(new Date());
+			ddRequestLOT.setSendDate(calendarBankingService.addBusinessDaysToDate(new Date(), ArConfig.getDateValueAfter()));
 			create(ddRequestLOT);
 			ddRequestLOT.setFileName(ddRequestBuilderInterface.getDDFileName(ddRequestLOT, appProvider));
 
@@ -128,7 +130,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
 			ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
-			jobExecutionService.registerError(result, ddrequestLotOp.getId(), e.getMessage());
+			result.registerError(ddrequestLotOp.getId(), e.getMessage());
 			result.addReport("ddrequestLotOp id : " + ddrequestLotOp.getId() + " RejectReason : " + e.getMessage());
 			return null;
 		}
@@ -165,7 +167,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 
 					} catch (ExecutionException e) {
 						Throwable cause = e.getCause();
-						jobExecutionService.registerError(result, cause.getMessage());
+						result.registerError(cause.getMessage());
 						result.addReport(cause.getMessage());
 						log.error("Failed to execute async method", cause);
 					}
@@ -220,7 +222,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			log.error("Failed to sepa direct debit for id {}", ddrequestLotOp.getId(), e);
 			ddrequestLotOp.setStatus(DDRequestOpStatusEnum.ERROR);
 			ddrequestLotOp.setErrorCause(StringUtils.truncate(e.getMessage(), 255, true));
-			jobExecutionService.registerError(result, ddrequestLotOp.getId(), e.getMessage());
+			result.registerError(ddrequestLotOp.getId(), e.getMessage());
 			result.addReport("ddrequestLotOp id : " + ddrequestLotOp.getId() + " RejectReason : " + e.getMessage());
 
 		}
@@ -234,7 +236,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	}
 
 	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT) throws Exception {
-		createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, 1L, 0L, null);
+		createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, true, PaymentStatusEnum.ACCEPTED, 1L, 0L, null);
 	}
 
 	/**
@@ -243,7 +245,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 * @param ddRequestLOT the dd request LOT
 	 * @throws Exception
 	 */
-	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT, Long nbRuns, Long waitingMillis, JobExecutionResultImpl result) throws Exception {
+	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT, Boolean isToMatching, PaymentStatusEnum paymentStatus, Long nbRuns, Long waitingMillis, JobExecutionResultImpl result) throws Exception {
 		ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
 		log.info("createPaymentsForDDRequestLot ddRequestLotId: {}, size:{}", ddRequestLOT.getId(), ddRequestLOT.getDdrequestItems().size());
 		if (ddRequestLOT.isPaymentCreated()) {
@@ -253,7 +255,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		SubListCreator subListCreator = new SubListCreator(ddRequestLOT.getDdrequestItems(), nbRuns.intValue());
 		List<Future<String>> futures = new ArrayList<Future<String>>();
 		while (subListCreator.isHasNext()) {
-			futures.add(sepaDirectDebitAsync.launchAndForgetPaymentCreation((List<DDRequestItem>) subListCreator.getNextWorkSet(), result));
+			futures.add(sepaDirectDebitAsync.launchAndForgetPaymentCreation((List<DDRequestItem>) subListCreator.getNextWorkSet(), isToMatching, paymentStatus, result));
 			try {
 				Thread.sleep(waitingMillis);
 			} catch (InterruptedException e) {
@@ -264,12 +266,13 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 		for (Future<String> future : futures) {
 			try {
 				future.get();
-			} catch (InterruptedException e) {
+			} catch (InterruptedException | CancellationException e) {
 				// It was cancelled from outside - no interest
+			    
 			} catch (ExecutionException e) {
 				Throwable cause = e.getCause();
 				if (result != null) {
-					jobExecutionService.registerError(result, cause.getMessage());
+					result.registerError(cause.getMessage());
 					result.addReport(cause.getMessage());
 				}
 				log.error("Failed to execute async method", cause);

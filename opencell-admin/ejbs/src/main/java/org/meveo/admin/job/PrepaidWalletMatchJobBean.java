@@ -19,29 +19,31 @@
 package org.meveo.admin.job;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.WalletService;
-import org.meveo.service.job.JobExecutionService;
-import org.slf4j.Logger;
 
+/**
+ * Job implementation to match prepaid wallets
+ * 
+ * @author Andrius Karpavicius
+ */
 @Stateless
-public class PrepaidWalletMatchJobBean {
+public class PrepaidWalletMatchJobBean extends IteratorBasedJobBean<Long> {
 
-    @Inject
-    private Logger log;
+    private static final long serialVersionUID = -3877756729428288947L;
 
     @Inject
     private WalletService walletService;
@@ -49,39 +51,38 @@ public class PrepaidWalletMatchJobBean {
     @Inject
     private OneShotChargeInstanceService oneShotChargeInstanceService;
 
-    @Inject
-    private JobExecutionService jobExecutionService;
+    private String matchingChargeCode;
 
-    @JpaAmpNewTx
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(String matchingChargeCode, JobExecutionResultImpl result) {
-        log.debug("Running matchingChargeCode={}", matchingChargeCode);
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::matchPrepaidWallet, null, null);
+    }
 
-        try {
-            List<WalletInstance> wallets = walletService.getWalletsToMatch(new Date());
+    /**
+     * Initialize job settings and retrieve data to process
+     * 
+     * @param jobExecutionResult Job execution result
+     * @return An iterator over a list of Prepaid wallet ids
+     */
+    private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
-            log.debug("wallets to match {}", wallets.size());
-            result.setNbItemsToProcess(wallets.size());
-            jobExecutionService.initCounterElementsRemaining(result, wallets.size());
-            int i = 0;
-            for (WalletInstance wallet : wallets) {
-                i++;
-                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
-                    break;
-                }
-                log.debug("match wallet={}", wallet.getId());
-                try {
-                    oneShotChargeInstanceService.matchPrepaidWallet(wallet, matchingChargeCode);
-                    jobExecutionService.registerSucces(result);
-                } catch (Exception e) {
-                    log.error("Failed to match prepaid wallet {}", wallet.getId(), e);
-                    jobExecutionService.registerError(result, e.getMessage());
-                }
-                jobExecutionService.decCounterElementsRemaining(result);
-            }
-        } catch (Exception e) {
-            log.error("Failed to match prepaid wallet ", e);
-        }
+        matchingChargeCode = jobExecutionResult.getJobInstance().getParametres();
+
+        List<Long> wallets = walletService.getWalletsToMatch(new Date());
+
+        return Optional.of(new SynchronizedIterator<Long>(wallets));
+    }
+
+    /**
+     * Match prepaid wallets
+     * 
+     * @param walletId Prepaid wallet ID to match
+     * @param jobExecutionResult Job execution result
+     */
+    private void matchPrepaidWallet(Long walletId, JobExecutionResultImpl jobExecutionResult) {
+
+        WalletInstance wallet = walletService.findById(walletId);
+        oneShotChargeInstanceService.matchPrepaidWallet(wallet, matchingChargeCode);
     }
 }

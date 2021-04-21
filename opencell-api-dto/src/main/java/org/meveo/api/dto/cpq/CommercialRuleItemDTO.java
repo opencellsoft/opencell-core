@@ -13,6 +13,8 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.enums.OperatorEnum;
 import org.meveo.model.cpq.trade.CommercialRuleItem;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlRootElement(name = "CommercialRuleItemDTO")
 @XmlType(name = "CommercialRuleItemDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -23,10 +25,12 @@ public class CommercialRuleItemDTO extends BaseEntityDto{
 	 * 
 	 */
 	private static final long serialVersionUID = 2921006853398452396L;
-	
+
+    @Schema(description = "operator for commercial rule, default value is AND", example = "AND, OR")
 	private OperatorEnum operator = OperatorEnum.AND;
+    @Schema(description = "rule item expression language")
 	private String ruleItemEl;
-	
+    @Schema(description = "list of commercial rule line")
 	private List<CommercialRuleLineDTO> commercialRuleLines=new ArrayList<CommercialRuleLineDTO>();
 	
 	

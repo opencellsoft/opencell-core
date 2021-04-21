@@ -161,10 +161,17 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
 
     private List<PricePlanMatrixLine> getMatchedPriceLines(PricePlanMatrixVersion pricePlanMatrixVersion, Set<AttributeValue> attributeValues) {
         List<PricePlanMatrixLine> priceLines = findByPricePlanMatrixVersion(pricePlanMatrixVersion);
-        return priceLines.stream()
-                .filter(line -> line.match(attributeValues))
-                .sorted(Comparator.comparing(PricePlanMatrixLine::getPriority))
-                .collect(Collectors.toList());
+        if(attributeValues.isEmpty()) {
+            return priceLines.stream()
+                    .filter(PricePlanMatrixLine::isDefaultLine)
+                    .collect(Collectors.toList());
+        }
+        else {
+            return priceLines.stream()
+                    .filter(line -> line.match(attributeValues))
+                    .sorted(Comparator.comparing(PricePlanMatrixLine::getPriority))
+                    .collect(Collectors.toList());
+        }
     }
 
     public void removeAll(Set<PricePlanMatrixLine> linesToRemove) {

@@ -18,11 +18,11 @@
 
 package org.meveo.api.dto.catalog;
 
-import java.io.Serializable;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class PricePlansDto.
@@ -36,7 +36,7 @@ public class PricePlansDto implements Serializable {
     private static final long serialVersionUID = 4354099345909112263L;
 
     /** The price plan matrix. */
-    private List<PricePlanMatrixDto> pricePlanMatrix;
+    private List<PricePlanMatrixDto> pricePlanMatrix = new ArrayList<>();
 
     /**
      * Gets the price plan matrix.

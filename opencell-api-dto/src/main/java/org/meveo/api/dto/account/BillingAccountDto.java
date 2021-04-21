@@ -37,6 +37,7 @@ import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.response.TitleDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -46,6 +47,8 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.ContactInformation;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class BillingAccountDto.
@@ -64,103 +67,127 @@ public class BillingAccountDto extends AccountDto {
 
     /** The customer account. */
     @XmlElement(required = true)
+    @Schema(description = "The customer account")
     protected String customerAccount;
 
     /** The billing cycle. */
     @XmlElement(required = true)
+    @Schema(description = "The billing cycle")
     protected String billingCycle;
 
     /** The country. */
     @XmlElement(required = true)
+    @Schema(description = "The country")
     protected String country;
 
     /** The language. */
     @XmlElement(required = true)
+    @Schema(description = "The language")
     protected String language;
 
     /** The next invoice date. */
     @XmlElement
+    @Schema(description = "The next invoice date")
     protected Date nextInvoiceDate;
 
     /** The subscription date. */
     @XmlElement
+    @Schema(description = "The subscription date")
     protected Date subscriptionDate;
 
     /** The termination date. */
     @XmlElement
+    @Schema(description = "The termination date")
     protected Date terminationDate;
 
     /** The electronic billing. */
+    @Schema(description = "The electronic billing")
     protected Boolean electronicBilling;
 
     /** The status. */
+    @Schema(description = "The status of billing account", example = "possible value are : ACTIVE, CANCELED, TERMINATED, CLOSED")
     protected AccountStatusEnum status;
 
     /** The status date. */
     @XmlElement
+    @Schema(description = "The status date, it set automatically when the status was changed")
     protected Date statusDate;
 
     /** The termination reason. */
+    @Schema(description = "The termination reason")
     protected String terminationReason;
 
     /** The email. */
+    @Schema(description = "The email")
     protected String email;
 
     /** The invoices. */
+    @Schema(description = "list of the invoice")
     protected List<InvoiceDto> invoices = new ArrayList<>();
 
     /** The invoicing threshold. */
+    @Schema(description = "The invoicing threshold")
     protected BigDecimal invoicingThreshold;
 
     /** The phone. */
+    @Schema(description = "The phone")
     protected String phone;
 
     /**
      * Expression to determine minimum amount value - for Spark
      */
+    @Schema(description = "Expression to determine minimum amount value - for Spark")
     protected String minimumAmountElSpark;
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
      */
+    @Schema(description = "Expression to determine rated transaction description to reach minimum amount value - for Spark")
     protected String minimumLabelElSpark;
     
     /**
      * Minimum Invoice SubCategory
      */
+    @Schema(description = "Minimum Invoice SubCategory")
     protected String minimumInvoiceSubCategory;
 
     /**
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead.
      */
     @Deprecated
+    @Schema(description = "Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead")
     protected PaymentMethodEnum paymentMethodType;
 
     /**
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead.
      */
     @Deprecated
+    @Schema(description = "Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead")
     protected BankCoordinatesDto bankCoordinates;
 
     /**
      * Field was deprecated in 4.6 version. Use custom fields instead.
      */
     @Deprecated
+    @Schema(description = "Field was deprecated in 4.6 version. Use custom fields instead")
     protected String paymentTerms;
 
     /**
      * Use for GET / LIST only.
      */
+    @Schema(description = "Use for GET / LIST only")
     protected UserAccountsDto userAccounts = new UserAccountsDto();
     
     /** List of discount plans. Use in instantiating {@link DiscountPlanInstance}. */
 	@XmlElementWrapper(name = "discountPlansForInstantiation")
 	@XmlElement(name = "discountPlanForInstantiation")
+    @Schema(description = "List of discount plans. Use in instantiating a discount plan instance")
     protected List<DiscountPlanDto> discountPlansForInstantiation;
     
     /** List of discount plans to be disassociated in a BillingAccount */
 	@XmlElementWrapper(name = "discountPlansForTermination")
 	@XmlElement(name = "discountPlanForTermination")
+    @Schema(description = "List of discount plans to be disassociated in a BillingAccount")
     protected List<String> discountPlansForTermination;
     
     /**
@@ -168,42 +195,50 @@ public class BillingAccountDto extends AccountDto {
      */
 	@XmlElementWrapper(name = "discountPlanInstances")
 	@XmlElement(name = "discountPlanInstance")
+    @Schema(description = "Use to return the active discount plans for this entity", example = "discountPlanInstance : []")
     protected List<DiscountPlanInstanceDto> discountPlanInstances;
 
     /**
      * Mailing type
      */
+    @Schema(description = "Mailing type")
 	protected String mailingType;
 
     /**
      * Email Template code
      */
+    @Schema(description = "Email Template code")
 	protected String emailTemplate;
 
     /**
      * a list of emails separated by comma
      */
+    @Schema(description = "list of emails separated by comma", example = "example1@example.com,example2@example.com")
 	protected String ccedEmails;
 
     /**
      * Account tax category code - overrides the value from a customer category
      **/
+    @Schema(description = "Account tax category code - overrides the value from a customer category")
     protected String taxCategoryCode;
 
     /**
      * The option on how to check the threshold.
      */
+    @Schema(description = "The option on how to check the threshold", example = "possible value are: BEFORE_DISCOUNT, AFTER_DISCOUNT, POSITIVE_RT, POSITIVE_IL")
     protected ThresholdOptionsEnum checkThreshold;
     
     /**
      * list of GDPR related to billing account
      */
+    @Schema(description = "List of GDPR related to billing account")
     protected List<GDPRInfoDto> infoGdpr;
 
     /**
      * Use to return the paymentMethod.
      */
     @XmlElement(name = "paymentMethod")
+    @Schema(description = "Use to return the paymentMethod")
     protected PaymentMethodDto paymentMethod;
     
     /**
@@ -211,12 +246,15 @@ public class BillingAccountDto extends AccountDto {
      * check the threshold per entity/invoice for BA.
      */
     @XmlElement
+    @Schema(description = "check the threshold per entity/invoice for BA")
     protected Boolean thresholdPerEntity;
 
     /**
      * Contact code
      */
+    @Schema(description = "The primary contact")
     private String primaryContact;
+
 
     public Boolean isThresholdPerEntity() {
 		return thresholdPerEntity;
@@ -229,6 +267,7 @@ public class BillingAccountDto extends AccountDto {
     /** The tags. */
     @XmlElementWrapper(name = "tagCodes")
     @XmlElement(name = "tagCodes")
+    @Schema(description = "list of the code of tags")
     protected Set<String> tagCodes = new HashSet<String>();
 
 
@@ -907,9 +946,4 @@ public class BillingAccountDto extends AccountDto {
 	public void setTagCodes(Set<String> tagCodes) {
 		this.tagCodes = tagCodes;
 	}
-
-
-
-
-
 }

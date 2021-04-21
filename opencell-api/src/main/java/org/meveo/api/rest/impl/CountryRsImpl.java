@@ -18,19 +18,21 @@
 
 package org.meveo.api.rest.impl;
 
+import org.meveo.api.CountryApi;
+import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.CountryDto;
+import org.meveo.api.dto.response.TradingCountriesResponseDto;
+import org.meveo.api.dto.response.GetTradingCountryResponse;
+import org.meveo.api.logging.WsRestApiInterceptor;
+import org.meveo.api.rest.CountryRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-
-import org.meveo.api.CountryApi;
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.CountryDto;
-import org.meveo.api.dto.response.GetTradingCountryResponse;
-import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.api.rest.CountryRs;
 
 /**
  * 
@@ -43,6 +45,20 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
 
     @Inject
     private CountryApi countryApi;
+
+    @Override
+    public TradingCountriesResponseDto list() {
+        TradingCountriesResponseDto result = new TradingCountriesResponseDto();
+        result.setPaging( GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
+
+        try {
+            result.setTradingCountries( countryApi.list() );
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
 
     /***
      * Creates an instance of @see TradingCountry base on @see Country.
@@ -83,6 +99,19 @@ public class CountryRsImpl extends BaseRs implements CountryRs {
 
         try {
             countryApi.remove(countryCode, currencyCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus remove(@PathParam("countryCode") String countryCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            countryApi.remove(countryCode, "");
         } catch (Exception e) {
             processException(e, result);
         }

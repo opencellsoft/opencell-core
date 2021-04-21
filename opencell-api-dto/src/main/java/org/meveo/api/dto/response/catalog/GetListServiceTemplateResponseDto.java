@@ -18,15 +18,14 @@
 
 package org.meveo.api.dto.response.catalog;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.response.SearchResponse;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.catalog.ServiceTemplateDto;
-import org.meveo.api.dto.response.SearchResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class GetListServiceTemplateResponseDto.
@@ -42,7 +41,7 @@ public class GetListServiceTemplateResponseDto extends SearchResponse {
     private static final long serialVersionUID = 6452175083213220603L;
 
     /** The list product template. */
-    private List<ServiceTemplateDto> listServiceTemplate;
+    private List<ServiceTemplateDto> listServiceTemplate = new ArrayList<>();
 
     /**
      * Gets the service template list.

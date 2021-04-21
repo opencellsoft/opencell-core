@@ -52,7 +52,7 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
     public OfferTemplateCategory create(OfferTemplateCategoryDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(OfferTemplateCategory.class.getName(), postData);
         }
         if (StringUtils.isBlank(postData.getName())) {
             missingParameters.add("name");

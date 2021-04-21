@@ -20,6 +20,8 @@ package org.meveo.api.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -27,6 +29,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -37,12 +40,15 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UnitOfMeasure;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.catalog.impl.UnitOfMeasureService;
+import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.finance.RevenueRecognitionRuleService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.tax.TaxClassService;
@@ -70,6 +76,9 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
+
+    @Inject
+    private AttributeService attributeService;
 
     /**
      * Convert/update DTO object to an entity object
@@ -185,6 +194,23 @@ public abstract class ChargeTemplateApi<E extends ChargeTemplate, T extends Char
         chargeTemplate.setDropZeroWo(postData.isDropZeroWo());
         if (postData.getSortIndexEl() != null) {
             chargeTemplate.setSortIndexEl(postData.getSortIndexEl());
+        }
+        if(postData.getLinkedAttributes() != null){
+            chargeTemplate.getAttributes()
+                    .forEach(
+                            attribute -> attribute.getChargeTemplates().remove(chargeTemplate)
+                    );
+            Set<Attribute> linkedAttributes = postData.getLinkedAttributes()
+                    .stream()
+                    .map(linkedAttribute -> {
+                        Attribute attribute = loadEntityByCode(attributeService, linkedAttribute, Attribute.class);
+                        if (attribute.getAttributeType() != AttributeTypeEnum.BOOLEAN)
+                            throw new BusinessApiException("Attribute: " + attribute.getCode() + " not of type Boolean");
+                        attribute.getChargeTemplates().add(chargeTemplate);
+                        return attribute;
+                    })
+                    .collect(Collectors.toSet());
+            chargeTemplate.getAttributes().addAll(linkedAttributes);
         }
         // populate customFields
         try {

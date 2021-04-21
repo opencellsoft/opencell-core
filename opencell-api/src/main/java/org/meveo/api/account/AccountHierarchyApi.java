@@ -18,46 +18,12 @@
 
 package org.meveo.api.account;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.BaseApi;
-import org.meveo.api.CountryApi;
-import org.meveo.api.CurrencyApi;
-import org.meveo.api.LanguageApi;
-import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.*;
 import org.meveo.api.billing.SubscriptionApi;
-import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.api.dto.CRMAccountTypeSearchDto;
-import org.meveo.api.dto.CustomFieldDto;
-import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.SellerDto;
-import org.meveo.api.dto.account.AccountDto;
-import org.meveo.api.dto.account.AccountHierarchyDto;
-import org.meveo.api.dto.account.AddressDto;
-import org.meveo.api.dto.account.BillingAccountDto;
-import org.meveo.api.dto.account.BillingAccountsDto;
-import org.meveo.api.dto.account.CRMAccountHierarchyDto;
-import org.meveo.api.dto.account.ContactInformationDto;
-import org.meveo.api.dto.account.CustomerAccountDto;
-import org.meveo.api.dto.account.CustomerAccountsDto;
-import org.meveo.api.dto.account.CustomerDto;
-import org.meveo.api.dto.account.CustomerHierarchyDto;
-import org.meveo.api.dto.account.CustomersDto;
-import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
-import org.meveo.api.dto.account.NameDto;
-import org.meveo.api.dto.account.ParentEntitiesDto;
-import org.meveo.api.dto.account.ParentEntityDto;
-import org.meveo.api.dto.account.UserAccountDto;
+import org.meveo.api.dto.*;
+import org.meveo.api.dto.account.*;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
@@ -76,18 +42,8 @@ import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.AccountStatusEnum;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.Country;
-import org.meveo.model.billing.ThresholdOptionsEnum;
-import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.crm.AccountHierarchyTypeEnum;
-import org.meveo.model.crm.BusinessAccountModel;
-import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.CustomerBrand;
-import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.billing.*;
+import org.meveo.model.crm.*;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
@@ -100,15 +56,18 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.TitleService;
-import org.meveo.service.crm.impl.AccountModelScriptService;
-import org.meveo.service.crm.impl.BusinessAccountModelService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.crm.impl.CustomerBrandService;
-import org.meveo.service.crm.impl.CustomerCategoryService;
-import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.crm.impl.*;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.MeveoParamBean;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Creates the customer hierarchy including : - Trading Country - Trading Currency - Trading Language - Customer Brand - Customer Category - Seller - Customer - Customer Account -
@@ -989,6 +948,8 @@ public class AccountHierarchyApi extends BaseApi {
             address.setAddress1(postData.getAddress().getAddress1());
             address.setAddress2(postData.getAddress().getAddress2());
             address.setAddress3(postData.getAddress().getAddress3());
+            address.setAddress4(postData.getAddress().getAddress4());
+            address.setAddress5(postData.getAddress().getAddress5());
             address.setCity(postData.getAddress().getCity());
             address.setCountry(countryService.findByCode(postData.getAddress().getCountry()));
             address.setState(postData.getAddress().getState());
@@ -1739,6 +1700,12 @@ public class AccountHierarchyApi extends BaseApi {
             if (!StringUtils.isBlank(accountDto.getAddress().getAddress3())) {
                 accountEntity.getAddress().setAddress3(accountDto.getAddress().getAddress3());
             }
+            if (!StringUtils.isBlank(accountDto.getAddress().getAddress4())) {
+                accountEntity.getAddress().setAddress3(accountDto.getAddress().getAddress4());
+            }
+            if (!StringUtils.isBlank(accountDto.getAddress().getAddress5())) {
+                accountEntity.getAddress().setAddress3(accountDto.getAddress().getAddress5());
+            }
             if (!StringUtils.isBlank(accountDto.getAddress().getZipCode())) {
                 accountEntity.getAddress().setZipCode(accountDto.getAddress().getZipCode());
             }
@@ -1875,6 +1842,10 @@ public class AccountHierarchyApi extends BaseApi {
 
     public CustomerDto customerToDto(Customer customer) {
         return customerToDto(customer, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false, false);
+    }
+
+    public CustomerDto customerToDto(Customer customer, CustomFieldInheritanceEnum inheritCF) {
+        return customerToDto(customer, inheritCF, false, false);
     }
 
     public CustomerDto customerToDto(Customer customer, CustomFieldInheritanceEnum inheritCF, boolean calculateBalances, boolean includeCustomerAccounts) {

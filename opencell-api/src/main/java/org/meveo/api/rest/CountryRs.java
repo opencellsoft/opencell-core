@@ -18,20 +18,13 @@
 
 package org.meveo.api.rest;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CountryDto;
+import org.meveo.api.dto.response.TradingCountriesResponseDto;
 import org.meveo.api.dto.response.GetTradingCountryResponse;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Web service for managing {@link org.meveo.model.billing.Country} and {@link org.meveo.model.billing.TradingCountry}.
@@ -44,6 +37,15 @@ import org.meveo.api.dto.response.GetTradingCountryResponse;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
 public interface CountryRs extends IBaseRs {
+
+    /**
+     * Search for list of trading countries.
+     *
+     * @return list of trading countries
+     */
+    @GET
+    @Path("/list")
+    TradingCountriesResponseDto list();
 
     /**
      * Creates a Trading Country base from the supplied country code. If the country code does not exists, a country and tradingCountry records are created
@@ -75,6 +77,16 @@ public interface CountryRs extends IBaseRs {
     @DELETE
     @Path("/{countryCode}/{currencyCode}")
     ActionStatus remove(@PathParam("countryCode") String countryCode, @PathParam("currencyCode") String currencyCode);
+
+    /**
+     * Does not delete a country but the tradingCountry associated to it.
+     *
+     * @param countryCode country code
+     * @return action status
+     */
+    @DELETE
+    @Path("/{countryCode}")
+    ActionStatus remove(@PathParam("countryCode") String countryCode);
 
     /**
      * Modify a country. Same input parameter as create. The country and tradingCountry are created if they don't exists. The operation fails if the tradingCountry is null.

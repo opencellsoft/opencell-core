@@ -19,6 +19,8 @@ package org.meveo.api.dto.account;
 
 import java.io.Serializable;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Store all minimum amount information for a CRM account hierarchy.
  *
@@ -27,66 +29,84 @@ import java.io.Serializable;
  */
 public class MinimumAmountElDto implements Serializable {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
      * Expression to determine minimum amount value for Customer.
      */
+	@Schema(description = "Expression to determine minimum amount value for Customer")
     private String customerMinimumAmountEl;
     /**
      * Expression to determine rated transaction description to reach minimum amount value for Customer.
      */
+	@Schema(description = "Expression to determine rated transaction description to reach minimum amount value for Customer")
     private String customerMinimumLabelEl;
     /**
      * The billable Entity for customer.
      */
+	@Schema(description = "The billable Entity for customer")
     private String customerMinimumTargetAccount;
 
     /**
      * Expression to determine minimum amount value for CA.
      */
+	@Schema(description = "Expression to determine minimum amount value for CA")
     private String customerAccountMinimumAmountEl;
     /**
      * Expression to determine rated transaction description to reach minimum amount value for CA.
      */
+	@Schema(description = "Expression to determine rated transaction description to reach minimum amount value for CA")
     private String customerAccountMinimumLabelEl;
     /**
      * The billable Entity for CA.
      */
+	@Schema(description = "The billable Entity for CA")
     private String customerAccountMinimumTargetAccount;
     /**
      * Expression to determine minimum amount value for BA.
      */
+	@Schema(description = "Expression to determine minimum amount value for BA")
     private String billingAccountMinimumAmountEl;
     /**
      * Expression to determine rated transaction description to reach minimum amount value for BA.
      */
+	@Schema(description = "Expression to determine rated transaction description to reach minimum amount value for BA")
     private String billingAccountMinimumLabelEl;
 
     /**
      * Expression to determine minimum amount value for UA.
      */
+	@Schema(description = "Expression to determine minimum amount value for UA")
     private String userAccountMinimumAmountEl;
     /**
      * Expression to determine rated transaction description to reach minimum amount value for UA.
      */
+	@Schema(description = "Expression to determine rated transaction description to reach minimum amount value for UA")
     private String userAccountMinimumLabelEl;
 
     /**
      * Corresponding to minimum one shot charge template for the customer
      */
+	@Schema(description = "Corresponding to minimum one shot charge template for the customer")
     private String customerMinimumChargeTemplate;
 
     /**
      * Corresponding to minimum one shot charge template for the customer account
      */
+	@Schema(description = "Corresponding to minimum one shot charge template for the customer account")
     private String customerAccountMinimumChargeTemplate;
 
     /**
      * Corresponding to minimum one shot charge template for the billing account
      */
+	@Schema(description = "Corresponding to minimum one shot charge template for the billing account")
     private String billingAccountMinimumChargeTemplate;
 
     /**
      * Corresponding to minimum one shot charge template for the billing account
      */
+	@Schema(description = "Corresponding to minimum one shot charge template for the billing account")
     private String userAccountMinimumChargeTemplate;
 
     /**

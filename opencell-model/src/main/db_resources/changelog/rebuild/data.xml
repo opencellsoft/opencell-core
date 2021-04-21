@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    
+    <changeSet id="#5116_10122020" author="AbdelmounaimAkadid">
+     	<insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-30" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="updated" valueDate="now()" />
+            <column name="code" value="APIv2PermissionsSyncJob" />
+            <column name="description" value="APIv2PermissionsSyncJob" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="APIv2PermissionsSyncJob" />
+            <column name="parametres" valueNumeric="null" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="timerentity_id" value="null" />
+            <column name="uuid" value="APIv2PermissionsSyncJob" />
+       	</insert>
+	</changeSet>
+    
     <changeSet author="AndriusKarpavicius" id="rebuild-data-currencies">
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="1" />
@@ -7960,11 +7980,12 @@
             <column name="created" valueDate="2015-03-19 00:04:19.85" />
             <column name="code" value="CYC_INV_MT_1" />
             <column name="description" value="Monthly Invoice Cycle 1" />
-            <column name="due_date_delay" valueNumeric="2" />
-            <column name="invoice_date_delay" valueNumeric="4" />
+            <column name="due_date_delay_el" valueNumeric="2" />
+            <column name="invoice_date_delay_el" valueNumeric="4" />
 
             <column name="calendar" valueNumeric="-1" />
             <column name="uuid" value="BillingCycle-1" />
+            <column name="billing_cycle_type" value="BILLINGACCOUNT" />
         </insert>
         <insert tableName="billing_cycle">
             <column name="id" valueNumeric="-2" />
@@ -7973,11 +7994,12 @@
             <column name="created" valueDate="2015-03-19 00:04:19.871" />
             <column name="code" value="CYC_INV_MT_2" />
             <column name="description" value="Monthly Invoice Cycle 2" />
-            <column name="due_date_delay" valueNumeric="2" />
-            <column name="invoice_date_delay" valueNumeric="4" />
+            <column name="due_date_delay_el" valueNumeric="2" />
+            <column name="invoice_date_delay_el" valueNumeric="4" />
 
             <column name="calendar" valueNumeric="-1" />
             <column name="uuid" value="BillingCycle-2" />
+            <column name="billing_cycle_type" value="BILLINGACCOUNT" />
         </insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-taxesDEMO">
@@ -8021,7 +8043,7 @@
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:19.237" />
-            <column name="pr_description" value="United States" />
+            <column name="description" value="United States" />
 
             <column name="country_id" valueNumeric="220" />
         </insert>
@@ -8030,7 +8052,7 @@
             <column name="version" valueNumeric="0" />
 
             <column name="created" valueDate="2015-03-19 00:04:19.264" />
-            <column name="pr_description" value="France" />
+            <column name="description" value="France" />
 
             <column name="country_id" valueNumeric="70" />
         </insert>
@@ -8121,47 +8143,71 @@
             <column name="invoice_category_id" valueNumeric="-2" />
             <column name="uuid" value="SUB_DATA" />
         </insert>
-        <insert tableName="billing_inv_sub_cat_country">
-            <column name="id" valueNumeric="-1" />
+	</changeSet>
+    
+    <changeSet author="AndriusKarpavicius" id="rebuild-data-taxDEMO">
+        <insert tableName="billing_tax_category">
+            <column name="id" valueNumeric="-1"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueDate="2020-02-08 00:03:59.983" />
             <column name="version" valueNumeric="0" />
-
+            <column name="code" value="Tax category"/>
+            <column name="uuid" value="tax_category_1"/>
+        </insert>
+        <insert tableName="billing_tax_class">
+            <column name="id" valueNumeric="-1"/>
+            <column name="code" value="CMP_DATA"/>
+            <column name="description" value="Consumption Data" />
+            <column name="uuid" value="tax_class_-1" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2015-03-19 00:04:19.724" />
+        </insert>
+        <insert tableName="billing_tax_class">
+            <column name="id" valueNumeric="-2"/>
+            <column name="code" value="SUB_DATA"/>
+            <column name="description" value="Subscription Data" />
+            <column name="uuid" value="tax_class_-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2015-03-19 00:04:19.744" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+            <column name="id" valueNumeric="-1"/>
+            <column name="tax_category_id" valueNumeric="-1"/>
+            <column name="tax_class_id" valueDate="-1" />
+            <column name="buyer_country_id" valueNumeric="-1" />
+            <column name="tax_id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:19.765" />
-
-            <column name="invoice_sub_category_id" valueNumeric="-1" />
-            <column name="tax_id" valueNumeric="-1" />
-            <column name="trading_country_id" valueNumeric="-1" />
         </insert>
-        <insert tableName="billing_inv_sub_cat_country">
-            <column name="id" valueNumeric="-2" />
+        <insert tableName="billing_tax_mapping">
+            <column name="id" valueNumeric="-2"/>
+            <column name="tax_category_id" valueNumeric="-1"/>
+            <column name="tax_class_id" valueDate="-1" />
+            <column name="buyer_country_id" valueNumeric="-2" />
+            <column name="tax_id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="2015-03-19 00:04:19.786" />
-
-            <column name="invoice_sub_category_id" valueNumeric="-1" />
-            <column name="tax_id" valueNumeric="-2" />
-            <column name="trading_country_id" valueNumeric="-2" />
         </insert>
-        <insert tableName="billing_inv_sub_cat_country">
-            <column name="id" valueNumeric="-3" />
-            <column name="version" valueNumeric="0" />
-
-            <column name="created" valueDate="2015-03-19 00:04:19.807" />
-
-            <column name="invoice_sub_category_id" valueNumeric="-2" />
+        <insert tableName="billing_tax_mapping">
+            <column name="id" valueNumeric="-3"/>
+            <column name="tax_category_id" valueNumeric="-1"/>
+            <column name="tax_class_id" valueDate="-2" />
+            <column name="buyer_country_id" valueNumeric="-1" />
             <column name="tax_id" valueNumeric="-1" />
-            <column name="trading_country_id" valueNumeric="-1" />
-        </insert>
-        <insert tableName="billing_inv_sub_cat_country">
-            <column name="id" valueNumeric="-4" />
             <column name="version" valueNumeric="0" />
-
-            <column name="created" valueDate="2015-03-19 00:04:19.829" />
-
-            <column name="invoice_sub_category_id" valueNumeric="-2" />
+            <column name="created" valueDate="2015-03-19 00:04:19.807" />
+        </insert>
+        <insert tableName="billing_tax_mapping">
+            <column name="id" valueNumeric="-4"/>
+            <column name="tax_category_id" valueNumeric="-1"/>
+            <column name="tax_class_id" valueDate="-2" />
+            <column name="buyer_country_id" valueNumeric="-2" />
             <column name="tax_id" valueNumeric="-2" />
-            <column name="trading_country_id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2015-03-19 00:04:19.829" />
         </insert>
     </changeSet>
+    
     <changeSet author="AndriusKarpavicius" id="rebuild-data-subscriptionTerminationReasonsDEMO">
         <insert tableName="billing_subscrip_termin_reason">
             <column name="id" valueNumeric="-1" />
@@ -8275,40 +8321,49 @@
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-sellerDEMO">
-        <insert tableName="crm_seller">
+    	<insert tableName="account_entity">
             <column name="id" valueNumeric="-1" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="2015-03-19 00:04:19.913" />
             <column name="code" value="MAIN_SELLER" />
             <column name="description" value="Demo Distributor" />
-            <column name="trading_currency_id" valueNumeric="-1" />
-            <column name="trading_language_id" valueNumeric="-1" />
+            <column name="account_type" value="ACCT_S" />
             <column name="uuid" value="MAIN_SELLER" />
         </insert>
         <insert tableName="crm_seller">
+            <column name="id" valueNumeric="-1" />
+            <column name="trading_currency_id" valueNumeric="-1" />
+            <column name="trading_language_id" valueNumeric="-1" />
+        </insert>
+        <insert tableName="account_entity">
             <column name="id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="2015-03-19 00:04:19.934" />
             <column name="code" value="SELLER_US" />
             <column name="description" value="US Seller" />
-            <column name="parent_seller_id" valueNumeric="-1" />
-            <column name="trading_currency_id" valueNumeric="-1" />
-            <column name="trading_language_id" valueNumeric="-1" />
+            <column name="account_type" value="ACCT_S" />
             <column name="uuid" value="SELLER_US" />
         </insert>
         <insert tableName="crm_seller">
+            <column name="id" valueNumeric="-2" />
+            <column name="parent_seller_id" valueNumeric="-1" />
+            <column name="trading_currency_id" valueNumeric="-1" />
+            <column name="trading_language_id" valueNumeric="-1" />
+        </insert>
+        <insert tableName="account_entity">
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="2015-03-19 00:04:19.955" />
             <column name="code" value="SELLER_FR" />
             <column name="description" value="France Seller" />
+            <column name="account_type" value="ACCT_S" />
+            <column name="uuid" value="SELLER_FR" />
+        </insert>
+        <insert tableName="crm_seller">
+            <column name="id" valueNumeric="-3" />
             <column name="parent_seller_id" valueNumeric="-1" />
             <column name="trading_currency_id" valueNumeric="-2" />
             <column name="trading_language_id" valueNumeric="-2" />
-            <column name="uuid" value="SELLER_FR" />
         </insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-timerDEMO">
@@ -11533,23 +11588,69 @@ public class KPICustomerPerOfferReporting extends ReportExtractScript {
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-data-adm_custom_generic_entity_code">
+    	<insert tableName="generic_sequence">
+            <column name="id" valueNumeric="-1" />
+            <column name="created" valueDate="2018-10-02 12:09:00.913" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="code" value="order_quote_sequence" />
+            <column name="description" value="Order and Quote" />
+            <column name="sequence_type" value="UUID" />
+        </insert>
+        <insert tableName="generic_sequence">
+            <column name="id" valueNumeric="-2" />
+            <column name="created" valueDate="2018-10-02 12:09:00.913" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="code" value="seller_sequence" />
+            <column name="description" value="Seller sequence" />
+            <column name="sequence_type" value="SEQUENCE" />
+            <column name="sequence_size" valueNumeric="9" />
+            <column name="current_number" valueNumeric="0" />
+        </insert>
+        <insert tableName="generic_sequence">
+            <column name="id" valueNumeric="-3" />
+            <column name="created" valueDate="2018-10-02 12:09:00.913" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="code" value="customer_sequence" />
+            <column name="description" value="Customer sequence" />
+            <column name="sequence_type" value="SEQUENCE" />
+            <column name="sequence_size" valueNumeric="5" />
+            <column name="current_number" valueNumeric="0" />
+        </insert>
+   
         <insert tableName="adm_custom_generic_entity_code">
-            <column name="id" valueNumeric="1" />
+            <column name="id" valueNumeric="-1" />
             <column name="created" valueDate="2018-10-02 12:09:00.913" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
             <column name="entity_class" value="Customer" />
-            <column name="code_el" value="CUST_#{entity.customerCategory.code}_#{sequenceNextValue}" />
-            <column name="sequence_size" valueNumeric="5" />
+            <column name="sequence_id" valueNumeric="-3" />
         </insert>
         <insert tableName="adm_custom_generic_entity_code">
-            <column name="id" valueNumeric="2" />
+            <column name="id" valueNumeric="-2" />
             <column name="created" valueDate="2018-10-02 12:12:09.935" />
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="version" valueNumeric="1" />
-            <column name="entity_class" value="Subscription" />
-            <column name="code_el" value="SU_#{entity.userAccount.code}_#{sequenceNextValue}" />
-            <column name="sequence_size" valueNumeric="9" />
+            <column name="entity_class" value="Quote" />
+            <column name="sequence_id" valueNumeric="-1" />
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueNumeric="-3" />
+            <column name="created" valueDate="2018-10-02 12:12:09.936" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="entity_class" value="Order" />
+            <column name="sequence_id" valueNumeric="-1" />
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueNumeric="-4" />
+            <column name="created" valueDate="2018-10-02 12:12:09.937" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="entity_class" value="Seller" />
+            <column name="sequence_id" valueNumeric="-2" />
         </insert>
     </changeSet>
 
@@ -12379,6 +12480,4 @@ public class DeleteCustomersScript extends Script {
            ]]>
         </sql>
     </changeSet>
-
-
 </databaseChangeLog>

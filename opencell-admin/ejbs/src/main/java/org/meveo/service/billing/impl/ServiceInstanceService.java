@@ -21,14 +21,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
-import org.hibernate.Hibernate;
-import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
@@ -54,16 +51,13 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.TerminationChargeInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
-import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.persistence.JacksonUtil;
@@ -151,7 +145,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     public List<ServiceInstance> findByCodeSubscriptionAndStatus(String code, Subscription subscription, InstanceStatusEnum... statuses) {
         List<ServiceInstance> serviceInstances = null;
         try {
-            log.debug("start of find {} by code and subscription/status (code={}) ..", "ServiceInstance", code);
             QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
             qb.addCriterion("c.code", "=", code, true);
             qb.addCriterion("c.subscription", "=", subscription, true);
@@ -165,10 +158,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             serviceInstances = (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
             log.debug("end of find {} by code and subscription/status (code={}). Result found={}.", "ServiceInstance", code, serviceInstances != null && !serviceInstances.isEmpty());
-        } catch (NoResultException nre) {
-            log.debug("findByCodeAndSubscription : no service has been found");
+
         } catch (Exception e) {
-            log.error("findByCodeAndSubscription error={} ", e);
+            log.error("Failed to find ServiceInstance by code and subscription/status (code={}) ..",  code);
         }
 
         return serviceInstances;
@@ -186,7 +178,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     public List<ServiceInstance> findByCodeSubscriptionAndStatus(String code, String subscriptionCode, InstanceStatusEnum... statuses) {
         List<ServiceInstance> serviceInstances = null;
         try {
-            log.debug("start of find {} by code and subscription/status (code={}) ..", "ServiceInstance", code);
             QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
             qb.addCriterion("c.code", "=", code, true);
             qb.addCriterion("c.subscription.code", "=", subscriptionCode, true);
@@ -200,10 +191,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             serviceInstances = (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
             log.debug("end of find {} by code and subscription/status (code={}). Result found={}.", "ServiceInstance", code, serviceInstances != null && !serviceInstances.isEmpty());
-        } catch (NoResultException nre) {
-            log.debug("findByCodeAndSubscription : no service has been found");
+
         } catch (Exception e) {
-            log.error("findByCodeAndSubscription error={} ", e);
+            log.error("Failed find ServiceInstance by code and subscription/status (code={}) ..",  code);
         }
 
         return serviceInstances;
@@ -257,10 +247,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new ValidationException("Service " + serviceInstance.getCode() + " is not associated with Offer");
         }
 
-        if (offer != null && serviceInstance != null) {
-            log.debug("check service {} is associated with offer {}", serviceInstance.getCode(), offer.getCode());
-
-        }
         return true;
     }
 
@@ -661,6 +647,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                     }
 
                     oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
+                    oneShotChargeInstanceService.update(oneShotChargeInstance);
+                    
                 } else {
                     log.debug("we do not apply the termination charge because of its status {}", oneShotChargeInstance.getId(), oneShotChargeInstance.getStatus());
                 }
@@ -1015,7 +1003,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     public List<ServiceInstance> findByCodeSubscriptionAndStatus(List<String> codes, String subscriptionCode, InstanceStatusEnum... statuses) {
         List<ServiceInstance> serviceInstances = null;
         try {
-            log.debug("start of find {} by code and subscription/status (code={}) ..", "ServiceInstance", codes);
+           
             QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
 
             qb.startOrClause();
@@ -1037,10 +1025,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             serviceInstances = (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
             log.debug("end of find {} by code and subscription/status (code={}). Result found={}.", "ServiceInstance", codes, serviceInstances != null && !serviceInstances.isEmpty());
-        } catch (NoResultException nre) {
-            log.debug("findByCodeAndSubscription : no service has been found");
+   
         } catch (Exception e) {
-            log.error("findByCodeAndSubscription error={} ", e);
+            log.error("Failed to find ServiceInstance by code and subscription/status (code={}) ..",  codes, e);
         }
 
         return serviceInstances;

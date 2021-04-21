@@ -1,0 +1,140 @@
+package org.meveo.service.script;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.util.Version;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+public class MailNotificationScript extends Script {
+
+ private EmailSender emailSender = (EmailSender) getServiceInterface("EmailSender");
+ private EdrService edrService = (EdrService) getServiceInterface("EdrService");
+
+ @Override
+ public void execute(Map<String, Object> methodContext) throws BusinessException {
+
+  String jobNativeQuery = "SELECT meveo_job_instance.code, start_date, (("
+    + "DATE_PART('day', end_date\\:\\:timestamp - start_date\\:\\:timestamp) * 24 + "
+    + "DATE_PART('hour', end_date\\:\\:timestamp - start_date\\:\\:timestamp)) * 60 + "
+    + "DATE_PART('minute', end_date\\:\\:timestamp - start_date\\:\\:timestamp)) * 60 + "
+    + "DATE_PART('second', end_date\\:\\:timestamp - start_date\\:\\:timestamp) as time_in_seconds, nb_to_process, nb_success, nb_error, nb_warning FROM job_execution, meveo_job_instance "
+    + "WHERE job_execution.job_instance_id=meveo_job_instance.id AND code in ('Cust_Job','Acco_Job','Subs_Job','M_Job','U_Job','RT_Job','BillingRunJob','Inv_Job','XML_Job','PDF_Job','AO_Job','A_SEPA') order by start_date";
+  
+
+  String nbBASQL = "SELECT count (*) FROM billing_billing_account";
+  EntityManager entityManager = edrService.getEntityManager();
+
+  Query query = entityManager.createNativeQuery(jobNativeQuery);
+  List<Object[]> rows = query.getResultList();
+  Map<String, Date> jobDateMap = new LinkedHashMap<>();
+  Map<String, Double> jobDuration = new LinkedHashMap<>();
+  Map<String, BigInteger> jobProcess = new LinkedHashMap<>();   
+  Map<String, BigInteger> jobSuccess = new LinkedHashMap<>();
+  Map<String, BigInteger> jobErrors = new LinkedHashMap<>();
+  Map<String, BigInteger> jobWarnings = new LinkedHashMap<>();
+
+  Query nbBAQuery = entityManager.createNativeQuery(nbBASQL);
+
+  BigInteger nbBA = (BigInteger) nbBAQuery.getSingleResult();
+   
+
+  for (Object[] row : rows) {
+   try {
+    jobDateMap.put((String) row[0], (Date) row[1]);
+    jobDuration.put((String) row[0], (Double) row[2]);
+    jobProcess.put((String) row[0], (BigInteger) row[3]);
+    jobSuccess.put((String) row[0], (BigInteger) row[4]);
+    jobErrors.put((String) row[0], (BigInteger) row[5]);
+    jobWarnings.put((String) row[0], (BigInteger) row[6]);
+   } catch (Exception ex) {
+    System.out.println(ex.getMessage());
+   }
+  }
+
+ 
+  StringBuilder stringBuilder = new StringBuilder();
+  stringBuilder.append("<html>");
+  stringBuilder.append("<head>");
+  stringBuilder.append("<title>Test Perfs Result on " + nbBA + " entities </title>");
+  stringBuilder.append("</head>");
+  stringBuilder.append("<body>");
+  stringBuilder.append("<style>table{font-family:Arial,Helvetica,sans-serif;border-collapse:collapse}td,th{border:1px solid #ddd;padding:8px}tr:nth-child(even){background-color:#f2f2f2}tr:hover{background-color:#ddd}th{padding-top:12px;padding-bottom:12px;text-align:left;background-color:#4CAF50;color:#fff}</style>");
+  stringBuilder.append("<h2>Jobs Performance tests results on " + nbBA + " entities for version : " + Version.appVersion + " </h2>");
+  stringBuilder.append("<table>");
+  stringBuilder.append("<thead>");
+  stringBuilder.append("<tr>");
+  stringBuilder.append("<th>JOB</th>");
+  stringBuilder.append("<th>START DATE</th>");
+  stringBuilder.append("<th>DURATION</th>");
+  stringBuilder.append("<th>NB PROCESS</th>");
+  stringBuilder.append("<th>NB SUCESS</th>");
+  stringBuilder.append("<th>NB ERRORS</th>");
+  stringBuilder.append("<th>NB WARNINGS</th>");
+  stringBuilder.append("<th>TPS</th>");
+  stringBuilder.append("</tr>");
+  stringBuilder.append("</thead>");
+  stringBuilder.append("<tbody>");
+  Set<Entry<String, Date>> entrySet = jobDateMap.entrySet();
+  for (Entry<String, Date> entry : entrySet) {
+   stringBuilder.append("<tr>");
+   String key = entry.getKey();
+   stringBuilder.append("<td>" + key + "</td>");
+   stringBuilder.append("<td>" + entry.getValue() + "</td>");
+   stringBuilder.append("<td>" + String.format("%1.0f",jobDuration.get(key)) + "</td>");
+   stringBuilder.append("<td>" + jobProcess.get(key) + "</td>");
+   stringBuilder.append("<td>" + jobSuccess.get(key) + "</td>");
+   stringBuilder.append("<td>" + jobErrors.get(key) + "</td>");
+   stringBuilder.append("<td>" + jobWarnings.get(key) + "</td>");
+   stringBuilder.append("<td>" + String.format("%1.0f",(nbBA.doubleValue()/jobDuration.get(key))) + "</td>");
+   stringBuilder.append("<tr>");
+  }
+
+  stringBuilder.append("</tbody>");
+  stringBuilder.append("</table>");
+
+  stringBuilder.append("</br>");
+
+  stringBuilder.append("<p>Nota : <em>Duration is in second and TPS is number of Treatements Per Second</em></p>");
+
+  stringBuilder.append("</body>");
+  stringBuilder.append("</html>");
+
+  Map<String, Object> emailParams = new HashMap<String, Object>();
+  emailParams.put("JobStartDate", jobDateMap);
+  emailParams.put("JobDuration", jobDateMap);
+  emailParams.put("nbBA", nbBA);
+
+  String from = "bot@opencellsoft.com";
+  String replyTo = "no-reply@opencellsoft.com";
+  String to1 = "mohamedali.hammal@opencellsoft.com";
+  String to2 = "wassim.drira@opencellsoft.com";
+  String to3 = "antoine.michea@opencellsoft.com";
+  String to4 = "franck.valot@opencellsoft.com";
+  String cc = "mohamedali.hammal@opencellsoft.com";
+
+  try {
+   emailSender.send(from, Arrays.asList(replyTo), Arrays.asList(to1,to2,to3,to4), cc == null ? null : Arrays.asList(cc),
+     null, "Test Perfs Result", null, stringBuilder.toString(), null, new Date(), true);
+   methodContext.put(Script.RESULT_VALUE, "Email sent");
+
+  } catch (Exception e) {
+   e.printStackTrace();
+  }
+
+ }
+}

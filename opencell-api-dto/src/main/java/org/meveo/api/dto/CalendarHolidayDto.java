@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.CalendarHoliday;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class CalendarHolidayDto.
  *
@@ -41,10 +43,12 @@ public class CalendarHolidayDto implements Serializable {
 
     /** The holiday begin. */
     @XmlAttribute(required = true)
+    @Schema(description = "The holiday begin")
     private Integer holidayBegin;
 
     /** The holiday end. */
     @XmlAttribute(required = true)
+    @Schema(description = "The holiday end")
     private Integer holidayEnd;
 
     /**

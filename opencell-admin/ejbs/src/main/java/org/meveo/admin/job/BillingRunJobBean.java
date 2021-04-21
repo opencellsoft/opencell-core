@@ -51,17 +51,14 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.job.JobExecutionService;
-import org.slf4j.Logger;
 
 /**
- * TODO add javadoc
+ * Job implementation to create Billing runs automatically
  */
 @Stateless
 public class BillingRunJobBean extends BaseJobBean {
 
-    @Inject
-    private Logger log;
+    private static final long serialVersionUID = 7129396284781711668L;
 
     @Inject
     private BillingRunService billingRunService;
@@ -74,9 +71,6 @@ public class BillingRunJobBean extends BaseJobBean {
 
     @Inject
     protected ResourceBundle resourceMessages;
-    
-    @Inject
-    protected JobExecutionService jobExecutionService;
 
     @SuppressWarnings("unchecked")
     @JpaAmpNewTx
@@ -96,7 +90,6 @@ public class BillingRunJobBean extends BaseJobBean {
         log.debug("Creating Billing Runs for billingCycles ={} with invoiceDate = {} and lastTransactionDate={}", billingCyclesCode, invoiceDateFromCF, lastTransactionDateFromCF);
 
         try {
-            int nbItemsToProcess = 0;
             int nbItemsProcessedWithError = 0;
             BillingProcessTypesEnum billingCycleType = BillingProcessTypesEnum.FULL_AUTOMATIC;
             if (billingCycleTypeId != null) {
@@ -105,12 +98,14 @@ public class BillingRunJobBean extends BaseJobBean {
             ParamBean param = paramBeanFactory.getInstance();
             boolean isAllowed = param.getBooleanValue("billingRun.allowManyInvoicing", true);
             log.info("launchInvoicing allowManyInvoicing={}", isAllowed);
+
+            result.setNbItemsToProcess(billingCyclesCode.size());
             for (String billingCycleCode : billingCyclesCode) {
                 List<BillingRun> billruns = billingRunService.getBillingRuns(billingCycleCode, POSTVALIDATED, NEW, PREVALIDATED, PREINVOICED);
                 boolean alreadyLaunched = billruns != null && billruns.size() > 0;
                 if (alreadyLaunched && !isAllowed) {
                     log.warn("Not allowed to launch many invoicing for the billingCycle = {}", billingCycleCode);
-                    jobExecutionService.registerError(result, resourceMessages.getString("error.invoicing.alreadyLunched"));
+                    result.registerError(resourceMessages.getString("error.invoicing.alreadyLunched"));
                     result.setNbItemsProcessedWithError(++nbItemsProcessedWithError);
                     continue;
                 }
@@ -118,7 +113,7 @@ public class BillingRunJobBean extends BaseJobBean {
                 BillingCycle billingCycle = billingCycleService.findByCode(billingCycleCode);
 
                 if (billingCycle == null) {
-                    jobExecutionService.registerError(result, "Cannot create a biling run with billing cycle '" + billingCycleCode);
+                    result.registerError("Cannot create a biling run with billing cycle '" + billingCycleCode);
                     result.setNbItemsProcessedWithError(++nbItemsProcessedWithError);
                     continue;
                 }
@@ -147,13 +142,11 @@ public class BillingRunJobBean extends BaseJobBean {
                     billingRun.setLastTransactionDate(billingRun.getProcessDate());
                 }
                 billingRunService.create(billingRun);
-                // result.setNbItemsCorrectlyProcessed(++nbItemsToProcess);
-                jobExecutionService.registerSucces(result);
-
+                result.registerSucces();
             }
-            result.setNbItemsToProcess(nbItemsToProcess + nbItemsProcessedWithError);
+
         } catch (Exception e) {
-            jobExecutionService.registerError(result, e.getMessage());
+            result.registerError(e.getMessage());
             log.error("Failed to run billing ", e);
         }
     }

@@ -114,6 +114,16 @@ public class DDRequestLotOp extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private Seller seller;
+    
+    /** Flag to activate generation of payment lines (by default true). */
+    @Type(type = "numeric_boolean")
+    @Column(name = "generate_payment_lines")
+    private Boolean generatePaymentLines = Boolean.TRUE;
+    
+    /** Default payment status. */
+    @Column(name = "payment_status")
+    @Enumerated(EnumType.STRING)
+    private PaymentStatusEnum paymentStatus;
 
     /**
      * Gets the from due date.
@@ -325,5 +335,32 @@ public class DDRequestLotOp extends AuditableEntity {
         this.paymentOrRefundEnum = paymentOrRefundEnum;
     }
 
-   
+	/**
+	 * @return the generatePaymentLines
+	 */
+	public Boolean isGeneratePaymentLines() {
+		return generatePaymentLines;
+	}
+
+	/**
+	 * @param generatePaymentLines the generatePaymentLines to set
+	 */
+	public void setGeneratePaymentLines(Boolean generatePaymentLines) {
+		this.generatePaymentLines = generatePaymentLines;
+	}
+
+    /**
+     * @return the paymentStatus
+     */
+    public PaymentStatusEnum getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    /**
+     * @param paymentStatus the paymentStatus to set
+     */
+    public void setPaymentStatus(PaymentStatusEnum paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+	
 }

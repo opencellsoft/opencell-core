@@ -93,6 +93,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "invoice_category_id")
+	@Deprecated
 	private InvoiceCategory invoiceCategory;
 
 	/**
@@ -100,6 +101,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "invoice_sub_category_id")
+	@Deprecated
 	private InvoiceSubCategory invoiceSubCategory;
 
 	/**
@@ -210,18 +212,22 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 		this.discountPlan = discountPlan;
 	}
 
+	@Deprecated
 	public InvoiceCategory getInvoiceCategory() {
 		return invoiceCategory;
 	}
 
+	@Deprecated
 	public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
 		this.invoiceCategory = invoiceCategory;
 	}
 
+	@Deprecated
 	public InvoiceSubCategory getInvoiceSubCategory() {
 		return invoiceSubCategory;
 	}
 
+	@Deprecated
 	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
 		this.invoiceSubCategory = invoiceSubCategory;
 	}

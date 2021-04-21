@@ -256,7 +256,7 @@ public class NativePersistenceService extends BaseService {
                         preparedStatement.addBatch();
 
                         // Batch size: 20
-                        if (itemsProcessed % 500 == 0) {
+                        if (itemsProcessed > 1 && itemsProcessed % 500 == 0) {
                             preparedStatement.executeBatch();
                         }
                         itemsProcessed++;

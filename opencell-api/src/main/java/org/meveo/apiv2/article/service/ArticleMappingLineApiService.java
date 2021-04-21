@@ -105,7 +105,30 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
 	            throw new BadRequestException("No article mapping found with id: " + articleMappingLine.getArticleMapping().getId());
 	        articleMappingLineUpdated.setArticleMapping(articleMapping);
         }
-        populateArtcileMappingLine(articleMappingLineUpdated);
+        
+        if(articleMappingLine.getOfferTemplate() != null){
+            OfferTemplate offerTemplate = offerTemplateService.findById(articleMappingLine.getOfferTemplate().getId());
+            if(offerTemplate == null)
+                throw new BadRequestException("No offer template found with id: " + articleMappingLine.getOfferTemplate().getId());
+            articleMappingLineUpdated.setOfferTemplate(offerTemplate);
+        }
+        if(articleMappingLine.getProduct() != null){
+            Product product = productService.findById(articleMappingLine.getProduct().getId());
+            if(product == null)
+                throw new BadRequestException("No product template found with id: " + articleMappingLine.getProduct().getId());
+            articleMappingLineUpdated.setProduct(product);
+        }
+        if(articleMappingLine.getChargeTemplate() != null){
+            ChargeTemplate chargeTemplate = chargeTemplateService.findById(articleMappingLine.getChargeTemplate().getId());
+            if(chargeTemplate == null)
+                throw new BadRequestException("No charge template found with id: " + articleMappingLine.getChargeTemplate().getId());
+            articleMappingLineUpdated.setChargeTemplate(chargeTemplate);
+        }
+        
+        articleMappingLineUpdated.setParameter1(articleMappingLine.getParameter1());
+        articleMappingLineUpdated.setParameter2(articleMappingLine.getParameter2());
+        articleMappingLineUpdated.setParameter3(articleMappingLine.getParameter3());
+        
 //        articleMappingLineUpdated.getAttributesMapping().forEach(am -> AttributeMappingService.remove(am));
         articleMappingLineUpdated.getAttributesMapping().clear();
         if(articleMappingLine.getAttributesMapping() != null && !articleMappingLine.getAttributesMapping().isEmpty()){

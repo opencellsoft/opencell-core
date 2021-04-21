@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.admin.SecuredEntity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class SecuredEntityDto.
  * 
@@ -39,13 +41,16 @@ public class SecuredEntityDto extends BaseEntityDto {
 
     /** The code. */
     @XmlAttribute(required = true)
+    @Schema(description = "The code", required = true)
     private String code;
 
     /** The entity class. */
     @XmlAttribute(required = true)
+    @Schema(description = "The entity class", required = true)
     private String entityClass;
 
     @XmlAttribute(required = true)
+    @Schema(description = "indicate of the entity is disabled", required = true, defaultValue = "false")
     private boolean disabled;
 
     /**

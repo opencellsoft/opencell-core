@@ -283,6 +283,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
     public List<WalletOperation> applyRecurringCharge(RecurringChargeInstance recurringChargeInstance, Date maxDate, boolean isMaxDateInclusive, boolean isVirtual, ChargeApplicationModeEnum applicationMode)
             throws BusinessException {
 
+        if(walletOperationService.ignoreChargeTemplate(recurringChargeInstance)){
+            return new ArrayList<>();
+        }
+
         if (applicationMode == null) {
             applicationMode = ChargeApplicationModeEnum.SUBSCRIPTION;
         }
@@ -475,7 +479,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         log.debug("Will apply reimbursment for charge {} for period {} - {}", chargeInstance.getId(), chargeInstance.getChargeToDateOnTermination(), chargeInstance.getChargedToDate());
 
-        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, null, false);
+        List<WalletOperation> wos = walletOperationService.applyReccuringCharge(chargeInstance, ChargeApplicationModeEnum.REIMBURSMENT, false, null, orderNumber, false);
 
         if (chargeWasUpdated || !wos.isEmpty()) {
             chargeInstance = updateNoCheck(chargeInstance);

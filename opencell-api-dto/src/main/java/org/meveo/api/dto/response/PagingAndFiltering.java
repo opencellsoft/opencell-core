@@ -18,7 +18,10 @@
 
 package org.meveo.api.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.meveo.commons.utils.StringUtils;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,6 +34,7 @@ import java.util.Map;
  *
  * @author anasseh
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PagingAndFiltering implements Serializable {
     
@@ -40,6 +44,7 @@ public class PagingAndFiltering implements Serializable {
     /**
      * Full text search filter. Mutually exclusive with filters attribute. fullTextFilter has priority
      */
+    @Schema(description = "Full text search filter. Mutually exclusive with filters attribute. fullTextFilter has priority")
     private String fullTextFilter;
     
     /**
@@ -112,42 +117,67 @@ public class PagingAndFiltering implements Serializable {
      * NOTE: Filters passed as string in Rest GET type method are in the following format: filterKey1:filterValue1|filterKey2:filterValue2
      *
      */
+    @Schema(description = "Search filters (key = Filter key, value = search pattern or value).", example = "<ul>\r\n" + 
+    		"<li>invoice number equals '1578AU': Filter key: invoiceNumber. Filter value: 1578AU</li>\r\n" + 
+    		"<li>invoice number is not '1578AU': Filter key: ne invoiceNumber. Filter value: 1578AU</li>\r\n" + 
+    		"<li>invoice number is null: Filter key: invoiceNumber. Filter value: IS_NULL</li>\r\n" + 
+    		"<li>invoice number is not empty: Filter key: invoiceNumber. Filter value: IS_NOT_NULL</li>\r\n" + 
+    		"<li>Invoice date is between 2017-05-01 and 2017-06-01: Filter key: fromRange invoiceDate. Filter value: 2017-05-01 Filter key: toRange invoiceDate. Filter value:\r\n" + 
+    		"2017-06-01</li>\r\n" + 
+    		"<li>Date is between creation and update dates: Filter key: minmaxRange audit.created audit.updated. Filter value: 2017-05-25</li>\r\n" + 
+    		"<li>invoice number is any of 158AU, 159KU or 189LL: Filter key: inList invoiceNumber. Filter value: 158AU,159KU,189LL</li>\r\n" + 
+    		"<li>any of param1, param2 or param3 fields contains 'energy': Filter key: wildcardOr param1 param2 param3. Filter value: energy</li>\r\n" + 
+    		"<li>any of param1, param2 or param3 fields start with 'energy': Filter key: likeCriterias param1 param2 param3. Filter value: *energy</li>\r\n" + 
+    		"<li>any of param1, param2 or param3 fields is 'energy': Filter key: likeCriterias param1 param2 param3. Filter value: energy</li>\r\n" + 
+    		"</ul>")
     private Map<String, Object> filters;
     
     /**
      * Data retrieval options/fieldnames separated by a comma.
      */
+    @Schema(description = "Data retrieval options/fieldnames separated by a comma")
     private String fields;
     
     /**
      * Pagination - from record number.
      */
+    @Schema(description = "Pagination - from record number")
     private Integer offset;
     
     /**
      * Pagination - number of items to retrieve.
      */
+    @Schema(description = "Pagination - number of items to retrieve")
     private Integer limit = 100;
     
     /**
      * Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      */
+    @Schema(description = "Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields")
     private String sortBy;
     
     /**
      * Sorting - sort order.
      */
+    @Schema(description = "Sorting - sort ordee")
     private SortOrder sortOrder;
+
+    /**
+     * Sorting - sort order.
+     */
+    private String multiSortOrder;
 
     /**
      * Total number of records. Note - filled on response only.
      */
+    @Schema(description = "")
     private Integer totalNumberOfRecords;
 
 	/**
 	 * Depth of loading referenced custom entities, default value is 0 (only referenced entity id is shown) 
 	 * Every time this value is incremented it will show a new level of entities in details.
 	 */
+    @Schema(description = "")
     private int loadReferenceDepth;
 
     /**
@@ -341,6 +371,24 @@ public class PagingAndFiltering implements Serializable {
      */
     public void setSortOrder(SortOrder sortOrder) {
         this.sortOrder = sortOrder;
+    }
+
+    /**
+     * Gets the multi sort order.
+     *
+     * @return the multi sort order
+     */
+    public String getMultiSortOrder() {
+        return multiSortOrder;
+    }
+
+    /**
+     * Sets the multi sort order.
+     *
+     * @param multiSortOrder the new sort order
+     */
+    public void setMultiSortOrder(String multiSortOrder) {
+        this.multiSortOrder = multiSortOrder;
     }
     
     /**

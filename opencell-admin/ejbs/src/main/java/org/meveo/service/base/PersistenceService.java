@@ -1312,4 +1312,24 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+" with code '"+code+"' found");
         }
     }
+	
+	public BusinessEntity tryToFindByEntityClassAndMap(Class<? extends BusinessEntity> entity, Map<String, Object> criterions) {
+    	if(criterions==null) {
+    		return null;
+    	}
+    	String where = "";
+        QueryBuilder qb = new QueryBuilder(entity, "entity", null);
+        for(Entry<String, Object> e : criterions.entrySet()) {
+        	qb.addCriterion("entity."+e.getKey(), "=", e.getValue(), true);
+        	where=where +" entity."+e.getKey()+"="+ e.getValue()+",";
+        }
+        
+        try {
+			return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with "+where+" found");
+        } catch (NonUniqueResultException e) {
+        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+"with "+where+" found");
+        }
+    }
 }

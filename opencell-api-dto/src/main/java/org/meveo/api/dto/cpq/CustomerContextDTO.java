@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class ServiceDto.
  *
@@ -46,30 +48,36 @@ public class CustomerContextDTO extends BaseEntityDto {
     /**
      * The billing account code
      */
+    @Schema(description = "The billing account code")
     private String billingAccountCode;
     
    /**
     * The the seller tags
     */
+    @Schema(description = "The the seller tags")
     private List<String> sellerTags;
     
     /**
     * The customer tags
     */
+    @Schema(description = "The customer tags")
     private List<String> customerTags;
     /**
      * The contract code
      */
+    @Schema(description = "The contract code")
     private String contractCode;
     
     /**
      * requested tag types
      */
+    @Schema(description = "requested tag types")
      private List<String> requestedTagTypes=new ArrayList<String>();
     
     /**
      * paging And Filtering
      */
+    @Schema(description = "paging And Filtering")
     private PagingAndFiltering pagingAndFiltering;
     
     

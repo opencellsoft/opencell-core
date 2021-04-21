@@ -65,6 +65,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
@@ -146,7 +147,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     /**
      * Recorded invoice
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "recorded_invoice_id")
     private RecordedInvoice recordedInvoice;
 
@@ -597,6 +598,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	 */
     @OneToMany(mappedBy = "invoice", fetch = LAZY)
 	private List<InvoiceLine>  invoiceLines;
+    
+    
+    /**
+     * Commercial order attached to the invoice
+     */
+    @ManyToOne(fetch = LAZY)
+  	@JoinColumn(name = "commercial_order_id", referencedColumnName = "id")
+  	private CommercialOrder commercialOrder;
 
     /**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
@@ -1482,6 +1491,16 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 	public void setInvoiceLines(List<InvoiceLine> invoiceLines) {
 		this.invoiceLines = invoiceLines;
 	}
+
+	public CommercialOrder getCommercialOrder() {
+		return commercialOrder;
+	}
+
+	public void setCommercialOrder(CommercialOrder commercialOrder) {
+		this.commercialOrder = commercialOrder;
+	}
+	
+	
     
     
 }

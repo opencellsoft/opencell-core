@@ -13,6 +13,8 @@ import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.cpq.enums.RuleTypeEnum;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlRootElement(name = "CommercialRuleHeaderDTO")
 @XmlType(name = "CommercialRuleHeaderDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -24,18 +26,30 @@ public class CommercialRuleHeaderDTO extends BusinessEntityDto{
 	 */
 	private static final long serialVersionUID = 2921006853398452396L;
 	
-	
+
+    @Schema(description = "rule type", example = "possible value are : PRE_REQUISITE, INCOMPATIBILITY, REPLACEMENT")
 	protected RuleTypeEnum ruleType;
+    @Schema(description = "rule expression language")
 	protected String ruleEl;
+    @Schema(description = "code offer of template")
 	protected String offerCode;  
+    @Schema(description = "code product")
 	protected String productCode;
+    @Schema(description = "product version")
 	protected Integer productVersion;
+    @Schema(description = "code of attribute")
 	protected String attributeCode;
+    @Schema(description = "code tag")
 	protected String tagCode;
+    @Schema(description = "code of grouped attribute")
 	protected String groupedAttributeCode;
+    @Schema(description = "target attribute value")
 	protected String targetAttributeValue; 
+    @Schema(description = "is commercial rule header is the target, default value is True")
 	protected Boolean isTarget=Boolean.TRUE;
+    @Schema(description = "is commercial rule disabled, default value is false")
 	protected Boolean disabled=Boolean.FALSE;
+    @Schema(description = "list of commercial rule item")
 	protected List<CommercialRuleItemDTO> commercialRuleItems=new ArrayList<CommercialRuleItemDTO>();
 	 
 	

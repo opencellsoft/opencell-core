@@ -72,7 +72,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
     public Chart create(ChartDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(Chart.class.getName(), postData);
         }
         if (postData.getMeasurableQuantity() == null || StringUtils.isBlank(postData.getMeasurableQuantity().getCode())) {
             missingParameters.add("measurableQuantity.code");

@@ -364,6 +364,9 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
                         if (location.endsWith("!/")) {
                             location = location.substring(0, location.length() - 2);
                         }
+                        if (location.startsWith("/")) {
+                            location = location.substring(1);
+                        }
 
                         if (!classpath.contains(location)) {
                             classpath += File.pathSeparator + location;

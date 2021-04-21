@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Discount invoice aggregate DTO
  *
@@ -38,9 +40,11 @@ public class DiscountInvoiceAggregateDto extends SubCategoryInvoiceAgregateDto {
     private static final long serialVersionUID = -4415088850335611099L;
 
     /** The discount plan item code. */
+    @Schema(description = "The discount plan item code")
     private String discountPlanItemCode;
 
     /** The discount percent. */
+    @Schema(description = "The discount percent")
     private BigDecimal discountPercent;
 
     /**

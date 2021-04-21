@@ -49,6 +49,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Channel;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
@@ -108,6 +109,9 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
     @Override
     public ProductTemplate create(ProductTemplateDto postData) throws MeveoApiException, BusinessException {
 
+        if (StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(ProductTemplate.class.getName(), postData);
+        }
         if (StringUtils.isBlank(postData.getName())) {
             missingParameters.add("name");
         }
@@ -142,7 +146,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         productTemplate.setLongDescription(postData.getLongDescription());
         productTemplate.setName(postData.getName());
         productTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
-        productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+        productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus()==null?LifeCycleStatusEnum.IN_DESIGN:postData.getLifeCycleStatus());
 
         if (postData.isDisabled() != null) {
             productTemplate.setDisabled(postData.isDisabled());
@@ -240,7 +244,9 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         productTemplate.setLongDescription(postData.getLongDescription());
         productTemplate.setName(postData.getName());
         productTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
+        if(!StringUtils.isBlank(postData.getLifeCycleStatus())) {
         productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+        }
 
         try {
             saveImage(productTemplate, postData.getImagePath(), postData.getImageBase64());

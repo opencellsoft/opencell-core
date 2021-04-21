@@ -33,11 +33,11 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CacheKeyLong;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
@@ -187,7 +187,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     @Override
     public void create(JobInstance jobInstance) throws BusinessException {
         super.create(jobInstance);
-        jobCacheContainerProvider.addUpdateJobInstance(jobInstance.getId());
+        jobCacheContainerProvider.addUpdateJobInstance(jobInstance);
         scheduleJob(jobInstance, null);
 
         clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.create);
@@ -196,7 +196,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     @Override
     public JobInstance update(JobInstance jobInstance) throws BusinessException {
         super.update(jobInstance);
-        jobCacheContainerProvider.addUpdateJobInstance(jobInstance.getId());
+        jobCacheContainerProvider.addUpdateJobInstance(jobInstance);
         scheduleUnscheduleJob(jobInstance);
 
         clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.update);
@@ -207,7 +207,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     @Override
     public void remove(JobInstance jobInstance) throws BusinessException {
 
-        log.info("remove jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
+        log.info("Remove jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
 
         String providerCode = currentUser.getProviderCode();
         if (jobInstance.getId() == null) {
@@ -320,7 +320,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
      */
     public void scheduleUnscheduleJob(Long jobInstanceId) {
 
-        JobInstance jobInstance = findById(jobInstanceId, Arrays.asList("timerEntity"));
+        JobInstance jobInstance = findById(jobInstanceId, Arrays.asList("timerEntity", "followingJob"));
         if (jobInstance == null) {
             unscheduleJob(jobInstanceId);
         } else {
@@ -381,5 +381,16 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     public List<JobInstance> listByJobType(String jobTemplate) {
 
         return getEntityManager().createNamedQuery("JobInstance.listByTemplate", JobInstance.class).setParameter("jobTemplate", jobTemplate).getResultList();
+    }
+
+    /**
+     * Get a list of job instances corresponding to a given job template
+     * 
+     * @param jobTemplateName Job template name
+     * @return A list of job instances
+     */
+    public List<JobInstance> findByJobTemplate(String jobTemplateName) {
+
+        return getEntityManager().createNamedQuery("JobInstance.findByJobTemplate", JobInstance.class).setParameter("jobTemplate", jobTemplateName).getResultList();
     }
 }

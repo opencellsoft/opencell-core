@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.LanguageIsoApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -30,6 +26,11 @@ import org.meveo.api.dto.response.GetLanguageIsoResponse;
 import org.meveo.api.dto.response.GetLanguagesIsoResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.LanguageIsoRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Edward P. Legaspi
@@ -118,4 +119,18 @@ public class LanguageIsoRsImpl extends BaseRs implements LanguageIsoRs {
 
         return result;
 	}
+
+    @Override
+    public GetLanguagesIsoResponse listGetAll() {
+
+        GetLanguagesIsoResponse result = new GetLanguagesIsoResponse();
+
+        try {
+            result = languageIsoApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
 }

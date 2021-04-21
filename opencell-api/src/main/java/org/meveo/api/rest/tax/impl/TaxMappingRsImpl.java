@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.tax.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -33,6 +29,11 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tax.TaxMappingRs;
 import org.meveo.api.tax.TaxMappingApi;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * REST interface definition of Tax mapping API
@@ -120,6 +121,20 @@ public class TaxMappingRsImpl extends BaseRs implements TaxMappingRs {
             result = new TaxMappingListResponseDto(apiService.search(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder)));
         } catch (Exception e) {
             result = new TaxMappingListResponseDto();
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public TaxMappingListResponseDto listGetAll() {
+
+        TaxMappingListResponseDto result = new TaxMappingListResponseDto();
+
+        try {
+            result = apiService.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
 

@@ -18,22 +18,33 @@
 
 package org.meveo.admin.job;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.job.JobExecutionErrorService;
+import org.meveo.service.job.JobExecutionResultService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class BaseJobBean : Holding a common behaviors for all JoBbeans instances
  */
-public abstract class BaseJobBean {
+public abstract class BaseJobBean implements Serializable {
+
+    private static final long serialVersionUID = 4892019854039929214L;
 
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
@@ -45,6 +56,24 @@ public abstract class BaseJobBean {
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
+
+    @Inject
+    protected JobExecutionService jobExecutionService;
+
+    @Inject
+    protected JobExecutionResultService jobExecutionResultService;
+
+    @Inject
+    protected JobExecutionErrorService jobExecutionErrorService;
+
+    @Resource(lookup = "java:jboss/ee/concurrency/executor/job_executor")
+    protected ManagedExecutorService executor;
+
+    @Inject
+    protected CurrentUserProvider currentUserProvider;
+
+    /** Logger. */
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Gets the parameter CF value if found, otherwise return CF value from job definition
@@ -86,6 +115,7 @@ public abstract class BaseJobBean {
      * @param cfCode a name of the enum
      * @return a list of an enum status
      */
+    @SuppressWarnings("unchecked")
     protected <T extends Enum<T>> List<T> getTargetStatusList(JobInstance jobInstance, Class<T> clazz, String cfCode) {
         List<T> formattedStatus = new ArrayList<>();
         List<String> statusList = (List<String>) this.getParamOrCFValue(jobInstance, cfCode, new ArrayList<>());

@@ -308,7 +308,7 @@ public class GenericWorkflowApi extends BaseCrudApi<GenericWorkflow, GenericWork
      */
     public void validateDto(GenericWorkflowDto genericWorkflowDto, boolean isUpdate) throws MissingParameterException {
         if (StringUtils.isBlank(genericWorkflowDto.getCode())) {
-            missingParameters.add("code");
+            addGenericCodeIfAssociated(GenericWorkflow.class.getName(), genericWorkflowDto);
         }
         if (!isUpdate && StringUtils.isBlank(genericWorkflowDto.getTargetEntityClass())) {
             missingParameters.add("targetEntityClass");

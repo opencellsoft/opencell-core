@@ -18,40 +18,36 @@
 
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.async.RatedTransactionAsync;
-import org.meveo.admin.async.SubListCreator;
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
+import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationAggregationSettings;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.security.MeveoUser;
-import org.meveo.service.billing.impl.AggregatedWalletOperation;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationAggregationSettingsService;
 import org.meveo.service.billing.impl.WalletOperationService;
-import org.meveo.service.job.Job;
-import org.meveo.service.job.JobExecutionService;
-import org.slf4j.Logger;
 
 /**
+ * A job implementation to convert Open Wallet operations to Rated transactions
+ * 
  * @author Edward P. Legaspi
- * @lastModifiedVersion 7.0
+ * @author Andrius Karpavicius
  */
 @Stateless
-public class RatedTransactionsJobBean extends BaseJobBean {
+public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
+
+    private static final long serialVersionUID = -2740290205290535899L;
 
     /**
      * Number of Wallet operations to process in a single job run
@@ -59,126 +55,63 @@ public class RatedTransactionsJobBean extends BaseJobBean {
     private static int PROCESS_NR_IN_JOB_RUN = 2000000;
 
     @Inject
-    private Logger log;
-
-    @Inject
     private WalletOperationService walletOperationService;
 
     @Inject
-    private RatedTransactionAsync ratedTransactionAsync;
+    private RatedTransactionService ratedTransactionService;
 
     @Inject
     private WalletOperationAggregationSettingsService walletOperationAggregationSettingsService;
 
-    @Inject
-    protected JobExecutionService jobExecutionService;
-
-    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-        log.debug("Running for with parameter={}", jobInstance.getParametres());
-
-        Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbRuns == -1) {
-            nbRuns = (long) Runtime.getRuntime().availableProcessors();
-        }
-        jobExecutionService.counterRunningThreads(result, nbRuns);
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
-
-        try {
-
-            EntityReferenceWrapper aggregationSettingsWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woAggregationSettings", null);
-            WalletOperationAggregationSettings aggregationSettings = null;
-            if (aggregationSettingsWrapper != null) {
-                aggregationSettings = walletOperationAggregationSettingsService.findByCode(aggregationSettingsWrapper.getCode());
-            }
-            removeZeroWalletOperation();
-            if (aggregationSettings != null) {
-                executeWithAggregation(result, nbRuns, waitingMillis, aggregationSettings);
-
-            } else {
-                executeWithoutAggregation(result, nbRuns, waitingMillis);
-            }
-
-        } catch (Exception e) {
-            log.error("Failed to rate transactions", e);
-        }
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWoToRT, this::hasMore, null);
     }
 
-    private void removeZeroWalletOperation() {
-        log.info("Remove wellet oprations rated to 0");
+    /**
+     * Initialize job settings and retrieve data to process
+     * 
+     * @param jobExecutionResult Job execution result
+     * @return An iterator over a list of Wallet operation Ids to convert to Rated transactions
+     */
+    private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
+
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
+
+        EntityReferenceWrapper aggregationSettingsWrapper = (EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "woAggregationSettings", null);
+        WalletOperationAggregationSettings aggregationSettings = null;
+        if (aggregationSettingsWrapper != null) {
+            aggregationSettings = walletOperationAggregationSettingsService.findByCode(aggregationSettingsWrapper.getCode());
+        }
+
+        // Aggregation is not supported here
+        if (aggregationSettings != null) {
+            return Optional.empty();
+        }
+
+        log.info("Remove wallet operations rated to 0");
         walletOperationService.removeZeroWalletOperation();
+
+        List<Long> ids = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
+
+        return Optional.of(new SynchronizedIterator<Long>(ids));
     }
 
-    private void executeWithoutAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis) throws Exception {
-        List<Long> walletOperations = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
-        log.info("WalletOperations to convert into rateTransactions={}", walletOperations.size());
-        result.setNbItemsToProcess(walletOperations.size());
-        jobExecutionService.initCounterElementsRemaining(result, walletOperations.size());
+    /**
+     * Convert a single Wallet operation to a Rated transaction
+     * 
+     * @param woId Wallet operation id to convert
+     * @param jobExecutionResult Job execution result
+     */
+    private void convertWoToRT(Long woId, JobExecutionResultImpl jobExecutionResult) {
 
-        SubListCreator<Long> subListCreator = new SubListCreator<>(walletOperations, nbRuns.intValue());
-        List<Future<String>> futures = new ArrayList<>();
-        MeveoUser lastCurrentUser = currentUser.unProxy();
-        while (subListCreator.isHasNext()) {
-            futures.add(ratedTransactionAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
-            try {
-                Thread.sleep(waitingMillis.longValue());
-
-            } catch (InterruptedException e) {
-                log.error("", e);
-            }
-        }
-
-        // Wait for all async methods to finish
-        for (Future<String> future : futures) {
-            try {
-                future.get();
-
-            } catch (InterruptedException e) {
-                // It was cancelled from outside - no interest
-
-            } catch (ExecutionException e) {
-                Throwable cause = e.getCause();
-                jobExecutionService.registerError(result, cause.getMessage());
-                result.addReport(cause.getMessage());
-                log.error("Failed to execute async method", cause);
-            }
-        }
-
-        // Check if there are any more Wallet Operations to process and mark job as completed if there are none
-        walletOperations = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
-        result.setDone(walletOperations.isEmpty());
+        WalletOperation walletOperation = walletOperationService.findById(woId);
+        ratedTransactionService.createRatedTransaction(walletOperation, false);
     }
 
-    private void executeWithAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis, WalletOperationAggregationSettings aggregationSetting) throws Exception {
-        Date invoicingDate = new Date();
-        List<AggregatedWalletOperation> aggregatedWo = walletOperationService.listToInvoiceIdsWithGrouping(invoicingDate, aggregationSetting);
-
-        if (aggregatedWo == null || aggregatedWo.isEmpty()) {
-            return;
-        }
-
-        log.info("Aggregated walletOperations to convert into rateTransactions={}", aggregatedWo.size());
-        result.setNbItemsToProcess(aggregatedWo.size());
-        jobExecutionService.initCounterElementsRemaining(result, aggregatedWo.size());
-
-        SubListCreator<AggregatedWalletOperation> subListCreator = new SubListCreator<>(aggregatedWo, nbRuns.intValue());
-        List<Future<String>> asyncReturns = new ArrayList<>();
-        MeveoUser lastCurrentUser = currentUser.unProxy();
-        while (subListCreator.isHasNext()) {
-            asyncReturns.add(ratedTransactionAsync.launchAndForget((List<AggregatedWalletOperation>) subListCreator.getNextWorkSet(), result, lastCurrentUser, aggregationSetting,
-                invoicingDate));
-            try {
-                Thread.sleep(waitingMillis.longValue());
-
-            } catch (InterruptedException e) {
-                log.error("", e);
-            }
-        }
-
-        for (Future<String> futureItsNow : asyncReturns) {
-            futureItsNow.get();
-        }
+    private boolean hasMore(JobInstance jobInstance) {
+        List<Long> ids = walletOperationService.listToRate(new Date(), 1);
+        return !ids.isEmpty();
     }
-
 }

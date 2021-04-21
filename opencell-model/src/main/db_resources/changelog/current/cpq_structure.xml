@@ -3566,32 +3566,6 @@ public class QuoteValidation extends ModuleScript {
         <sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-27, 0, 0, now(), 'org.meveo.api.billing.OrderAdvancement', 'OrderAdvancement', 'JAVA', '
   package org.meveo.api.billing;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.cpq.CommercialOrderApi;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplate;
-import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
-import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.AttributeValue;
-import org.meveo.model.cpq.Product;
-import org.meveo.model.cpq.commercial.CommercialOrder;
-import org.meveo.model.cpq.commercial.CommercialOrderEnum;
-import org.meveo.model.cpq.commercial.InvoiceLine;
-import org.meveo.model.cpq.commercial.InvoicingPlanItem;
-import org.meveo.model.cpq.commercial.OrderPrice;
-import org.meveo.model.cpq.commercial.OrderProduct;
-import org.meveo.service.billing.impl.InvoiceLinesService;
-import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.article.AccountingArticleService;
-import org.meveo.service.cpq.order.CommercialOrderService;
-import org.meveo.service.cpq.order.OrderPriceService;
-import org.meveo.service.script.module.ModuleScript;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -3602,6 +3576,34 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.cpq.CommercialOrderApi;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.cpq.commercial.InvoicingPlanItem;
+import org.meveo.model.cpq.commercial.OrderPrice;
+import org.meveo.model.cpq.commercial.OrderProduct;
+import org.meveo.service.billing.impl.InvoiceLinesService;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.cpq.order.CommercialOrderService;
+import org.meveo.service.cpq.order.OrderPriceService;
+import org.meveo.service.script.module.ModuleScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @SuppressWarnings("serial")
 public class OrderAdvancement extends ModuleScript {
 
@@ -3611,6 +3613,7 @@ public class OrderAdvancement extends ModuleScript {
     private AccountingArticleService accountingArticleService = (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
     private InvoiceLinesService invoiceLinesService = (InvoiceLinesService) getServiceInterface(InvoiceLinesService.class.getSimpleName());
     private InvoiceService invoiceService = (InvoiceService) getServiceInterface(InvoiceService.class.getSimpleName());
+    private InvoiceTypeService invoiceTypeService = (InvoiceTypeService) getServiceInterface(InvoiceTypeService.class.getSimpleName());
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
 
@@ -3688,7 +3691,7 @@ public class OrderAdvancement extends ModuleScript {
                     BigDecimal taxAmountToBeInvoiced = invoicingPlanItem.getRateToBill().divide(BigDecimal.valueOf(100).setScale(8, RoundingMode.HALF_UP)).multiply(totalTax);
 
                     createInvoiceLine(commercialOrder, defaultAccountingArticle, orderProduct, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
-                    invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
+                    List<Invoice> invoices=invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder, null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false,true);
                 }
                 commercialOrder.setRateInvoiced(newRateInvoiced.intValue());
                 commercialOrder.setOrderProgressTmp(orderProgress);
@@ -3720,7 +3723,8 @@ public class OrderAdvancement extends ModuleScript {
         }
 
         createInvoiceLine(commercialOrder, accountingArticle.get(), orderProduct, totalAmountWithoutTax, totalAmountWithTax, totalTax, totalTaxRate);
-        invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder.getBillingAccount(), null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false);
+        invoiceService.createAggregatesAndInvoiceWithIL(commercialOrder, null, null, invoiceDate, firstTransactionDate, nextDay, null, false, false,false);
+      
     }
 
     private AccountingArticle getDefaultAccountingArticle() {
@@ -3733,7 +3737,7 @@ public class OrderAdvancement extends ModuleScript {
     }
 
     private void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, OrderProduct orderProduct, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
-        invoiceLinesService.createInvoiceLine(commercialOrder, accountingArticle, orderProduct, amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
+        invoiceLinesService.createInvoiceLine(commercialOrder, accountingArticle, orderProduct.getProductVersion(),orderProduct.getOrderServiceCommercial(), amountWithoutTaxToBeInvoiced, amountWithTaxToBeInvoiced, taxAmountToBeInvoiced, totalTaxRate);
     }
 
     private boolean isPriceRelatedToOneShotChargeTemplateOfTypeOther(OrderPrice price) {
@@ -4158,6 +4162,17 @@ public class OrderAdvancement extends ModuleScript {
 		</addColumn>
 	</changeSet>
 	
+		<changeSet id="#20210323-382" author="Mbarek-Ay">
+		<addColumn tableName="cpq_contract_item">
+			<column name="rate_type" type="varchar(255)"/>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="#20210323-382" author="Mbarek-Ay">
+		<addColumn tableName="cpq_contract_item">
+			<column name="rate_type" type="varchar(255)"/>
+		</addColumn>
+	</changeSet>	
 	<changeSet id="#20220325_360" author="TarikFA.">
 		<createTable tableName="cpq_commercial_order_order_lot">
 	        	<column name="commercial_order_id" type="bigint">
@@ -4179,5 +4194,67 @@ public class OrderAdvancement extends ModuleScript {
 	<changeSet id="#20210329_399" author="TarikFA.">
             <renameTable newTableName="cpq_order_attribute" oldTableName="cpq_order_item"/>
     </changeSet>
+    <changeSet id="#20210401_402" author="TarikFA.">
+    	<addColumn tableName="account_entity">
+    		<column name="company" type="${type.boolean}"/>
+    		<column name="legal_entity_type_id" type="bigint" />
+    	</addColumn>
+        	<addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="account_entity" constraintName="fk_account_entity_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
+            	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_title" />
+    </changeSet>
+    
+    <changeSet id="#20210406_opencell-portal-593" author="TarikFA.">
+    	<dropForeignKeyConstraint baseTableName="billing_article_mapping_line" constraintName="fk_billing_article_mapping_line_service_template"/>
+    	<addForeignKeyConstraint baseColumnNames="offer_template_id" baseTableName="billing_article_mapping_line" constraintName="fk_billing_article_mapping_line_offer_template" deferrable="false" initiallyDeferred="false"
+            	onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+    </changeSet>
+
+
+
+
+
+	<changeSet id="rebuild-str-fk_6012_20210323" author="MohamedAliHammal">
+		<dropForeignKeyConstraint baseTableName="adm_inbound_resp_cookies" constraintName="fk_1kyctwmlumac9aoikhb3kmc02"/>
+		<addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_resp_cookies" constraintName="fk_1kyctwmlumac9aoikhb3kmc02" deferrable="false" initiallyDeferred="false"
+								 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+		<dropForeignKeyConstraint baseTableName="adm_inbound_req_headers" constraintName="fk_5l2gy0e4dol6gtr05sq929hnx"/>
+		<addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_headers" constraintName="fk_5l2gy0e4dol6gtr05sq929hnx" deferrable="false" initiallyDeferred="false"
+								 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+		<dropForeignKeyConstraint baseTableName="adm_notif_history" constraintName="fk_8k2sxhjmrswxnecfo74bdmnsa"/>
+		<addForeignKeyConstraint baseColumnNames="inbound_request_id" baseTableName="adm_notif_history" constraintName="fk_8k2sxhjmrswxnecfo74bdmnsa" deferrable="false" initiallyDeferred="false" onDelete="CASCADE"
+								 onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+		<dropForeignKeyConstraint baseTableName="adm_inbound_req_cookies" constraintName="fk_cfd55de59w792gxpcd478ujfq"/>
+		<addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_cookies" constraintName="fk_cfd55de59w792gxpcd478ujfq" deferrable="false" initiallyDeferred="false"
+								 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+		<dropForeignKeyConstraint baseTableName="adm_inbound_req_params" constraintName="fk_djmbjb6ja9fapeadjyj395020"/>
+		<addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_req_params" constraintName="fk_djmbjb6ja9fapeadjyj395020" deferrable="false" initiallyDeferred="false"
+								 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+		<dropForeignKeyConstraint baseTableName="adm_inbound_resp_headers" constraintName="fk_h07be9b84xmmx5ypkbunkxwxt"/>
+		<addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_resp_headers" constraintName="fk_h07be9b84xmmx5ypkbunkxwxt" deferrable="false" initiallyDeferred="false"
+								 onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_inbound_request" />
+	</changeSet>
+	<changeSet id="rebuild_5621_20201104_offer_template" author="NabilOUACHI">
+		<addColumn tableName="cat_offer_template">
+			<column name="offer_template_id" type="bigint"/>
+		</addColumn>
+
+		<addForeignKeyConstraint baseTableName="cat_offer_template" baseColumnNames="offer_template_id"
+								 constraintName="offer_template_offer_template_fk" referencedTableName="cat_offer_template"
+								 referencedColumnNames="id"/>
+	</changeSet>
+	
+	 <changeSet id="#20210415-435" author="Mbarek-Ay">
+		<addColumn tableName="billing_invoice">
+			<column name="commercial_order_id" type="bigint"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="commercial_order_id" baseTableName="billing_invoice" constraintName="fk_billing_invoice_commercial_order_id" deferrable="false" initiallyDeferred="false"
+			     onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_commercial_order" />
+	  </changeSet>
+	  
+	  <changeSet id="#20210416_441" author="TarikFA.">
+	  	<addColumn tableName="cpq_offer_component">
+	  		<column name="product_set" type="varchar(250)"/>
+	  	</addColumn>
+	  </changeSet>
 
 </databaseChangeLog>

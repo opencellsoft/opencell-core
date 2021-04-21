@@ -109,7 +109,15 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
         return getDefaultType(getQuoteCode());
     }
 
-    
+    /**
+     * Gets the default deposit invoice.
+     *
+     * @return the default draft
+     * @throws BusinessException the business exception
+     */
+    public InvoiceType getDefaultDeposit() throws BusinessException {
+        return getDefaultType(getDepositCode());
+    }
     
     /**
      * Gets the default draft.
@@ -176,7 +184,14 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     public String getDraftCode() {
         return paramBeanFactory.getInstance().getProperty("invoiceType.draft.code", "DRAFT");
     }
-
+    /**
+     * Gets the deposit code.
+     *
+     * @return the draft code
+     */
+    public String getDepositCode() {
+        return paramBeanFactory.getInstance().getProperty("invoiceType.depositInvoice.code", "ADV");
+    }
     /**
      * Gets the quote code.
      *

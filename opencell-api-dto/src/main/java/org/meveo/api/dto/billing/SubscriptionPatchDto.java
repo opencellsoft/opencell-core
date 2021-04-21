@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
+import java.util.List;
 
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -19,6 +20,7 @@ public class SubscriptionPatchDto {
     private ServicesToActivateDto servicesToActivate;
     private Boolean updateSubscriptionDate;
     private Boolean resetRenewalTerms;
+    List<String> subscriptionCustomFieldsToCopy;
 
     public String getOfferTemplate() {
         return offerTemplate;
@@ -83,4 +85,18 @@ public class SubscriptionPatchDto {
     public void setResetRenewalTerms(Boolean resetRenewalTerms) {
         this.resetRenewalTerms = resetRenewalTerms;
     }
+
+	/**
+	 * @return the subscriptionCustomFieldsToCopy
+	 */
+	public List<String> getSubscriptionCustomFieldsToCopy() {
+		return subscriptionCustomFieldsToCopy;
+	}
+
+	/**
+	 * @param subscriptionCustomFieldsToCopy the subscriptionCustomFieldsToCopy to set
+	 */
+	public void setSubscriptionCustomFieldsToCopy(List<String> subscriptionCustomFieldsToCopy) {
+		this.subscriptionCustomFieldsToCopy = subscriptionCustomFieldsToCopy;
+	}
 }

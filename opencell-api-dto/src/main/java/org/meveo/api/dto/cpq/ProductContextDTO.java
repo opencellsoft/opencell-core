@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class ServiceDto.
  *
@@ -45,26 +47,31 @@ public class ProductContextDTO extends BaseEntityDto {
      * The selected product code in the quote
      */
 	@NotNull
+    @Schema(description = "The selected product code in the quote")
     private String productCode;
     
     /**
      * The selected product version in the quote
      */
 	@NotNull
+    @Schema(description = "The selected product version in the quote")
     private Integer producVersion;
     
     /**
      * The product quantity
      */
+    @Schema(description = "The product quantity")
     private int quantity;
     /**
      * The selected services in the quote with their values
      */
     // DO NOT change to Map. Used LinkedHashMap to preserve the item order during read/write
     @XmlElement
+    @Schema(description = "The selected services in the quote with their values, DO NOT change to Map. Used LinkedHashMap to preserve the item order during read/write")
     private LinkedHashMap<String, Object> selectedAttributes;
     
     @XmlElement
+    @Schema(description = "selected grouped attribute")
     private LinkedHashMap<String, Object> selectedGroupedAttributes;
     
 

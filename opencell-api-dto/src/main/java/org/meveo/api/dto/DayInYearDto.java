@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.catalog.DayInYear;
 import org.meveo.model.catalog.MonthEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class DayInYearDto.
  *
@@ -42,10 +44,12 @@ public class DayInYearDto implements Serializable {
 
     /** The day. */
     @XmlAttribute(required = true)
+    @Schema(description = "day in the year")
     private Integer day;
 
     /** The month. */
     @XmlAttribute(required = true)
+    @Schema(description = "month of the year", example = "possible value are : JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER")
     private MonthEnum month;
 
     /**

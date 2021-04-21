@@ -142,7 +142,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             if (resultList != null && !resultList.isEmpty()) {
                 log.debug("{} record/s found", resultList.size());
                 if (entity.getReportExtractResultType().equals(ReportExtractResultTypeEnum.CSV)) {
-                    writeAsFile(filename, reportDir, resultList);
+                    writeAsFile(filename, entity.getFileSeparator(), reportDir, resultList);
                 } else {
                     writeAsHtml(filename, reportDir, resultList, entity);
                 }
@@ -253,7 +253,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 	}
 
     @SuppressWarnings("rawtypes")
-    private void writeAsFile(String filename, StringBuilder sbDir, List<Map<String, Object>> resultList) throws BusinessException {
+    private void writeAsFile(String filename, String fileSeparator, StringBuilder sbDir, List<Map<String, Object>> resultList) throws BusinessException {
         FileWriter fileWriter = null;
         StringBuilder line = new StringBuilder("");
 
@@ -270,7 +270,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             Map<String, Object> firstRow = resultList.get(0);
             Iterator ite = firstRow.keySet().iterator();
             while (ite.hasNext()) {
-                line.append(ite.next() + ",");
+                line.append(ite.next() + fileSeparator);
             }
             line.deleteCharAt(line.length() - 1);
             fileWriter.write(line.toString());
@@ -280,7 +280,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             for (Map<String, Object> row : resultList) {
                 ite = firstRow.keySet().iterator();
                 while (ite.hasNext()) {
-                    line.append(row.get(ite.next()) + ",");
+                    line.append(row.get(ite.next()) + fileSeparator);
                 }
                 line.deleteCharAt(line.length() - 1);
                 fileWriter.write(line.toString());

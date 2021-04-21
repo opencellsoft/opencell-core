@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class MatchingAmountsDto.
  *
@@ -38,6 +40,7 @@ public class MatchingAmountsDto implements Serializable {
     private static final long serialVersionUID = -8375302840183850003L;
 
     /** The matching amount. */
+    @Schema(description = "List of the matching amount")
     private List<MatchingAmountDto> matchingAmount;
 
     /**

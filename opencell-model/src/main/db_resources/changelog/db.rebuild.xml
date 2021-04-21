@@ -23,9 +23,7 @@
     <property name="db.schema.adapted" value="" dbms="mysql"/>
     
     <include file="rebuild/structure.xml" relativeToChangelogFile="true" />
+    <include file="current/cpq_structure.xml" relativeToChangelogFile="true" />
     <include file="rebuild/data.xml" relativeToChangelogFile="true" />
-    <include file="current/structure.xml" relativeToChangelogFile="true" />
-    <include file="current/data.xml" relativeToChangelogFile="true" />
-    <include file="dunning/data.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>

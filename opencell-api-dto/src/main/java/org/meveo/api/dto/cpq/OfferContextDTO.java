@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class ServiceDto.
  *
@@ -43,10 +45,13 @@ public class OfferContextDTO extends BaseEntityDto {
 	  /**
      * The offer code
      */
+    @Schema(description = "code of offer template")
     private String offerCode;
-    
+
+    @Schema(description = "information for customer")
 	private CustomerContextDTO customerContextDTO;
-	
+
+    @Schema(description = "code of quote lot")
 	private String quoteLotCode ;
 	
 	
@@ -54,6 +59,7 @@ public class OfferContextDTO extends BaseEntityDto {
     /**
      * The selected products in the quote
      */
+    @Schema(description = "The selected products in the quote")
     private List<ProductContextDTO> selectedProducts=new ArrayList<ProductContextDTO>();;
     
    

@@ -18,12 +18,12 @@
 
 package org.meveo.api.dto.response;
 
+import org.meveo.api.dto.billing.InvoiceTypeDto;
+import org.meveo.api.dto.billing.InvoiceTypesDto;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.billing.InvoiceTypeDto;
-import org.meveo.api.dto.billing.InvoiceTypesDto;
 
 /**
  * The Class GetInvoiceTypesResponse.
@@ -38,7 +38,7 @@ public class GetInvoiceTypesResponse extends SearchResponse {
     private static final long serialVersionUID = 1336652304727158329L;
 
     /** The invoice types dto. */
-    private InvoiceTypesDto invoiceTypesDto;
+    private InvoiceTypesDto invoiceTypesDto = new InvoiceTypesDto();
 
     /**
      * Instantiates a new gets the invoice types response.

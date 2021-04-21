@@ -32,39 +32,27 @@ import javax.interceptor.Interceptors;
 import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.GDPRInfoDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.exception.BusinessApiException;
-import org.meveo.api.exception.DeleteReferencedEntityException;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
+import org.meveo.api.exception.*;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.BeanUtils;
-import org.meveo.model.billing.BankCoordinates;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.CounterInstance;
-import org.meveo.model.billing.DiscountPlanInstance;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.SubscriptionTerminationReason;
-import org.meveo.model.billing.ThresholdOptionsEnum;
-import org.meveo.model.billing.TradingCountry;
-import org.meveo.model.billing.TradingLanguage;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
@@ -76,17 +64,12 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.shared.Title;
 import org.meveo.model.tax.TaxCategory;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingCycleService;
-import org.meveo.service.billing.impl.DiscountPlanInstanceService;
-import org.meveo.service.billing.impl.InvoiceTypeService;
-import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.billing.impl.TradingCountryService;
-import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -168,6 +151,9 @@ public class BillingAccountApi extends AccountEntityApi {
 
     @Inject
     private TagService tagService;
+    
+    @Inject
+    private TitleService titleService;
 
     public BillingAccount create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -179,6 +165,9 @@ public class BillingAccountApi extends AccountEntityApi {
 
     public BillingAccount create(BillingAccountDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
+        if(StringUtils.isBlank(postData.getCode())) {
+            addGenericCodeIfAssociated(BillingAccount.class.getName(), postData);
+        }
         if (StringUtils.isBlank(postData.getCustomerAccount())) {
             missingParameters.add("customerAccount");
         }
@@ -528,6 +517,30 @@ public class BillingAccountApi extends AccountEntityApi {
                 }
             }
         }
+        
+        if(postData.getIsCompany() != null) {
+        	billingAccount.setIsCompany(postData.getIsCompany());
+        }
+        
+        if(postData.getLegalEntityType() != null) {
+        	var titleDto = postData.getLegalEntityType();
+        	if(Strings.isEmpty(titleDto.getCode()))
+        		missingParameters.add("legalEntityType.code");
+        	handleMissingParameters();
+        	Title title = titleService.findByCode(titleDto.getCode());
+        	if(title == null)
+        		title = new Title(titleDto.getCode(), titleDto.getIsCompany());
+        	if(!Strings.isEmpty(titleDto.getDescription()))
+        		title.setDescription(titleDto.getDescription());
+        	if(titleDto.getLanguageDescriptions() != null && !titleDto.getLanguageDescriptions().isEmpty()) {
+        		title.setDescriptionI18n(
+        								titleDto.getLanguageDescriptions()
+        											.stream().collect(Collectors.toMap(LanguageDescriptionDto::getLanguageCode, LanguageDescriptionDto::getDescription)));
+        	}
+        	if(title.getId() == null)
+        		titleService.create(title);
+        	billingAccount.setLegalEntityType(title);
+        }
 
         // Update payment method information in a customer account.
         // ONLY used to handle deprecated billingAccountDto.paymentMethod and billingAccountDto.bankCoordinates fields. Use
@@ -606,7 +619,7 @@ public class BillingAccountApi extends AccountEntityApi {
         }
 
         BillingAccountsDto result = new BillingAccountsDto();
-        List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount);
+        List<BillingAccount> billingAccounts = billingAccountService.listByCustomerAccount(customerAccount, GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         if (billingAccounts != null) {
             for (BillingAccount ba : billingAccounts) {
                 BillingAccountDto billingAccountDto = accountHierarchyApi.billingAccountToDto(ba);
@@ -632,6 +645,20 @@ public class BillingAccountApi extends AccountEntityApi {
         return result;
     }
 
+    public BillingAccountsResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        BillingAccountsResponseDto result = new BillingAccountsResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<BillingAccount> billingAccounts = billingAccountService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (billingAccounts != null) {
+            for (BillingAccount billingAccount : billingAccounts) {
+                result.getBillingAccounts().getBillingAccount().add(new BillingAccountDto(billingAccount));
+            }
+        }
+
+        return result;
+    }
+
     /**
      * Create or update Billing Account based on Billing Account Code
      * 
@@ -641,13 +668,11 @@ public class BillingAccountApi extends AccountEntityApi {
      * @throws BusinessException business exception.
      */
     public BillingAccount createOrUpdate(BillingAccountDto postData) throws MeveoApiException, BusinessException {
-        BillingAccount billingAccount = billingAccountService.findByCode(postData.getCode());
-        if (billingAccount == null) {
-            billingAccount = create(postData);
+        if (!StringUtils.isBlank(postData.getCode()) && billingAccountService.findByCode(postData.getCode()) != null) {
+            return update(postData);
         } else {
-            billingAccount = update(postData);
+            return create(postData);
         }
-        return billingAccount;
     }
 
     public BillingAccount terminate(BillingAccountDto postData) throws MeveoApiException {
@@ -655,7 +680,7 @@ public class BillingAccountApi extends AccountEntityApi {
         try {
             terminationReason = subscriptionTerminationReasonService.findByCodeReason(postData.getTerminationReason());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error = {}", e);
         }
         if (terminationReason == null) {
             throw new EntityDoesNotExistsException(SubscriptionTerminationReason.class, postData.getTerminationReason());

@@ -11,21 +11,35 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.GroupedAttributes;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class GroupedAttributeDto {
 
+	@Schema(description = "id of the grouped attribute")
 	private Long id;
-	
+
+	@Schema(description = "code of groupped attribute")
     @NotNull
 	private String code;
+	@Schema(description = "description of the groupped attribute")
 	private String description;
+	@Schema(description = "list of attributes to display")
 	private List<AttributeDTO> attributes = new ArrayList<AttributeDTO>();
+	@Schema(description = "list of code of attribute for adding to a groupped attribute")
 	private Set<String> attributeCodes = new HashSet<String>();
+	@Schema(description = "indicate if the groupped attribute should display")
 	private boolean display;
+	@Schema(description = "indicate if the groupped attribute should be disable")
 	private boolean disabled;
+	@Schema(description = "indicate if the groupped attribute should be mandatory")
 	private boolean mandatory;
-	private boolean selectable=Boolean.TRUE;  
+	@Schema(description = "indicate if the groupped attribute is selectable, the default value is true")
+	private boolean selectable=Boolean.TRUE; 
+	@Schema(description = "indicate if the groupped attribute is ruled, the default value is false") 
 	private boolean ruled=Boolean.FALSE;
+	@Schema(description = "list of code of commercial rule")
 	 private List<String> commercialRuleCodes=new ArrayList<String>();
+	@Schema(description = "custome field associated to groupped attribute")
 	 private CustomFieldsDto customFields;
 	
 	public GroupedAttributeDto() {

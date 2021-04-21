@@ -18,14 +18,6 @@
 
 package org.meveo.api.crm;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.account.AccountEntityApi;
@@ -40,7 +32,13 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
+import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.config.annotation.FilterProperty;
+import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.Customer;
@@ -54,6 +52,13 @@ import org.meveo.service.intcrm.impl.AdditionalDetailsService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.intcrm.impl.ContactService;
 import org.primefaces.model.SortOrder;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Abdellatif BARI
@@ -121,7 +126,7 @@ public class ContactApi extends AccountEntityApi {
         if (contact != null) {
             throw new EntityAlreadyExistsException(Contact.class, code, "code");
         }
-        
+
         contact = new Contact();
 
         if (!StringUtils.isBlank(postData.getEmail()) && StringUtils.isBlank(postData.getCode())) {
@@ -164,7 +169,7 @@ public class ContactApi extends AccountEntityApi {
 
     /**
      * Populate entity with fields from DTO entity
-     * 
+     *
      * @param contact Entity to populate
      * @param postData DTO entity object to populate from
      **/
@@ -291,6 +296,20 @@ public class ContactApi extends AccountEntityApi {
 
         return contactDto;
     }
+
+	public ContactsResponseDto listGetAll(PagingAndFiltering pagingAndFiltering) {
+		ContactsResponseDto result = new ContactsResponseDto();
+		result.setPaging( pagingAndFiltering );
+
+		List<Contact> contacts = contactService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+		if (contacts != null) {
+			for (Contact contact : contacts) {
+				result.getContacts().getContact().add(new ContactDto(contact));
+			}
+		}
+
+		return result;
+	}
 
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "contacts.contact", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Contact.class) }, totalRecords = "contacts.totalNumberOfRecords")

@@ -18,20 +18,13 @@
 
 package org.meveo.api.rest;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.response.GetTradingLanguageResponse;
+import org.meveo.api.dto.response.TradingLanguagesResponseDto;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * * Web service for managing {@link org.meveo.model.billing.Language} and {@link org.meveo.model.billing.TradingLanguage}.
@@ -44,6 +37,15 @@ import org.meveo.api.dto.response.GetTradingLanguageResponse;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
 public interface LanguageRs extends IBaseRs {
+
+    /**
+     * Search for list of trading languages.
+     *
+     * @return list of trading languages
+     */
+    @GET
+    @Path("/list")
+    TradingLanguagesResponseDto list();
 
     /**
      * Creates tradingLanguage base on language code. If the language code does not exists, a language record is created.

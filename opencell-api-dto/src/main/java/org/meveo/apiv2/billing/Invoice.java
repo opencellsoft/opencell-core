@@ -207,4 +207,6 @@ public interface Invoice extends Resource {
 	@Nullable
 	Resource getDiscountPlan();
 
+	@Nullable
+	Resource getCommercialOrder();
 }

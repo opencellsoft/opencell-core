@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class TriggeredEdrTemplatesDto.
  *
@@ -39,6 +41,7 @@ public class TriggeredEdrTemplatesDto implements Serializable {
     private static final long serialVersionUID = 5790679004639676207L;
 
     /** The triggered edr. */
+    @Schema(description = "list triggered EDR")
     private List<TriggeredEdrTemplateDto> triggeredEdr;
 
     /**

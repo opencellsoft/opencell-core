@@ -26,6 +26,7 @@ import javax.inject.Named;
 import javax.persistence.Query;
 
 import org.meveo.model.catalog.CalendarBanking;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -101,4 +102,28 @@ public class CalendarBankingService extends PersistenceService<CalendarBanking> 
         }
         return bankingCalendar.isBankWorkingDate(date);
     }
+    
+	/**
+	 * Adds the business days to date.
+	 *
+	 * @param dateStart the date start
+	 * @param nbDays the nb days
+	 * @return the date
+	 */
+	public Date addBusinessDaysToDate(Date dateStart, Integer nbDays) {
+		Date dateResult = null;
+		if (dateStart == null || nbDays == null) {
+			return dateResult;
+		}
+		dateResult = dateStart;
+		int daysAdded = 0;
+		while (daysAdded != nbDays) {
+			dateResult = DateUtils.addDaysToDate(dateResult, 1);
+			if (isBankWorkingDate(dateResult)) {
+				daysAdded++;
+			}
+		}
+		return dateResult;
+	}
+
 }

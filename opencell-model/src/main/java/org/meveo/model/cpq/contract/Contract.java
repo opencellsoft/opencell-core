@@ -30,7 +30,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.cpq.commercial.OrderPrice;
+import org.meveo.model.cpq.enums.ContractStatusEnum;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CustomerAccount;
@@ -47,12 +47,15 @@ import org.meveo.model.payments.CustomerAccount;
 @NamedQueries({
 	@NamedQuery(name = "Contract.findBillingAccount", query = "select c from Contract c  left join fetch  c.billingAccount cb where cb.code=:codeBillingAccount"),
 	@NamedQuery(name = "Contract.findCustomerAccount", query = "select c from Contract c left join c.customerAccount cc where cc.code=:codeCustomerAccount"),
-	@NamedQuery(name = "Contract.findCustomer", query = "select c from Contract c left join c.customer cc where cc.code=:codeCustomer")
+	@NamedQuery(name = "Contract.findCustomer", query = "select c from Contract c left join c.customer cc where cc.code=:codeCustomer"),
+    @NamedQuery(name = "Contract.findByAccounts", query = "select c from Contract c where c.status='ACTIVE' and (c.beginDate<=current_date and c.endDate>current_date) "
+    		+ " and (c.customer.id is null or c.customer.id=:customerId) "
+				+ " and (c.billingAccount.id is null or c.billingAccount.id=:billingAccountId) and (c.customerAccount.id is null or c.customerAccount.id=:customerAccountId)  " )
 })
 public class Contract extends EnableBusinessCFEntity {
 
 	public Contract() {
-		this.status = ProductStatusEnum.DRAFT;
+		this.status = ContractStatusEnum.DRAFT;
 		this.statusDate = Calendar.getInstance().getTime();
 	}
 
@@ -95,7 +98,7 @@ public class Contract extends EnableBusinessCFEntity {
 	@Column(name = "status", nullable = false)
 	@Enumerated(EnumType.STRING)
 	@NotNull
-	private ProductStatusEnum status;
+	private ContractStatusEnum status;
 	
 	/**
 	 * date of the modification of the status
@@ -202,17 +205,12 @@ public class Contract extends EnableBusinessCFEntity {
 		this.customer = customer;
 	}
 
-	/**
-	 * @return the status
-	 */
-	public ProductStatusEnum getStatus() {
+ 
+	public ContractStatusEnum getStatus() {
 		return status;
 	}
 
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(ProductStatusEnum status) {
+	public void setStatus(ContractStatusEnum status) {
 		this.status = status;
 	}
 
@@ -299,6 +297,28 @@ public class Contract extends EnableBusinessCFEntity {
 	public void setContractDuration(int contractDuration) {
 		this.contractDuration = contractDuration;
 	}
+	
+	
+	   /**
+     * Check if a date is within this contract effective date. Exclusive of the endDate. If startDate is null, it returns true. If startDate is not null and endDate is null,
+     * endDate is computed from the given duration.
+     *
+     * @param date the given date
+     * @return returns true if this DiscountItem is to be applied
+     */
+    public boolean isEffective(Date date) {
+        if (beginDate == null && endDate == null) {
+            return true;
+        }
+        if (beginDate != null && endDate == null) {
+            return date.compareTo(beginDate) >= 0;
+        }
+        if (beginDate == null) {
+            return date.before(endDate);
+        }
+        return (date.compareTo(beginDate) >= 0) && (date.before(endDate));
+    }
+	
 
 	@Override
 	public int hashCode() {

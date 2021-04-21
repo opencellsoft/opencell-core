@@ -21,6 +21,8 @@ package org.meveo.api.dto.crm;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.intcrm.AdditionalDetails;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class AdditionalDetailsDto  extends BaseEntityDto  {
 
 	/**
@@ -28,10 +30,13 @@ public class AdditionalDetailsDto  extends BaseEntityDto  {
 	 */
 	private static final long serialVersionUID = 620321903097019766L;
 
+    @Schema(description = "name of the company")
 	private String companyName;
-	
+
+    @Schema(description = "position")
 	private String position;
-		
+
+    @Schema(description = "instant messenger")
 	private String instantMessengers;
 	
 	public AdditionalDetailsDto() {

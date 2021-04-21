@@ -39,6 +39,7 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class FtpAdapterJob connect to the given ftp server and get files from the given remote path.
+ * 
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
@@ -54,7 +55,7 @@ public class FtpAdapterJob extends Job {
 
     @Override
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+    protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         String localDirectory = null;
         String remoteServer = null;
         int remotePort = 21;
@@ -81,8 +82,9 @@ public class FtpAdapterJob extends Job {
         } catch (Exception e) {
             log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e);
         }
-        ftpAdapterJobBean.execute(result, jobInstance, localDirectory, remoteServer, remotePort, "true".equalsIgnoreCase(removeOriginalFile), remoteDirectory, ftpExtension,
-            ftpUsername, ftpPassword, ftpProtocol, operation);
+        ftpAdapterJobBean.execute(result, jobInstance, localDirectory, remoteServer, remotePort, "true".equalsIgnoreCase(removeOriginalFile), remoteDirectory, ftpExtension, ftpUsername, ftpPassword, ftpProtocol,
+            operation);
+        return result;
     }
 
     @Override

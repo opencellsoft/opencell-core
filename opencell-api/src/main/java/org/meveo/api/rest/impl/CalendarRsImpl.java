@@ -18,12 +18,6 @@
 
 package org.meveo.api.rest.impl;
 
-import java.util.Date;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.CalendarApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -34,6 +28,12 @@ import org.meveo.api.dto.response.GetCalendarResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CalendarRs;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import java.util.Date;
 
 /**
  * @author Edward P. Legaspi
@@ -93,6 +93,20 @@ public class CalendarRsImpl extends BaseRs implements CalendarRs {
         try {
             calendarsDto.setCalendar(calendarApi.list());
             result.setCalendars(calendarsDto);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ListCalendarResponse listGetAll() {
+
+        ListCalendarResponse result = new ListCalendarResponse();
+
+        try {
+            result = calendarApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

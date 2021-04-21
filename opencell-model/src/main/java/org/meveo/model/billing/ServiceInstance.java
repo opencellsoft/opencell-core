@@ -75,6 +75,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Service subscribed to.
@@ -166,7 +167,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     /**
      * Charges instances associated with a service instance
      */
-    @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "serviceInstance", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ChargeInstance> chargeInstances = new ArrayList<>();
 
     /**
@@ -1247,5 +1248,11 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
 
     public ServiceCharge getServiceCharge() {
         return serviceTemplate != null ? serviceTemplate : productVersion.getProduct();
+    }
+
+    public void clearTransientSubscriptionChargeInstance() {
+        this.subscriptionChargeInstances = getSubscriptionChargeInstances().stream()
+                .filter(ch -> ch.getId() != null)
+                .collect(Collectors.toList());
     }
 }
