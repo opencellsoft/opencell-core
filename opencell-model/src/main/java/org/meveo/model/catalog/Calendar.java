@@ -29,6 +29,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.ValidationException;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -87,39 +88,43 @@ public abstract class Calendar extends BusinessEntity {
      * Calendar initialization date
      */
     @Transient
-    private Date initDate;
+    private ThreadLocal<Date> initDate = new ThreadLocal<Date>();
 
     /**
      * Get the period end date for a given date
      * 
      * @param date Current date.
-     * @return Next calendar date.
+     * @return Next calendar date or NULL if it can not be resolved
+     * @throws ValidationException Invalid date or invalid calendar configuration
      */
-    public abstract Date nextCalendarDate(Date date);
+    public abstract Date nextCalendarDate(Date date) throws ValidationException;
 
     /**
      * Get the period start date for a given date
      * 
      * @param date Current date.
-     * @return Next calendar date.
+     * @return Next calendar date or NULL if it can not be resolved
+     * @throws ValidationException Invalid date or invalid calendar configuration
      */
-    public abstract Date previousCalendarDate(Date date);
+    public abstract Date previousCalendarDate(Date date) throws ValidationException;
 
     /**
      * Get the previous period end date
      * 
      * @param date Current date
-     * @return The previous period end date
+     * @return The previous period end date or NULL if it can not be resolved
+     * @throws ValidationException Invalid date or invalid calendar configuration
      */
-    public abstract Date previousPeriodEndDate(Date date);
+    public abstract Date previousPeriodEndDate(Date date) throws ValidationException;
 
     /**
      * Get the next period start date
      * 
      * @param date Current date
-     * @return The next period start date
+     * @return The next period start date or NULL if it can not be resolved
+     * @throws ValidationException Invalid date or invalid calendar configuration
      */
-    public abstract Date nextPeriodStartDate(Date date);
+    public abstract Date nextPeriodStartDate(Date date) throws ValidationException;
 
     public void setCalendarType(String calendarType) {
         this.calendarType = calendarType;
@@ -139,11 +144,11 @@ public abstract class Calendar extends BusinessEntity {
     }
 
     public Date getInitDate() {
-        return initDate;
+        return initDate.get();
     }
 
     public void setInitDate(Date startDate) {
-        this.initDate = startDate;
+        this.initDate.set(startDate);
     }
 
     /**
@@ -203,7 +208,7 @@ public abstract class Calendar extends BusinessEntity {
     }
 
     public String getLocalizedDescription(String lang) {
-        if(descriptionI18n != null) {
+        if (descriptionI18n != null) {
             return descriptionI18n.getOrDefault(lang, this.description);
         } else {
             return this.description;
