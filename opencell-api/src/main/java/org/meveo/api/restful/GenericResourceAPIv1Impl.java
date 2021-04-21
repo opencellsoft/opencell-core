@@ -165,7 +165,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     public Response getApiVersion() {
         ActionStatus successfulStatus = new ActionStatus(ActionStatusEnum.SUCCESS,
                 "Opencell core version " + Version.appVersion + ", Opencell Rest API version " + GenericOpencellRestfulAPIv1.API_VERSION.substring(1)
-                        + ", commit " + Version.buildNumber + " , build at " + Version.build_time );
+                        + ", commit " + Version.buildNumber + " , build at " + Version.build_time);
 
         return Response.status(Response.Status.OK).entity(successfulStatus).build();
     }
