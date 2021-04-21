@@ -1,4 +1,4 @@
-package org.meveo.apiv2.generic;
+package org.meveo.api.restful.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections.MapUtils;

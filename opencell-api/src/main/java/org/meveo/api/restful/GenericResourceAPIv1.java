@@ -1,4 +1,4 @@
-package org.meveo.apiv2.generic;
+package org.meveo.api.restful;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,7 +16,7 @@ public interface GenericResourceAPIv1 {
 
     @GET
     @Path("/{segments:.*}")
-    Response getAllEntitiesOrGetAnEntity() throws URISyntaxException, IOException;
+    Response getRequest() throws URISyntaxException, IOException;
 
     @POST
     @Path("/{segments:.*}")
@@ -28,7 +28,7 @@ public interface GenericResourceAPIv1 {
 
     @DELETE
     @Path("/{segments:.*}")
-    Response deleteAnEntity() throws URISyntaxException;
+    Response deleteRequest() throws URISyntaxException;
 
     @POST
     @Path("/{segments:.*}/creationOrUpdate")

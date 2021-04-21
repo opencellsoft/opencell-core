@@ -1,4 +1,4 @@
-package org.meveo.apiv2.generic;
+package org.meveo.api.restful.filter;
 
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
@@ -14,7 +14,7 @@ import java.util.Base64;
 @WebFilter(filterName = "AuthenticationFilter", urlPatterns = { "/v1/*" })
 public class AuthenticationFilter implements Filter {
 
-    static ResteasyClient httpClient;
+    public static ResteasyClient httpClient;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {

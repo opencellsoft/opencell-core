@@ -26,7 +26,7 @@ import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.service.payments.impl.CreditCategoryService;

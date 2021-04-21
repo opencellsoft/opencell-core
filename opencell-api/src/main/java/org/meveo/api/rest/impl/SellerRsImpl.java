@@ -27,7 +27,7 @@ import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.SellerRs;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;

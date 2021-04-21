@@ -25,7 +25,7 @@ import org.meveo.api.dto.communication.MeveoInstanceDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.crm.Customer;

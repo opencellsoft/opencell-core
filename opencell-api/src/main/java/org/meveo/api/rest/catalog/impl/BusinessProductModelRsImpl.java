@@ -27,7 +27,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.rest.catalog.BusinessProductModelRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.catalog.BusinessProductModel;
 
 import javax.enterprise.context.RequestScoped;
