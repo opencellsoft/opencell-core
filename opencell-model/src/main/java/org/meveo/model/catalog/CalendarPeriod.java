@@ -107,6 +107,20 @@ public class CalendarPeriod extends Calendar {
         if (periodLength == null || periodUnit == null || initDate == null || date == null|| date.before(initDate)) {
             return null;
         }
+        
+//        if (periodLength == null || periodUnit == null) {
+//            throw new ValidationException("Period length or unit not defined for calendar " + code);
+//
+//        } else if (initDate == null) {
+//            throw new ValidationException("Calendar " + code + " was not initialized");
+//
+//        } else if (date == null) {
+//            throw new ValidationException("Reference date was not provided for next calendar date calculation for calendar " + code);
+//
+//        } else if (date.before(initDate)) {
+//            throw new ValidationException("Calendar " + code + " initialization date (" + initDate + ") is later than the reference date (" + date + ")");
+//        }
+        
         if (nbPeriods == null) {
             nbPeriods = 0;
         }
@@ -165,25 +179,41 @@ public class CalendarPeriod extends Calendar {
      */
     @Override
     public Date previousCalendarDate(Date date) {
-
-        if (periodLength == null || periodUnit == null || getInitDate() == null || date.before(getInitDate())) {
+        
+        Date initDate = getInitDate();
+        
+        if (periodLength == null || periodUnit == null || initDate == null || date.before(initDate)) {
             return null;
         }
+        
+//        if (periodLength == null || periodUnit == null) {
+//            throw new ValidationException("Period length or unit not defined for calendar " + code);
+//
+//        } else if (initDate == null) {
+//            throw new ValidationException("Calendar " + code + " was not initialized");
+//
+//        } else if (date == null) {
+//            throw new ValidationException("Reference date was not provided for previous calendar date calculation for calendar " + code);
+//
+//        } else if (date.before(initDate)) {
+//            throw new ValidationException("Calendar " + code + " initialization date (" + initDate + ") is later than the reference date (" + date + ")");
+//        }
+        
         if (nbPeriods == null) {
             nbPeriods = 0;
         }
 
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(getInitDate());
+        calendar.setTime(initDate);
 
         int i = 1;
 
         while (date.compareTo(calendar.getTime()) >= 0) {
 
-            calendar.setTime(getInitDate());
+            calendar.setTime(initDate);
 
             GregorianCalendar calendarOld = new GregorianCalendar();
-            calendarOld.setTime(getInitDate());
+            calendarOld.setTime(initDate);
             calendarOld.add(periodUnit, (i - 1) * periodLength);
             Date oldDate = calendarOld.getTime();
 
