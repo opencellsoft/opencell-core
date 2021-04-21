@@ -27,7 +27,7 @@ import org.meveo.api.dto.response.catalog.GetListProductTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.CatalogRs;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ProductTemplate;
 import org.tmf.dsmapi.catalog.resource.LifecycleStatus;

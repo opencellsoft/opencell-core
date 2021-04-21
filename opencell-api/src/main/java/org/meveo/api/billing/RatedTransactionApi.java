@@ -24,7 +24,7 @@ import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.RatedTransactionListResponseDto;
 import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.primefaces.model.SortOrder;

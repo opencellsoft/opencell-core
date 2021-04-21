@@ -27,7 +27,7 @@ import org.meveo.api.dto.dwh.PieChartDto;
 import org.meveo.api.dto.response.ChartsResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.*;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.dwh.*;
 import org.meveocrm.services.dwh.ChartService;

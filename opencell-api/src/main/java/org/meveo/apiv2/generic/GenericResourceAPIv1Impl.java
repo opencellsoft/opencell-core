@@ -1,3 +1,4 @@
+
 package org.meveo.apiv2.generic;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
