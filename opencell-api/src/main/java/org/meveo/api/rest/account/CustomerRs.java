@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.account;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
@@ -54,6 +63,7 @@ import java.util.Date;
  * @lastModifiedVersion 5.2
  **/
 @Path("/account/customer")
+@Tag(name = "Customer", description = "@%Customer")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -67,6 +77,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new customer ",
+			description=" Create a new customer ",
+			operationId="    POST_Customer_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(CustomerDto postData);
 
     /**
@@ -77,6 +100,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing customer ",
+			description=" Update an existing customer ",
+			operationId="    PUT_Customer_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(CustomerDto postData);
 
     /**
@@ -88,6 +124,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for a customer with a given code ",
+			description=" Search for a customer with a given code ",
+			operationId="    GET_Customer_search",
+			responses= {
+				@ApiResponse(description=" The customer's data ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetCustomerResponseDto.class
+											)
+								)
+				)}
+	)
     GetCustomerResponseDto find(@QueryParam("customerCode") String customerCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
@@ -98,6 +147,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @DELETE
     @Path("/{customerCode}")
+	@Operation(
+			summary=" Remove customer with a given code ",
+			description=" Remove customer with a given code ",
+			operationId="    DELETE_Customer_{customerCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("customerCode") String customerCode);
 
     /**
@@ -114,6 +176,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/list47")
+	@Operation(
+			summary=" Filters are: category, seller, brand and provider. ",
+			description=" Filters are: category, seller, brand and provider. ",
+			operationId="    POST_Customer_list47",
+			responses= {
+				@ApiResponse(description=" list of customers ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CustomersResponseDto.class
+											)
+								)
+				)}
+	)
     public CustomersResponseDto list47(@Deprecated CustomerDto postData, @QueryParam("firstRow") @Deprecated Integer firstRow,
             @QueryParam("numberOfRows") @Deprecated Integer numberOfRows, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("c.code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
@@ -132,6 +207,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List customers matching a given criteria ",
+			description=" List customers matching a given criteria ",
+			operationId="    GET_Customer_list",
+			responses= {
+				@ApiResponse(description=" List of customers ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CustomersResponseDto.class
+											)
+								)
+				)}
+	)
     public CustomersResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
@@ -143,6 +231,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List customers matching a given criteria ",
+			description=" List customers matching a given criteria ",
+			operationId="    GET_Customer_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of customers ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CustomersResponseDto.class
+											)
+								)
+				)}
+	)
     CustomersResponseDto list();
 
     /**
@@ -153,6 +254,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" List customers matching a given criteria ",
+			description=" List customers matching a given criteria ",
+			operationId="    POST_Customer_list",
+			responses= {
+				@ApiResponse(description=" List of customers ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CustomersResponseDto.class
+											)
+								)
+				)}
+	)
     public CustomersResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -163,6 +277,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/createBrand")
+	@Operation(
+			summary=" Create a new customer brand ",
+			description=" Create a new customer brand ",
+			operationId="    POST_Customer_createBrand",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createBrand(CustomerBrandDto postData);
 
     /**
@@ -173,6 +300,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @PUT
     @Path("/updateBrand")
+	@Operation(
+			summary=" Update an existing customer brand ",
+			description=" Update an existing customer brand ",
+			operationId="    PUT_Customer_updateBrand",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus updateBrand(CustomerBrandDto postData);
 
     /**
@@ -183,6 +323,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdateBrand")
+	@Operation(
+			summary=" Create new or update an existing customer brand ",
+			description=" Create new or update an existing customer brand ",
+			operationId="    POST_Customer_createOrUpdateBrand",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdateBrand(CustomerBrandDto postData);
 
     /**
@@ -193,6 +346,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/createCategory")
+	@Operation(
+			summary=" Create a new customer category ",
+			description=" Create a new customer category ",
+			operationId="    POST_Customer_createCategory",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createCategory(CustomerCategoryDto postData);
 
     /**
@@ -203,6 +369,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @PUT
     @Path("/updateCategory")
+	@Operation(
+			summary=" Update an existing customer category ",
+			description=" Update an existing customer category ",
+			operationId="    PUT_Customer_updateCategory",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus updateCategory(CustomerCategoryDto postData);
     
     /**
@@ -213,6 +392,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @GET
     @Path("/category/{categoryCode}")
+	@Operation(
+			summary=" Search for a customer category with a given code  ",
+			description=" Search for a customer category with a given code  ",
+			operationId="    GET_Customer_category_{categoryCode}",
+			responses= {
+				@ApiResponse(description=" The customer category's data ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetCustomerCategoryResponseDto.class
+											)
+								)
+				)}
+	)
     GetCustomerCategoryResponseDto findCategory(@PathParam("categoryCode") String categoryCode);
 
     /**
@@ -223,6 +415,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdateCategory")
+	@Operation(
+			summary=" Create new or update an existing customer category ",
+			description=" Create new or update an existing customer category ",
+			operationId="    POST_Customer_createOrUpdateCategory",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdateCategory(CustomerCategoryDto postData);
 
     /**
@@ -233,6 +438,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @DELETE
     @Path("/removeBrand/{brandCode}")
+	@Operation(
+			summary=" Remove existing customer brand with a given brand code ",
+			description=" Remove existing customer brand with a given brand code ",
+			operationId="    DELETE_Customer_removeBrand_{brandCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus removeBrand(@PathParam("brandCode") String brandCode);
 
     /**
@@ -243,6 +461,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @DELETE
     @Path("/removeCategory/{categoryCode}")
+	@Operation(
+			summary=" Remove an existing customer category with a given category code ",
+			description=" Remove an existing customer category with a given category code ",
+			operationId="    DELETE_Customer_removeCategory_{categoryCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus removeCategory(@PathParam("categoryCode") String categoryCode);
 
     /**
@@ -253,6 +484,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update existing customer ",
+			description=" Create new or update existing customer ",
+			operationId="    POST_Customer_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(CustomerDto postData);
 
     /**
@@ -265,6 +509,19 @@ public interface CustomerRs extends IBaseRs {
 	 */
     @GET
     @Path("/exportCustomerHierarchy")
+	@Operation(
+			summary="	  Exports an account hierarchy given a specific customer selected in the GUI",
+			description="	  Exports an account hierarchy given a specific customer selected in the GUI.	  It includes Subscription, AccountOperation and Invoice details. It packaged the json output	  as a zipped file along with the pdf invoices.	  	  ",
+			operationId="    GET_Customer_exportCustomerHierarchy",
+			responses= {
+				@ApiResponse(description=" Request processing status	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus exportCustomerHierarchy(@QueryParam("customerCode") String customerCode);
     
     /**
@@ -276,6 +533,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @GET
     @Path("/anonymizeGdpr")
+	@Operation(
+			summary=" Right to be forgotten",
+			description=" Right to be forgotten. This concerns listing of risky or grey/black listed customers and their data.	  Upon request, they can require their data to be erased.	  In such case, mandatory information (accounting, invoicing, payments) must be preserved but the data tables including the customer's data must be anonymize (firstname/name/emails/phones/addresses/etc) so if this person register back it will be treated as a new customer without history. ",
+			operationId="    GET_Customer_anonymizeGdpr",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus anonymizeGdpr(@QueryParam("customerCode") String customerCode);
 
     /**
@@ -287,6 +557,19 @@ public interface CustomerRs extends IBaseRs {
 	 */
 	@PUT
 	@Path("/customerNumberSequence")
+	@Operation(
+			summary="	  Update the Provider's customer number sequence configuration.	  	  ",
+			description="	  Update the Provider's customer number sequence configuration.	  	  ",
+			operationId="PUT_Customer_customerNumberSequence",
+			responses= {
+				@ApiResponse(description=" status of the operation	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
 	ActionStatus updateCustomerNumberSequence(GenericSequenceDto postData);
 	
     /**
@@ -296,6 +579,19 @@ public interface CustomerRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/customerNumberSequence")
+	@Operation(
+			summary="	  Calculates and returns the next value of the mandate number.	  	  ",
+			description="	  Calculates and returns the next value of the mandate number.	  	  ",
+			operationId="POST_Customer_customerNumberSequence",
+			responses= {
+				@ApiResponse(description=" next customer no value	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GenericSequenceValueResponseDto.class
+											)
+								)
+				)}
+	)
 	GenericSequenceValueResponseDto getNextCustomerNumber();
 	
 	/**
@@ -305,6 +601,19 @@ public interface CustomerRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/sequence")
+	@Operation(
+			summary="	  Creates a new customer sequence.	  ",
+			description="	  Creates a new customer sequence.	  ",
+			operationId="POST_Customer_sequence",
+			responses= {
+				@ApiResponse(description=" request status	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
 	ActionStatus createCustomerSequence(CustomerSequenceDto postData);
 	
 	/**
@@ -314,6 +623,19 @@ public interface CustomerRs extends IBaseRs {
 	 */
 	@PUT
 	@Path("/sequence")
+	@Operation(
+			summary="	  Updates a new customer sequence with a given code.	  ",
+			description="	  Updates a new customer sequence with a given code.	  ",
+			operationId="PUT_Customer_sequence",
+			responses= {
+				@ApiResponse(description=" request status	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
 	ActionStatus updateCustomerSequence(CustomerSequenceDto postData);
 	
 	/**
@@ -323,6 +645,19 @@ public interface CustomerRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/sequence/{code}/next")
+	@Operation(
+			summary="	  Generates the next customer sequence number.	  ",
+			description="	  Generates the next customer sequence number.	  ",
+			operationId="POST_Customer_sequence_{code}_next",
+			responses= {
+				@ApiResponse(description=" sequence value dto	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GenericSequenceValueResponseDto.class
+											)
+								)
+				)}
+	)
 	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@PathParam("code") String code);
 
     /**
@@ -334,6 +669,19 @@ public interface CustomerRs extends IBaseRs {
      */
     @GET
     @Path("/filterCountersByPeriod")
+	@Operation(
+			summary=" Filter counters by period date. ",
+			description=" Filter counters by period date. ",
+			operationId="    GET_Customer_filterCountersByPeriod",
+			responses= {
+				@ApiResponse(description=" counter instances. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetCountersInstancesResponseDto.class
+											)
+								)
+				)}
+	)
     GetCountersInstancesResponseDto filterCustomerCountersByPeriod(@QueryParam("customerCode") String customerCode, @QueryParam("date") @RestDateParam Date date);
 
 

@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.account;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
@@ -42,6 +51,7 @@ import java.util.Date;
  * @lastModifiedVersion 8.0.0
  */
 @Path("/account/customerAccount")
+@Tag(name = "CustomerAccount", description = "@%CustomerAccount")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -55,6 +65,19 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new customer account  ",
+			description=" Create a new customer account  ",
+			operationId="    POST_CustomerAccount_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(CustomerAccountDto postData);
 
     /**
@@ -65,6 +88,19 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing customer account  ",
+			description=" Update an existing customer account  ",
+			operationId="    PUT_CustomerAccount_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(CustomerAccountDto postData);
 
     /**
@@ -78,6 +114,19 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for a customer account with a given code. ",
+			description=" Search for a customer account with a given code. ",
+			operationId="    GET_CustomerAccount_search",
+			responses= {
+				@ApiResponse(description=" customer account ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetCustomerAccountResponseDto.class
+											)
+								)
+				)}
+	)
     GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") Boolean calculateBalances,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF, @QueryParam("withAccountOperations") Boolean withAccountOperations);
 
@@ -89,6 +138,19 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @DELETE
     @Path("/{customerAccountCode}")
+	@Operation(
+			summary=" Remove customerAccount with a given code.  ",
+			description=" Remove customerAccount with a given code.  ",
+			operationId="    DELETE_CustomerAccount_{customerAccountCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("customerAccountCode") String customerAccountCode);
 
     /**
@@ -99,6 +161,19 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List CustomerAccount filtered by customerCode.  ",
+			description=" List CustomerAccount filtered by customerCode.  ",
+			operationId="    GET_CustomerAccount_list",
+			responses= {
+				@ApiResponse(description=" list of customer account by customer. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CustomerAccountsResponseDto.class
+											)
+								)
+				)}
+	)
     CustomerAccountsResponseDto listByCustomer(@QueryParam("customerCode") String customerCode);
 
     /**
@@ -108,6 +183,19 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List CustomerAccounts matching a given criteria ",
+			description=" List CustomerAccounts matching a given criteria ",
+			operationId="    GET_CustomerAccount_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of CustomerAccounts ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CustomerAccountsResponseDto.class
+											)
+								)
+				)}
+	)
     CustomerAccountsResponseDto listGetAll();
 
     /**
@@ -118,6 +206,19 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @POST
     @Path("/creditCategory")
+	@Operation(
+			summary=" Create a new credit category.  ",
+			description=" Create a new credit category.  ",
+			operationId="    POST_CustomerAccount_creditCategory",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createCreditCategory(CreditCategoryDto postData);
 
     /**
@@ -128,6 +229,19 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @DELETE
     @Path("/creditCategory/{creditCategoryCode}")
+	@Operation(
+			summary=" Remove credit category with a given code.  ",
+			description=" Remove credit category with a given code.  ",
+			operationId="    DELETE_CustomerAccount_creditCategory_{creditCategoryCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus removeCreditCategory(@PathParam("creditCategoryCode") String creditCategoryCode);
 
     /**
@@ -138,6 +252,19 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update existing customer account  ",
+			description=" Create new or update existing customer account  ",
+			operationId="    POST_CustomerAccount_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(CustomerAccountDto postData);
 
     /**
@@ -148,6 +275,19 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @POST
     @Path("/transferAccount")
+	@Operation(
+			summary=" Transfer an amount from one customer to another. ",
+			description=" Transfer an amount from one customer to another. ",
+			operationId="    POST_CustomerAccount_transferAccount",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus transferAccount(TransferCustomerAccountDto transferCustomerAccountDto);
 
     /**
@@ -159,6 +299,19 @@ public interface CustomerAccountRs extends IBaseRs {
      */
     @GET
     @Path("/filterCountersByPeriod")
+	@Operation(
+			summary=" Filter counters by period date. ",
+			description=" Filter counters by period date. ",
+			operationId="    GET_CustomerAccount_filterCountersByPeriod",
+			responses= {
+				@ApiResponse(description=" counter instances. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetCountersInstancesResponseDto.class
+											)
+								)
+				)}
+	)
     GetCountersInstancesResponseDto filterCustomerAccountCountersByPeriod(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("date") @RestDateParam Date date);
 
 }

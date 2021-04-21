@@ -18,6 +18,26 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
 import org.meveo.api.dto.response.CounterTemplatesResponseDto;
@@ -33,6 +53,7 @@ import javax.ws.rs.core.MediaType;
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/counterTemplate")
+@Tag(name = "CounterTemplate", description = "@%CounterTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -46,6 +67,19 @@ public interface CounterTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create counter template.  ",
+			description=" Create counter template.  ",
+			operationId="    POST_CounterTemplate_create",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(CounterTemplateDto postData);
 
     /**
@@ -56,6 +90,19 @@ public interface CounterTemplateRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update counter template.  ",
+			description=" Update counter template.  ",
+			operationId="    PUT_CounterTemplate_update",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(CounterTemplateDto postData);
 
     /**
@@ -66,6 +113,19 @@ public interface CounterTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search counter template with a given code.  ",
+			description=" Search counter template with a given code.  ",
+			operationId="    GET_CounterTemplate_search",
+			responses= {
+				@ApiResponse(description=" counter template ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetCounterTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     GetCounterTemplateResponseDto find(@QueryParam("counterTemplateCode") String counterTemplateCode);
 
     /**
@@ -76,6 +136,19 @@ public interface CounterTemplateRs extends IBaseRs {
      */
     @DELETE
     @Path("/{counterTemplateCode}")
+	@Operation(
+			summary=" Remove counter template with a given code.  ",
+			description=" Remove counter template with a given code.  ",
+			operationId="    DELETE_CounterTemplate_{counterTemplateCode}",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("counterTemplateCode") String counterTemplateCode);
 
     /**
@@ -86,6 +159,19 @@ public interface CounterTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update a counter Template. ",
+			description=" Create or update a counter Template. ",
+			operationId="    POST_CounterTemplate_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(CounterTemplateDto postData);
 
     /**
@@ -96,6 +182,19 @@ public interface CounterTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Counter template with a given code  ",
+			description=" Enable a Counter template with a given code  ",
+			operationId="    POST_CounterTemplate_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -106,6 +205,19 @@ public interface CounterTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Counter template with a given code  ",
+			description=" Disable a Counter template with a given code  ",
+			operationId="    POST_CounterTemplate_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 
     /**

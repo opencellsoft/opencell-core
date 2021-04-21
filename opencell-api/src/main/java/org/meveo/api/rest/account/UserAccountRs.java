@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.account;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
@@ -36,6 +45,7 @@ import java.util.Date;
  * @author Edward P. Legaspi
  **/
 @Path("/account/userAccount")
+@Tag(name = "UserAccount", description = "@%UserAccount")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -49,6 +59,19 @@ public interface UserAccountRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new user account.  ",
+			description=" Create a new user account.  ",
+			operationId="    POST_UserAccount_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(UserAccountDto postData);
 
     /**
@@ -59,6 +82,19 @@ public interface UserAccountRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing user account  ",
+			description=" Update an existing user account  ",
+			operationId="    PUT_UserAccount_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(UserAccountDto postData);
 
     /**
@@ -70,6 +106,19 @@ public interface UserAccountRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for a user account with a given code.  ",
+			description=" Search for a user account with a given code.  ",
+			operationId="    GET_UserAccount_search",
+			responses= {
+				@ApiResponse(description=" found user account if exist ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetUserAccountResponseDto.class
+											)
+								)
+				)}
+	)
     GetUserAccountResponseDto find(@QueryParam("userAccountCode") String userAccountCode,
     		@DefaultValue("false") @QueryParam("includeSubscriptions") boolean includeSubscriptions,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
@@ -82,6 +131,19 @@ public interface UserAccountRs extends IBaseRs {
      */
     @DELETE
     @Path("/{userAccountCode}")
+	@Operation(
+			summary=" Remove an existing user account with a given code.  ",
+			description=" Remove an existing user account with a given code.  ",
+			operationId="    DELETE_UserAccount_{userAccountCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("userAccountCode") String userAccountCode);
 
     /**
@@ -92,6 +154,19 @@ public interface UserAccountRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List user accounts filtered by a billing account's code.  ",
+			description=" List user accounts filtered by a billing account's code.  ",
+			operationId="    GET_UserAccount_list",
+			responses= {
+				@ApiResponse(description=" list of user accounts. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= UserAccountsResponseDto.class
+											)
+								)
+				)}
+	)
     UserAccountsResponseDto listByBillingAccount(@QueryParam("billingAccountCode") String billingAccountCode);
 
     /**
@@ -101,6 +176,19 @@ public interface UserAccountRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List user accounts matching a given criteria ",
+			description=" List user accounts matching a given criteria ",
+			operationId="    GET_UserAccount_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of user accounts ",
+						content=@Content(
+									schema=@Schema(
+											implementation= UserAccountsResponseDto.class
+											)
+								)
+				)}
+	)
     UserAccountsResponseDto listGetAll();
 
     /**
@@ -111,6 +199,19 @@ public interface UserAccountRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing user account.  ",
+			description=" Create new or update an existing user account.  ",
+			operationId="    POST_UserAccount_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(UserAccountDto postData);
     
     /**
@@ -122,6 +223,19 @@ public interface UserAccountRs extends IBaseRs {
      */
     @GET
     @Path("/filterCountersByPeriod")
+	@Operation(
+			summary=" Filter counters by period date. ",
+			description=" Filter counters by period date. ",
+			operationId="    GET_UserAccount_filterCountersByPeriod",
+			responses= {
+				@ApiResponse(description=" counter instances. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetCountersInstancesResponseDto.class
+											)
+								)
+				)}
+	)
     GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(@QueryParam("userAccountCode") String userAccountCode, @QueryParam("date") @RestDateParam Date date);
 
     /**
@@ -132,5 +246,18 @@ public interface UserAccountRs extends IBaseRs {
      */
     @POST
     @Path("/applyProduct")
+	@Operation(
+			summary=" Apply a product on a user account. ",
+			description=" Apply a product on a user account. ",
+			operationId="    POST_UserAccount_applyProduct",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus applyProduct(ApplyProductRequestDto postData);
 }

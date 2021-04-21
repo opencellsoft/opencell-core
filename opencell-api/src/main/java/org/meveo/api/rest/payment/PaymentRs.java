@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.payment;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.PaymentActionStatus;
 import org.meveo.api.dto.payment.*;
@@ -42,6 +51,7 @@ import javax.ws.rs.core.MediaType;
 
 @SuppressWarnings("deprecation")
 @Path("/payment")
+@Tag(name = "Payment", description = "@%Payment")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -56,6 +66,20 @@ public interface PaymentRs extends IBaseRs {
     @POST
     @Deprecated
     @Path("/create")
+	@Operation(
+			summary=" Creates automated payment. It also process if a payment is matching or not Deprecated and replaced by reatePayment using /payment path  ",
+			description=" Creates automated payment. It also process if a payment is matching or not Deprecated and replaced by reatePayment using /payment path  ",
+			deprecated=true,
+			operationId="    POST_Payment_create",
+			responses= {
+				@ApiResponse(description=" payment action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentActionStatus.class
+											)
+								)
+				)}
+	)
     public PaymentActionStatus create(PaymentDto postData);
 
     /**
@@ -66,6 +90,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Creates automated payment. It also process if a payment is matching or not  ",
+			description=" Creates automated payment. It also process if a payment is matching or not  ",
+			operationId="    POST_Payment_create",
+			responses= {
+				@ApiResponse(description=" payment action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentActionStatus.class
+											)
+								)
+				)}
+	)
     public PaymentActionStatus createPayment(PaymentDto postData);
 
     /**
@@ -77,6 +114,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/customerPayment")
+	@Operation(
+			summary=" Returns a list of account operations along with the balance of a customer.  ",
+			description=" Returns a list of account operations along with the balance of a customer.  ",
+			operationId="    GET_Payment_customerPayment",
+			responses= {
+				@ApiResponse(description=" list of customer's response. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CustomerPaymentsResponse.class
+											)
+								)
+				)}
+	)
     public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode,  PagingAndFiltering pagingAndFiltering);
 
     /************************************************************************************************/
@@ -91,6 +141,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/cardPaymentMethod")
+	@Operation(
+			summary=" Add a new card payment method. It will be marked as preferred.  ",
+			description=" Add a new card payment method. It will be marked as preferred.  ",
+			operationId="    POST_Payment_cardPaymentMethod",
+			responses= {
+				@ApiResponse(description=" Token id in payment gateway ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CardPaymentMethodTokenDto.class
+											)
+								)
+				)}
+	)
     public CardPaymentMethodTokenDto addCardPaymentMethod(CardPaymentMethodDto cardPaymentMethod);
 
     /**
@@ -101,6 +164,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @PUT
     @Path("/cardPaymentMethod")
+	@Operation(
+			summary=" Update existing card payment method.  ",
+			description=" Update existing card payment method.  ",
+			operationId="    PUT_Payment_cardPaymentMethod",
+			responses= {
+				@ApiResponse(description=" Action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus updateCardPaymentMethod(CardPaymentMethodDto cardPaymentMethod);
 
     /**
@@ -111,6 +187,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @DELETE
     @Path("/cardPaymentMethod")
+	@Operation(
+			summary=" Remove card payment method. If it was marked as preferred, some other payment method will be marked as preferred  ",
+			description=" Remove card payment method. If it was marked as preferred, some other payment method will be marked as preferred  ",
+			operationId="    DELETE_Payment_cardPaymentMethod",
+			responses= {
+				@ApiResponse(description=" Action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus removeCardPaymentMethod(@QueryParam("id") Long id);
 
     /**
@@ -122,6 +211,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/cardPaymentMethod/list")
+	@Operation(
+			summary=" List available card payment methods for a given customer account identified either by id or by code.  ",
+			description=" List available card payment methods for a given customer account identified either by id or by code.  ",
+			operationId="    GET_Payment_cardPaymentMethod_list",
+			responses= {
+				@ApiResponse(description=" A list of card payment methods ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CardPaymentMethodTokensDto.class
+											)
+								)
+				)}
+	)
     public CardPaymentMethodTokensDto listCardPaymentMethods(@QueryParam("customerAccountId") Long customerAccountId,
             @QueryParam("customerAccountCode") String customerAccountCode);
 
@@ -133,6 +235,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/cardPaymentMethod")
+	@Operation(
+			summary=" Retrieve card payment method by its id.  ",
+			description=" Retrieve card payment method by its id.  ",
+			operationId="    GET_Payment_cardPaymentMethod",
+			responses= {
+				@ApiResponse(description=" Card payment DTO ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CardPaymentMethodTokenDto.class
+											)
+								)
+				)}
+	)
     public CardPaymentMethodTokenDto findCardPaymentMethod(@QueryParam("id") Long id);
 
     /************************************************************************************************/
@@ -146,6 +261,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/paymentMethod")
+	@Operation(
+			summary=" Add a new payment method. It will be marked as preferred.  ",
+			description=" Add a new payment method. It will be marked as preferred.  ",
+			operationId="    POST_Payment_paymentMethod",
+			responses= {
+				@ApiResponse(description=" Token id in payment gateway ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentMethodTokenDto.class
+											)
+								)
+				)}
+	)
     public PaymentMethodTokenDto addPaymentMethod(PaymentMethodDto paymentMethod);
 
     /**
@@ -156,6 +284,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @PUT
     @Path("/paymentMethod")
+	@Operation(
+			summary=" Update existing payment method.  ",
+			description=" Update existing payment method.  ",
+			operationId="    PUT_Payment_paymentMethod",
+			responses= {
+				@ApiResponse(description=" Action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus updatePaymentMethod(PaymentMethodDto ddPaymentMethod);
 
     /**
@@ -166,6 +307,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @DELETE
     @Path("/paymentMethod")
+	@Operation(
+			summary=" Remove payment method. If it was marked as preferred, some other payment method will be marked as preferred  ",
+			description=" Remove payment method. If it was marked as preferred, some other payment method will be marked as preferred  ",
+			operationId="    DELETE_Payment_paymentMethod",
+			responses= {
+				@ApiResponse(description=" Action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus removePaymentMethod(@QueryParam("id") Long id);
 
     /**
@@ -181,6 +335,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/paymentMethod/list")
+	@Operation(
+			summary=" List Payment Methods matching a given criteria  ",
+			description=" List Payment Methods matching a given criteria  ",
+			operationId="    GET_Payment_paymentMethod_list",
+			responses= {
+				@ApiResponse(description=" An payment method list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentMethodTokensDto.class
+											)
+								)
+				)}
+	)
     public PaymentMethodTokensDto listPaymentMethodGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -191,6 +358,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/paymentMethod/listGetAll")
+	@Operation(
+			summary=" List paymentMethods matching a given criteria ",
+			description=" List paymentMethods matching a given criteria ",
+			operationId="    GET_Payment_paymentMethod_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of paymentMethods ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentMethodTokensDto.class
+											)
+								)
+				)}
+	)
     PaymentMethodTokensDto listGetAll();
     
     /**
@@ -203,6 +383,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/paymentMethod/findByCustomerAccount")
+	@Operation(
+			summary=" List Payment Methods matching a customer account  ",
+			description=" List Payment Methods matching a customer account  ",
+			operationId="    GET_Payment_paymentMethod_findByCustomerAccount",
+			responses= {
+				@ApiResponse(description=" An payment method list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentMethodTokensDto.class
+											)
+								)
+				)}
+	)
     public PaymentMethodTokensDto findPaymentMethodByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit);
 
     /**
@@ -213,6 +406,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/paymentMethod/list")
+	@Operation(
+			summary=" List Payment Methods matching a given criteria  ",
+			description=" List Payment Methods matching a given criteria  ",
+			operationId="    POST_Payment_paymentMethod_list",
+			responses= {
+				@ApiResponse(description=" An payment method list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentMethodTokensDto.class
+											)
+								)
+				)}
+	)
     public PaymentMethodTokensDto listPaymentMethodPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -223,6 +429,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/paymentMethod")
+	@Operation(
+			summary=" Retrieve payment method by its id.  ",
+			description=" Retrieve payment method by its id.  ",
+			operationId="    GET_Payment_paymentMethod",
+			responses= {
+				@ApiResponse(description=" payment DTO ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentMethodTokenDto.class
+											)
+								)
+				)}
+	)
     public PaymentMethodTokenDto findPaymentMethod(@QueryParam("id") Long id);
 
     /**
@@ -233,6 +452,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/paymentMethod/{id}/enable")
+	@Operation(
+			summary=" Enable a Payment method with a given id  ",
+			description=" Enable a Payment method with a given id  ",
+			operationId="    POST_Payment_paymentMethod_{id}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enablePaymentMethod(@PathParam("id") Long id);
 
     /**
@@ -243,6 +475,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/paymentMethod/{id}/disable")
+	@Operation(
+			summary=" Disable a Payment method with a given id  ",
+			description=" Disable a Payment method with a given id  ",
+			operationId="    POST_Payment_paymentMethod_{id}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disablePaymentMethod(@PathParam("id") Long id);
 
     /************************************************************************************************/
@@ -256,6 +501,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/paymentGateway")
+	@Operation(
+			summary=" Add a new payment gateway.  ",
+			description=" Add a new payment gateway.  ",
+			operationId="    POST_Payment_paymentGateway",
+			responses= {
+				@ApiResponse(description=" the paymentGateway dto created ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentGatewayResponseDto.class
+											)
+								)
+				)}
+	)
     public PaymentGatewayResponseDto addPaymentGateway(PaymentGatewayDto paymentGateway);
 
     /**
@@ -266,6 +524,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @PUT
     @Path("/paymentGateway")
+	@Operation(
+			summary=" Update existing payment gateway.  ",
+			description=" Update existing payment gateway.  ",
+			operationId="    PUT_Payment_paymentGateway",
+			responses= {
+				@ApiResponse(description=" Action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus updatePaymentGateway(PaymentGatewayDto paymentGateway);
 
     /**
@@ -276,6 +547,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @DELETE
     @Path("/paymentGateway")
+	@Operation(
+			summary=" Remove payment gateway.  ",
+			description=" Remove payment gateway.  ",
+			operationId="    DELETE_Payment_paymentGateway",
+			responses= {
+				@ApiResponse(description=" Action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus removePaymentGateway(@QueryParam("code") String code);
 
     /**
@@ -291,6 +575,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/paymentGateway/list")
+	@Operation(
+			summary=" List payment gateways matching a given criteria  ",
+			description=" List payment gateways matching a given criteria  ",
+			operationId="    GET_Payment_paymentGateway_list",
+			responses= {
+				@ApiResponse(description=" An payment gateway list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentGatewayResponseDto.class
+											)
+								)
+				)}
+	)
     public PaymentGatewayResponseDto listPaymentGatewaysGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -302,6 +599,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/paymentGateway/list")
+	@Operation(
+			summary=" List payment gateways matching a given criteria.  ",
+			description=" List payment gateways matching a given criteria.  ",
+			operationId="    POST_Payment_paymentGateway_list",
+			responses= {
+				@ApiResponse(description=" An payment gateway list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentGatewayResponseDto.class
+											)
+								)
+				)}
+	)
     public PaymentGatewayResponseDto listPaymentGatewaysPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -312,6 +622,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/paymentGateway")
+	@Operation(
+			summary=" Retrieve payment gateway by its code.  ",
+			description=" Retrieve payment gateway by its code.  ",
+			operationId="    GET_Payment_paymentGateway",
+			responses= {
+				@ApiResponse(description=" payment DTO ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentGatewayResponseDto.class
+											)
+								)
+				)}
+	)
     public PaymentGatewayResponseDto findPaymentGateway(@QueryParam("code") String code);
 
     /**
@@ -322,6 +645,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/paymentGateway/createOrUpdate")
+	@Operation(
+			summary=" Create or update payment gateway.  ",
+			description=" Create or update payment gateway.  ",
+			operationId="    POST_Payment_paymentGateway_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" the paymentGateway dto created ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentGatewayResponseDto.class
+											)
+								)
+				)}
+	)
     public PaymentGatewayResponseDto createOrUpdatePaymentGateway(PaymentGatewayDto paymentGateway);
 
     /**
@@ -332,6 +668,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/paymentGateway/{code}/enable")
+	@Operation(
+			summary=" Enable a Payment gateway with a given code  ",
+			description=" Enable a Payment gateway with a given code  ",
+			operationId="    POST_Payment_paymentGateway_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enablePaymentGateway(@PathParam("code") String code);
 
     /**
@@ -342,6 +691,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/paymentGateway/{code}/disable")
+	@Operation(
+			summary=" Disable a Payment gateway with a given code  ",
+			description=" Disable a Payment gateway with a given code  ",
+			operationId="    POST_Payment_paymentGateway_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disablePaymentGateway(@PathParam("code") String code);
     
     /**
@@ -351,6 +713,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/paymentGateway/rumSequence")
+	@Operation(
+			summary=" Creates a RUM sequence associated to the given payment gateway. ",
+			description=" Creates a RUM sequence associated to the given payment gateway. ",
+			operationId="    POST_Payment_paymentGateway_rumSequence",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createRumSequence(PaymentGatewayRumSequenceDto postData);
     
     /**
@@ -360,6 +735,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @PUT
     @Path("/paymentGateway/rumSequence")
+	@Operation(
+			summary=" Updates a RUM sequence associated to the given payment gateway. ",
+			description=" Updates a RUM sequence associated to the given payment gateway. ",
+			operationId="    PUT_Payment_paymentGateway_rumSequence",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus updateRumSequence(PaymentGatewayRumSequenceDto postData);
     
     /**
@@ -369,6 +757,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/paymentGateway/rumSequence/{code}")
+	@Operation(
+			summary=" Finds the RUM sequence with the specified code. ",
+			description=" Finds the RUM sequence with the specified code. ",
+			operationId="    GET_Payment_paymentGateway_rumSequence_{code}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentGatewayRumSequenceResponseDto.class
+											)
+								)
+				)}
+	)
     PaymentGatewayRumSequenceResponseDto findRumSequence(@PathParam("code") String code);
     
     /**
@@ -378,6 +779,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @DELETE
     @Path("/paymentGateway/rumSequence/{code}")
+	@Operation(
+			summary=" Deletes the RUM sequence with the specified code. ",
+			description=" Deletes the RUM sequence with the specified code. ",
+			operationId="    DELETE_Payment_paymentGateway_rumSequence_{code}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus deleteRumSequence(@PathParam("code") String code);
     
     /**
@@ -387,6 +801,19 @@ public interface PaymentRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/paymentGateway/rumSequence/{code}/next")
+	@Operation(
+			summary="	  Generates the next RUM sequence number.	  ",
+			description="	  Generates the next RUM sequence number.	  ",
+			operationId="POST_Payment_paymentGateway_rumSequence_{code}_next",
+			responses= {
+				@ApiResponse(description=" sequence value dto	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GenericSequenceValueResponseDto.class
+											)
+								)
+				)}
+	)
 	GenericSequenceValueResponseDto getNextPaymentGatewayRumSequenceNumber(@PathParam("code") String code);
 
     /**
@@ -402,6 +829,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/history/list")
+	@Operation(
+			summary=" List Payment matching a given criteria.  ",
+			description=" List Payment matching a given criteria.  ",
+			operationId="    GET_Payment_history_list",
+			responses= {
+				@ApiResponse(description=" An invoice list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentHistoriesDto.class
+											)
+								)
+				)}
+	)
     PaymentHistoriesDto listPaymentHistoryGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -413,6 +853,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/history/list")
+	@Operation(
+			summary=" List invoices matching a given criteria.  ",
+			description=" List invoices matching a given criteria.  ",
+			operationId="    POST_Payment_history_list",
+			responses= {
+				@ApiResponse(description=" An invoice list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentHistoriesDto.class
+											)
+								)
+				)}
+	)
     PaymentHistoriesDto listPaymentHistoryPost(PagingAndFiltering pagingAndFiltering);
     
 
@@ -427,6 +880,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/ddRequestBuilder")
+	@Operation(
+			summary=" Add a new ddRequest builder.  ",
+			description=" Add a new ddRequest builder.  ",
+			operationId="    POST_Payment_ddRequestBuilder",
+			responses= {
+				@ApiResponse(description=" the ddRequestBuilder dto created ",
+						content=@Content(
+									schema=@Schema(
+											implementation= DDRequestBuilderResponseDto.class
+											)
+								)
+				)}
+	)
     public DDRequestBuilderResponseDto addDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder);
 
     /**
@@ -437,6 +903,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @PUT
     @Path("/ddRequestBuilder")
+	@Operation(
+			summary=" Update existing ddRequest builder.  ",
+			description=" Update existing ddRequest builder.  ",
+			operationId="    PUT_Payment_ddRequestBuilder",
+			responses= {
+				@ApiResponse(description=" Action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus updateDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder);
 
     /**
@@ -447,6 +926,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @DELETE
     @Path("/ddRequestBuilder")
+	@Operation(
+			summary=" Remove ddRequest builder.  ",
+			description=" Remove ddRequest builder.  ",
+			operationId="    DELETE_Payment_ddRequestBuilder",
+			responses= {
+				@ApiResponse(description=" Action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus removeDDRequestBuilder(@QueryParam("code") String code);
 
     /**
@@ -462,6 +954,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/ddRequestBuilder/list")
+	@Operation(
+			summary=" List DDRequest Builders matching a given criteria  ",
+			description=" List DDRequest Builders matching a given criteria  ",
+			operationId="    GET_Payment_ddRequestBuilder_list",
+			responses= {
+				@ApiResponse(description=" An ddRequest builder list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= DDRequestBuilderResponseDto.class
+											)
+								)
+				)}
+	)
     public DDRequestBuilderResponseDto listDDRequestBuildersGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -473,6 +978,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/ddRequestBuilder/list")
+	@Operation(
+			summary=" List DDRequest Builders matching a given criteria.  ",
+			description=" List DDRequest Builders matching a given criteria.  ",
+			operationId="    POST_Payment_ddRequestBuilder_list",
+			responses= {
+				@ApiResponse(description=" An ddRequest builder list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= DDRequestBuilderResponseDto.class
+											)
+								)
+				)}
+	)
     public DDRequestBuilderResponseDto listDDRequestBuildersPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -483,6 +1001,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/ddRequestBuilder")
+	@Operation(
+			summary=" Retrieve ddRequest builder by its code.  ",
+			description=" Retrieve ddRequest builder by its code.  ",
+			operationId="    GET_Payment_ddRequestBuilder",
+			responses= {
+				@ApiResponse(description=" ddRequest builder DTO ",
+						content=@Content(
+									schema=@Schema(
+											implementation= DDRequestBuilderResponseDto.class
+											)
+								)
+				)}
+	)
     public DDRequestBuilderResponseDto findDDRequestBuilder(@QueryParam("code") String code);
 
     /**
@@ -493,6 +1024,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/ddRequestBuilder/createOrUpdate")
+	@Operation(
+			summary=" Create or update ddRequest builder.  ",
+			description=" Create or update ddRequest builder.  ",
+			operationId="    POST_Payment_ddRequestBuilder_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" the ddRequestBuilder dto created ",
+						content=@Content(
+									schema=@Schema(
+											implementation= DDRequestBuilderResponseDto.class
+											)
+								)
+				)}
+	)
     public DDRequestBuilderResponseDto createOrUpdateDDRequestBuilder(DDRequestBuilderDto ddRequestBuilder);
 
     /**
@@ -503,6 +1047,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/ddRequestBuilder/{code}/enable")
+	@Operation(
+			summary=" Enable a ddRequest builder with a given code  ",
+			description=" Enable a ddRequest builder with a given code  ",
+			operationId="    POST_Payment_ddRequestBuilder_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enableDDRequestBuilder(@PathParam("code") String code);
 
     /**
@@ -513,6 +1070,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/ddRequestBuilder/{code}/disable")
+	@Operation(
+			summary=" Disable a ddRequest builder with a given code  ",
+			description=" Disable a ddRequest builder with a given code  ",
+			operationId="    POST_Payment_ddRequestBuilder_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disableDDRequestBuilder(@PathParam("code") String code);
 
     /**
@@ -532,6 +1102,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/paymentGateway/getHostedCheckoutUrl")
+	@Operation(
+			summary=" Get the Hosted Checkout URL for payment. ",
+			description=" Get the Hosted Checkout URL for payment. ",
+			operationId="    GET_Payment_paymentGateway_getHostedCheckoutUrl",
+			responses= {
+				@ApiResponse(description=" the PaymentHostedCheckoutResponseDto ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentHostedCheckoutResponseDto.class
+											)
+								)
+				)}
+	)
     public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(@QueryParam("ca") String customerAccountCode,
                                                                  @QueryParam("returnUrl") String returnUrl,
                                                                  @DefaultValue("fr_FR") @QueryParam("locale") String locale,
@@ -558,6 +1141,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/paymentScheduleTemplate/createOrUpdate")
+	@Operation(
+			summary=" Create or update payment Schedules template.  ",
+			description=" Create or update payment Schedules template.  ",
+			operationId="    POST_Payment_paymentScheduleTemplate_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus createOrUpdatePaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto);
     /**
      * Create  payment Schedules template.
@@ -567,6 +1163,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/paymentScheduleTemplate")
+	@Operation(
+			summary=" Create  payment Schedules template.  ",
+			description=" Create  payment Schedules template.  ",
+			operationId="    POST_Payment_paymentScheduleTemplate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus createPaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto);
     
     /**
@@ -577,6 +1186,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @PUT
     @Path("/paymentScheduleTemplate")
+	@Operation(
+			summary=" Create  payment Schedules template.  ",
+			description=" Create  payment Schedules template.  ",
+			operationId="    PUT_Payment_paymentScheduleTemplate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus updatePaymentScheduleTemplate(PaymentScheduleTemplateDto paymentScheduleTemplateDto);
 
 
@@ -588,6 +1210,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @DELETE
     @Path("/paymentScheduleTemplate")
+	@Operation(
+			summary=" remove  payment Schedules template.  ",
+			description=" remove  payment Schedules template.  ",
+			operationId="    DELETE_Payment_paymentScheduleTemplate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus removePaymentScheduleTemplate(@QueryParam("paymentScheduleTemplateCode") String paymentScheduleTemplateCode);
     
     /**
@@ -598,6 +1233,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/paymentScheduleTemplate")
+	@Operation(
+			summary=" find  payment Schedules template.  ",
+			description=" find  payment Schedules template.  ",
+			operationId="    GET_Payment_paymentScheduleTemplate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentScheduleTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     public PaymentScheduleTemplateResponseDto findPaymentScheduleTemplate(@QueryParam("paymentScheduleTemplateCode")  String paymentScheduleTemplateCode);
       
     /**
@@ -608,6 +1256,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/paymentScheduleTemplate/list")
+	@Operation(
+			summary=" List  PaymentScheduleTemplate matching a given criteria  ",
+			description=" List  PaymentScheduleTemplate matching a given criteria  ",
+			operationId="    POST_Payment_paymentScheduleTemplate_list",
+			responses= {
+				@ApiResponse(description=" An paymentScheduleTemplate dto list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentScheduleTemplatesDto.class
+											)
+								)
+				)}
+	)
     public PaymentScheduleTemplatesDto listPaymentScheduleTemplate(PagingAndFiltering pagingAndFiltering);
     
     /**
@@ -623,6 +1284,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/paymentScheduleTemplate/list")
+	@Operation(
+			summary=" List  PaymentScheduleTemplate matching a given criteria  ",
+			description=" List  PaymentScheduleTemplate matching a given criteria  ",
+			operationId="    GET_Payment_paymentScheduleTemplate_list",
+			responses= {
+				@ApiResponse(description=" An paymentScheduleTemplate dto list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentScheduleTemplatesDto.class
+											)
+								)
+				)}
+	)
     public PaymentScheduleTemplatesDto listPaymentScheduleTemplate(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -635,6 +1309,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @PUT
     @Path("/paymentScheduleInstance")
+	@Operation(
+			summary=" Update  payment Schedules instance.  ",
+			description=" Update  payment Schedules instance.  ",
+			operationId="    PUT_Payment_paymentScheduleInstance",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus updatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
     
     /**
@@ -645,6 +1332,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/paymentScheduleInstance")
+	@Operation(
+			summary=" Find  PaymentScheduleInstance by ID  ",
+			description=" Find  PaymentScheduleInstance by ID  ",
+			operationId="    GET_Payment_paymentScheduleInstance",
+			responses= {
+				@ApiResponse(description=" A paymentScheduleInstance dto ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentScheduleInstanceResponseDto.class
+											)
+								)
+				)}
+	)
     public PaymentScheduleInstanceResponseDto findPaymentScheduleInstance(@QueryParam("id") Long id);
 
     
@@ -656,6 +1356,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @POST
     @Path("/paymentScheduleInstance/list")
+	@Operation(
+			summary=" List  PaymentScheduleInstance matching a given criteria  ",
+			description=" List  PaymentScheduleInstance matching a given criteria  ",
+			operationId="    POST_Payment_paymentScheduleInstance_list",
+			responses= {
+				@ApiResponse(description=" An PaymentScheduleInstance dto list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentScheduleInstancesDto.class
+											)
+								)
+				)}
+	)
     public PaymentScheduleInstancesDto listPaymentScheduleInstance(PagingAndFiltering pagingAndFiltering);
     
     /**
@@ -671,6 +1384,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/paymentScheduleInstance/list")
+	@Operation(
+			summary=" List  paymentScheduleInstance matching a given criteria  ",
+			description=" List  paymentScheduleInstance matching a given criteria  ",
+			operationId="    GET_Payment_paymentScheduleInstance_list",
+			responses= {
+				@ApiResponse(description=" An paymentScheduleInstance dto list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PaymentScheduleInstancesDto.class
+											)
+								)
+				)}
+	)
     public PaymentScheduleInstancesDto listPaymentScheduleInstance(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -682,6 +1408,19 @@ public interface PaymentRs extends IBaseRs {
      */
     @PUT
     @Path("/paymentScheduleInstance/terminate")
+	@Operation(
+			summary=" Terminate  payment Schedules instance.  ",
+			description=" Terminate  payment Schedules instance.  ",
+			operationId="    PUT_Payment_paymentScheduleInstance_terminate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus terminatePaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
     
     /**
@@ -692,5 +1431,18 @@ public interface PaymentRs extends IBaseRs {
      */
     @PUT
     @Path("/paymentScheduleInstance/cancel")
+	@Operation(
+			summary=" Cancel  payment Schedules instance.  ",
+			description=" Cancel  payment Schedules instance.  ",
+			operationId="    PUT_Payment_paymentScheduleInstance_cancel",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus cancelPaymentScheduleInstance(PaymentScheduleInstanceDto paymentScheduleInstanceDto);
 }

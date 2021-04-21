@@ -18,6 +18,26 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.response.TriggeredEdrsResponseDto;
@@ -31,6 +51,7 @@ import javax.ws.rs.core.MediaType;
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/triggeredEdr")
+@Tag(name = "TriggeredEdr", description = "@%TriggeredEdr")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -44,6 +65,19 @@ public interface TriggeredEdrRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new triggered edr. template  ",
+			description=" Create a new triggered edr. template  ",
+			operationId="    POST_TriggeredEdr_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(TriggeredEdrTemplateDto postData);
 
     /**
@@ -54,6 +88,19 @@ public interface TriggeredEdrRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing triggered edr. template  ",
+			description=" Update an existing triggered edr. template  ",
+			operationId="    PUT_TriggeredEdr_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(TriggeredEdrTemplateDto postData);
 
     /**
@@ -64,6 +111,19 @@ public interface TriggeredEdrRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Find triggered edr with a given code.  ",
+			description=" Find triggered edr with a given code.  ",
+			operationId="    GET_TriggeredEdr_search",
+			responses= {
+				@ApiResponse(description=" Returns triggeredEdrTemplate ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetTriggeredEdrResponseDto.class
+											)
+								)
+				)}
+	)
     GetTriggeredEdrResponseDto find(@QueryParam("triggeredEdrCode") String triggeredEdrCode);
 
     /**
@@ -74,6 +134,19 @@ public interface TriggeredEdrRs extends IBaseRs {
      */
     @DELETE
     @Path("/{triggeredEdrCode}")
+	@Operation(
+			summary=" Remove an existing triggered edr template with a given code.  ",
+			description=" Remove an existing triggered edr template with a given code.  ",
+			operationId="    DELETE_TriggeredEdr_{triggeredEdrCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("triggeredEdrCode") String triggeredEdrCode);
 
     /**
@@ -84,6 +157,19 @@ public interface TriggeredEdrRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing triggered edr template  ",
+			description=" Create new or update an existing triggered edr template  ",
+			operationId="    POST_TriggeredEdr_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(TriggeredEdrTemplateDto postData);
 
     /**

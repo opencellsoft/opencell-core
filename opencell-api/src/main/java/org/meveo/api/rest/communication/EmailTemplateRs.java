@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.communication;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -42,6 +51,7 @@ import org.meveo.api.rest.IBaseRs;
  *
  */
 @Path("/communication/emailTemplate")
+@Tag(name = "EmailTemplate", description = "@%EmailTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -55,6 +65,19 @@ public interface EmailTemplateRs extends IBaseRs {
 	 */
 	@POST
     @Path("/")
+	@Operation(
+			summary="	  Create an email template by dto	  ",
+			description="	  Create an email template by dto	  ",
+			operationId="POST_EmailTemplate_create",
+			responses= {
+				@ApiResponse(description=" Request processing status	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(EmailTemplateDto emailTemplateDto);
 
 	/**
@@ -65,6 +88,19 @@ public interface EmailTemplateRs extends IBaseRs {
 	 */
     @PUT
     @Path("/")
+	@Operation(
+			summary="	  update an emailTemplate by dto	  ",
+			description="	  update an emailTemplate by dto	  ",
+			operationId="    PUT_EmailTemplate_update",
+			responses= {
+				@ApiResponse(description=" Request processing status	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(EmailTemplateDto emailTemplateDto);
 
     /**
@@ -75,6 +111,19 @@ public interface EmailTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Find an email template with a given code  ",
+			description=" Find an email template with a given code  ",
+			operationId="    GET_EmailTemplate_search",
+			responses= {
+				@ApiResponse(description=" Returns an email template ",
+						content=@Content(
+									schema=@Schema(
+											implementation= EmailTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     EmailTemplateResponseDto find(@QueryParam("code") String code);
 
     /**
@@ -85,6 +134,19 @@ public interface EmailTemplateRs extends IBaseRs {
      */
     @DELETE
     @Path("/{code}")
+	@Operation(
+			summary=" remove an emailTemplate by code  ",
+			description=" remove an emailTemplate by code  ",
+			operationId="    DELETE_EmailTemplate_{code}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("code") String code);
 
     /**
@@ -94,6 +156,19 @@ public interface EmailTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List email templates  ",
+			description=" List email templates  ",
+			operationId="    GET_EmailTemplate_list",
+			responses= {
+				@ApiResponse(description=" List of email templates ",
+						content=@Content(
+									schema=@Schema(
+											implementation= EmailTemplatesResponseDto.class
+											)
+								)
+				)}
+	)
     EmailTemplatesResponseDto list();
 
     /**
@@ -104,6 +179,19 @@ public interface EmailTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing email template by dto  ",
+			description=" Create new or update an existing email template by dto  ",
+			operationId="    POST_EmailTemplate_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(EmailTemplateDto emailTemplateDto);
 }
 

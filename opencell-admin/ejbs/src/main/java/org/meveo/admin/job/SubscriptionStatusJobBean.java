@@ -18,9 +18,6 @@
 
 package org.meveo.admin.job;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -41,7 +38,6 @@ import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.billing.SubscriptionRenewal.EndOfTermActionEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.slf4j.Logger;
@@ -121,9 +117,25 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 
 				} else if (subscription.getSubscriptionRenewal()
 						.getEndOfTermAction() == EndOfTermActionEnum.TERMINATE) {
+
+					Date validTo = subscription.getValidity() != null ? subscription.getValidity().getTo() : null;
+
+					log.debug("Terminate subscription {}", subscription.getId());
 					subscriptionService.terminateSubscription(subscription,
 							subscription.getSubscribedTillDate(),
 							subscription.getSubscriptionRenewal().getTerminationReason(), null);
+
+					//if sub has new next version with status created, then activate it
+					if (validTo != null) {
+						Subscription subNextVersion = subscriptionService
+								.findByCodeAndValidityDate(subscription.getCode(), validTo);
+						if (subNextVersion != null && subNextVersion.getStatus() == SubscriptionStatusEnum.CREATED) {
+							log.debug("Subscription {} has new version sub {} with status CREATED. will be activated",
+									subscription.getId(), subNextVersion.getId());
+
+							subscriptionService.activateInstantiatedService(subNextVersion);
+						}
+					}
 				}
 
 				// Fire "soon to renew" notification

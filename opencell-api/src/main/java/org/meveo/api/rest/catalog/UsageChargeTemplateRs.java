@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -34,6 +43,7 @@ import javax.ws.rs.core.MediaType;
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/usageChargeTemplate")
+@Tag(name = "UsageChargeTemplate", description = "@%UsageChargeTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -47,6 +57,19 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create new usage charge template.  ",
+			description=" Create new usage charge template.  ",
+			operationId="    POST_UsageChargeTemplate_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus create(UsageChargeTemplateDto postData);
 
     /**
@@ -57,6 +80,19 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update usage charge template.  ",
+			description=" Update usage charge template.  ",
+			operationId="    PUT_UsageChargeTemplate_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus update(UsageChargeTemplateDto postData);
 
     /**
@@ -67,6 +103,19 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Find an existing usage charge template with a given code.  ",
+			description=" Find an existing usage charge template with a given code.  ",
+			operationId="    GET_UsageChargeTemplate_search",
+			responses= {
+				@ApiResponse(description=" Returns a usageChargeTemplate ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetUsageChargeTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     public GetUsageChargeTemplateResponseDto find(@QueryParam("usageChargeTemplateCode") String usageChargeTemplateCode);
 
     /**
@@ -77,6 +126,19 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      */
     @DELETE
     @Path("/{usageChargeTemplateCode}")
+	@Operation(
+			summary=" Remove usage charge template with a given code.  ",
+			description=" Remove usage charge template with a given code.  ",
+			operationId="    DELETE_UsageChargeTemplate_{usageChargeTemplateCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus remove(@PathParam("usageChargeTemplateCode") String usageChargeTemplateCode);
 
     /**
@@ -87,6 +149,19 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing charge template with a given code.  ",
+			description=" Create new or update an existing charge template with a given code.  ",
+			operationId="    POST_UsageChargeTemplate_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus createOrUpdate(UsageChargeTemplateDto postData);
 
     /**
@@ -97,6 +172,19 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Usage charge template with a given code  ",
+			description=" Enable a Usage charge template with a given code  ",
+			operationId="    POST_UsageChargeTemplate_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -107,6 +195,19 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Usage charge template with a given code  ",
+			description=" Disable a Usage charge template with a given code  ",
+			operationId="    POST_UsageChargeTemplate_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
     
     /**
@@ -117,6 +218,19 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" List UsageChargeTemplate matching a given criteria ",
+			description=" List UsageChargeTemplate matching a given criteria ",
+			operationId="    POST_UsageChargeTemplate_list",
+			responses= {
+				@ApiResponse(description=" List of UsageChargeTemplate ",
+						content=@Content(
+									schema=@Schema(
+											implementation= UsageChargeTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     public UsageChargeTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -126,5 +240,18 @@ public interface UsageChargeTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List UsageChargeTemplate ",
+			description=" List UsageChargeTemplate ",
+			operationId="    GET_UsageChargeTemplate_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of UsageChargeTemplate ",
+						content=@Content(
+									schema=@Schema(
+											implementation= UsageChargeTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     UsageChargeTemplateResponseDto listGetAll();
 }

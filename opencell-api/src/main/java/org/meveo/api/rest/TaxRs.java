@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.response.GetTaxResponse;
@@ -32,6 +41,7 @@ import javax.ws.rs.core.MediaType;
  * @author Edward P. Legaspi
  **/
 @Path("/tax")
+@Tag(name = "Tax", description = "@%Tax")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -45,6 +55,19 @@ public interface TaxRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create tax. Description per language can be defined  ",
+			description=" Create tax. Description per language can be defined  ",
+			operationId="    POST_Tax_create",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(TaxDto postData);
 
     /**
@@ -55,6 +78,19 @@ public interface TaxRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update tax. Description per language can be defined  ",
+			description=" Update tax. Description per language can be defined  ",
+			operationId="    PUT_Tax_update",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(TaxDto postData);
 
     /**
@@ -65,6 +101,19 @@ public interface TaxRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search tax with a given code.  ",
+			description=" Search tax with a given code.  ",
+			operationId="    GET_Tax_search",
+			responses= {
+				@ApiResponse(description=" tax if exists ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetTaxResponse.class
+											)
+								)
+				)}
+	)
     GetTaxResponse find(@QueryParam("taxCode") String taxCode);
 
     /**
@@ -75,6 +124,19 @@ public interface TaxRs extends IBaseRs {
      */
     @DELETE
     @Path("/{taxCode}")
+	@Operation(
+			summary=" Remove tax with a given code.  ",
+			description=" Remove tax with a given code.  ",
+			operationId="    DELETE_Tax_{taxCode}",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("taxCode") String taxCode);
 
     /**
@@ -85,6 +147,19 @@ public interface TaxRs extends IBaseRs {
      */
     @POST 
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or uptadate a tax.  ",
+			description=" Create or uptadate a tax.  ",
+			operationId="    POST _Tax_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(TaxDto postData);
 
     /**
@@ -94,6 +169,19 @@ public interface TaxRs extends IBaseRs {
      */
     @GET 
     @Path("/list")
+	@Operation(
+			summary=" Search for the list of taxes. ",
+			description=" Search for the list of taxes. ",
+			operationId="    GET _Tax_list",
+			responses= {
+				@ApiResponse(description=" list of all taxes. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetTaxesResponse.class
+											)
+								)
+				)}
+	)
     GetTaxesResponse list();
 
     /**
@@ -103,5 +191,18 @@ public interface TaxRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List taxes matching a given criteria ",
+			description=" List taxes matching a given criteria ",
+			operationId="    GET_Tax_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of taxes ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetTaxesResponse.class
+											)
+								)
+				)}
+	)
     GetTaxesResponse listGetAll();
 }

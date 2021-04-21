@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -27,6 +36,7 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.response.PermissionResponseDto;
 
 @Path("/permission")
+@Tag(name = "Permission", description = "@%Permission")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -39,5 +49,18 @@ public interface PermissionRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List of permissions  ",
+			description=" List of permissions  ",
+			operationId="    GET_Permission_list",
+			responses= {
+				@ApiResponse(description=" A list of permissions ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PermissionResponseDto.class
+											)
+								)
+				)}
+	)
     PermissionResponseDto list();
 }

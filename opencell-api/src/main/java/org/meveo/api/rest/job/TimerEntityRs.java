@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.job;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -38,6 +47,7 @@ import org.meveo.api.rest.IBaseRs;
  * 
  */
 @Path("/timerEntity")
+@Tag(name = "TimerEntity", description = "@%TimerEntity")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -51,6 +61,19 @@ public interface TimerEntityRs extends IBaseRs {
      */
     @POST
     @Path("/create")
+	@Operation(
+			summary=" Create a new timer schedule  ",
+			description=" Create a new timer schedule  ",
+			operationId="    POST_TimerEntity_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(TimerEntityDto postData);
 
     /**
@@ -61,6 +84,19 @@ public interface TimerEntityRs extends IBaseRs {
      */
     @POST
     @Path("/update")
+	@Operation(
+			summary=" Update an existing timer schedule  ",
+			description=" Update an existing timer schedule  ",
+			operationId="    POST_TimerEntity_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(TimerEntityDto postData);
 
     /**
@@ -71,6 +107,19 @@ public interface TimerEntityRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing timer schedule with a given code  ",
+			description=" Create new or update an existing timer schedule with a given code  ",
+			operationId="    POST_TimerEntity_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(TimerEntityDto postData);
 
     /**
@@ -81,6 +130,19 @@ public interface TimerEntityRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Find a timer schedule with a given code  ",
+			description=" Find a timer schedule with a given code  ",
+			operationId="    GET_TimerEntity_search",
+			responses= {
+				@ApiResponse(description=" Return timerEntity ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetTimerEntityResponseDto.class
+											)
+								)
+				)}
+	)
     GetTimerEntityResponseDto find(@QueryParam("timerEntityCode") String timerEntityCode);
 
     /**
@@ -91,6 +153,19 @@ public interface TimerEntityRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Timer schedule with a given code  ",
+			description=" Enable a Timer schedule with a given code  ",
+			operationId="    POST_TimerEntity_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -101,6 +176,19 @@ public interface TimerEntityRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Timer schedule with a given code  ",
+			description=" Disable a Timer schedule with a given code  ",
+			operationId="    POST_TimerEntity_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 
 }

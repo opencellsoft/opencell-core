@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.tmforum;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -39,6 +48,7 @@ import org.tmf.dsmapi.quote.ProductQuote;
  * @author Andrius Karpavicius
  */
 @Path("/quoteManagement/productQuote")
+@Tag(name = "Quote", description = "@%Quote")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -53,6 +63,19 @@ public interface QuoteRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Place a new product quote  ",
+			description=" Place a new product quote  ",
+			operationId="    POST_Quote_create",
+			responses= {
+				@ApiResponse(description=" Product quote information ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response createProductQuote(ProductQuote productQuote, @Context UriInfo info);
 
     /**
@@ -64,6 +87,19 @@ public interface QuoteRs {
      */
     @GET
     @Path("/{quoteId}")
+	@Operation(
+			summary=" Get details of a single product quote  ",
+			description=" Get details of a single product quote  ",
+			operationId="    GET_Quote_{quoteId}",
+			responses= {
+				@ApiResponse(description=" quote response ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response getProductQuote(@PathParam("quoteId") String id, @Context UriInfo info);
 
     /**
@@ -74,6 +110,19 @@ public interface QuoteRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Get a list of product quotes optionally filtered by some criteria  ",
+			description=" Get a list of product quotes optionally filtered by some criteria  ",
+			operationId="    GET_Quote_search",
+			responses= {
+				@ApiResponse(description=" A list of product quotes matching search criteria ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response findProductQuotes(@Context UriInfo info);
 
     /**
@@ -86,6 +135,19 @@ public interface QuoteRs {
      */
     @PATCH
     @Path("/{id}")
+	@Operation(
+			summary=" Modify partially a product quote  ",
+			description=" Modify partially a product quote  ",
+			operationId="    PATCH_Quote_{id}",
+			responses= {
+				@ApiResponse(description=" An updated product quote information ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response updateProductQuote(@PathParam("id") String id, ProductQuote productQuote, @Context UriInfo info);
 
     /**
@@ -97,6 +159,19 @@ public interface QuoteRs {
      */
     @DELETE
     @Path("/{quoteId}")
+	@Operation(
+			summary=" Delete a product quote.  ",
+			description=" Delete a product quote.  ",
+			operationId="    DELETE_Quote_{quoteId}",
+			responses= {
+				@ApiResponse(description=" Response status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response deleteProductQuote(@PathParam("quoteId") String id, @Context UriInfo info);
 
     /**
@@ -108,5 +183,18 @@ public interface QuoteRs {
      */
     @POST
     @Path("/placeOrder/{quoteId}")
+	@Operation(
+			summary=" Place an order based on a product quote.  ",
+			description=" Place an order based on a product quote.  ",
+			operationId="    POST_Quote_placeOrder_{quoteId}",
+			responses= {
+				@ApiResponse(description=" Response status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response placeOrder(@PathParam("quoteId") String id, @Context UriInfo info);
 }

@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.billing;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.CancelBillingRunRequestDto;
 import org.meveo.api.dto.billing.CreateBillingRunDto;
@@ -32,6 +41,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("/billing/invoicing")
+@Tag(name = "Invoicing", description = "@%Invoicing")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -45,6 +55,19 @@ public interface InvoicingRs extends IBaseRs {
      */
     @POST
     @Path("/createBillingRun")
+	@Operation(
+			summary=" Create a new billing run. The id of the created BillingRun is returned on 'message' field of response object.  ",
+			description=" Create a new billing run. The id of the created BillingRun is returned on 'message' field of response object.  ",
+			operationId="    POST_Invoicing_createBillingRun",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createBillingRun(CreateBillingRunDto createBillingRunDto);
 
 
@@ -56,6 +79,19 @@ public interface InvoicingRs extends IBaseRs {
      */
     @POST
     @Path("/getBillingRunInfo")
+	@Operation(
+			summary=" Search for a billing run info with a given Id   ",
+			description=" Search for a billing run info with a given Id   ",
+			operationId="    POST_Invoicing_getBillingRunInfo",
+			responses= {
+				@ApiResponse(description=" The billing run info ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetBillingRunInfoResponseDto.class
+											)
+								)
+				)}
+	)
     GetBillingRunInfoResponseDto getBillingRunInfo(Long billingRunId);
 
     /**
@@ -66,6 +102,19 @@ public interface InvoicingRs extends IBaseRs {
      */
     @POST
     @Path("/getBillingAccountListInRun")
+	@Operation(
+			summary=" Returns the list of billable billing accounts of a billing run  ",
+			description=" Returns the list of billable billing accounts of a billing run  ",
+			operationId="    POST_Invoicing_getBillingAccountListInRun",
+			responses= {
+				@ApiResponse(description=" A list of billing accounts ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetBillingAccountListInRunResponseDto.class
+											)
+								)
+				)}
+	)
     GetBillingAccountListInRunResponseDto getBillingAccountListInRun(Long billingRunId);
 
     /**
@@ -76,6 +125,19 @@ public interface InvoicingRs extends IBaseRs {
      */
     @POST
     @Path("/getPreInvoicingReport")
+	@Operation(
+			summary=" Returns the pre-invoicing report for a given billing run Id  ",
+			description=" Returns the pre-invoicing report for a given billing run Id  ",
+			operationId="    POST_Invoicing_getPreInvoicingReport",
+			responses= {
+				@ApiResponse(description=" A pre-invoicing reports ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetPreInvoicingReportsResponseDto.class
+											)
+								)
+				)}
+	)
     GetPreInvoicingReportsResponseDto getPreInvoicingReport(Long billingRunId);
 
     /**
@@ -86,6 +148,19 @@ public interface InvoicingRs extends IBaseRs {
      */
     @POST
     @Path("/getPostInvoicingReport")
+	@Operation(
+			summary=" Returns the post-invoicing report for a given billing run Id  ",
+			description=" Returns the post-invoicing report for a given billing run Id  ",
+			operationId="    POST_Invoicing_getPostInvoicingReport",
+			responses= {
+				@ApiResponse(description=" A post-invoicing reports ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetPostInvoicingReportsResponseDto.class
+											)
+								)
+				)}
+	)
     GetPostInvoicingReportsResponseDto getPostInvoicingReport(Long billingRunId);
 
     /**
@@ -97,6 +172,19 @@ public interface InvoicingRs extends IBaseRs {
      */
     @POST
     @Path("/validateBillingRun")
+	@Operation(
+			summary=" Depending on the status of the billing run, produce the pre-invoicing report, the post-Invoicing report or validates a billing run",
+			description=" Depending on the status of the billing run, produce the pre-invoicing report, the post-Invoicing report or validates a billing run. Sets the next invoice date of a billing account to the next calendar date.  ",
+			operationId="    POST_Invoicing_validateBillingRun",
+			responses= {
+				@ApiResponse(description=" Request processing status  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus validateBillingRun(Long billingRunId);
 
     /**
@@ -107,6 +195,19 @@ public interface InvoicingRs extends IBaseRs {
      */
     @PUT
     @Path("/validateBillingRun")
+	@Operation(
+			summary=" Validate a billing run based on billingRun id. ",
+			description=" Validate a billing run based on billingRun id. ",
+			operationId="    PUT_Invoicing_validateBillingRun",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus validateBillingRun(ValidateBillingRunRequestDto billingRunId);
 
     /**
@@ -118,6 +219,19 @@ public interface InvoicingRs extends IBaseRs {
      */
     @POST
     @Path("/cancelBillingRun")
+	@Operation(
+			summary=" Cancels a billing run",
+			description=" Cancels a billing run. Sets RatedTransaction.status associated to billing run to OPEN. Remove aggregates and invoice associated to the billing run. Set billingAccount.billingRun to null.  ",
+			operationId="    POST_Invoicing_cancelBillingRun",
+			responses= {
+				@ApiResponse(description=" Request processing status  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus cancelBillingRun(Long billingRunId);
 
     /**
@@ -128,6 +242,19 @@ public interface InvoicingRs extends IBaseRs {
      */
     @PUT
     @Path("/cancelBillingRun")
+	@Operation(
+			summary=" Cancel a billing run based on billingRun id. ",
+			description=" Cancel a billing run based on billingRun id. ",
+			operationId="    PUT_Invoicing_cancelBillingRun",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus cancelBillingRun(CancelBillingRunRequestDto putData);
 
 }

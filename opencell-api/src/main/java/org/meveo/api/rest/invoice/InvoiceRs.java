@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.invoice;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.invoice.*;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
@@ -38,6 +47,7 @@ import javax.ws.rs.core.MediaType;
  * @lastModifiedVersion 7.0
  **/
 @Path("/invoice")
+@Tag(name = "Invoice", description = "@%Invoice")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -56,6 +66,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for an invoice given an invoice id or invoice number and invoice type.  ",
+			description=" Search for an invoice given an invoice id or invoice number and invoice type.  ",
+			operationId="    GET_Invoice_search",
+			responses= {
+				@ApiResponse(description=" instance of GetInvoiceResponseDto ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetInvoiceResponseDto.class
+											)
+								)
+				)}
+	)
     public GetInvoiceResponseDto findInvoiceByIdOrType(@QueryParam("id") Long id, @QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("invoiceType") String invoiceType,
             @QueryParam("includeTransactions") boolean includeTransactions, @QueryParam("includePdf") Boolean includePdf,  @QueryParam("includeXml") Boolean includeXml);
 
@@ -67,6 +90,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create invoice. Invoice number depends on invoice type  ",
+			description=" Create invoice. Invoice number depends on invoice type  ",
+			operationId="    POST_Invoice_create",
+			responses= {
+				@ApiResponse(description=" created invoice ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CreateInvoiceResponseDto.class
+											)
+								)
+				)}
+	)
     public CreateInvoiceResponseDto create(InvoiceDto invoiceDto);
 
     /**
@@ -81,6 +117,20 @@ public interface InvoiceRs extends IBaseRs {
     @Deprecated
     @GET
     @Path("/listInvoiceByCustomerAccount")
+	@Operation(
+			summary=" Search for a list of invoices given a customer account code",
+			description=" Search for a list of invoices given a customer account code.  Deprecated in v.4.7.2, use list() instead with criteria billingAccount.customerAccount.code=xxx  ",
+			deprecated=true,
+			operationId="    GET_Invoice_listInvoiceByCustomerAccount",
+			responses= {
+				@ApiResponse(description=" customer invoice. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CustomerInvoicesResponse.class
+											)
+								)
+				)}
+	)
     CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("returnPdf") Boolean returnPdf);
 
     /**
@@ -98,6 +148,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @POST
     @Path("/generateInvoice")
+	@Operation(
+			summary=" Launch all the invoicing process for a given billingAccount, that's mean",
+			description=" Launch all the invoicing process for a given billingAccount, that's mean.  <ul> <li>Create rated transactions <li>Create an exceptional billingRun with given dates <li>Validate the pre-invoicing report <li>Validate the post-invoicing report <li>Validate the BillingRun  </ul>  ",
+			operationId="    POST_Invoice_generateInvoice",
+			responses= {
+				@ApiResponse(description=" invoice response ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GenerateInvoiceResponseDto.class
+											)
+								)
+				)}
+	)
     GenerateInvoiceResponseDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto);
 
     /**
@@ -109,6 +172,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @GET
     @Path("/getXMLInvoice")
+	@Operation(
+			summary=" Finds an invoice based on its invoice number and return it as xml string.  ",
+			description=" Finds an invoice based on its invoice number and return it as xml string.  ",
+			operationId="    GET_Invoice_getXMLInvoice",
+			responses= {
+				@ApiResponse(description=" xml invoice ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetXmlInvoiceResponseDto.class
+											)
+								)
+				)}
+	)
     GetXmlInvoiceResponseDto findXMLInvoice(@QueryParam("invoiceId") Long invoiceId, @QueryParam("invoiceNumber") String invoiceNumber);
 
     /**
@@ -119,6 +195,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @POST
     @Path("/fetchXMLInvoice")
+	@Operation(
+			summary=" Finds an invoice based on its invoice number and optionally an invoice type and return it as xml string. ",
+			description=" Finds an invoice based on its invoice number and optionally an invoice type and return it as xml string. ",
+			operationId="    POST_Invoice_fetchXMLInvoice",
+			responses= {
+				@ApiResponse(description=" xml invoice ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetXmlInvoiceResponseDto.class
+											)
+								)
+				)}
+	)
     GetXmlInvoiceResponseDto findXMLInvoice(GetXmlInvoiceRequestDto xmlInvoiceRequestDto);
 
     /**
@@ -130,6 +219,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @GET
     @Path("/getXMLInvoiceWithType")
+	@Operation(
+			summary=" Finds an invoice based on invoice number and invoice type. It returns the result as xml string ",
+			description=" Finds an invoice based on invoice number and invoice type. It returns the result as xml string ",
+			operationId="    GET_Invoice_getXMLInvoiceWithType",
+			responses= {
+				@ApiResponse(description=" xml invoice ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetXmlInvoiceResponseDto.class
+											)
+								)
+				)}
+	)
     GetXmlInvoiceResponseDto findXMLInvoiceWithType(@QueryParam("invoiceId") Long invoiceId, @QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("invoiceType") String invoiceType);
 
     /**
@@ -141,6 +243,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @GET
     @Path("/getPdfInvoice")
+	@Operation(
+			summary=" Finds an invoice based on invoice number and return it as pdf as byte []",
+			description=" Finds an invoice based on invoice number and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database is returned.  ",
+			operationId="    GET_Invoice_getPdfInvoice",
+			responses= {
+				@ApiResponse(description=" pdf invoice ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetPdfInvoiceResponseDto.class
+											)
+								)
+				)}
+	)
     GetPdfInvoiceResponseDto findPdfInvoice(@QueryParam("invoiceId") Long invoiceId, @QueryParam("invoiceNumber") String invoiceNumber);
 
     /**
@@ -152,6 +267,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @POST
     @Path("/fetchPdfInvoice")
+	@Operation(
+			summary=" Finds an invoice based on invoice number and optionally an invoice type and return it as pdf as byte []",
+			description=" Finds an invoice based on invoice number and optionally an invoice type and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database is returned. ",
+			operationId="    POST_Invoice_fetchPdfInvoice",
+			responses= {
+				@ApiResponse(description=" pdf invoice ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetPdfInvoiceResponseDto.class
+											)
+								)
+				)}
+	)
     GetPdfInvoiceResponseDto findPdfInvoice(GetPdfInvoiceRequestDto pdfInvoiceRequestDto);
 
     /**
@@ -163,6 +291,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @GET
     @Path("/getPdfInvoiceWithType")
+	@Operation(
+			summary=" Finds an invoice based on invoice number and invoice type and return it as pdf as byte []",
+			description=" Finds an invoice based on invoice number and invoice type and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database is returned. ",
+			operationId="    GET_Invoice_getPdfInvoiceWithType",
+			responses= {
+				@ApiResponse(description=" pdf invoice ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetPdfInvoiceResponseDto.class
+											)
+								)
+				)}
+	)
     GetPdfInvoiceResponseDto findPdfInvoiceWithType(@QueryParam("invoiceId") Long invoiceId, @QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("invoiceType") String invoiceType);
 
     /**
@@ -173,6 +314,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @POST
     @Path("/cancel")
+	@Operation(
+			summary=" Cancel an invoice based on invoice id.  ",
+			description=" Cancel an invoice based on invoice id.  ",
+			operationId="    POST_Invoice_cancel",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus cancel(Long invoiceId);
 
     /**
@@ -183,6 +337,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @PUT
     @Path("/cancel")
+	@Operation(
+			summary=" Cancel an invoice based on invoice id. ",
+			description=" Cancel an invoice based on invoice id. ",
+			operationId="    PUT_Invoice_cancel",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus cancel(CancelInvoiceRequestDto putData);
 
     /**
@@ -193,6 +360,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @POST
     @Path("/validate")
+	@Operation(
+			summary=" Validate an invoice based on the invoice id.  ",
+			description=" Validate an invoice based on the invoice id.  ",
+			operationId="    POST_Invoice_validate",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus validate(@FormParam("invoiceId") Long invoiceId);
 
     /**
@@ -203,6 +383,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @PUT
     @Path("/validate")
+	@Operation(
+			summary=" Validate an invoice based on invoice id. ",
+			description=" Validate an invoice based on invoice id. ",
+			operationId="    PUT_Invoice_validate",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus validate(ValidateInvoiceRequestDto putData);
 
     /**
@@ -217,6 +410,20 @@ public interface InvoiceRs extends IBaseRs {
     @GET
     @Deprecated
     @Path("/listPresentInAR")
+	@Operation(
+			summary=" List invoices with account operation for a given customer account  Deprecated in v",
+			description=" List invoices with account operation for a given customer account  Deprecated in v.4.8. Use list() instead with criteria recordedInvoice=IS_NOT_NULL and billingAccount.customerAccount.code=xxx  ",
+			deprecated=true,
+			operationId="    GET_Invoice_listPresentInAR",
+			responses= {
+				@ApiResponse(description=" List of invoices ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CustomerInvoicesResponse.class
+											)
+								)
+				)}
+	)
     CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("includePdf") boolean includePdf);
     
     /**
@@ -227,6 +434,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @POST
     @Path("/generateDraftInvoice")
+	@Operation(
+			summary=" Generate a Draft invoice  ",
+			description=" Generate a Draft invoice  ",
+			operationId="    POST_Invoice_generateDraftInvoice",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GenerateInvoiceResponseDto.class
+											)
+								)
+				)}
+	)
     GenerateInvoiceResponseDto generateDraftInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto);
 
     /**
@@ -242,6 +462,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List invoices matching a given criteria.  ",
+			description=" List invoices matching a given criteria.  ",
+			operationId="    GET_Invoice_list",
+			responses= {
+				@ApiResponse(description=" An invoice list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= InvoicesDto.class
+											)
+								)
+				)}
+	)
     InvoicesDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -252,6 +485,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List invoices matching a given criteria ",
+			description=" List invoices matching a given criteria ",
+			operationId="    GET_Invoice_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of invoices ",
+						content=@Content(
+									schema=@Schema(
+											implementation= InvoicesDto.class
+											)
+								)
+				)}
+	)
     InvoicesDto list();
 
     /**
@@ -262,6 +508,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" List invoices matching a given criteria.  ",
+			description=" List invoices matching a given criteria.  ",
+			operationId="    POST_Invoice_list",
+			responses= {
+				@ApiResponse(description=" An invoice list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= InvoicesDto.class
+											)
+								)
+				)}
+	)
     InvoicesDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -271,6 +530,19 @@ public interface InvoiceRs extends IBaseRs {
      */
     @POST
     @Path("/sendByEmail")
+	@Operation(
+			summary=" Send invoice by Email. ",
+			description=" Send invoice by Email. ",
+			operationId="    POST_Invoice_sendByEmail",
+			responses= {
+				@ApiResponse(description=" SUCCESS if sent, FAIL else ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus sendByEmail(InvoiceDto invoiceDto);
 
 }

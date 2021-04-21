@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.response.BankingDateStatusResponse;
@@ -33,6 +42,7 @@ import java.util.Date;
  * @author Edward P. Legaspi
  **/
 @Path("/calendar")
+@Tag(name = "Calendar", description = "@%Calendar")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -46,6 +56,19 @@ public interface CalendarRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new calendar.  ",
+			description=" Create a new calendar.  ",
+			operationId="    POST_Calendar_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(CalendarDto postData);
 
     /**
@@ -56,6 +79,19 @@ public interface CalendarRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update calendar.  ",
+			description=" Update calendar.  ",
+			operationId="    PUT_Calendar_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(CalendarDto postData);
 
     /**
@@ -66,6 +102,19 @@ public interface CalendarRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for calendar with a given code.  ",
+			description=" Search for calendar with a given code.  ",
+			operationId="    GET_Calendar_search",
+			responses= {
+				@ApiResponse(description=" calendar if exists ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetCalendarResponse.class
+											)
+								)
+				)}
+	)
     GetCalendarResponse find(@QueryParam("calendarCode") String calendarCode);
     
     /**
@@ -76,6 +125,19 @@ public interface CalendarRs extends IBaseRs {
      */
     @GET
     @Path("/bankingDateStatus")
+	@Operation(
+			summary=" Gets the banking date status. ",
+			description=" Gets the banking date status. ",
+			operationId="    GET_Calendar_bankingDateStatus",
+			responses= {
+				@ApiResponse(description=" the banking date status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= BankingDateStatusResponse.class
+											)
+								)
+				)}
+	)
     BankingDateStatusResponse getBankingDateStatus(@QueryParam("date") @RestDateParam Date date);
 
     /**
@@ -85,6 +147,19 @@ public interface CalendarRs extends IBaseRs {
      */
     @GET 
     @Path("/list")
+	@Operation(
+			summary=" Retrieve a list of all calendars.  ",
+			description=" Retrieve a list of all calendars.  ",
+			operationId="    GET _Calendar_list",
+			responses= {
+				@ApiResponse(description=" list of all calendars ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ListCalendarResponse.class
+											)
+								)
+				)}
+	)
     ListCalendarResponse list();
 
     /**
@@ -94,6 +169,19 @@ public interface CalendarRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List Calendars matching a given criteria ",
+			description=" List Calendars matching a given criteria ",
+			operationId="    GET_Calendar_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of Calendars ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ListCalendarResponse.class
+											)
+								)
+				)}
+	)
     ListCalendarResponse listGetAll();
 
     /**
@@ -104,6 +192,19 @@ public interface CalendarRs extends IBaseRs {
      */
     @DELETE 
     @Path("/{calendarCode}")
+	@Operation(
+			summary=" Remove calendar with a given code.  ",
+			description=" Remove calendar with a given code.  ",
+			operationId="    DELETE _Calendar_{calendarCode}",
+			responses= {
+				@ApiResponse(description=" action result ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("calendarCode") String calendarCode);
 
     /**
@@ -114,6 +215,19 @@ public interface CalendarRs extends IBaseRs {
      */
     @POST 
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing calendar with a given code.  ",
+			description=" Create new or update an existing calendar with a given code.  ",
+			operationId="    POST _Calendar_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(CalendarDto postData);
 
 }

@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.UsersDto;
@@ -34,6 +43,7 @@ import javax.ws.rs.core.MediaType;
  * @author Mohamed Hamidi
  **/
 @Path("/user")
+@Tag(name = "User", description = "@%User")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -47,6 +57,19 @@ public interface UserRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create user.  ",
+			description=" Create user.  ",
+			operationId="    POST_User_create",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(UserDto postData);
 
     /**
@@ -57,6 +80,19 @@ public interface UserRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update user.  ",
+			description=" Update user.  ",
+			operationId="    PUT_User_update",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(UserDto postData);
 
     /**
@@ -67,6 +103,19 @@ public interface UserRs extends IBaseRs {
      */
     @DELETE
     @Path("/{username}")
+	@Operation(
+			summary=" Remove user with a given username.  ",
+			description=" Remove user with a given username.  ",
+			operationId="    DELETE_User_{username}",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("username") String username);
 
     /**
@@ -77,6 +126,19 @@ public interface UserRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search user with a given username.  ",
+			description=" Search user with a given username.  ",
+			operationId="    GET_User_search",
+			responses= {
+				@ApiResponse(description=" user ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetUserResponse.class
+											)
+								)
+				)}
+	)
     GetUserResponse find(@QueryParam("username") String username);
 
     /**
@@ -87,6 +149,19 @@ public interface UserRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update user based on the username.  ",
+			description=" Create or update user based on the username.  ",
+			operationId="    POST_User_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(UserDto postData);
     
     /**
@@ -96,6 +171,19 @@ public interface UserRs extends IBaseRs {
      */
     @POST
     @Path("/external")
+	@Operation(
+			summary=" Creates a user in keycloak and core. ",
+			description=" Creates a user in keycloak and core. ",
+			operationId="    POST_User_external",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createExternalUser(UserDto postData);
 
     /**
@@ -105,6 +193,19 @@ public interface UserRs extends IBaseRs {
      */
     @PUT
     @Path("/external/")
+	@Operation(
+			summary=" Updates a user in keycloak and core given a username. ",
+			description=" Updates a user in keycloak and core given a username. ",
+			operationId="    PUT_User_external_",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus updateExternalUser(UserDto postData);
 
     /**
@@ -114,6 +215,19 @@ public interface UserRs extends IBaseRs {
      */
     @DELETE
     @Path("/external/{username}")
+	@Operation(
+			summary=" Deletes a user in keycloak and core given a username. ",
+			description=" Deletes a user in keycloak and core given a username. ",
+			operationId="    DELETE_User_external_{username}",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus deleteExternalUser(@PathParam("username") String username);
 
     /**
@@ -129,6 +243,19 @@ public interface UserRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List users matching a given criteria.  ",
+			description=" List users matching a given criteria.  ",
+			operationId="    GET_User_list",
+			responses= {
+				@ApiResponse(description=" A list of users ",
+						content=@Content(
+									schema=@Schema(
+											implementation= UsersDto.class
+											)
+								)
+				)}
+	)
     UsersDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("userName") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -139,6 +266,19 @@ public interface UserRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List users matching a given criteria ",
+			description=" List users matching a given criteria ",
+			operationId="    GET_User_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of users ",
+						content=@Content(
+									schema=@Schema(
+											implementation= UsersDto.class
+											)
+								)
+				)}
+	)
     UsersDto list();
 
     /**
@@ -149,6 +289,19 @@ public interface UserRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" List users matching a given criteria.  ",
+			description=" List users matching a given criteria.  ",
+			operationId="    POST_User_list",
+			responses= {
+				@ApiResponse(description=" A list of users ",
+						content=@Content(
+									schema=@Schema(
+											implementation= UsersDto.class
+											)
+								)
+				)}
+	)
     UsersDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }
