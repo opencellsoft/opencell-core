@@ -364,6 +364,10 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         } else {
             offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         }
+        var isValidityIsSet = offerTemplate.getValidity().getTo() != null && offerTemplate.getValidity().getFrom() != null;
+        if(isValidityIsSet && offerTemplate.getValidity().getTo().compareTo(offerTemplate.getValidity().getFrom()) <= 0) {
+        	throw new MeveoApiException("Date 'valid to' must be great than Data 'valid from'");  
+        }
         offerTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
         offerTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());
         offerTemplate.setMinimumAmountElSpark(postData.getMinimumAmountElSpark());

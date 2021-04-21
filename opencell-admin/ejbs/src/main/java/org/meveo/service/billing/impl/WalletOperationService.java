@@ -1500,7 +1500,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     public boolean ignoreChargeTemplate(ChargeInstance chargeInstance){
         ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
-        if(serviceInstance.getProductVersion() != null){
+        if(serviceInstance != null && serviceInstance.getProductVersion() != null){
             boolean dontApplyCharge = serviceInstance.getAttributeInstances()
                     .stream()
                     .filter(attributeInstance -> attributeInstance.getAttribute().getAttributeType() == AttributeTypeEnum.BOOLEAN)
