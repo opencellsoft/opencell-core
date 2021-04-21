@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -39,6 +48,7 @@ import org.meveo.api.rest.IBaseRs;
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/businessProductModel")
+@Tag(name = "BusinessProductModel", description = "@%BusinessProductModel")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -52,6 +62,19 @@ public interface BusinessProductModelRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new business product model  ",
+			description=" Create a new business product model  ",
+			operationId="    POST_BusinessProductModel_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(BusinessProductModelDto postData);
 
     /**
@@ -62,6 +85,19 @@ public interface BusinessProductModelRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing business product model  ",
+			description=" Update an existing business product model  ",
+			operationId="    PUT_BusinessProductModel_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(BusinessProductModelDto postData);
 
     /**
@@ -72,6 +108,19 @@ public interface BusinessProductModelRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Remove an existing business product model with a given code   ",
+			description=" Remove an existing business product model with a given code   ",
+			operationId="    GET_BusinessProductModel_search",
+			responses= {
+				@ApiResponse(description=" A business product model ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetBusinessProductModelResponseDto.class
+											)
+								)
+				)}
+	)
     GetBusinessProductModelResponseDto find(@QueryParam("businessProductModelCode") String businessProductModelCode);
 
 
@@ -83,6 +132,19 @@ public interface BusinessProductModelRs extends IBaseRs {
      */
     @DELETE
     @Path("/{businessProductModelCode}")
+	@Operation(
+			summary=" Remove an existing business product model with a given code   ",
+			description=" Remove an existing business product model with a given code   ",
+			operationId="    DELETE_BusinessProductModel_{businessProductModelCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("businessProductModelCode") String businessProductModelCode);
 
     /**
@@ -93,6 +155,19 @@ public interface BusinessProductModelRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing business product model  ",
+			description=" Create new or update an existing business product model  ",
+			operationId="    POST_BusinessProductModel_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(BusinessProductModelDto postData);
 
     /**
@@ -102,6 +177,19 @@ public interface BusinessProductModelRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List business product models  ",
+			description=" List business product models  ",
+			operationId="    GET_BusinessProductModel_list",
+			responses= {
+				@ApiResponse(description=" A list of business product models ",
+						content=@Content(
+									schema=@Schema(
+											implementation= MeveoModuleDtosResponse.class
+											)
+								)
+				)}
+	)
     public MeveoModuleDtosResponse list();
 
     /**
@@ -111,5 +199,18 @@ public interface BusinessProductModelRs extends IBaseRs {
      */
     @PUT
     @Path("/install")
+	@Operation(
+			summary=" Install business product model module ",
+			description=" Install business product model module ",
+			operationId="    PUT_BusinessProductModel_install",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus install(BusinessProductModelDto moduleDto);
 }

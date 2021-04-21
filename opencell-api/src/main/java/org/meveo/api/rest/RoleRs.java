@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -43,6 +52,7 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
  * @lastModifiedVersion 6.0
  */
 @Path("/role")
+@Tag(name = "Role", description = "@%Role")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface RoleRs extends IBaseRs {
@@ -54,7 +64,20 @@ public interface RoleRs extends IBaseRs {
      * @return action status
      */
     @POST
-    @Path("/") 
+    @Path("/")
+	@Operation(
+			summary=" Create role.  ",
+			description=" Create role.  ",
+			operationId="    POST_Role_ ",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(RoleDto postData);
 
     /**
@@ -64,7 +87,20 @@ public interface RoleRs extends IBaseRs {
      * @return action status.
      */
     @PUT
-    @Path("/") 
+    @Path("/")
+	@Operation(
+			summary=" Update role.  ",
+			description=" Update role.  ",
+			operationId="    PUT_Role_ ",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(RoleDto postData);
 
     /**
@@ -75,6 +111,19 @@ public interface RoleRs extends IBaseRs {
      */
     @DELETE
     @Path("/{roleName}")
+	@Operation(
+			summary=" Remove role. ",
+			description=" Remove role. ",
+			operationId="    DELETE_Role_{roleName}",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("roleName") String roleName);
 
     /**
@@ -85,7 +134,20 @@ public interface RoleRs extends IBaseRs {
      * @return found role
      */
     @GET
-    @Path("/") 
+    @Path("/")
+	@Operation(
+			summary=" Search role.  ",
+			description=" Search role.  ",
+			operationId="    GET_Role_ ",
+			responses= {
+				@ApiResponse(description=" found role ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetRoleResponse.class
+											)
+								)
+				)}
+	)
     GetRoleResponse find(@QueryParam("roleName") String roleName, @QueryParam("includeSecuredEntities") boolean includeSecuredEntities);
 
     /**
@@ -95,7 +157,20 @@ public interface RoleRs extends IBaseRs {
      * @return action status
      */
     @POST
-    @Path("/createOrUpdate") 
+    @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update role.  ",
+			description=" Create or update role.  ",
+			operationId="    POST_Role_createOrUpdate ",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(RoleDto postData);
 
     /**
@@ -111,6 +186,19 @@ public interface RoleRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List roles matching a given criteria.  ",
+			description=" List roles matching a given criteria.  ",
+			operationId="    GET_Role_list",
+			responses= {
+				@ApiResponse(description=" A list of roles ",
+						content=@Content(
+									schema=@Schema(
+											implementation= RolesDto.class
+											)
+								)
+				)}
+	)
     RolesDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("name") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -121,7 +209,20 @@ public interface RoleRs extends IBaseRs {
      * @return A list of roles
      */
     @POST
-    @Path("/list") 
+    @Path("/list")
+	@Operation(
+			summary=" List roles matching a given criteria.  ",
+			description=" List roles matching a given criteria.  ",
+			operationId="    POST_Role_list ",
+			responses= {
+				@ApiResponse(description=" A list of roles ",
+						content=@Content(
+									schema=@Schema(
+											implementation= RolesDto.class
+											)
+								)
+				)}
+	)
     RolesDto listPost(PagingAndFiltering pagingAndFiltering);
     
     /**
@@ -129,7 +230,20 @@ public interface RoleRs extends IBaseRs {
      * @return list of external roles
      */
     @GET
-    @Path("/external") 
+    @Path("/external")
+	@Operation(
+			summary=" List external roles. ",
+			description=" List external roles. ",
+			operationId="    GET_Role_external ",
+			responses= {
+				@ApiResponse(description=" list of external roles ",
+						content=@Content(
+									schema=@Schema(
+											implementation= RolesDto.class
+											)
+								)
+				)}
+	)
     RolesDto listExternalRoles();
 
 }

@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.LanguageIsoDto;
 import org.meveo.api.dto.response.GetLanguageIsoResponse;
@@ -32,6 +41,7 @@ import javax.ws.rs.core.MediaType;
  * @author Edward P. Legaspi
  **/
 @Path("/languageIso")
+@Tag(name = "LanguageIso", description = "@%LanguageIso")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -45,6 +55,19 @@ public interface LanguageIsoRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Creates tradingLanguage base on language code. If the language code does not exists, a language record is created.  ",
+			description=" Creates tradingLanguage base on language code. If the language code does not exists, a language record is created.  ",
+			operationId="    POST_LanguageIso_create",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(LanguageIsoDto languageIsoDto);
 
     /**
@@ -55,6 +78,19 @@ public interface LanguageIsoRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search language given a code.  ",
+			description=" Search language given a code.  ",
+			operationId="    GET_LanguageIso_search",
+			responses= {
+				@ApiResponse(description=" language iso for given code ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetLanguageIsoResponse.class
+											)
+								)
+				)}
+	)
     GetLanguageIsoResponse find(@QueryParam("languageCode") String languageCode);
 
     /**
@@ -65,6 +101,19 @@ public interface LanguageIsoRs extends IBaseRs {
      */
     @DELETE
     @Path("/{languageCode}")
+	@Operation(
+			summary=" Does not delete a language but the tradingLanguage associated to it.  ",
+			description=" Does not delete a language but the tradingLanguage associated to it.  ",
+			operationId="    DELETE_LanguageIso_{languageCode}",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("languageCode") String languageCode);
 
     /**
@@ -75,6 +124,19 @@ public interface LanguageIsoRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" modify a language",
+			description=" modify a language. Same input parameter as create. The language and trading Language are created if they don't exists. The operation fails if the tradingLanguage is null.  ",
+			operationId="    PUT_LanguageIso_update",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(LanguageIsoDto languageIsoDto);
 
     /**
@@ -85,6 +147,19 @@ public interface LanguageIsoRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update a language if it doesn't exists.  ",
+			description=" Create or update a language if it doesn't exists.  ",
+			operationId="    POST_LanguageIso_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(LanguageIsoDto languageIsoDto);
 
     /**
@@ -94,6 +169,19 @@ public interface LanguageIsoRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" List all languages.  ",
+			description=" List all languages.  ",
+			operationId="    GET_LanguageIso_search",
+			responses= {
+				@ApiResponse(description=" all languages ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetLanguagesIsoResponse.class
+											)
+								)
+				)}
+	)
     GetLanguagesIsoResponse list();
 
     /**
@@ -103,5 +191,18 @@ public interface LanguageIsoRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List languages ISO matching a given criteria ",
+			description=" List languages ISO matching a given criteria ",
+			operationId="    GET_LanguageIso_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of languages ISO ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetLanguagesIsoResponse.class
+											)
+								)
+				)}
+	)
     GetLanguagesIsoResponse listGetAll();
 }

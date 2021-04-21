@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.tmforum;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -41,6 +50,7 @@ import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
  * @author Andrius Karpavicius
  */
 @Path("/orderManagement/productOrder")
+@Tag(name = "Order", description = "@%Order")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -55,6 +65,19 @@ public interface OrderRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Place a new product order  ",
+			description=" Place a new product order  ",
+			operationId="    POST_Order_create",
+			responses= {
+				@ApiResponse(description=" Product order information ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response createProductOrder(ProductOrder productOrder, @Context UriInfo info);
 
     /**
@@ -66,6 +89,19 @@ public interface OrderRs {
      */
     @GET
     @Path("/{orderId}")
+	@Operation(
+			summary=" Get details of a single product order  ",
+			description=" Get details of a single product order  ",
+			operationId="    GET_Order_{orderId}",
+			responses= {
+				@ApiResponse(description=" Response of the request ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response getProductOrder(@PathParam("orderId") String id, @Context UriInfo info);
 
     /**
@@ -76,6 +112,19 @@ public interface OrderRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Get a list of product orders optionaly filtered by some criteria  ",
+			description=" Get a list of product orders optionaly filtered by some criteria  ",
+			operationId="    GET_Order_search",
+			responses= {
+				@ApiResponse(description=" A list of product orders matching search criteria ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response findProductOrders(@Context UriInfo info);
 
     /**
@@ -88,6 +137,19 @@ public interface OrderRs {
      */
     @PATCH
     @Path("/{id}")
+	@Operation(
+			summary=" Modify partially a product order  ",
+			description=" Modify partially a product order  ",
+			operationId="    PATCH_Order_{id}",
+			responses= {
+				@ApiResponse(description=" An updated product order information ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response updateProductOrder(@PathParam("id") String id, ProductOrder productOrder, @Context UriInfo info);
 
     /**
@@ -99,6 +161,19 @@ public interface OrderRs {
      */
     @DELETE
     @Path("/{orderId}")
+	@Operation(
+			summary=" Delete a product order  ",
+			description=" Delete a product order  ",
+			operationId="    DELETE_Order_{orderId}",
+			responses= {
+				@ApiResponse(description=" Response of the delete request ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response deleteProductOrder(@PathParam("orderId") String id, @Context UriInfo info);
     
     /**
@@ -110,6 +185,19 @@ public interface OrderRs {
      */
     @GET
     @Path("/{orderId}/applicableDueDateDelay")
+	@Operation(
+			summary=" Evaluate and return the dueDateDelayEL. It checks the EL in this order: Order, CustomerAccount, BillingCycle.  ",
+			description=" Evaluate and return the dueDateDelayEL. It checks the EL in this order: Order, CustomerAccount, BillingCycle.  ",
+			operationId="    GET_Order_{orderId}_applicableDueDateDelay",
+			responses= {
+				@ApiResponse(description=" Response of the due date delay  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response applicableDueDateDelay(@PathParam("orderId") String orderId, @Context UriInfo info);
     
     /**
@@ -122,6 +210,19 @@ public interface OrderRs {
      */
     @PUT
     @Path("/{orderId}/simpleDueDateDelay")
+	@Operation(
+			summary=" Updates the dueDateDelayEL of an Order.   ",
+			description=" Updates the dueDateDelayEL of an Order.   ",
+			operationId="    PUT_Order_{orderId}_simpleDueDateDelay",
+			responses= {
+				@ApiResponse(description=" Response of the update request ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response simpleDueDateDelay(@PathParam("orderId") String orderId, ApplicableDueDateDelayDto postData, @Context UriInfo info);
 
     /**
@@ -133,5 +234,18 @@ public interface OrderRs {
      */
     @GET
     @Path("/validate")
+	@Operation(
+			summary=" validate a product order ",
+			description=" validate a product order ",
+			operationId="    GET_Order_validate",
+			responses= {
+				@ApiResponse(description=" Product order information ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response validateProductOrder(ProductOrder productOrder, @Context UriInfo info);
 }

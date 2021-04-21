@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -39,6 +48,7 @@ import org.meveo.api.rest.IBaseRs;
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/businessServiceModel")
+@Tag(name = "BusinessServiceModel", description = "@%BusinessServiceModel")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -52,6 +62,19 @@ public interface BusinessServiceModelRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new business service model  ",
+			description=" Create a new business service model  ",
+			operationId="    POST_BusinessServiceModel_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(BusinessServiceModelDto postData);
 
     /**
@@ -62,6 +85,19 @@ public interface BusinessServiceModelRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing business service model  ",
+			description=" Update an existing business service model  ",
+			operationId="    PUT_BusinessServiceModel_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(BusinessServiceModelDto postData);
 
     /**
@@ -72,6 +108,19 @@ public interface BusinessServiceModelRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for a business service model with a given code   ",
+			description=" Search for a business service model with a given code   ",
+			operationId="    GET_BusinessServiceModel_search",
+			responses= {
+				@ApiResponse(description=" A business servie model ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetBusinessServiceModelResponseDto.class
+											)
+								)
+				)}
+	)
     GetBusinessServiceModelResponseDto find(@QueryParam("businessServiceModelCode") String businessServiceModelCode);
 
     /**
@@ -82,6 +131,19 @@ public interface BusinessServiceModelRs extends IBaseRs {
      */
     @DELETE
     @Path("/{businessServiceModelCode}")
+	@Operation(
+			summary=" Remove an existing business service model with a given code   ",
+			description=" Remove an existing business service model with a given code   ",
+			operationId="    DELETE_BusinessServiceModel_{businessServiceModelCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("businessServiceModelCode") String businessServiceModelCode);
 
     /**
@@ -92,6 +154,19 @@ public interface BusinessServiceModelRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing business service model  ",
+			description=" Create new or update an existing business service model  ",
+			operationId="    POST_BusinessServiceModel_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(BusinessServiceModelDto postData);
 
     /**
@@ -101,6 +176,19 @@ public interface BusinessServiceModelRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List business service model  ",
+			description=" List business service model  ",
+			operationId="    GET_BusinessServiceModel_list",
+			responses= {
+				@ApiResponse(description=" A list of business service models ",
+						content=@Content(
+									schema=@Schema(
+											implementation= MeveoModuleDtosResponse.class
+											)
+								)
+				)}
+	)
     public MeveoModuleDtosResponse list();
 
     /**
@@ -111,5 +199,18 @@ public interface BusinessServiceModelRs extends IBaseRs {
      */
     @PUT
     @Path("/install")
+	@Operation(
+			summary=" Install business offer model module  ",
+			description=" Install business offer model module  ",
+			operationId="    PUT_BusinessServiceModel_install",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus install(BusinessServiceModelDto moduleDto);
 }

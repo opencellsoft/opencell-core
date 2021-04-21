@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -43,6 +52,7 @@ import org.meveo.api.rest.IBaseRs;
  *
  */
 @Path("/catalog/discountPlanItem")
+@Tag(name = "DiscountPlanItem", description = "@%DiscountPlanItem")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -56,6 +66,19 @@ public interface DiscountPlanItemRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new discount plan item. ",
+			description=" Create a new discount plan item. ",
+			operationId="    POST_DiscountPlanItem_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(DiscountPlanItemDto postData);
 
     /**
@@ -66,6 +89,19 @@ public interface DiscountPlanItemRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" update an existed discount plan item.  ",
+			description=" update an existed discount plan item.  ",
+			operationId="    PUT_DiscountPlanItem_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(DiscountPlanItemDto postData);
 
     /**
@@ -76,6 +112,19 @@ public interface DiscountPlanItemRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Find a discount plan item with a given code. ",
+			description=" Find a discount plan item with a given code. ",
+			operationId="    GET_DiscountPlanItem_search",
+			responses= {
+				@ApiResponse(description=" A discount plan item ",
+						content=@Content(
+									schema=@Schema(
+											implementation= DiscountPlanItemResponseDto.class
+											)
+								)
+				)}
+	)
     DiscountPlanItemResponseDto find(@QueryParam("discountPlanItemCode") String discountPlanItemCode);
 
     /**
@@ -86,6 +135,19 @@ public interface DiscountPlanItemRs extends IBaseRs {
      */
     @DELETE
     @Path("/{discountPlanItemCode}")
+	@Operation(
+			summary=" remove a discount plan item by code. ",
+			description=" remove a discount plan item by code. ",
+			operationId="    DELETE_DiscountPlanItem_{discountPlanItemCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("discountPlanItemCode") String discountPlanItemCode);
 
     /**
@@ -96,6 +158,19 @@ public interface DiscountPlanItemRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" create/update a discount plan item. ",
+			description=" create/update a discount plan item. ",
+			operationId="    POST_DiscountPlanItem_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(DiscountPlanItemDto postData);
 
     /**
@@ -105,6 +180,19 @@ public interface DiscountPlanItemRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List all discount plan items by current user. ",
+			description=" List all discount plan items by current user. ",
+			operationId="    GET_DiscountPlanItem_list",
+			responses= {
+				@ApiResponse(description=" List of discount plan items ",
+						content=@Content(
+									schema=@Schema(
+											implementation= DiscountPlanItemsResponseDto.class
+											)
+								)
+				)}
+	)
     DiscountPlanItemsResponseDto list();
 
     /**
@@ -115,6 +203,19 @@ public interface DiscountPlanItemRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Discount plan item with a given code  ",
+			description=" Enable a Discount plan item with a given code  ",
+			operationId="    POST_DiscountPlanItem_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -125,5 +226,18 @@ public interface DiscountPlanItemRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Discount plan item with a given code  ",
+			description=" Disable a Discount plan item with a given code  ",
+			operationId="    POST_DiscountPlanItem_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 }

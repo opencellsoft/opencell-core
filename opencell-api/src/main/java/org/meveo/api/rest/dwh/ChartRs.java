@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.dwh;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -38,6 +47,7 @@ import org.meveo.api.dto.response.dwh.GetChartResponse;
 import org.meveo.api.rest.IBaseRs;
 
 @Path("/chart")
+@Tag(name = "Chart", description = "@%Chart")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -51,6 +61,19 @@ public interface ChartRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new chart  ",
+			description=" Create a new chart  ",
+			operationId="    POST_Chart_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(ChartDto postData);
 
     /**
@@ -61,6 +84,19 @@ public interface ChartRs extends IBaseRs {
      */
     @POST
     @Path("/bar")
+	@Operation(
+			summary=" Create a new bar chart  ",
+			description=" Create a new bar chart  ",
+			operationId="    POST_Chart_bar",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createBarChart(BarChartDto postData);
 
     /**
@@ -71,6 +107,19 @@ public interface ChartRs extends IBaseRs {
      */
     @PUT
     @Path("/bar")
+	@Operation(
+			summary=" Update an existing bar chart  ",
+			description=" Update an existing bar chart  ",
+			operationId="    PUT_Chart_bar",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus updateBarChart(BarChartDto postData);
 
     /**
@@ -81,6 +130,19 @@ public interface ChartRs extends IBaseRs {
      */
     @POST
     @Path("/pie")
+	@Operation(
+			summary=" Create a new pie chart  ",
+			description=" Create a new pie chart  ",
+			operationId="    POST_Chart_pie",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createPieChart(PieChartDto postData);
 
     /**
@@ -91,6 +153,19 @@ public interface ChartRs extends IBaseRs {
      */
     @PUT
     @Path("/pie")
+	@Operation(
+			summary=" Update an existing pie chart  ",
+			description=" Update an existing pie chart  ",
+			operationId="    PUT_Chart_pie",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus updatePieChart(PieChartDto postData);
 
     /**
@@ -101,6 +176,19 @@ public interface ChartRs extends IBaseRs {
      */
     @POST
     @Path("/line")
+	@Operation(
+			summary=" Create a new line chart  ",
+			description=" Create a new line chart  ",
+			operationId="    POST_Chart_line",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createLineChart(LineChartDto postData);
 
     /**
@@ -111,6 +199,19 @@ public interface ChartRs extends IBaseRs {
      */
     @PUT
     @Path("/line")
+	@Operation(
+			summary=" Update an existing line chart  ",
+			description=" Update an existing line chart  ",
+			operationId="    PUT_Chart_line",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus updateLineChart(LineChartDto postData);
 
     /**
@@ -121,6 +222,19 @@ public interface ChartRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing chart  ",
+			description=" Update an existing chart  ",
+			operationId="    PUT_Chart_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(ChartDto postData);
 
     /**
@@ -131,6 +245,19 @@ public interface ChartRs extends IBaseRs {
      */
     @DELETE
     @Path("/")
+	@Operation(
+			summary=" Remove an existing chart with a given code  ",
+			description=" Remove an existing chart with a given code  ",
+			operationId="    DELETE_Chart_delete",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@QueryParam("chartCode") String chartCode);
 
     /**
@@ -141,6 +268,19 @@ public interface ChartRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Find a chart with a given code  ",
+			description=" Find a chart with a given code  ",
+			operationId="    GET_Chart_search",
+			responses= {
+				@ApiResponse(description=" Get Chart Response ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetChartResponse.class
+											)
+								)
+				)}
+	)
     GetChartResponse find(@QueryParam("chartCode") String chartCode);
 
     /**
@@ -151,6 +291,19 @@ public interface ChartRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing chart with a given code  ",
+			description=" Create new or update an existing chart with a given code  ",
+			operationId="    POST_Chart_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(ChartDto postData);
 
     /**
@@ -161,6 +314,19 @@ public interface ChartRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Chart with a given code  ",
+			description=" Enable a Chart with a given code  ",
+			operationId="    POST_Chart_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -171,5 +337,18 @@ public interface ChartRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Chart with a given code  ",
+			description=" Disable a Chart with a given code  ",
+			operationId="    POST_Chart_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 }

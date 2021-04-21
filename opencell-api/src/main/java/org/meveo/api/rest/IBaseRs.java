@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
@@ -35,6 +44,19 @@ public interface IBaseRs {
      */
     @GET
     @Path("/version")
+	@Operation(
+			summary=" Get version of application  ",
+			description=" Get version of application  ",
+			operationId="    GET_IBase_version",
+			responses= {
+				@ApiResponse(description=" Action status with version number as a message ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus index();
 
 }

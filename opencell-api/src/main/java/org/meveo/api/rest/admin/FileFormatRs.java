@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.admin;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -45,6 +54,7 @@ import org.meveo.api.rest.IBaseRs;
  * @since 8.0.0
  */
 @Path("/admin/fileFormat")
+@Tag(name = "FileFormat", description = "@%FileFormat")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface FileFormatRs extends IBaseRs {
@@ -57,6 +67,19 @@ public interface FileFormatRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new File format ",
+			description=" Create a new File format ",
+			operationId="    POST_FileFormat_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(FileFormatDto postData);
 
     /**
@@ -67,6 +90,19 @@ public interface FileFormatRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing File format  ",
+			description=" Update an existing File format  ",
+			operationId="    PUT_FileFormat_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(FileFormatDto dto);
 
     /**
@@ -77,6 +113,19 @@ public interface FileFormatRs extends IBaseRs {
      */
     @DELETE
     @Path("/{code}")
+	@Operation(
+			summary=" Remove an existing File format with a given code ",
+			description=" Remove an existing File format with a given code ",
+			operationId="    DELETE_FileFormat_{code}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("code") String code);
 
     /**
@@ -87,6 +136,19 @@ public interface FileFormatRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing File formats  ",
+			description=" Create new or update an existing File formats  ",
+			operationId="    POST_FileFormat_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(FileFormatDto dto);
 
     /**
@@ -97,6 +159,19 @@ public interface FileFormatRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for a File format with a given code  ",
+			description=" Search for a File format with a given code  ",
+			operationId="    GET_FileFormat_search",
+			responses= {
+				@ApiResponse(description=" A File format's data ",
+						content=@Content(
+									schema=@Schema(
+											implementation= FileFormatResponseDto.class
+											)
+								)
+				)}
+	)
     FileFormatResponseDto find(@QueryParam("code") String code);
 
     /**
@@ -112,6 +187,19 @@ public interface FileFormatRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" Search File formats by matching a given criteria  ",
+			description=" Search File formats by matching a given criteria  ",
+			operationId="    GET_FileFormat_list",
+			responses= {
+				@ApiResponse(description=" List of File formats ",
+						content=@Content(
+									schema=@Schema(
+											implementation= FileFormatListResponseDto.class
+											)
+								)
+				)}
+	)
     public FileFormatListResponseDto searchGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -123,6 +211,19 @@ public interface FileFormatRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" Search for File formats by matching a given criteria  ",
+			description=" Search for File formats by matching a given criteria  ",
+			operationId="    POST_FileFormat_list",
+			responses= {
+				@ApiResponse(description=" List of File formats ",
+						content=@Content(
+									schema=@Schema(
+											implementation= FileFormatListResponseDto.class
+											)
+								)
+				)}
+	)
     public FileFormatListResponseDto searchPost(PagingAndFiltering pagingAndFiltering);
 
 }

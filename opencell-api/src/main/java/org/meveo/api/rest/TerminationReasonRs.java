@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -34,6 +43,7 @@ import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.dto.response.GetTerminationReasonResponse;
 
 @Path("/terminationReason")
+@Tag(name = "TerminationReason", description = "@%TerminationReason")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -47,6 +57,19 @@ public interface TerminationReasonRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new termination reason.  ",
+			description=" Create a new termination reason.  ",
+			operationId="    POST_TerminationReason_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(TerminationReasonDto postData);
 
     /**
@@ -57,6 +80,19 @@ public interface TerminationReasonRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing termination reason.  ",
+			description=" Update an existing termination reason.  ",
+			operationId="    PUT_TerminationReason_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(TerminationReasonDto postData);
 
     /**
@@ -67,6 +103,19 @@ public interface TerminationReasonRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing termination reason with a given code.  ",
+			description=" Create new or update an existing termination reason with a given code.  ",
+			operationId="    POST_TerminationReason_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(TerminationReasonDto postData);
 
     /**
@@ -77,6 +126,19 @@ public interface TerminationReasonRs extends IBaseRs {
      */
     @DELETE
     @Path("/{terminationReasonCode}")
+	@Operation(
+			summary=" Remove an existing termination reason with a given code.  ",
+			description=" Remove an existing termination reason with a given code.  ",
+			operationId="    DELETE_TerminationReason_{terminationReasonCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("terminationReasonCode") String terminationReasonCode);
 
     /**
@@ -87,6 +149,19 @@ public interface TerminationReasonRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Find a termination reason with a given code.  ",
+			description=" Find a termination reason with a given code.  ",
+			operationId="    GET_TerminationReason_search",
+			responses= {
+				@ApiResponse(description=" found termination reason ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetTerminationReasonResponse.class
+											)
+								)
+				)}
+	)
     GetTerminationReasonResponse find(@QueryParam("terminationReasonCode") String code);
 
     /**
@@ -96,6 +171,19 @@ public interface TerminationReasonRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List of termination reasons.  ",
+			description=" List of termination reasons.  ",
+			operationId="    GET_TerminationReason_list",
+			responses= {
+				@ApiResponse(description=" A list of termination reasons ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetTerminationReasonResponse.class
+											)
+								)
+				)}
+	)
     GetTerminationReasonResponse list();
 
 }
