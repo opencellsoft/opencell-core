@@ -1701,10 +1701,10 @@ public class AccountHierarchyApi extends BaseApi {
                 accountEntity.getAddress().setAddress3(accountDto.getAddress().getAddress3());
             }
             if (!StringUtils.isBlank(accountDto.getAddress().getAddress4())) {
-                accountEntity.getAddress().setAddress3(accountDto.getAddress().getAddress4());
+                accountEntity.getAddress().setAddress4(accountDto.getAddress().getAddress4());
             }
             if (!StringUtils.isBlank(accountDto.getAddress().getAddress5())) {
-                accountEntity.getAddress().setAddress3(accountDto.getAddress().getAddress5());
+                accountEntity.getAddress().setAddress5(accountDto.getAddress().getAddress5());
             }
             if (!StringUtils.isBlank(accountDto.getAddress().getZipCode())) {
                 accountEntity.getAddress().setZipCode(accountDto.getAddress().getZipCode());
