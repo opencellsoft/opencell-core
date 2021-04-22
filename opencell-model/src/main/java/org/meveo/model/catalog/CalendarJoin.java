@@ -19,14 +19,26 @@ package org.meveo.model.catalog;
 
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+import javax.validation.ValidationException;
 
 /**
- * Represents a calendar that operates on two calendars joining them by union or intersection. Union will return the greatest matched period while intersect will return the
- * smallest matched period.
+ * Represents a calendar that operates on two calendars joining them by union, intersection or apending one after another one. Union will return the greatest matched period while intersect will return the smallest
+ * matched period. Append join calendar will first use calendar 1 then calendar 2. The calendar 2 initial date will be the calendar 1 end date. Interesting use of this type of join is on period calendars.
  * 
- * Example: given one calendar as a weekday calendar with interval monday - friday and another calendar of as hour calendar with interval 8 - 15. A union calendar will return
- * monday and friday as previous and next calendar days and intersection calendar will return 8 and 15 as previous and next calendar days
+ * Example: given one calendar as a weekday calendar with interval monday - friday and another calendar of as hour calendar with interval 8 - 15. A union calendar will return monday and friday as previous and next
+ * calendar days and intersection calendar will return 8 and 15 as previous and next calendar days.
+ * 
+ * An example of Append calendar: if we want to append a period calendar with 3 periods of 1 month, and another with 2 periods of 1 month, even if the initial date is the same, the second one will start on the end of the
+ * first one if the initial date is 1/1/2021, this calendar must be used 5 periods, until 1/5/2021
  * 
  * @author Andrius Karpavicius
  * 
@@ -34,7 +46,6 @@ import javax.persistence.*;
 @Entity
 @DiscriminatorValue("JOIN")
 public class CalendarJoin extends Calendar {
-
 
     public enum CalendarJoinTypeEnum {
         UNION, INTERSECT, APPEND;
@@ -88,27 +99,25 @@ public class CalendarJoin extends Calendar {
     /**
      * Determines a next calendar date joining next calendar date result from two calendars. Result depends on a join type:
      * 
-     * given one calendar as a weekday calendar with interval monday - friday and another calendar of as hour calendar with interval 8 - 15. A union calendar will return friday as
-     * next calendar days and intersection calendar will return 15 as next calendar days
+     * given one calendar as a weekday calendar with interval monday - friday and another calendar of as hour calendar with interval 8 - 15. A union calendar will return friday as next calendar days and intersection
+     * calendar will return 15 as next calendar days
      * 
      * @param date Date to check
      * @return Next calendar date.
      */
     public Date nextCalendarDate(Date date) {
-        initChildCalendarsDate();
 
-        if(joinType.equals(CalendarJoinTypeEnum.APPEND)){
+        if (joinType.equals(CalendarJoinTypeEnum.APPEND)) {
             Date firstCalendarDate = joinCalendar1.nextCalendarDate(date, getInitDate());
 
-            if(firstCalendarDate != null){
+            if (firstCalendarDate != null) {
                 lastCalendar1date = firstCalendarDate;
                 return firstCalendarDate;
-            }else {
+            } else {
                 Date secondDate = joinCalendar2.nextCalendarDate(date, lastCalendar1date);
                 return secondDate;
             }
         }
-    	
 
         Date date1 = joinCalendar1.nextCalendarDate(date);
         Date date2 = joinCalendar2.nextCalendarDate(date);
@@ -144,26 +153,28 @@ public class CalendarJoin extends Calendar {
     /**
      * Determines a previous calendar date joining previous calendar date result from two calendars. Result depends on a join type:
      * 
-     * given one calendar as a weekday calendar with interval monday - friday and another calendar of as hour calendar with interval 8 - 15. A union calendar will return monday as
-     * previous calendar days and intersection calendar will return 8 as previous calendar days
+     * given one calendar as a weekday calendar with interval monday - friday and another calendar of as hour calendar with interval 8 - 15. A union calendar will return monday as previous calendar days and intersection
+     * calendar will return 8 as previous calendar days
      * 
      * @param date Date to check
      * @return Previous calendar date.
      */
     public Date previousCalendarDate(Date date) {
-    	
-    	initChildCalendarsDate();
-    	
+
         Date date1 = joinCalendar1.previousCalendarDate(date);
         Date date2 = joinCalendar2.previousCalendarDate(date);
-        
-        if(joinType == CalendarJoinTypeEnum.APPEND &&joinCalendar1 instanceof CalendarPeriod && joinCalendar2 instanceof CalendarPeriod) {
-    		Date endOfPreviousDate = ((CalendarPeriod)joinCalendar1).getLimitOfNextDate();
-    		if(endOfPreviousDate!=null) {
-				joinCalendar2.setInitDate(endOfPreviousDate);
-        		date2 = joinCalendar2.previousCalendarDate(date);
-    		}
-    	}
+
+        if (joinType == CalendarJoinTypeEnum.APPEND && joinCalendar1 instanceof CalendarPeriod && joinCalendar2 instanceof CalendarPeriod) {
+            Date endOfPreviousDate = ((CalendarPeriod) joinCalendar1).getLimitOfNextDate();
+            if (endOfPreviousDate != null) {
+                joinCalendar2.setInitDate(endOfPreviousDate);
+                try {
+                    date2 = joinCalendar2.previousCalendarDate(date);
+                } catch (ValidationException e) {
+                    date2 = null;
+                }
+            }
+        }
 
         if (date1 == null && date2 == null) {
             return null;
@@ -190,29 +201,20 @@ public class CalendarJoin extends Calendar {
                 return date2;
             }
         } else if (joinType == CalendarJoinTypeEnum.APPEND) {
-        	if (date1 != null) {
-        		return date1;
-        	} else {
-        		return date2;
-        	}
+            if (date1 != null) {
+                return date1;
+            } else {
+                return date2;
+            }
         }
         return null;
     }
 
-	private void initChildCalendarsDate() {
-		if(joinCalendar1.getInitDate()==null) {
-    		joinCalendar1.setInitDate(getInitDate());
-    	}
-    	if(joinCalendar2.getInitDate()==null) {
-    		joinCalendar2.setInitDate(getInitDate());
-    	}
-	}
-
     /**
      * Determines a previous period end date by joining previousPeriodEndDate result from two calendars. Result depends on a join type:
      * 
-     * given one calendar as a weekday calendar with interval monday - friday and another calendar of as hour calendar with interval 8 - 15. A union calendar will return friday as
-     * previous period end date and intersection calendar will return 15 as period end date
+     * given one calendar as a weekday calendar with interval monday - friday and another calendar of as hour calendar with interval 8 - 15. A union calendar will return friday as previous period end date and
+     * intersection calendar will return 15 as period end date
      * 
      * @param date Date to check
      * @return Previous period end date calendar date.
@@ -220,7 +222,6 @@ public class CalendarJoin extends Calendar {
     @Override
     public Date previousPeriodEndDate(Date date) {
 
-    	initChildCalendarsDate();
         Date date1 = joinCalendar1.previousPeriodEndDate(date);
         Date date2 = joinCalendar2.previousPeriodEndDate(date);
 
@@ -249,11 +250,11 @@ public class CalendarJoin extends Calendar {
                 return date2;
             }
         } else if (joinType == CalendarJoinTypeEnum.APPEND) {
-        	if (date1 != null) {
-        		return date1;
-        	} else {
-        		return date2;
-        	}
+            if (date1 != null) {
+                return date1;
+            } else {
+                return date2;
+            }
         }
 
         return null;
@@ -262,8 +263,8 @@ public class CalendarJoin extends Calendar {
     /**
      * Determines a next period start date joining nextPeriodStartDate result from two calendars. Result depends on a join type:
      * 
-     * given one calendar as a weekday calendar with interval monday - friday and another calendar of as hour calendar with interval 8 - 15. A union calendar will return monday as
-     * next period start date and intersection calendar will return 8 as next period start date
+     * given one calendar as a weekday calendar with interval monday - friday and another calendar of as hour calendar with interval 8 - 15. A union calendar will return monday as next period start date and intersection
+     * calendar will return 8 as next period start date
      * 
      * @param date Date to check
      * @return Next period start date.
@@ -271,7 +272,6 @@ public class CalendarJoin extends Calendar {
     @Override
     public Date nextPeriodStartDate(Date date) {
 
-    	initChildCalendarsDate();
         Date date1 = joinCalendar1.nextPeriodStartDate(date);
         Date date2 = joinCalendar2.nextPeriodStartDate(date);
 
@@ -300,11 +300,11 @@ public class CalendarJoin extends Calendar {
                 return date2;
             }
         } else if (joinType == CalendarJoinTypeEnum.APPEND) {
-        	if (date1 != null) {
-        		return date1;
-        	} else {
-        		return date2;
-        	}
+            if (date1 != null) {
+                return date1;
+            } else {
+                return date2;
+            }
         }
         return null;
     }
@@ -333,5 +333,12 @@ public class CalendarJoin extends Calendar {
     @Override
     public boolean isInitializationRequired() {
         return joinCalendar1.isInitializationRequired() || joinCalendar2.isInitializationRequired();
+    }
+
+    @Override
+    public void setInitDate(Date initDate) {
+        super.setInitDate(initDate);
+        joinCalendar1.setInitDate(initDate);
+        joinCalendar2.setInitDate(initDate);
     }
 }
