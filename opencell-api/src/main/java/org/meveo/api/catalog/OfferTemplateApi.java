@@ -180,7 +180,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     public OfferTemplate create(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getName())) {
-            addGenericCodeIfAssociated(OfferTemplate.class.getName(), postData);
+            postData.setName(postData.getCode());
         }
         if (postData.getLifeCycleStatus() == null) {
             postData.setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
