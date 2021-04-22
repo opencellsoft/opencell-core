@@ -23,6 +23,7 @@ import static java.util.stream.Collectors.toList;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -387,7 +388,7 @@ public class UsageRatingService implements Serializable {
             usageRatingServiceNewTX.rejectEDR(edrId, e);
             throw e;
 
-        } catch (BusinessException e) {
+        } catch (Exception e) {
             log.error("Failed to rate EDR {}: {}", edrId, e.getMessage(), e);
             usageRatingServiceNewTX.rejectEDR(edrId, e);
             throw e;
@@ -421,7 +422,8 @@ public class UsageRatingService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<WalletOperation> rateUsageInNewTransaction(Long edrId, boolean rateTriggeredEdr, int maxDeep, int currentRatingDepth) throws BusinessException, RatingException {
 
-        EDR edr = getEntityManager().find(EDR.class, edrId);
+        EDR edr =edrService.findById(edrId, Arrays.asList("subscription"));
+
         return rateUsageWithinTransaction(edr, false, rateTriggeredEdr, maxDeep, currentRatingDepth);
     }
 
@@ -665,8 +667,8 @@ public class UsageRatingService implements Serializable {
 
         UsageChargeTemplate chargeTemplate = null;
         for (UsageChargeInstance usageChargeInstance : charges) {
-        	chargeTemplate=usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
-            log.trace("Try  templateCache {}", chargeTemplate.getCode());
+            chargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
+  
             try {
                 if (isChargeMatch(usageChargeInstance, edr, true)) {
 
