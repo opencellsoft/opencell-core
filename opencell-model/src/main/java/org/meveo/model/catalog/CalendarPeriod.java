@@ -17,16 +17,16 @@
  */
 package org.meveo.model.catalog;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 import javax.validation.ValidationException;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 
 /**
  * The CalendarPeriod class.
@@ -97,15 +97,17 @@ public class CalendarPeriod extends Calendar {
      * Checks for next calendar date by adding number of days in a period to a starting date. Date being checked must fall within a period timeframe or null is returned
      *
      * @param date Date being checked
-     * @return Next calendar date.
+     * @return Next calendar date or NULL if it can not be resolved
+     * @throws ValidationException Invalid date or invalid calendar configuration
      */
     @Override
-    public Date nextCalendarDate(Date date) {
+    public Date nextCalendarDate(Date date) throws ValidationException {
         return nextCalendarDate(date, getInitDate());
     }
 
     @Override
-    protected Date nextCalendarDate(Date date, Date initDate) {
+    protected Date nextCalendarDate(Date date, Date initDate) throws ValidationException {
+
         if (periodLength == null || periodUnit == null) {
             throw new ValidationException("Period length or unit not defined for calendar " + code);
 
@@ -173,10 +175,11 @@ public class CalendarPeriod extends Calendar {
      * Checks for previous calendar date by adding number of days in a period to a starting date. Date being checked must fall within a period timeframe or null is returned
      *
      * @param date Current date.
-     * @return Previous calendar date.
+     * @return Previous calendar date or NULL if it can not be resolved
+     * @throws ValidationException Invalid date or invalid calendar configuration
      */
     @Override
-    public Date previousCalendarDate(Date date) {
+    public Date previousCalendarDate(Date date) throws ValidationException {
 
         Date initDate = getInitDate();
 
