@@ -35,15 +35,7 @@ public class Apiv1GetService {
     private static final String QUERY_PARAM_VALUE_SEPARATOR = "=";
     private static final String PAIR_QUERY_PARAM_SEPARATOR = "&";
 
-    private static final Set<String> SET_GET_ALL = new HashSet<>(Arrays.asList(Apiv1ConstantDictionary.WALLET_OPERATION, Apiv1ConstantDictionary.PRICE_PLAN, Apiv1ConstantDictionary.COUNTRY_ISO,
-            Apiv1ConstantDictionary.CURRENCY_ISO, Apiv1ConstantDictionary.LANGUAGE_ISO, Apiv1ConstantDictionary.CUSTOMER, Apiv1ConstantDictionary.USER, Apiv1ConstantDictionary.INVOICE, Apiv1ConstantDictionary.ACCOUNTING_CODE,
-            Apiv1ConstantDictionary.CONTACT, Apiv1ConstantDictionary.TAX_CATEGORY, Apiv1ConstantDictionary.TAX_CLASS, Apiv1ConstantDictionary.TAX_MAPPING, Apiv1ConstantDictionary.PAYMENT_METHOD, Apiv1ConstantDictionary.FILE_FORMAT,
-            Apiv1ConstantDictionary.OSC_TEMPLATE, Apiv1ConstantDictionary.RC_TEMPLATE, Apiv1ConstantDictionary.UC_TEMPLATE, Apiv1ConstantDictionary.SUBSCRIPTION, Apiv1ConstantDictionary.RATED_TRANSACTION,
-            Apiv1ConstantDictionary.WALLET, Apiv1ConstantDictionary.OFFER_TEMPLATE, Apiv1ConstantDictionary.CALENDAR, Apiv1ConstantDictionary.UNIT_MEASURE, Apiv1ConstantDictionary.TAX, Apiv1ConstantDictionary.CREDIT_CATEGORY,
-            Apiv1ConstantDictionary.CUSTOMER_ACCOUNT, Apiv1ConstantDictionary.TITLE, Apiv1ConstantDictionary.BILLING_ACCOUNT, Apiv1ConstantDictionary.USER_ACCOUNT, Apiv1ConstantDictionary.SERVICE_TEMPLATE,
-            Apiv1ConstantDictionary.BUSINESS_ACCOUNT_MODEL, Apiv1ConstantDictionary.BUSINESS_PRODUCT_MODEL, Apiv1ConstantDictionary.BUSINESS_SERVICE_MODEL,
-            Apiv1ConstantDictionary.COUNTER_TEMPLATE, Apiv1ConstantDictionary.DISCOUNT_PLAN, Apiv1ConstantDictionary.DISCOUNT_PLAN_ITEM, Apiv1ConstantDictionary.OFFER_TEMPLATE_CATEGORY,
-            Apiv1ConstantDictionary.TRIGGERED_EDR, Apiv1ConstantDictionary.PRODUCT_CHARGE_TEMPLATE, Apiv1ConstantDictionary.PRODUCT_TEMPLATE, Apiv1ConstantDictionary.CHART));
+    public static final Set<String> SET_GET_ALL = new HashSet<>();
 
     private static final String API_REST = "api/rest";
 

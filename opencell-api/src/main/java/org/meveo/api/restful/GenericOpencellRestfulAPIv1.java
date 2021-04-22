@@ -10,6 +10,9 @@ import org.meveo.api.dto.invoice.CancelInvoiceRequestDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.invoice.ValidateInvoiceRequestDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.api.restful.annotation.GetAllEntities;
+import org.meveo.api.restful.services.Apiv1ConstantDictionary;
+import org.meveo.api.restful.services.Apiv1GetService;
 import org.meveo.apiv2.GenericJacksonProvider;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
@@ -33,6 +36,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -89,6 +93,20 @@ public class GenericOpencellRestfulAPIv1 extends Application {
         GENERIC_API_REQUEST_LOGGING_CONFIG = paramBeanFactory.getInstance().getProperty(GENERIC_API_REQUEST_LOGGING_CONFIG_KEY, "false");
         loadVersionInformation();
         loadMapPathAndInterfaceIBaseRs();
+        loadSetGetAll();
+    }
+
+    private void loadSetGetAll() {
+        for ( Field field : Apiv1ConstantDictionary.class.getDeclaredFields() ) {
+            if ( field.isAnnotationPresent(GetAllEntities.class) ) {
+                try {
+                    Apiv1GetService.SET_GET_ALL.add((String) field.get( null ));
+                }
+                catch ( IllegalAccessException exception ) {
+
+                }
+            }
+        }
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
