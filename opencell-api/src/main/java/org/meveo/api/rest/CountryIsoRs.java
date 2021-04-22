@@ -56,7 +56,7 @@ public interface CountryIsoRs extends IBaseRs {
     @POST
     @Path("/")
 	@Operation(
-			summary=" Creates a tradingCountry base from the supplied country code",
+			summary=" Creates a tradingCountry base from the supplied country code. If the country code does not exists, a country and tradingCountry records are created  ",
 			description=" Creates a tradingCountry base from the supplied country code. If the country code does not exists, a country and tradingCountry records are created  ",
 			operationId="    POST_CountryIso_create",
 			responses= {
@@ -81,7 +81,7 @@ public interface CountryIsoRs extends IBaseRs {
 	@Operation(
 			summary=" Search country with a given country code.  ",
 			description=" Search country with a given country code.  ",
-			operationId="    GET_CountryIso_ ",
+			operationId="    GET_CountryIso_search",
 			responses= {
 				@ApiResponse(description="link org.meveo.api.dto.response.GetCountryIsoResponse}. ",
 						content=@Content(

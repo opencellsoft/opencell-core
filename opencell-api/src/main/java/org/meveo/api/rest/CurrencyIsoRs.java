@@ -58,7 +58,7 @@ public interface CurrencyIsoRs extends IBaseRs {
 	@Operation(
 			summary=" Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created  ",
 			description=" Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created  ",
-			operationId="    POST_CurrencyIso_ ",
+			operationId="    POST_CurrencyIso_create",
 			responses= {
 				@ApiResponse(description=" action status. ",
 						content=@Content(
@@ -81,7 +81,7 @@ public interface CurrencyIsoRs extends IBaseRs {
 	@Operation(
 			summary=" Search currency with a given currency code.  ",
 			description=" Search currency with a given currency code.  ",
-			operationId="    GET_CurrencyIso_ ",
+			operationId="    GET_CurrencyIso_search",
 			responses= {
 				@ApiResponse(description=" currency iso if found. ",
 						content=@Content(
@@ -104,7 +104,7 @@ public interface CurrencyIsoRs extends IBaseRs {
 	@Operation(
 			summary=" Remove currency with a given currency code.  ",
 			description=" Remove currency with a given currency code.  ",
-			operationId="    DELETE_CurrencyIso_{currencyCode} ",
+			operationId="    DELETE_CurrencyIso_{currencyCode}",
 			responses= {
 				@ApiResponse(description=" action status. ",
 						content=@Content(
@@ -150,7 +150,7 @@ public interface CurrencyIsoRs extends IBaseRs {
 	@Operation(
 			summary=" Creates or modify a tradingCurrency base on currency code.  ",
 			description=" Creates or modify a tradingCurrency base on currency code.  ",
-			operationId="    POST_CurrencyIso_createOrUpdate ",
+			operationId="    POST_CurrencyIso_createOrUpdate",
 			responses= {
 				@ApiResponse(description=" action status. ",
 						content=@Content(

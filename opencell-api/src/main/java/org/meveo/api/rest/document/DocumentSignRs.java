@@ -63,7 +63,7 @@ public interface DocumentSignRs extends IBaseRs {
 	@Operation(
 			summary=" Creates the procedure. ",
 			description=" Creates the procedure. ",
-			operationId="    POST _DocumentSign_procedures ",
+			operationId="    POST _DocumentSign_procedures",
 			responses= {
 				@ApiResponse(description=" the sign procedure response dto ",
 						content=@Content(
@@ -86,7 +86,7 @@ public interface DocumentSignRs extends IBaseRs {
 	@Operation(
 			summary=" Gets the procedure by id. ",
 			description=" Gets the procedure by id. ",
-			operationId="    GET _DocumentSign_procedures_{id} ",
+			operationId="    GET _DocumentSign_procedures_{id}",
 			responses= {
 				@ApiResponse(description=" the procedure by id ",
 						content=@Content(
@@ -109,7 +109,7 @@ public interface DocumentSignRs extends IBaseRs {
 	@Operation(
 			summary=" Gets the procedure status by id. ",
 			description=" Gets the procedure status by id. ",
-			operationId="    GET _DocumentSign_procedures_{id}_status ",
+			operationId="    GET _DocumentSign_procedures_{id}_status",
 			responses= {
 				@ApiResponse(description=" the procedure status by id ",
 						content=@Content(
@@ -132,7 +132,7 @@ public interface DocumentSignRs extends IBaseRs {
 	@Operation(
 			summary=" Download the files with the given id ",
 			description=" Download the files with the given id ",
-			operationId="    GET _DocumentSign_files_{id}_download ",
+			operationId="    GET _DocumentSign_files_{id}_download",
 			responses= {
 				@ApiResponse(description=" the file by id ",
 						content=@Content(

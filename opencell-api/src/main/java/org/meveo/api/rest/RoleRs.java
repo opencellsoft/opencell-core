@@ -68,7 +68,7 @@ public interface RoleRs extends IBaseRs {
 	@Operation(
 			summary=" Create role.  ",
 			description=" Create role.  ",
-			operationId="    POST_Role_ ",
+			operationId="    POST_Role_create",
 			responses= {
 				@ApiResponse(description=" action status ",
 						content=@Content(
@@ -91,7 +91,7 @@ public interface RoleRs extends IBaseRs {
 	@Operation(
 			summary=" Update role.  ",
 			description=" Update role.  ",
-			operationId="    PUT_Role_ ",
+			operationId="    PUT_Role_update",
 			responses= {
 				@ApiResponse(description=" action status. ",
 						content=@Content(
@@ -138,7 +138,7 @@ public interface RoleRs extends IBaseRs {
 	@Operation(
 			summary=" Search role.  ",
 			description=" Search role.  ",
-			operationId="    GET_Role_ ",
+			operationId="    GET_Role_search",
 			responses= {
 				@ApiResponse(description=" found role ",
 						content=@Content(
@@ -161,7 +161,7 @@ public interface RoleRs extends IBaseRs {
 	@Operation(
 			summary=" Create or update role.  ",
 			description=" Create or update role.  ",
-			operationId="    POST_Role_createOrUpdate ",
+			operationId="    POST_Role_createOrUpdate",
 			responses= {
 				@ApiResponse(description=" action status ",
 						content=@Content(
@@ -213,7 +213,7 @@ public interface RoleRs extends IBaseRs {
 	@Operation(
 			summary=" List roles matching a given criteria.  ",
 			description=" List roles matching a given criteria.  ",
-			operationId="    POST_Role_list ",
+			operationId="    POST_Role_list",
 			responses= {
 				@ApiResponse(description=" A list of roles ",
 						content=@Content(
@@ -234,7 +234,7 @@ public interface RoleRs extends IBaseRs {
 	@Operation(
 			summary=" List external roles. ",
 			description=" List external roles. ",
-			operationId="    GET_Role_external ",
+			operationId="    GET_Role_external",
 			responses= {
 				@ApiResponse(description=" list of external roles ",
 						content=@Content(

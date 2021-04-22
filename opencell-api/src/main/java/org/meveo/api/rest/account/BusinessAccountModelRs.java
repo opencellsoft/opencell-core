@@ -66,7 +66,7 @@ public interface BusinessAccountModelRs extends IBaseRs {
 	@Operation(
 			summary=" Create a new business account model.  ",
 			description=" Create a new business account model.  ",
-			operationId="    POST_BusinessAccountModel_ ",
+			operationId="    POST_BusinessAccountModel_create",
 			responses= {
 				@ApiResponse(description=" Request processing status ",
 						content=@Content(
@@ -89,7 +89,7 @@ public interface BusinessAccountModelRs extends IBaseRs {
 	@Operation(
 			summary=" Update an existing business account model.  ",
 			description=" Update an existing business account model.  ",
-			operationId="    PUT_BusinessAccountModel_ ",
+			operationId="    PUT_BusinessAccountModel_update",
 			responses= {
 				@ApiResponse(description=" Request processing status ",
 						content=@Content(
@@ -112,7 +112,7 @@ public interface BusinessAccountModelRs extends IBaseRs {
 	@Operation(
 			summary=" Search for a business account model.  ",
 			description=" Search for a business account model.  ",
-			operationId="    GET_BusinessAccountModel_ ",
+			operationId="    GET_BusinessAccountModel_search",
 			responses= {
 				@ApiResponse(description=" business account model response. ",
 						content=@Content(
@@ -135,7 +135,7 @@ public interface BusinessAccountModelRs extends IBaseRs {
 	@Operation(
 			summary=" Remove business account model with a given business account model code.  ",
 			description=" Remove business account model with a given business account model code.  ",
-			operationId="    DELETE_BusinessAccountModel_{businessAccountModelCode} ",
+			operationId="    DELETE_BusinessAccountModel_{businessAccountModelCode}",
 			responses= {
 				@ApiResponse(description=" Request processing status ",
 						content=@Content(
@@ -181,7 +181,7 @@ public interface BusinessAccountModelRs extends IBaseRs {
 	@Operation(
 			summary=" Install business account module.  ",
 			description=" Install business account module.  ",
-			operationId="    PUT_BusinessAccountModel_install ",
+			operationId="    PUT_BusinessAccountModel_install",
 			responses= {
 				@ApiResponse(description=" Request processing status ",
 						content=@Content(
