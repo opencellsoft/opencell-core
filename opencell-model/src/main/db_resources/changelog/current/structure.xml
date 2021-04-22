@@ -14,6 +14,17 @@
         <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = 'reports' where category is null or category = ''
         </sql>
 	</changeSet>
+	
+	<changeSet id="#4127_10042019" author="AbdelmounaimAkadid">
+	    <validCheckSum>any</validCheckSum>
+		<addColumn tableName="dwh_report_extract">
+            <column name="output_dir" type="varchar(255)" />
+        </addColumn>
+        <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = concat('reports/', category) where category is not null or category != ''
+        </sql>
+        <sql>update ${db.schema.adapted}dwh_report_extract set output_dir = 'reports' where category is null or category = ''
+        </sql>
+	</changeSet>
 
     <changeSet id="#4089_20190404" author="AbdellatifBARI">
         <sql>update ${db.schema.adapted}crm_custom_field_tmpl set applies_to = case
@@ -4241,5 +4252,29 @@ END $$;]]>
         
     	<dropColumn columnName="action_script_id" tableName="wf_generic_transition" />
     </changeSet>    
+    
+    <changeSet id="#4742_20191030" author="MohamedSTITANE">
+        <createSequence sequenceName="meveo_metrics_config_seq" />
+        <createTable tableName="meveo_metrics_config">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_metrics_config_id_pk" />
+            </column>
+            <column name="code" type="varchar(100)">
+                <constraints unique="true" uniqueConstraintName="meveo_metrics_config_code_unique" nullable="false"/>
+            </column>
+            <column name="description" type="text"/>
+            <column name="full_path" type="text"/>
+            <column name="method" type="text"/>
+            <column name="metrics_type" type="text"/>
+            <column name="metrics_unit" type="text"/>
+            <column name="version" type="int4"/>
+            <column name="updated" type="datetime"/>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </createTable>
+    </changeSet>
     
 </databaseChangeLog>

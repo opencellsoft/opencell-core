@@ -11369,4 +11369,617 @@ $$ LANGUAGE plpgsql;
     <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
         <delete tableName="DATABASECHANGELOG" />
     </changeSet>
+    
+    <changeSet id="#4140_08042019" author="hznibar">
+	</changeSet>
+	
+	<changeSet id="#4127_10042019" author="AbdelmounaimAkadid">
+	</changeSet>
+
+    <changeSet id="#4089_20190404" author="AbdellatifBARI">
+    </changeSet>
+
+	<changeSet id="#4107_20190515" author="EdwardPLegaspi">
+	</changeSet>
+    
+    <changeSet id="#4117_20190405" author="AmineBENAICHA">
+    </changeSet>
+
+    <changeSet id="#4179_20190417" author="AndriusKarpavicius">
+    </changeSet>
+    
+    <changeSet id="#4148_20190418 - Add runAsync on notification" author="EdwardPLegaspi">
+    </changeSet>
+    
+    <changeSet id="#3683_20190415" author="YoussefIZEM">
+    </changeSet>
+     
+    <changeSet id="#4208_2019042601" author="MohamedElYoussoufi" dbms="postgresql" >
+    </changeSet>
+     
+    <changeSet id="#4208_2019042602" author="MohamedElYoussoufi" dbms="mysql">
+    </changeSet>
+     
+    <changeSet id="#3692_20190426" author="AndriusKarpavicius">
+    </changeSet>
+    
+    <changeSet id="#4207_2019042901" author="MohamedElYoussoufi">
+    </changeSet>
+      
+    <changeSet id="#4207_2019042902" author="MohamedElYoussoufi" dbms="postgresql">
+    </changeSet>
+      
+    <changeSet id="#4207_2019042903" author="MohamedElYoussoufi" dbms="mysql">
+    </changeSet>
+      
+    <changeSet id="#4207_2019042904" author="MohamedElYoussoufi">
+	</changeSet>
+
+	<changeSet id="#4156_20190423" author="EdwardPLegaspi">
+	</changeSet>
+    
+    <changeSet id="#4198_03052019" author="SaidRamli">
+    </changeSet>
+
+    <changeSet id="#4156_08052019" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#4282_20190520" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#39262_20190604" author="TonyAlejandro">
+    </changeSet>
+
+    <changeSet id="#4282_20190524" author="AndriusKarpavicius" dbms="postgres">
+    </changeSet>
+
+    <!-- MySQL currently doesn't support conditional indexes -->
+    <changeSet id="#4282_20190524-MS" author="MohamedSTITANE" dbms="mysql">
+    </changeSet>
+
+    <changeSet id="#4290_20190520-P" author="AndriusKarpavicius" dbms="postgresql">
+    </changeSet>
+
+    <changeSet id="#4290_20190520-M" author="AndriusKarpavicius" dbms="mysql">
+    </changeSet>
+    
+    <changeSet id="#4326_20190530-P" author="AndriusKarpavicius" dbms="postgresql">
+    </changeSet>
+    
+    <changeSet id="#4326_20190530-M" author="AndriusKarpavicius" dbms="mysql">
+    </changeSet>
+    
+    <changeSet id="#4326_20190530" author="AndriusKarpavicius">
+    </changeSet>
+    
+    <changeSet id="#4278_20190520_partitions" author="mohamed.el.youssoufi" dbms="postgresql">
+    </changeSet>
+
+    <changeSet author="mohamed.el.youssoufi" id="#4301_23052019 - empty tax amount">
+    </changeSet>
+
+    <changeSet author="abdelkader.bouazza" id="#4026-Order-validation-enhancement">
+    </changeSet>
+
+    <changeSet id="#4192_20190506 - add counter for subscription and service" author="KhalidHorri">
+    </changeSet>
+    
+    <changeSet id="#4303_300520191" author="mohamed.el.youssoufi" dbms="postgresql">
+    </changeSet>
+    
+    <changeSet id="#4303_300520192" author="mohamed.el.youssoufi" dbms="mysql">
+	</changeSet>
+
+    <changeSet id="#4322_20190612 - Add a filter to GenericWorkflow" author="MounirBahije">
+    </changeSet>
+    
+    <changeSet id="#4054_201917061 - Encryption" author="MohamedElYoussoufi" dbms="postgresql">
+    </changeSet>
+    
+    <changeSet id="#4054_201917062 - Encryption" author="mohamed.el.youssoufi" dbms="mysql">
+    </changeSet>
+
+    <changeSet id="#4371_20190620_1" author="AbdellatifBARI" dbms="mysql">
+    </changeSet>
+
+    <changeSet id="#4371_20190620_2" author="AbdellatifBARI">
+    </changeSet>
+
+    <changeSet id="#4371_20190620_3" author="AbdellatifBARI" dbms="mysql">
+    </changeSet>
+
+	<changeSet id="#4371_20190620_4" author="AbdellatifBARI">
+    </changeSet>
+
+    <changeSet id="#4371_20190620_5" author="AbdellatifBARI" dbms="postgresql">
+    </changeSet>
+
+    <changeSet id="#4160_20190105 - Accounting Writing" author="MounirBOUKAYOUA">
+    </changeSet>
+
+    <changeSet id="##4160_20190105 - Accounting Writing - MYSQL sequence" author="MounirBOUKAYOUA" dbms="mysql">
+    </changeSet>
+
+    <changeSet id="#4337_20190710" author="MohammedELAZZOUZI">
+    </changeSet>
+
+    <changeSet id="#4372_20190715" author="RedaDebbache">
+    </changeSet>
+
+    <changeSet id="#4372_20190723" author="RedaDebbache">
+    </changeSet>
+
+    <changeSet id="#4458_20190626_1" author="AbdellatifBARI">
+    </changeSet>
+
+    <changeSet id="#4458_20190626_2" author="AbdellatifBARI">
+    </changeSet>
+
+    <changeSet id="#4458_20190626_3" author="AbdellatifBARI" dbms="mysql">
+    </changeSet>
+
+    <changeSet id="#4458_20190626_4" author="AbdellatifBARI">
+    </changeSet>
+
+    <changeSet id="#4468_20190631_1" author="AbdellatifBARI">
+    </changeSet>
+    
+    <changeSet id="#4326_20190709" author="AndriusKarpavicius" failOnError="false"> 
+    </changeSet>
+
+    <changeSet id="#4457_20190728" author="AndriusKarpavicius">
+    </changeSet> 
+
+	<changeSet id="#4472_20190807" author="AndriusKarpavicius">
+    </changeSet> 
+
+    <changeSet id="#4392_20190625" author="AndriusKarpavicius" dbms="postgres">
+    </changeSet>
+
+    <!-- addNotNullConstraint generates SQL with the default numeric value missing, which blocks the insertions-->
+    <changeSet id="#4392_20190625-UPDATED-20190827" author="MohamedSTITANE" dbms="mysql">
+    </changeSet>
+
+    <changeSet id="#4326_20190811" author="AndriusKarpavicius"> 
+    </changeSet>
+
+    <changeSet id="#4512_20190819" author="AbdellatifBARI">
+    </changeSet>
+    
+ 	<changeSet id="#4480_250919" author="MohammedElAzzouzi">
+    </changeSet>
+
+    <changeSet id="#4480_210819" author="SaidRamli">
+    </changeSet>                          
+
+    <changeSet id="#4538_20190829" author="AbdellatifBARI">
+    </changeSet>
+
+    <changeSet id="#4550_20190904" author="AbdellatifBARI">
+    </changeSet>
+    
+    <changeSet id="#4313_17062019" author="mohamed.el.youssoufi">
+	</changeSet>
+
+	<changeSet id="#3774_07102019" author="FranckValot">
+	</changeSet>
+
+	<changeSet id="#4064_11092019" author="AbdelmounaimAkadid">
+	</changeSet>
+
+   	<changeSet id="#4606_260919" author="AbdelmounaimAkadid"> 	
+    </changeSet>
+    
+    <changeSet id="#4555_20190903" author="AndriusKarpavicius">
+    </changeSet>         
+        
+    <changeSet id="#4555_20190903-M" author="AndriusKarpavicius" dbms="mysql">
+    </changeSet>
+    
+    <changeSet id="#4555_20190903-end" author="AndriusKarpavicius">        
+    </changeSet> 
+    
+    <changeSet id="#4555_20190905" author="AndriusKarpavicius"> 
+    </changeSet>
+    
+    <changeSet id="#4555_20190905-M" author="AndriusKarpavicius" dbms="mysql">
+    </changeSet>
+    
+    <changeSet id="#4555_20190905-end" author="AndriusKarpavicius">        
+    </changeSet>    
+    
+    <changeSet id="#4511_20190919-M" author="AndriusKarpavicius" dbms="mysql"> 
+    </changeSet>
+        
+    <changeSet id="#4511_20190919-P" author="AndriusKarpavicius" dbms="postgresql"> 
+    </changeSet>
+    
+    <changeSet id="#4511_20190919-P-end" author="AndriusKarpavicius" dbms="postgresql">       
+    </changeSet>
+
+    <changeSet id="#4490_31102019" author="AbdelmounaimAkadid">
+	</changeSet>
+
+    <changeSet author="abdelkader.bouazza" id="#4523-Changing-amount-for-a-service-instance-with-prorating">
+    </changeSet>
+
+    <changeSet id="#3510_20190516" author="MounirBahije">
+    </changeSet>
+
+    <changeSet id="#4766_20191111" author="MohammedELAZZOUZI">
+    </changeSet>
+    
+    <changeSet id="#4765_20191112" author="MohammedELAZZOUZI">
+    </changeSet>
+
+    <changeSet id="#4783_20191118" author="MohamedSTITANE" dbms="postgresql">
+    </changeSet>
+
+    <changeSet id="#4412_20191125" author="MohammedELAZZOUZI">
+    </changeSet>
+
+    <changeSet id="#4795_221119" author="Mohammed_ElAzzouzi">
+    </changeSet>
+
+    <changeSet author="abdelkader.bouazza" id="#4494-Enable_a_subscription_to_have_the_same_access_point_in_two_or_more_different_periods_of_time">
+    </changeSet>
+
+    <changeSet id="#4712_20191223" author="khalidHORRI">
+    </changeSet>
+
+    <changeSet id="#4791_20200113" author="KhalidHORRI">
+    </changeSet>
+
+    <!--    one shot migration of sellers -->
+    <changeSet id="4745_20200108" author="MohamedSTITANE" >
+    </changeSet>
+
+    <changeSet id="#4906_Creation_CDR_Table_1" author="anasseh" dbms="mysql">
+    </changeSet>
+
+    <changeSet id="#4906_Creation_CDR_Table_2" author="anasseh">
+    </changeSet>
+
+    <changeSet id="#4933_20200117" author="AbdellatifBARI">
+    </changeSet>
+
+    <changeSet id="#3743_20190414" author="HatimOudad">
+    </changeSet>
+
+    <changeSet id="#500X_20200218" author="mohamed.el.youssoufi" dbms="postgresql">
+    </changeSet>
+    
+    <changeSet id="#4787_20200224" author="khalidHORRI">
+    </changeSet>
+
+    <changeSet id="#4096_2020-02-07_1" author="AndriusKarpavicius" dbms="mysql">
+    </changeSet>
+
+    <changeSet id="#4096_2020-02-07_2" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#4096_2020-02-07_3" author="AndriusKarpavicius">
+    </changeSet>
+    
+    <changeSet id="#4201_20200225" author="khalidHORRI">
+    </changeSet>
+ 
+    <changeSet id="#4071_20200227" author="khalidHORRI">
+    </changeSet>
+
+    <changeSet author="abdelkader.bouazza"  id="#4894-Additional_fields_in_RT">
+    </changeSet>
+
+    <changeSet author="abdelkader.bouazza"  id="#4893-Add-custom-field-support-to-WalletOperation">
+    </changeSet>
+
+    <changeSet id="#4892_2020-03-04" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#5038_2020-03-06" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#5064_2020-03-15" author="AndriusKarpavicius">
+    </changeSet>
+  
+    <changeSet author="abdelkader.bouazza" id="#4891-Copy-recurrence-calendar-and-applyInAdvance-to-RecurringChargeInstance-from-a-RecurringChargeTemplate">
+    </changeSet>
+
+    <changeSet author="khalid.horri" id="#4757_20191118">
+    </changeSet>
+
+    <changeSet id="#4924_20200219" author="anasseh">
+    </changeSet>
+
+    <changeSet id="#5085_20200330 - triggeredNextCharge has an incorrect value" author="Mohammed_ELAZZOUZI">
+	</changeSet>
+
+    <changeSet id="#4903_GDPR_Anonymize_CF" author="Mounir_BOUKAYOUA">
+    </changeSet>
+
+    <changeSet id="#4879_20190121" author="AmineBENAICHA">
+    </changeSet>
+    
+    <changeSet id="#5052_20200323" author="MohammedELAZZOUZI">
+    </changeSet>
+
+    <changeSet id="#5014_20200313" author="khalidHORRI">
+    </changeSet>
+
+    <changeSet id="#5014_20200402" author="khalidHORRI">
+    </changeSet>
+
+    <changeSet id="#5125_20200407" author="khalidHORRI">
+    </changeSet>
+
+    <changeSet id="#2447_20200421" author="khalidHORRI">
+    </changeSet>
+
+    <changeSet id="#5130_20200414" author="khalidHORRI">
+    </changeSet>
+
+    <changeSet author="MohammedELAZZOUZI"  id="#4004_ Add_CustomField_to_OrderItem">
+    </changeSet>
+
+    <changeSet id="#40167_20200407" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#5163_20200415" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#5174_20200423" author="AbdelmounaimAkadid">
+    </changeSet>
+
+    <changeSet id="#5193_20200428" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#5174_20200504" author="AbdelmounaimAkadid">
+    </changeSet>
+
+    <changeSet id="#4792_20200504" author="khalidHORRI">
+    </changeSet>
+
+    <changeSet id="#5172_20200426" author="anasseh">
+    </changeSet>
+
+    <changeSet id="#5206_20200505" author="AndriusKarpavicius" dbms="postgresql" >
+    </changeSet>
+    
+    <changeSet id="#5257_20200527" author="AndriusKarpavicius" dbms="postgresql" >
+    </changeSet>
+
+    <changeSet id="#4895_20200515" author="MohammedAmineTazi">        
+    </changeSet>
+
+    <changeSet id="#5279_20200608_Cancellation of a billing run is impossible" author="anasseh">
+    </changeSet>
+    
+    <changeSet id="#5266_20200622" author="AbdelmounaimAkadid">
+    </changeSet>
+
+    <changeSet id="#5319_20200703" author="Mohammed_EL-AZZOUZI">
+    </changeSet>
+
+    <changeSet id="#5331_20190630" author="AndriusKarpavicius">
+    </changeSet>
+
+	<changeSet id="#5295_20200626" author="anasseh">
+    </changeSet>
+
+    <changeSet id="#5330_20190630" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#5372_20190630" author="AndriusKarpavicius">
+    </changeSet>
+    
+    <changeSet id="#5372_20200711" author="AndriusKarpavicius">
+    </changeSet>
+    
+    <changeSet id="#5303_20200629" author="hznibar" >
+    </changeSet>
+
+    <changeSet id="#5241_20200622" author="khalidHORRI">
+    </changeSet>
+
+    <changeSet id="#5241_20200721" author="khalidHORRI">
+    </changeSet>
+ 
+    <changeSet id="#5388_20200715" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#FEAT-777_20200728j" author="AbdelkaderBouazza">
+    </changeSet>
+    
+    <changeSet id="#4764_20200720" author="MohammedELAZZOUZI">
+    </changeSet>
+
+    <changeSet id="#5408_20200724" author="AbdellatifBARI">
+    </changeSet>
+
+    <changeSet id="#5405_20190723" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#5404_20200728" author="khalidHORRI">
+    </changeSet>
+    
+    <changeSet id="#5400_23072020" author="KhalidHORRI">
+    </changeSet>
+    
+    <changeSet id="#4156_20120719" author="anasseh">
+    </changeSet>
+
+    <changeSet id="#4906_Creation_CDR_Table" author="MohammedAmineTazi">
+    </changeSet>
+
+    <changeSet id="#5372_20190813" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#5442_CET_ES" author="AndriusKarpavicius">
+    </changeSet>
+    
+    <changeSet id="#5454_20200824" author="khalidHORRI">
+    </changeSet>
+
+    <changeSet id="#5303_Update_CDR_Table_20200826" author="MohammedAmineTazi">
+    </changeSet>
+       
+    <changeSet id="#CORE-5215_11082020" author="AbdelkaderBouazza">
+    </changeSet>
+    
+	<changeSet id="#5303_20200831" author="hznibar" >
+    </changeSet>
+
+	<changeSet id="#5461_20200901" author="Mohammed_EL-AZZOUZI">
+    </changeSet>
+
+    <changeSet id="#5460_BA_fields" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#CORE-5457_20200825" author="AbdelkaderBouazza">
+    </changeSet>
+    
+    <changeSet id="#5303_20200902" author="hznibar" >
+    </changeSet>
+
+    <changeSet id="#5471-2020-09-07" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#5489-2020-09-14" author="AndriusKarpavicius">
+    </changeSet>
+    
+    <changeSet id="#5510_20200923" author="anasseh">
+    </changeSet>
+
+    <changeSet id="#5534_20200929" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#5471_20200930" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet author="zbariki" id="#3402_20201007">
+    </changeSet>
+
+    <changeSet id="#5556_20201006" author="AndriusKarpavicius">
+    </changeSet>
+
+    <changeSet id="#5501_20201007" author="MohammedELAZZOUZI">
+    </changeSet>
+    
+    <changeSet id="#5155_20200928" author="Mbarek-Ay">
+    </changeSet>
+
+    <changeSet id="#5546_20201023" author="AbdelmounaimAkadid" dbms="postgresql">
+    </changeSet>
+
+    <changeSet id="#5621_20201104_offer_template_fix" author="NabilOUACHI" failOnError="false">
+    </changeSet>
+    
+    <changeSet id="#5621_20201104_offer_template" author="NabilOUACHI" failOnError="false">
+    </changeSet>
+    
+    <changeSet id="#5975_20210225_offer_template_allowed_offer_change_should_be_many_to_many" author="MounirBOUKAYOUA" failOnError="false">
+    </changeSet>   
+
+    <changeSet id="#5599_20201029" author="AndriusKarpavicius">
+    </changeSet>
+    
+    <changeSet id="#5416_20120809" author="anasseh">
+	</changeSet>
+
+    <changeSet id="#5610-2020-11-05 - Dunning workflow" author="NabilOUACHI">
+    </changeSet>
+
+    <changeSet id="#5587_20201021" author="ZBariki">
+    </changeSet>
+
+    <changeSet author="#5512_20201113" id="AbdelkaderBouazza" failOnError="false">
+    </changeSet>
+
+    <changeSet id="#5587_20201125" author="ZBariki" failOnError="false">
+    </changeSet>
+
+    <changeSet id="#5214_20201117" author="ZBariki">
+    </changeSet>
+    
+    <changeSet id="#5680_20201126" author="khalidHORRI">
+    </changeSet>
+
+    <changeSet id="5687_20203011" author="khalidHORRI">
+    </changeSet>
+    
+    <changeSet id="5697_20201208" author="khalidHORRI">
+    </changeSet>
+
+    <changeSet id="#5632_20201207_RT_TYPE" author="NabilOUACHI">
+    </changeSet>
+
+	<changeSet id="#5627_20201212" author="MohammedELAZZOUZI">
+    </changeSet>
+    
+    <changeSet id="#4427_20201202" author="ZBariki">
+    </changeSet>
+    
+    <changeSet id="#4427_20201216" author="ZBariki">
+    </changeSet>
+    
+    <changeSet id="#5627_20210112" author="MohammedELAZZOUZI">
+    </changeSet>
+
+    <changeSet id="#5627_20210107" author="AndriusKarpavicius">
+    </changeSet>
+    
+    <changeSet id="#5872_20210104" author="AmineBENAICHA" dbms="postgresql">
+    </changeSet>
+    
+    <changeSet id="#5700_20210118" author="AmineBENAICHA" dbms="postgresql">
+    </changeSet>        
+    
+    <changeSet id="#5909_20210118" author="AndriusKarpavicius">
+    </changeSet>
+    
+    <changeSet id="#5904_20210129" author="AmineBENAICHA">
+    </changeSet>
+    
+    <changeSet id="#5960_20210212" author="AndriusKarpavicius">
+    </changeSet>
+    
+    <changeSet id="#5993_20210304" author="HatimOUDAD">
+    </changeSet>
+    
+    <changeSet id="#5863_22122020" author="AbdelmounaimAkadid">
+	</changeSet>
+
+    <changeSet id="#5999_20210305" author="AndriusKarpavicius">
+    </changeSet>
+    
+    <changeSet id="#6040_20210323" author="amineTazi">
+    </changeSet>
+    
+    <changeSet id="#6012_20210323" author="MohamedAliHammal">
+    </changeSet>
+    
+    <changeSet id="4756_20191104" author="Andrius">
+    </changeSet>    
+        
+    <changeSet id="4756_20210311" author="Andrius">
+    </changeSet>
+    
+    <changeSet id="6055_20210330" author="Andrius" dbms="postgresql">
+    </changeSet>
+    
+    <changeSet id="#5622_20210406" author="AbdelmounaimAkadid">
+    </changeSet>
+    
+    <changeSet id="#5214_20200415_migration" author="AbdelmounaimAkadid">
+    </changeSet>    
+    
+    <changeSet id="#4742_20191030" author="MohamedSTITANE">
+    </changeSet>   
+    
+    
+    <!-- DONT REMOVE THIS CHANGESET -->
+    <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
+		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>    
+    </changeSet>
+    
 </databaseChangeLog>
