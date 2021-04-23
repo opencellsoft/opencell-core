@@ -18,16 +18,16 @@
 
 package org.meveo.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.meveo.api.ApiErrorCodeEnum;
+import org.meveo.api.MeveoApiErrorCodeEnum;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.ApiErrorCodeEnum;
-import org.meveo.api.MeveoApiErrorCodeEnum;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * Determine the status of the MEVEO API web service response.
@@ -164,6 +164,7 @@ public class ActionStatus {
         this.entityCode = entityCode;
     }
 
+    @JsonIgnore
     public String getjson() {
         return "{\"status\":\"" + status + "\",\"errorCode\": \"" + errorCode + "\",\"message\": \""
                 + message + "\",\"entityId\": \"" + entityId + "\",\"entityCode\": \"" + entityCode + "\"}";

@@ -46,6 +46,9 @@ import org.meveo.api.dto.response.account.BusinessAccountModelResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.rest.IBaseRs;
 
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -169,7 +172,16 @@ public interface BusinessAccountModelRs extends IBaseRs {
 	)
     MeveoModuleDtosResponse list();
 
-    
+    /**
+     * List MeveoModuleDtos matching a given criteria
+     *
+     * @return List of MeveoModuleDtos
+     */
+    @GET
+    @Path("/listGetAll")
+    MeveoModuleDtosResponse listGetAll();
+
+
     /**
      * Install business account module.
      * 

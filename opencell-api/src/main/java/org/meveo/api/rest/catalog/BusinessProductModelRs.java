@@ -44,6 +44,9 @@ import org.meveo.api.dto.response.catalog.GetBusinessProductModelResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.rest.IBaseRs;
 
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+
 /**
  * @author Edward P. Legaspi
  **/
@@ -191,6 +194,15 @@ public interface BusinessProductModelRs extends IBaseRs {
 				)}
 	)
     public MeveoModuleDtosResponse list();
+
+    /**
+     * List Business Product Models matching a given criteria
+     *
+     * @return List of Business Account Models
+     */
+    @GET
+    @Path("/listGetAll")
+    MeveoModuleDtosResponse listGetAll();
 
     /**
      * Install business product model module

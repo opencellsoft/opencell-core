@@ -18,12 +18,12 @@
 
 package org.meveo.api.dto.response.catalog;
 
+import org.meveo.api.dto.catalog.DiscountPlansDto;
+import org.meveo.api.dto.response.SearchResponse;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.catalog.DiscountPlansDto;
-import org.meveo.api.dto.response.BaseResponse;
 
 /**
  * The Class GetDiscountPlansResponseDto.
@@ -32,7 +32,7 @@ import org.meveo.api.dto.response.BaseResponse;
  */
 @XmlRootElement(name = "GetDiscountPlansResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetDiscountPlansResponseDto extends BaseResponse {
+public class GetDiscountPlansResponseDto extends SearchResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -46,6 +46,9 @@ public class GetDiscountPlansResponseDto extends BaseResponse {
      * @return the discount plan
      */
     public DiscountPlansDto getDiscountPlan() {
+        if ( discountPlan == null )
+            discountPlan = new DiscountPlansDto();
+
         return discountPlan;
     }
 

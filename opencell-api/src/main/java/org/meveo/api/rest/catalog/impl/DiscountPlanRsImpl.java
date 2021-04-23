@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.catalog.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.catalog.DiscountPlanApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -31,6 +27,11 @@ import org.meveo.api.dto.response.catalog.GetDiscountPlansResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.DiscountPlanRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -110,6 +111,20 @@ public class DiscountPlanRsImpl extends BaseRs implements DiscountPlanRs {
 
         try {
             result.setDiscountPlan(discountPlanApi.list());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public GetDiscountPlansResponseDto listGetAll() {
+
+        GetDiscountPlansResponseDto result = new GetDiscountPlansResponseDto();
+
+        try {
+            result = discountPlanApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

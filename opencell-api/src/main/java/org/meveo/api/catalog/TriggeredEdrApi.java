@@ -18,16 +18,16 @@
 
 package org.meveo.api.catalog;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.TriggeredEdrsResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.communication.MeveoInstance;
@@ -35,6 +35,10 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.script.ScriptInstanceService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -225,5 +229,19 @@ public class TriggeredEdrApi extends BaseApi {
         } else {
             update(postData);
         }
+    }
+
+    public TriggeredEdrsResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        TriggeredEdrsResponseDto result = new TriggeredEdrsResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<TriggeredEDRTemplate> triggeredEDRTemplates = triggeredEDRTemplateService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (triggeredEDRTemplates != null) {
+            for (TriggeredEDRTemplate triggeredEDRTemplate : triggeredEDRTemplates) {
+                result.getTriggeredEdrs().add(new TriggeredEdrTemplateDto(triggeredEDRTemplate));
+            }
+        }
+
+        return result;
     }
 }

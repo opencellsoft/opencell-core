@@ -18,10 +18,6 @@
 
 package org.meveo.api.rest.communication.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.communication.EmailTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -31,6 +27,11 @@ import org.meveo.api.dto.response.communication.EmailTemplatesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.communication.EmailTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -94,6 +95,7 @@ public class EmailTemplateRsImpl extends BaseRs implements EmailTemplateRs {
     @Override
     public EmailTemplatesResponseDto list() {
         EmailTemplatesResponseDto result = new EmailTemplatesResponseDto();
+        result.setPaging(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
 
         try {
             result.setEmailTemplates(emailTemplateApi.list());

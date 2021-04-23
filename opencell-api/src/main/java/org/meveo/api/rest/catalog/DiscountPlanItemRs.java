@@ -44,6 +44,9 @@ import org.meveo.api.dto.response.catalog.DiscountPlanItemResponseDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+
 /**
  * CRUD/list discountPlanItem via REST API.
  * 
@@ -194,6 +197,15 @@ public interface DiscountPlanItemRs extends IBaseRs {
 				)}
 	)
     DiscountPlanItemsResponseDto list();
+
+    /**
+     * List DiscountPlanItems matching a given criteria
+     *
+     * @return List of DiscountPlanItems
+     */
+    @GET
+    @Path("/listGetAll")
+    DiscountPlanItemsResponseDto listGetAll();
 
     /**
      * Enable a Discount plan item with a given code
