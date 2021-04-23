@@ -20,8 +20,10 @@ package org.meveo.admin.action.admin;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceConfiguration;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.dwh.GdprConfiguration;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -52,8 +54,9 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 
     @Inject
     private ProviderService providerService;
+    
 
-    @Inject
+	@Inject
     @Param
     private String mode;
 
@@ -116,7 +119,7 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         if (entity.getLanguage() != null) {
             entity.getLanguage().getLanguageCode();
         }
-
+        
         return entity;
     }
 
@@ -157,5 +160,4 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     public void setPaymentMethodsModel(DualListModel<PaymentMethodEnum> paymentMethodsModel) {
         this.paymentMethodsModel = paymentMethodsModel;
     }
-
 }

@@ -18,11 +18,15 @@
 package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,6 +34,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -51,6 +57,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
@@ -75,7 +82,61 @@ import org.meveo.model.scripts.ScriptInstance;
 public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparable<PricePlanMatrix>, ISearchable {
     private static final long serialVersionUID = 1L;
 
-    /**
+    
+	public PricePlanMatrix() {
+		super();
+	}
+
+	public PricePlanMatrix(PricePlanMatrix copy) {
+		super();
+		this.eventCode = copy.eventCode;
+		this.offerTemplate = copy.offerTemplate;
+		this.startSubscriptionDate = copy.startSubscriptionDate;
+		this.endSubscriptionDate = copy.endSubscriptionDate;
+		this.startRatingDate = copy.startRatingDate;
+		this.endRatingDate = copy.endRatingDate;
+		this.minQuantity = copy.minQuantity;
+		this.maxQuantity = copy.maxQuantity;
+		this.minSubscriptionAgeInMonth = copy.minSubscriptionAgeInMonth;
+		this.maxSubscriptionAgeInMonth = copy.maxSubscriptionAgeInMonth;
+		this.criteria1Value = copy.criteria1Value;
+		this.criteria2Value = copy.criteria2Value;
+		this.criteria3Value = copy.criteria3Value;
+		this.criteriaEL = copy.criteriaEL;
+		this.criteriaELSpark = copy.criteriaELSpark;
+		this.amountWithoutTax = copy.amountWithoutTax;
+		this.amountWithTax = copy.amountWithTax;
+		this.amountWithoutTaxEL = copy.amountWithoutTaxEL;
+		this.amountWithoutTaxELSpark = copy.amountWithoutTaxELSpark;
+		this.amountWithTaxEL = copy.amountWithTaxEL;
+		this.amountWithTaxELSpark = copy.amountWithTaxELSpark;
+		this.tradingCurrency = copy.tradingCurrency;
+		this.tradingCountry = copy.tradingCountry;
+		this.priority = copy.priority;
+		this.seller = copy.seller;
+		this.validityCalendar = copy.validityCalendar;
+		this.sequence = copy.sequence;
+		this.scriptInstance = copy.scriptInstance;
+		this.descriptionI18n = copy.descriptionI18n;
+		this.woDescriptionEL = copy.woDescriptionEL;
+		this.woDescriptionELSpark = copy.woDescriptionELSpark;
+		this.totalAmountEL = copy.totalAmountEL;
+		this.totalAmountELSpark = copy.totalAmountELSpark;
+		this.minimumAmountEL = copy.minimumAmountEL;
+		this.minimumAmountELSpark = copy.minimumAmountELSpark;
+		this.invoiceSubCategoryEL = copy.invoiceSubCategoryEL;
+		this.validityFrom = copy.validityFrom;
+		this.validityDate = copy.validityDate;
+		this.parameter1El = copy.parameter1El;
+		this.parameter2El = copy.parameter2El;
+		this.parameter3El = copy.parameter3El;
+		this.code = copy.code;
+		this.description = copy.description;
+		this.setUuid(UUID.randomUUID().toString());
+	}
+
+
+	/**
      * Charge code
      */
     @Column(name = "event_code", length = 255, nullable = false)
@@ -89,6 +150,9 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
+
+    @OneToMany(mappedBy = "pricePlanMatrix", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PricePlanMatrixVersion> versions = new ArrayList<>();
 
     /**
      * Filtering criteria - subscription date range - start date
@@ -345,7 +409,13 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
     @Column(name = "parameter3_el", columnDefinition = "TEXT")
     @Size(max = 2000)
     private String parameter3El;
-
+    
+    /**
+	 * Discount plan items
+	 */
+	@OneToMany(mappedBy = "pricePlanMatrix", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<DiscountPlanItem> discountPlanItems = new ArrayList<>();  
+	
     public String getEventCode() {
         return eventCode;
     }
@@ -910,6 +980,14 @@ public class PricePlanMatrix extends EnableBusinessCFEntity implements Comparabl
      */
     public String getParameter3El() {
         return parameter3El;
+    }
+
+    public List<PricePlanMatrixVersion> getVersions() {
+        return versions;
+    }
+
+    public void setVersions(List<PricePlanMatrixVersion> versions) {
+        this.versions = versions;
     }
 
     /**

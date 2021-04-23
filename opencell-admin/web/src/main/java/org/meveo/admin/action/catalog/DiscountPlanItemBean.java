@@ -55,7 +55,6 @@ public class DiscountPlanItemBean extends CustomFieldBean<DiscountPlanItem> {
 	@Override
 	public DiscountPlanItem initEntity() {
 		DiscountPlanItem dpi = new DiscountPlanItem();
-		dpi.setAccountingCode(appProvider.getDiscountAccountingCode());
 		return dpi;
 	}
 

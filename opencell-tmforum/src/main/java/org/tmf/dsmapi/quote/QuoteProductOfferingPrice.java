@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 import org.tmf.dsmapi.catalog.resource.product.Price;
+import org.tmf.dsmapi.catalog.resource.product.ProductOfferingPriceType;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -67,7 +68,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class QuoteProductOfferingPrice implements Serializable {
 
     private final static long serialVersionUID = 11L;
-    protected String priceType;
+    protected ProductOfferingPriceType priceType;
     protected String recurringChargePeriod;
     protected String priceCondition;
     protected QuotePriceAlteration quotePriceAlteration;
@@ -79,7 +80,7 @@ public class QuoteProductOfferingPrice implements Serializable {
      * @return possible object is {@link String }
      * 
      */
-    public String getPriceType() {
+    public ProductOfferingPriceType getPriceType() {
         return priceType;
     }
 
@@ -89,7 +90,7 @@ public class QuoteProductOfferingPrice implements Serializable {
      * @param value allowed object is {@link String }
      * 
      */
-    public void setPriceType(String value) {
+    public void setPriceType(ProductOfferingPriceType value) {
         this.priceType = value;
     }
 

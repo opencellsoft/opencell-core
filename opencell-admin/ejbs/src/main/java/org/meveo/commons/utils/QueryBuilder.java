@@ -78,6 +78,7 @@ public class QueryBuilder {
     private Class<?> clazz;
 
     static final String FROM = "from ";
+
     public static final String  JOIN_AS = " as ";
     
     private static Set<String> joinAlias = new TreeSet<String>();
@@ -1384,7 +1385,7 @@ public class QueryBuilder {
             return;
         }
 
-        if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1) {
+        if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1 && paginationConfiguration.getOrderings().length != 0) {
             Object[] orderings = paginationConfiguration.getOrderings();
             Object defaultOrder = orderings[1];
             String[] fields = orderings[0].toString().split(", ");

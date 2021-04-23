@@ -139,6 +139,11 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     }
 
     @Override
+    public CustomEntityTemplatesResponseDto listEntityTemplates() {
+        return listEntityTemplates(null);
+    }
+
+    @Override
     public ActionStatus customizeEntity(EntityCustomizationDto dto) {
 
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -432,5 +437,20 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
         }
 
         return result;
+    }
+
+    @Override
+    public GetCustomFieldTemplateReponseDto findFieldV2(String customFieldTemplateCode, String appliesTo) {
+        return findField(customFieldTemplateCode, appliesTo);
+    }
+
+    @Override
+    public EntityCustomActionResponseDto findActionV2(String actionCode, String appliesTo) {
+        return findActionV2(actionCode, appliesTo);
+    }
+
+    @Override
+    public BusinessEntityResponseDto listBusinessEntityForCFVByCodeV2(String code, String wildcode) {
+        return listBusinessEntityForCFVByCode(code, wildcode);
     }
 }

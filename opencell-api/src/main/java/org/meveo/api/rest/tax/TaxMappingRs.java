@@ -70,7 +70,7 @@ public interface TaxMappingRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    public TaxMappingListResponseDto searchGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+    TaxMappingListResponseDto searchGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
@@ -90,7 +90,7 @@ public interface TaxMappingRs extends IBaseRs {
      */
     @POST
     @Path("/list")
-    public TaxMappingListResponseDto searchPost(PagingAndFiltering pagingAndFiltering);
+    TaxMappingListResponseDto searchPost(PagingAndFiltering pagingAndFiltering);
 
     /**
      * Update an existing Tax mapping
@@ -110,7 +110,7 @@ public interface TaxMappingRs extends IBaseRs {
      */
     @DELETE
     @Path("/{id}")
-    public ActionStatus remove(@PathParam("id") String id);
+    ActionStatus remove(@PathParam("id") String id);
 
     /**
      * Create new or update an existing Tax mapping

@@ -18,6 +18,7 @@
 
 package org.meveo.api.rest.tmforum.impl;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,16 +27,20 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.billing.QuoteApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.cpq.QuoteVersionDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.QuoteRs;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 import org.tmf.dsmapi.quote.ProductQuote;
+import org.tmf.dsmapi.quote.ProductQuoteItem;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -187,4 +192,101 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
         
         return response;
     }
+
+    
+	
+
+	@Override
+	public Response createQuoteItem(ProductQuoteItem productQuoteItem, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+        try {
+        	Long id = quoteApi.createQuoteItem(productQuoteItem);
+            responseBuilder = Response.ok(Collections.singletonMap("id", id));
+            return responseBuilder.build();
+        } catch (Exception e) {
+            processExceptionAndSetBuilder(result, responseBuilder, e);
+            responseBuilder = Response.status(Status.INTERNAL_SERVER_ERROR);
+        }
+		return null;
+	}
+
+	@Override
+	public Response deleteQuoteItem(String id, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+        try {
+        	quoteApi.deleteQuoteItem(id);
+            responseBuilder = Response.ok();
+        } catch (Exception e) {
+            processExceptionAndSetBuilder(result, responseBuilder, e);
+            responseBuilder = Response.status(Status.INTERNAL_SERVER_ERROR);
+        }
+		return responseBuilder.build();
+	}
+
+	@Override
+	public Response createQuoteVersion(QuoteVersionDto quoteVersion, UriInfo info) {
+        try {
+        	Long id = quoteApi.createQuoteVersion(quoteVersion);
+            return  Response.ok().entity(Collections.singletonMap("id", id))
+                    .build();
+        } catch (MeveoApiException e) {
+        	return errorResponse(e, null);
+        }
+	
+	}
+
+	@Override
+	public Response updateQuoteItem(String code, ProductQuoteItem productQuoteitem, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+        try {
+        	quoteApi.updateQuoteItem(code, productQuoteitem);
+            responseBuilder = Response.ok();
+        } catch (Exception e) {
+            processExceptionAndSetBuilder(result, responseBuilder, e);
+            responseBuilder = Response.status(Status.INTERNAL_SERVER_ERROR);
+        }
+		return responseBuilder.build();
+	
+	}
+
+	@Override
+	public Response updateQuoteVersion(QuoteVersionDto quoteVersion, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+        try {
+        	quoteApi.updateQuoteVersion(quoteVersion);
+            responseBuilder = Response.ok();
+        } catch (Exception e) {
+            processExceptionAndSetBuilder(result, responseBuilder, e);
+            responseBuilder = Response.status(Status.INTERNAL_SERVER_ERROR);
+        }
+		return responseBuilder.build();
+	}
+
+	@Override
+	public Response deleteQuoteVersion(String quoteCode, int quoteVersion, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+        try {
+        	quoteApi.deleteQuoteVersion(quoteCode, quoteVersion);
+            responseBuilder = Response.ok(result);
+        } catch (Exception e) {
+            processExceptionAndSetBuilder(result, responseBuilder, e);
+            responseBuilder = Response.status(Status.INTERNAL_SERVER_ERROR);
+        }
+		return responseBuilder.build();
+	}
+
+	/*private Response errorResponse(MeveoApiException e, ActionStatus result) {
+		if(result==null) {
+			result = new ActionStatus();
+		}
+		result.setStatus(ActionStatusEnum.FAIL);
+		result.setMessage(e.getMessage());
+		 return createResponseFromMeveoApiException(e, result).build();
+	}*/
+   
 }

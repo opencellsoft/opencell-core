@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -38,10 +40,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
@@ -57,6 +59,7 @@ import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.finance.RevenueRecognitionRule;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxClass;
@@ -82,6 +85,10 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 
     private static final long serialVersionUID = -6619927605555822610L;
 
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @OneToMany(mappedBy = "chargeTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ProductChargeTemplateMapping> productCharges = new ArrayList<>();
+    
     public enum ChargeTypeEnum {
         RECURRING, USAGE, SUBSCRIPTION, TERMINATION
     }
@@ -128,8 +135,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
      * Corresponding invoice subcategory
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invoice_sub_category", nullable = false)
-    @NotNull
+    @JoinColumn(name = "invoice_sub_category") 
     protected InvoiceSubCategory invoiceSubCategory;
 
     /**
@@ -233,7 +239,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
      * Charge tax class
      **/
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tax_class_id", nullable = false)
+    @JoinColumn(name = "tax_class_id")
     private TaxClass taxClass;
 
     /**
@@ -271,6 +277,9 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     @Size(max = 2000)
     private String sortIndexEl;
 
+    @ManyToMany(mappedBy = "chargeTemplates", cascade = CascadeType.ALL)
+    private Set<Attribute> attributes;
+
     // Calculated values
     @Transient
     private boolean roundingValuesComputed;
@@ -280,7 +289,10 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
 
     @Transient
     private int roundingEdrNbDecimal = BaseEntity.NB_DECIMALS;
-
+    
+    
+	
+    
     public String getInputUnitEL() {
         return inputUnitEL;
     }
@@ -296,7 +308,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     public void setOutputUnitEL(String outputUnitEL) {
         this.outputUnitEL = outputUnitEL;
     }
-
+    
     /**
      * Get a charge main type
      * 
@@ -596,4 +608,12 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
         this.sortIndexEl = sortIndexEl;
     }
 
+
+    public Set<Attribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Set<Attribute> attributes) {
+        this.attributes = attributes;
+    }
 }

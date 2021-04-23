@@ -62,6 +62,19 @@ public class Address implements Serializable, Cloneable {
     protected String address3;
 
     /**
+     * Address line 2
+     */
+    @Column(name = "address_4", length = 255)
+    @Size(max = 255)
+    protected String address4;
+
+    /**
+     * Address line 3
+     */
+    @Column(name = "address_5", length = 255)
+    @Size(max = 255)
+    protected String address5;
+    /**
      * Postal code
      */
     @Column(name = "address_zipcode", length = 10)
@@ -93,7 +106,7 @@ public class Address implements Serializable, Cloneable {
     }
 
     public Address(Address address) {
-        this(address.address1, address.address2, address.address3, address.zipCode, address.city, address.country, address.state);
+        this(address.address1, address.address2, address.address3,address.address4, address.address5, address.zipCode, address.city, address.country, address.state);
     }
 
     public Address(String address1, String address2, String address3, String zipCode, String city, Country country, String state) {
@@ -101,6 +114,19 @@ public class Address implements Serializable, Cloneable {
         this.address1 = address1;
         this.address2 = address2;
         this.address3 = address3;
+        this.zipCode = zipCode;
+        this.city = city;
+        this.country = country;
+        this.state = state;
+    }
+
+    public Address(String address1, String address2, String address3,String address4, String address5, String zipCode, String city, Country country, String state) {
+        super();
+        this.address1 = address1;
+        this.address2 = address2;
+        this.address3 = address3;
+        this.address4 = address4;
+        this.address5 = address5;
         this.zipCode = zipCode;
         this.city = city;
         this.country = country;
@@ -190,4 +216,32 @@ public class Address implements Serializable, Cloneable {
         setZipCode("xxx");
         setCountry(null);
     }
+
+	/**
+	 * @return the address4
+	 */
+	public String getAddress4() {
+		return address4;
+	}
+
+	/**
+	 * @param address4 the address4 to set
+	 */
+	public void setAddress4(String address4) {
+		this.address4 = address4;
+	}
+
+	/**
+	 * @return the address5
+	 */
+	public String getAddress5() {
+		return address5;
+	}
+
+	/**
+	 * @param address5 the address5 to set
+	 */
+	public void setAddress5(String address5) {
+		this.address5 = address5;
+	}
 }

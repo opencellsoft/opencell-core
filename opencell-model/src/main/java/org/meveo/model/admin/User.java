@@ -141,8 +141,10 @@ public class User extends AuditableEntity implements ICustomFieldEntity, IRefere
      */
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "adm_secured_entity", joinColumns = { @JoinColumn(name = "user_id") })
-    @AttributeOverrides(value = { @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
-            @AttributeOverride(name = "entityClass", column = @Column(name = "entity_class", nullable = false, length = 255)) })
+    @AttributeOverrides(value = { 
+    		@AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
+            @AttributeOverride(name = "entityClass", column = @Column(name = "entity_class", nullable = false, length = 255)),
+            @AttributeOverride(name = "disabled", column = @Column(name = "disable", columnDefinition = "boolean"))})
     private List<SecuredEntity> securedEntities = new ArrayList<>();
 
     /**

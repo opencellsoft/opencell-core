@@ -20,6 +20,7 @@ package org.meveo.api;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.hibernate.exception.ConstraintViolationException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
@@ -58,6 +59,7 @@ import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
@@ -105,6 +107,9 @@ import java.util.stream.Stream;
  *
  */
 public abstract class BaseApi {
+	
+
+	protected static final String DEFAULT_SORT_ORDER_ID = "id";
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -1132,8 +1137,8 @@ public abstract class BaseApi {
      * @throws InvalidParameterException invalid parameter exception.
      */
     @SuppressWarnings("rawtypes")
-    protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering, Class targetClass)
-            throws InvalidParameterException {
+    public PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering,
+            Class targetClass) throws InvalidParameterException {
 
         if (pagingAndFiltering != null && targetClass != null) {
             Map<String, CustomFieldTemplate> cfts = null;
@@ -1177,6 +1182,8 @@ public abstract class BaseApi {
     /**
      * Convert pagination and filtering DTO to a pagination configuration used in services.
      *
+<<<<<<< HEAD
+=======
      * @param defaultSortBy A default value to sortBy
      * @param defaultSortOrder A default sort order
      * @param fetchFields Fields to fetch
@@ -1203,6 +1210,7 @@ public abstract class BaseApi {
     /**
      * Convert pagination and filtering DTO to a pagination configuration used in services.
      *
+>>>>>>> integration
      * @param defaultSortBy A default value to sortBy
      * @param defaultSortOrder A default sort order
      * @param fetchFields Fields to fetch
@@ -1759,6 +1767,29 @@ public abstract class BaseApi {
 
     public ICustomFieldEntity populateCustomFieldsForGenericApi(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
         return populateCustomFields(customFieldsDto, entity, isNewEntity, true);
+    }
+
+    protected  <T extends BusinessEntity> T loadEntityByCode(BusinessService<T> service, String code, Class<T> typeParameterClass){
+        T baseEntity = service.findByCode(code);
+        if(baseEntity == null)
+            throw new EntityDoesNotExistsException(typeParameterClass, code);
+        return baseEntity;
+    }
+    
+    protected <T extends Enum<T>> List<String> allStatus(Class<T> enums, String paramBeanName, String defaultValueForParamBean){
+    	
+		final List<String> allStatus = new ArrayList<String>();
+		for(T status:enums.getEnumConstants()) {
+			allStatus.add(status.toString().toLowerCase());
+		}
+		String statusProperties = ParamBean.getInstance().getProperty(paramBeanName, defaultValueForParamBean);
+		
+		if(!Strings.isEmpty(statusProperties)) {
+			for (String currentStatus : statusProperties.split(",")) {
+				allStatus.add(currentStatus.toLowerCase());
+			}
+		}
+		return allStatus;
     }
 
     protected void addGenericCodeIfAssociated(String entityClass, BusinessEntityDto postData) {

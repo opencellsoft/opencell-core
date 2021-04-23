@@ -18,6 +18,7 @@
 
 package org.meveo.api.dto.catalog;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,7 +26,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.catalog.RecurrenceTypeEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class RecurringChargeTemplateDto.
@@ -42,48 +46,71 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
 
     /** The calendar. */
     @XmlElement(required = true)
+    @Schema(description = "the calendar")
+    @NotNull
     private String calendar;
 
     /** The duration term in month. */
+    @Schema(description = "The duration term in month")
     private Integer durationTermInMonth;
 
     /** The subscription prorata. */
+    @Schema(description = "The subscription prorata")
     private Boolean subscriptionProrata;
 
     /** The termination prorata. */
+    @Schema(description = "The termination prorata")
     private Boolean terminationProrata;
 
     /** The apply in advance. */
+    @Schema(description = "The apply in advance")
     private Boolean applyInAdvance = false;
 
     /** The share level. */
+    @Schema(description = "The share level")
     private Integer shareLevel;
 
     /** The calendar code el. */
     @Size(max = 2000)
+    @Schema(description = "The calendar code expression language")
     private String calendarCodeEl;
 
     /** The duration term in month El. */
     @Size(max = 2000)
+    @Schema(description = "The duration term in month on expression language")
     private String durationTermInMonthEl;
 
     /** The subscription prorata el. */
     @Size(max = 2000)
+    @Schema(description = "The subscription prorata on expression language")
     private String subscriptionProrataEl;
 
     /** The termination prorata el. */
     @Size(max = 2000)
+    @Schema(description = "The termination prorata on expression language")
     private String terminationProrataEl;
 
     /** The apply in advance el. */
     @Size(max = 2000)
+    @Schema(description = "The apply in advance on expression language")
     private String applyInAdvanceEl;
 
     /**
      * Expression to determine and override the date that recurring charge should be charged to upon charge/service termination
      */
+    @Schema(description = "Expression to determine and override the date that recurring charge should be charged to upon charge/service termination")
     private String applyTerminatedChargeToDateEL;
+    
 
+    @Schema(description = "recrrence type", example = "possible value are : CALENDAR, PERIOD", defaultValue = "CALENDAR")
+    private RecurrenceTypeEnum recurrenceType 
+    = RecurrenceTypeEnum.CALENDAR;
+
+    @Schema(description = "code of attribute duration")
+    private String attributeDurationCode;
+
+    @Schema(description = "code of attribute calendar")
+    private String attributeCalendarCode;
     /**
      * Instantiates a new recurring charge template dto.
      */
@@ -115,6 +142,9 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
         if (recurringChargeTemplate.getCalendar() != null) {
             calendar = recurringChargeTemplate.getCalendar().getCode();
         }
+        recurrenceType=recurringChargeTemplate.getRecurrenceType();
+        this.attributeCalendarCode = recurringChargeTemplate.getAttributeCalendar() != null ? recurringChargeTemplate.getAttributeCalendar().getCode() : null;
+        this.attributeDurationCode = recurringChargeTemplate.getAttributeDuration() != null ? recurringChargeTemplate.getAttributeDuration().getCode() : null;
     }
 
     /**
@@ -324,8 +354,24 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
     public void setApplyTerminatedChargeToDateEL(String applyTerminatedChargeToDateEL) {
         this.applyTerminatedChargeToDateEL = applyTerminatedChargeToDateEL;
     }
+    
+    
 
-    /*
+    /**
+	 * @return the recurrenceType
+	 */
+	public RecurrenceTypeEnum getRecurrenceType() {
+		return recurrenceType;
+	}
+
+	/**
+	 * @param recurrenceType the recurrenceType to set
+	 */
+	public void setRecurrenceType(RecurrenceTypeEnum recurrenceType) {
+		this.recurrenceType = recurrenceType;
+	}
+
+	/*
      * (non-Javadoc)
      * 
      * @see org.meveo.api.dto.catalog.ChargeTemplateDto#toString()
@@ -336,4 +382,32 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
                 + terminationProrata + ", applyInAdvance=" + applyInAdvance + ", shareLevel=" + shareLevel + ", calendarCodeEl=" + calendarCodeEl + ", durationTermInMonthEl=" + durationTermInMonthEl
                 + ", subscriptionProrataEl=" + subscriptionProrataEl + ", terminationProrataEl=" + terminationProrataEl + ", applyInAdvanceEl=" + applyInAdvanceEl + "]";
     }
+
+	/**
+	 * @return the attributeDurationCode
+	 */
+	public String getAttributeDurationCode() {
+		return attributeDurationCode;
+	}
+
+	/**
+	 * @param attributeDurationCode the attributeDurationCode to set
+	 */
+	public void setAttributeDurationCode(String attributeDurationCode) {
+		this.attributeDurationCode = attributeDurationCode;
+	}
+
+	/**
+	 * @return the attributeCalendarCode
+	 */
+	public String getAttributeCalendarCode() {
+		return attributeCalendarCode;
+	}
+
+	/**
+	 * @param attributeCalendarCode the attributeCalendarCode to set
+	 */
+	public void setAttributeCalendarCode(String attributeCalendarCode) {
+		this.attributeCalendarCode = attributeCalendarCode;
+	}
 }

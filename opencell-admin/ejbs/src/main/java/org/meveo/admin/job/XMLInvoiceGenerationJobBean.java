@@ -18,8 +18,10 @@
 
 package org.meveo.admin.job;
 
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Iterator;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
@@ -27,6 +29,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -63,6 +66,8 @@ public class XMLInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
 
         InvoicesToProcessEnum invoicesToProcessEnum = InvoicesToProcessEnum.valueOf((String) this.getParamOrCFValue(jobInstance, "invoicesToProcess", "FinalOnly"));
 
+        List<String> statusNamesList = (List<String>) this.getParamOrCFValue(jobInstance, "invoicesToProcess", Arrays.asList("VALIDATED"));
+        List<InvoiceStatusEnum> statusList = statusNamesList.stream().map(status->InvoiceStatusEnum.valueOf(status)).collect(Collectors.toList());
         String parameter = jobInstance.getParametres();
 
         Long billingRunId = null;
@@ -75,9 +80,8 @@ public class XMLInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
             }
         }
 
-        List<Long> ids = this.fetchInvoiceIdsToProcess(invoicesToProcessEnum, billingRunId);
-
-        return Optional.of(new SynchronizedIterator<Long>(ids));
+        List<Long> invoiceIds = this.fetchInvoiceIdsToProcess(statusList, billingRunId);
+        return Optional.of(new SynchronizedIterator<>(invoiceIds));
     }
 
     /**
@@ -92,24 +96,8 @@ public class XMLInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
         invoiceService.produceInvoiceXml(invoice, null);
     }
 
-    private List<Long> fetchInvoiceIdsToProcess(InvoicesToProcessEnum invoicesToProcessEnum, Long billingRunId) {
-
-        log.debug(" fetchInvoiceIdsToProcess for invoicesToProcessEnum = {} and billingRunId = {} ", invoicesToProcessEnum, billingRunId);
-        List<Long> invoiceIds = null;
-
-        switch (invoicesToProcessEnum) {
-        case FinalOnly:
-            invoiceIds = invoiceService.getInvoiceIdsByBRWithNoXml(billingRunId);
-            break;
-
-        case DraftOnly:
-            invoiceIds = invoiceService.getDraftInvoiceIdsByBRWithNoXml(billingRunId);
-            break;
-
-        case All:
-            invoiceIds = invoiceService.getInvoiceIdsIncludeDraftByBRWithNoXml(billingRunId);
-            break;
-        }
-        return invoiceIds;
+    private List<Long> fetchInvoiceIdsToProcess(List<InvoiceStatusEnum> statusList, Long billingRunId) {
+        log.debug(" fetchInvoiceIdsToProcess for InvoiceStatusEnums = {} and billingRunId = {} ", statusList, billingRunId);
+        return invoiceService.listInvoicesWithoutXml(billingRunId, statusList);
     }
 }

@@ -19,6 +19,7 @@
 package org.meveo.service.quote;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 
 import org.meveo.model.quote.QuoteItem;
 import org.meveo.service.base.PersistenceService;

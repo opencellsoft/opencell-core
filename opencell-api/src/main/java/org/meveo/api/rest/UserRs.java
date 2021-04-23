@@ -26,6 +26,7 @@ import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
+import io.swagger.v3.oas.annotations.Operation;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
@@ -48,6 +49,8 @@ public interface UserRs extends IBaseRs {
      */
     @POST
     @Path("/")
+    @Operation(summary = "Create user",
+    tags = { "User management" })
     ActionStatus create(UserDto postData);
 
     /**
@@ -58,6 +61,8 @@ public interface UserRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+    @Operation(summary = "Update user",
+    tags = { "User management" })
     ActionStatus update(UserDto postData);
 
     /**
@@ -68,17 +73,34 @@ public interface UserRs extends IBaseRs {
      */
     @DELETE
     @Path("/{username}")
+    @Operation(summary = "Remove user with a given username",
+    tags = { "User management" })
     ActionStatus remove(@PathParam("username") String username);
 
     /**
      * Search user with a given username.
-     * 
+     *
      * @param username user name
      * @return user
      */
     @GET
     @Path("/")
+    @Operation(summary = "Search user with a given username.",
+            deprecated = true,
+            tags = { "Deprecated" })
     GetUserResponse find(@QueryParam("username") String username);
+
+    /**
+     * Search user with a given username.
+     *
+     * @param username user name
+     * @return user
+     */
+    @GET
+    @Path("/name/{username}")
+    @Operation(summary = "Search user with a given username.",
+            tags = { "User management" })
+    GetUserResponse findV2(@QueryParam("username") String username);
 
     /**
      * Get info of currently logged in user
@@ -97,6 +119,8 @@ public interface UserRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+    @Operation(summary = "Create or update user based on the username.", deprecated = true,
+    tags = { "Deprecated" })
     ActionStatus createOrUpdate(UserDto postData);
 
     /**
@@ -107,6 +131,8 @@ public interface UserRs extends IBaseRs {
      */
     @POST
     @Path("/external")
+    @Operation(summary = "Creates a user in keycloak and core.",
+    tags = { "User management" })
     ActionStatus createExternalUser(UserDto postData);
 
     /**
@@ -117,6 +143,8 @@ public interface UserRs extends IBaseRs {
      */
     @PUT
     @Path("/external/")
+    @Operation(summary = "Updates a user in keycloak and core given a username.",
+    tags = { "User management" })
     ActionStatus updateExternalUser(UserDto postData);
 
     /**
@@ -127,6 +155,8 @@ public interface UserRs extends IBaseRs {
      */
     @DELETE
     @Path("/external/{username}")
+    @Operation(summary = " Deletes a user in keycloak and core given a username.",
+    tags = { "User management" })
     ActionStatus deleteExternalUser(@PathParam("username") String username);
 
     /**
@@ -142,8 +172,29 @@ public interface UserRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+    @Operation(summary = " List users matching a given criteria.", deprecated = true,
+    tags = { "Deprecated" })
     UsersDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("userName") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+
+    /**
+     * List users matching a given criteria.
+     *
+     * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
+     * @param fields Data retrieval options/fieldnames separated by a comma. Specify "securedEntities" in fields to include the secured entities.
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return A list of users
+     */
+    @GET
+    @Path("/filtering")
+    @Operation(summary = " List users matching a given criteria.",
+            tags = { "User management" })
+    UsersDto listGetV2(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+                     @DefaultValue("userName") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
      * List users matching a given criteria
@@ -162,6 +213,19 @@ public interface UserRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+    @Operation(summary = "List users matching a given criteria.", deprecated = true,
+    tags = { "Deprecated" })
     UsersDto listPost(PagingAndFiltering pagingAndFiltering);
 
+    /**
+     * List users matching a given criteria.
+     *
+     * @param pagingAndFiltering Pagination and filtering criteria. Specify "securedEntities" in fields to include the secured entities.
+     * @return A list of users
+     */
+    @POST
+    @Path("/filtering")
+    @Operation(summary = "List users matching a given criteria.",
+            tags = { "User management" })
+    UsersDto listPostV2(PagingAndFiltering pagingAndFiltering);
 }

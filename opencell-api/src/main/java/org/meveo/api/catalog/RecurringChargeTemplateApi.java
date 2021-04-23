@@ -18,6 +18,13 @@
 
 package org.meveo.api.catalog;
 
+import java.util.Arrays;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import org.elasticsearch.common.Strings;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
@@ -29,13 +36,12 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
+import org.meveo.service.cpq.AttributeService;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -50,6 +56,9 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
 
     @Inject
     private CalendarService calendarService;
+    
+    @Inject
+    private AttributeService attributeService;
 
     @Override
     public RecurringChargeTemplate create(RecurringChargeTemplateDto postData) throws MeveoApiException, BusinessException {
@@ -62,10 +71,7 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         }
         if (StringUtils.isBlank(postData.getCalendar())) {
             missingParameters.add("calendar");
-        }
-        if (StringUtils.isBlank(postData.getTaxClassCode())) {
-            missingParameters.add("taxClassCode");
-        }
+        } 
 
         handleMissingParametersAndValidate(postData);
 
@@ -85,13 +91,7 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-        }
-        if (postData.getInvoiceSubCategory() != null && StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-            missingParameters.add("invoiceSubCategory");
-        }
-        if (postData.getTaxClassCode() != null && StringUtils.isBlank(postData.getTaxClassCode())) {
-            missingParameters.add("taxClassCode");
-        }
+        } 
         if (postData.getCalendar() != null && StringUtils.isBlank(postData.getCalendar())) {
             missingParameters.add("calendar");
         }
@@ -174,6 +174,16 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         }
         if (postData.getApplyTerminatedChargeToDateEL() != null) {
             chargeTemplate.setApplyTerminatedChargeToDateEL(StringUtils.getDefaultIfEmpty(postData.getApplyTerminatedChargeToDateEL(), null));
+        }
+        if (postData.getRecurrenceType() != null) {
+            chargeTemplate.setRecurrenceType(postData.getRecurrenceType());
+        }
+        
+        if(!Strings.isEmpty(postData.getAttributeCalendarCode())) {
+        	chargeTemplate.setAttributeCalendar(loadEntityByCode(attributeService, postData.getAttributeCalendarCode(), Attribute.class));
+        }
+        if(!Strings.isEmpty(postData.getAttributeDurationCode())) {
+        	chargeTemplate.setAttributeDuration(loadEntityByCode(attributeService, postData.getAttributeDurationCode(), Attribute.class));
         }
 
         return chargeTemplate;

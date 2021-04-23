@@ -27,6 +27,8 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class OneShotChargeTemplateDto.
  *
@@ -42,9 +44,11 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
 
     /** The one shot charge template type. */
     @XmlElement(required = true)
+    @Schema(description = "The one shot charge template type", example = "possible value are : SUBSCRIPTION, TERMINATION, OTHER")
     private OneShotChargeTemplateTypeEnum oneShotChargeTemplateType;
 
     /** The immediate invoicing. */
+    @Schema(description = "The immediate invoicing")
     private Boolean immediateInvoicing;
 
     /**

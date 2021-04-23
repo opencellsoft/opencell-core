@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
 import org.meveo.model.billing.Tax;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Invoice subcategory amount by tax DTO
  * 
@@ -18,21 +20,25 @@ public class SubcategoryInvoiceAgregateAmountDto implements Serializable {
     /**
      * Amount without tax
      */
+    @Schema(description = "Amount without tax")
     private BigDecimal amountWithoutTax;
 
     /**
      * Amount with tax
      */
+    @Schema(description = "Amount with tax")
     private BigDecimal amountWithTax;
 
     /**
      * Tax amount
      */
+    @Schema(description = "Tax amount")
     private BigDecimal amountTax;
 
     /**
      * Tax applied
      */
+    @Schema(description = "Tax applied")
     private TaxDto tax;
 
     /**

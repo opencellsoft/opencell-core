@@ -1,0 +1,247 @@
+package org.meveo.model.quote;
+
+import static javax.persistence.FetchType.LAZY;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.AuditableCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.offer.QuoteOffer;
+
+@SuppressWarnings("serial")
+@Entity
+@CustomFieldEntity(cftCodePrefix = "QuoteProduct")
+@Table(name = "cpq_quote_product")
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cpq_quote_product_seq"), })
+@NamedQueries({
+		@NamedQuery(name = "QuoteProduct.findByQuoteId", query = "select q from QuoteProduct q where q.quote.id=:id"),
+		@NamedQuery(name = "QuoteProduct.findByQuoteVersionAndQuoteOffer", query = "select q from QuoteProduct q left join q.quoteVersion qq left join q.quoteOffre qqo where qq.id=:quoteVersionId and qqo.id=:quoteOfferId")
+})
+public class QuoteProduct extends AuditableCFEntity {
+
+	/**
+     * quote
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cpq_quote_id", referencedColumnName = "id")
+    private CpqQuote quote;
+
+    /**
+     * quote Version
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "quote_version_id", referencedColumnName = "id")
+    private QuoteVersion quoteVersion;
+
+    /**
+     * product
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "product_version_id", referencedColumnName = "id")
+	@NotNull
+    private ProductVersion productVersion;
+
+    @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
+    @NotNull
+    private BigDecimal quantity = BigDecimal.ONE;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "offer_quote_id", referencedColumnName = "id")
+    private QuoteOffer quoteOffre;
+    
+
+    @OneToMany(mappedBy = "quoteProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+	private List<QuoteAttribute> quoteAttributes = new ArrayList<QuoteAttribute>();
+    
+
+    @OneToMany(mappedBy = "quoteProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<QuoteArticleLine> quoteArticleLines;
+    
+	/**
+	 * discountPlan attached to this quoteProduct
+	 */
+    @ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
+	private DiscountPlan discountPlan;
+
+	public QuoteProduct() {
+	}
+
+
+	public QuoteProduct(QuoteProduct copy) {
+		this.quote = copy.quote;
+		this.quoteVersion = copy.quoteVersion;
+		this.productVersion = copy.productVersion;
+		this.quantity = copy.quantity;
+		this.quoteOffre = copy.quoteOffre;
+		this.quoteAttributes = copy.quoteAttributes;
+	}
+	
+	public void update(QuoteProduct other) {
+    	this.quoteOffre = other.quoteOffre;
+    	this.quote = other.quote;
+		this.quoteVersion = other.quoteVersion;
+		this.productVersion = other.productVersion;
+		this.quantity = other.quantity;
+		this.quoteOffre = other.quoteOffre;
+		this.quoteAttributes = other.quoteAttributes;
+    }
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
+	}
+
+	/**
+	 * @return the quote
+	 */
+	public CpqQuote getQuote() {
+		return quote;
+	}
+
+	/**
+	 * @param quote the quote to set
+	 */
+	public void setQuote(CpqQuote quote) {
+		this.quote = quote;
+	}
+
+	/**
+	 * @return the quoteVersion
+	 */
+	public QuoteVersion getQuoteVersion() {
+		return quoteVersion;
+	}
+
+	/**
+	 * @param quoteVersion the quoteVersion to set
+	 */
+	public void setQuoteVersion(QuoteVersion quoteVersion) {
+		this.quoteVersion = quoteVersion;
+	}
+
+
+
+	/**
+	 * @return the quantity
+	 */
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	/**
+	 * @param quantity the quantity to set
+	 */
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+
+
+
+	/**
+	 * @return the productVersion
+	 */
+	public ProductVersion getProductVersion() {
+		return productVersion;
+	}
+
+	/**
+	 * @param productVersion the productVersion to set
+	 */
+	public void setProductVersion(ProductVersion productVersion) {
+		this.productVersion = productVersion;
+	}
+
+	/**
+	 * @return the quoteOffre
+	 */
+	public QuoteOffer getQuoteOffre() {
+		return quoteOffre;
+	}
+
+	/**
+	 * @param quoteOffre the quoteOffre to set
+	 */
+	public void setQuoteOffre(QuoteOffer quoteOffre) {
+		this.quoteOffre = quoteOffre;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ Objects.hash(productVersion, quantity, quote, quoteOffre, quoteVersion);
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		QuoteProduct other = (QuoteProduct) obj;
+		return  Objects.equals(productVersion, other.productVersion) && Objects.equals(quantity, other.quantity)
+				&& Objects.equals(quote, other.quote)
+				&& Objects.equals(quoteOffre, other.quoteOffre) && Objects.equals(quoteVersion, other.quoteVersion);
+	}
+	/**
+	 * @return the quoteAttributes
+	 */
+	public List<QuoteAttribute> getQuoteAttributes() {
+		if(quoteAttributes == null)
+			quoteAttributes = new ArrayList<QuoteAttribute>();
+		return quoteAttributes;
+	}
+	/**
+	 * @param quoteAttributes the quoteAttributes to set
+	 */
+	public void setQuoteAttributes(List<QuoteAttribute> quoteAttributes) {
+		this.quoteAttributes = quoteAttributes;
+	}
+
+
+	/**
+	 * @return the quoteArticleLines
+	 */
+	public List<QuoteArticleLine> getQuoteArticleLines() {
+		return quoteArticleLines;
+	}
+
+
+	/**
+	 * @param quoteArticleLines the quoteArticleLines to set
+	 */
+	public void setQuoteArticleLines(List<QuoteArticleLine> quoteArticleLines) {
+		this.quoteArticleLines = quoteArticleLines;
+	}
+
+
+}

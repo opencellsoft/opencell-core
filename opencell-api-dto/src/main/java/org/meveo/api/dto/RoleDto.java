@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -34,6 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class RoleDto.
@@ -51,26 +54,38 @@ public class RoleDto extends BaseEntityDto {
 
     /** The name. */
     @XmlAttribute(required = true)
+    @Schema(description = "the name of the role")
+    @NotNull
     private String name;
 
     /** The description. */
     @XmlAttribute
+    @Schema(description = "short description of the role")
     private String description;
 
     /** The permission. */
     @XmlElementWrapper(name = "permissions")
     @XmlElement(name = "permission")
+    @Schema(description = "list of the permission associated to the role", example = "permission : [{permission : PERMIS_1, name : NAME_1}]")
     private List<PermissionDto> permission = new ArrayList<>();
 
     /** The roles. */
     @XmlElementWrapper(name = "roles")
     @XmlElement(name = "role")
+    @Schema(description = "roles attached to this role")
     private List<RoleDto> roles = new ArrayList<>();
     
     /** The secured entities. */
     @XmlElementWrapper(name = "accessibleEntities")
     @XmlElement(name = "accessibleEntity")
+    @Schema(description = "list of the secured entities")
     private List<SecuredEntityDto> securedEntities;
+
+    @Schema(description = "uuid set automatically")
+    private String uuid;
+
+    @Schema(description = "custom field associated to the role")
+    protected CustomFieldsDto customFields;
 
     /**
      * Instantiates a new role dto.
@@ -110,6 +125,7 @@ public class RoleDto extends BaseEntityDto {
     public RoleDto(Role role, boolean includeRoles, boolean includePermissions, boolean includeSecuredEntities) {
         this.setName(role.getName());
         this.setDescription(role.getDescription());
+        this.uuid = role.getUuid();
 
         Set<Permission> permissions = role.getPermissions();
 
@@ -236,5 +252,33 @@ public class RoleDto extends BaseEntityDto {
 	 */
 	public void setSecuredEntities(List<SecuredEntityDto> securedEntities) {
 		this.securedEntities = securedEntities;
+	}
+
+	/**
+	 * @return the uuid
+	 */
+	public String getUuid() {
+		return uuid;
+	}
+
+	/**
+	 * @param uuid the uuid to set
+	 */
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 }

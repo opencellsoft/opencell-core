@@ -24,6 +24,7 @@ import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -32,6 +33,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -51,10 +53,13 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.UnitOfMeasure;
+import org.meveo.model.cpq.commercial.InvoiceLine;
+import org.meveo.model.cpq.commercial.OrderInfo;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.tax.TaxClass;
@@ -527,6 +532,17 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @NotNull
     private String uuid;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "article_id")
+    private AccountingArticle accountingArticle;
+
+    @Embedded
+    private OrderInfo infoOrder;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_line_id")
+    private InvoiceLine invoiceLine;
+
     public RatedTransaction() {
         super();
     }
@@ -666,6 +682,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.inputUnitOfMeasure = walletOperation.getInputUnitOfMeasure();
         this.ratingUnitOfMeasure = walletOperation.getRatingUnitOfMeasure();
         this.accountingCode = walletOperation.getAccountingCode();
+        this.accountingArticle=walletOperation.getAccountingArticle();
+        this.infoOrder = walletOperation.getOrderInfo();
 
         this.unityDescription = walletOperation.getInputUnitDescription();
         if (this.unityDescription == null) {
@@ -1254,6 +1272,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.accountingCode = accountingCode;
     }
 
+    public AccountingArticle getAccountingArticle() {
+        return accountingArticle;
+    }
+
+    public void setAccountingArticle(AccountingArticle accountingArticle) {
+        this.accountingArticle = accountingArticle;
+    }
+
     /**
      * Gets the sorting index.
      *
@@ -1339,5 +1365,27 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         if (uuid == null) {
             uuid = UUID.randomUUID().toString();
         }
+    }
+
+	/**
+	 * @return the infoOrder
+	 */
+	public OrderInfo getOrderInfo() {
+		return infoOrder;
+	}
+
+	/**
+	 * @param infoOrder the infoOrder to set
+	 */
+	public void setOrderInfo(OrderInfo infoOrder) {
+		this.infoOrder = infoOrder;
+	}
+
+    public InvoiceLine getInvoiceLine() {
+        return invoiceLine;
+    }
+
+    public void setInvoiceLine(InvoiceLine invoiceLine) {
+        this.invoiceLine = invoiceLine;
     }
 }

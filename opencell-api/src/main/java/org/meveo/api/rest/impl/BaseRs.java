@@ -135,4 +135,19 @@ public abstract class BaseRs implements IBaseRs {
     protected void processException(Exception e, ActionStatus status) {
         new ExceptionProcessorRs(resourceMessages).process(e, status);
     }
+    
+
+    protected Response errorResponse(MeveoApiException e, ActionStatus result) {
+		if(result==null) {
+			result = new ActionStatus();
+		}
+		result.setStatus(ActionStatusEnum.FAIL);
+		result.setMessage(e.getMessage());
+		 return createResponseFromMeveoApiException(e, result).build();
+	}
+    protected Response errorResponse(MeveoApiException e) {
+		ActionStatus result = new ActionStatus();
+		return errorResponse(e, result);
+	}
+
 }

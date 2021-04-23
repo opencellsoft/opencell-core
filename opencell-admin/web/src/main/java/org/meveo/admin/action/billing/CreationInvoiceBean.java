@@ -57,6 +57,7 @@ import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.RatedTransaction;
@@ -205,6 +206,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     private final static String MODE_DETAILED = "detailed";
     private final static String MODE_DETAILED_W_SERVICES = "detailedWithServices";
 
+    private boolean amountsAndlinesUpdated=false;
+    
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
@@ -415,7 +418,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
      * @throws BusinessException General business exception
      */
     public void updateAmountsAndLines() throws BusinessException {
-
+    	amountsAndlinesUpdated=true;
         BillingAccount billingAccount = billingAccountService.retrieveIfNotManaged(entity.getBillingAccount());
 
         aggregateHandler.updateSubCategoryCategoryAndTaxAggregateAmounts();
@@ -681,6 +684,13 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) {
+    	if(entity.getId()!=null) {
+    		if( !amountsAndlinesUpdated) {
+    			return getListViewName();
+    		} else{
+    			entity = invoiceService.retrieveIfNotManaged(entity);
+    		}
+    	}
 
         BillingAccount billingAccount = getFreshBA();
 
@@ -1348,6 +1358,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         this.amountWithTax = amountWithTax;
     }
 
+    
+
     public ServiceTemplate getSelectedServiceTemplate() {
         return selectedServiceTemplate;
     }
@@ -1381,15 +1393,36 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         this.selectedTaxClass = selectedTaxClass;
     }
 
-    public void cancelInvoice(Invoice invoice) throws BusinessException {
-        invoiceService.cancelInvoiceWithoutDelete(invoice);
+    public String cancelInvoice() throws BusinessException {
+        invoiceService.cancelInvoiceAndRts(entity);
+        return saveOrUpdate(false);
     }
 
-    public void validateInvoice(Invoice invoice) throws BusinessException {
-        invoiceService.validateInvoice(invoice);
+    public String validateInvoice() throws BusinessException {
+        invoiceService.validateInvoice(entity, false);
+        return saveOrUpdate(false);
     }
 
-    public void rebuildInvoice(Invoice invoice) throws BusinessException {
-        invoiceService.rebuildInvoice(invoice);
+    public String rebuildInvoice() throws BusinessException {
+        invoiceService.rebuildInvoice(entity, false);
+        return saveOrUpdate(false);
+    }
+
+    /**
+     *
+     */
+    public boolean canCancelInvoice() {
+        return canChangeInvoiceStatusTo(InvoiceStatusEnum.CANCELED);
+    }
+
+    /**
+     *
+     */
+    public boolean canValidateInvoice() {
+        return canChangeInvoiceStatusTo(InvoiceStatusEnum.DRAFT);
+    }
+
+    public boolean canChangeInvoiceStatusTo(InvoiceStatusEnum newStatus) {
+        return entity!=null && entity.getStatus()!=null && newStatus.getPreviousStats().contains(entity.getStatus());
     }
 }

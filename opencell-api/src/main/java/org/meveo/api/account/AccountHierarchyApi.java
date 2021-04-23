@@ -27,6 +27,7 @@ import org.meveo.api.dto.account.*;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
+import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.payment.PaymentMethodApi;
@@ -947,6 +948,8 @@ public class AccountHierarchyApi extends BaseApi {
             address.setAddress1(postData.getAddress().getAddress1());
             address.setAddress2(postData.getAddress().getAddress2());
             address.setAddress3(postData.getAddress().getAddress3());
+            address.setAddress4(postData.getAddress().getAddress4());
+            address.setAddress5(postData.getAddress().getAddress5());
             address.setCity(postData.getAddress().getCity());
             address.setCountry(countryService.findByCode(postData.getAddress().getCountry()));
             address.setState(postData.getAddress().getState());
@@ -1697,6 +1700,12 @@ public class AccountHierarchyApi extends BaseApi {
             if (!StringUtils.isBlank(accountDto.getAddress().getAddress3())) {
                 accountEntity.getAddress().setAddress3(accountDto.getAddress().getAddress3());
             }
+            if (!StringUtils.isBlank(accountDto.getAddress().getAddress4())) {
+                accountEntity.getAddress().setAddress3(accountDto.getAddress().getAddress4());
+            }
+            if (!StringUtils.isBlank(accountDto.getAddress().getAddress5())) {
+                accountEntity.getAddress().setAddress3(accountDto.getAddress().getAddress5());
+            }
             if (!StringUtils.isBlank(accountDto.getAddress().getZipCode())) {
                 accountEntity.getAddress().setZipCode(accountDto.getAddress().getZipCode());
             }
@@ -1811,7 +1820,7 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public void accountEntityToDto(AccountDto dto, AccountEntity account, CustomFieldInheritanceEnum inheritCF) {
-        dto.setAuditable(account);
+        dto.setAuditableEntity(account);
         dto.setExternalRef1(account.getExternalRef1());
         dto.setExternalRef2(account.getExternalRef2());
         dto.setJobTitle(account.getJobTitle());
@@ -1907,7 +1916,7 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public BillingAccountDto billingAccountToDto(BillingAccount ba, CustomFieldInheritanceEnum inheritCF, boolean includeUserAccounts) {
-        BillingAccountDto dto = new BillingAccountDto(ba);
+        GetBillingAccountResponseDto dto = new GetBillingAccountResponseDto(ba);
         accountEntityToDto(dto, ba, inheritCF);
 
         if (!dto.isLoaded() && includeUserAccounts && ba.getUsersAccounts() != null) {

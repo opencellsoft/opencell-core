@@ -34,14 +34,15 @@ public class ExceptionProcessorRs extends ExceptionProcessorWs {
             } else if ("UNAUTHORIZED".equals(str) //
                     || "AUTHENTICATION_AUTHORIZATION_EXCEPTION".equals(str)) {
                 throw new NotAuthorizedException(status);
-            } else if ("ENTITY_ALREADY_EXISTS_EXCEPTION".equals(str) //
-                    || "DELETE_REFERENCED_ENTITY_EXCEPTION".equals(str) //
+            } else if ("DELETE_REFERENCED_ENTITY_EXCEPTION".equals(str) //
                     || "DUPLICATE_ACCESS".equals(str) || "ACTION_FORBIDDEN".equals(str)//
                     || "INSUFFICIENT_BALANCE".equals(str)) {
                 throw new ForbiddenException(status);
             } else if ("ENTITY_DOES_NOT_EXISTS_EXCEPTION".equals(str)) {
                 throw new NotFoundException(status);
-            } else {
+            } else if ("ENTITY_ALREADY_EXISTS_EXCEPTION".equals(str)){
+            	throw new AlreadyExistException(status);
+            }else {
                 throw new InternalServerErrorException(status);
             }
         }

@@ -20,6 +20,7 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 
 /**
  * The Class SubCategoryInvoiceAgregate.
@@ -136,6 +138,9 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
     @Transient
     private List<RatedTransaction> ratedtransactionsToAssociate = new ArrayList<>();
+
+    @Transient
+    private List<InvoiceLine> invoiceLinesToAssociate = new ArrayList<>();
 
     /**
      * Tracks cumulative amounts by tax
@@ -649,9 +654,46 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         this.amountsByTax = amountsByTax;
     }
 
+    public List<InvoiceLine> getInvoiceLinesToAssociate() {
+        return invoiceLinesToAssociate;
+    }
+
+    public void setInvoiceLinesToAssociate(List<InvoiceLine> invoiceLinesToAssociate) {
+        this.invoiceLinesToAssociate = invoiceLinesToAssociate;
+    }
+
+    public void addInvoiceLine(InvoiceLine invoiceLine, boolean isEnterprise, boolean addAmounts) {
+
+        if (this.itemNumber == null) {
+            this.itemNumber = 0;
+        }
+        this.itemNumber++;
+        this.invoiceLinesToAssociate.add(invoiceLine);
+
+        BigDecimal amount = isEnterprise? invoiceLine.getAmountWithoutTax(): invoiceLine.getAmountWithTax();
+        if(addAmounts) {
+            if (isEnterprise) {
+                addAmountWithoutTax(invoiceLine.getAmountWithoutTax());
+            } else {
+                addAmountWithTax(invoiceLine.getAmountWithTax());
+            }
+            addAmountTax(invoiceLine.getAmountTax());
+        }
+        if (amountsByTax == null) {
+            amountsByTax = new HashMap<>();
+        }
+        if (!amountsByTax.containsKey(invoiceLine.getTax())) {
+            amountsByTax.put(invoiceLine.getTax(), new SubcategoryInvoiceAgregateAmount(invoiceLine.getAmountWithoutTax(), invoiceLine.getAmountWithTax(), invoiceLine.getAmountTax()));
+        } else {
+            SubcategoryInvoiceAgregateAmount subcategoryInvoiceAgregate = amountsByTax.get(invoiceLine.getTax());
+            subcategoryInvoiceAgregate.addAmounts(invoiceLine.getAmountWithoutTax(), invoiceLine.getAmountWithTax(), invoiceLine.getAmountTax());
+            amountsByTax.put(invoiceLine.getTax(), subcategoryInvoiceAgregate);
+        }
+    }
+
     /**
      * Set cumulative amounts by tax
-     * 
+     *
      * @param amountsByTax Amounts by tax - just as number
      * @param isEnterprise Is application used used in B2B (base prices are without tax) or B2C mode (base prices are with tax)
      */

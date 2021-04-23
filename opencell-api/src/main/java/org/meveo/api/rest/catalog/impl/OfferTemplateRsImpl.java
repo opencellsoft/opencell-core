@@ -18,27 +18,33 @@
 
 package org.meveo.api.rest.catalog.impl;
 
+import java.util.Date;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.ws.rs.core.Response;
+
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.OfferTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.serialize.RestDateParam;
 import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.util.Date;
 
 /**
  * @author Edward P. Legaspi
@@ -88,14 +94,14 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(
-                offerTemplateApi.find(offerTemplateCode, validFrom, validTo, inheritCF, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate, loadAllowedDiscountPlan));
+            result=offerTemplateApi.find(offerTemplateCode, validFrom, validTo, inheritCF, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate, loadAllowedDiscountPlan);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
 
         return result;
     }
+
 
     @Override
     public GetListOfferTemplateResponseDto listGet(@Deprecated String code, @Deprecated @RestDateParam Date validFrom, @Deprecated @RestDateParam Date validTo, String query, String fields, Integer offset, Integer limit,
@@ -138,6 +144,21 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
         return result;
     }
+    
+	@Override
+	public Response listPost(CustomerContextDTO customerContextDto) {
+		GetListCpqOfferResponseDto result = new GetListCpqOfferResponseDto();
+
+	        try {
+	        	/*****@TODO RAY : create a new method in offertemplateAPI that get offers matching given 
+	        	 * pagination/filetring crieria and also BA trading rules and tags ***////
+	            result = (offerTemplateApi.list(customerContextDto));
+	        } catch (Exception e) {
+	            processException(e, result.getActionStatus());
+	        }
+
+	        return Response.ok().entity(result).build();
+	}
 
     @Override
     public ActionStatus remove(String offerTemplateCode, Date validFrom, Date validTo) {
@@ -193,4 +214,31 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
         return result;
     }
+
+	@Override
+	public Response duplicateOffer(String offerTemplateCode, boolean duplicateHierarchy, boolean preserveCode, Date validFrom, Date validTo) {
+		GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
+		try {
+            result.setOfferTemplate(offerTemplateApi.duplicate(offerTemplateCode, duplicateHierarchy, preserveCode, validFrom, validTo));
+        	return Response.ok(result).build();
+        } catch (MeveoApiException e) {
+            return errorResponse(e, result.getActionStatus());
+        }
+
+	}
+
+	@Override
+	public Response updateStatus(String offerTemplateCode, LifeCycleStatusEnum status, Date validFrom, Date validTo) {
+		   ActionStatus result = new ActionStatus();
+	        try {
+	            offerTemplateApi.updateStatus(offerTemplateCode, status, validFrom, validTo);
+	            return Response.ok(result).build();
+	        } catch (MeveoApiException e) {
+			       return errorResponse(e, result);
+	        }
+	}
+    
+    
+
+
 }

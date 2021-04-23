@@ -34,6 +34,7 @@ import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.GetAccessResponseDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.api.serialize.RestDateParam;
 
 import java.util.Date;
 
@@ -91,7 +92,7 @@ public interface AccessRs extends IBaseRs {
      */
     @DELETE
     @Path("/{accessCode}/{subscriptionCode}/{startDate}/{endDate}")
-    ActionStatus remove(@PathParam("accessCode") String accessCode, @PathParam("subscriptionCode") String subscriptionCode, @PathParam("startDate") Date startDate, @PathParam("endDate") Date endDate);
+    ActionStatus remove(@PathParam("accessCode") String accessCode, @PathParam("subscriptionCode") String subscriptionCode, @PathParam("startDate") @RestDateParam Date startDate, @PathParam("endDate") @RestDateParam Date endDate);
 
     /**
      * List Access filtered by subscriptionCode.

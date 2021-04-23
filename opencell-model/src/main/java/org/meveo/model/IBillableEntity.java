@@ -23,30 +23,35 @@ import java.util.List;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 
 public interface IBillableEntity extends IEntity {
 
-    public BillingRun getBillingRun();
+    BillingRun getBillingRun();
 
-    public void setBillingRun(BillingRun billingRun);
+    void setBillingRun(BillingRun billingRun);
 
-    public void setMinRatedTransactions(List<RatedTransaction> ratedTransactions);
+    void setMinRatedTransactions(List<RatedTransaction> ratedTransactions);
 
-    public List<RatedTransaction> getMinRatedTransactions();
+    List<RatedTransaction> getMinRatedTransactions();
 
-    public BigDecimal getTotalInvoicingAmountWithoutTax();
+    BigDecimal getTotalInvoicingAmountWithoutTax();
 
-    public void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax);
+    void setTotalInvoicingAmountWithoutTax(BigDecimal totalInvoicingAmountWithoutTax);
 
-    public BigDecimal getTotalInvoicingAmountWithTax();
+    BigDecimal getTotalInvoicingAmountWithTax();
 
-    public void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax);
+    void setTotalInvoicingAmountWithTax(BigDecimal totalInvoicingAmountWithTax);
 
-    public BigDecimal getTotalInvoicingAmountTax();
+    BigDecimal getTotalInvoicingAmountTax();
 
-    public void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax);
+    void setTotalInvoicingAmountTax(BigDecimal totalInvoicingAmountTax);
 
-    public String getCode();
+    String getCode();
 
-    public BillingCycle getBillingCycle();
+    BillingCycle getBillingCycle();
+
+    List<InvoiceLine> getMinInvoiceLines();
+
+    void setMinInvoiceLines(List<InvoiceLine> invoiceLines);
 }

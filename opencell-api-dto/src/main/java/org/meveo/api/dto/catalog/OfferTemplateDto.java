@@ -18,17 +18,26 @@
 
 package org.meveo.api.dto.catalog;
 
-import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.billing.SubscriptionRenewalDto;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.OfferTemplate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
+
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.billing.SubscriptionRenewalDto;
+import org.meveo.api.dto.cpq.AttributeDTO;
+import org.meveo.api.dto.cpq.OfferProductsDto;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.OfferTemplate;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The Class OfferTemplateDto.
@@ -42,69 +51,117 @@ import java.util.List;
 public class OfferTemplateDto extends ProductOfferingDto {
 
     /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 9156372453581362595L;
+    protected static final long serialVersionUID = 9156372453581362595L;
 
     /** The bom code. */
-    private String bomCode;
+    @Schema(description = "the bom code")
+    protected String bomCode;
 
     /** The offer template category code. */
     @Deprecated
-    private String offerTemplateCategoryCode;
+    protected String offerTemplateCategoryCode;
 
     /** The offer service templates. */
     @XmlElementWrapper(name = "offerServiceTemplates")
     @XmlElement(name = "offerServiceTemplate")
-    private List<OfferServiceTemplateDto> offerServiceTemplates;
+    @Schema(description = "list of the offer service templates")
+    protected List<OfferServiceTemplateDto> offerServiceTemplates;
 
     /** The offer product templates. */
+    @Deprecated
     @XmlElementWrapper(name = "offerProductTemplates")
     @XmlElement(name = "offerProductTemplate")
-    private List<OfferProductTemplateDto> offerProductTemplates;
+    protected List<OfferProductTemplateDto> offerProductTemplates;
+
+    /** The offer component. */
+    @XmlElementWrapper(name = "offerProducts")
+    @XmlElement(name = "offerProducts")
+    @Schema(description = "list of The offer component")
+    protected List<OfferProductsDto> offerProducts=new ArrayList<OfferProductsDto>();
 
     /** The offer product templates. */
     @XmlElementWrapper(name = "allowedDiscountPlans")
     @XmlElement(name = "allowedDiscountPlans")
-    private List<DiscountPlanDto> allowedDiscountPlans;
+    @Schema(description = "list of The offer product template")
+    protected List<DiscountPlanDto> allowedDiscountPlans;
 
+
+    /** The  attribute */
+    @XmlElementWrapper(name = "attributes")
+    @XmlElement(name = "attributes")
+    @Schema(description = "list of attributes")
+    protected List<AttributeDTO> attributes=new ArrayList<AttributeDTO>();
+ 
+    @XmlElementWrapper(name = "commercialRuleCodes")
+    @XmlElement(name = "commercialRuleCodes")
+    @Schema(description = "list of codes of commercial rules")
+    protected List<String> commercialRuleCodes=new ArrayList<String>();
+    
+    /** The media codes. */
+    @XmlElementWrapper(name = "mediaCodes")
+    @XmlElement(name = "mediaCodes")
+    @Schema(description = "list of the codes media")
+    protected Set<String> mediaCodes = new HashSet<String>();
+
+
+    @Schema(description = "indicat if offer change is restricted")
     private boolean isOfferChangeRestricted;
 
+    @Schema(description = "list of allowed offer change")
     private List<String> allowedOfferChange;
 
     /** The renewal rule. */
-    private SubscriptionRenewalDto renewalRule;
+    @Schema(description = "The renewal rule")
+    protected SubscriptionRenewalDto renewalRule;
 
     /**
      * Expression to determine minimum amount value
      */
-    private String minimumAmountEl;
+    @Schema(description = "Expression to determine minimum amount value")
+    protected String minimumAmountEl;
 
     /**
      * Expression to determine minimum amount value - for Spark
      */
-    private String minimumAmountElSpark;
+    @Schema(description = "Expression to determine minimum amount value - for Spark")
+    protected String minimumAmountElSpark;
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value
      */
-    private String minimumLabelEl;
+    @Schema(description = "Expression to determine labe value")
+    protected String minimumLabelEl;
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
      */
-    private String minimumLabelElSpark;
+    @Schema(description = "Expression to determine labe value for Spark")
+    protected String minimumLabelElSpark;
 
     /**
      * Corresponding to minimum invoice subcategory
      */
-    private String minimumInvoiceSubCategory;
+    @Schema(description = "Corresponding to minimum invoice subcategory")
+    protected String minimumInvoiceSubCategory;
 
 
-    private Boolean autoEndOfEngagement;
+    @Schema(description = "indicate end of engagement")
+    protected Boolean autoEndOfEngagement;
 
     /**
      * Corresponding to minimum one shot charge template code.
      */
-    private String minimumChargeTemplate;
+    @Schema(description = "Corresponding to minimum one shot charge template code")
+    protected String minimumChargeTemplate;
+
+    /** The tags. */
+    @XmlElementWrapper(name = "tagCodes")
+    @XmlElement(name = "tagCodes")
+    @Schema(description = "list of tag code")
+    protected Set<String> tagCodes = new HashSet<String>();
+
+    @Schema(description = "last update status datetime")
+    protected Date statusDate;
 
     /**
      * Instantiates a new offer template dto.
@@ -123,6 +180,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
     public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
         super(offerTemplate, customFieldsDto, asLink);
         id = offerTemplate.getId();
+        statusDate=offerTemplate.getStatusDate();
 
         if (offerTemplate.getBusinessOfferModel() != null) {
             setBomCode(offerTemplate.getBusinessOfferModel().getCode());
@@ -362,6 +420,79 @@ public class OfferTemplateDto extends ProductOfferingDto {
         this.minimumChargeTemplate = minimumChargeTemplate;
     }
 
+
+
+
+	/**
+	 * @return the tagCodes
+	 */
+	public Set<String> getTagCodes() {
+		return tagCodes;
+	}
+
+	/**
+	 * @param tagCodes the tagCodes to set
+	 */
+	public void setTagCodes(Set<String> tagCodes) {
+		this.tagCodes = tagCodes;
+	}
+
+	/**
+	 * @return the offerProducts
+	 */
+	public List<OfferProductsDto> getOfferProducts() {
+		return offerProducts;
+	}
+
+	/**
+	 * @param offerProducts the offerProducts to set
+	 */
+	public void setOfferProducts(List<OfferProductsDto> offerProducts) {
+		this.offerProducts = offerProducts;
+	}
+
+	/**
+	 * @return the attributes
+	 */
+	public List<AttributeDTO> getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(List<AttributeDTO> attributes) {
+		this.attributes = attributes;
+	}
+ 
+	/**
+	 * @return the statusDate
+	 */
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+	/**
+	 * @param statusDate the statusDate to set
+	 */
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
+
+	/**
+	 * @return the commercialRuleCodes
+	 */
+	public List<String> getCommercialRuleCodes() {
+		return commercialRuleCodes;
+	}
+
+	/**
+	 * @param commercialRuleCodes the commercialRuleCodes to set
+	 */
+	public void setCommercialRuleCodes(List<String> commercialRuleCodes) {
+		this.commercialRuleCodes = commercialRuleCodes;
+	}
+
     public boolean isOfferChangeRestricted() {
         return isOfferChangeRestricted;
     }
@@ -377,4 +508,20 @@ public class OfferTemplateDto extends ProductOfferingDto {
     public void setAllowedOfferChange(List<String> allowedOfferChange) {
         this.allowedOfferChange = allowedOfferChange;
     }
+
+	/**
+	 * @return the mediaCodes
+	 */
+	public Set<String> getMediaCodes() {
+		return mediaCodes;
+	}
+
+	/**
+	 * @param mediaCodes the mediaCodes to set
+	 */
+	public void setMediaCodes(Set<String> mediaCodes) {
+		this.mediaCodes = mediaCodes;
+	}
+    
+    
 }

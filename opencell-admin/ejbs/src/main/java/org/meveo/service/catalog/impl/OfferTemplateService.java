@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -47,9 +48,15 @@ import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Media;
+import org.meveo.model.cpq.offer.OfferComponent;
+import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.cpq.CommercialRuleHeaderService;
+import org.meveo.service.cpq.MediaService;
 
 /**
  * Offer Template service implementation.
@@ -67,6 +74,10 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
     @Inject
     private SubscriptionService subscriptionService;
+    @Inject
+    private MediaService mediaService;
+    @Inject
+    private CommercialRuleHeaderService commercialRuleHeaderService;
 
     @SuppressWarnings("unchecked")
     public List<OfferTemplate> findByServiceTemplate(ServiceTemplate serviceTemplate) {
@@ -198,6 +209,8 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offerToDuplicate.getOfferTemplateCategories().size();
         offerToDuplicate.getSellers().size();
         offerToDuplicate.getCustomerCategories().size();
+        offerToDuplicate.getMedias().size();
+        offerToDuplicate.getCommercialRules().size();
 
         if (offerToDuplicate.getOfferServiceTemplates() != null) {
             for (OfferServiceTemplate offerServiceTemplate : offerToDuplicate.getOfferServiceTemplates()) {
@@ -249,6 +262,15 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         List<CustomerCategory> customerCategories = offer.getCustomerCategories();
         offer.setCustomerCategories(new ArrayList<CustomerCategory>());
+        
+        List<Media> medias = offer.getMedias();
+        offer.setMedias(new ArrayList<Media>());
+        
+        List<CommercialRuleHeader> commercialRulesHeader = offer.getCommercialRules();
+        offer.setCommercialRules(new ArrayList<CommercialRuleHeader>());
+        
+        List<OfferComponent> offerComponents = offer.getOfferComponents();
+        offer.setOfferComponents(new ArrayList<OfferComponent>());
 
         if (businessAccountModels != null) {
             for (BusinessAccountModel bam : businessAccountModels) {
@@ -299,6 +321,27 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
             if (offerProductTemplates != null) {
                 catalogHierarchyBuilderService.duplicateOfferProductTemplate(offer, offerProductTemplates, prefix);
+            }
+
+            if(medias != null) {
+            	for (Media media : medias) {
+        			mediaService.detach(media);
+        			Media newMedia = new Media(media);  
+        			newMedia.setMediaName(media.getMediaName() + "_" + offer.getId());
+        			mediaService.create(newMedia);
+    				offer.getMedias().add(newMedia);
+    			}
+            }
+            
+            if(commercialRulesHeader != null) {
+            	for (CommercialRuleHeader commercialRuleHeader : commercialRulesHeader) {
+            		commercialRuleHeader.getCommercialRuleItems().size();
+            		commercialRuleHeaderService.detach(commercialRuleHeader);
+            		CommercialRuleHeader duplicate = new CommercialRuleHeader(commercialRuleHeader);
+            		duplicate.setTargetOfferTemplate(offer);
+            		commercialRuleHeaderService.create(duplicate);
+            		offer.getCommercialRules().add(duplicate);
+    			}
             }
 
         } else {
@@ -380,5 +423,31 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         }
 
         return listOfferTemplates;
+    }
+    
+    
+    @SuppressWarnings("unchecked")
+    public List<OfferTemplate> getOffersByTags(HashSet<String> tagCodes) { 
+    	List<OfferTemplate> offers=new ArrayList<OfferTemplate>();
+    	try {
+    		offers = (List<OfferTemplate>)getEntityManager().createNamedQuery("OfferTemplate.findByTags").setParameter("tagCodes", tagCodes).getResultList();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		log.error("listOffersByTags error ", e.getMessage());
+    	}
+
+    	return offers;
+    }
+    @SuppressWarnings("unchecked")
+    public List<Tag> getOfferTagsByType(List<String> tagTypeCodes) { 
+    	List<Tag> tags=new ArrayList<Tag>();
+    	try {
+    		tags = (List<Tag>)getEntityManager().createNamedQuery("OfferTemplate.findTagsByTagType").setParameter("tagTypeCodes", tagTypeCodes).getResultList();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		log.error("getOfferTagsByType error ", e.getMessage());
+    	}
+
+    	return tags;
     }
 }

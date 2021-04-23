@@ -18,7 +18,10 @@
 
 package org.meveo.security.keycloak;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,6 +30,7 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 import org.keycloak.KeycloakPrincipal;
 import org.meveo.security.MeveoUser;
@@ -43,7 +47,6 @@ public class CurrentUserProvider {
 
     @Inject
     private UserInfoManagement userInfoManagement;
-
     @Resource
     private SessionContext ctx;
 
@@ -188,6 +191,12 @@ public class CurrentUserProvider {
      * @param currentUser Authenticated current user
      */
 
+
+
+
+
+
+
     /**
      * Invalidate cached role to permission mapping (usually after role save/update event)
      */
@@ -226,7 +235,7 @@ public class CurrentUserProvider {
 
     /**
      * Get roles by application. Applies to Keycloak implementation only.
-     * 
+     *
      * @param currentUser Currently logged-in user
      * @return A list of roles grouped by application (keycloak client name). A realm level roles are identified by key "realm". Admin application (KC client opencell-web) contains
      *         a mix or realm roles, client roles, roles defined in opencell and their resolution to permissions.

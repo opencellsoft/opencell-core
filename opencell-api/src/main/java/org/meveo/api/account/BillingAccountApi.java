@@ -18,10 +18,25 @@
 
 package org.meveo.api.account;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.persistence.EntityNotFoundException;
+
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.GDPRInfoDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.account.BillingAccountsDto;
 import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
@@ -41,6 +56,7 @@ import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.communication.email.MailingTypeEnum;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.ProviderContact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
@@ -48,28 +64,20 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.shared.Title;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.billing.impl.*;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.communication.impl.EmailTemplateService;
+import org.meveo.service.cpq.TagService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.ProviderContactService;
 import org.meveo.service.crm.impl.SubscriptionTerminationReasonService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 import org.meveo.service.tax.TaxCategoryService;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author Edward P. Legaspi
@@ -140,7 +148,13 @@ public class BillingAccountApi extends AccountEntityApi {
     
     @Inject
     private ProviderContactService providerContactService;
+
+    @Inject
+    private TagService tagService;
     
+    @Inject
+    private TitleService titleService;
+
     public BillingAccount create(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
     }
@@ -185,6 +199,8 @@ public class BillingAccountApi extends AccountEntityApi {
 
         dtoToEntity(billingAccount, postData, checkCustomFields, businessAccountModel);
 
+        processTags(postData,billingAccount);
+
         billingAccountService.createBillingAccount(billingAccount);
 
         // instantiate the discounts
@@ -219,6 +235,21 @@ public class BillingAccountApi extends AccountEntityApi {
         return billingAccount;
     }
 
+    private void processTags(BillingAccountDto postData, BillingAccount billingAccount) {
+    	Set<String> tagCodes = postData.getTagCodes();
+		if(tagCodes != null && !tagCodes.isEmpty()){
+			List<Tag> tags=new ArrayList<Tag>();
+			for(String code:tagCodes) {
+				Tag tag=tagService.findByCode(code);
+				if(tag == null) {
+					throw new EntityDoesNotExistsException(Tag.class,code);
+				}
+				tags.add(tag);
+			}
+			billingAccount.setTags(tags);
+		}
+    }
+
     public BillingAccount update(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         return update(postData, true);
     }
@@ -247,6 +278,7 @@ public class BillingAccountApi extends AccountEntityApi {
         }
 
         dtoToEntity(billingAccount, postData, checkCustomFields, businessAccountModel);
+        processTags(postData,billingAccount);
 
         billingAccount = billingAccountService.update(billingAccount);
 
@@ -475,7 +507,7 @@ public class BillingAccountApi extends AccountEntityApi {
         if (businessAccountModel != null) {
             billingAccount.setBusinessAccountModel(businessAccountModel);
         }
-        
+
         if (postData.getPrimaryContact() != null) {
             if (StringUtils.isBlank(postData.getPrimaryContact())) {
                 billingAccount.setPrimaryContact(null);
@@ -487,6 +519,30 @@ public class BillingAccountApi extends AccountEntityApi {
                     billingAccount.setPrimaryContact(primaryContact);
                 }
             }
+        }
+        
+        if(postData.getIsCompany() != null) {
+        	billingAccount.setIsCompany(postData.getIsCompany());
+        }
+        
+        if(postData.getLegalEntityType() != null) {
+        	var titleDto = postData.getLegalEntityType();
+        	if(Strings.isEmpty(titleDto.getCode()))
+        		missingParameters.add("legalEntityType.code");
+        	handleMissingParameters();
+        	Title title = titleService.findByCode(titleDto.getCode());
+        	if(title == null)
+        		title = new Title(titleDto.getCode(), titleDto.getIsCompany());
+        	if(!Strings.isEmpty(titleDto.getDescription()))
+        		title.setDescription(titleDto.getDescription());
+        	if(titleDto.getLanguageDescriptions() != null && !titleDto.getLanguageDescriptions().isEmpty()) {
+        		title.setDescriptionI18n(
+        								titleDto.getLanguageDescriptions()
+        											.stream().collect(Collectors.toMap(LanguageDescriptionDto::getLanguageCode, LanguageDescriptionDto::getDescription)));
+        	}
+        	if(title.getId() == null)
+        		titleService.create(title);
+        	billingAccount.setLegalEntityType(title);
         }
 
         // Update payment method information in a customer account.

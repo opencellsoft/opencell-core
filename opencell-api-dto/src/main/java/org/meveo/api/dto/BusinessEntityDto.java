@@ -18,12 +18,15 @@
 
 package org.meveo.api.dto;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.model.BusinessEntity;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Equivalent of BusinessEntity in DTO
@@ -48,15 +51,19 @@ public class BusinessEntityDto extends AuditableEntityDto implements IEntityDto 
      */
     // @Pattern(regexp = "^[@A-Za-z0-9_\\.-]+$")
     @XmlAttribute(required = true)
+    @NotNull
+    @Schema(description = "The code of the entity")
     protected String code;
 
     /**
      * The description
      */
     @XmlAttribute()
+    @Schema(description = "The description of the entity")
     protected String description;
 
     /** The updated code. */
+    @Schema(description = "The changed code")
     protected String updatedCode;
 
     /**

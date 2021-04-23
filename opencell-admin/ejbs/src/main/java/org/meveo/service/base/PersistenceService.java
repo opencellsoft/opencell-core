@@ -17,7 +17,11 @@
  */
 package org.meveo.service.base;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -44,10 +48,14 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.OneToMany;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.metamodel.Attribute;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotFoundException;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -595,7 +603,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         queryBuilder.addCriterion("code", "like", "%" + wildcode + "%", true);
         return queryBuilder.getQuery(getEntityManager()).getResultList();
     }
-
+    
+    /**
+     * Find entities by code
+     *
+     * @param code to match
+     * @return entity matching code
+     */
+    public BusinessEntity findBusinessEntityByCode(String code) {
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "entity", null);
+        queryBuilder.addCriterion("entity.code", "=", code, true);
+        return (BusinessEntity) queryBuilder.getQuery(getEntityManager()).getSingleResult();
+    }
     /**
      * @see org.meveo.service.base.local.IPersistenceService#list(org.meveo.admin.util.pagination.PaginationConfiguration)
      */
@@ -1234,6 +1253,83 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             return "boolean";
         } else {
             return "varchar";
+        }
+    }
+    
+    public Object deepCopyObject(Class<E> old) throws Exception {
+   	 	ObjectOutputStream oos = null;
+        ObjectInputStream ois = null;
+        try {
+           ByteArrayOutputStream bos = new ByteArrayOutputStream();
+           oos = new ObjectOutputStream(bos);
+           oos.writeObject(old);
+           oos.flush();               
+           ByteArrayInputStream bin = new ByteArrayInputStream(bos.toByteArray()); 
+           ois = new ObjectInputStream(bin);                  
+           return ois.readObject(); 
+        }
+        catch(Exception e) {
+           System.out.println("Exception in ObjectCloner = " + e);
+           throw(e);
+        }
+        finally {
+           oos.close();
+           ois.close();
+        }
+   }
+    
+    /**
+	 * @param entity
+	 * @param id
+	 * @return
+	 */
+	public IEntity tryToFindByEntityClassAndId(Class<? extends IEntity> entity, Long id) {
+    	if(id==null) {
+    		return null;
+    	}
+        QueryBuilder qb = new QueryBuilder(entity, "entity", null);
+        qb.addCriterion("entity.id", "=", id, true);
+        try {
+			return (IEntity) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            throw new NotFoundException("No entity of type "+entity.getSimpleName()+" with id '"+id+"' found");
+        } catch (NonUniqueResultException e) {
+        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+" with id '"+id+"' found");
+        }
+	}
+
+	public BusinessEntity tryToFindByEntityClassAndCode(Class<? extends BusinessEntity> entity, String code) {
+    	if(code==null) {
+    		return null;
+    	}
+        QueryBuilder qb = new QueryBuilder(entity, "entity", null);
+        qb.addCriterion("entity.code", "=", code, true);
+        try {
+			return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with code '"+code+"' found");
+        } catch (NonUniqueResultException e) {
+        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+" with code '"+code+"' found");
+        }
+    }
+	
+	public BusinessEntity tryToFindByEntityClassAndMap(Class<? extends BusinessEntity> entity, Map<String, Object> criterions) {
+    	if(criterions==null) {
+    		return null;
+    	}
+    	String where = "";
+        QueryBuilder qb = new QueryBuilder(entity, "entity", null);
+        for(Entry<String, Object> e : criterions.entrySet()) {
+        	qb.addCriterion("entity."+e.getKey(), "=", e.getValue(), true);
+        	where=where +" entity."+e.getKey()+"="+ e.getValue()+",";
+        }
+        
+        try {
+			return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with "+where+" found");
+        } catch (NonUniqueResultException e) {
+        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+"with "+where+" found");
         }
     }
 }

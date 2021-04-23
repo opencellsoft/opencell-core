@@ -70,6 +70,9 @@ public class ProductTemplate extends ProductOffering {
     @JoinTable(name = "cat_product_wallet_template", joinColumns = @JoinColumn(name = "product_template_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
     @OrderColumn(name = "indx")
     private List<WalletTemplate> walletTemplates = new ArrayList<WalletTemplate>();
+    
+    
+	 
 
     public void addProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
         if (getProductChargeTemplates() == null) {
@@ -119,10 +122,13 @@ public class ProductTemplate extends ProductOffering {
 
     public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
         this.walletTemplates = walletTemplates;
-    }
-
-    @Override
+    } 
+    
+	@Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return null;
     }
+    
+	
+    
 }

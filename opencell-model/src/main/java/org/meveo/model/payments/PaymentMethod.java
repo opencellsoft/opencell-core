@@ -37,7 +37,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.EnableEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableCFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.document.Document;
 
@@ -48,6 +49,7 @@ import org.meveo.model.document.Document;
  * @lastModifiedVersion 5.0
  */
 @Entity
+@CustomFieldEntity(cftCodePrefix = "PaymentMethod")
 @ObservableEntity
 @Table(name = "ar_payment_token")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -62,7 +64,7 @@ import org.meveo.model.document.Document;
         @NamedQuery(name = "PaymentMethod.getNumberOfPaymentMethods", query = "select count(*) from  PaymentMethod pm where pm.customerAccount.id = :caId and pm.disabled = false"),
         @NamedQuery(name = "PaymentMethod.getPreferredPaymentMethodForCA", query = "select m from PaymentMethod m where m.customerAccount.id =:caId and m.preferred=true"),
         @NamedQuery(name = "PaymentMethod.listByCustomerAccount", query = "select m from PaymentMethod m inner join m.customerAccount ca where ca=:customerAccount") })
-public abstract class PaymentMethod extends EnableEntity {
+public abstract class PaymentMethod extends EnableCFEntity {
 
     private static final long serialVersionUID = 8726571628074346184L;
 

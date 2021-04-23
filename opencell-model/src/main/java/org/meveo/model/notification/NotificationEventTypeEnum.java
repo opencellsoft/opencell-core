@@ -162,7 +162,14 @@ public enum NotificationEventTypeEnum {
     /**
      * Subscription version has been removed
      */
-    VERSION_REMOVED;
+    VERSION_REMOVED,
+
+    /**
+     *
+     * check if order progress is incrasing
+     */
+    ADVT_RATE_INCREASED
+    ;
 
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();

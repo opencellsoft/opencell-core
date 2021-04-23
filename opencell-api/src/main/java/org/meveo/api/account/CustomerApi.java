@@ -21,6 +21,7 @@ package org.meveo.api.account;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import org.apache.commons.io.IOUtils;
+import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.MeveoApiErrorCodeEnum;
@@ -161,9 +162,6 @@ public class CustomerApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getCustomerCategory())) {
             missingParameters.add("customerCategory");
         }
-        if (StringUtils.isBlank(postData.getSeller())) {
-            missingParameters.add("seller");
-        }
         if (postData.getName() != null && !StringUtils.isBlank(postData.getName().getTitle()) && StringUtils.isBlank(postData.getName().getLastName())) {
             missingParameters.add("name.lastName");
         }
@@ -233,7 +231,7 @@ public class CustomerApi extends AccountEntityApi {
 
         boolean isNew = customer.getId() == null;
 
-        if (postData.getCustomerCategory() != null) {
+        if (!Strings.isEmpty(postData.getCustomerCategory())) {
             CustomerCategory customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory());
             if (customerCategory == null) {
                 throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
@@ -241,7 +239,7 @@ public class CustomerApi extends AccountEntityApi {
             customer.setCustomerCategory(customerCategory);
         }
 
-        if (postData.getCustomerBrand() != null) {
+        if (!Strings.isEmpty(postData.getCustomerBrand())) {
             if (StringUtils.isBlank(postData.getCustomerBrand())) {
                 customer.setCustomerBrand(null);
             } else {
@@ -253,7 +251,7 @@ public class CustomerApi extends AccountEntityApi {
             }
         }
 
-        if (postData.getSeller() != null) {
+        if (!Strings.isEmpty(postData.getSeller())) {
             Seller seller = sellerService.findByCode(postData.getSeller());
             if (seller == null) {
                 throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());

@@ -29,15 +29,19 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditTarget;
 import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.order.OrderHistory;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.payments.PaymentScheduleInstance;
+import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.shared.DateUtils;
 
 import javax.persistence.AttributeOverride;
@@ -71,6 +75,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Service subscribed to.
@@ -92,7 +97,7 @@ import java.util.Map;
         @NamedQuery(name = "ServiceInstance.getExpired", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.subscribedTillDate<=:date and s.status in (:statuses)"),
         @NamedQuery(name = "ServiceInstance.findByServiceCodeAndSubscriptionCodeAndValidity", query = "select s from ServiceInstance s where lower(s.code) = :code and lower(s.subscription.code) = :subscriptionCode AND (s.subscription.validity is null or (s.subscription.validity.from <= :subscriptionValidityDate and  (s.subscription.validity.to is null or :subscriptionValidityDate < s.subscription.validity.to)))"),
         @NamedQuery(name = "ServiceInstance.getToNotifyExpiration", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate and s.status in (:statuses)"),
-        @NamedQuery(name = "ServiceInstance.getMimimumRTUsed", query = "select s.minimumAmountEl from ServiceInstance s where s.minimumAmountEl is not null"),
+        @NamedQuery(name = "ServiceInstance.getMinimumAmountUsed", query = "select s.minimumAmountEl from ServiceInstance s where s.minimumAmountEl is not null"),
         @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountBySubscription", query = "select s from ServiceInstance s where s.minimumAmountEl is not null  AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription=:subscription"),
         @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountByBA", query = "select s from ServiceInstance s where s.minimumAmountEl is not null  AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription.userAccount.billingAccount=:billingAccount") })
 public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICounterEntity {
@@ -109,6 +114,16 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_template_id")
     private ServiceTemplate serviceTemplate;
+
+    /** Service template/definition. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_version_id")
+    private ProductVersion productVersion;
+
+    /** Service template/definition. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quote_product_id")
+    private QuoteProduct quoteProduct;
 
     /**
      * Calendar to use when creating Wallet operations. Service subscription start date is taken as calendar's initiation date. Invoicing calendar to calculate if operation should
@@ -287,6 +302,16 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
      */
     @Column(name = "initial_renewal", columnDefinition = "text")
     private String initialServiceRenewal;
+
+    @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AttributeInstance> attributeInstances;
+
+    /**
+     * Corresponding to minimum invoice AccountingArticle
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_article_id")
+    private AccountingArticle minimumArticle;
 
     /**
      * PK of OrderItem.id.
@@ -1117,6 +1142,64 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
         this.chargeInstances = chargeInstances;
     }
 
+
+
+    /**
+	 * @return the attributeInstances
+	 */
+	public List<AttributeInstance> getAttributeInstances() {
+		return attributeInstances;
+	}
+
+	/**
+	 * @param attributeInstances the attributeInstances to set
+	 */
+	public void setAttributeInstances(List<AttributeInstance> attributeInstances) {
+		this.attributeInstances = attributeInstances;
+	}
+
+	public void addAttributeInstance(AttributeInstance attributeInstance) {
+		attributeInstances=attributeInstances!=null?attributeInstances:new ArrayList<AttributeInstance>();
+		if(attributeInstance!=null) {
+			attributeInstances.add(attributeInstance);
+		}
+
+	}
+
+
+
+	/**
+	 * @return the product
+	 */
+	public ProductVersion getProductVersion() {
+		return productVersion;
+	}
+
+	/**
+	 * @param product the product to set
+	 */
+	public void setProductVersion(ProductVersion productVersion) {
+		this.productVersion = productVersion;
+	}
+
+
+
+	/**
+	 * @return the quoteProduct
+	 */
+	public QuoteProduct getQuoteProduct() {
+		return quoteProduct;
+	}
+
+	/**
+	 * @param quoteProduct the quoteProduct to set
+	 */
+	public void setQuoteProduct(QuoteProduct quoteProduct) {
+		this.quoteProduct = quoteProduct;
+	}
+
+	/**
+
     /**
      * @return the ratedTransactions
      */
@@ -1153,5 +1236,23 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
                 usageChargeInstances.add((UsageChargeInstance) chargeInstance);
             }
         }
+    }
+
+    public AccountingArticle getMinimumArticle() {
+        return minimumArticle;
+    }
+
+    public void setMinimumArticle(AccountingArticle minimumArticle) {
+        this.minimumArticle = minimumArticle;
+    }
+
+    public ServiceCharge getServiceCharge() {
+        return serviceTemplate != null ? serviceTemplate : productVersion.getProduct();
+    }
+
+    public void clearTransientSubscriptionChargeInstance() {
+        this.subscriptionChargeInstances = getSubscriptionChargeInstances().stream()
+                .filter(ch -> ch.getId() != null)
+                .collect(Collectors.toList());
     }
 }

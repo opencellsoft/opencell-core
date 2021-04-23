@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.catalog.HourInDay;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class HourInDayDto.
  *
@@ -41,10 +43,12 @@ public class HourInDayDto implements Serializable {
 
     /** The hour. */
     @XmlAttribute(required = true)
+    @Schema(description = "hour")
     private Integer hour;
 
     /** The min. */
     @XmlAttribute(required = true)
+    @Schema(description = "minute of the hours")
     private Integer min;
 
     /**

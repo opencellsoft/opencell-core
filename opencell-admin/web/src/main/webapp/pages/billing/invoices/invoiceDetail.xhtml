@@ -67,18 +67,18 @@
                                 </p:fieldset>
                                 <h:panelGroup id="attachments">
                                     <p:fieldset legend="#{messages['invoice.attachments']}"
-                                        rendered="#{invoiceBean.pdfInvoiceAlreadyGenerated or invoiceBean.xmlInvoiceAlreadyGenerated}">
+                                                rendered="#{invoiceBean.pdfGenerationPossible or invoiceBean.xmlGenerationPossible}">
                                         <p:panelGrid columns="1">
-                                            <p:outputPanel rendered="#{invoiceBean.pdfInvoiceAlreadyGenerated}">
-                                                <h:commandLink action="#{invoiceBean.downloadPdfInvoice()}" immediate="true">
+                                            <p:outputPanel rendered="#{invoiceBean.pdfGenerationPossible}">
+                                                <h:commandLink action="#{invoiceBean.downloadPdfInvoice()}">
                                                     <h:outputText value="#{invoiceBean.getEntity().pdfFilenameOnly}" />
                                                 </h:commandLink>
                                                 <p:spacer width="10" />
                                                 <p:commandButton icon="ui-icon-close" action="#{invoiceBean.deletePdfInvoice}" immediate="true"
                                                     update=":headerForm:messages :headerForm:tabView:attachments :headerForm:tabView:buttonGenerate" />
                                             </p:outputPanel>
-                                            <p:outputPanel rendered="#{invoiceBean.xmlInvoiceAlreadyGenerated}">
-                                                <h:commandLink action="#{invoiceBean.downloadXmlInvoice()}" immediate="true">
+                                            <p:outputPanel rendered="#{invoiceBean.xmlGenerationPossible}">
+                                                <h:commandLink action="#{invoiceBean.downloadXmlInvoice()}">
                                                     <h:outputText value="#{invoiceBean.getEntity().xmlFilenameOnly}" />
                                                 </h:commandLink>
                                                 <p:spacer width="10" />
@@ -277,13 +277,14 @@
                         <br />
                         <p:outputPanel column="2" id="buttonGenerate">
                             <p:commandButton rendered="#{invoiceBean.generatePdfBtnActive}" value="#{messages['invoice.generatePdf']}" icon="ui-icon-refresh"
-                                disabled="#{invoiceBean.pdfInvoiceAlreadyGenerated}" action="#{invoiceBean.generatePdfInvoice()}"
-                                update=":headerForm:messages :headerForm:tabView:attachments buttonGenerate" />
+                                             disabled="#{invoiceBean.pdfGenerationPossible}"
+                                             action="#{invoiceBean.generatePdfInvoice()}" update=":headerForm:messages :headerForm:tabView:attachments buttonGenerate"/>
                             <p:commandButton rendered="#{invoiceBean.generateXmlBtnActive}" value="#{messages['invoice.generateXml']}" icon="ui-icon-refresh"
-                                disabled="#{invoiceBean.xmlInvoiceAlreadyGenerated}" action="#{invoiceBean.generateXmlInvoice}"
-                                update=":headerForm:messages :headerForm:tabView:attachments buttonGenerate" />
+                                             disabled="#{invoiceBean.xmlGenerationPossible}"
+                                             action="#{invoiceBean.generateXmlInvoice}" update=":headerForm:messages :headerForm:tabView:attachments buttonGenerate"/>
                             <p:commandButton rendered="#{invoiceBean.sendByEmailBtnActive}" value="#{messages['invoice.sendByEmail']}" icon="ui-icon-send"
-                                disabled="#{!invoiceBean.pdfInvoiceAlreadyGenerated}" action="#{invoiceBean.sendInvoiceByEmail}" update=":headerForm:messages" />
+                                             disabled="#{!invoiceBean.pdfGenerationPossible}"
+                                             action="#{invoiceBean.sendInvoiceByEmail}" update=":headerForm:messages"/>
                         </p:outputPanel>
 
                         <p:fieldset legend="#{messages['invoice.linkedInvoices']}">

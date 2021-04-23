@@ -227,6 +227,21 @@ public class DatePeriod implements Comparable<DatePeriod>, Serializable {
         return 0;
     }
 
+    public int compareFieldTo(DatePeriod other) {
+
+        if (this.to == null && other.to == null) {
+            return 0;
+        } else if (this.to != null && other.to == null) {
+            return 1;
+        } else if (this.to == null && other.to != null) {
+            return -1;
+        } else if (this.to != null) {
+            return this.to.compareTo(other.to);
+        }
+
+        return 0;
+    
+    }
     /**
      * Is period empty - are both From and To values are not specified
      * 

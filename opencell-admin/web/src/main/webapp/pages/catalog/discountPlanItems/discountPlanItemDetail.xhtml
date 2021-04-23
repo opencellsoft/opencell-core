@@ -58,22 +58,24 @@
 				listBean="#{invoiceCategoryBean}" />
 
 			<hftl:formField id="invoiceSubCategory"
-				label="#{messages['discountPlanItem.invoiceSubCategory']}"
-				field="invoiceSubCategory" valueLabelField="code" required="false"
-				listBean="#{invoiceSubCategoryBean}" />
+							label="#{messages['discountPlanItem.invoiceSubCategory']}"
+							field="invoiceSubCategory" valueLabelField="code" required="false"
+							listBean="#{invoiceSubCategoryBean}"/>
 
 			<hftl:formField id="chargeTemplate"
-				label="#{messages['discountPlanItem.chargeTemplate']}"
-				field="chargeTemplate" valueLabelField="code" required="false"
-				popup="true" popupId="popupChargeTemplates" />
+							label="#{messages['discountPlanItem.chargeTemplate']}"
+							field="chargeTemplate" valueLabelField="code" required="false"
+							popup="true" popupId="popupChargeTemplates"/>
 
-            <hftl:formField label="#{messages['discountPlanItem.expressionEl']}" field="expressionEl" textArea="true" maxlength="2000" rows="1" />
-            <hftl:formField label="#{messages['discountPlanItem.expressionElSpark']}" field="expressionElSpark" textArea="true" maxlength="2000" rows="1" />
-            <hftl:formField label="#{messages['discountPlanItem.discountValue']}" field="discountValue" required="true" minValue="-100" maxValue="100" />
-            <hftl:formField label="#{messages['discountPlanItem.discountValueEl']}" field="discountValueEl" textArea="true" maxlength="2000" rows="1" />
-            <hftl:formField label="#{messages['discountPlanItem.discountValueElSpark']}" field="discountValueElSpark" textArea="true" maxlength="2000" rows="1" />
-
-        </hftl:formPanel>
+			<hftl:formField label="#{messages['discountPlanItem.expressionEl']}" field="expressionEl" textArea="true" maxlength="2000" rows="1"/>
+			<hftl:formField label="#{messages['discountPlanItem.expressionElSpark']}" field="expressionElSpark" textArea="true" maxlength="2000" rows="1"/>
+			<hftl:formField label="#{messages['discountPlanItem.discountValue']}" field="discountValue" required="true" minValue="-100" maxValue="100"/>
+			<hftl:formField label="#{messages['discountPlanItem.discountValueEl']}" field="discountValueEl" textArea="true" maxlength="2000" rows="1"/>
+			<hftl:formField label="#{messages['discountPlanItem.discountValueElSpark']}" field="discountValueElSpark" textArea="true" maxlength="2000" rows="1"/>
+			<hftl:formField label="#{messages['discountPlanItem.accountingArticle']}" field="accountingArticle"/>
+			<hftl:formField label="#{messages['discountPlanItem.articlesToDiscount']}" field="articlesToDiscount"/>
+			<hftl:formField label="#{messages['discountPlanItem.allowToNegate']}" field="allowToNegate"/>
+		</hftl:formPanel>
 
 	</ui:define>
 

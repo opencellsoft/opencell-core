@@ -23,9 +23,12 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.ejb.Stateless;
@@ -41,13 +44,17 @@ import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.DigitalResource;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.catalog.ProductChargeTemplate;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplate;
@@ -59,12 +66,37 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.GroupedAttributes;
+import org.meveo.model.cpq.Media;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.cpq.offer.OfferComponent;
+import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.model.quote.QuoteArticleLine;
+import org.meveo.model.quote.QuotePrice;
+import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.cpq.GroupedAttributeService;
+import org.meveo.service.cpq.MediaService;
+import org.meveo.service.cpq.OfferComponentService;
+import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.cpq.QuoteArticleLineService;
+import org.meveo.service.cpq.QuoteAttributeService;
+import org.meveo.service.cpq.QuoteProductService;
+import org.meveo.service.cpq.QuoteVersionService;
+import org.meveo.service.cpq.order.QuotePriceService;
+import org.meveo.service.quote.QuoteOfferService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,11 +159,210 @@ public class CatalogHierarchyBuilderService {
 
     @Inject
     private SubscriptionService subscriptionService;
+    
+    @Inject
+    private ProductVersionService productVersionService;
+    
+    @Inject
+    private DiscountPlanService discountPlanService;
+    
+    @Inject 
+    private DiscountPlanItemService discountPlanItemService;
+    
+    @Inject
+    private OfferComponentService offerComponentService;
+    
+    @Inject
+    private MediaService mediaService;
+    
+    @Inject ProductChargeTemplateMappingService productChargeTemplateMappingService;
 
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
 
+    @Inject private QuoteVersionService quoteVersionService;
+    @Inject private QuoteOfferService quoteOfferService;
+    @Inject private QuoteProductService quoteProductService;
+    @Inject private QuoteAttributeService quoteAttributeService;
+    @Inject private QuoteArticleLineService articleLineService;
+    @Inject private QuotePriceService quotePriceService;
+    @Inject private GroupedAttributeService groupedAttributeService;
+
+
+    public void duplicateProductVersion(ProductVersion entity, List<Attribute> attributes, List<Tag> tags, List<GroupedAttributes> groupedAttributes, String prefix) throws BusinessException {
+    
+        if(attributes != null) {
+        	entity.setAttributes(new ArrayList<Attribute>());
+        	for (Attribute attribute : attributes) {
+        		for(Media media : attribute.getMedias()) {
+        			Media newMedia = new Media(media);
+        			newMedia.setCode(media.getCode() + "_" + entity.getId());
+        			mediaService.create(newMedia);
+        		}
+				entity.getAttributes().add(attribute);
+			}
+        }
+        
+        if(tags != null) {
+        	entity.setTags(new HashSet<>());
+        	for (Tag tag : tags) {
+				entity.getTags().add(tag);
+			}
+        }
+        
+        if(groupedAttributes != null) {
+        	entity.setGroupedAttributes(new ArrayList<GroupedAttributes>());
+        	for (GroupedAttributes groupedAttribute : groupedAttributes) {
+        		GroupedAttributes duplicateGroupedAttribute = new GroupedAttributes(groupedAttribute);
+        		duplicateGroupedAttribute.setCode(groupedAttribute.getCode() + "_" + entity.getId());
+        		var groupAttr = new ArrayList<>(groupedAttribute.getAttributes());
+        		duplicateGroupedAttribute.setAttributes(groupAttr);
+        		groupedAttributeService.create(duplicateGroupedAttribute);
+        		entity.getGroupedAttributes().add(duplicateGroupedAttribute);
+			}
+        }
+    }
+    
+   
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void duplicateProduct(Product entity, ProductVersion productVersion, Set<DiscountPlan> discountPlans, 
+										Set<String> modelChildren, List<OfferComponent> offerComponents, List<Media> medias, 
+										List<ProductChargeTemplateMapping> productCharge, String prefix) {
+    	if(productVersion != null) {
+    		ProductVersion tmpProductVersion = productVersionService.findById(productVersion.getId());
+    		tmpProductVersion.getTags().size();
+    		tmpProductVersion.getAttributes().size();
+    		tmpProductVersion.getAttributes().forEach(att -> {
+    			att.getMedias().size();
+    			att.getAssignedAttributes().size();
+    		});
+
+    		tmpProductVersion.getGroupedAttributes().forEach(ga -> {
+        		ga.getAttributes().size();
+        		ga.getAttributes().forEach(a ->  {
+        			a.getMedias().size();
+        			a.getTags().size();
+        		});
+        		ga.getCommercialRules().size();
+        		ga.getCommercialRules().forEach(cr -> cr.getCommercialRuleItems().size());
+        	});
+    		
+    		var tagList = new ArrayList<>(tmpProductVersion.getTags());
+    		var serviceList = new ArrayList<>(tmpProductVersion.getAttributes());
+    		var groupedAttribute = new ArrayList<>(tmpProductVersion.getGroupedAttributes());
+
+    		ProductVersion newProductVersion = new ProductVersion(tmpProductVersion, entity);
+    		productVersionService.create(newProductVersion);    		
+			duplicateProductVersion(newProductVersion, serviceList, tagList, groupedAttribute, newProductVersion.getId() + "_");			
+			entity.getProductVersions().add(newProductVersion);
+    	}
+    	if(discountPlans != null) {
+    		entity.getDiscountList().clear();;
+    		discountPlans.forEach(dp -> {
+    			dp.getDiscountPlanItems().size();
+    			DiscountPlan newDiscountPlan = new DiscountPlan(dp);
+    			newDiscountPlan.setCode(discountPlanService.findDuplicateCode(dp));
+    			
+    			
+    			discountPlanService.create(newDiscountPlan);
+
+    			List<DiscountPlanItem> discountPlanItem = new ArrayList<DiscountPlanItem>();
+    			duplicateDiscount(newDiscountPlan, discountPlanItem);
+    			
+        		entity.getDiscountList().add(newDiscountPlan);
+    			
+    		});
+    	}
+    	if(modelChildren != null) {
+    		entity.setModelChildren(new HashSet<String>());
+    		modelChildren.forEach( model -> {
+    			entity.getModelChildren().add(model);
+    		});
+    	}
+    	
+    	if(offerComponents != null) {
+    		entity.getOfferComponents().clear();;
+    		offerComponents.forEach(oc -> {
+    	    	offerComponentService.detach(oc);
+    			OfferComponent newOffer = new OfferComponent(oc);
+    			newOffer.setProduct(entity);
+    			var tags = newOffer.getTagsList();
+    	        if(tags != null) {
+    	        	newOffer.setTagsList(new HashSet<>());
+    	        	for (Tag tag : tags) {
+    	        		newOffer.getTagsList().add(tag);
+    				}
+    	        }
+    			offerComponentService.create(newOffer);
+    			entity.getOfferComponents().add(newOffer);
+    		});
+    	}
+    	
+    	if(medias != null) {
+    		medias.forEach(media -> {
+    			Media newMedia = new Media(media);
+    			mediaService.create(newMedia);
+    			entity.getMedias().add(newMedia);
+    		});
+    	}
+    	
+    	if(productCharge != null) {
+    		productCharge.forEach(pct -> { 
+    			ProductChargeTemplateMapping duplicat = new ProductChargeTemplateMapping();
+    			duplicat.setCounterTemplate(pct.getCounterTemplate());
+    			duplicat.setChargeTemplate(pct.getChargeTemplate()); 
+    			duplicat.setProduct(entity);
+    			duplicat.setAccumulatorCounterTemplates(new ArrayList<>());
+    			duplicat.setWalletTemplates(new ArrayList<>());
+    			productChargeTemplateMappingService.create(duplicat);
+    			entity.getProductCharges().add(duplicat);
+    		});
+    	}
+    }
+	
+	/*@SuppressWarnings("unchecked")
+	private void duplicateCounterTemplate(Product entity, ProductChargeTemplateMapping productChargetTemplate, List<CounterTemplate> coutnerTemplates) {
+		if(productChargetTemplate.getAccumulatorCounterTemplates() != null) {
+			productChargetTemplate.getAccumulatorCounterTemplates().forEach(ct -> {
+				if(ct instanceof CounterTemplate) {
+					CounterTemplate counter = (CounterTemplate) ct;
+					CounterTemplate duplicate = new CounterTemplate();
+					duplicate.setAccumulator(counter.getAccumulator());
+					duplicate.setAccumulatorType(counter.getAccumulatorType());
+					duplicate.setActive(counter.isActive());
+					duplicate.setCode(counterTemplateService.);
+				}
+			});
+		}
+	}*/
+	
+	
+	private void duplicateDiscount(DiscountPlan entity, List<DiscountPlanItem> discountPlanItem) {
+		if(entity.getDiscountPlanItems() != null && !entity.getDiscountPlanItems().isEmpty()) {
+			entity.getDiscountPlanItems().forEach(dp -> {
+				final DiscountPlanItem duplicate = new DiscountPlanItem();
+				duplicate.setCode(dp.getCode());
+				duplicate.setId(null);
+				duplicate.setDiscountPlan(entity);
+				duplicate.setExpressionEl(dp.getExpressionEl());
+				duplicate.setExpressionElSpark(dp.getExpressionElSpark());
+				duplicate.setDiscountValue(dp.getDiscountValue());
+				duplicate.setDiscountValueEL(dp.getDiscountValueEL());
+				duplicate.setDiscountPlanItemType(dp.getDiscountPlanItemType());
+				duplicate.setUUIDIfNull();
+				duplicate.setCfValues(dp.getCfValues());
+				duplicate.setCfAccumulatedValues(dp.getCfAccumulatedValues());
+				duplicate.setInvoiceCategory(dp.getInvoiceCategory());
+				
+				discountPlanItemService.create(duplicate);
+				discountPlanItem.add(duplicate);
+			});
+			entity.setDiscountPlanItems(discountPlanItem);
+		}
+	}
+    
     public void duplicateOfferServiceTemplate(OfferTemplate entity, List<OfferServiceTemplate> offerServiceTemplates, String prefix) throws BusinessException {
         List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
         List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
@@ -343,34 +574,9 @@ public class CatalogHierarchyBuilderService {
                 String chargeTemplateCode = productCharge.getCode();
                 List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
                 if (pricePlanMatrixes != null) {
-                    try {
-                        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-                            String ppCode = prefix + pricePlanMatrix.getCode();
-                            PricePlanMatrix ppMatrix = pricePlanMatrixService.findByCode(ppCode);
-                            if (ppMatrix != null) {
-                                continue;
-                            }
-
-                            PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-                            BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-                            newPriceplanmaMatrix.setAuditable(null);
-                            newPriceplanmaMatrix.setId(null);
-                            newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-                            newPriceplanmaMatrix.setCode(ppCode);
-                            newPriceplanmaMatrix.setVersion(0);
-                            newPriceplanmaMatrix.setOfferTemplate(null);
-
-                            if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-                                continue;
-                            } else {
-                                pricePlansInMemory.add(newPriceplanmaMatrix);
-                            }
-
-                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
-                        }
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        throw new BusinessException(e.getMessage());
-                    }
+                    for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+		            	duplicatePricePlanMatrix(pricePlanMatrix, prefix, chargeTemplateCode, pricePlansInMemory);
+		            	}
                 }
             }
         }
@@ -510,7 +716,7 @@ public class CatalogHierarchyBuilderService {
         serviceTemplate.getServiceRecurringCharges().size();
         serviceTemplate.getServiceSubscriptionCharges().size();
         serviceTemplate.getServiceTerminationCharges().size();
-        serviceTemplate.getServiceUsageCharges().size();
+        serviceTemplate.getServiceUsageCharges().size(); 
 
         ServiceTemplate newServiceTemplate = new ServiceTemplate();
         String newCode = prefix + serviceTemplate.getCode();
@@ -587,145 +793,95 @@ public class CatalogHierarchyBuilderService {
 		    log.error("IPIEL: Failed duplicating service image: {}", e1.getMessage());
 		}
 	}
-
+	
     private void duplicatePrices(ServiceTemplate serviceTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory) throws BusinessException {
 
-        try {
-            // create price plans
-            if (serviceTemplate.getServiceRecurringCharges() != null && !serviceTemplate.getServiceRecurringCharges().isEmpty()) {
-                for (ServiceChargeTemplateRecurring serviceCharge : serviceTemplate.getServiceRecurringCharges()) {
-                    // create price plan
-                    String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                    List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
-                    if (pricePlanMatrixes != null) {
-                        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-                            String ppCode = prefix + pricePlanMatrix.getCode();
-                            PricePlanMatrix ppMatrix = pricePlanMatrixService.findByCode(ppCode);
-                            if (ppMatrix != null) {
-                                continue;
-                            }
+        // create price plans
+		if (serviceTemplate.getServiceRecurringCharges() != null && !serviceTemplate.getServiceRecurringCharges().isEmpty()) {
+		    for (ServiceChargeTemplateRecurring serviceCharge : serviceTemplate.getServiceRecurringCharges()) {
+		        // create price plan
+		        String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
+		        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
+		        if (pricePlanMatrixes != null) {
+		            for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+		            	duplicatePricePlanMatrix(pricePlanMatrix, prefix, chargeTemplateCode, pricePlansInMemory);
+		            	}
+		        }
+		    }
+		}
 
-                            PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-                            BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-                            newPriceplanmaMatrix.setAuditable(null);
-                            newPriceplanmaMatrix.setId(null);
-                            newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-                            newPriceplanmaMatrix.setCode(ppCode);
-                            newPriceplanmaMatrix.setVersion(0);
-                            newPriceplanmaMatrix.setOfferTemplate(null);
+		if (serviceTemplate.getServiceSubscriptionCharges() != null && !serviceTemplate.getServiceSubscriptionCharges().isEmpty()) {
+		    for (ServiceChargeTemplateSubscription serviceCharge : serviceTemplate.getServiceSubscriptionCharges()) {
+		        // create price plan
+		        String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
+		        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
+		        if (pricePlanMatrixes != null) {
+		            for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+		            	duplicatePricePlanMatrix(pricePlanMatrix, prefix, chargeTemplateCode, pricePlansInMemory);
+		            }
+		        }
+		    }
+		}
 
-                            if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-                                continue;
-                            } else {
-                                pricePlansInMemory.add(newPriceplanmaMatrix);
-                            }
+		if (serviceTemplate.getServiceTerminationCharges() != null && !serviceTemplate.getServiceTerminationCharges().isEmpty()) {
+		    for (ServiceChargeTemplateTermination serviceCharge : serviceTemplate.getServiceTerminationCharges()) {
+		        // create price plan
+		        String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
+		        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
+		        if (pricePlanMatrixes != null) {
+		            for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+		            	duplicatePricePlanMatrix(pricePlanMatrix, prefix, chargeTemplateCode, pricePlansInMemory);}
+		        }
+		    }
+		}
 
-                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
-                        }
-                    }
-                }
-            }
-
-            if (serviceTemplate.getServiceSubscriptionCharges() != null && !serviceTemplate.getServiceSubscriptionCharges().isEmpty()) {
-                for (ServiceChargeTemplateSubscription serviceCharge : serviceTemplate.getServiceSubscriptionCharges()) {
-                    // create price plan
-                    String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                    List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
-                    if (pricePlanMatrixes != null) {
-                        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-                            String ppCode = prefix + pricePlanMatrix.getCode();
-                            if (pricePlanMatrixService.findByCode(ppCode) != null) {
-                                continue;
-                            }
-
-                            PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-                            BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-                            newPriceplanmaMatrix.setAuditable(null);
-                            newPriceplanmaMatrix.setId(null);
-                            newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-                            newPriceplanmaMatrix.setCode(ppCode);
-                            newPriceplanmaMatrix.setVersion(0);
-                            newPriceplanmaMatrix.setOfferTemplate(null);
-
-                            if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-                                continue;
-                            } else {
-                                pricePlansInMemory.add(newPriceplanmaMatrix);
-                            }
-
-                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
-                        }
-                    }
-                }
-            }
-
-            if (serviceTemplate.getServiceTerminationCharges() != null && !serviceTemplate.getServiceTerminationCharges().isEmpty()) {
-                for (ServiceChargeTemplateTermination serviceCharge : serviceTemplate.getServiceTerminationCharges()) {
-                    // create price plan
-                    String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                    List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
-                    if (pricePlanMatrixes != null) {
-                        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-                            String ppCode = prefix + pricePlanMatrix.getCode();
-                            if (pricePlanMatrixService.findByCode(ppCode) != null) {
-                                continue;
-                            }
-
-                            PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-                            BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-                            newPriceplanmaMatrix.setAuditable(null);
-                            newPriceplanmaMatrix.setId(null);
-                            newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-                            newPriceplanmaMatrix.setCode(ppCode);
-                            newPriceplanmaMatrix.setVersion(0);
-                            newPriceplanmaMatrix.setOfferTemplate(null);
-
-                            if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-                                continue;
-                            } else {
-                                pricePlansInMemory.add(newPriceplanmaMatrix);
-                            }
-
-                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
-                        }
-                    }
-                }
-            }
-
-            if (serviceTemplate.getServiceUsageCharges() != null && !serviceTemplate.getServiceUsageCharges().isEmpty()) {
-                for (ServiceChargeTemplateUsage serviceCharge : serviceTemplate.getServiceUsageCharges()) {
-                    String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                    List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
-                    if (pricePlanMatrixes != null) {
-                        for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-                            String ppCode = prefix + pricePlanMatrix.getCode();
-                            if (pricePlanMatrixService.findByCode(ppCode) != null) {
-                                continue;
-                            }
-
-                            PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix();
-                            BeanUtils.copyProperties(newPriceplanmaMatrix, pricePlanMatrix);
-                            newPriceplanmaMatrix.setAuditable(null);
-                            newPriceplanmaMatrix.setId(null);
-                            newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
-                            newPriceplanmaMatrix.setCode(ppCode);
-                            newPriceplanmaMatrix.setVersion(0);
-                            newPriceplanmaMatrix.setOfferTemplate(null);
-
-                            if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
-                                continue;
-                            } else {
-                                pricePlansInMemory.add(newPriceplanmaMatrix);
-                            }
-
-                            pricePlanMatrixService.createPP(newPriceplanmaMatrix);
-                        }
-                    }
-                }
-            }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new BusinessException(e.getMessage());
-        }
+		if (serviceTemplate.getServiceUsageCharges() != null && !serviceTemplate.getServiceUsageCharges().isEmpty()) {
+		    for (ServiceChargeTemplateUsage serviceCharge : serviceTemplate.getServiceUsageCharges()) {
+		        String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
+		        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
+		        if (pricePlanMatrixes != null) {
+		            for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
+		            	duplicatePricePlanMatrix(pricePlanMatrix, prefix, chargeTemplateCode, pricePlansInMemory);}
+		        }
+		    }
+		}
+    }
+    
+    private void duplicatePricePlanMatrix(PricePlanMatrix pricePlanMatrix, String prefix, String chargeTemplateCode, List<PricePlanMatrix> pricePlansInMemory) throws BusinessException {
+    	try {
+	    	pricePlanMatrix.getVersions().size();
+	    	var versions = new ArrayList<>(pricePlanMatrix.getVersions());
+	    	pricePlanMatrix.getVersions().clear();
+	    	
+	        String ppCode = prefix + pricePlanMatrix.getCode();
+	        if (pricePlanMatrixService.findByCode(ppCode) != null) {
+	            return;
+	        }
+	    	
+	        PricePlanMatrix newPriceplanmaMatrix = new PricePlanMatrix(pricePlanMatrix);
+	        newPriceplanmaMatrix.setEventCode(prefix + chargeTemplateCode);
+	        newPriceplanmaMatrix.setCode(ppCode);
+	        newPriceplanmaMatrix.setVersion(0);
+	        newPriceplanmaMatrix.setOfferTemplate(null);
+	        newPriceplanmaMatrix.setVersions(new ArrayList<>());
+	        
+	        if(versions != null) {
+	        	for (PricePlanMatrixVersion version : versions) {
+	        		newPriceplanmaMatrix.getVersions().add(version);
+				}
+	        }
+	
+	        if (pricePlansInMemory.contains(newPriceplanmaMatrix)) {
+	            return;
+	        } else {
+	            pricePlansInMemory.add(newPriceplanmaMatrix);
+	        }
+	
+	        pricePlanMatrixService.createPP(newPriceplanmaMatrix);
+    	}catch(RuntimeException e) {
+    		throw new BusinessException(e.getMessage());
+    	}
+    
     }
 
     private ChargeTemplate setChargeTemplate(ChargeTemplate chargeTemplate, ChargeTemplate newChargeTemplate, List<ChargeTemplate> chargeTemplateInMemory, String prefix)
@@ -1043,5 +1199,100 @@ public class CatalogHierarchyBuilderService {
 
         }
 
+    }
+    
+    private void breakLazyLoadForQuoteVersion(QuoteVersion quoteVersion) {
+    	quoteVersion.getQuoteOffers().size();
+    	quoteVersion.getQuoteOffers().forEach(qo -> {
+    		qo.getQuoteProduct().size();
+    		qo.getQuoteProduct().forEach(qp -> {
+    			qp.getQuoteAttributes().size();
+    			qp.getQuoteArticleLines().size();
+    			qp.getQuoteArticleLines().forEach(qal -> {
+    				qal.getQuotePrices().size();
+    			});
+    		});
+    	});
+    }
+    
+    
+    public void duplicateQuoteVersion(CpqQuote entity, QuoteVersion quoteVersion) {
+    	final QuoteVersion duplicate = new QuoteVersion();
+    	breakLazyLoadForQuoteVersion(quoteVersion);
+    	quoteVersionService.detach(quoteVersion);
+    	try {
+			BeanUtils.copyProperties(duplicate, quoteVersion);
+		} catch (IllegalAccessException | InvocationTargetException e) {
+		}
+    	var quoteOffer = quoteVersion.getQuoteOffers();
+    	
+    	duplicate.setId(null);
+    	duplicate.setQuoteOffers(new ArrayList<QuoteOffer>());
+    	duplicate.setQuote(entity);
+    	duplicate.setStatus(VersionStatusEnum.DRAFT);
+    	duplicate.setStatusDate(Calendar.getInstance().getTime());
+    	duplicate.setQuoteVersion(1);
+    	
+    	quoteVersionService.create(duplicate);
+    	duplicateQuoteOffer(quoteOffer, duplicate);
+    }
+    
+    private void duplicateQuoteOffer(List<QuoteOffer> offers, QuoteVersion entity) {
+    	for (QuoteOffer quoteOffer : offers) {
+    		final var duplicate = new QuoteOffer(quoteOffer);
+    		quoteOfferService.detach(quoteOffer);
+    		var quoteProducts = quoteOffer.getQuoteProduct();
+    		duplicate.setQuoteVersion(entity);
+    		duplicate.setQuoteProduct(new ArrayList<QuoteProduct>());
+    		quoteOfferService.create(duplicate);
+    		duplicateQuoteProduct(quoteProducts, duplicate);
+		}
+    }
+    
+    private void duplicateQuoteProduct(List<QuoteProduct> products, QuoteOffer offer) {
+    	for (QuoteProduct quoteProduct : products) {
+			final var duplicate = new QuoteProduct(quoteProduct);
+			quoteProductService.detach(quoteProduct);
+			var quoteAttributes = quoteProduct.getQuoteAttributes();
+			var quoteArticleLines = quoteProduct.getQuoteArticleLines(); 
+			duplicate.setQuoteOffre(offer);
+			duplicate.setQuote(offer.getQuoteVersion().getQuote());
+			duplicate.setQuoteVersion(offer.getQuoteVersion());
+			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());
+			quoteProductService.create(duplicate);
+			
+			duplicateQuoteAttribute(quoteAttributes, duplicate);
+			duplicateArticleLine(quoteArticleLines, duplicate);
+			
+		}
+    }
+    
+    
+    private void duplicateArticleLine(List<QuoteArticleLine> quoteArticleLines, QuoteProduct quoteProduct) {
+    	for (QuoteArticleLine quoteArticleLine : quoteArticleLines) {
+			var quotePrices = quoteArticleLine.getQuotePrices();
+			final var duplicate = new QuoteArticleLine(quoteArticleLine);
+			duplicate.setQuoteProduct(quoteProduct);
+			articleLineService.create(duplicate);
+			duplicateQuotePrice(quotePrices, duplicate);
+		}
+    }
+    
+    private void duplicateQuotePrice(List<QuotePrice> quotePrices, QuoteArticleLine articleLine) {
+    	for (QuotePrice quotePrice : quotePrices) {
+			final var duplicate = new QuotePrice(quotePrice);
+			duplicate.setQuoteArticleLine(articleLine);
+			duplicate.setQuoteVersion(articleLine.getQuoteProduct().getQuoteVersion());
+			quotePriceService.create(duplicate);
+		}
+    }
+    
+    private void duplicateQuoteAttribute(List<QuoteAttribute> attributes, QuoteProduct quoteProduct) {
+    	for (QuoteAttribute quoteAttribute : attributes) {
+			final var duplicate = new QuoteAttribute(quoteAttribute);
+			quoteAttributeService.detach(quoteAttribute);
+			duplicate.setQuoteProduct(quoteProduct);
+			quoteAttributeService.create(duplicate);
+		}
     }
 }

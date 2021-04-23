@@ -248,6 +248,8 @@
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.WIRETRANSFER.label]}" itemValue="#{PaymentMethodEnum.WIRETRANSFER}" />
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.PAYPAL.label]}" itemValue="#{PaymentMethodEnum.PAYPAL}" />
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.STRIPE.label]}" itemValue="#{PaymentMethodEnum.STRIPE}" />
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.CARD.label]}" itemValue="#{PaymentMethodEnum.CARD}" />
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.CASH.label]}" itemValue="#{PaymentMethodEnum.CASH}" />
                                                     <f:converter converterId="enumConverter" />
                                                     <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.payments.PaymentMethodEnum" />
                                                 </p:selectOneMenu>

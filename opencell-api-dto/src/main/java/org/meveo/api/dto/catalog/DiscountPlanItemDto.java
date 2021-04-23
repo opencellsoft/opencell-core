@@ -19,12 +19,16 @@
 package org.meveo.api.dto.catalog;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
@@ -32,6 +36,8 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEnableDto;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Discount plan item
@@ -52,6 +58,7 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      */
     @NotNull
     @XmlAttribute(required = true)
+    @Schema(description = "The code", required = true)
     private String code;
 
     /**
@@ -59,61 +66,110 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
      */
     @NotNull
     @XmlElement(required = true)
+    @Schema(description = "Discount plan code", required = true)
     private String discountPlanCode;
 
     /**
      * Invoice category code
      */
+    @Schema(description = "Invoice category code")
     private String invoiceCategoryCode;
 
     /**
      * Invoice sub category code
      */
+    @Schema(description = "Invoice sub category code")
     private String invoiceSubCategoryCode;
 
     /**
      * Accounting code
      */
     @Deprecated // until further analysis
+    @Schema(description = "Accounting code", deprecated = true)
     private String accountingCode;
+
+    /**
+
 
     /**
      * Expression to determine if discount applies
      */
+    @Schema(description = "Expression to determine if discount applies")
     private String expressionEl;
 
     /**
      * Expression to determine if discount applies - for Spark
      */
+    @Schema(description = "Expression to determine if discount applies - for Spark")
     private String expressionElSpark;
 
     /**
      * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
      */
+    @Schema(description = "Is entity disabled. Value is ignored in Update action - use enable/disable API instead")
     private Boolean disabled;
-	
-	/** Type of discount, whether absolute or percentage. */
-	private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
-    
-	/**
+
+    /**
+     * Type of discount, whether absolute or percentage.
+     */
+    @Schema(description = "Type of discount, whether absolute or percentage", defaultValue = "PERCENTAGE")
+    private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
+
+    /**
      * The absolute or percentage discount amount.
      */
-	private BigDecimal discountValue;
-	
-	/**
+    @Schema(description = "The absolute or percentage discount amount")
+    private BigDecimal discountValue;
+
+    /**
      * The absolute or percentage discount amount EL.
      */
-	private String discountValueEL;
-	
-	/**
+    @Schema(description = "The absolute or percentage discount amount EL")
+    private String discountValueEL;
+
+    /**
      * Expression to calculate discount percentage - for Spark
      */
+    @Schema(description = "Expression to calculate discount percentage - for Spark")
 	private String discountValueElSpark;
 	
+
+    /** The accountingArticle */
+    @XmlElementWrapper(name = "targetAccountingArticleCodes")
+    @XmlElement(name = "targetAccountingArticleCodes")
+    @Schema(description = "The target accounting article codes")
+    protected Set<String> targetAccountingArticleCodes = new HashSet<String>();
+
+	/**
+     * pricePlanMatrix code
+     */
+    @Schema(description = "Price plan matrix code")
+	 private String pricePlanMatrixCode;
+
 	/** The custom fields. */
     @XmlElement(required = false)
+    @Schema(description = "The custom fields")
     private CustomFieldsDto customFields;
 
+    /**
+     * If true, then allows to negate the amount of affected invoice lines.
+     * If fase, then amount for the discount line produce by the discount plan item cannot exceed the amount of discounted lines.
+     * Default: false
+     */
+    @Schema(description = "<ul><li>If true, then allows to negate the amount of affected invoice lines</li><li>If fase, then amount for the discount line produce by the discount plan item cannot exceed the amount of discounted lines</li></ul>", defaultValue = "false")
+    private Boolean allowToNegate;
+
+    @Schema(description = "description of discount plan item")
+	private String description;
+    
+    
+    /**
+     * The lower number, the higher the priority is
+     */
+    @Schema(description = "The lower number, the higher the priority is")
+    protected Long priority ;
+    
+    
     /**
      * Instantiates a new discount plan item dto.
      */
@@ -131,7 +187,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         this.discountPlanCode = discountPlanItem.getDiscountPlan().getCode();
         this.invoiceCategoryCode = discountPlanItem.getInvoiceCategory() != null ? discountPlanItem.getInvoiceCategory().getCode() : null;
         this.invoiceSubCategoryCode = discountPlanItem.getInvoiceSubCategory() != null ? discountPlanItem.getInvoiceSubCategory().getCode() : null;
-        this.accountingCode = discountPlanItem.getAccountingCode();
         this.expressionEl = discountPlanItem.getExpressionEl();
         this.expressionElSpark = discountPlanItem.getExpressionElSpark();
         this.disabled = discountPlanItem.isDisabled();
@@ -139,8 +194,15 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 		this.discountValue = discountPlanItem.getDiscountValue();
 		this.discountValueEL = discountPlanItem.getDiscountValueEL();
 		this.discountValueElSpark = discountPlanItem.getDiscountValueElSpark();
-		
-		customFields = customFieldInstances;
+		this.pricePlanMatrixCode=discountPlanItem.getPricePlanMatrix()!=null?discountPlanItem.getPricePlanMatrix().getCode():null;
+		 this.targetAccountingArticleCodes = discountPlanItem.getTargetAccountingArticle()
+                 .stream()
+                 .map(accountingArticle -> accountingArticle.getCode())
+                 .collect(Collectors.toSet());
+        this.allowToNegate = discountPlanItem.isAllowToNegate();
+        customFields = customFieldInstances;
+        this.description = discountPlanItem.getDescription();
+        this.priority=discountPlanItem.getPriority();
     }
 
     /**
@@ -214,7 +276,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     public void setInvoiceSubCategoryCode(String invoiceSubCategoryCode) {
         this.invoiceSubCategoryCode = invoiceSubCategoryCode;
     }
-
     /**
      * Gets the accounting code.
      *
@@ -234,8 +295,6 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     }
 
     /**
-     * @return Expression to determine if discount applies
-     */
     public String getExpressionEl() {
         return expressionEl;
     }
@@ -315,49 +374,51 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 	 */
 	public String getDiscountValueElSpark() {
 		return discountValueElSpark;
-	}
+    }
 
-	/**
-	 * Sets the discount value el for spark.
-	 * @param discountValueElSpark the discount value
-	 */
-	public void setDiscountValueElSpark(String discountValueElSpark) {
-		this.discountValueElSpark = discountValueElSpark;
-	}
+    /**
+     * Sets the discount value el for spark.
+     *
+     * @param discountValueElSpark the discount value
+     */
+    public void setDiscountValueElSpark(String discountValueElSpark) {
+        this.discountValueElSpark = discountValueElSpark;
+    }
 
-	@Override
-	public String toString() {
-		return "DiscountPlanItemDto [code=" + code + ", discountPlanCode=" + discountPlanCode + ", invoiceCategoryCode="
-				+ invoiceCategoryCode + ", invoiceSubCategoryCode=" + invoiceSubCategoryCode + ", accountingCode="
-				+ accountingCode + ", expressionEl=" + expressionEl + ", expressionElSpark=" + expressionElSpark
-				+ ", disabled=" + disabled + ", discountPlanItemType=" + discountPlanItemType + ", discountValue="
-				+ discountValue + ", discountValueEL=" + discountValueEL + ", discountValueElSpark="
-				+ discountValueElSpark + "]";
-	}
+    @Override
+    public String toString() {
+        return "DiscountPlanItemDto [code=" + code + ", discountPlanCode=" + discountPlanCode + ", invoiceCategoryCode=" + invoiceCategoryCode + ", invoiceSubCategoryCode="
+                + invoiceSubCategoryCode + ", accountingCode=" + accountingCode + ", expressionEl=" + expressionEl + ", expressionElSpark=" + expressionElSpark + ", disabled="
+                + disabled + ", discountPlanItemType=" + discountPlanItemType + ", discountValue=" + discountValue + ", discountValueEL=" + discountValueEL
+                + ", discountValueElSpark=" + discountValueElSpark + "]";
+    }
 
-	/**
-	 * Sets the discount value el.
-	 * @param discountValueEL el expression
-	 */
-	public void setDiscountValueEL(String discountValueEL) {
-		this.discountValueEL = discountValueEL;
-	}
+    /**
+     * Sets the discount value el.
+     *
+     * @param discountValueEL el expression
+     */
+    public void setDiscountValueEL(String discountValueEL) {
+        this.discountValueEL = discountValueEL;
+    }
 
-	/**
-	 * Gets the discount value el.
-	 * @return el expression
-	 */
-	public String getDiscountValueEL() {
-		return discountValueEL;
-	}
+    /**
+     * Gets the discount value el.
+     *
+     * @return el expression
+     */
+    public String getDiscountValueEL() {
+        return discountValueEL;
+    }
 
-	/**
-	 * Gets the custom fields.
-	 * @return custom fields associated with this entity
-	 */
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    /**
+     * Gets the custom fields.
+     *
+     * @return custom fields associated with this entity
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
 	/**
 	 * Sets the custom fields.
@@ -366,4 +427,60 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
+
+	public String getPricePlanMatrixCode() {
+		return pricePlanMatrixCode;
+	}
+
+	public void setPricePlanMatrixCode(String pricePlanMatrixCode) {
+		this.pricePlanMatrixCode = pricePlanMatrixCode;
+	}
+
+
+
+	public Set<String> getTargetAccountingArticleCodes() {
+		return targetAccountingArticleCodes;
+	}
+
+	public void setTargetAccountingArticleCodes(Set<String> targetAccountingArticleCodes) {
+		this.targetAccountingArticleCodes = targetAccountingArticleCodes;
+	}
+
+	public String getExpressionEl() {
+		return expressionEl;
+	}
+    public Boolean isAllowToNegate() {
+        return allowToNegate;
+    }
+
+    public void setAllowToNegate(Boolean allowToNegate) {
+        this.allowToNegate = allowToNegate;
+    }
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Long getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Long priority) {
+		this.priority = priority;
+	}
+	
+	
+
+
+
 }

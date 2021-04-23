@@ -17,7 +17,6 @@
  */
 package org.meveo.model;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Embedded;
@@ -42,6 +41,7 @@ import org.meveo.model.listeners.AccountCodeGenerationListener;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
+import org.meveo.model.shared.Title;
 
 /**
  * Parent class of all account entities
@@ -180,6 +180,15 @@ public abstract class AccountEntity extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_charge_template_id")
     private OneShotChargeTemplate minimumChargeTemplate;
+    
+    @Column(name = "company")
+    @Type(type = "numeric_boolean")
+    protected Boolean isCompany;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "legal_entity_type_id")
+    protected Title legalEntityType;
+    
 
 
     public String getExternalRef1() {
@@ -383,5 +392,35 @@ public abstract class AccountEntity extends BusinessCFEntity {
     public void setMinimumChargeTemplate(OneShotChargeTemplate minimumChargeTemplate) {
         this.minimumChargeTemplate = minimumChargeTemplate;
     }
+
+
+	/**
+	 * @return the isCompany
+	 */
+	public Boolean getIsCompany() {
+		return isCompany;
+	}
+
+	/**
+	 * @param isCompany the isCompany to set
+	 */
+	public void setIsCompany(Boolean isCompany) {
+		this.isCompany = isCompany;
+	}
+
+	/**
+	 * @return the legalEntityType
+	 */
+	public Title getLegalEntityType() {
+		return legalEntityType;
+	}
+
+	/**
+	 * @param legalEntityType the legalEntityType to set
+	 */
+	public void setLegalEntityType(Title legalEntityType) {
+		this.legalEntityType = legalEntityType;
+	}
+
 
 }

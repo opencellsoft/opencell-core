@@ -3,7 +3,7 @@
   <con:settings/>
   <con:interface xsi:type="con:WsdlInterface" id="862741d9-1cba-4f44-8645-23cbf90521aa" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/CatalogWs</con:endpoint>
     </con:endpoints>
     <con:operation id="9ba233dc-83dc-4922-bccb-c4730c741e6a" isOneWay="false" action="" name="createBusinessOfferModel" bindingOperationName="createBusinessOfferModel" type="Request-Response" outputName="createBusinessOfferModelResponse" inputName="createBusinessOfferModel" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -264,7 +264,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="7cdd0ae3-5427-435a-a52c-e8cd6f39974a" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://${#Project#opencell.url}" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#opencell.url}</con:endpoint>
     </con:endpoints>
     <con:resource name="" path="/api/rest/taxClass/createOrUpdate" id="aa111c31-bc25-48e5-9d17-7b39ff794313">
@@ -474,7 +474,7 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="b93ebf67-a568-4bed-9036-80561b1b1cce" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO JAX-WS API Documentation" type="rest" basePath="/api/rest" definitionUrl="C:\andrius\projektai\seb\meveo\meveo-api\target\docs\application.wadl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache type="TEXT"/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>${#Project#opencell.url}</con:endpoint>
     </con:endpoints>
     <con:resource name="/notification/jobTrigger" path="/notification/jobTrigger" id="76d053cc-cd47-4775-ac93-d2a021485b19">
@@ -14349,7 +14349,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="aa208489-a0b2-404c-8a77-c1350b4c83b3" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/AccountWs</con:endpoint>
     </con:endpoints>
     <con:operation id="4a0fc5f7-43d0-4617-8c84-40c762d59f2d" isOneWay="false" action="" name="addLitigation" bindingOperationName="addLitigation" type="Request-Response" outputName="addLitigationResponse" inputName="addLitigation" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -14550,7 +14550,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="6ccc8a8a-997f-4960-82f3-20becb05f389" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="3d36e78c-f4a2-4b54-8863-98f524934ea6" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -14625,7 +14625,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="3eeb0138-8c90-4a2b-acda-3f4f301cbb22" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SubscriptionWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/SubscriptionWs</con:endpoint>
     </con:endpoints>
     <con:operation id="b1e4b0c4-088e-4ba2-bf3d-ebc7b9466bac" isOneWay="false" action="" name="activateServices" bindingOperationName="activateServices" type="Request-Response" outputName="activateServicesResponse" inputName="activateServices" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -15304,7 +15304,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="bd759564-3e2e-45ca-bab9-b79fbda5ea37" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/InvoiceWs</con:endpoint>
     </con:endpoints>
     <con:operation id="326ead8f-5c83-4cef-8fb7-5267078ab490" isOneWay="false" action="" name="cancelInvoice" bindingOperationName="cancelInvoice" type="Request-Response" outputName="cancelInvoiceResponse" inputName="cancelInvoice" receivesAttachments="false" sendsAttachments="false">
@@ -15349,7 +15349,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="42281280-a1aa-4328-a731-6528fdf162cd" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8080/opencell/JobWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/JobWs</con:endpoint>
     </con:endpoints>
     <con:operation id="9ac244b1-803a-4095-ae8f-dc679241da0d" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -15391,7 +15391,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="b1fb4e02-d2d2-44aa-b9ff-24c2f8902305" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints>
+    <con:endpoints>
       <con:endpoint>http://localhost:8080/opencell/SettingsWs</con:endpoint>
     </con:endpoints>
     <con:operation id="cc243b0f-79ce-421e-a18e-7895d9b4ab85" isOneWay="false" action="" name="createBillingCycle" bindingOperationName="createBillingCycle" type="Request-Response" outputName="createBillingCycleResponse" inputName="createBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -17509,9 +17509,13 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="44d46c02-f9ad-42d5-bbf7-44c0678287e6" wadlVersion="http://wadl.dev.java.net/2009/02" name="Meveo TMForum - API - wildfly" type="rest" definitionUrl="578a0373-294f-4461-8912-aa35a4248d4f" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:definitionCache/><con:endpoints/>
+    <con:endpoints/>
   </con:interface>
-  <con:interface xsi:type="con:RestService" id="c79a32ee-4bb7-4cdc-9b69-fa20200b1434" wadlVersion="http://wadl.dev.java.net/2009/02" name="Meveo TMForum - API - wildfly" type="rest" definitionUrl="101" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache/><con:endpoints/></con:interface><con:testSuite id="6ac7964a-a9d0-431e-b680-b0c3aa92daed" name="Setup Authorization">
+  <con:interface xsi:type="con:RestService" id="c79a32ee-4bb7-4cdc-9b69-fa20200b1434" wadlVersion="http://wadl.dev.java.net/2009/02" name="Meveo TMForum - API - wildfly" type="rest" definitionUrl="101" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints/>
+  </con:interface>
+  <con:testSuite id="6ac7964a-a9d0-431e-b680-b0c3aa92daed" name="Setup Authorization">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="47bb237d-abbe-48ff-91a2-69930ff9287f" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="setAllHeaders" searchProperties="true">
@@ -23681,7 +23685,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="4c543ad4-c016-429e-8b81-a34cf6bbafc3" name="Contains 1">
-              <con:configuration><token>"message":"No offerServiceTemplate corresponds to ${#Project#baseEntityPrefix}_SERVICE1"</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>"message":"No offerServiceTemplate corresponds to ${#Project#baseEntityPrefix}_SERVICE1"</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username/>
@@ -25702,7 +25710,13 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="JsonPath Match" id="7dd1fec3-52f1-46ec-a189-204d974ca6fe" name="JsonPath Match">
-              <con:configuration><path>$.invoices[0].amountWithoutTax</path><content>100.0</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+              <con:configuration>
+                <path>$.invoices[0].amountWithoutTax</path>
+                <content>100.0</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username/>
@@ -26130,7 +26144,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
-            <con:parameters><entry key="quoteId" value="ad3c0396-4dd0-478b-a270-d951d93656dc" xmlns="http://eviware.com/soapui/config"/></con:parameters>
+            <con:parameters>
+              <entry key="quoteId" value="ad3c0396-4dd0-478b-a270-d951d93656dc" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
           </con:restRequest>
         </con:config>
       </con:testStep>
@@ -27292,7 +27308,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
-            <con:parameters><entry key="quoteId" value="93ecf91c-9add-44eb-99fa-1aa46be04798" xmlns="http://eviware.com/soapui/config"/></con:parameters>
+            <con:parameters>
+              <entry key="quoteId" value="93ecf91c-9add-44eb-99fa-1aa46be04798" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
           </con:restRequest>
         </con:config>
       </con:testStep>
@@ -28360,7 +28378,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:credentials>
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
-            <con:parameters><entry key="quoteId" value="ea64165b-ae1d-4422-8f0e-3ab27763d3cc" xmlns="http://eviware.com/soapui/config"/></con:parameters>
+            <con:parameters>
+              <entry key="quoteId" value="ea64165b-ae1d-4422-8f0e-3ab27763d3cc" xmlns="http://eviware.com/soapui/config"/>
+            </con:parameters>
           </con:restRequest>
         </con:config>
       </con:testStep>
@@ -31886,7 +31906,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="Simple Contains" id="8dc34ece-eec6-42e7-a533-8fb6f3952b9c" name="Contains 1">
-              <con:configuration><token>&lt;paymentMethod>DIRECTDEBIT&lt;/paymentMethod></token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>&lt;paymentMethod>DIRECTDEBIT&lt;/paymentMethod></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="ff041be2-3305-4416-a7c3-98361cfd604a" name="XPath Match 1">
               <con:configuration>
@@ -32806,7 +32830,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="1bc75f17-2661-416c-84be-e978469d0b48"/>
             <con:assertion type="Simple Contains" id="b1c9508f-7951-43c5-a8c2-d4ef20c695cf" name="Contains">
-              <con:configuration><token>SUCCESS</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
@@ -32878,7 +32906,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               </con:configuration>
             </con:assertion>
             <con:assertion type="XPath Match" id="aa448c6e-976e-44e8-9c32-c679cf855747" name="XPath Match">
-              <con:configuration><path>//ratedTransaction[code="${#Project#baseEntityPrefix}_REC1" and contains(usageDate,"2016-03-01")]</path><content><![CDATA[<ratedTransaction>
+              <con:configuration>
+                <path>//ratedTransaction[code="${#Project#baseEntityPrefix}_REC1" and contains(usageDate,"2016-03-01")]</path>
+                <content><![CDATA[<ratedTransaction>
           <usageDate>2016-03-01T00:00:00*</usageDate>
           <unitAmountWithoutTax>10.000000000000</unitAmountWithoutTax>
            <unitAmountWithTax>10.500000000000</unitAmountWithTax>
@@ -32901,7 +32931,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                                   <sellerCode>SELLER_FR</sellerCode>
                                  <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
   <taxClassCode>${#Project#baseEntityPrefix}_taxClass</taxClassCode>
-                              </ratedTransaction>]]></content><allowWildcards>true</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+                              </ratedTransaction>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
             </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>

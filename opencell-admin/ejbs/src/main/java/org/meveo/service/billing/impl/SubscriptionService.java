@@ -60,6 +60,7 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -643,8 +644,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     public Subscription instantiateDiscountPlan(Subscription entity, DiscountPlan dp) throws BusinessException {
-        if (!entity.getOffer().getAllowedDiscountPlans().contains(dp)) {
-            throw new BusinessException("DiscountPlan " + dp.getCode() + " is not allowed in this offer.");
+        if (dp.getDiscountPlanType() != null && !dp.getDiscountPlanType().equals(DiscountPlanTypeEnum.OFFER) && !entity.getOffer().getAllowedDiscountPlans().contains(dp)) {
+            throw new BusinessException("DiscountPlan " + dp.getCode() + " is not allowed in this subscription.");
         }
         BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
         for (DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()) {
@@ -744,14 +745,16 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         // check if selected available services are part of incompatible services of subscribed service's
         for (ServiceInstance subscribedService : serviceInstances) {
-            OfferServiceTemplate offerServiceTemplateSubscribedService = getOfferServiceTemplate(subscribedService.getServiceTemplate().getCode(), offerTemplate);
-            // list of incompatible services of an element of current subscribed service's
-            List<ServiceTemplate> serviceTemplateSubscribedServiceIncompatibles = offerServiceTemplateSubscribedService.getIncompatibleServices();
+            if(subscribedService.getServiceTemplate() != null) {
+                OfferServiceTemplate offerServiceTemplateSubscribedService = getOfferServiceTemplate(subscribedService.getServiceTemplate().getCode(), offerTemplate);
+                // list of incompatible services of an element of current subscribed service's
+                List<ServiceTemplate> serviceTemplateSubscribedServiceIncompatibles = offerServiceTemplateSubscribedService.getIncompatibleServices();
 
-            for (ServiceTemplate serviceTemplateSelectedItem : selectedItemsAsList) {
-                for (ServiceTemplate serviceTemplateSubscribedServiceIncompatible : serviceTemplateSubscribedServiceIncompatibles) {
-                    if (serviceTemplateSelectedItem.getCode().equals(serviceTemplateSubscribedServiceIncompatible.getCode())) {
-                        throw new BusinessException("Services Incompatibility between " + serviceTemplateSelectedItem.getCode() + " and " + subscribedService.getCode());
+                for (ServiceTemplate serviceTemplateSelectedItem : selectedItemsAsList) {
+                    for (ServiceTemplate serviceTemplateSubscribedServiceIncompatible : serviceTemplateSubscribedServiceIncompatibles) {
+                        if (serviceTemplateSelectedItem.getCode().equals(serviceTemplateSubscribedServiceIncompatible.getCode())) {
+                            throw new BusinessException("Services Incompatibility between " + serviceTemplateSelectedItem.getCode() + " and " + subscribedService.getCode());
+                        }
                     }
                 }
             }

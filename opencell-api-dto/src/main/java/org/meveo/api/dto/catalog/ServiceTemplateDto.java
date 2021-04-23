@@ -18,8 +18,12 @@
 
 package org.meveo.api.dto.catalog;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +31,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
+import org.meveo.api.dto.cpq.MediaDto;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
@@ -37,8 +42,6 @@ import org.meveo.model.catalog.WalletTemplate;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import java.util.List;
 
 /**
  * The Class ServiceTemplateDto.
@@ -77,7 +80,7 @@ public class ServiceTemplateDto extends EnableBusinessDto {
 
     /** The mandatory. */
     @Deprecated
-    private boolean mandatory;
+    private boolean mandatory=Boolean.FALSE;
 
     /**
      * BusinessServiceModel code.
@@ -130,6 +133,41 @@ public class ServiceTemplateDto extends EnableBusinessDto {
 
     /** The language descriptions. */
     private List<LanguageDescriptionDto> languageDescriptions;
+    
+    /**
+     * Corresponding to minimum one shot charge template code.
+     */
+    private String groupedServiceCode;
+     
+    /**
+     * Corresponding to predefined allowed values
+     */
+    private List<Object> values;
+    
+    
+    /**
+     * Corresponding to the value validator (regex expression)
+     */
+    private String valueValidator;
+    
+    
+    /** The service type code */
+    private String  serviceTypeCode;
+    
+
+    /** The display . */ 
+    private boolean display=Boolean.FALSE;
+    
+    
+    /**
+     * this field will contain the additional information entered in the "CPQ configurator" and linked to the type of service
+     */
+    private String param;
+    
+    /** The medias */
+    @XmlElementWrapper(name = "medias")
+    @XmlElement(name = "medias")
+    protected List<MediaDto> medias;
 
     /**
      * Instantiates a new service template dto.
@@ -591,4 +629,91 @@ public class ServiceTemplateDto extends EnableBusinessDto {
     public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
         this.languageDescriptions = languageDescriptions;
     }
+
+	public String getGroupedServiceCode() {
+		return groupedServiceCode;
+	}
+
+	public void setGroupedServiceCode(String groupedServiceCode) {
+		this.groupedServiceCode = groupedServiceCode;
+	}
+ 
+
+
+	/**
+	 * @return the serviceTypeCode
+	 */
+	public String getServiceTypeCode() {
+		return serviceTypeCode;
+	}
+
+	/**
+	 * @param serviceTypeCode the serviceTypeCode to set
+	 */
+	public void setServiceTypeCode(String serviceTypeCode) {
+		this.serviceTypeCode = serviceTypeCode;
+	}
+
+	public List<Object> getValues() {
+		return values;
+	}
+
+	public void setValues(List<Object> values) {
+		this.values = values;
+	}
+
+	public String getValueValidator() {
+		return valueValidator;
+	}
+
+	public void setValueValidator(String valueValidator) {
+		this.valueValidator = valueValidator;
+	}
+
+	/**
+	 * @return the display
+	 */
+	public boolean isDisplay() {
+		return display;
+	}
+
+	/**
+	 * @param display the display to set
+	 */
+	public void setDisplay(boolean display) {
+		this.display = display;
+	}
+
+	/**
+	 * @return the param
+	 */
+	public String getParam() {
+		return param;
+	}
+
+	/**
+	 * @param param the param to set
+	 */
+	public void setParam(String param) {
+		this.param = param;
+	}
+
+	/**
+	 * @return the medias
+	 */
+	public List<MediaDto> getMedias() {
+		return medias;
+	}
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<MediaDto> medias) {
+		this.medias = medias;
+	}
+	
+	
+	
+	
+    
 }

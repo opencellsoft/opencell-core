@@ -224,14 +224,14 @@ public class BillingCycle extends BusinessCFEntity {
     @Column(name = "compute_dates_validation")
     @Type(type = "numeric_boolean")
     private Boolean computeDatesAtValidation = false;
-    
+
     /**
      * executed for each invoice, Will raise an exception if the invoice is invalid. Context will contain billingRun and invoice.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run_validation_script_id")
     private ScriptInstance billingRunValidationScript;
-    
+
     /**
      * @return Invoicing calendar
      */
@@ -523,7 +523,7 @@ public class BillingCycle extends BusinessCFEntity {
     public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
         this.computeDatesAtValidation = computeDatesAtValidation;
     }
-    
+
 	public ScriptInstance getBillingRunValidationScript() {
 		return billingRunValidationScript;
 	}

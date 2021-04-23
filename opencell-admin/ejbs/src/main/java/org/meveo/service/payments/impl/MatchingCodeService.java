@@ -38,6 +38,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -69,7 +70,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     @Inject
     private PaymentScheduleInstanceItemService paymentScheduleInstanceItemService;
-    
+
     @Inject
     @Updated
     private Event<BaseEntity> entityUpdatedEventProducer;
@@ -143,13 +144,13 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             if(accountOperation instanceof RecordedInvoice) {
                 Invoice invoice = ((RecordedInvoice)accountOperation).getInvoice();
                 if(withWriteOff) {
-                    invoice.setStatus(InvoiceStatusEnum.ABANDONED);
+                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
                 } else if(withRefund) {
-                    invoice.setStatus(InvoiceStatusEnum.REFUNDED);
+                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
                 } else if(fullMatch) {
-                    invoice.setStatus(InvoiceStatusEnum.PAID);
+                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
                 } else if(!fullMatch) {
-                    invoice.setStatus(InvoiceStatusEnum.PPAID);
+                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
                 }
                 entityUpdatedEventProducer.fire(invoice);
             }
@@ -203,13 +204,13 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             if(accountOperation instanceof RecordedInvoice) {
                 Invoice invoice = ((RecordedInvoice)accountOperation).getInvoice();
                 if(withWriteOff) {
-                    invoice.setStatus(InvoiceStatusEnum.ABANDONED);
+                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.ABANDONED);
                 } else if(withRefund) {
-                    invoice.setStatus(InvoiceStatusEnum.REFUNDED);
+                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.REFUNDED);
                 } else if(fullMatch) {
-                    invoice.setStatus(InvoiceStatusEnum.PAID);
+                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
                 } else if(!fullMatch) {
-                    invoice.setStatus(InvoiceStatusEnum.PPAID);
+                    invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
                 }
             }
 
@@ -288,20 +289,14 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     operation.setMatchingStatus(MatchingStatusEnum.O);
                     if (operation instanceof RecordedInvoice) {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
-                        if(invoice.isAlreadySent()) {
-                            invoice.setStatus(InvoiceStatusEnum.SENT);
-                        } else if(StringUtils.isNotBlank(invoice.getXmlFilename())) {
-                            invoice.setStatus(InvoiceStatusEnum.GENERATED);
-                        } else {
-                            invoice.setStatus(InvoiceStatusEnum.CREATED);
-                        }
+                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PAID);
                         entityUpdatedEventProducer.fire(invoice);
                     }
                 } else {
                     operation.setMatchingStatus(MatchingStatusEnum.P);
                     if (operation instanceof RecordedInvoice) {
                         Invoice invoice = ((RecordedInvoice)operation).getInvoice();
-                        invoice.setStatus(InvoiceStatusEnum.PPAID);
+                        invoice.setPaymentStatus(InvoicePaymentStatusEnum.PPAID);
                     }
                 }
                 operation.getMatchingAmounts().remove(matchingAmount);

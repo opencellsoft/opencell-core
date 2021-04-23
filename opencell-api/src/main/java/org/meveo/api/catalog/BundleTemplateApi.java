@@ -53,6 +53,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
@@ -162,7 +163,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         bundleTemplate.setLongDescription(postData.getLongDescription());
         bundleTemplate.setName(postData.getName());
         bundleTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
-        bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+        bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus()==null?LifeCycleStatusEnum.IN_DESIGN:postData.getLifeCycleStatus());
 
         if (postData.isDisabled() != null) {
             bundleTemplate.setDisabled(postData.isDisabled());
@@ -252,7 +253,9 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         bundleTemplate.setLongDescription(postData.getLongDescription());
         bundleTemplate.setName(postData.getName());
         bundleTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
+        if(!StringUtils.isBlank(postData.getLifeCycleStatus())) {
         bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+        }
 
         try {
             saveImage(bundleTemplate, postData.getImagePath(), postData.getImageBase64());

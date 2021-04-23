@@ -19,12 +19,55 @@
 package org.meveo.model.catalog;
 
 /**
- * @author Edward P. Legaspi
+ * @author Khalid HORRI
  **/
 public enum DiscountPlanStatusEnum {
-    ACTIVE, INACTIVE;
+    ACTIVE(1, "DiscountPlanStatusEnum.active"), INACTIVE(2, "DiscountPlanStatusEnum.inactive"), DRAFT(3, "DiscountPlanStatusEnum.draft"), IN_USE(4,
+            "DiscountPlanStatusEnum.inUse"), EXPIRED(5, "DiscountPlanStatusEnum.expired");
+    /**
+     * Enum Id
+     */
+    private Integer id;
+    /**
+     * Enum label.
+     */
+    private String label;
 
+    /**
+     * @param id    Enum Id
+     * @param label enum label
+     */
+    DiscountPlanStatusEnum(final Integer id, final String label) {
+        this.id = id;
+        this.label = label;
+    }
+
+    /**
+     * @return
+     */
     public String getLabel() {
-        return "enum.DiscountPlanStatusEnum." + name();
+        return label;
+    }
+
+    /**
+     * @return
+     */
+    public Integer getId() {
+        return id;
+    }
+
+    /**
+     * @param id
+     * @return
+     */
+    public static DiscountPlanStatusEnum getValue(Integer id) {
+        if (id != null) {
+            for (DiscountPlanStatusEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
     }
 }

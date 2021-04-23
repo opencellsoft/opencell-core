@@ -147,7 +147,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    public SubscriptionsListResponseDto listGet(@Deprecated @QueryParam("userAccountCode") String userAccountCode, @QueryParam("mergedCF") Boolean mergedCF,
+    SubscriptionsListResponseDto listGet(@Deprecated @QueryParam("userAccountCode") String userAccountCode, @QueryParam("mergedCF") Boolean mergedCF,
             @QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
@@ -169,7 +169,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/findByCustomer")
-    public SubscriptionsListResponseDto findByCustomer(@QueryParam("customerCode") String customerCode);
+    SubscriptionsListResponseDto findByCustomer(@QueryParam("customerCode") String customerCode);
 
     /**
      * List subscriptions matching a given criteria
@@ -179,7 +179,7 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/list")
-    public SubscriptionsListResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+    SubscriptionsListResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
      * Deprecated in v.4.7.2 Use /list instead.
@@ -414,6 +414,17 @@ public interface SubscriptionRs extends IBaseRs {
     @POST
     @Path("/subscribeAndActivateServices")
     ActionStatus subscribeAndActivateServices(SubscriptionAndServicesToActivateRequestDto postData);
+    
+    
+    /**
+     * Create a subscription and instanciate product in a single transaction.
+     * 
+     * @param postData Subscription and products to i
+     * @return Request processing status
+     */
+    @POST
+    @Path("/subscribeAndInstantiateProducts")
+    ActionStatus subscribeAndInstantiateProducts(SubscriptionAndProductsToInstantiateDto postData);
 
     @PATCH
     @Path("/{code}/offer")

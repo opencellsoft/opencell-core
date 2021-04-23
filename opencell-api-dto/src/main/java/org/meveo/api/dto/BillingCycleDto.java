@@ -194,7 +194,7 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     @XmlElement
     private Boolean thresholdPerEntity;
-    
+
     @XmlElement
     private String billingRunValidationScriptCode;
 

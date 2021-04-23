@@ -18,9 +18,10 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,6 +37,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
@@ -46,9 +49,14 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.WorkflowedEntity;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
-import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.Media;
+import org.meveo.model.cpq.offer.OfferComponent;
+import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
 
 /**
  * @author Edward P. Legaspi, Andrius Karpavicius
@@ -63,7 +71,12 @@ import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
         @NamedQuery(name = "OfferTemplate.countDisabled", query = "SELECT COUNT(*) FROM OfferTemplate WHERE businessOfferModel is not null and lifeCycleStatus<>'ACTIVE'"),
         @NamedQuery(name = "OfferTemplate.getMimimumRTUsed", query = "select ot.minimumAmountEl from OfferTemplate ot where ot.minimumAmountEl is not null"),
         @NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinusXDay<validity.to and validity.to<=NOW() and businessOfferModel is not null"),
-        @NamedQuery(name = "OfferTemplate.findByServiceTemplate", query = "SELECT t FROM OfferTemplate t JOIN t.offerServiceTemplates ost WHERE ost.serviceTemplate = :serviceTemplate") })
+        @NamedQuery(name = "OfferTemplate.findByServiceTemplate", query = "SELECT t FROM OfferTemplate t JOIN t.offerServiceTemplates ost WHERE ost.serviceTemplate = :serviceTemplate"),
+        @NamedQuery(name = "OfferTemplate.findByTags", query = "select o from OfferTemplate o LEFT JOIN o.tags as tag WHERE tag.code IN (:tagCodes)"),
+        @NamedQuery(name = "OfferTemplate.findTagsByTagType", query = "select tag from OfferTemplate p LEFT JOIN p.tags as tag left join tag.tagType tp where tp.code IN (:tagTypeCodes)")
+})
+
+
 public class OfferTemplate extends ProductOffering implements IWFEntity, ISearchable {
     private static final long serialVersionUID = 1L;
 
@@ -79,6 +92,13 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<OfferProductTemplate> offerProductTemplates = new ArrayList<>();
+
+    /**
+     * offer component
+     */
+    @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OfferComponent> offerComponents = new ArrayList<>();
+
 
     /**
      * Expression to determine minimum amount value
@@ -103,7 +123,7 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_offer_tmpl_discount_plan", joinColumns = @JoinColumn(name = "offer_tmpl_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "discount_plan_id", referencedColumnName = "id"))
-    private List<DiscountPlan> allowedDiscountPlans;
+    private List<DiscountPlan> allowedDiscountPlans = new ArrayList<>();
 
     /**
      * Expression to determine rated transaction description to reach minimum amount value - for Spark
@@ -131,12 +151,12 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 
     @Transient
     private String prefix;
+//
+//    @Transient
+//    private Map<ChargeTypeEnum, List<ServiceTemplate>> serviceTemplatesByChargeType;
 
     @Transient
-    private Map<ChargeTypeEnum, List<ServiceTemplate>> serviceTemplatesByChargeType;
-
-    @Transient
-    private List<ProductTemplate> productTemplates;
+    private List<ProductTemplate> productTemplates = new ArrayList<>();
 
     @Transient
     private String transientCode;
@@ -145,13 +165,62 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Column(name = "auto_end_of_engagement")
     private Boolean autoEndOfEngagement = Boolean.FALSE;
 
+
+    /**
+     * list of tag attached
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cpq_offer_template_tags", joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
+    private List<Tag> tags = new ArrayList<Tag>();
+
+
+	/**
+	 * list of attributes attached to this offer
+	 */
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+				name = "cpq_offer_attributes",
+				joinColumns = @JoinColumn(name = "offer_template_id", referencedColumnName = "id"),
+				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")
+			)
+    private List<Attribute> attributes = new ArrayList<Attribute>();
+
+
+	/**
+     * list of Media
+     */   
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cpq_offer_template_media", joinColumns = @JoinColumn(name = "offer_template_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
+    private List<Media> medias = new ArrayList<Media>();
+
+    @OneToMany(mappedBy = "targetOfferTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<CommercialRuleHeader> commercialRules = new ArrayList<>();
+
+    /**
+     * date of status : it set automatically when ever the status of offerTemplate is changed
+     */
+    @Column(name = "status_date", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date statusDate;
+
+
+
     @Type(type = "numeric_boolean")
     @Column(name = "is_offer_change_restricted")
     private Boolean isOfferChangeRestricted;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "cat_offer_allowed_offer_change", joinColumns = @JoinColumn(name = "offer_tmpl_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "allowed_offer_change_id", referencedColumnName = "id"))
-    private List<OfferTemplate> allowedOffersChange;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name="offer_template_id")
+    private List<OfferTemplate> allowedOffersChange = new ArrayList<>();
+
+
+    /**
+     * Corresponding to minimum invoice AccountingArticle
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "minimum_article_id")
+    private AccountingArticle minimumArticle;
 
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
@@ -256,51 +325,51 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
         this.subscriptionRenewal = subscriptionRenewal;
     }
 
-    @SuppressWarnings("rawtypes")
-    public Map<ChargeTypeEnum, List<ServiceTemplate>> getServiceTemplatesByChargeType() {
-
-        if (serviceTemplatesByChargeType != null) {
-            return serviceTemplatesByChargeType;
-        }
-
-        serviceTemplatesByChargeType = new HashMap<>();
-
-        for (OfferServiceTemplate service : offerServiceTemplates) {
-            List charges = service.getServiceTemplate().getServiceRecurringCharges();
-            if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.RECURRING)) {
-                    serviceTemplatesByChargeType.put(ChargeTypeEnum.RECURRING, new ArrayList<ServiceTemplate>());
-                }
-                serviceTemplatesByChargeType.get(ChargeTypeEnum.RECURRING).add(service.getServiceTemplate());
-            }
-
-            charges = service.getServiceTemplate().getServiceUsageCharges();
-            if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.USAGE)) {
-                    serviceTemplatesByChargeType.put(ChargeTypeEnum.USAGE, new ArrayList<ServiceTemplate>());
-                }
-                serviceTemplatesByChargeType.get(ChargeTypeEnum.USAGE).add(service.getServiceTemplate());
-            }
-
-            charges = service.getServiceTemplate().getServiceSubscriptionCharges();
-            if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.SUBSCRIPTION)) {
-                    serviceTemplatesByChargeType.put(ChargeTypeEnum.SUBSCRIPTION, new ArrayList<ServiceTemplate>());
-                }
-                serviceTemplatesByChargeType.get(ChargeTypeEnum.SUBSCRIPTION).add(service.getServiceTemplate());
-            }
-
-            charges = service.getServiceTemplate().getServiceTerminationCharges();
-            if (charges != null && !charges.isEmpty()) {
-                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.TERMINATION)) {
-                    serviceTemplatesByChargeType.put(ChargeTypeEnum.TERMINATION, new ArrayList<ServiceTemplate>());
-                }
-                serviceTemplatesByChargeType.get(ChargeTypeEnum.TERMINATION).add(service.getServiceTemplate());
-            }
-        }
-
-        return serviceTemplatesByChargeType;
-    }
+//    @SuppressWarnings("rawtypes")
+//    public Map<ChargeTypeEnum, List<ServiceTemplate>> getServiceTemplatesByChargeType() {
+//
+//        if (serviceTemplatesByChargeType != null) {
+//            return serviceTemplatesByChargeType;
+//        }
+//
+//        serviceTemplatesByChargeType = new HashMap<>();
+//
+//        for (OfferServiceTemplate service : offerServiceTemplates) {
+//            List charges = service.getServiceTemplate().getServiceRecurringCharges();
+//            if (charges != null && !charges.isEmpty()) {
+//                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.RECURRING)) {
+//                    serviceTemplatesByChargeType.put(ChargeTypeEnum.RECURRING, new ArrayList<ServiceTemplate>());
+//                }
+//                serviceTemplatesByChargeType.get(ChargeTypeEnum.RECURRING).add(service.getServiceTemplate());
+//            }
+//
+//            charges = service.getServiceTemplate().getServiceUsageCharges();
+//            if (charges != null && !charges.isEmpty()) {
+//                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.USAGE)) {
+//                    serviceTemplatesByChargeType.put(ChargeTypeEnum.USAGE, new ArrayList<ServiceTemplate>());
+//                }
+//                serviceTemplatesByChargeType.get(ChargeTypeEnum.USAGE).add(service.getServiceTemplate());
+//            }
+//
+//            charges = service.getServiceTemplate().getServiceSubscriptionCharges();
+//            if (charges != null && !charges.isEmpty()) {
+//                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.SUBSCRIPTION)) {
+//                    serviceTemplatesByChargeType.put(ChargeTypeEnum.SUBSCRIPTION, new ArrayList<ServiceTemplate>());
+//                }
+//                serviceTemplatesByChargeType.get(ChargeTypeEnum.SUBSCRIPTION).add(service.getServiceTemplate());
+//            }
+//
+//            charges = service.getServiceTemplate().getServiceTerminationCharges();
+//            if (charges != null && !charges.isEmpty()) {
+//                if (!serviceTemplatesByChargeType.containsKey(ChargeTypeEnum.TERMINATION)) {
+//                    serviceTemplatesByChargeType.put(ChargeTypeEnum.TERMINATION, new ArrayList<ServiceTemplate>());
+//                }
+//                serviceTemplatesByChargeType.get(ChargeTypeEnum.TERMINATION).add(service.getServiceTemplate());
+//            }
+//        }
+//
+//        return serviceTemplatesByChargeType;
+//    }
 
     public List<ProductTemplate> getProductTemplates() {
         if (productTemplates != null) {
@@ -442,6 +511,105 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
         this.minimumChargeTemplate = minimumChargeTemplate;
     }
 
+
+
+	/**
+	 * @return the tags
+	 */
+	public List<Tag> getTags() {
+		return tags;
+	}
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+	}
+
+	public void setProductTemplates(List<ProductTemplate> productTemplates) {
+		this.productTemplates = productTemplates;
+	}
+
+	/**
+	 * @return the offerComponents
+	 */
+	public List<OfferComponent> getOfferComponents() {
+		return offerComponents;
+	}
+
+	/**
+	 * @param offerComponents the offerComponents to set
+	 */
+	public void setOfferComponents(List<OfferComponent> offerComponents) {
+		this.offerComponents = offerComponents;
+	}
+
+
+	/**
+	 * @return the attributes
+	 */
+	public List<Attribute> getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(List<Attribute> attributes) {
+		this.attributes = attributes;
+	}
+ 
+
+	/**
+	 * @return the medias
+	 */
+	public List<Media> getMedias() {
+		return medias;
+	}
+
+	/**
+	 * @param medias the medias to set
+	 */
+	public void setMedias(List<Media> medias) {
+		this.medias = medias;
+	}
+
+	/**
+	 * @return the statusDate
+	 */
+	public Date getStatusDate() {
+		return statusDate;
+	}
+
+	/**
+	 * @param statusDate the statusDate to set
+	 */
+	public void setStatusDate(Date statusDate) {
+		this.statusDate = statusDate;
+	}
+
+	/**
+	 * @return the commercialRules
+	 */
+	public List<CommercialRuleHeader> getCommercialRules() {
+		return commercialRules;
+	}
+
+	/**
+	 * @param commercialRules the commercialRules to set
+	 */
+	public void setCommercialRules(List<CommercialRuleHeader> commercialRules) {
+		this.commercialRules = commercialRules;
+	}
+
+
+    public boolean haveProduct(String productCode) {
+	    return offerComponents.stream()
+                .filter(off -> off.getProduct() != null)
+                .anyMatch(off -> off.getProduct().getCode().equals(productCode));
+    }
+
     public Boolean getOfferChangeRestricted() {
         return isOfferChangeRestricted;
     }
@@ -456,5 +624,13 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 
     public void setAllowedOffersChange(List<OfferTemplate> allowedOffersChange) {
         this.allowedOffersChange = allowedOffersChange;
+    }
+
+    public AccountingArticle getMinimumArticle() {
+        return minimumArticle;
+    }
+
+    public void setMinimumArticle(AccountingArticle minimumArticle) {
+        this.minimumArticle = minimumArticle;
     }
 }

@@ -18,8 +18,10 @@
 package org.meveo.model.catalog;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -28,6 +30,8 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -50,6 +54,8 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.annotation.ImageType;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.SubscriptionRenewal;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.tags.Tag;
 
 /**
  * This represents a service that is part of an offer. It contains charges of different types.
@@ -71,7 +77,8 @@ import org.meveo.model.billing.SubscriptionRenewal;
         @NamedQuery(name = "serviceTemplate.getNbServiceWithNotOffer", query = "select count(*) from ServiceTemplate s where s.id not in (select serv.serviceTemplate.id from OfferTemplate o join o.offerServiceTemplates serv)"),
         @NamedQuery(name = "serviceTemplate.getServicesWithNotOffer", query = "from ServiceTemplate s where s.id not in (select serv.serviceTemplate.id from OfferTemplate o join o.offerServiceTemplates serv)"),
         @NamedQuery(name = "serviceTemplate.getServicesWithRecurringsByChargeTemplate", query = "from ServiceTemplate s left join s.serviceRecurringCharges c where c.chargeTemplate=:chargeTemplate"),
-        @NamedQuery(name = "ServiceTemplate.getMimimumRTUsed", query = "select s.minimumAmountEl from ServiceTemplate s where s.minimumAmountEl is not null")
+        @NamedQuery(name = "ServiceTemplate.getMimimumRTUsed", query = "select s.minimumAmountEl from ServiceTemplate s where s.minimumAmountEl is not null"),
+        @NamedQuery(name = "ServiceTemplate.findByTags", query = "select s from ServiceTemplate s LEFT JOIN s.tags as tag WHERE tag.code IN (:tagCodes)")
         // @NamedQuery(name = "serviceTemplate.getServicesWithSubscriptionsByChargeTemplate",
         // query = "from ServiceTemplate s left join s.serviceSubscriptionCharges c where c.chargeTemplate=:chargeTemplate"),
         // @NamedQuery(name = "serviceTemplate.getServicesWithTerminationsByChargeTemplate",
@@ -79,37 +86,9 @@ import org.meveo.model.billing.SubscriptionRenewal;
         // @NamedQuery(name = "serviceTemplate.getServicesWithUsagesByChargeTemplate",
         // query = "from ServiceTemplate s left join s.serviceUsageCharges c where c.chargeTemplate=:chargeTemplate")
 })
-public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpload {
+public class ServiceTemplate extends ServiceCharge implements IImageUpload {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Mapping between service and recurring charges
-     */
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<>();
-
-    /**
-     * Mapping between service and subscription charges
-     */
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<>();
-
-    /**
-     * Mapping between service and termination charges
-     */
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<>();
-
-    /**
-     * Mapping between service and usage charges
-     */
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<>();
 
     /**
      * Calendar to use when creating Wallet operations. Service subscription start date is taken as calendar's initiation date. Invoicing calendar to calculate if operation should
@@ -220,82 +199,27 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
+	
 
-    public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
-        ServiceChargeTemplateRecurring result = null;
-        for (ServiceChargeTemplateRecurring sctr : serviceRecurringCharges) {
-            if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
-                result = sctr;
-                break;
-            }
-        }
-        return result;
-    }
-
-    public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
-        return serviceRecurringCharges;
-    }
-
-    public void setServiceRecurringCharges(List<ServiceChargeTemplateRecurring> serviceRecurringCharges) {
-        this.serviceRecurringCharges = serviceRecurringCharges;
-    }
-
-    public ServiceChargeTemplateSubscription getServiceChargeTemplateSubscriptionByChargeCode(String chargeCode) {
-        ServiceChargeTemplateSubscription result = null;
-        for (ServiceChargeTemplateSubscription sctr : serviceSubscriptionCharges) {
-            if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
-                result = sctr;
-                break;
-            }
-        }
-        return result;
-    }
-
-    public List<ServiceChargeTemplateSubscription> getServiceSubscriptionCharges() {
-        return serviceSubscriptionCharges;
-    }
-
-    public void setServiceSubscriptionCharges(List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges) {
-        this.serviceSubscriptionCharges = serviceSubscriptionCharges;
-    }
-
-    public ServiceChargeTemplateTermination getServiceChargeTemplateTerminationByChargeCode(String chargeCode) {
-        ServiceChargeTemplateTermination result = null;
-        for (ServiceChargeTemplateTermination sctr : serviceTerminationCharges) {
-            if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
-                result = sctr;
-                break;
-            }
-        }
-        return result;
-    }
-
-    public List<ServiceChargeTemplateTermination> getServiceTerminationCharges() {
-        return serviceTerminationCharges;
-    }
-
-    public void setServiceTerminationCharges(List<ServiceChargeTemplateTermination> serviceTerminationCharges) {
-        this.serviceTerminationCharges = serviceTerminationCharges;
-    }
-
-    public ServiceChargeTemplateUsage getServiceChargeTemplateUsageByChargeCode(String chargeCode) {
-        ServiceChargeTemplateUsage result = null;
-        for (ServiceChargeTemplateUsage sctr : serviceUsageCharges) {
-            if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
-                result = sctr;
-                break;
-            }
-        }
-        return result;
-    }
-
-    public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {
-        return serviceUsageCharges;
-    }
-
-    public void setServiceUsageCharges(List<ServiceChargeTemplateUsage> serviceUsageCharges) {
-        this.serviceUsageCharges = serviceUsageCharges;
-    }
+    
+    
+    /**
+     * list of tag attached
+     */   
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cpq_service_template_tags", joinColumns = @JoinColumn(name = "service_template_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tags = new HashSet<Tag>();
+    
+	/**
+	 * list of attributes attached to this product
+	 */
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+				name = "cpq_service_template_attributes",
+				joinColumns = @JoinColumn(name = "service_template_id", referencedColumnName = "id"),
+				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
+			)
+    private List<Attribute> attributes = new ArrayList<>();
 
     @Override
     public boolean equals(Object obj) {
@@ -505,4 +429,41 @@ public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpl
             return this.description;
         }
     }
+
+
+	
+	/**
+	 * @return the tags
+	 */
+	public Set<Tag> getTags() {
+		return tags;
+	}
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(Set<Tag> tags) {
+		this.tags = tags;
+	}
+
+	/**
+	 * @return the attributes
+	 */
+	public List<Attribute> getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(List<Attribute> attributes) {
+		this.attributes = attributes;
+	}
+
+
+	
+	
+    
+    
 }
+

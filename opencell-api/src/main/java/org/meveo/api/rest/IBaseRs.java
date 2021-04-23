@@ -22,6 +22,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.cpq.GetListAccountingArticlePricesResponseDto;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 /**
  * @author Edward P. Legaspi
@@ -35,6 +41,12 @@ public interface IBaseRs {
      */
     @GET
     @Path("/version")
+    @Operation(summary = "Get version of application",
+    tags = { "Application" },
+    description ="",
+    responses = {
+            @ApiResponse(responseCode="200", description = "Return action status with version number as a message",content = @Content(schema = @Schema(implementation = ActionStatus.class)))
+    })
     public ActionStatus index();
 
 }

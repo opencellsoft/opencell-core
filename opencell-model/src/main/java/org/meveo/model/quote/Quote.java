@@ -63,7 +63,9 @@ import org.meveo.model.order.Order;
  * 
  * @author Andrius Karpavicius
  * @author Abdellatif BARI
+ * @author Tarik FAKHOURI
  * @lastModifiedVersion 7.0
+ * @lastModiedVersion 10.0 
  */
 @Entity
 @WorkflowedEntity
@@ -88,6 +90,7 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
     /**
      * Quote version because if the customer rejected the quote but negotiations still open a new version of the quote is managed
      */
+    @Deprecated
     @Column(name = "quote_version", length = 10)
     @Size(max = 10)
     private String quoteVersion;
@@ -202,6 +205,7 @@ public class Quote extends BusinessCFEntity implements IWFEntity {
     @Transient
     private boolean isVirtual = false;
 
+	
     public String getExternalId() {
         return externalId;
     }

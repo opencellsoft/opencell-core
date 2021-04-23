@@ -29,8 +29,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
 
 /**
  * The Class ServiceToInstantiateDto.
@@ -71,8 +76,13 @@ public class ServiceToInstantiateDto implements Serializable {
 
     /** The service template. */
     @XmlTransient
-    // @ApiModelProperty(hidden = true)
+    @JsonIgnore
     private ServiceTemplate serviceTemplate;
+
+    /** The service template. */
+    @XmlTransient
+    @JsonIgnore
+    private ProductVersion productVersion;
 
     /** The rate until date. */
     private Date rateUntilDate;
@@ -285,6 +295,15 @@ public class ServiceToInstantiateDto implements Serializable {
         this.calendarPSCode = calendarPSCode;
     }
 
+
+    public ProductVersion getProductVersion() {
+        return productVersion;
+    }
+
+    public void setProductVersion(ProductVersion productVersion) {
+        this.productVersion = productVersion;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -292,5 +311,9 @@ public class ServiceToInstantiateDto implements Serializable {
     public String toString() {
         return String.format("ServiceToInstantiateDto [code=%s, quantity=%s, subscriptionDate=%s, chargeInstanceOverrides=%s, customFields=%s]", code, quantity, subscriptionDate,
             chargeInstanceOverrides, customFields);
+    }
+
+    public ServiceCharge getServiceCharge() {
+        return serviceTemplate != null ? serviceTemplate : productVersion.getProduct();
     }
 }

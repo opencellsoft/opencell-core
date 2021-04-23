@@ -29,9 +29,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.ProductVersion;
 
 /**
  * The Class ServiceToActivateDto.
@@ -72,8 +74,13 @@ public class ServiceToActivateDto implements Serializable {
 
     /** The service template. */
     @XmlTransient
-    // @ApiModelProperty(hidden = true)
+    @JsonIgnore
     private ServiceTemplate serviceTemplate;
+
+    /** The service template. */
+    @XmlTransient
+    @JsonIgnore
+    private ProductVersion productVersion;
 
     /** The rate until date. */
     private Date rateUntilDate;
@@ -426,6 +433,14 @@ public class ServiceToActivateDto implements Serializable {
      */
     public void setServiceRenewal(SubscriptionRenewalDto serviceRenewal) {
         this.serviceRenewal = serviceRenewal;
+    }
+
+    public ProductVersion getProductVersion() {
+        return productVersion;
+    }
+
+    public void setProductVersion(ProductVersion productVersion) {
+        this.productVersion = productVersion;
     }
 
     /* (non-Javadoc)

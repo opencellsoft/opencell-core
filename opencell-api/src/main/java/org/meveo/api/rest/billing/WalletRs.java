@@ -176,7 +176,7 @@ public interface WalletRs extends IBaseRs {
     @Deprecated
     @POST
     @Path("/operation/find")
-    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+    FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
@@ -193,7 +193,7 @@ public interface WalletRs extends IBaseRs {
      */
     @GET
     @Path("/operation/list")
-    public FindWalletOperationsResponseDto listOperationsGet(@QueryParam("query") String query, 
+    FindWalletOperationsResponseDto listOperationsGet(@QueryParam("query") String query,
                                             @QueryParam("fields") String fields, 
                                             @QueryParam("offset") Integer offset,
                                             @QueryParam("limit") Integer limit, 
@@ -219,7 +219,7 @@ public interface WalletRs extends IBaseRs {
      */
     @POST
     @Path("/operation/list")
-    public FindWalletOperationsResponseDto listOperationsPost(PagingAndFiltering pagingAndFiltering, @DefaultValue("false") @QueryParam("withRTs") Boolean withRTs);
+    FindWalletOperationsResponseDto listOperationsPost(PagingAndFiltering pagingAndFiltering, @DefaultValue("false") @QueryParam("withRTs") Boolean withRTs);
 
     /**
      * Create new or update an existing wallet template

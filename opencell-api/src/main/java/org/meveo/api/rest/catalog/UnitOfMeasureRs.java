@@ -102,6 +102,4 @@ public interface UnitOfMeasureRs extends IBaseRs {
     @GET
     @Path("/listGetAll")
     GetListUnitOfMeasureResponseDto listGetAll();
-
-
 }

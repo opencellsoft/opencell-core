@@ -29,12 +29,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.IEnableDto;
 import org.meveo.api.dto.IEntityDto;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.document.Document;
 import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.CashPaymentMethod;
 import org.meveo.model.payments.CheckPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -45,6 +47,8 @@ import org.meveo.model.payments.PaypalPaymentMethod;
 import org.meveo.model.payments.StripePaymentMethod;
 import org.meveo.model.payments.WirePaymentMethod;
 import org.meveo.security.MeveoUser;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * The PaymentMethod Dto.
@@ -65,121 +69,145 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
      */
     @NotNull
     @XmlAttribute()
+    @Schema(description = "type of the payment method", example = "possible value are: CHECK, DIRECTDEBIT, WIRETRANSFER, CARD, PAYPAL, STRIPE, CASH")
     private PaymentMethodEnum paymentMethodType;
 
     /**
      * Entity id.
      */
+    @Schema(description = "id of the entity")
     private Long id;
 
     /**
      * Is payment method disabled.
      */
+    @Schema(description = "Indicate if the payment method is disabled")
     private Boolean disabled;
 
     /**
      * Alias.
      */
+    @Schema(description = "Alias")
     private String alias;
 
     /**
      * Is it a preferred payment method
      */
+    @Schema(description = "Is it a preferred payment method", defaultValue = "false")
     private boolean preferred;
 
     /**
      * Customer account code.
      */
+    @Schema(description = "Customer account code")
     private String customerAccountCode;
 
     /**
      * Additional info1.
      */
+    @Schema(description = "first Additional info")
     private String info1;
 
     /**
      * Additional info2.
      */
+    @Schema(description = "second Additional info")
     private String info2;
 
     /**
      * Additional info3.
      */
+    @Schema(description = "third Additional info")
     private String info3;
 
     /**
      * Additional info4.
      */
+    @Schema(description = "fourth Additional info")
     private String info4;
 
     /**
      * Additional info5.
      */
+    @Schema(description = "fifth Additional info")
     private String info5;
 
     /**
      * Bank account information.
      */
+    @Schema(description = "Bank account information")
     private BankCoordinatesDto bankCoordinates;
 
     /**
      * Mandate identification for SEPA.
      */
+    @Schema(description = "Mandate identification for SEPA")
     private String mandateIdentification;
 
     /**
      * Mandate date for SEPA.
      */
+    @Schema(description = "Mandate date for SEPA")
     private Date mandateDate;
 
     /**
      * Card type.
      */
+    @Schema(description = "Card type", example = "possible value are : VISA, MASTERCARD, AMERICAN_EXPRESS, CB")
     private CreditCardTypeEnum cardType;
 
     /**
      * Cardholder: first and last name.
      */
+    @Schema(description = "Cardholder: first and last name")
     private String owner;
 
     /**
      * Card expiration: month.
      */
+    @Schema(description = "Card expiration: month")
     private Integer monthExpiration;
 
     /**
      * Card expiration: year.
      */
+    @Schema(description = "Card expiration: year")
     private Integer yearExpiration;
 
     /**
      * Token ID in a payment gateway.
      */
+    @Schema(description = "Token ID in a payment gateway")
     private String tokenId;
 
     /**
      * Card number: full number , with first 12 digits hiding in read operation.
      */
+    @Schema(description = "Card number: full number , with first 12 digits hiding in read operation")
     private String cardNumber;
 
     /**
      * Issue number.
      */
+    @Schema(description = "Issue number")
     private String issueNumber;
 
     /**
      * User identifier.
      */
+    @Schema(description = "Id of the user")
     private String userId;
     
     /**
      * Email.
      */
+    @Schema(description = "Email")
     private String email;
 
     /**
      * Document.
      */
+    @Schema(description = "The code of reference document")
     private String referenceDocumentCode;
 
     /**
@@ -187,6 +215,10 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
      */
     @XmlTransient
     private String customerCode;
+    
+
+    @Schema(description = "custom field associated to this payment method")
+    protected CustomFieldsDto customFields;
 
     /**
      * Default constructor.
@@ -333,7 +365,9 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
             break;
         case STRIPE:
             pmEntity = new StripePaymentMethod(disabledBool, alias, preferred, customerAccount,userId);
-            break;            
+            break;   
+        case CASH:
+        	pmEntity = new CashPaymentMethod(disabledBool, alias, disabledBool, customerAccount, userId);
         default:
             break;
         }
@@ -883,4 +917,18 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
                 + ", owner=" + owner + ", monthExpiration=" + monthExpiration + ", yearExpiration=" + yearExpiration + ", tokenId=" + tokenId + ", cardNumber="
                 + CardPaymentMethod.hideCardNumber(cardNumber) + ", issueNumber=" + issueNumber + ", userId=" + userId + ", referenceDocumentCode=" + referenceDocumentCode + "]";
     }
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
 }

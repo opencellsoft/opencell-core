@@ -23,20 +23,26 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.*;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
@@ -52,6 +58,10 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 @CustomFieldEntity(cftCodePrefix = "DiscountPlanInstance", inheritCFValuesFrom = { "discountPlan" })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_discount_plan_instance_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "discountPlanInstance.getExpired", query = "select d.id from DiscountPlanInstance d where d.endDate is not null and d.endDate<=:date and d.status in (:statuses)"),
+        @NamedQuery(name = "discountPlanInstance.getToActive", query = "select d.id from DiscountPlanInstance d where (d.startDate is not null and d.startDate<=:date or d.startDate is null) and (d.endDate is not null and d.endDate>:date or d.endDate is null) and d.status in (:statuses)") })
+
 public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = -3794502716655922498L;
@@ -104,6 +114,33 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
     @Column(name = "cf_values_accum", columnDefinition = "text")
     protected CustomFieldValues cfAccumulatedValues;
 
+    /**
+     * Status of this specific discount plan instance
+     * APPLIED: the discount plan has be applied to entity but effective start date is not reached yet
+     * ACTIVE: the discount plan is active on the entity (start date has been reached)
+     * IN_USE: the discount plan has already been used once for the entity.
+     * EXPIRED: the discount plan is no longer active
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private DiscountPlanInstanceStatusEnum status;
+
+    /**
+     * Datetime of last status change.
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "status_date")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Date statusDate;
+
+    /**
+     * How many times the discount has been used.
+     */
+    @Column(name = "application_count")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Long applicationCount;
+
     public boolean isValid() {
         return (startDate == null || endDate == null || startDate.before(endDate));
     }
@@ -111,7 +148,7 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
     /**
      * Check if a date is within this Discount's effective date. Exclusive of the endDate. If startDate is null, it returns true. If startDate is not null and endDate is null,
      * endDate is computed from the given duration.
-     * 
+     *
      * @param date the given date
      * @return returns true if this DiscountItem is to be applied
      */
@@ -258,4 +295,58 @@ public class DiscountPlanInstance extends BaseEntity implements ICustomFieldEnti
             this.setSubscription((Subscription) entity);
         }
     }
+
+    public DiscountPlanInstanceStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(DiscountPlanInstanceStatusEnum status) {
+        this.status = status;
+    }
+
+    public Date getStatusDate() {
+        return statusDate;
+    }
+
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
+    }
+
+    public Long getApplicationCount() {
+        return applicationCount;
+    }
+
+    public void setApplicationCount(Long applicationCount) {
+        this.applicationCount = applicationCount;
+    }
+
+    public void setDiscountPlanInstanceStatus(DiscountPlan dp) {
+        if (status != null && status.equals(DiscountPlanInstanceStatusEnum.EXPIRED)) {
+            return;
+        }
+        Date now = new Date();
+        Date start = dp.getStartDate();
+        Date end = dp.getEndDate();
+        if (startDate != null) {
+            start = startDate;
+        }
+        if (endDate != null) {
+            end = endDate;
+        }
+        if (start == null && end == null) {
+            this.status = DiscountPlanInstanceStatusEnum.ACTIVE;
+            return;
+        }
+        if (now.after(start) && now.before(end)) {
+            this.status = DiscountPlanInstanceStatusEnum.ACTIVE;
+            return;
+        }
+        if (now.before(start)) {
+            this.status = DiscountPlanInstanceStatusEnum.APPLIED;
+            return;
+        }
+        this.status = DiscountPlanInstanceStatusEnum.EXPIRED;
+        this.statusDate = now;
+    }
+
 }

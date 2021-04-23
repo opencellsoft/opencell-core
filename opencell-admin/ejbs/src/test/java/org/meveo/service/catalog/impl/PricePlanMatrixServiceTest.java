@@ -18,19 +18,37 @@
 
 package org.meveo.service.catalog.impl;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.api.dto.catalog.PricePlanMatrixDto;
+import org.meveo.model.catalog.ColumnTypeEnum;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
+import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixValue;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.enums.AttributeTypeEnum;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.PersistenceService;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.persistence.EntityManager;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.List;
+
+import static java.math.BigDecimal.valueOf;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

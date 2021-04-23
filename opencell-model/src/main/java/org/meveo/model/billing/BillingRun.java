@@ -305,7 +305,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Enumerated(EnumType.STRING)
     @Column(name = "reference_date")
     private ReferenceDateEnum referenceDate = ReferenceDateEnum.TODAY;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "skip_validation_script")
     private boolean skipValidationScript = false;
@@ -321,13 +321,43 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      */
     @Column(name = "compute_dates_validation")
     private Boolean computeDatesAtValidation;
-    
+
     /**
      * The next BillingRun where rejected/suspect invoices may be moved.
      */
     @OneToOne
     @JoinColumn(name = "next_billing_run_id")
     private BillingRun nextBillingRun;
+
+    /**
+     * To indicates that invoice minimum job has already been run on the BR.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "minimum_applied")
+    private Boolean minimumApplied;
+
+    /**
+     * To indicates that invoicing threshold job has already been run on the BR.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "threshold_checked")
+    private Boolean thresholdChecked;
+
+    /**
+     * To indicates that that invoice discounts job has already been run on the BR.
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "discount_applied")
+    private Boolean discountApplied;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "reject_auto_action")
+    private BillingRunAutomaticActionEnum rejectAutoAction = BillingRunAutomaticActionEnum.MOVE;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "suspect_auto_action")
+    private BillingRunAutomaticActionEnum suspectAutoAction = BillingRunAutomaticActionEnum.MOVE;
+
 
     public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -717,46 +747,6 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
         this.referenceDate = referenceDate;
     }
 
-    /**
-     * Gets CollectionDate date.
-     *
-     * @return ollectionDate date.
-     */
-    public Date getCollectionDate() {
-        return collectionDate;
-    }
-
-    /**
-     * Sets CollectionDate delay EL.
-     *
-     * @param collectionDate
-     */
-    public void setCollectionDate(Date collectionDate) {
-        this.collectionDate = collectionDate;
-    }
-
-    /**
-     * @return
-     */
-    public Boolean getComputeDatesAtValidation() {
-        return computeDatesAtValidation;
-    }
-
-    /**
-     * @param computeDatesAtValidation
-     */
-    public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
-        this.computeDatesAtValidation = computeDatesAtValidation;
-    }
-    
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "reject_auto_action")
-    private BillingRunAutomaticActionEnum rejectAutoAction = BillingRunAutomaticActionEnum.MOVE;
-    
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "suspect_auto_action")
-    private BillingRunAutomaticActionEnum suspectAutoAction = BillingRunAutomaticActionEnum.MOVE;
-    
     public BillingRunAutomaticActionEnum getRejectAutoAction() {
 		return rejectAutoAction;
 	}
@@ -779,5 +769,63 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
 	public void setSkipValidationScript(boolean skipValidationScript) {
 		this.skipValidationScript = skipValidationScript;
+	}
+
+	public Date getCollectionDate() {
+		return collectionDate;
+	}
+
+	public void setCollectionDate(Date collectionDate) {
+		this.collectionDate = collectionDate;
+	}
+
+	public Boolean getComputeDatesAtValidation() {
+		return computeDatesAtValidation;
+	}
+
+	public void setComputeDatesAtValidation(Boolean computeDatesAtValidation) {
+		this.computeDatesAtValidation = computeDatesAtValidation;
+	}
+
+	/**
+	 * @return the minimumApplied
+	 */
+	public Boolean getMinimumApplied() {
+		return minimumApplied;
+	}
+
+	/**
+	 * @param minimumApplied the minimumApplied to set
+	 */
+	public void setMinimumApplied(Boolean minimumApplied) {
+		this.minimumApplied = minimumApplied;
+	}
+
+	/**
+	 * @return the thresholdChecked
+	 */
+	public Boolean getThresholdChecked() {
+		return thresholdChecked;
+	}
+
+	/**
+	 * @param thresholdChecked the thresholdChecked to set
+	 */
+	public void setThresholdChecked(Boolean thresholdChecked) {
+		this.thresholdChecked = thresholdChecked;
+	}
+
+	/**
+	 * @return the discountApplied
+	 */
+	public Boolean getDiscountApplied() {
+		return discountApplied;
+	}
+
+	/**
+	 * @param discountApplied the discountApplied to set
+	 */
+	public void setDiscountApplied(Boolean discountApplied) {
+		this.discountApplied = discountApplied;
 	}
 }

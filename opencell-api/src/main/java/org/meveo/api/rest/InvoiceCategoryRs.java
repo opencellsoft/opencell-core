@@ -105,6 +105,6 @@ public interface InvoiceCategoryRs extends IBaseRs {
      */
     @POST
     @Path("/list")
-    public InvoiceCategoryResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+    InvoiceCategoryResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

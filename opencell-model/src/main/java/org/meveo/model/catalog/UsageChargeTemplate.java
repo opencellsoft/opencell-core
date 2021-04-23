@@ -23,6 +23,9 @@ import java.math.RoundingMode;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.PostLoad;
@@ -33,6 +36,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
+import org.meveo.model.cpq.Attribute;
 
 /**
  * Usage charge template
@@ -110,6 +114,10 @@ public class UsageChargeTemplate extends ChargeTemplate {
     @Column(name = "trigger_next_charge_el", length = 2000)
     @Size(max = 2000)
     private String triggerNextChargeEL;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "attribute_id")
+    private Attribute usageQuantityAttribute;
 
     public String getFilterParam1() {
         return filterParam1;
@@ -198,4 +206,18 @@ public class UsageChargeTemplate extends ChargeTemplate {
     public void setTriggerNextChargeEL(String triggerNextChargeEL) {
         this.triggerNextChargeEL = triggerNextChargeEL;
     }
+
+	/**
+	 * @return the usageQuantityAttribute
+	 */
+	public Attribute getUsageQuantityAttribute() {
+		return usageQuantityAttribute;
+	}
+
+	/**
+	 * @param usageQuantityAttribute the usageQuantityAttribute to set
+	 */
+	public void setUsageQuantityAttribute(Attribute usageQuantityAttribute) {
+		this.usageQuantityAttribute = usageQuantityAttribute;
+	}
 }

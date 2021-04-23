@@ -19,6 +19,8 @@
 package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Cacheable;
@@ -28,6 +30,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -43,6 +47,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -88,6 +93,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "invoice_category_id")
+	@Deprecated
 	private InvoiceCategory invoiceCategory;
 
 	/**
@@ -95,15 +101,8 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "invoice_sub_category_id")
+	@Deprecated
 	private InvoiceSubCategory invoiceSubCategory;
-
-	/**
-	 * @deprecated As of version 5.0. No replacement.
-	 */
-	@Deprecated // until further analysis
-	@Column(name = "accounting_code", length = 255)
-	@Size(max = 255)
-	private String accountingCode;
 
 	/**
 	 * Expression to determine if discount applies
@@ -144,23 +143,23 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	 * Type of discount, default is percent.
 	 */
 	@Enumerated(EnumType.STRING)
-	@Column(name = "discount_plan_item_type", length = 25)
+	@Column(name = "discount_plan_item_type", length = 50)
 	private DiscountPlanItemTypeEnum discountPlanItemType = DiscountPlanItemTypeEnum.PERCENTAGE;
-	
-	 /**
-     * Unique identifier UUID
-     */
-    @Column(name = "uuid", nullable = false, updatable = false, length = 60)
-    @Size(max = 60)
-    @NotNull
-    protected String uuid;
 
-    /**
-     * Custom field values in JSON format
-     */
-    @Type(type = "cfjson")
-    @Column(name = "cf_values", columnDefinition = "text")
-    protected CustomFieldValues cfValues;
+	/**
+	 * Unique identifier UUID
+	 */
+	@Column(name = "uuid", nullable = false, updatable = false, length = 60)
+	@Size(max = 60)
+	@NotNull
+	protected String uuid;
+
+	/**
+	 * Custom field values in JSON format
+	 */
+	@Type(type = "cfjson")
+	@Column(name = "cf_values", columnDefinition = "text")
+	protected CustomFieldValues cfValues;
 
     /**
      * Accumulated custom field values in JSON format
@@ -168,6 +167,42 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
     @Type(type = "cfjson")
     @Column(name = "cf_values_accum", columnDefinition = "text")
     protected CustomFieldValues cfAccumulatedValues;
+    
+    @Column(name = "priorty")
+    private Long priority;
+    
+    
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "accounting_article_id")
+    private AccountingArticle accountingArticle;
+
+	  /**
+     * list of accountingArticle attached
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "discount_plan_item_articles", joinColumns = @JoinColumn(name = "discount_plan_item_id"), inverseJoinColumns = @JoinColumn(name = "accounting_article_id"))
+    private Set<AccountingArticle> targetAccountingArticle = new HashSet<AccountingArticle>();
+
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "price_plan_matrix_id", nullable = true, referencedColumnName = "id")
+    private PricePlanMatrix pricePlanMatrix;
+
+	/**
+	 * If true, then allows to negate the amount of affected invoice lines.
+	 * If fase, then amount for the discount line produce by the discount plan item cannot exceed the amount of discounted lines.
+	 * Default: false
+	 */
+	@Type(type = "numeric_boolean")
+	@Column(name = "allow_to_negate")
+	@NotNull
+	private boolean allowToNegate = false;
+	
+	/**
+	 * Code
+	 */
+	@Column(name = "description", length = 255)
+	private String description;
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -177,18 +212,22 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 		this.discountPlan = discountPlan;
 	}
 
+	@Deprecated
 	public InvoiceCategory getInvoiceCategory() {
 		return invoiceCategory;
 	}
 
+	@Deprecated
 	public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
 		this.invoiceCategory = invoiceCategory;
 	}
 
+	@Deprecated
 	public InvoiceSubCategory getInvoiceSubCategory() {
 		return invoiceSubCategory;
 	}
 
+	@Deprecated
 	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
 		this.invoiceSubCategory = invoiceSubCategory;
 	}
@@ -259,14 +298,6 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 			return false;
 		}
 		return true;
-	}
-
-	public String getAccountingCode() {
-		return accountingCode;
-	}
-
-	public void setAccountingCode(String accountingCode) {
-		this.accountingCode = accountingCode;
 	}
 
 	public DiscountPlanItemTypeEnum getDiscountPlanItemType() {
@@ -360,5 +391,83 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
     public ICustomFieldEntity[] getParentCFEntities() {
     	return new ICustomFieldEntity[] { discountPlan };
     }
+    
+
+
+	/**
+	 * @return the priority
+	 */
+	public Long getPriority() {
+		return priority;
+	}
+
+	/**
+	 * @param priority the priority to set
+	 */
+	public void setPriority(Long priority) {
+		this.priority = priority;
+	}
+
+	public boolean isAllowToNegate() {
+		return allowToNegate;
+	}
+
+	public void setAllowToNegate(boolean allowToNegate) {
+		this.allowToNegate = allowToNegate;
+	}
+
+
+
+	/**
+	 * @return the targetAccountingArticle
+	 */
+	public Set<AccountingArticle> getTargetAccountingArticle() {
+		return targetAccountingArticle;
+	}
+
+	/**
+	 * @param targetAccountingArticle the targetAccountingArticle to set
+	 */
+	public void setTargetAccountingArticle(Set<AccountingArticle> targetAccountingArticle) {
+		this.targetAccountingArticle = targetAccountingArticle;
+	}
+
+	/**
+	 * @return the pricePlanMatrix
+	 */
+	public PricePlanMatrix getPricePlanMatrix() {
+		return pricePlanMatrix;
+	}
+
+	/**
+	 * @param pricePlanMatrix the pricePlanMatrix to set
+	 */
+	public void setPricePlanMatrix(PricePlanMatrix pricePlanMatrix) {
+		this.pricePlanMatrix = pricePlanMatrix;
+	}
+
+	public AccountingArticle getAccountingArticle() {
+		return accountingArticle;
+	}
+
+	public void setAccountingArticle(AccountingArticle accountingArticle) {
+		this.accountingArticle = accountingArticle;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	
 
 }

@@ -30,6 +30,7 @@ public class ModulePropertyFlagLoader {
     private boolean loadServiceChargeTemplate = true;
     private boolean loadProductChargeTemplate = true;
     private boolean loadAllowedDiscountPlan = true;
+    private boolean loadOfferProducts = true;
 
     public boolean isLoadOfferServiceTemplate() {
         return loadOfferServiceTemplate;
@@ -70,4 +71,20 @@ public class ModulePropertyFlagLoader {
     public void setLoadAllowedDiscountPlan(boolean loadAllowedDiscountPlan) {
         this.loadAllowedDiscountPlan = loadAllowedDiscountPlan;
     }
+
+	/**
+	 * @return the loadOfferProducts
+	 */
+	public boolean isLoadOfferProducts() {
+		return loadOfferProducts;
+	}
+
+	/**
+	 * @param loadOfferProducts the loadOfferProducts to set
+	 */
+	public void setLoadOfferProducts(boolean loadOfferProducts) {
+		this.loadOfferProducts = loadOfferProducts;
+	}
+    
+    
 }

@@ -83,6 +83,7 @@ import org.meveo.model.billing.SubcategoryInvoiceAgregateAmount;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.filter.Filter;
@@ -102,6 +103,7 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.generic.wf.WorkflowInstanceService;
@@ -173,6 +175,9 @@ public class InvoiceApi extends BaseApi {
 
     @Inject
     protected WorkflowInstanceService workflowInstanceService;
+    
+    @Inject
+    private DiscountPlanService discountPlanService;
 
     /**
      * Create an invoice based on the DTO object data and current user
@@ -202,6 +207,14 @@ public class InvoiceApi extends BaseApi {
 
         Seller seller = this.getSeller(invoiceDTO, billingAccount);
         Invoice invoice = invoiceService.createInvoice(invoiceDTO, seller, billingAccount, invoiceType);
+        
+        if (!StringUtils.isBlank(invoiceDTO.getDiscountPlanCode())) {
+            DiscountPlan discountPlan = discountPlanService.findByCode(invoiceDTO.getDiscountPlanCode());
+            if (discountPlan == null) {
+                throw new EntityDoesNotExistsException(DiscountPlan.class, invoiceDTO.getDiscountPlanCode());
+            }
+            invoice.setDiscountPlan(discountPlan);
+        }
         // Validate and populate customFields
         try {
             populateCustomFields(invoiceDTO.getCustomFields(), invoice, false);
@@ -418,7 +431,8 @@ public class InvoiceApi extends BaseApi {
         List<GenerateInvoiceResultDto> invoicesDtos = new ArrayList<>();
         ICustomFieldEntity customFieldEntity = new Invoice();
         customFieldEntity = this.populateCustomFields(generateInvoiceRequestDto.getCustomFields(), customFieldEntity, false);
-        List<Invoice> invoices = invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft, customFieldEntity.getCfValues());
+        List<Invoice> invoices =
+                invoiceService.generateInvoice(entity, generateInvoiceRequestDto, ratedTransactionFilter, isDraft, customFieldEntity.getCfValues(), false);
 
         // For backward compatibility with API
         if (invoices == null || invoices.isEmpty()) {
@@ -473,10 +487,6 @@ public class InvoiceApi extends BaseApi {
         handleMissingParameters();
 
         Invoice invoice = find(invoiceId, invoiceNumber, invoiceTypeCode);
-        if (invoice == null) {
-            throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
-        }
-
         return invoiceService.getInvoiceXml(invoice);
     }
 
@@ -513,20 +523,10 @@ public class InvoiceApi extends BaseApi {
         }
         handleMissingParameters();
         Invoice invoice = find(invoiceId, invoiceNumber, invoiceTypeCode);
-        if (invoice == null) {
-            throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceTypeCode");
-        }
-        if (invoice.isPrepaid()) {
-            throw new BusinessException("Invoice PDF is disabled for prepaid invoice: " + invoice.getInvoiceNumber());
-        }
-        if (!invoiceService.isInvoicePdfExist(invoice)) {
-            if (generatePdfIfNoExist) {
-                invoiceService.produceInvoicePdf(invoice, null);
-            }
-        }
-        return invoiceService.getInvoicePdf(invoice);
+        return invoiceService.getInvoicePdf(invoice, generatePdfIfNoExist);
 
     }
+
 
     /**
      * @param invoiceId invoice's id.
@@ -697,14 +697,6 @@ public class InvoiceApi extends BaseApi {
      */
     public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions, boolean includePdf, boolean includeXml) throws MeveoApiException, BusinessException {
         Invoice invoice = find(id, invoiceNumber, invoiceTypeCode);
-        if (invoice == null) {
-            if (id != null) {
-                throw new EntityDoesNotExistsException(Invoice.class, id);
-
-            } else {
-                throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceType");
-            }
-        }
         return invoiceToDto(invoice, includeTransactions, includePdf, includeXml);
     }
 
@@ -802,20 +794,31 @@ public class InvoiceApi extends BaseApi {
             missingParameters.add("invoiceNumber");
             handleMissingParameters();
         }
+        Invoice invoice = null;
         if (id != null) {
-            return invoiceService.findById(id);
+            invoice = invoiceService.findById(id);
+        }else {
+	        InvoiceType invoiceType = null;
+	        if (!StringUtils.isBlank(invoiceTypeCode)) {
+	            invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
+	            if (invoiceType == null) {
+	                throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
+	            }
+	        }
+	        if (invoiceType != null) {
+	            invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType);
+	        }
         }
-        InvoiceType invoiceType = null;
-        if (!StringUtils.isBlank(invoiceTypeCode)) {
-            invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
-            if (invoiceType == null) {
-                throw new EntityDoesNotExistsException(InvoiceType.class, invoiceTypeCode);
+        if (invoice == null) {
+            if (id != null) {
+                throw new EntityDoesNotExistsException(Invoice.class, id);
+
+            } else {
+                throw new EntityDoesNotExistsException(Invoice.class, invoiceNumber, "invoiceNumber", invoiceTypeCode, "invoiceType");
             }
         }
-        if (invoiceType != null) {
-            return invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType);
-        }
-        return invoiceService.getInvoiceByNumber(invoiceNumber);
+        
+        return invoice;
     }
 
     /**
@@ -1035,7 +1038,7 @@ public class InvoiceApi extends BaseApi {
 
         InvoiceDto dto = dtoToUpdate == null ? new InvoiceDto() : dtoToUpdate;
 
-        dto.setAuditable(invoice);
+        dto.setAuditableEntity(invoice);
         dto.setInvoiceId(invoice.getId());
         dto.setBillingAccountCode(invoice.getBillingAccount().getCode());
         Subscription subscription = invoice.getSubscription();

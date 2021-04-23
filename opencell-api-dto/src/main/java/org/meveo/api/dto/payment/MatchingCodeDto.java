@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.model.payments.MatchingTypeEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class MatchingCodeDto.
  *
@@ -41,18 +43,23 @@ public class MatchingCodeDto extends AuditableEntityDto {
     private static final long serialVersionUID = 5657981714421497476L;
 
     /** The code. */
+    @Schema(description = "The code of matching code")
     private String code;
     
     /** The matching type. */
+    @Schema(description = "The matching type", example = "possible value are: A, M, A_TIP, A_DERICT_DEBIT")
     private MatchingTypeEnum matchingType;
     
     /** The matching date. */
+    @Schema(description = "The matching date")
     private Date matchingDate;
     
     /** The matching amount credit. */
+    @Schema(description = "The matching amount credit")
     private BigDecimal matchingAmountCredit;
     
     /** The matching amount debit. */
+    @Schema(description = "The matching amount debit")
     private BigDecimal matchingAmountDebit;
 
     /**

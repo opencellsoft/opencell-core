@@ -37,11 +37,13 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.GenerateInvoiceResultDto;
+import org.meveo.api.dto.cpq.AccountingArticlePricesDTO;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.ServiceLevelAgreement;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.catalog.resource.order.BillingAccount;
+import org.tmf.dsmapi.catalog.resource.order.CustomerService;
 import org.tmf.dsmapi.catalog.resource.order.Note;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -118,18 +120,24 @@ public class ProductQuote implements Serializable {
     protected Customer customer;
     protected List<RelatedParty> relatedParty;
     protected List<ServiceLevelAgreement> agreement;
+    @Deprecated
     protected List<QuoteProductOfferingPrice> quoteProductOfferingPrice;
+    protected List<AccountingArticlePricesDTO> accountingArticlePricesDTO;
     protected List<ProductQuoteItem> quoteItem;
+    protected List<CustomerService> customerService;//customerService
     private boolean isVirtual;
     /**
      * By default we do not generate the pdf as it cost CPU usage
      */
     private boolean generatePdf = true;
-
     private CustomFieldsDto customFields = new CustomFieldsDto();
-
     private List<GenerateInvoiceResultDto> invoices;
-
+    private String contractCode;
+	@JsonSerialize(using = CustomDateSerializer.class)
+	private Date customerServiceDateBegin;
+	private int customerServiceDuration;
+	private String opportunityRef;
+    
     /**
      * 
      * Gets the value of the billingAccount property.
@@ -582,13 +590,14 @@ public class ProductQuote implements Serializable {
      * 
      * 
      */
+    @Deprecated
     public List<QuoteProductOfferingPrice> getQuoteProductOfferingPrice() {
         if (quoteProductOfferingPrice == null) {
             quoteProductOfferingPrice = new ArrayList<QuoteProductOfferingPrice>();
         }
         return this.quoteProductOfferingPrice;
     }
-
+    @Deprecated
     public void setQuoteProductOfferingPrice(List<QuoteProductOfferingPrice> quoteProductOfferingPrice) {
         this.quoteProductOfferingPrice = quoteProductOfferingPrice;
     }
@@ -672,4 +681,78 @@ public class ProductQuote implements Serializable {
     public void setVirtual(boolean virtual) {
         isVirtual = virtual;
     }
+
+	/**
+	 * @return the customerServiceDateBegin
+	 */
+	public Date getCustomerServiceDateBegin() {
+		return customerServiceDateBegin;
+	}
+
+	/**
+	 * @param customerServiceDateBegin the customerServiceDateBegin to set
+	 */
+	public void setCustomerServiceDateBegin(Date customerServiceDateBegin) {
+		this.customerServiceDateBegin = customerServiceDateBegin;
+	}
+
+	/**
+	 * @return the customerServiceDuration
+	 */
+	public int getCustomerServiceDuration() {
+		return customerServiceDuration;
+	}
+
+	/**
+	 * @param customerServiceDuration the customerServiceDuration to set
+	 */
+	public void setCustomerServiceDuration(int customerServiceDuration) {
+		this.customerServiceDuration = customerServiceDuration;
+	}
+
+	/**
+	 * @return the opportunityRef
+	 */
+	public String getOpportunityRef() {
+		return opportunityRef;
+	}
+
+	/**
+	 * @param opportunityRef the opportunityRef to set
+	 */
+	public void setOpportunityRef(String opportunityRef) {
+		this.opportunityRef = opportunityRef;
+	}
+	
+	/**
+	 * @return the CustomerService list
+	 */
+	public List<CustomerService> getCustomerService() {
+		return customerService;
+	}
+
+	/**
+	 * @param customerService the customerService to set
+	 */
+	public void setCustomerService(List<CustomerService> customerService) {
+		this.customerService = customerService;
+	}
+
+	public String getContractCode() {
+		return contractCode;
+	}
+
+	public void setContractCode(String contractCode) {
+		this.contractCode = contractCode;
+	}
+
+	public List<AccountingArticlePricesDTO> getAccountingArticlePricesDTO() {
+		return accountingArticlePricesDTO;
+	}
+
+	public void setAccountingArticlePricesDTO(List<AccountingArticlePricesDTO> accountingArticlePricesDTO) {
+		this.accountingArticlePricesDTO = accountingArticlePricesDTO;
+	}
+	
+	
 }

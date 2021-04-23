@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class NameDto.
  *
@@ -38,13 +40,16 @@ public class NameDto implements Serializable {
     private static final long serialVersionUID = 4516337040269767031L;
 
     /** The title. */
+    @Schema(description = "The title")
     private String title;
     
     /** The first name. */
+    @Schema(description = "The first name")
     private String firstName;
 
     /** The last name. */
     @XmlElement(required = true)
+    @Schema(description = "The last name", required = true)
     private String lastName;
 
     /**

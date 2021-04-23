@@ -1,11 +1,12 @@
 package org.meveo.security.keycloak;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.meveo.model.admin.User;
+import org.meveo.model.security.Permission;
+import org.meveo.model.security.Role;
+import org.meveo.model.shared.Name;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.UserAuthTimeProducer;
+import org.slf4j.Logger;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -16,14 +17,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-
-import org.meveo.model.admin.User;
-import org.meveo.model.security.Permission;
-import org.meveo.model.security.Role;
-import org.meveo.model.shared.Name;
-import org.meveo.security.MeveoUser;
-import org.meveo.security.UserAuthTimeProducer;
-import org.slf4j.Logger;
+import java.util.*;
 
 @Stateless
 public class UserInfoManagement {
@@ -43,7 +37,7 @@ public class UserInfoManagement {
 
     /**
      * Update user's last login date in db
-     * 
+     *
      * @param currentUser Currently logged in user
      * @param em Entity manager
      * @param forcedUsername
@@ -103,7 +97,7 @@ public class UserInfoManagement {
 
     /**
      * Register a new user in application when loging in for the first time with a new user created in Keycloak
-     * 
+     *
      * @param currentUser Current user information
      * @param em Entity manager
      * @param forcedUsername
@@ -151,6 +145,61 @@ public class UserInfoManagement {
 
         } catch (Exception e) {
             log.error("Failed to create new user in db", e);
+        }
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void supplementOrCreateUserInApp(MeveoUser currentUser, EntityManager em, String forcedUsername) {
+
+        // Takes care of anonymous users
+        if (currentUser.getUserName() == null) {
+            return;
+        }
+
+        // Create or retrieve current user
+        try {
+            User user = null;
+            try {
+                user = em.createNamedQuery("User.getByUsername", User.class).setParameter("username", currentUser.getUserName().toLowerCase()).getSingleResult();
+                currentUser.setFullName(user.getNameOrUsername());
+
+                if (!userAuthTimeProducer.isUnsatisfied() && userAuthTimeProducer.get().getAuthTime() != currentUser.getAuthTime()) {
+                    userAuthTimeProducer.get().setAuthTime(currentUser.getAuthTime());
+                    user.setLastLoginDate(new Date());
+                    em.merge(user);
+                    em.flush();
+                }
+
+            } catch (NoResultException e) {
+
+                user = new User();
+                user.setUserName(currentUser.getUserName().toUpperCase());
+                if (currentUser.getFullName() != null) {
+                    if (user.getName() == null) {
+                        user.setName(new Name());
+                    }
+                    int spacePos = currentUser.getFullName().indexOf(' ');
+                    if (spacePos > 0) {
+                        user.getName().setFirstName(currentUser.getFullName().substring(0, spacePos));
+                        user.getName().setLastName(currentUser.getFullName().substring(spacePos + 1));
+                    } else {
+                        user.getName().setFirstName(currentUser.getFullName());
+                    }
+                }
+                user.setLastLoginDate(new Date());
+                user.setEmail(currentUser.getEmail());
+                user.updateAudit(currentUser);
+                em.persist(user);
+                em.flush();
+                log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName() != null ? user.getName().getFullName() : "");
+                triggerNewUserNotification(user, forcedUsername);
+            } catch (ContextNotActiveException e) {
+                // Commented out as no context is available for scheduled jobs to retrieve userAuthTimeProducer instance
+                // log.error("No session context={}", e.getMessage());
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to supplement current user information from db and/or create new user in db", e);
         }
     }
 
@@ -232,7 +281,7 @@ public class UserInfoManagement {
     }
 
 	/**
-	 * 
+	 *
 	 */
 	public static void invalidateRoleToPermissionMapping() {
 		roleToPermissionMapping = new HashMap<>();

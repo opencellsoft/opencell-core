@@ -28,6 +28,7 @@ import org.meveo.api.dto.response.catalog.GetOneShotChargeTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.OneShotChargeTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 
 import javax.enterprise.context.RequestScoped;
@@ -51,7 +52,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            oneShotChargeTemplateApi.create(postData);
+        	result.setEntityId(oneShotChargeTemplateApi.create(postData).getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -64,7 +65,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            oneShotChargeTemplateApi.update(postData);
+        	result.setEntityId(oneShotChargeTemplateApi.update(postData).getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -131,7 +132,7 @@ public class OneShotChargeTemplateRsImpl extends BaseRs implements OneShotCharge
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            oneShotChargeTemplateApi.createOrUpdate(postData);
+        	result.setEntityId(oneShotChargeTemplateApi.createOrUpdate(postData).getId());
         } catch (Exception e) {
             processException(e, result);
         }

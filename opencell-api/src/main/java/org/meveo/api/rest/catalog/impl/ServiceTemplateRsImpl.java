@@ -46,6 +46,7 @@ public class ServiceTemplateRsImpl extends BaseRs implements ServiceTemplateRs {
 
     @Inject
     private ServiceTemplateApi serviceTemplateApi;
+    
 
     @Override
     public ActionStatus create(ServiceTemplateDto postData) {

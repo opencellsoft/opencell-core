@@ -181,12 +181,12 @@ public class BillingRunDto extends AuditableEntityDto {
 
     }
 
-    
+
     private Boolean skipValidationScript = false;
-    
+
     private BillingRunAutomaticActionEnum rejectAutoAction;
-    
-    private BillingRunAutomaticActionEnum suspectAutoAction; 
+
+    private BillingRunAutomaticActionEnum suspectAutoAction;
 
     public Boolean getSkipValidationScript() {
 		return skipValidationScript;
@@ -721,7 +721,7 @@ public class BillingRunDto extends AuditableEntityDto {
      */
     @Hidden
     public void setFromEntity(BillingRun billingRunEntity) {
-        setAuditable(billingRunEntity);
+        setAuditableEntity(billingRunEntity);
         setProcessDate(billingRunEntity.getProcessDate());
         setStatus(billingRunEntity.getStatus());
         setStatusDate(billingRunEntity.getStatusDate());

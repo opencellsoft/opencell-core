@@ -49,7 +49,7 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            usageChargeTemplateApi.create(postData);
+        	result.setEntityId(usageChargeTemplateApi.create(postData).getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -62,7 +62,7 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            usageChargeTemplateApi.update(postData);
+        	result.setEntityId(usageChargeTemplateApi.update(postData).getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -101,7 +101,7 @@ public class UsageChargeTemplateRsImpl extends BaseRs implements UsageChargeTemp
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            usageChargeTemplateApi.createOrUpdate(postData);
+        	result.setEntityId(usageChargeTemplateApi.createOrUpdate(postData).getId());
         } catch (Exception e) {
             processException(e, result);
         }

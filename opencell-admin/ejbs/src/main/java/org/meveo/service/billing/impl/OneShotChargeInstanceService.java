@@ -23,8 +23,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
@@ -49,6 +47,7 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
+import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
@@ -110,6 +109,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * Instantiate subscription or termination charge
      *
      * @param serviceInstance Service instance
+     * @param serviceCharge
      * @param serviceChargeTemplate Service Charge template
      * @param amoutWithoutTax Amount without tax
      * @param amoutWithTax Amount with tax
@@ -119,8 +119,8 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
      * @throws BusinessException General exception
      */
     @SuppressWarnings("rawtypes")
-    public OneShotChargeInstance oneShotChargeInstanciation(ServiceInstance serviceInstance, ServiceChargeTemplate serviceChargeTemplate, BigDecimal amoutWithoutTax, BigDecimal amoutWithTax, boolean isSubscriptionCharge,
-            boolean isVirtual) throws BusinessException {
+    public OneShotChargeInstance oneShotChargeInstanciation(ServiceInstance serviceInstance, ServiceCharge serviceCharge, ServiceChargeTemplate serviceChargeTemplate, BigDecimal amoutWithoutTax, BigDecimal amoutWithTax, boolean isSubscriptionCharge,
+                                                            boolean isVirtual) throws BusinessException {
 
         OneShotChargeTemplate chargeTemplate = (OneShotChargeTemplate) serviceChargeTemplate.getChargeTemplate();
 
@@ -138,11 +138,11 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
         // FIXME : this code should not be here
         if (isSubscriptionCharge) {
-            ServiceChargeTemplateSubscription recChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateSubscriptionByChargeCode(chargeTemplate.getCode());
+            ServiceChargeTemplateSubscription recChTmplServ = serviceCharge.getServiceChargeTemplateSubscriptionByChargeCode(chargeTemplate.getCode());
             walletTemplates = recChTmplServ.getWalletTemplates();
 
         } else {
-            ServiceChargeTemplateTermination recChTmplServ = serviceInstance.getServiceTemplate().getServiceChargeTemplateTerminationByChargeCode(chargeTemplate.getCode());
+            ServiceChargeTemplateTermination recChTmplServ = serviceCharge.getServiceChargeTemplateTerminationByChargeCode(chargeTemplate.getCode());
             walletTemplates = recChTmplServ.getWalletTemplates();
         }
         // By default we set the charge instance as being postpaid
@@ -297,7 +297,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
         create(oneShotChargeInstance);
 
-        if (!walletOperationService.isChargeMatch(oneShotChargeInstance, chargeTemplate.getFilterExpression())) {
+        if (!walletOperationService.isChargeMatch(oneShotChargeInstance, chargeTemplate.getFilterExpression()) || walletOperationService.ignoreChargeTemplate(oneShotChargeInstance)) {
             log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", oneShotChargeInstance.getCode());
             return oneShotChargeInstance;
         }
@@ -342,6 +342,10 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             return;
         }
 
+        if(walletOperationService.ignoreChargeTemplate(oneShotChargeInstance)){
+            return;
+        }
+
         walletOperationService.applyOneShotWalletOperation(oneShotChargeInstance.getSubscription(), oneShotChargeInstance, quantity, null, chargeDate, false, orderNumberOverride, chargeMode);
 
         oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
@@ -366,6 +370,10 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeInstance.getChargeTemplate().getFilterExpression())) {
             log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", oneShotChargeInstance.getCode());
             return null;
+        }
+
+        if(walletOperationService.ignoreChargeTemplate(oneShotChargeInstance)){
+           return null;
         }
 
         WalletOperation wo = walletOperationService.applyOneShotWalletOperation(subscription, oneShotChargeInstance, quantity, null, effectiveDate, true, subscription.getOrderNumber(),

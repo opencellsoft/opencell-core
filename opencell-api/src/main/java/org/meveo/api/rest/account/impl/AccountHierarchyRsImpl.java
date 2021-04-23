@@ -64,6 +64,17 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
         return result;
     }
 
+    /**
+     *
+     * @param accountHierarchyDto account hierarchy dto.
+     * @param calculateBalances  true if needs  to calculate balances
+     * @return list of customer dto satisfying the filter
+     */
+    @Override
+    public CustomerListResponse findV2(AccountHierarchyDto accountHierarchyDto, Boolean calculateBalances) {
+        return find(accountHierarchyDto, calculateBalances);
+    }
+
     /*
      * Creates the customer hierarchy including : - Trading Country - Trading Currency - Trading Language - Customer Brand - Customer Category - Seller - Customer - Customer
      * Account - Billing Account - User Account

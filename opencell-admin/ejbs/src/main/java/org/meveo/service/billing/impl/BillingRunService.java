@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
@@ -43,6 +44,7 @@ import javax.persistence.TypedQuery;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.async.AmountsToInvoice;
+import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoicingJob;
@@ -52,22 +54,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.IBillableEntity;
-import org.meveo.model.billing.Amounts;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.BillingProcessTypesEnum;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunAutomaticActionEnum;
-import org.meveo.model.billing.BillingRunList;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
-import org.meveo.model.billing.PostInvoicingReportsDTO;
-import org.meveo.model.billing.PreInvoicingReportsDTO;
-import org.meveo.model.billing.RejectedBillingAccount;
-import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobInstance;
@@ -77,6 +64,8 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomerService;
@@ -171,6 +160,14 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
+    @Inject
+    private InvoiceLinesService invoiceLinesService;
+
+    @Inject
+    private CurrentUserProvider currentUserProvider;
+
+    private static int rtPaginationSize = 30000;
+
     /**
      * Generate pre invoicing reports.
      *
@@ -195,7 +192,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Date startDate = billingRun.getStartDate();
         Date endDate = billingRun.getEndDate();
         endDate = endDate != null ? endDate : new Date();
-        List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
+        List<BillingAccount> billingAccounts = new ArrayList<>();
 
         if (billingCycle != null) {
             billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
@@ -495,6 +492,27 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     /**
+     * Mark Billing run as "Canceling"
+     *
+     * @param billingRunId Billing run identifier
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void markForCancel(Long billingRunId) {
+        BillingRun billingRun = findById(billingRunId);
+        if (BillingRunStatusEnum.CANCELED.equals(billingRun.getStatus())) {
+            throw new ValidationException("Cannot cancel a Canceled  billingRun #" + billingRunId);
+            // Can try canceling again if got stuck in Canceling status for over 5 minutes
+        } else if (BillingRunStatusEnum.CANCELLING.equals(billingRun.getStatus()) && (new Date().getTime() - billingRun.getAuditable().getUpdated().getTime()) < 300000) {
+            throw new ValidationException("BillingRun #" + billingRunId + " in still in a process of cancelling");
+        } else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus()) || BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus())) {
+            throw new ValidationException("Cannot cancel a POSTVALIDATED or VALIDATED billingRun #" + billingRunId);
+        }
+        billingRun.setStatus(BillingRunStatusEnum.CANCELLING);
+        update(billingRun);
+    }
+
+    /**
      * Mark billing run as canceled, delete any minimum amount transactions, mark rated transactions as open, delete any invoices and invoice aggregates that were created during invoicing process
      *
      * @param billingRun The billing run
@@ -605,7 +623,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
 
         } else {
-            List<BillingAccount> result = new ArrayList<BillingAccount>();
+            List<BillingAccount> result = new ArrayList<>();
             String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
 
             for (String id : Arrays.asList(baIds)) {
@@ -699,14 +717,31 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     /**
-     * Apply billing run validation actions
-     * 
-     * @param billingRun Billing run
+     * Load rated transaction by billing runs
+     * @param list of billingRuns
+     * @return ratedTransaction list
+     */
+    public List<RatedTransaction> loadRTsByBillingRuns(List<BillingRun> billingRuns){
+        List<RatedTransaction> ratedTransactions = new ArrayList<>();
+        for(BillingRun billingRun : billingRuns){
+            List<? extends IBillableEntity> billableEntities = getEntitiesToInvoice(billingRun);
+            for (IBillableEntity be :  billableEntities){
+                ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(), null, rtPaginationSize));
+            }
+        }
+        return ratedTransactions;
+    }
+
+    /**
+     * Invoicing process for the billingRun, launched by invoicingJob.
+     *
+     * @param billingRun the billing run to process
+     * @throws Exception the exception
      */
     public void applyAutomaticValidationActions(BillingRun billingRun) {
         if (BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus())) {
-            List<InvoiceStatusEnum> toMove = new ArrayList<InvoiceStatusEnum>();
-            List<InvoiceStatusEnum> toCancel = new ArrayList<InvoiceStatusEnum>();
+            List<InvoiceStatusEnum> toMove = new ArrayList<>();
+            List<InvoiceStatusEnum> toCancel = new ArrayList<>();
             if (billingRun.getRejectAutoAction() != null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
                 toCancel.add(InvoiceStatusEnum.REJECTED);
             } else {
@@ -727,21 +762,28 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
 
+    public BillingRunStatusEnum validateBillingRun(BillingRun billingRun, BillingRunStatusEnum validationStatus) {
+        if(validationStatus == BillingRunStatusEnum.INVOICES_GENERATED || BillingRunStatusEnum.INVOICES_GENERATED.equals(billingRun.getStatus()) || BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus())) {
+            BillingRunStatusEnum status = validationStatus != null ? validationStatus : BillingRunStatusEnum.POSTINVOICED;
+            if(!isBillingRunValid(billingRun)) {
+                status = BillingRunStatusEnum.REJECTED;
+            }
+            return status;
+        }
+        return null;
+    }
+
     /**
-     * Execute a validation script to determine if billing run is valid
-     * 
-     * @param billingRun Billing run
+     * @param billingRun
      */
     public boolean isBillingRunValid(BillingRun billingRun) {
         boolean result = true;
         if (!billingRun.isSkipValidationScript()) {
-            if (isBillingRunContainingRejectedInvoices(billingRun.getId())) {
+            if(isBillingRunContainingRejectedInvoices(billingRun.getId())) {
                 return false;
-            } else if (billingRun.getBillingCycle() == null) {
-                return true;
             }
             final ScriptInstance billingRunValidationScript = billingRun.getBillingCycle().getBillingRunValidationScript();
-            if (billingRunValidationScript != null) {
+            if(billingRunValidationScript!=null) {
                 ScriptInterface script = scriptInstanceService.getScriptInstance(billingRunValidationScript.getCode());
                 if (script != null) {
                     Map<String, Object> methodContext = new HashMap<String, Object>();
@@ -751,8 +793,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     methodContext.put("billingRun", billingRun);
                     script.execute(methodContext);
                     Object status = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
-                    if (status != null && status instanceof InvoiceValidationStatusEnum) {
-                        if (InvoiceValidationStatusEnum.REJECTED.equals((InvoiceValidationStatusEnum) status)) {
+                    if(status!=null && status instanceof InvoiceValidationStatusEnum) {
+                        if(InvoiceValidationStatusEnum.REJECTED.equals((InvoiceValidationStatusEnum)status)){
                             result = false;
                         }
                     }
@@ -765,7 +807,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     /**
      * Apply the threshold rules for the billing account, customer account and customer.
      *
-     * @param billingRun The billing run
+     * @param billingRunId The billing run
      */
     @SuppressWarnings("rawtypes")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -776,22 +818,27 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Set<Long> invoicesToRemove = new HashSet<>();
         Map<Class, Map<Long, Map<Long, Amounts>>> discountAmounts = getAmountsMap(invoiceAgregateService.getTotalDiscountAmountByBR(billingRun));
         Map<Class, Map<Long, Map<Long, Amounts>>> positiveRTAmounts = getAmountsMap(ratedTransactionService.getTotalPositiveRTAmountsByBR(billingRun));
+        Map<Class, Map<Long, Map<Long, Amounts>>> positiveILAmounts = getAmountsMap(invoiceLinesService.getTotalPositiveILAmountsByBR(billingRun));
         Map<Class, Map<Long, Map<Long, Amounts>>> invoiceableAmounts = getAmountsMap(invoiceService.getTotalInvoiceableAmountByBR(billingRun));
 
         Set<Long> billableEntitieIds = invoiceableAmounts.get(BillingAccount.class).keySet();
         Set<Long> rejectedBillingAccounts = new HashSet<>();
-        invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(BillingAccount.class), positiveRTAmounts.get(BillingAccount.class), invoiceableAmounts.get(BillingAccount.class),
-            BillingAccount.class, rejectedBillingAccounts));
+        invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(BillingAccount.class),
+                positiveRTAmounts.get(BillingAccount.class), invoiceableAmounts.get(BillingAccount.class),
+            BillingAccount.class, rejectedBillingAccounts, positiveILAmounts.get(BillingAccount.class)));
         invoicesToRemove.addAll(getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(CustomerAccount.class), positiveRTAmounts.get(CustomerAccount.class), invoiceableAmounts.get(CustomerAccount.class),
-            CustomerAccount.class, rejectedBillingAccounts));
+            CustomerAccount.class, rejectedBillingAccounts, positiveILAmounts.get(CustomerAccount.class)));
         invoicesToRemove.addAll(
-            getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(Customer.class), positiveRTAmounts.get(Customer.class), invoiceableAmounts.get(Customer.class), Customer.class, rejectedBillingAccounts));
+            getInvoicesToRemoveByAccount(billableEntitieIds, discountAmounts.get(Customer.class), positiveRTAmounts.get(Customer.class),
+                    invoiceableAmounts.get(Customer.class), Customer.class, rejectedBillingAccounts, positiveILAmounts.get(Customer.class)));
         if (invoicesToRemove != null && !invoicesToRemove.isEmpty()) {
             // Exclude prepaid invoice from applying threshold rules.
             List<Long> excludedPrepaidInvoices = invoiceService.excludePrepaidInvoices(invoicesToRemove);
             log.info("Remove all postpaid invoices that not reach to the invoicing threshold {}", excludedPrepaidInvoices);
             ratedTransactionService.deleteSupplementalRTs(excludedPrepaidInvoices);
             ratedTransactionService.uninvoiceRTs(excludedPrepaidInvoices);
+            invoiceLinesService.deleteSupplementalILs(excludedPrepaidInvoices);
+            invoiceLinesService.uninvoiceILs(excludedPrepaidInvoices);
             invoiceService.deleteInvoices(excludedPrepaidInvoices);
             invoiceAgregateService.deleteInvoiceAgregates(excludedPrepaidInvoices);
             rejectedBillingAccounts.forEach(rejectedBillingAccountId -> {
@@ -834,7 +881,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     private void addInvoiceAmounts(Map<Long, Map<Long, Amounts>> entityAmounts, Amounts amounts, Long invoiceId, Long entityId) {
         if (entityAmounts.get(entityId) == null) {
-            Map<Long, Amounts> thresholdAmounts = new TreeMap<Long, Amounts>();
+            Map<Long, Amounts> thresholdAmounts = new TreeMap<>();
             thresholdAmounts.put(invoiceId, amounts.clone());
             entityAmounts.put(entityId, thresholdAmounts);
         } else {
@@ -854,7 +901,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     @SuppressWarnings("rawtypes")
     private List<Long> getInvoicesToRemoveByAccount(Collection<Long> billableEntities, Map<Long, Map<Long, Amounts>> discountThresholdAmounts, Map<Long, Map<Long, Amounts>> positiveRTThresholdAmounts,
-            Map<Long, Map<Long, Amounts>> invoiceableThresholdAmounts, Class clazz, Set<Long> rejectedBillingAccounts) {
+            Map<Long, Map<Long, Amounts>> invoiceableThresholdAmounts, Class clazz, Set<Long> rejectedBillingAccounts, Map<Long, Map<Long, Amounts>> positiveILThresholdAmounts) {
         List<Long> invoicesToRemove = new ArrayList<>();
         List<Long> alreadyProcessedEntities = new ArrayList<>();
         for (Long billableEntityId : billableEntities) {
@@ -915,6 +962,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     if (discountAmounts != null) {
                         thresholdAmounts.keySet().stream().forEach(x -> thresholdAmounts.get(x).addAmounts((discountAmounts.get(x) != null) ? discountAmounts.get(x).negate() : null));
                     }
+                    checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts);
+                }
+                break;
+            case POSITIVE_IL :
+                thresholdAmounts = positiveILThresholdAmounts.get(entityId);
+                if (thresholdAmounts != null) {
                     checkThresholdInvoices(rejectedBillingAccounts, invoicesToRemove, billableEntities, billableEntityId, threshold, isThresholdPerEntity, thresholdAmounts);
                 }
                 break;
@@ -1171,23 +1224,23 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     /**
      * Check any invoice is rejected for a given billingRun id.
-     * 
      * @param billingRunId
      *
      * @return boolean isBillingRunContainingRejectedInvoices
      */
     public boolean isBillingRunContainingRejectedInvoices(Long billingRunId) {
-        return !getEntityManager().createNamedQuery("Invoice.isRejectedByBillingRun", Long.class).setParameter("billingRunId", billingRunId).setMaxResults(1).getResultList().isEmpty();
+        return ((Long) getEntityManager().createNamedQuery("Invoice.countRejectedByBillingRun", Long.class).setParameter("billingRunId", billingRunId).getSingleResult()) > 0;
     }
 
     /**
-     * Search if a next BR exist for the given BR ID. if next BR is not found, a new one is created and associated to the BR return null if no BR is found for the input id
-     * 
+     * Search if a next BR exist for the given BR ID. if next BR is not found, a new one is created and associated to the BR
+     * return null if no BR is found for the input id
+     *
      * @param billingRunId
      * @return
      */
     public BillingRun findOrCreateNextBR(Long billingRunId) {
-        BillingRun billingRun = findById(billingRunId);
+         BillingRun billingRun = findById(billingRunId);
         if (billingRun != null) {
             if (billingRun.getNextBillingRun() != null) {
                 return billingRun.getNextBillingRun();
@@ -1195,16 +1248,16 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             BillingRun nextBillingRun = new BillingRun();
             try {
                 BeanUtils.copyProperties(nextBillingRun, billingRun);
-                final ArrayList<BillingAccount> selectedBillingAccounts = new ArrayList<BillingAccount>();
+                final ArrayList<BillingAccount> selectedBillingAccounts = new ArrayList<>();
                 selectedBillingAccounts.addAll(billingRun.getBillableBillingAccounts());
-                Set<BillingRunList> billingRunLists = new HashSet<BillingRunList>();
+                Set<BillingRunList> billingRunLists = new HashSet<>();
                 billingRunLists.addAll(billingRun.getBillingRunLists());
-                List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
+                List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<>();
                 rejectedBillingAccounts.addAll(billingRun.getRejectedBillingAccounts());
-                nextBillingRun.setRejectedBillingAccounts(rejectedBillingAccounts);
-                nextBillingRun.setBillingRunLists(billingRunLists);
+                nextBillingRun.setRejectedBillingAccounts(rejectedBillingAccounts );
+                nextBillingRun.setBillingRunLists(billingRunLists );
                 nextBillingRun.setBillableBillingAccounts(selectedBillingAccounts);
-                nextBillingRun.setInvoices(new ArrayList<Invoice>());
+                nextBillingRun.setInvoices(new ArrayList<>());
                 nextBillingRun.setId(null);
                 create(nextBillingRun);
                 billingRun.setNextBillingRun(nextBillingRun);
@@ -1219,28 +1272,77 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     /**
-     * Mark Billing run as "Canceling"
-     * 
-     * @param billingRunId Billing run identifier
+     * Creates the aggregates and invoice with invoiceLines.
+     * @param billingRun the billing run
+     * @param nbRuns the nb runs
+     * @param waitingMillis the waiting millis
+     * @param jobInstanceId the job instance id
+     * @throws BusinessException
      */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void markForCancel(Long billingRunId) {
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public void createAggregatesAndInvoiceWithIl(BillingRun billingRun, long nbRuns, long waitingMillis,
+                                                 Long jobInstanceId) throws BusinessException {
+        List<? extends IBillableEntity> entities = getEntitiesToInvoice(billingRun);
+        SubListCreator<? extends IBillableEntity> subListCreator;
+        try {
+            subListCreator = new SubListCreator<>(entities, (int) nbRuns);
+        } catch (Exception e1) {
+            throw new BusinessException("cannot create  aggregates and invoice with nbRuns=" + nbRuns);
+        }
+        List<Future<String>> asyncReturns = new ArrayList<>();
+        MeveoUser lastCurrentUser = currentUser.unProxy();
+        while (subListCreator.isHasNext()) {
+            asyncReturns.add(createAggregatesAndInvoiceAsyncWithIL(subListCreator.getNextWorkSet(),
+                    billingRun, jobInstanceId, null, lastCurrentUser, billingRun.isSkipValidationScript()));
+            try {
+                Thread.sleep(waitingMillis);
+            } catch (InterruptedException e) {
+                log.error("Failed to create aggregates and invoice waiting for thread", e);
+                throw new BusinessException(e);
+            }
+        }
+        for (Future<String> futureItsNow : asyncReturns) {
+            try {
+                futureItsNow.get();
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Failed to create aggregates and invoice getting future", e);
+                throw new BusinessException(e);
+            }
+        }
+    }
 
-        BillingRun billingRun = findById(billingRunId);
-        if (BillingRunStatusEnum.CANCELED.equals(billingRun.getStatus())) {
-            throw new ValidationException("Cannot cancel a Canceled  billingRun #" + billingRunId);
-
-            // Can try canceling again if got stuck in Canceling status for over 5 minutes
-        } else if (BillingRunStatusEnum.CANCELLING.equals(billingRun.getStatus()) && (new Date().getTime() - billingRun.getAuditable().getUpdated().getTime()) < 300000) {
-            throw new ValidationException("BillingRun #" + billingRunId + " in still in a process of cancelling");
-
-        } else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus()) || BillingRunStatusEnum.VALIDATED.equals(billingRun.getStatus())) {
-            throw new ValidationException("Cannot cancel a POSTVALIDATED or VALIDATED billingRun #" + billingRunId);
+    /**
+     * Creates the aggregates and invoice async using invoiceLines. One entity at a time in a separate transaction.
+     *
+     * @param entities the entity objects
+     * @param billingRun the billing run
+     * @param jobInstanceId the job instance id
+     * @param minAmountForAccounts Check if min amount is enabled in any account level
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     * @return the future
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    private Future<String> createAggregatesAndInvoiceAsyncWithIL(List<? extends IBillableEntity> entities,
+                                                                BillingRun billingRun, Long jobInstanceId,
+                                                                MinAmountForAccounts minAmountForAccounts,
+                                                                MeveoUser lastCurrentUser, boolean automaticInvoiceCheck) {
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+        for (IBillableEntity entityToInvoice : entities) {
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                break;
+            }
+            try {
+                invoiceService.createAggregatesAndInvoiceWithILInNewTransaction(entityToInvoice, billingRun,
+                        null, null, null, null,
+                        minAmountForAccounts, false, automaticInvoiceCheck, false);
+            } catch (Exception e1) {
+                log.error("Failed to create invoices for entity {}/{}",
+                        entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
+            }
         }
 
-        billingRun.setStatus(BillingRunStatusEnum.CANCELLING);
-        update(billingRun);
-
+        return new AsyncResult<>("OK");
     }
 }

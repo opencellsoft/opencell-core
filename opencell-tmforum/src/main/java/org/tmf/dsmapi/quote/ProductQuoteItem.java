@@ -28,6 +28,7 @@ package org.tmf.dsmapi.quote;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +48,10 @@ import org.tmf.dsmapi.catalog.resource.Attachment;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
 import org.tmf.dsmapi.catalog.resource.order.BillingAccount;
+import org.tmf.dsmapi.catalog.resource.order.CustomerService;
 import org.tmf.dsmapi.catalog.resource.order.Note;
 import org.tmf.dsmapi.catalog.resource.order.Product;
+import org.tmf.dsmapi.catalog.resource.order.Service;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -84,7 +87,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @XmlRootElement(name = "QuoteItem", namespace = "http://www.tmforum.org")
 @XmlType(name = "QuoteItem", namespace = "http://www.tmforum.org")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL) 
 public class ProductQuoteItem implements Serializable {
 
     private final static long serialVersionUID = 11L;
@@ -97,8 +100,16 @@ public class ProductQuoteItem implements Serializable {
     protected List<Note> note;
     protected ProductOffering productOffering;
     protected Product product;
+    protected Service service;
+    protected Integer quantity;
+    protected CustomerService customerService;
     protected List<QuoteProductOfferingPrice> itemQuoteProductOfferingPrice;
     protected List<BillingAccount> billingAccount;
+    protected String produtQuote;
+    protected String produtQuoteVersion;
+    protected String produtVersion;
+    
+    
 
     protected TimeRange subscriptionPeriod;
     protected List<String> consumptionCdr;
@@ -317,27 +328,54 @@ public class ProductQuoteItem implements Serializable {
         this.productOffering = value;
     }
 
-    /**
-     * Obtient la valeur de la propriété product.
+
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	public String getProdutQuote() {
+		return produtQuote;
+	}
+
+	public void setProdutQuote(String produtQuote) {
+		this.produtQuote = produtQuote;
+	}
+
+	public String getProdutQuoteVersion() {
+		return produtQuoteVersion;
+	}
+
+	public void setProdutQuoteVersion(String produtQuoteVersion) {
+		this.produtQuoteVersion = produtQuoteVersion;
+	}
+
+	/**
+     * Obtient la valeur de la propriété service.
      * 
-     * @return possible object is {@link Product }
+     * @return possible object is {@link Service }
      * 
      */
-    public Product getProduct() {
-        return product;
-    }
+    public Service getService() {
+		return service;
+	}
+
 
     /**
-     * Définit la valeur de la propriété product.
+     * Définit la valeur de la propriété service.
      * 
-     * @param value allowed object is {@link Product }
+     * @param value allowed object is {@link Service }
      * 
      */
-    public void setProduct(Product value) {
-        this.product = value;
-    }
+	public void setService(Service service) {
+		this.service = service;
+	}
 
-    /**
+	/**
      * Gets the value of the itemQuoteProductOfferingPrice property.
      * 
      * <p>
@@ -405,7 +443,35 @@ public class ProductQuoteItem implements Serializable {
         addBillingAccount(ba);
     }
 
-    /**
+    public CustomerService getCustomerService() {
+		return customerService;
+	}
+
+	public void setCustomerService(CustomerService customerService) {
+		this.customerService = customerService;
+	}
+	
+	
+
+	public Integer getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
+	}
+	
+	
+
+	public String getProdutVersion() {
+		return produtVersion;
+	}
+
+	public void setProdutVersion(String produtVersion) {
+		this.produtVersion = produtVersion;
+	}
+
+	/**
      * Serialize orderItem DTO into a string.
      * 
      * @param productQuoteItem Quote item to serialize
@@ -450,4 +516,5 @@ public class ProductQuoteItem implements Serializable {
             throw new BusinessException(e);
         }
     }
+
 }

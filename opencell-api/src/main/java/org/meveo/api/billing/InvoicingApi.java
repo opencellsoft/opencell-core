@@ -241,57 +241,58 @@ public class InvoicingApi extends BaseApi {
         billingRunService.cancelAsync(billingRun.getId());
     }
 
-    /**
-     * @param billingRunId
-     * @param invoices
-     */
-    public void rebuildInvoice(Long billingRunId, List<Long> invoices) {
-        invoiceService.rebuildInvoices(billingRunId, invoices);
+	/**
+	 * @param billingRunId
+	 * @param invoices
+	 */
+	public void rebuildInvoice(Long billingRunId, List<Long> invoices) {
+		invoiceService.rebuildInvoices(billingRunId, invoices);
 
-    }
+	}
 
-    /**
-     * @param billingRunId
-     * @param invoices
-     */
-    public void rejectInvoice(Long billingRunId, List<Long> invoices) {
-        invoiceService.rejectInvoices(billingRunId, invoices);
+	/**
+	 * @param billingRunId
+	 * @param invoices
+	 */
+	public void rejectInvoice(Long billingRunId, List<Long> invoices) {
+		invoiceService.rejectInvoices(billingRunId, invoices);
 
-    }
+	}
 
-    /**
-     * @param billingRunId
-     * @param invoices
-     */
-    public void validateInvoice(Long billingRunId, List<Long> invoices) {
-        invoiceService.validateInvoices(billingRunId, invoices);
-    }
+	/**
+	 * @param billingRunId
+	 * @param invoices
+	 */
+	public void validateInvoice(Long billingRunId, List<Long> invoices) {
+		invoiceService.validateInvoices(billingRunId, invoices);
+	}
 
-    /**
-     * @param billingRunId
-     * @param invoices
-     */
-    public void moveInvoice(Long billingRunId, List<Long> invoices) {
-        invoiceService.moveInvoices(billingRunId, invoices);
-    }
+	/**
+	 * @param billingRunId
+	 * @param invoices
+	 * @return billingRunId the id of the new billing run.
+	 */
+	public Long moveInvoice(Long billingRunId, List<Long> invoices) {
+		return invoiceService.moveInvoices(billingRunId, invoices);
+	}
 
-    /**
-     * @param billingRunId
-     * @param invoices
-     */
-    public void cancelInvoice(Long billingRunId, List<Long> invoices, Boolean deleteCanceledInvoices) {
-        invoiceService.cancelInvoices(billingRunId, invoices, deleteCanceledInvoices == null ? false : deleteCanceledInvoices);
-    }
+	/**
+	 * @param billingRunId
+	 * @param invoices
+	 */
+	public void cancelInvoice(Long billingRunId, List<Long> invoices, Boolean deleteCanceledInvoices) {
+		invoiceService.cancelInvoices(billingRunId, invoices, deleteCanceledInvoices == null ? false : deleteCanceledInvoices);
+	}
 
-    /**
-     * Delete canceled invoices for a given billing run
-     * 
-     * @param billingRunId
-     * @param invoices
-     */
-    public void canceledInvoices(Long billingRunId) {
-        invoiceService.deleteInvoices(billingRunId);
+	/**
+	 * Delete canceled invoices for a given billing run
+	 *
+	 * @param billingRunId
+	 * @param invoices
+	 */
+	public void canceledInvoices(Long billingRunId) {
+		invoiceService.deleteInvoices(billingRunId);
 
-    }
+	}
 
 }

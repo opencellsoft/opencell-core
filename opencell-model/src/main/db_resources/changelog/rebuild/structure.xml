@@ -199,6 +199,13 @@
         <createSequence sequenceName="dunning_document_seq" />
         <createSequence sequenceName="wf_generic_transition_seq" />
         <createSequence sequenceName="adm_custom_generic_entity_code_seq" startValue="3" />
+        <createSequence sequenceName="cpq_price_plan_version_seq" />
+        <createSequence sequenceName="cpq_price_plan_matrix_item_seq" />
+        <createSequence sequenceName="cpq_quote_version_seq" />
+        <createSequence sequenceName="cpq_quote_product_seq" />
+        <createSequence sequenceName="cpq_quote_lot_seq" />
+        <createSequence sequenceName="cpq_contract_seq" />
+        <createSequence sequenceName="cpq_contract_item_seq" />
         <createSequence sequenceName="adm_file_format_seq" startValue="1" />
         <createSequence sequenceName="flat_file_seq" startValue="1" />
         <createSequence sequenceName="ar_accounting_writing_seq"/>
@@ -218,6 +225,8 @@
         <createSequence sequenceName="generic_sequence_seq" startValue="1" />
         <createSequence sequenceName="meveo_metrics_config_seq" />
     </changeSet>
+    
+     
 
 
     <changeSet id="rebuild-str-seq-2" author="AndriusKarpavicius" dbms="mysql">
@@ -2727,6 +2736,23 @@
             <column name="external_ref" type="varchar(255)" />
             <column name="initial_collection_date" type="datetime"/>
             <column name="reject_reason" type="varchar(255)"/>
+            <column name="status_date" type="datetime"/>
+            <column name="xml_date" type="datetime"/>
+            <column name="pdf_date" type="datetime"/>
+            <column name="discount_amount" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="discount_rate" type="numeric(3, 3)" />
+            <column name="is_already_applied_minimum" type="${type.boolean}"/>
+            <column name="is_already_added_discount" type="${type.boolean}"/>
+            <column name="email_sent_date" type="datetime"/>
+            <column name="payment_status" type="varchar(255)"/>
+            <column name="payment_status_date" type="datetime"/>
+            <column name="start_date" type="datetime"/>
+            <column name="end_date" type="datetime"/>
+            <column name="raw_amount" type="numeric(23, 12)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-177">
@@ -3566,7 +3592,6 @@
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
             <column name="invoice_sub_category" type="bigint">
-                <constraints nullable="false" />
             </column>
             <column name="input_unit_description" type="varchar(20)" />
             <column name="rating_unit_description" type="varchar(20)" />
@@ -3719,6 +3744,20 @@
             <column name="end_date" type="date" />
             <column name="default_duration" type="int4" />
             <column name="duration_unit" type="varchar(50)" />
+            <column name="discount_plan_type" type="varchar(50)" />
+            <column name="status" type="varchar(50)"/>
+            <column name="status_date" type="datetime"/>
+            <column name="initial_quantity" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="used_quantity" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="application_limit" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="application_filter_el" type="varchar(2000)"/>
+            <column name="discount_plan_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-212">
@@ -3756,6 +3795,12 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
+            <column name="allow_to_negate" type="${type.boolean}"/>
+            <column name="status" type="varchar(50)"/>
+            <column name="status_date" type="datetime"/>
+            <column name="application_count" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-213">
@@ -5167,6 +5212,11 @@
             <column name="display_orders" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="current_invoice_nb" type="bigint" />
             <column name="display_wallet_operations" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="default_invoice_subcategory_id" type="bigint"/>
+            <column name="default_generic_article_id" type="bigint"/>
+            <column name="default_discount_article_id" type="bigint"/>
+            <column name="default_advanced_payment_article_id" type="bigint"/>
+            <column name="default_invoice_minimum_article_id" type="bigint"/>
         </createTable>
     </changeSet>
 
@@ -6432,6 +6482,7 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ord_quote_item_pkey" />
             </column>
+
             <column name="version" type="int4" />
 
             <column name="quote_id" type="bigint">
@@ -7252,6 +7303,11 @@
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
             <column name="subscription_id" type="bigint" />
+            <column name="application_count" type="bigint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(50)"/>
+            <column name="status_date" type="datetime"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-381">
@@ -11362,11 +11418,24 @@ $$ LANGUAGE plpgsql;
         ]]>
         </createProcedure>
     </changeSet>
+    <changeSet id="rebuild-str-tbl-2021204" author="ZBariki">
+        <createTable tableName="cat_discount_applicable_entity">
+            <column name="disount_plan_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entity_class" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="disount_plan_id, code, entity_class" constraintName="cat_discount_applicable_entity_pkey" tableName="cat_discount_applicable_entity"/>
+    </changeSet>
 
     <!-- end procedure -->
-
-    <!-- keep this always as the last changeSet to remove all rebuild logs -->
-    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
+   <!-- keep this always as the last changeSet to remove all rebuild logs -->
+	    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
         <delete tableName="DATABASECHANGELOG" />
     </changeSet>
     

@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.UsageChargeTemplate;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class UsageChargeTemplateDto.
  *
@@ -40,36 +42,47 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
     private static final long serialVersionUID = -192169359113319490L;
 
     /** The wilcard. */
+    @Schema(description = "The wilcard")
     static String WILCARD = null;
 
     /** The filter param 1. */
     @Size(min = 0, max = 255)
+    @Schema(description = "first filter parameter")
     private String filterParam1 = WILCARD;
 
     /** The filter param 2. */
     @Size(min = 0, max = 255)
+    @Schema(description = "second filter parameter")
     private String filterParam2 = WILCARD;
 
     /** The filter param 3. */
     @Size(min = 0, max = 255)
+    @Schema(description = "third filter parameter")
     private String filterParam3 = WILCARD;
 
     /** The filter param 4. */
     @Size(min = 0, max = 255)
+    @Schema(description = "fourth filter parameter")
     private String filterParam4 = WILCARD;
 
     /** The priority. */
+    @Schema(description = "The priority")
     private Integer priority = 1;
 
     /**
      * If true and (charge has no counter associated) then the next matching charge with the full quantity of the EDR.
      */
+    @Schema(description = "If set to true and (charge has no counter associated) then the next matching charge with the full quantity of the EDR")
     protected Boolean triggerNextCharge;
 
     /**
      * Overrides the triggerNextCharge switch.
      */
+    @Schema(description = "Overrides the triggerNextCharge switch")
     protected String triggerNextChargeEL;
+
+    @Schema(description = "code of usage attribute quantity")
+    private String usageQuantityAttributeCode;
 
     /**
      * Instantiates a new usage charge template dto.
@@ -93,6 +106,8 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
         priority = usageChargeTemplate.getPriority();
         triggerNextCharge = usageChargeTemplate.getTriggerNextCharge();
         triggerNextChargeEL = usageChargeTemplate.getTriggerNextChargeEL();
+        if(usageChargeTemplate.getUsageQuantityAttribute() != null)
+        	this.usageQuantityAttributeCode = usageChargeTemplate.getUsageQuantityAttribute().getCode();
 
     }
 
@@ -207,5 +222,19 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
         return "UsageChargeTemplateDto [" + super.toString() + ",filterParam1=" + filterParam1 + ", filterParam2=" + filterParam2 + ", filterParam3=" + filterParam3 + ", filterParam4=" + filterParam4 + ", priority="
                 + priority + ", triggerNextCharge=" + triggerNextCharge + ", triggerNextChargeEL=" + triggerNextChargeEL + "]";
     }
+
+	/**
+	 * @return the usageQuantityAttributeCode
+	 */
+	public String getUsageQuantityAttributeCode() {
+		return usageQuantityAttributeCode;
+	}
+
+	/**
+	 * @param usageQuantityAttributeCode the usageQuantityAttributeCode to set
+	 */
+	public void setUsageQuantityAttributeCode(String usageQuantityAttributeCode) {
+		this.usageQuantityAttributeCode = usageQuantityAttributeCode;
+	}
 
 }

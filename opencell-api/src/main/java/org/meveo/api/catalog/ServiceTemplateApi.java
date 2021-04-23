@@ -18,28 +18,77 @@
 
 package org.meveo.api.catalog;
 
+import static java.util.Optional.ofNullable;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.billing.SubscriptionApi;
-import org.meveo.api.dto.catalog.*;
+import org.meveo.api.dto.catalog.BaseServiceChargeTemplateDto;
+import org.meveo.api.dto.catalog.ServiceChargeTemplateRecurringDto;
+import org.meveo.api.dto.catalog.ServiceChargeTemplateSubscriptionDto;
+import org.meveo.api.dto.catalog.ServiceChargeTemplateTerminationDto;
+import org.meveo.api.dto.catalog.ServiceTemplateDto;
+import org.meveo.api.dto.catalog.ServiceUsageChargeTemplateDto;
+import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
-import org.meveo.api.exception.*;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.dto.response.cpq.GetListServiceResponseDto;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidImageData;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.catalog.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.catalog.BusinessServiceModel;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplate;
+import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
+import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
+import org.meveo.model.catalog.ServiceChargeTemplateTermination;
+import org.meveo.model.catalog.ServiceChargeTemplateUsage;
+import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.GroupedAttributes;
+import org.meveo.model.cpq.tags.Tag;
+import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
+import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.WalletTemplateService;
-import org.meveo.service.catalog.impl.*;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Optional.ofNullable;
+import org.meveo.service.catalog.impl.BusinessServiceModelService;
+import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.catalog.impl.CounterTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateRecurringService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateTerminationService;
+import org.meveo.service.catalog.impl.ServiceChargeTemplateUsageService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.meveo.service.cpq.AttributeService;
+import org.meveo.service.cpq.GroupedAttributeService;
+import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.cpq.TagService;
 
 /**
  * @author Edward P. Legaspi
@@ -88,13 +137,28 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     private CounterTemplateService counterTemplateService;
 
     @Inject
-    private BusinessServiceModelService businessServiceModelService;
-
-    @Inject
-    private InvoiceSubCategoryService invoiceSubCategoryService;
+    private BusinessServiceModelService businessServiceModelService; 
 
     @Inject
     private SubscriptionApi subscriptionApi;
+    
+	@Inject
+	private GroupedAttributeService groupedAttributeService;
+	
+	@Inject
+	private BillingAccountService billingAccountService;
+	
+	@Inject
+	private TagService tagService;
+	
+	@Inject
+	private OfferTemplateService offerTemplateService; 
+	
+	 @Inject
+	 private ProductVersionService productVersionService;
+	 
+	 @Inject
+	 private AttributeService attributeService;
 
     /**
      * Sets the service charge template.
@@ -235,9 +299,14 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(ServiceTemplate.class.getName(), postData);
         }
+        
+       /* if (StringUtils.isBlank(postData.getServiceTypeCode())) {
+            missingParameters.add("serviceTypeCode");
+        }*/
 
         handleMissingParametersAndValidate(postData);
-
+ 
+        
         // check if code already exists
         if (serviceTemplateService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(ServiceTemplateService.class, postData.getCode());
@@ -265,6 +334,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (autoEndOfEngagement != null) {
             serviceTemplate.setAutoEndOfEngagement(autoEndOfEngagement);
         }
+     
 
         serviceTemplate.setBusinessServiceModel(businessService);
         serviceTemplate.setCode(postData.getCode());
@@ -324,6 +394,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         // check for usage charges
         createServiceChargeTemplateUsage(postData, serviceTemplate);
+        
+        
 
         return serviceTemplate;
     }
@@ -334,6 +406,10 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
+        
+        /*if (StringUtils.isBlank(postData.getServiceTypeCode())) {
+            missingParameters.add("serviceTypeCode");
+        }*/
 
         handleMissingParametersAndValidate(postData);
 
@@ -370,7 +446,8 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if(postData.getLanguageDescriptions() != null) {
             serviceTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         }
-
+        
+     
         if (postData.getMinimumChargeTemplate() != null) {
             if (StringUtils.isBlank(postData.getMinimumChargeTemplate())) {
                 serviceTemplate.setMinimumChargeTemplate(null);
@@ -563,6 +640,61 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         return result;
 
     }
+
+    /**
+	 * <ul>
+	 *  <li>check if groupedServiceCode already exist if no throw an exception</li>
+	 *	<li>check if all serviceTemplateCodes exist , if no throw an exception</li>
+	 *	<li>check if  serviceTemplate passed in params is already assigned to a group, if no throw an exception</li>
+	 *	<li>assign the group to all services templates passed in params (groupedService field)</li>
+	 *</ul>
+	 * @param groupedServiceCode
+	 * @param serviceTemplateCodes
+	 */
+	public void addToGroup(String groupedServiceCode, List<String> serviceTemplateCodes) {
+		final GroupedAttributes groupedService = groupedAttributeService.findByCode(groupedServiceCode);
+		if(groupedService == null)
+            throw new EntityDoesNotExistsException(GroupedAttributes.class, groupedServiceCode);
+		
+		var templates = serviceTemplateCodes.stream().map(code -> {
+							final Attribute template = attributeService.findByCode(code);
+							if(template == null) 
+								throw new EntityDoesNotExistsException(ServiceTemplate.class, code);
+							return template;
+						}).collect(Collectors.toList());
+		
+		templates.stream().forEach(template -> {
+			attributeService.update(template);
+		});
+	}
+	
+
+	
+	public GetListServiceResponseDto list(OfferContextDTO offerContextDTO) {
+		GetListServiceResponseDto result = new GetListServiceResponseDto();
+		String billingAccountCode=offerContextDTO.getCustomerContextDTO().getBillingAccountCode();
+		if(Strings.isEmpty(billingAccountCode)) {
+			missingParameters.add("billingAccountCode");
+		}
+		handleMissingParameters();
+		List<String> tagCodes=new ArrayList<String>();
+		BillingAccount ba=billingAccountService.findByCode(billingAccountCode);
+		if(ba!=null) {
+			List<Tag> entityTags=tagService.getTagsByBA(ba);
+			if(!entityTags.isEmpty()) {
+				for(Tag tag:entityTags) {
+					tagCodes.add(tag.getCode());
+				}
+			}} 
+		List<String> sellerTags=offerContextDTO.getCustomerContextDTO().getSellerTags();
+		List<String> customerTags=offerContextDTO.getCustomerContextDTO().getCustomerTags();
+		HashSet<String> resultBaTags = new HashSet<String>();
+		resultBaTags.addAll(tagCodes);
+		resultBaTags.addAll(sellerTags);
+		resultBaTags.addAll(customerTags); 
+
+		return result;	
+	}
 
     public GetListServiceTemplateResponseDto listGetAll(PagingAndFiltering pagingAndFiltering) {
         GetListServiceTemplateResponseDto result = new GetListServiceTemplateResponseDto();

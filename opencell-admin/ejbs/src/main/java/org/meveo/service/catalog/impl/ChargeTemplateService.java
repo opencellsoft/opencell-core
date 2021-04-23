@@ -21,13 +21,16 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -339,7 +342,7 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 	private Integer calculateNeededScale(BigDecimal inputMultiplicator, BigDecimal outputMultiplicator) {
 		return BaseEntity.NB_DECIMALS + Math.abs(inputMultiplicator.toBigInteger().toString().length() - outputMultiplicator.toBigInteger().toString().length()) ;
 		
-	}
+	} 
 	
 	private UnitOfMeasure getUOMfromEL(String expression) throws BusinessException {
 		UnitOfMeasure unitFromEL = null;
@@ -365,4 +368,18 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 			throw new BusinessException("input/rating UnitOfMeasures must both be specified or both null: " + inputUnitOfMeasure + "/" + ratingUnitOfMeasure);
 		}
 	}
+	public Set<ChargeTemplate> getChargeTemplatesByCodes(List<String> chargeTemplateCodes) throws EntityDoesNotExistsException {
+        Set<ChargeTemplate> chargeTemplates = new HashSet<ChargeTemplate>();
+        if (chargeTemplateCodes == null) {
+            return chargeTemplates;
+        }
+        for (String chargeCode : chargeTemplateCodes) {
+            ChargeTemplate chargeTemplate = findByCode(chargeCode);
+            if (chargeTemplate == null) {
+                throw new EntityDoesNotExistsException(ChargeTemplate.class, chargeCode);
+            }
+            chargeTemplates.add(chargeTemplate);
+        }
+        return chargeTemplates;
+    }
 }

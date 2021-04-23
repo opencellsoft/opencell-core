@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.5.0.final using JasperReports Library version 5.5.2  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Orange_invoice" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="801855a9-548e-443b-81d5-d27d42b5df88">
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Orange_invoice" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="801855a9-548e-443b-81d5-d27d42b5df88">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -408,7 +408,6 @@
 	<field name="category_sortIndex" class="java.lang.String">
 		<fieldDescription><![CDATA[ancestor::category/@sortIndex]]></fieldDescription>
 	</field>
-	<sortField name="v_category_sortIndex" type="Variable"/>
 	<sortField name="category_code"/>
 	<sortField name="taxPercent"/>
 	<variable name="amountWithTax_total_1" class="java.lang.Double" resetType="Group" resetGroup="1" calculation="Sum">
@@ -420,9 +419,6 @@
 	<variable name="tax" class="java.lang.String">
 		<variableExpression><![CDATA[]]></variableExpression>
 		<initialValueExpression><![CDATA[$F{taxPercent}]]></initialValueExpression>
-	</variable>
-	<variable name="v_category_sortIndex" class="java.lang.Integer">
-		<variableExpression><![CDATA["".equals($F{category_sortIndex})?Integer.MAX_VALUE:Integer.valueOf($F{category_sortIndex})]]></variableExpression>
 	</variable>
 	<group name="subCategory"/>
 	<group name="1">

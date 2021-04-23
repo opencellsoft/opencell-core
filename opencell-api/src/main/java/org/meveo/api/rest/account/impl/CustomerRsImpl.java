@@ -35,6 +35,7 @@ import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
+import org.meveo.api.dto.sequence.CustomerSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceDto;
 import org.meveo.api.dto.sequence.GenericSequenceValueResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -114,6 +115,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
+    public GetCustomerResponseDto findV2(String customerCode, CustomFieldInheritanceEnum inheritCF, boolean includeCustomerAccounts) {
+        return find(customerCode, inheritCF, includeCustomerAccounts);
+    }
+
+    @Override
     public ActionStatus remove(String customerCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -171,6 +177,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
+    public CustomersResponseDto listPostV2(PagingAndFiltering pagingAndFiltering) {
+        return listPost(pagingAndFiltering);
+    }
+
+    @Override
     public ActionStatus createBrand(CustomerBrandDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
@@ -180,6 +191,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         }
 
         return result;
+    }
+
+    @Override
+    public ActionStatus createBrandV2(CustomerBrandDto postData) {
+        return createBrand(postData);
     }
 
     @Override
@@ -195,6 +211,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
+    public ActionStatus createCategoryV2(CustomerCategoryDto postData) {
+        return createCategory(postData);
+    }
+
+    @Override
     public ActionStatus updateCategory(CustomerCategoryDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -205,6 +226,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         }
 
         return result;
+    }
+
+    @Override
+    public ActionStatus updateCategoryV2(CustomerCategoryDto postData) {
+        return updateCategory(postData);
     }
 
     @Override
@@ -243,6 +269,16 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
+    public GetCustomerCategoryResponseDto findCategoryV2(String categoryCode) {
+        return findCategory(categoryCode);
+    }
+
+    @Override
+    public ActionStatus removeBrandV2(String brandCode) {
+        return removeBrand(brandCode);
+    }
+
+    @Override
     public ActionStatus removeBrand(String brandCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -253,6 +289,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         }
 
         return result;
+    }
+
+    @Override
+    public ActionStatus removeCategoryV2(String categoryCode) {
+        return removeCategory(categoryCode);
     }
 
     @Override
@@ -298,6 +339,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
+    public ActionStatus updateBrandV2(CustomerBrandDto postData) {
+        return updateBrand(postData);
+    }
+
+    @Override
     public ActionStatus createOrUpdateBrand(CustomerBrandDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -324,6 +370,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
+    public ActionStatus exportCustomerHierarchyV2(String customerCode) {
+        return exportCustomerHierarchy(customerCode);
+    }
+
+    @Override
     public ActionStatus anonymizeGdpr(String customerCode) {
         ActionStatus result = new ActionStatus();
 
@@ -334,6 +385,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         }
 
         return result;
+    }
+
+    @Override
+    public ActionStatus anonymizeGdprV2(String customerCode) {
+        return anonymizeGdpr(customerCode);
     }
 
     @Override
@@ -363,11 +419,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public ActionStatus createCustomerSequence(GenericCodeDto postData) {
+    public ActionStatus createCustomerSequence(CustomerSequenceDto postData) {
         ActionStatus result = new ActionStatus();
 
         try {
-            genericCodeApi.create(postData);
+            customerSequenceApi.createCustomerSequence(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -376,11 +432,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public ActionStatus updateCustomerSequence(GenericCodeDto postData) {
+    public ActionStatus updateCustomerSequence(CustomerSequenceDto postData) {
         ActionStatus result = new ActionStatus();
 
         try {
-            genericCodeApi.update(postData);
+            customerSequenceApi.updateCustomerSequence(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -389,11 +445,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public GenericCodeResponseDto getNextCustomerSequenceNumber(GenericCodeDto genericCodeDto) {
-        GenericCodeResponseDto result = new GenericCodeResponseDto();
+    public GenericSequenceValueResponseDto getNextCustomerSequenceNumber(String code) {
+        GenericSequenceValueResponseDto result = new GenericSequenceValueResponseDto();
 
         try {
-            result.setGeneratedCode(genericCodeApi.getGenericCode(genericCodeDto));
+            result = customerSequenceApi.getNextNumber(code);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -420,4 +476,8 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         return result;
     }
 
+    @Override
+    public GetCountersInstancesResponseDto filterCustomerCountersByPeriodV2(String customerCode, Date date) {
+        return filterCustomerCountersByPeriod(customerCode, date);
+    }
 }

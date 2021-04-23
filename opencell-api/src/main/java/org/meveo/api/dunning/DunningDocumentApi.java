@@ -43,7 +43,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.payments.AccountOperation;
@@ -82,7 +82,7 @@ public class DunningDocumentApi extends BaseApi {
 
     @Inject
     private AccountOperationService accountOperationService;
-    
+
     @Inject
     @Updated
     private Event<BaseEntity> entityUpdatedEventProducer;
@@ -112,7 +112,7 @@ public class DunningDocumentApi extends BaseApi {
                 if (invoice.getRecordedInvoice() == null) {
                     throw new EntityDoesNotExistsException(RecordedInvoice.class, invoiceDto.getInvoiceNumber(), "invoiceNumber");
                 }
-                invoice.setStatus(InvoiceStatusEnum.DISPUTED);
+                invoice.setPaymentStatus(InvoicePaymentStatusEnum.DISPUTED);
                 entityUpdatedEventProducer.fire(invoice);
                 RecordedInvoice ri = invoice.getRecordedInvoice();
                 ri.setDunningDocument(dunningDocument);
@@ -224,7 +224,7 @@ public class DunningDocumentApi extends BaseApi {
     public DunningDocumentDto dunningDocumentToDto(DunningDocument dunningDocument) {
        
         DunningDocumentDto dto = new DunningDocumentDto();
-        dto.setAuditable(dunningDocument);
+        dto.setAuditableEntity(dunningDocument);
 
         if (dunningDocument.getCustomerAccount() != null) {
             dto.setCustomerAccountCode(dunningDocument.getCustomerAccount().getCode());

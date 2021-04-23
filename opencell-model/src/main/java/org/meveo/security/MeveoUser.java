@@ -87,6 +87,8 @@ public abstract class MeveoUser implements Serializable {
      */
     protected String authenticationTokenId;
 
+    protected int authTime;
+
     public MeveoUser() {
     }
 
@@ -200,6 +202,14 @@ public abstract class MeveoUser implements Serializable {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public int getAuthTime() {
+        return authTime;
+    }
+
+    public void setAuthTime(int authTime) {
+        this.authTime = authTime;
     }
 
     /**

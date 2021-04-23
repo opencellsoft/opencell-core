@@ -29,6 +29,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.eclipse.microprofile.metrics.*;
+import org.eclipse.microprofile.metrics.annotation.RegistryType;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.cache.JobCacheContainerProvider;
@@ -62,6 +64,8 @@ public class JobExecutionService extends BaseService {
      */
     private static final int MAX_TIMES_TO_RUN_INCOMPLETE_JOB = 50;
 
+    public static final int CHECK_IS_JOB_RUNNING_EVERY_NR = 50;
+
     /**
      * job instance service.
      */
@@ -83,6 +87,10 @@ public class JobExecutionService extends BaseService {
 
     @Inject
     private ClusterEventPublisher clusterEventPublisher;
+
+    @Inject
+    @RegistryType(type = MetricRegistry.Type.APPLICATION)
+    MetricRegistry registry;
 
     /**
      * Execute a job and return job execution result ID to be able to query execution results later. Job execution result is persisted right away, while job is executed asynchronously.
@@ -300,7 +308,7 @@ public class JobExecutionService extends BaseService {
     /**
      * Mark job, identified by a given job instance id, as currently running on current cluster node.
      * 
-     * @param jobInstanceId Job instance identifier
+     * @param jobInstance Job instance
      * @param limitToSingleNode true if this job can be run on only one node.
      * @param jobExecutionResultId Job execution result/progress identifier
      * @param threads Threads/futures that job is running on (optional)
@@ -314,7 +322,7 @@ public class JobExecutionService extends BaseService {
     /**
      * Mark job, identified by a given job instance id, as currently NOT running on CURRENT cluster node.
      * 
-     * @param jobInstanceId Job instance identifier
+     * @param jobInstance Job instance
      */
     public void markJobAsFinished(JobInstance jobInstance) {
         jobCacheContainerProvider.markJobAsFinished(jobInstance);
@@ -323,7 +331,7 @@ public class JobExecutionService extends BaseService {
     /**
      * Mark job, identified by a given job instance id, as requested to stop on CURRENT cluster node.
      * 
-     * @param jobInstanceId Job instance identifier
+     * @param jobInstance Job instance identifier
      */
     public void markJobToStop(JobInstance jobInstance) {
         jobCacheContainerProvider.markJobToStop(jobInstance);
@@ -332,7 +340,7 @@ public class JobExecutionService extends BaseService {
     /**
      * Check if job execution was canceled
      * 
-     * @param id Job instance identifier
+     * @param jobInstanceId Job instance identifier
      * @return True if job was execution was canceled by a user
      */
     public boolean isJobCancelled(Long jobInstanceId) {
@@ -342,5 +350,92 @@ public class JobExecutionService extends BaseService {
             return jobStatus.isRequestedToStop();
         }
         return false;
+    }
+
+    /**
+     * Create counter metric for JobExecutionResultImpl
+     *
+     * @param jobExecutionResultImpl
+     * @param value
+     */
+    public void initCounterElementsRemaining(JobExecutionResultImpl jobExecutionResultImpl, Number value) {
+        counterInc(jobExecutionResultImpl, "elements_remaining", value.longValue());
+    }
+
+    /**
+     * Create counter metric for JobExecutionResultImpl
+     *
+     * @param jobExecutionResultImpl
+     * @param value
+     * @param name the name of metric
+     */
+    public void counterInc(JobExecutionResultImpl jobExecutionResultImpl, String name, Long value) {
+        JobInstance jobInstance = jobExecutionResultImpl.getJobInstance();
+        Metadata metadata = new MetadataBuilder().withName(name + "_" + jobInstance.getJobTemplate() + "_" + jobInstance.getCode()).reusable().build();
+        Tag tgName = new Tag("name", jobInstance.getCode());
+        Counter counter = registry.counter(metadata, tgName);
+
+        if (value != null) {
+            counter.inc(value);
+        } else {
+            counter.inc();
+        }
+    }
+
+    /**
+     * Decreased elements_remaining counter for JobExecutionResultImpl
+     *
+     * @param jobExecutionResultImpl
+     */
+    public void decCounterElementsRemaining(JobExecutionResultImpl jobExecutionResultImpl) {
+        counterInc(jobExecutionResultImpl, "elements_remaining", -1L);
+    }
+
+    /**
+     * Use counter metric
+     *
+     * @param jobExecutionResultImpl
+     * @param error
+     */
+    public void registerError(JobExecutionResultImpl jobExecutionResultImpl, String error) {
+        jobExecutionResultImpl.registerError(error);
+        counterNbItemsProcessedWithError(jobExecutionResultImpl);
+    }
+
+    /**
+     * Use counter metric
+     *
+     * @param jobExecutionResultImpl
+     */
+    public void registerError(JobExecutionResultImpl jobExecutionResultImpl) {
+        jobExecutionResultImpl.registerError();
+        counterNbItemsProcessedWithError(jobExecutionResultImpl);
+    }
+
+    private void counterNbItemsProcessedWithError(JobExecutionResultImpl jobExecutionResultImpl) {
+        counterInc(jobExecutionResultImpl, "number_of_ko");
+    }
+    /**
+     * Create counter metric for JobExecutionResultImpl
+     *
+     * @param jobExecutionResultImpl
+     * @param name the name of metric
+     */
+    public void counterInc(JobExecutionResultImpl jobExecutionResultImpl, String name) {
+        counterInc(jobExecutionResultImpl, name, null);
+    }
+
+    /**
+     * Use counter metric
+     *
+     * @param jobExecutionResultImpl
+     */
+    public void registerSucces(JobExecutionResultImpl jobExecutionResultImpl) {
+        jobExecutionResultImpl.registerSucces();
+        counterNbItemsProcessed(jobExecutionResultImpl);
+    }
+
+    private void counterNbItemsProcessed(JobExecutionResultImpl jobExecutionResultImpl) {
+        counterInc(jobExecutionResultImpl, "number_of_ok");
     }
 }

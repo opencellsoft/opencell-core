@@ -47,6 +47,8 @@ import org.meveo.model.catalog.FixedDate;
 import org.meveo.model.catalog.HourInDay;
 import org.meveo.model.shared.DateUtils;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class CalendarDto.
  *
@@ -62,64 +64,83 @@ public class CalendarDto extends BusinessEntityDto {
 
     /** Calendar type. */
     @XmlElement(required = true)
+    @Schema(description = "calendar type", example = "possible value are : YEARLY, DAILY, PERIOD, INTERVAL, INTERSECT, UNION, APPEND, BANKING, FIXED")
     private CalendarTypeEnum calendarType;
 
     /** Fixed Dates. */
+    @Schema(description = "list of fixed date")
     private List<String> fixedDates;
 
     /** Days. */
+    @Schema(description = "list of the day")
     private List<DayInYearDto> days;
 
     /** Hours. */
+    @Schema(description = "list of the hour")
     private List<HourInDayDto> hours;
 
     /** Period length. */
+    @Schema(description = "Period length")
     private Integer periodLength;
 
     /** Period measurement unit. */
+    @Schema(description = "Period measurement unit", example = "MONTH, DAY_OF_MONTH, HOUR_OF_DAY, MINUTE, SECOND")
     private CalendarPeriodUnitEnum periodUnit;
 
     /** Number of periods. */
+    @Schema(description = "Number of periods")
     private Integer nbPeriods;
 
     /** Code of the first calendar to intersect/union. */
+    @Schema(description = "Code of the first calendar to intersect/union")
     private String joinCalendar1Code;
 
     /** Code of the second calendar to intersect/union. */
+    @Schema(description = "Code of the second calendar to intersect/union")
     private String joinCalendar2Code;
 
     /** Interval type. */
+    @Schema(description = "Interval type", example = "possible value are : DAY, HOUR, WDAY")
     private CalendarIntervalTypeEnum intervalType;
 
     /** List of intervals. */
+    @Schema(description = "List of intervals")
     private List<CalendarDateIntervalDto> intervals;
 
     /** The weekend begin. */
+    @Schema(description = "The weekend begin")
     private Integer weekendBegin;
 
     /** The weekend end. */
+    @Schema(description = "")
     private Integer weekendEnd;
 
     /** The end date. */
+    @Schema(description = "The end dat")
     private Date endDate;
 
     /** The start date. */
+    @Schema(description = "The start date")
     private Date startDate;
 
     /**
      * Calendar initialization date - expression to determine a value for calendar initialization date
      */
     @Size(max = 2000)
+    @Schema(description = "Calendar initialization date - expression to determine a value for calendar initialization date")
     private String initDateEL;
 
     /**
      * Calendar initialization date - expression to determine a value for calendar initialization date for Spark
      */
     @Size(max = 2000)
+    @Schema(description = "Calendar initialization date - expression to determine a value for calendar initialization date for Spark")
     private String initDateELSpark;
 
+    @Schema(description = "list of the days of holiday")
     private List<CalendarHolidayDto> holidays;
 
+    @Schema(description = "lsit of language description")
     private List<LanguageDescriptionDto> languageDescriptions;
 
     /**

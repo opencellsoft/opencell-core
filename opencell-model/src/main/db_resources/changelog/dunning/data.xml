@@ -589,12 +589,15 @@ Accounting Team
 
     <changeSet author="ZBARIKI" id="#6048_20210326_2">
         <sql dbms="postgresql"><![CDATA[UPDATE ${db.schema.adapted}meveo_script_instance SET
-script = 'package org.meveo.service.script;
 
+            script = 'package org.meveo.service.script;
 import static org.meveo.admin.job.GenericWorkflowJob.IWF_ENTITY;
 import static org.meveo.admin.job.GenericWorkflowJob.WF_ACTUAL_TRANSITION;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.ABANDONED;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.DISPUTED;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.PAID;
 
-import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.dunning.DunningDocument;
 import org.meveo.model.dunning.DunningDocumentStatus;
 import org.meveo.model.generic.wf.GWFTransition;
@@ -662,7 +665,7 @@ public class SimpleDunning extends org.meveo.service.script.Script {
     private void markInvoicesAsAbandoned(List<AccountOperation> accountOperations) {
         for (AccountOperation accountOperation : accountOperations) {
             if (accountOperation instanceof RecordedInvoice) {
-                ((RecordedInvoice) accountOperation).getInvoice().setStatus(InvoiceStatusEnum.ABANDONED);
+                ((RecordedInvoice) accountOperation).getInvoice().setPaymentStatus(ABANDONED);
                 accountOperationService.update(accountOperation);
             }
         }
@@ -699,7 +702,7 @@ public class SimpleDunning extends org.meveo.service.script.Script {
         for (AccountOperation accountOperation : customerAccount.getAccountOperations()) {
             if (accountOperation instanceof RecordedInvoice) {
                 ((RecordedInvoice) accountOperation).setDunningDocument(null);
-                ((RecordedInvoice) accountOperation).getInvoice().setStatus(InvoiceStatusEnum.PAID);
+                ((RecordedInvoice) accountOperation).getInvoice().setPaymentStatus(PAID);
                 accountOperationService.update(accountOperation);
             }
         }
@@ -762,7 +765,7 @@ public class SimpleDunning extends org.meveo.service.script.Script {
                 if (accountOperation instanceof RecordedInvoice) {
                     if (accountOperation instanceof RecordedInvoice) {
                         ((RecordedInvoice) accountOperation).setDunningDocument(dunningDocument);
-                        ((RecordedInvoice) accountOperation).getInvoice().setStatus(InvoiceStatusEnum.DISPUTED);
+                        ((RecordedInvoice) accountOperation).getInvoice().setPaymentStatus(DISPUTED);
                         ris.add((RecordedInvoice) accountOperation);
                     }
                 }

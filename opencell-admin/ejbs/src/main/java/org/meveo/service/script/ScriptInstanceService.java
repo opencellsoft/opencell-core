@@ -436,6 +436,28 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
         Map<String, Object> result = executeWInitAndFinalize(scriptCode, context);
         return result;
     }
+    
+    /**
+     * Execute action on an entity/event.
+     * 
+     * @param entityOrEvent Entity or event to execute action on. Will be added to context under Script.CONTEXT_ENTITY key.
+     * @param scriptCode Script to execute, identified by a code. Will be added to context under Script.CONTEXT_ACTION key.
+     * @param context Additional parameters
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
+     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws BusinessException Any execution exception
+     */
+    public Map<String, Object> execute(Object entityOrEvent, String scriptCode, Map<String, Object> context,boolean isToInit, boolean isToExecute, boolean isToTerminate) throws BusinessException {
+
+        if (context == null) {
+            context = new HashMap<>();
+        }
+        context.put(Script.CONTEXT_ENTITY, entityOrEvent);
+        Map<String, Object> result = execute(scriptCode, context,isToInit, isToExecute, isToTerminate);
+        return result;
+    }
 
     /**
      * Execute script. DOES call init() or finalize() methods of the script.
@@ -450,25 +472,51 @@ public class ScriptInstanceService extends BusinessService<ScriptInstance> {
      */
     public Map<String, Object> executeWInitAndFinalize(String scriptCode, Map<String, Object> context) throws BusinessException {
 
-        log.trace("Script {} to be executed with parameters {}", scriptCode, context);
-
-        if (context == null) {
-            context = new HashMap<String, Object>();
-        }
-        if (context.get(Script.CONTEXT_ACTION) == null) {
-            context.put(Script.CONTEXT_ACTION, scriptCode);
-        }
-        context.put(Script.CONTEXT_CURRENT_USER, currentUser);
-        context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
-
-        ScriptInterface classInstance = getScriptInstance(scriptCode);
-        classInstance.init(context);
-        classInstance.execute(context);
-        classInstance.terminate(context);
-
-        log.trace("Script {} executed with parameters {}", scriptCode, context);
-        return context;
+       return execute(scriptCode, context, true, true, true);
     }
+    
+    /**
+     * Execute script. 
+     * 
+     * @param scriptCode Script to execute, identified by a code. Will be added to context under Script.CONTEXT_ACTION key.
+     * @param context Method context
+     * @param isToInit 
+     * @param isToExecute
+     * @param isToTerminate
+     * @return Context parameters. Will not be null even if "context" parameter is null.
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
+     * @throws InvalidPermissionException Insufficient access to run the script
+     * @throws BusinessException Any execution exception
+     */
+	public Map<String, Object> execute(String scriptCode, Map<String, Object> context, boolean isToInit, boolean isToExecute, boolean isToTerminate)
+			throws BusinessException {
+
+		log.trace("Script {} to be executed with parameters {}", scriptCode, context);
+
+		if (context == null) {
+			context = new HashMap<String, Object>();
+		}
+		if (context.get(Script.CONTEXT_ACTION) == null) {
+			context.put(Script.CONTEXT_ACTION, scriptCode);
+		}
+		context.put(Script.CONTEXT_CURRENT_USER, currentUser);
+		context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+
+		ScriptInterface classInstance = getScriptInstance(scriptCode);
+		if (isToInit) {
+			classInstance.init(context);
+		}
+		if (isToExecute) {
+			classInstance.execute(context);
+		}
+		if (isToTerminate) {
+			classInstance.terminate(context);
+		}
+
+		log.trace("Script {} executed with parameters {}", scriptCode, context);
+		return context;
+	}
 
     /**
      * Execute script. DOES call init() or finalize() methods of the script.

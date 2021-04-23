@@ -219,6 +219,17 @@ public class UserRoleBean extends BaseBean<Role> {
         super.saveOrUpdate(false);
     }
     
+    @ActionMethod
+    public void enableOrDisable(SecuredEntity selectedSecuredEntity, boolean disable) throws BusinessException {
+        for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
+            if (securedEntity.equals(selectedSecuredEntity)) {
+            	securedEntity.setDisabled(disable);
+                break;
+            }
+        }
+        super.saveOrUpdate(false);
+    }
+    
     /**
      * This will add the selected business entity to the user's securedEntities list.
      * 

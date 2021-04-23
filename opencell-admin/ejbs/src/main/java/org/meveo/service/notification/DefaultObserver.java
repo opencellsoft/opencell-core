@@ -42,7 +42,26 @@ import org.meveo.event.CounterPeriodEvent;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.event.logging.LoggedEvent;
 import org.meveo.event.monitoring.BusinessExceptionEvent;
-import org.meveo.event.qualifier.*;
+import org.meveo.event.qualifier.AdvancementRateIncreased;
+import org.meveo.event.qualifier.Created;
+import org.meveo.event.qualifier.Disabled;
+import org.meveo.event.qualifier.Enabled;
+import org.meveo.event.qualifier.EndOfTerm;
+import org.meveo.event.qualifier.InboundRequestReceived;
+import org.meveo.event.qualifier.InstantiateWF;
+import org.meveo.event.qualifier.InvoiceNumberAssigned;
+import org.meveo.event.qualifier.LoggedIn;
+import org.meveo.event.qualifier.LowBalance;
+import org.meveo.event.qualifier.PDFGenerated;
+import org.meveo.event.qualifier.Processed;
+import org.meveo.event.qualifier.Rejected;
+import org.meveo.event.qualifier.RejectedCDR;
+import org.meveo.event.qualifier.Removed;
+import org.meveo.event.qualifier.Terminated;
+import org.meveo.event.qualifier.Updated;
+import org.meveo.event.qualifier.VersionCreated;
+import org.meveo.event.qualifier.VersionRemoved;
+import org.meveo.event.qualifier.XMLGenerated;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
@@ -53,6 +72,7 @@ import org.meveo.model.audit.AuditableFieldHistory;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.InboundRequest;
@@ -149,7 +169,7 @@ public class DefaultObserver {
         checkEvent(NotificationEventTypeEnum.CREATED, e);
     }
 
-    public void entityUpdated(@Observes @Updated BaseEntity e) throws BusinessException {
+    public void entityUpdated(@Observes @Updated  BaseEntity e) throws BusinessException {
         log.debug("Defaut observer: Entity {} with id {} updated", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.UPDATED, e);
     }
@@ -298,6 +318,7 @@ public class DefaultObserver {
         checkEvent(NotificationEventTypeEnum.INVOICE_NUMBER_ASSIGNED, invoice);
     }
 
+
     /**
      * Handle Subscription version
      *
@@ -318,6 +339,17 @@ public class DefaultObserver {
     public void versionRemoved(@Observes @VersionRemoved Subscription subscription) throws BusinessException {
         log.debug("Defaut observer: Subscription version removed, id: {}", subscription.getId());
         checkEvent(NotificationEventTypeEnum.VERSION_REMOVED, subscription);
+    }
+
+    /**
+     * Handle OrderProgress from Commercial Order
+     *
+     * @param invoice Invoice
+     * @throws BusinessException General business exception
+     */
+    public void commercialOrderOrderProgress(@Observes @AdvancementRateIncreased CommercialOrder commercialOrder) throws BusinessException {
+        log.debug("Defaut observer: check order progress for order {}", commercialOrder.getId());
+        checkEvent(NotificationEventTypeEnum.ADVT_RATE_INCREASED, commercialOrder);
     }
 
     private void fieldUpdated(BaseEntity entity, AuditableFieldEvent field, NotificationEventTypeEnum notificationType) throws BusinessException {

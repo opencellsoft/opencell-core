@@ -1,0 +1,212 @@
+package org.meveo.apiv2.billing;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.immutables.value.Value;
+import org.meveo.apiv2.models.Resource;
+import org.meveo.model.billing.InvoicePaymentStatusEnum;
+import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@Value.Immutable
+@Value.Style(jdkOnly = true)
+@JsonDeserialize(as = ImmutableInvoice.class)
+public interface Invoice extends Resource {
+
+	@Nullable
+	String getBillingAccountCode();
+
+	@Nullable
+	Resource getBillingRun();
+
+	@Nullable
+	Resource getRecordedInvoice();
+
+	@Nullable
+	String getInvoiceNumber();
+
+	@Nullable
+	Date getProductDate();
+
+	Date getInvoiceDate();
+
+	@Nullable
+	InvoiceStatusEnum getStatus();
+
+	Date getDueDate();
+
+	@Nullable
+	BigDecimal getAmount();
+
+	@Nullable
+	BigDecimal getDiscount();
+
+	BigDecimal getAmountWithoutTax();
+
+	BigDecimal getAmountTax();
+
+	BigDecimal getAmountWithTax();
+
+	BigDecimal getNetToPay();
+
+	@Nullable
+	PaymentMethodEnum getPaymentMethodType();
+
+	@Nullable
+	String getIban();
+
+	@Nullable
+	String getAlias();
+
+	@Nullable
+	Resource getTradingCurrency();
+
+	@Nullable
+	Resource getTradingCountry();
+
+	@Nullable
+	Resource getTradingLanguage();
+
+	@Nullable
+	String getComment();
+
+	@Nullable
+	@JsonProperty("detailedInvoice")
+	Boolean isDetailedInvoice();
+
+	@Nullable
+	Resource getAdjustedInvoice();
+
+	@Nullable
+	String getInvoiceTypeCode();
+
+	@Nullable
+	Resource getCfValues();
+
+	@Nullable
+	Resource getCfAccumulatedValues();
+
+	@Nullable
+	Resource getQuote();
+
+	@Nullable
+	Resource getSubscription();
+
+	@Nullable
+	Resource getOrder();
+
+	@Nullable
+	String getXmlFilename();
+
+	@Nullable
+	String getPdfFilename();
+
+	@Nullable
+	Resource getPaymentMethod();
+
+	@Nullable
+	BigDecimal getDueBalance();
+
+	@Nullable
+	@JsonProperty("alreadySent")
+	Boolean isAlreadySent();
+
+	@Nullable
+	@JsonProperty("dontSend")
+	Boolean isDontSend();
+
+	@Nullable
+	String getSellerCode();
+
+	@Nullable
+	@JsonProperty("prepaid")
+	Boolean isPrepaid();
+
+	@Nullable
+	String getExternalRef();
+
+	@Nullable
+	String getRejectReason();
+
+	@Nullable
+	Date getInitialCollectionDate();
+
+	@Nullable
+	Date getStatusDate();
+
+	@Nullable
+	Date getXmlDate();
+
+	@Nullable
+	Date getPdfDate();
+
+	@Nullable
+	Date getEmailSentDate();
+
+	InvoicePaymentStatusEnum getPaymentStatus();
+
+	@Nullable
+	Date getPaymentStatusDate();
+
+	@Nullable
+	Date getStartDate();
+
+	@Nullable
+	Date getEndDate();
+
+	BigDecimal getRawAmount();
+
+	@Nullable
+	BigDecimal getDiscountRate();
+
+	BigDecimal getDiscountAmount();
+
+	@Nullable
+	@JsonProperty("alreadyAppliedMinimum")
+	Boolean isAlreadyAppliedMinimum();
+
+	@Nullable
+	@JsonProperty("alreadyAddedDiscount")
+	Boolean isAlreadyAddedDiscount();
+
+	@Nullable
+	Long getInvoiceAdjustmentCurrentSellerNb();
+
+	@Nullable
+	Long getInvoiceAdjustmentCurrentProviderNb();
+
+	@Nullable
+	String getPreviousInvoiceNumber();
+
+	@Nullable
+	@JsonProperty("draft")
+	Boolean getDraft();
+
+	@Nullable
+	String getDescription();
+
+	@Nullable
+	List<InvoiceLine> getInvoiceLines();
+
+	@Nullable
+	List<Long> getListLinkedInvoices();
+
+	@Nullable
+	List<CategoryInvoiceAgregate> getCategoryInvoiceAgregates();
+
+	@Nullable
+	List<Long> getInvoiceLinesTolink();
+	
+	@Nullable
+	Resource getDiscountPlan();
+
+	@Nullable
+	Resource getCommercialOrder();
+}

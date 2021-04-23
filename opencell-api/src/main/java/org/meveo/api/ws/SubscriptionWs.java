@@ -202,5 +202,15 @@ public interface SubscriptionWs extends IBaseWs {
      */
     @WebMethod
     ActionStatus subscribeAndActivateServices(@WebParam(name = "subscribeAndActivateServices") SubscriptionAndServicesToActivateRequestDto postData);
+    
+    
+    /**
+     * Create a subscription and instantiate services in a single transaction.
+     * 
+     * @param postData Subscription and services to activate data
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus subscribeAndInstantiateServices(@WebParam(name = "subscribeAndInstanciateServices") SubscriptionAndServicesToActivateRequestDto postData);
 
 }

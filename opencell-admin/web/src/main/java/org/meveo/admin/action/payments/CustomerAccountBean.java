@@ -40,6 +40,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.CashPaymentMethod;
 import org.meveo.model.payments.CheckPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
@@ -413,6 +414,8 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             selectedPaymentMethod = new PaypalPaymentMethod();
         } else if (newPaymentMethodType == PaymentMethodEnum.STRIPE) {
             selectedPaymentMethod = new StripePaymentMethod();
+        } else if (newPaymentMethodType == PaymentMethodEnum.CASH) {
+            selectedPaymentMethod = new CashPaymentMethod();
         }
 
     }
