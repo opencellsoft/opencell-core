@@ -130,6 +130,13 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         } else {
             chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         }
+        
+        if(!Strings.isEmpty(postData.getAttributeCalendarCode())) {
+        	chargeTemplate.setAttributeCalendar(loadEntityByCode(attributeService, postData.getAttributeCalendarCode(), Attribute.class));
+        }
+        if(!Strings.isEmpty(postData.getAttributeDurationCode())) {
+        	chargeTemplate.setAttributeDuration(loadEntityByCode(attributeService, postData.getAttributeDurationCode(), Attribute.class));
+        }
 
         super.dtoToEntity(postData, chargeTemplate, isNew);
 
@@ -179,13 +186,6 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
             chargeTemplate.setRecurrenceType(postData.getRecurrenceType());
         }
         
-        if(!Strings.isEmpty(postData.getAttributeCalendarCode())) {
-        	chargeTemplate.setAttributeCalendar(loadEntityByCode(attributeService, postData.getAttributeCalendarCode(), Attribute.class));
-        }
-        if(!Strings.isEmpty(postData.getAttributeDurationCode())) {
-        	chargeTemplate.setAttributeDuration(loadEntityByCode(attributeService, postData.getAttributeDurationCode(), Attribute.class));
-        }
-
         return chargeTemplate;
     }
 
