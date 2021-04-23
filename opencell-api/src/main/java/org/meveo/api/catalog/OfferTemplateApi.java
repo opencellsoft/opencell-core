@@ -291,6 +291,11 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         if (autoEndOfEngagement != null) {
             offerTemplate.setAutoEndOfEngagement(autoEndOfEngagement);
         }
+        
+        Boolean isModel = postData.getIsModel();
+        if (isModel != null) {
+            offerTemplate.setIsModel(isModel);
+        }
 
         BusinessOfferModel businessOffer = null;
         if (!StringUtils.isBlank(postData.getBomCode())) {

@@ -4256,5 +4256,14 @@ public class OrderAdvancement extends ModuleScript {
 	  		<column name="product_set" type="varchar(250)"/>
 	  	</addColumn>
 	  </changeSet>
+	  
+	   <changeSet id="#470_20210422" author="Mbarek-Ay">
+        <addColumn tableName="cat_offer_template">
+            <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+          <addColumn tableName="cpq_product">
+          <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
+        </addColumn>
+     </changeSet> 
 
 </databaseChangeLog>

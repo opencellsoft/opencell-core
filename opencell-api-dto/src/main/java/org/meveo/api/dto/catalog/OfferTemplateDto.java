@@ -162,6 +162,9 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
     @Schema(description = "last update status datetime")
     protected Date statusDate;
+    
+    @Schema(description = "allowing to create,update and delete an offer from a model")
+    protected Boolean isModel=Boolean.FALSE;
 
     /**
      * Instantiates a new offer template dto.
@@ -522,6 +525,16 @@ public class OfferTemplateDto extends ProductOfferingDto {
 	public void setMediaCodes(Set<String> mediaCodes) {
 		this.mediaCodes = mediaCodes;
 	}
+
+	public Boolean getIsModel() {
+		return isModel;
+	}
+
+	public void setIsModel(Boolean isModel) {
+		this.isModel = isModel;
+	}
+	
+	
     
     
 }

@@ -209,6 +209,11 @@ public class Product extends ServiceCharge {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cpq_product_media", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
     private List<Media> medias = new ArrayList<Media>();
+    
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_model")
+    private Boolean isModel;
 
 	/**
 	 * @return the status
@@ -604,5 +609,17 @@ public class Product extends ServiceCharge {
 	public List<PricePlanMatrixColumn> getPricePlanMatrixColumns() {
 		return pricePlanMatrixColumns;
 	}
+
+
+	public Boolean getIsModel() {
+		return isModel;
+	}
+
+
+	public void setIsModel(Boolean isModel) {
+		this.isModel = isModel;
+	}
+	
+	
 	
 }
