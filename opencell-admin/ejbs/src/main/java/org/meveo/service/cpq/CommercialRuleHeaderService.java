@@ -170,10 +170,11 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 			boolean isPreRequisite = RuleTypeEnum.PRE_REQUISITE.equals(commercialRule.getRuleType());
 			items = commercialRule.getCommercialRuleItems();
 			for (CommercialRuleItem item : items) {
+				int linesCount=item.getCommercialRuleLines().size();
 				Iterator<CommercialRuleLine> lineIterator = item.getCommercialRuleLines().iterator();
 				while (lineIterator.hasNext()) {
 					CommercialRuleLine line = lineIterator.next();
-					continueProcess = checkOperator(item.getOperator(), !lineIterator.hasNext(), isPreRequisite,
+					continueProcess = checkOperator(item.getOperator(), linesCount==1,!lineIterator.hasNext(), isPreRequisite,
 							isSelectable);
 					if ((isPreRequisite && line.getSourceOfferTemplate() != null
 							&& !line.getSourceOfferTemplate().getCode().equals(offerCode))
@@ -346,7 +347,10 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 			}
 	}
 
-	private boolean checkOperator(OperatorEnum operator, boolean isLastLine, boolean isPreRequisite,Boolean isSelectable) {
+	private boolean checkOperator(OperatorEnum operator, boolean isOnlyOneLine, boolean isLastLine, boolean isPreRequisite,Boolean isSelectable) {
+		if(isOnlyOneLine) {
+			return false;
+		}
 		if(isPreRequisite){
 			if( OperatorEnum.AND.equals(operator)) {
 				return false;

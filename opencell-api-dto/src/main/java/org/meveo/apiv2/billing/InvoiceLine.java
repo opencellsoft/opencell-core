@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 
 import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
@@ -210,4 +211,23 @@ public interface InvoiceLine extends Resource {
 	 */
 	@Nullable
 	InvoiceLineStatusEnum getStatus();
+	/**
+	 * 
+	 * @return The description
+	 */
+	@Nullable
+	String getDescription();
+	/**
+	 * 
+	 * @return The start date
+	 */
+	@Nullable
+	Date getStartDate();
+	/**
+	 * 
+	 * @return The end date
+	 */
+	@Nullable
+	Date getEndDate();
+	
 }

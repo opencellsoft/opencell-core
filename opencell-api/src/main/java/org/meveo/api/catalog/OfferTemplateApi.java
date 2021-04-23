@@ -180,7 +180,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     public OfferTemplate create(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getName())) {
-            addGenericCodeIfAssociated(OfferTemplate.class.getName(), postData);
+            postData.setName(postData.getCode());
         }
         if (postData.getLifeCycleStatus() == null) {
             postData.setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
@@ -291,6 +291,11 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         if (autoEndOfEngagement != null) {
             offerTemplate.setAutoEndOfEngagement(autoEndOfEngagement);
         }
+        
+        Boolean isModel = postData.getIsModel();
+        if (isModel != null) {
+            offerTemplate.setIsModel(isModel);
+        }
 
         BusinessOfferModel businessOffer = null;
         if (!StringUtils.isBlank(postData.getBomCode())) {
@@ -359,10 +364,19 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         offerTemplate.setDescription(postData.getDescription());
         offerTemplate.setName(postData.getName());
         offerTemplate.setLongDescription(postData.getLongDescription());
-        if(postData.getNewValidFrom() != null && postData.getNewValidTo() != null) {
-            offerTemplate.setValidity(new DatePeriod(postData.getNewValidFrom(), postData.getNewValidTo()));
-        } else {
-            offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
+        var datePeriod = new DatePeriod();
+        if(postData.getNewValidFrom() != null)
+        	datePeriod.setFrom(postData.getNewValidFrom());
+        else
+        	datePeriod.setFrom(postData.getValidFrom());
+        if(postData.getNewValidTo() != null)
+        		datePeriod.setTo(postData.getNewValidTo());
+        else
+    		datePeriod.setTo(postData.getValidTo());
+        offerTemplate.setValidity(datePeriod);
+        var isValidityIsSet = offerTemplate.getValidity().getTo() != null && offerTemplate.getValidity().getFrom() != null;
+        if(isValidityIsSet && offerTemplate.getValidity().getTo().compareTo(offerTemplate.getValidity().getFrom()) <= 0) {
+        	throw new MeveoApiException("Date 'valid to' must be great than Data 'valid from'");  
         }
         offerTemplate.setMinimumAmountEl(postData.getMinimumAmountEl());
         offerTemplate.setMinimumLabelEl(postData.getMinimumLabelEl());

@@ -1055,7 +1055,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{productOneCode}}\",\r\n    \"label\": \"This is the product one label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"chargeTemplateCodes\": [\r\n        \"{{recChargeTemplateCode}}\",\r\n        \"{{oneShotTemplateCode}}\"\r\n    ],\r\n    \"mediaCodes\": [\r\n        \"{{mediaOneCode}}\",\r\n        \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"code\": \"{{productOneCode}}\",\r\n    \"label\": \"This is the product one label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"productChargeTemplateMappingDto\": [\r\n        {\r\n            \"chargeCode\": \"{{recChargeTemplateCode}}\"\r\n        },\r\n        {\r\n            \"chargeCode\": \"{{oneShotTemplateCode}}\"\r\n        }\r\n    ],\r\n    \"mediaCodes\": [\r\n        \"{{mediaOneCode}}\",\r\n        \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1288,7 +1288,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{productTwoCode}}\",\r\n    \"label\": \"this is the product two label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"chargeTemplateCodes\": [\r\n        \"{{oneShotTemplateCode}}\"\r\n    ],\r\n    \"mediaCodes\": [\r\n        \"{{mediaOneCode}}\",\r\n        \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
+									"raw": "{\r\n    \"code\": \"{{productTwoCode}}\",\r\n    \"label\": \"this is the product two label\",\r\n    \"productLineCode\": \"{{productLineCode}}\",\r\n    \"status\": \"DRAFT\",\r\n    \"statusDate\": \"2020-11-25\",\r\n    \"productChargeTemplateMappingDto\": [\r\n        {\r\n            \"chargeCode\": \"{{oneShotTemplateCode}}\"\r\n        }\r\n    ],\r\n    \"mediaCodes\": [\r\n        \"{{mediaOneCode}}\",\r\n        \"{{mediaTwoCode}}\"\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1484,7 +1484,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{offerTemplateCode}}\",\r\n    \"description\": \"Classic Offer Template test description\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{productOneCode}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ],\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ],\r\n    \"mediaCodes\": [\r\n            \"{{mediaOneCode}}\",\r\n            \"{{mediaTwoCode}}\"\r\n    ]\r\n}"
+									"raw": "{\r\n    \"code\": \"{{offerTemplateCode}}\",\r\n    \"name\": \"Offer Classic Commission\",\r\n    \"description\": \"Classic Offer Template\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{productOneCode}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ],\r\n    \"tagCodes\": [\r\n        \"{{tagOneCode}}\",\r\n        \"{{tagVipCode}}\"\r\n    ],\r\n    \"mediaCodes\": [\r\n        \"{{mediaOneCode}}\",\r\n        \"{{mediaTwoCode}}\"\r\n    ]\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",
@@ -2482,7 +2482,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"code\": \"{{tvDecoderOffer}}\",\r\n    \"description\": \"This the desc of TV and decoder offer\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{tvDecoderCode}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ]\r\n}"
+									"raw": "{\r\n    \"code\": \"{{tvDecoderOffer}}\",\r\n    \"name\": \"tv decoder offer\",\r\n    \"description\": \"This the desc of TV and decoder offer\",\r\n    \"disabled\": false,\r\n    \"lifeCycleStatus\": \"ACTIVE\",\r\n    \"offerProducts\": [\r\n        {\r\n            \"product\": {\r\n                \"code\": \"{{tvDecoderCode}}\",\r\n                \"discountFlag\": false,\r\n                \"packageFlag\": false\r\n            },\r\n            \"commercialRules\": [],\r\n            \"selectable\": true,\r\n            \"sequence\": 0,\r\n            \"ruled\": false\r\n        }\r\n    ]\r\n}"
 								},
 								"url": {
 									"raw": "{{opencell.url}}/catalog/offerTemplate/createOrUpdate",

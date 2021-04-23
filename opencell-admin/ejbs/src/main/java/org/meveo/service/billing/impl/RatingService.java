@@ -572,7 +572,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 ChargeTemplate  chargeTemplate=chargeInstance.getChargeTemplate();
                 OfferTemplate offerTemplate=subscription.getOffer();
                 ContractItem contractItem=null;  
-                if(contract!=null) {
+                if(contract!=null && serviceInstance!=null) {
                 contractItem=contractItemService.getApplicableContractItem(contract ,offerTemplate,serviceInstance.getCode(),chargeTemplate);
                 } 
                 if (contractItem!=null && ContractRateTypeEnum.FIXED.equals(contractItem.getContractRateType())) {
