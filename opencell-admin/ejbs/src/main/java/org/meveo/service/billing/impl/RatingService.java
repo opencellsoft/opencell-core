@@ -633,10 +633,12 @@ public class RatingService extends PersistenceService<WalletOperation> {
                         }
                     } else {
                         PricePlanMatrixLine pricePlanMatrixLine = pricePlanMatrixVersionService.loadPrices(ppmVersion, bareWalletOperation.getChargeInstance());
+                        if(pricePlanMatrixLine!=null) {
                         unitPriceWithoutTaxOverridden = pricePlanMatrixLine.getPricetWithoutTax();
+                        }
                         if (unitPriceWithoutTaxOverridden == null) {
-                            throw new PriceELErrorException("Can't evaluate price for price plan " + ppmVersion.getId()
-                                    + " EL:" + ppmVersion.getAmountWithoutTaxEL());
+                            throw new PriceELErrorException("no price for price plan version " + ppmVersion.getId()
+                                    + "and charge instance : " + bareWalletOperation.getChargeInstance());
                         }
                     }
 
