@@ -6740,6 +6740,12 @@
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
             <column name="output_dir" type="varchar(255)" />
+            <column name="custom_table_code" type="varchar(255)" />
+            <column name="accumulate" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="separator" type="varchar(5)" defaultValue=";" />
+            <column name="decimal_separator" type="character" defaultValue="." />
+            <column name="generate_empty_report" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="maximum_line" type="bigint" defaultValueNumeric="0" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-360">

@@ -18,15 +18,14 @@
 
 package org.meveo.service.finance;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.*;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FilenameUtils;
@@ -37,6 +36,7 @@ import org.meveo.admin.util.ModuleUtil;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.finance.ReportExtract;
 import org.meveo.model.finance.ReportExtractExecutionOrigin;
 import org.meveo.model.finance.ReportExtractExecutionResult;
@@ -45,8 +45,13 @@ import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.service.custom.CustomTableService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.finance.ReportExtractScript;
+
+import static java.lang.String.format;
+import static java.util.Optional.*;
 
 /**
  * Service for managing ReportExtract entity.
@@ -66,15 +71,24 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     @Inject
     private ReportExtractExecutionResultService reportExtractExecutionResultService;
 
+    @Inject
+    private CustomTableService customTableService;
+
+    @Inject
+    private CustomEntityTemplateService customEntityTemplateService;
+
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void runReport(ReportExtract entity) throws ReportExtractExecutionException, BusinessException {
         runReport(entity, null, ReportExtractExecutionOrigin.GUI);
     }
 
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void runReport(ReportExtract entity, Map<String, String> mapParams) throws ReportExtractExecutionException, BusinessException {
         runReport(entity, mapParams, ReportExtractExecutionOrigin.GUI);
     }
 
     @SuppressWarnings("rawtypes")
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public ReportExtractExecutionResult runReport(ReportExtract entity, Map<String, String> mapParams, ReportExtractExecutionOrigin origin) throws ReportExtractExecutionException, BusinessException {
         Map<String, Object> context = new HashMap<>();
 
@@ -124,8 +138,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         reportExtractExecutionResult.setStatus(true);
 
         ReportExtractExecutionException be = null;
+        List<Map<String, Object>> resultList = null;
         if (entity.getScriptType().equals(ReportExtractScriptTypeEnum.SQL)) {
-            List<Map<String, Object>> resultList = null;
 
             try {
                 resultList = scriptInstanceService.executeNativeSelectQuery(entity.getSqlQuery(), context);
@@ -142,11 +156,15 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             if (resultList != null && !resultList.isEmpty()) {
                 log.debug("{} record/s found", resultList.size());
                 if (entity.getReportExtractResultType().equals(ReportExtractResultTypeEnum.CSV)) {
-                    writeAsFile(filename, reportDir, resultList);
+                    writeAsFile(filename, reportDir, resultList, entity.getSeparator(), entity.getMaximumLine(), entity.getDecimalSeparator());
                 } else {
                     writeAsHtml(filename, reportDir, resultList, entity);
                 }
                 reportExtractExecutionResult.setLineCount(resultList.size());
+            }
+
+            if(resultList == null && entity.isGenerateEmptyReport()) {
+                generateEmptyReport(filename, reportDir, entity.getReportExtractResultType());
             }
 
         } else {
@@ -156,8 +174,13 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             }
 
             Map<String, Object> resultContext = scriptInstanceService.execute(entity.getScriptInstance().getCode(), context);
+            resultList = readGeneratedFile(resultContext.get("DIR") +"\\"+ resultContext.get("FILENAME"), entity.getSeparator());
             reportExtractExecutionResult.setErrorMessage((String) resultContext.getOrDefault(ReportExtractScript.ERROR_MESSAGE, ""));
             reportExtractExecutionResult.setLineCount((int) resultContext.getOrDefault(ReportExtractScript.LINE_COUNT, 0));
+        }
+
+        if(entity.getCustomTableCode() != null && resultList != null && !resultList.isEmpty()) {
+            storeDataInCT(entity.getCustomTableCode(), resultList, entity.isAccumulate());
         }
 
         reportExtractExecutionResult.setEndDate(new Date());
@@ -253,46 +276,79 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 	}
 
     @SuppressWarnings("rawtypes")
-    private void writeAsFile(String filename, StringBuilder sbDir, List<Map<String, Object>> resultList) throws BusinessException {
+    private List<String> writeAsFile(String filename, StringBuilder sbDir, List<Map<String, Object>> resultList,
+                             String separator, long maxLinePerFile, char decimalSeparator) throws BusinessException {
         FileWriter fileWriter = null;
-        StringBuilder line = new StringBuilder("");
+        StringBuilder line;
 
+        int fileSufix = 0;
         try {
             File dir = new File(sbDir.toString());
             if (!dir.exists()) {
                 dir.mkdirs();
             }
-            File file = new File(sbDir.toString() + File.separator + filename);
+            List<String> fileNames = new ArrayList<>();
+            String[] path = filename.split("\\.");
+            filename = new StringBuilder(path[0]).append("_").append(format("%04d", fileSufix)).append(".").append(path[1]).toString();
+            File file = new File(sbDir + File.separator + filename);
             file.createNewFile();
             fileWriter = new FileWriter(file);
+            fileNames.add(filename);
 
             // get the header
             Map<String, Object> firstRow = resultList.get(0);
             Iterator ite = firstRow.keySet().iterator();
+            StringBuilder header = new StringBuilder();
             while (ite.hasNext()) {
-                line.append(ite.next() + ",");
+                header.append(ite.next() + separator);
             }
-            line.deleteCharAt(line.length() - 1);
-            fileWriter.write(line.toString());
+            header.deleteCharAt(header.length() - 1);
+            fileWriter.write(header.toString());
             fileWriter.write(System.lineSeparator());
 
-            line = new StringBuilder("");
+            line = new StringBuilder();
+            int counter = 0;
             for (Map<String, Object> row : resultList) {
                 ite = firstRow.keySet().iterator();
                 while (ite.hasNext()) {
-                    line.append(row.get(ite.next()) + ",");
+                    Object item = row.get(ite.next());
+                    if(item instanceof Number) {
+                        line.append(formatDecimal((Number) item, decimalSeparator) + separator);
+                    } else {
+                        line.append(item + separator);
+                    }
                 }
+                counter++;
                 line.deleteCharAt(line.length() - 1);
                 fileWriter.write(line.toString());
                 fileWriter.write(System.lineSeparator());
-                line = new StringBuilder("");
+                line = new StringBuilder();
+                if(maxLinePerFile > 0 && counter >= maxLinePerFile) {
+                    fileWriter.close();
+                    counter = 0;
+                    filename = new StringBuilder(path[0]).append("_").append(format("%04d", ++fileSufix)).append(".").append(path[1]).toString();
+                    file = new File(sbDir + File.separator + filename);
+                    file.createNewFile();
+                    fileWriter = new FileWriter(file);
+                    fileNames.add(filename);
+                    fileWriter.write(header.toString());
+                    fileWriter.write(System.lineSeparator());
+                }
             }
+            return fileNames;
         } catch (Exception e) {
             log.error("Cannot write report to file: {}", e);
             throw new BusinessException("Cannot write report to file.");
         } finally  {
             IOUtils.closeQuietly(fileWriter);
         }
+    }
+
+    private String formatDecimal(Number item, char decimalSeparator) {
+        DecimalFormatSymbols symbol = new DecimalFormatSymbols();
+        symbol.setDecimalSeparator(decimalSeparator);
+        DecimalFormat formatter = new DecimalFormat("0.##########", symbol);
+        return formatter.format(item);
     }
 
     @SuppressWarnings("unchecked")
@@ -326,6 +382,48 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         filename = evaluateStringExpression(filename, entity);
 
         return reportDir + File.separator + filename;
+    }
+
+
+    private int storeDataInCT(String customTableCode, List<Map<String, Object>> data, boolean append) {
+        CustomEntityTemplate customTable = ofNullable(customEntityTemplateService.findByCode(customTableCode))
+                .orElseThrow(() -> new BusinessException("No custom table found with the given code : " + customTableCode));
+        return customTableService.importData(customTable, data, append);
+    }
+
+    private List<Map<String, Object>> readGeneratedFile(String path, String separator) {
+        List<Map<String, Object>> records = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            String line;
+            String[] header =  br.readLine().split(separator);
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(separator);
+                Map<String, Object> data = new HashMap<>();
+                for(int index = 0; index < header.length; index++) {
+                    data.put(header[index].replaceAll("\\s+",""), values[index]);
+                }
+                records.add(data);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return records;
+    }
+
+    private void generateEmptyReport(String filename, StringBuilder sbDir, ReportExtractResultTypeEnum reportType) {
+        if(reportType.equals(ReportExtractResultTypeEnum.HTML) && FilenameUtils.getExtension(filename.toLowerCase()).equals("csv")) {
+                filename = FileUtils.changeExtension(filename, ".html");
+        }
+        File dir = new File(sbDir.toString());
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File file = new File(sbDir + File.separator + filename);
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
