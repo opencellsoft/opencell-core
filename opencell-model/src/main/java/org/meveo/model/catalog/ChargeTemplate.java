@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -278,7 +279,7 @@ public abstract class ChargeTemplate extends EnableBusinessCFEntity {
     private String sortIndexEl;
 
     @ManyToMany(mappedBy = "chargeTemplates", cascade = CascadeType.ALL)
-    private Set<Attribute> attributes;
+    private Set<Attribute> attributes = new HashSet<>();
 
     // Calculated values
     @Transient

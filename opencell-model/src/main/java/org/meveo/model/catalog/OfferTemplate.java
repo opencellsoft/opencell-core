@@ -221,6 +221,11 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "minimum_article_id")
     private AccountingArticle minimumArticle;
+    
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "is_model")
+    private Boolean isModel;
 
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
@@ -633,4 +638,15 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     public void setMinimumArticle(AccountingArticle minimumArticle) {
         this.minimumArticle = minimumArticle;
     }
+
+	public Boolean getIsModel() {
+		return isModel;
+	}
+
+	public void setIsModel(Boolean isModel) {
+		this.isModel = isModel;
+	}
+    
+    
+    
 }

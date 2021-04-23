@@ -275,6 +275,12 @@ public class ProductApi extends BaseApi {
 							.sorted( (pv1, pv2) -> pv2.getAuditable().compareByUpdated(pv1.getAuditable())).collect(Collectors.toList());
 				product.setCurrentVersion(noPublishedVersion.get(0));
 			}
+			
+			Boolean isModel = productDto.getIsModel();
+		       if (isModel != null) {
+		    	   product.setIsModel(isModel);
+		       }
+		       
 			if(productDto.getCustomFields() != null) {
 				populateCustomFields(productDto.getCustomFields(), product, false);
 			}
@@ -571,6 +577,11 @@ public class ProductApi extends BaseApi {
 			product.setBrand(customerBrand);
 		}
 
+		   Boolean isModel = productDto.getIsModel();
+	       if (isModel != null) {
+	    	   product.setIsModel(isModel);
+	       }
+           
     	if(productDto.getDiscountList() != null && !productDto.getDiscountList().isEmpty()){
     		product.setDiscountList(productDto.getDiscountList().stream()
 					.map(discount -> createDiscountPlan(discount))

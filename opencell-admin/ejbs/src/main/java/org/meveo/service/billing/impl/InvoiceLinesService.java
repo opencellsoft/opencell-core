@@ -30,6 +30,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
@@ -349,6 +350,7 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
 		Optional.ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
 		Optional.ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
 		Optional.ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
+		Optional.ofNullable(resource.getDescription()).ifPresent(invoiceLine::setDescription);
 		
 		if(resource.getServiceInstanceCode()!=null) {
 			invoiceLine.setServiceInstance((ServiceInstance)tryToFindByEntityClassAndCode(ServiceInstance.class, resource.getServiceInstanceCode()));
@@ -384,6 +386,14 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
 		if(resource.isTaxRecalculated()!=null){
 			invoiceLine.setTaxRecalculated( resource.isTaxRecalculated());
 		}
+		
+		var datePeriod = new DatePeriod();
+		if(resource.getStartDate() != null)
+			datePeriod.setFrom(resource.getStartDate());
+		if(resource.getEndDate() != null)
+			datePeriod.setTo(resource.getEndDate());
+		
+		invoiceLine.setValidity(datePeriod);
 		invoiceLine.setProductVersion((ProductVersion)tryToFindByEntityClassAndId(ProductVersion.class, resource.getProductVersionId()));
 		invoiceLine.setOfferServiceTemplate((OfferServiceTemplate) tryToFindByEntityClassAndId(OfferServiceTemplate.class, resource.getOfferServiceTemplateId()));
 		invoiceLine.setCommercialOrder((CommercialOrder)tryToFindByEntityClassAndId(CommercialOrder.class, resource.getCommercialOrderId()));

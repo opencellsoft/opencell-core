@@ -86,6 +86,9 @@ public class ProductDto extends BaseEntityDto{
 	@Schema(description = "List of media codes")
     protected Set<String> mediaCodes = new HashSet<String>();
     
+    @Schema(description = "allowing to create,update and delete an product from a model")
+    protected Boolean isModel=Boolean.FALSE;
+    
     
     public ProductDto() {}
     
@@ -368,4 +371,14 @@ public class ProductDto extends BaseEntityDto{
 	public void setProductChargeTemplateMappingDto(List<ProductChargeTemplateMappingDto> productChargeTemplateMappingDto) {
 		this.productChargeTemplateMappingDto = productChargeTemplateMappingDto;
 	}
+
+	public Boolean getIsModel() {
+		return isModel;
+	}
+
+	public void setIsModel(Boolean isModel) {
+		this.isModel = isModel;
+	}
+	
+	
 }

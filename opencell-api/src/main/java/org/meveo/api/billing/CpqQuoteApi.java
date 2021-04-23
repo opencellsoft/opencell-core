@@ -1031,6 +1031,10 @@ public class CpqQuoteApi extends BaseApi {
                 quoteVersion.getStatus().equals(VersionStatusEnum.PUBLISHED)) {
             throw new MeveoApiException("you can not update the quote version with status = " + quoteVersion.getStatus());
         }
+        var quoteVersionPublished = quoteVersionService.findByQuoteIdAndStatusActive(quoteVersion.getQuote().getId());
+        var numberQuoteVersionPublished = quoteVersionPublished.stream().filter(qv -> qv.getQuoteVersion().intValue() != currentVersion).collect(Collectors.toList()).size();
+        if(numberQuoteVersionPublished > 0)
+        	throw new MeveoApiException("There are already publish version.One Version can be published per Quote!!");
         quoteVersion.setStatus(status);
         quoteVersion.setStatusDate(Calendar.getInstance().getTime());
         quoteVersionService.update(quoteVersion);

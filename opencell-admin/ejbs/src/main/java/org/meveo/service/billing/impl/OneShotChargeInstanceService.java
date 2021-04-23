@@ -247,7 +247,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
             quantity = BigDecimal.ONE;
         }
 
-        if (!chargeTemplate.getAmountEditable()) {
+        if (chargeTemplate.getAmountEditable() != null && !chargeTemplate.getAmountEditable()) {
             amoutWithoutTax = null;
             amoutWithTax = null;
         }
