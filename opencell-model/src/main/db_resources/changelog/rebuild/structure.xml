@@ -4027,6 +4027,7 @@
             <column name="status_date" type="datetime" />
             <column name="minimum_article_id" type="bigint" />
             <column name="offer_template_id" type="bigint"/>
+            <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-217">
@@ -8448,6 +8449,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
             <column name="product_version_id" type="bigint" />
+            <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
         </createTable>
     </changeSet>
 
