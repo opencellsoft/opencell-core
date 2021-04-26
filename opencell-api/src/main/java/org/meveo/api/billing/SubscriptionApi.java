@@ -614,6 +614,7 @@ public class SubscriptionApi extends BaseApi {
                 serviceInstance.setServiceTemplate(serviceTemplate);
                 serviceInstance.setSubscription(subscription);
                 serviceInstance.setRateUntilDate(serviceToActivateDto.getRateUntilDate());
+                serviceInstance.setCalendarInitDate(serviceToActivateDto.getCalendarInitDate());
                 if (serviceToActivateDto.getSubscriptionDate() == null) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
@@ -804,6 +805,7 @@ public class SubscriptionApi extends BaseApi {
         serviceInstance.setOrderItemAction(orderItemAction);
         serviceInstance.setAmountPS(serviceToInstantiateDto.getAmountPS());
         serviceInstance.setCalendarPS(calendarPS);
+        serviceInstance.setCalendarInitDate(serviceToInstantiateDto.getCalendarInitDate());
 
         if (serviceToInstantiateDto.getSubscriptionDate() == null) {
             Calendar calendar = Calendar.getInstance();
@@ -2536,10 +2538,20 @@ public class SubscriptionApi extends BaseApi {
         }
         createAccess(existingSubscriptionDto);
 
+        // get subscription date of the very first version of the subscription
+        Date initialSubscriptionDate = subscriptionService.findListByCode(code).stream()
+                .filter(sub -> sub.getValidity() == null || sub.getValidity().getFrom() == null)
+                .findFirst().get().getSubscriptionDate();
+
         if (subscriptionPatchDto.getServicesToInstantiate() != null) {
             List<ServiceToInstantiateDto> serviceToInstantiateDtos = checkCompatibilityAndGetServiceToInstantiate(newSubscription, subscriptionPatchDto.getServicesToInstantiate());
-            serviceToInstantiateDtos.stream()
-                    .forEach(s -> s.setSubscriptionDate(effectiveDate));
+            serviceToInstantiateDtos.forEach(s -> {
+                        s.setSubscriptionDate(effectiveDate);
+                        //services calendars should start by default from first sub date
+                        if (s.getCalendarInitDate() == null) {
+                            s.setCalendarInitDate(initialSubscriptionDate);
+                        }
+                    });
             for (ServiceToInstantiateDto serviceToInstantiateDto : serviceToInstantiateDtos) {
                 instantiateServiceForSubscription(serviceToInstantiateDto, newSubscription, null, null, null);
             }
@@ -2548,8 +2560,13 @@ public class SubscriptionApi extends BaseApi {
         if (subscriptionPatchDto.getServicesToActivate() != null) {
             subscriptionPatchDto.getServicesToActivate()
                     .getService()
-                    .stream()
-                    .forEach(s -> s.setSubscriptionDate(effectiveDate));
+                    .forEach(s -> {
+                        s.setSubscriptionDate(effectiveDate);
+                        //services calendars should start by default from first sub date
+                        if (s.getCalendarInitDate() == null) {
+                            s.setCalendarInitDate(initialSubscriptionDate);
+                        }
+                    });
             activateServices(subscriptionPatchDto.getServicesToActivate(), newSubscription, null, null, null);
         }
 
