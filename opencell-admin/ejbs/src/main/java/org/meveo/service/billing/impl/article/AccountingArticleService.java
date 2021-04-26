@@ -80,7 +80,8 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			ArticleMappingLine bestMatch = attributeMappingLineMatch.getBestMatch();
 			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode("ART-STD");
 		}
-		detach(result);
+		if(result != null)
+			detach(result);
 		return  result != null ? Optional.of(result) : Optional.empty();
 	}
 

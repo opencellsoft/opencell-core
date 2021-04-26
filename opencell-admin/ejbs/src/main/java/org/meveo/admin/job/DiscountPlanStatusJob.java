@@ -64,31 +64,35 @@ public class DiscountPlanStatusJob extends Job {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected JobExecutionResultImpl execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        String expireDiscountPlanToDateEl = (String) this.getParamOrCFValue(jobInstance, "expireDiscountPlanToDateEl");
-        Date expireDiscountPlanToDate = new Date();
-        if (!StringUtils.isBlank(expireDiscountPlanToDateEl)) {
-            Map<Object, Object> context = new HashMap<>();
-            context.put("jobInstance", jobInstance);
-            expireDiscountPlanToDate = ValueExpressionWrapper.evaluateExpression(expireDiscountPlanToDateEl, context, Date.class);
-        }
-        try {
+        
 
-            List<Long> discountPlanIds = discountPlanService.getDiscountPlanToExpire(expireDiscountPlanToDate);
-            jobExecutionService.initCounterElementsRemaining(result, discountPlanIds.size());
-            int i = 0;
-            for (Long discountPlanId : discountPlanIds) {
-                i++;
-                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
-                    break;
-                }
-                discountPlanStatusJobBean.expireDiscountPlan(result, discountPlanId);
-                jobExecutionService.decCounterElementsRemaining(result);
-            }
-
-        } catch (Exception e) {
-            log.error("Failed to run discount plan status job {}", jobInstance.getCode(), e);
-            jobExecutionService.registerError(result, e.getMessage());
-        }
+     // AKK change job logic   
+        
+//        String expireDiscountPlanToDateEl = (String) this.getParamOrCFValue(jobInstance, "expireDiscountPlanToDateEl");
+//        Date expireDiscountPlanToDate = new Date();
+//        if (!StringUtils.isBlank(expireDiscountPlanToDateEl)) {
+//            Map<Object, Object> context = new HashMap<>();
+//            context.put("jobInstance", jobInstance);
+//            expireDiscountPlanToDate = ValueExpressionWrapper.evaluateExpression(expireDiscountPlanToDateEl, context, Date.class);
+//        }
+//        try {
+//
+//            List<Long> discountPlanIds = discountPlanService.getDiscountPlanToExpire(expireDiscountPlanToDate);
+//            jobExecutionService.initCounterElementsRemaining(result, discountPlanIds.size());
+//            int i = 0;
+//            for (Long discountPlanId : discountPlanIds) {
+//                i++;
+//                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+//                    break;
+//                }
+//                discountPlanStatusJobBean.expireDiscountPlan(result, discountPlanId);
+//                jobExecutionService.decCounterElementsRemaining(result);
+//            }
+//
+//        } catch (Exception e) {
+//            log.error("Failed to run discount plan status job {}", jobInstance.getCode(), e);
+//            jobExecutionService.registerError(result, e.getMessage());
+//        }
         return result;
 
     }

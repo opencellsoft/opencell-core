@@ -25,6 +25,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -56,6 +57,7 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @Interceptors(JobExecutionResultInterceptor.class)
     public void persistResult(JobExecutionResultImpl result) {
 
         if (result.getId() == null) {
