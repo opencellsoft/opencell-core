@@ -2,7 +2,6 @@ package org.meveo.service.job;
 
 import org.eclipse.microprofile.metrics.*;
 import org.eclipse.microprofile.metrics.annotation.RegistryType;
-import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,19 +9,21 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
+import java.util.List;
+import java.util.concurrent.Future;
 
 /**
- * Interceptor to update the Jobs informations in realtime
+ * Interceptor to update the Jobs number of threads in realtime
  *
  * @author Mohamed Ali Hammal
  * @since 11.X
  */
-public class JobExecutionResultInterceptor {
+public class JobExecutionInterceptor {
 
     /**
      * class logger
      */
-    private static final Logger log = LoggerFactory.getLogger(JobExecutionResultInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(JobExecutionInterceptor.class);
 
     @Inject
     @RegistryType(type = MetricRegistry.Type.APPLICATION)
@@ -39,18 +40,15 @@ public class JobExecutionResultInterceptor {
     @AroundInvoke
     public Object aroundInvoke(InvocationContext context) throws Exception {
         Object[] entity = context.getParameters();
-        JobExecutionResultImpl result = (JobExecutionResultImpl) entity[0];
+        List<Future> result = (List<Future>) entity[3];
 
-        // Update the counters
-        long NBofOKs = result.getNbItemsCorrectlyProcessed();
-        long NBofKOs = result.getNbItemsProcessedWithError();
-        long NBofRemainingValues = (result.getNbItemsToProcess() - NBofOKs - NBofKOs);
+        long nbThreads = 0;
 
+        if(result != null && !result.isEmpty()) {
+            nbThreads = result.size();
+        }
 
-
-        counterInc(result, "number_of_OKs",NBofOKs);
-        counterInc(result, "number_of_KOs",NBofKOs);
-        counterInc(result, "number_of_Remaining_Items",NBofRemainingValues);
+        counterInc((JobInstance) entity[0], "number_of_Threads", nbThreads);
 
         try{
             return context.proceed();
@@ -61,13 +59,12 @@ public class JobExecutionResultInterceptor {
     }
 
     /**
-     * Increment counter metric for JobExecutionResultImpl
+     * Increment counter metric for JobExecution
      *
      * @param value
      * @param name the name of metric
      */
-    private void counterInc(JobExecutionResultImpl jobExecutionResultImpl, String name, Long value) {
-        JobInstance jobInstance = jobExecutionResultImpl.getJobInstance();
+    private void counterInc(JobInstance jobInstance, String name, Long value) {
         Metadata metadata = new MetadataBuilder().withName(name + "_" + jobInstance.getJobTemplate()).reusable().build();
         Tag tgName = new Tag("name", jobInstance.getCode());
         Counter counter = registry.counter(metadata, tgName);
