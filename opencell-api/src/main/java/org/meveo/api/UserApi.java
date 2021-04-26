@@ -165,6 +165,8 @@ public class UserApi extends BaseApi {
             user.setRoles(roles);
             user.setSecuredEntities(securedEntities);
             user.setUserLevel(userHierarchyLevel);
+            if(postData.getCustomFields() != null)
+                super.populateCustomFields(postData.getCustomFields(), user, true, true);
 
             userService.create(user);
         }
@@ -247,6 +249,9 @@ public class UserApi extends BaseApi {
             user.setSecuredEntities(securedEntities);
         }
         user.setUserLevel(userHierarchyLevel);
+        if(postData.getCustomFields() != null){
+            populateCustomFields(postData.getCustomFields(), user, false, true);
+        }
 
         userService.update(user);
     }
