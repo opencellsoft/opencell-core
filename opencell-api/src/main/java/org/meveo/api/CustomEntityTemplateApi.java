@@ -41,6 +41,14 @@ import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.EntityCustomActionService;
 import org.meveo.util.EntityCustomizationUtils;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * @author Andrius Karpavicius
  * @author Edward P. Legaspi
@@ -246,7 +254,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
             cets = customEntityTemplateService.findByCodeLike(code);
         }
 
-        List<CustomEntityTemplateDto> cetDtos = new ArrayList<CustomEntityTemplateDto>();
+        List<CustomEntityTemplateDto> cetDtos = new ArrayList<>();
 
         for (CustomEntityTemplate cet : cets) {
             cetDtos.add(convertCustomEntityTemplateToDTO(cet));

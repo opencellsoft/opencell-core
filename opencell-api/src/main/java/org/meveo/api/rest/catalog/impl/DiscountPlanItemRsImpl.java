@@ -28,7 +28,6 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.DiscountPlanItemRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.catalog.DiscountPlanItem;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 
 import javax.enterprise.context.RequestScoped;

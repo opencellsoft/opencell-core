@@ -18,44 +18,31 @@
 
 package org.meveo.api.rest.catalog.impl;
 
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import javax.ws.rs.core.Response;
-
 import org.meveo.api.catalog.PricePlanMatrixApi;
 import org.meveo.api.catalog.PricePlanMatrixColumnApi;
 import org.meveo.api.catalog.PricePlanMatrixLineApi;
 import org.meveo.api.catalog.PricePlanMatrixVersionApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.catalog.LoadPricesRequest;
-import org.meveo.api.dto.catalog.MatrixRatingRequest;
-import org.meveo.api.dto.catalog.PricePlanMatrixColumnDto;
-import org.meveo.api.dto.catalog.PricePlanMatrixDto;
-import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
-import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
+import org.meveo.api.dto.catalog.*;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.dto.response.catalog.GetListPricePlanMatrixVersionResponseDto;
-import org.meveo.api.dto.response.catalog.GetPricePlanMatrixColumnResponseDto;
-import org.meveo.api.dto.response.catalog.GetPricePlanMatrixLineResponseDto;
-import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
-import org.meveo.api.dto.response.catalog.GetPricePlanVersionResponseDto;
-import org.meveo.api.dto.response.catalog.PricePlanMatrixLinesDto;
-import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
+import org.meveo.api.dto.response.catalog.*;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.PricePlanRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
-import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
