@@ -42,13 +42,13 @@ public class JobExecutionInterceptor {
         Object[] entity = context.getParameters();
         List<Future> result = (List<Future>) entity[3];
 
-        long nbThreads = 0;
+        long numberOfThreads = 0;
 
         if(result != null && !result.isEmpty()) {
-            nbThreads = result.size();
+            numberOfThreads = result.size();
         }
 
-        counterInc((JobInstance) entity[0], "number_of_Threads", nbThreads);
+        counterInc((JobInstance) entity[0], "number_of_Threads", numberOfThreads);
 
         try{
             return context.proceed();

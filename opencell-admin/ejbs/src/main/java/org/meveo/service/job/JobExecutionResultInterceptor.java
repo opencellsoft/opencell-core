@@ -42,15 +42,15 @@ public class JobExecutionResultInterceptor {
         JobExecutionResultImpl result = (JobExecutionResultImpl) entity[0];
 
         // Update the counters
-        long NBofOKs = result.getNbItemsCorrectlyProcessed();
-        long NBofKOs = result.getNbItemsProcessedWithError();
-        long NBofRemainingValues = (result.getNbItemsToProcess() - NBofOKs - NBofKOs);
+        long numberOfOKs = result.getNbItemsCorrectlyProcessed();
+        long numberOfKOs = result.getNbItemsProcessedWithError();
+        long numberOfRemainingValues = (result.getNbItemsToProcess() - numberOfOKs - numberOfKOs);
 
 
 
-        counterInc(result, "number_of_OKs",NBofOKs);
-        counterInc(result, "number_of_KOs",NBofKOs);
-        counterInc(result, "number_of_Remaining_Items",NBofRemainingValues);
+        counterInc(result, "number_of_OKs", numberOfOKs);
+        counterInc(result, "number_of_KOs",numberOfKOs);
+        counterInc(result, "number_of_Remaining_Items",numberOfRemainingValues);
 
         try{
             return context.proceed();
