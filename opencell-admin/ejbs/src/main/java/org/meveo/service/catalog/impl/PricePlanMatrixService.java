@@ -744,12 +744,16 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     }
 
     public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) {
-        String serviceCode = chargeInstance.getServiceInstance().getCode();
-        Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()
-                            .stream()
-                            .map(attributeInstance -> (AttributeValue)attributeInstance)
-                            .collect(Collectors.toSet());
-        return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, serviceCode);
+        if( chargeInstance.getServiceInstance()!=null) {
+        	String serviceCode=chargeInstance.getServiceInstance().getCode();
+        	   Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()
+                       .stream()
+                       .map(attributeInstance -> (AttributeValue)attributeInstance)
+                       .collect(Collectors.toSet());
+        	   return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, serviceCode);
+        }
+     
+        return null; 
     }
     public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, String productCode,Set<AttributeValue> attributeValues) {
         
