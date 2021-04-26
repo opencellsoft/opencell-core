@@ -1446,7 +1446,7 @@
             <column name="minimum_amount_el_sp" type="varchar(2000)" />
             <column name="minimum_label_el_sp" type="varchar(2000)" />
             <column name="minimum_charge_template_id" type="bigint" />
-            <column name="company" type="${type.boolean}"/>
+            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
         </createTable>
     </changeSet>

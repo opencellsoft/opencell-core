@@ -8260,7 +8260,7 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
     <changeSet id="#20210401_402" author="TarikFA.">
         <addColumn tableName="account_entity">
-            <column name="company" type="${type.boolean}"/>
+            <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
         </addColumn>
         <addForeignKeyConstraint baseColumnNames="legal_entity_type_id" baseTableName="account_entity" constraintName="fk_account_entity_legal_entity_type_id" deferrable="false" initiallyDeferred="false"
