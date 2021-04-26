@@ -34,8 +34,9 @@ public class NativeExpressionFactory {
     	if(key.endsWith(".id")) {
         	Object ids = (value instanceof Collection)? ((Collection)value).stream().map(x->Long.parseLong(x.toString())).collect(Collectors.toList()):Long.parseLong(value.toString());
             checkOnCondition(key, ids, new ExpressionParser(key.split(" ")));
-    	} else
+    	} else {
     		checkOnCondition(key, value, new ExpressionParser(key.split(" ")));
+    	}
     }
 
     protected void checkOnCondition(String key, Object value, ExpressionParser exp) {
