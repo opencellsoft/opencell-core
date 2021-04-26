@@ -13,11 +13,10 @@ import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.restful.annotation.GetAllEntities;
 import org.meveo.api.restful.services.Apiv1ConstantDictionary;
 import org.meveo.api.restful.services.Apiv1GetService;
+import org.meveo.api.restful.util.RegExHashMap;
 import org.meveo.apiv2.GenericJacksonProvider;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
-import org.meveo.apiv2.generic.VersionImpl;
-import org.meveo.api.restful.util.RegExHashMap;
 import org.meveo.apiv2.generic.exception.*;
 import org.meveo.apiv2.generic.services.GenericApiLoggingFilter;
 import org.meveo.apiv2.ordering.resource.order.OrderResourceImpl;
@@ -112,7 +111,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public Set<Class<?>> getClasses() {
-        Set<Class<?>> resources = Stream.of(VersionImpl.class, GenericResourceAPIv1Impl.class, NotYetImplementedResource.class,
+        Set<Class<?>> resources = Stream.of(GenericResourceAPIv1Impl.class, NotYetImplementedResource.class,
                 NotFoundExceptionMapper.class, BadRequestExceptionMapper.class,
                 MeveoExceptionMapper.class, IllegalArgumentExceptionMapper.class,
                 EJBTransactionRolledbackExceptionMapper.class, OpenApiResource.class,
