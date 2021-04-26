@@ -18,24 +18,11 @@
 
 package org.meveo.api;
 
-import java.util.function.BiFunction;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
-import org.meveo.api.dto.BillingCyclesDto;
 import org.meveo.api.exception.*;
-import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.InvoiceType;
@@ -47,6 +34,10 @@ import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.script.ScriptInstanceService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.function.BiFunction;
 
 /**
  * @author Edward P. Legaspi

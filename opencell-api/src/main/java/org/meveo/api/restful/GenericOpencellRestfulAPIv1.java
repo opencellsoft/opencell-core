@@ -15,7 +15,6 @@ import org.meveo.api.restful.services.Apiv1ConstantDictionary;
 import org.meveo.api.restful.services.Apiv1GetService;
 import org.meveo.apiv2.GenericJacksonProvider;
 import org.meveo.apiv2.document.DocumentResourceImpl;
-import org.meveo.apiv2.generic.GenericResourceAPIv1Impl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
 import org.meveo.api.restful.util.RegExHashMap;
 import org.meveo.apiv2.generic.exception.*;
