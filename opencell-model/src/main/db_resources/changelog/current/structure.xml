@@ -8691,4 +8691,14 @@ public class OrderAdvancement extends ModuleScript {
         </createTable>
     </changeSet>
 
+    <changeSet id="07042021-540-423" author="NabilOuachi">
+
+        <sql>
+            <![CDATA[
+				update billing_tax_class set version = 0 where code = 'NO_TAX';
+                update billing_tax_class set version = 0 where code = 'NORMAL';
+                update billing_tax_class set version = 0 where code = 'REDUCED';
+			]]>
+        </sql>
+    </changeSet>
 </databaseChangeLog>
