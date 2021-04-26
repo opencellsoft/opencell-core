@@ -89,6 +89,13 @@ public class RecurringChargeInstance extends ChargeInstance {
     private Calendar calendar;
 
     /**
+     * The calendar init date
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "calendar_init_date")
+    private Date calendarInitDate;
+
+    /**
      * Apply charge in advance - at the beginning of the period. If false, charge will be applied at the end of the period
      */
     @Type(type = "numeric_boolean")
@@ -108,10 +115,11 @@ public class RecurringChargeInstance extends ChargeInstance {
         this.quantity = serviceInstance.getQuantity() == null ? BigDecimal.ONE : serviceInstance.getQuantity();
 
     }
-    public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, RecurringChargeTemplate recurringChargeTemplate, ServiceInstance serviceInstance,
-                                   InstanceStatusEnum status, Calendar calendar, Boolean applyInAdvance) {
+    public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, RecurringChargeTemplate recurringChargeTemplate,
+                                   ServiceInstance serviceInstance, InstanceStatusEnum status, Calendar calendar, Date calendarInitDate, Boolean applyInAdvance) {
         this(amountWithoutTax, amountWithTax, recurringChargeTemplate, serviceInstance, status);
         this.calendar = calendar;
+        this.calendarInitDate = calendarInitDate;
         this.applyInAdvance = applyInAdvance;
     }
     public RecurringChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, Date subscriptionDate, Subscription subscription, Seller seller,
@@ -199,6 +207,24 @@ public class RecurringChargeInstance extends ChargeInstance {
      */
     public void setCalendar(Calendar calendar) {
         this.calendar = calendar;
+    }
+
+    /**
+     * Gets the calendar initial date
+     *
+     * @return the calendar initial date
+     */
+    public Date getCalendarInitDate() {
+        return calendarInitDate;
+    }
+
+    /**
+     * Sets the calendar initial date
+     *
+     * @param calendarInitDate the new calendar initial date
+     */
+    public void setCalendarInitDate(Date calendarInitDate) {
+        this.calendarInitDate = calendarInitDate;
     }
 
     /**
