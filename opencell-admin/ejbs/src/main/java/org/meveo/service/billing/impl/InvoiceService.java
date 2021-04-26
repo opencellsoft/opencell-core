@@ -4192,7 +4192,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (BigDecimal.ZERO.compareTo(amountByTax.getValue().getAmount(!isEnterprise)) != 0) {
                 Tax tax = amountByTax.getKey();
                 TaxInvoiceAgregate invoiceAgregateTax;
-                if (taxInvoiceAgregateMap.containsKey(tax.getId())) {
+                if (tax != null && taxInvoiceAgregateMap != null && taxInvoiceAgregateMap.containsKey(tax.getId())) {
                     invoiceAgregateTax = taxInvoiceAgregateMap.get(tax.getId());
                 } else {
                     invoiceAgregateTax = initTaxInvoiceAgregate(billingAccount, auditable, invoice, tax);
