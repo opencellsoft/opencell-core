@@ -33,6 +33,7 @@ import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.infinispan.Cache;
 import org.infinispan.commons.CacheException;
@@ -44,6 +45,7 @@ import org.meveo.commons.utils.ThreadUtils;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.job.JobExecutionInterceptor;
 import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
 
@@ -315,6 +317,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     // @Lock(LockType.WRITE)
     @SuppressWarnings("rawtypes")
+    @Interceptors(JobExecutionInterceptor.class)
     public JobRunningStatusEnum markJobAsRunning(JobInstance jobInstance, boolean limitToSingleNode, Long jobExecutionResultId, List<Future> threads) {
 
         String currentNode = EjbUtils.getCurrentClusterNode();
@@ -461,6 +464,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @param jobInstance Job instance
      */
     // @Lock(LockType.READ)
+    @Interceptors(JobExecutionInterceptor.class)
     public void markJobAsFinished(JobInstance jobInstance) {
 
         String currentNode = EjbUtils.getCurrentClusterNode();

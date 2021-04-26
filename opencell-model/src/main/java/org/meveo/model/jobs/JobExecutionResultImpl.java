@@ -42,7 +42,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.NotifiableEntity;
-import org.meveo.model.ObservableEntity;
 
 /**
  * Job execution statistics
@@ -52,7 +51,6 @@ import org.meveo.model.ObservableEntity;
 @Entity
 @Table(name = "job_execution")
 @NotifiableEntity
-@ObservableEntity
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = { @Parameter(name = "sequence_name", value = "job_execution_seq"), })
 @NamedQueries({ @NamedQuery(name = "JobExecutionResult.countHistoryToPurgeByDate", query = "select count(*) FROM JobExecutionResultImpl hist WHERE hist.startDate<=:date"),
         @NamedQuery(name = "JobExecutionResult.purgeHistoryByDate", query = "delete JobExecutionResultImpl hist WHERE hist.startDate<=:date"),

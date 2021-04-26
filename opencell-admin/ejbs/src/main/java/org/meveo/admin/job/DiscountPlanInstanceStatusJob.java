@@ -76,57 +76,64 @@ public class DiscountPlanInstanceStatusJob extends Job {
     }
 
     private void activateDiscountPlanInstance(JobExecutionResultImpl result, JobInstance jobInstance, String activateDiscountPlanInstanceFromDateEl) {
-        Date activateDiscountPlanInstanceToDate = new Date();
-        if (!StringUtils.isBlank(activateDiscountPlanInstanceFromDateEl)) {
-            Map<Object, Object> context = new HashMap<>();
-            context.put("jobInstance", jobInstance);
-            activateDiscountPlanInstanceToDate = ValueExpressionWrapper.evaluateExpression(activateDiscountPlanInstanceFromDateEl, context, Date.class);
-        }
-        try {
 
-            List<Long> discountPlanInstanceIds = discountPlanInstanceService.getDiscountPlanInstanceToActivate(activateDiscountPlanInstanceToDate);
-            jobExecutionService.initCounterElementsRemaining(result, discountPlanInstanceIds.size());
-            int i = 0;
-            for (Long discountPlanInstanceId : discountPlanInstanceIds) {
-                i++;
-                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
-                    break;
-                }
-                discountPlanInstanceStatusJobBean.updateDiscountPlanInstanceStatus(result, discountPlanInstanceId, DiscountPlanInstanceStatusEnum.ACTIVE);
-                jobExecutionService.decCounterElementsRemaining(result);
-            }
-
-        } catch (Exception e) {
-            log.error("Failed to run discount plan instance status job {}", jobInstance.getCode(), e);
-            jobExecutionService.registerError(result, e.getMessage());
-        }
+// AKK change job logic         
+        
+//        Date activateDiscountPlanInstanceToDate = new Date();
+//        if (!StringUtils.isBlank(activateDiscountPlanInstanceFromDateEl)) {
+//            Map<Object, Object> context = new HashMap<>();
+//            context.put("jobInstance", jobInstance);
+//            activateDiscountPlanInstanceToDate = ValueExpressionWrapper.evaluateExpression(activateDiscountPlanInstanceFromDateEl, context, Date.class);
+//        }
+//        try {
+//
+//            List<Long> discountPlanInstanceIds = discountPlanInstanceService.getDiscountPlanInstanceToActivate(activateDiscountPlanInstanceToDate);
+//            jobExecutionService.initCounterElementsRemaining(result, discountPlanInstanceIds.size());
+//            int i = 0;
+//            for (Long discountPlanInstanceId : discountPlanInstanceIds) {
+//                i++;
+//                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+//                    break;
+//                }
+//                discountPlanInstanceStatusJobBean.updateDiscountPlanInstanceStatus(result, discountPlanInstanceId, DiscountPlanInstanceStatusEnum.ACTIVE);
+//                jobExecutionService.decCounterElementsRemaining(result);
+//            }
+//
+//        } catch (Exception e) {
+//            log.error("Failed to run discount plan instance status job {}", jobInstance.getCode(), e);
+//            jobExecutionService.registerError(result, e.getMessage());
+//        }
     }
 
     private void expireDiscountPlanInstance(JobExecutionResultImpl result, JobInstance jobInstance, String expireDiscountPlanInstanceToDateEl) {
-        Date expireDiscountPlanInstanceToDate = new Date();
-        if (!StringUtils.isBlank(expireDiscountPlanInstanceToDateEl)) {
-            Map<Object, Object> context = new HashMap<>();
-            context.put("jobInstance", jobInstance);
-            expireDiscountPlanInstanceToDate = ValueExpressionWrapper.evaluateExpression(expireDiscountPlanInstanceToDateEl, context, Date.class);
-        }
-        try {
+        
 
-            List<Long> discountPlanInstanceIds = discountPlanInstanceService.getDiscountPlanInstanceToExpire(expireDiscountPlanInstanceToDate);
-            jobExecutionService.initCounterElementsRemaining(result, discountPlanInstanceIds.size());
-            int i = 0;
-            for (Long discountPlanInstanceId : discountPlanInstanceIds) {
-                i++;
-                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
-                    break;
-                }
-                discountPlanInstanceStatusJobBean.updateDiscountPlanInstanceStatus(result, discountPlanInstanceId, DiscountPlanInstanceStatusEnum.EXPIRED);
-                jobExecutionService.decCounterElementsRemaining(result);
-            }
-
-        } catch (Exception e) {
-            log.error("Failed to run discount plan instance status job {}", jobInstance.getCode(), e);
-            jobExecutionService.registerError(result, e.getMessage());
-        }
+     // AKK change job logic   
+        
+//        Date expireDiscountPlanInstanceToDate = new Date();
+//        if (!StringUtils.isBlank(expireDiscountPlanInstanceToDateEl)) {
+//            Map<Object, Object> context = new HashMap<>();
+//            context.put("jobInstance", jobInstance);
+//            expireDiscountPlanInstanceToDate = ValueExpressionWrapper.evaluateExpression(expireDiscountPlanInstanceToDateEl, context, Date.class);
+//        }
+//        try {
+//
+//            List<Long> discountPlanInstanceIds = discountPlanInstanceService.getDiscountPlanInstanceToExpire(expireDiscountPlanInstanceToDate);
+//            jobExecutionService.initCounterElementsRemaining(result, discountPlanInstanceIds.size());
+//            int i = 0;
+//            for (Long discountPlanInstanceId : discountPlanInstanceIds) {
+//                i++;
+//                if (i % JobExecutionService.CHECK_IS_JOB_RUNNING_EVERY_NR == 0 && !jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+//                    break;
+//                }
+//                discountPlanInstanceStatusJobBean.updateDiscountPlanInstanceStatus(result, discountPlanInstanceId, DiscountPlanInstanceStatusEnum.EXPIRED);
+//                jobExecutionService.decCounterElementsRemaining(result);
+//            }
+//
+//        } catch (Exception e) {
+//            log.error("Failed to run discount plan instance status job {}", jobInstance.getCode(), e);
+//            jobExecutionService.registerError(result, e.getMessage());
+//        }
     }
 
     @Override
