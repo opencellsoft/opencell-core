@@ -168,6 +168,11 @@ public class AttributeDTO extends EnableBusinessDto {
         
         
     }
+    
+    public AttributeDTO(Attribute attribute, CustomFieldsDto customFieldsDto) {
+    	this(attribute);
+    	this.customFields = customFieldsDto;
+    }
 
 	public AttributeTypeEnum getAttributeType() {
 		return attributeType;
