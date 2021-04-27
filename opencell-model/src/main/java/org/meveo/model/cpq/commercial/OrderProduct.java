@@ -14,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -23,6 +24,7 @@ import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.quote.QuoteProduct;
 
 /** 
  * @author Tarik F.
@@ -73,6 +75,15 @@ public class OrderProduct extends AuditableCFEntity {
     @ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
 	private DiscountPlan discountPlan;
+    
+    
+    /**
+   	 * quote product attached to this orderOffer
+   	 */
+       
+   	@OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "quote_prodcut_id")
+   	private QuoteProduct quoteProduct;
 	
 	
 	public void update(OrderProduct other) {
@@ -180,6 +191,16 @@ public class OrderProduct extends AuditableCFEntity {
 
 	public void setDiscountPlan(DiscountPlan discountPlan) {
 		this.discountPlan = discountPlan;
+	}
+	
+	
+
+	public QuoteProduct getQuoteProduct() {
+		return quoteProduct;
+	}
+
+	public void setQuoteProduct(QuoteProduct quoteProduct) {
+		this.quoteProduct = quoteProduct;
 	}
 
 	@Override

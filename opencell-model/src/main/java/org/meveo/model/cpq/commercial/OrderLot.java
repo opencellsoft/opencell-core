@@ -1,10 +1,12 @@
 package org.meveo.model.cpq.commercial;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -14,6 +16,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.quote.QuoteLot;
 
 /** 
  * @author Tarik F.
@@ -41,6 +44,14 @@ public class OrderLot extends BusinessCFEntity{
 	@Size(max = 50)
 	private String name;
 	
+	
+    /**
+   	 * quote product attached to this orderOffer
+   	 */
+       
+   	@OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "quote_lot_id")
+   	private QuoteLot quoteLot;
 
 	/**
 	 * @return the order
@@ -69,5 +80,16 @@ public class OrderLot extends BusinessCFEntity{
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public QuoteLot getQuoteLot() {
+		return quoteLot;
+	}
+
+	public void setQuoteLot(QuoteLot quoteLot) {
+		this.quoteLot = quoteLot;
+	}
+	
+	
+	
 	
 }

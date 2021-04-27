@@ -109,6 +109,7 @@ public class ProductDto extends BaseEntityDto{
     	this.modelChildren = p.getModelChildren();
     	this.discountFlag = p.isDiscountFlag();
     	this.packageFlag = p.isPackageFlag();
+    	this.isModel=p.getIsModel();
     	this.discountList = p.getDiscountList().stream()
 				.map(dl -> new DiscountPlanDto(dl, null))
 				.collect(Collectors.toSet()); 
