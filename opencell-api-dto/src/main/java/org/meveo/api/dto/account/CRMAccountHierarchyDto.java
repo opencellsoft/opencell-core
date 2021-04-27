@@ -267,7 +267,7 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
     @XmlElement
     private ThresholdOptionsEnum customerCheckThreshold;
 
-    private String TaxCategoryCode;
+    private String taxCategoryCode;
 
     /**
      * 
@@ -1256,11 +1256,19 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
         this.customerCheckThreshold = customerCheckThreshold;
     }
 
+    /**
+     *
+     * @return tax Category code
+     */
     public String getTaxCategoryCode() {
-        return TaxCategoryCode;
+        return taxCategoryCode;
     }
 
+    /**
+     * set Tax Category Code
+     * @param taxCategoryCode
+     */
     public void setTaxCategoryCode(String taxCategoryCode) {
-        TaxCategoryCode = taxCategoryCode;
+        this.taxCategoryCode = taxCategoryCode;
     }
 }
