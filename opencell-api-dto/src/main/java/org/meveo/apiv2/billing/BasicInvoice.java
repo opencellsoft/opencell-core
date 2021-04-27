@@ -10,28 +10,37 @@ import org.meveo.apiv2.models.Resource;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Value.Immutable
 @Value.Style(jdkOnly = true)
 @JsonDeserialize(as = ImmutableBasicInvoice.class)
 public interface BasicInvoice extends Resource {
 
+	@Schema(description = "The billing account code")
 	String getBillingAccountCode();
 
 	@Nullable
+	@Schema(description = "The order code for invoice")
 	String getOrderCode();
 
 	@Nullable
+	@Schema(description = "The Date of the invoice")
 	Date getInvoiceDate();
 
 	@Nullable
+	@Schema(description = "The due date")
 	Date getDueDate();
 
 	@Nullable
+	@Schema(description = "The article code for invoice")
 	String getArticleCode();
 
 	@Nullable
+	@Schema(description = "The label")
 	String getLabel();
 
+	@Schema(description = "The maount with tax")
 	BigDecimal getAmountWithTax();
 
 }
