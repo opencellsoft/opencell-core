@@ -1155,7 +1155,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         BillingRun billingRun = findById(billingRunId);
 
-        if (billingRun.getStatus() == BillingRunStatusEnum.POSTINVOICED || billingRun.getStatus() == BillingRunStatusEnum.POSTVALIDATED) {
+        if (billingRun.getStatus() == BillingRunStatusEnum.POSTINVOICED || billingRun.getStatus() == BillingRunStatusEnum.POSTVALIDATED || billingRun.getStatus() == BillingRunStatusEnum.CANCELLING) {
             cleanBillingRun(billingRun);
 
             // Andrius: There Supplemental RTS are not saved in PRE-INVOICE report stage, so there is nothing to delete
