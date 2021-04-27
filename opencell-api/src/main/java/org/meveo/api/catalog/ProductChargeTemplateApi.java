@@ -18,25 +18,23 @@
 
 package org.meveo.api.catalog;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.ProductChargeTemplatesResponseDto;
+import org.meveo.api.exception.*;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.service.catalog.impl.ProductChargeTemplateService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Stateless
 public class ProductChargeTemplateApi extends ChargeTemplateApi<ProductChargeTemplate, ProductChargeTemplateDto> {
@@ -145,5 +143,21 @@ public class ProductChargeTemplateApi extends ChargeTemplateApi<ProductChargeTem
             }
         }
         return dtos;
+    }
+
+    public ProductChargeTemplatesResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        ProductChargeTemplatesResponseDto result = new ProductChargeTemplatesResponseDto();
+        result.setPaging( pagingAndFiltering );
+
+        List<ProductChargeTemplate> productChargeTemplates = productChargeTemplateService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (productChargeTemplates != null) {
+            for (ProductChargeTemplate productChargeTemplate : productChargeTemplates) {
+                result.getProductChargeTemplates().add(
+                        new ProductChargeTemplateDto(productChargeTemplate,
+                                entityToDtoConverter.getCustomFieldsDTO(productChargeTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
+            }
+        }
+
+        return result;
     }
 }

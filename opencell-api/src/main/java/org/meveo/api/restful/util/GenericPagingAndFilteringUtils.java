@@ -1,4 +1,4 @@
-package org.meveo.apiv2.generic;
+package org.meveo.api.restful.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections.MapUtils;
@@ -107,31 +107,39 @@ public class GenericPagingAndFilteringUtils {
                 Object anObject = jsonMapper.readValue( aList.get(0), Object.class );
                 genericFilters.put( aKey, anObject );
             }
-
-            if ( ! MapUtils.isEmpty(genericFilters) )
-                pagingAndFiltering.setFilters( genericFilters );
         }
+
+        if ( ! MapUtils.isEmpty(genericFilters) )
+            pagingAndFiltering.setFilters( genericFilters );
     }
 
     public PaginationConfiguration getPaginationConfiguration(){
-        PaginationConfiguration aPagingConfig = paginationConfig;
-        reinitializePaginationConfiguration();
-        return aPagingConfig;
-    }
-
-    public void reinitializePaginationConfiguration(){
-        paginationConfig = new PaginationConfiguration(null );
+        return paginationConfig;
     }
 
     public PagingAndFiltering getPagingAndFiltering(){
-        PagingAndFiltering aPagingAndFiltering = pagingAndFiltering;
-        reinitializePagingAndFiltering();
-        return aPagingAndFiltering;
+        return pagingAndFiltering;
     }
 
-    public void reinitializePagingAndFiltering(){
-        pagingAndFiltering = new PagingAndFiltering();
-    }
+//    public PaginationConfiguration getPaginationConfiguration(){
+//        PaginationConfiguration aPagingConfig = paginationConfig;
+//        reinitializePaginationConfiguration();
+//        return aPagingConfig;
+//    }
+//
+//    public void reinitializePaginationConfiguration(){
+//        paginationConfig = new PaginationConfiguration(null );
+//    }
+//
+//    public PagingAndFiltering getPagingAndFiltering(){
+//        PagingAndFiltering aPagingAndFiltering = pagingAndFiltering;
+//        reinitializePagingAndFiltering();
+//        return aPagingAndFiltering;
+//    }
+//
+//    public void reinitializePagingAndFiltering(){
+//        pagingAndFiltering = new PagingAndFiltering();
+//    }
 
     public void generatePagingConfig(Class entityClass){
         Map<String, Object> filters = pagingAndFiltering.getFilters();

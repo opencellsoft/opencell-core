@@ -18,29 +18,18 @@
 
 package org.meveo.api.rest.tmforum;
 
-import java.util.Date;
+import org.meveo.api.dto.catalog.*;
+import org.meveo.api.dto.response.ProductChargeTemplatesResponseDto;
+import org.meveo.api.dto.response.catalog.GetListProductTemplateResponseDto;
+import org.meveo.api.rest.IBaseRs;
+import org.meveo.api.serialize.RestDateParam;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
-import org.meveo.api.dto.catalog.BomOfferDto;
-import org.meveo.api.dto.catalog.BpmProductDto;
-import org.meveo.api.dto.catalog.BsmServiceDto;
-import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
-import org.meveo.api.dto.catalog.ProductTemplateDto;
-import org.meveo.api.rest.IBaseRs;
-import org.meveo.api.serialize.RestDateParam;
+import java.util.Date;
 
 /**
  * TMForum Product catalog API specification implementation. Note: only READ type methods are implemented.
@@ -224,6 +213,15 @@ public interface CatalogRs extends IBaseRs {
             @QueryParam("validTo") @RestDateParam Date validTo);
 
     /**
+     * Gets a productTemplates list.
+     *
+     * @return Return productTemplates list
+     */
+    @GET
+    @Path("/productTemplate/listGetAll")
+    GetListProductTemplateResponseDto listGetAllProductTemplates();
+
+    /**
      * Enable a Product template with a given code
      * 
      * @param code Product template code
@@ -305,6 +303,15 @@ public interface CatalogRs extends IBaseRs {
     @GET
     @Path("/productChargeTemplate/list")
     public Response listProductChargeTemplate();
+
+    /**
+     * Gets a productChargeTemplate list.
+     *
+     * @return Return productChargeTemplate list
+     */
+    @GET
+    @Path("/productChargeTemplate/listGetAll")
+    ProductChargeTemplatesResponseDto listGetAllPCTemplates();
 
     /**
      * Enable a Product charge template with a given code

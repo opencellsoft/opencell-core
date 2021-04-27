@@ -18,16 +18,11 @@
 
 package org.meveo.api.dto.response;
 
+import org.meveo.api.dto.CustomEntityTemplateDto;
+
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.CustomEntityTemplateDto;
 
 /**
  * The Class CustomEntityTemplatesResponseDto.
@@ -36,7 +31,7 @@ import org.meveo.api.dto.CustomEntityTemplateDto;
  */
 @XmlRootElement(name = "CustomEntityTemplatesResponseDto")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomEntityTemplatesResponseDto extends BaseResponse {
+public class CustomEntityTemplatesResponseDto extends SearchResponse {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 2198425912826143580L;

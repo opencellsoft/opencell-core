@@ -18,17 +18,6 @@
 
 package org.meveo.api.rest.catalog;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlanResponseDto;
@@ -40,6 +29,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 @Path("/catalog/discountPlan")
 @Tag(name = "DiscountPlan", description = "@%DiscountPlan")
@@ -184,6 +176,15 @@ public interface DiscountPlanRs extends IBaseRs {
 				)}
 	)
     GetDiscountPlansResponseDto list();
+
+    /**
+     * List DiscountPlans matching a given criteria
+     *
+     * @return List of DiscountPlans
+     */
+    @GET
+    @Path("/listGetAll")
+    GetDiscountPlansResponseDto listGetAll();
 
     /**
      * Enable a Discount plan with a given code

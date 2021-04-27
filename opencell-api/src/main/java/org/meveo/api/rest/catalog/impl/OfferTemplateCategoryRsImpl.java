@@ -18,18 +18,20 @@
 
 package org.meveo.api.rest.catalog.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.catalog.OfferTemplateCategoryApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
+import org.meveo.api.dto.response.OfferTemplateCategoriesResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateCategoryResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.OfferTemplateCategoryRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -124,6 +126,20 @@ public class OfferTemplateCategoryRsImpl extends BaseRs implements OfferTemplate
             offerTemplateCategoryApi.enableOrDisable(code, false);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public OfferTemplateCategoriesResponseDto listGetAll() {
+
+        OfferTemplateCategoriesResponseDto result = new OfferTemplateCategoriesResponseDto();
+
+        try {
+            result = offerTemplateCategoryApi.list(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;

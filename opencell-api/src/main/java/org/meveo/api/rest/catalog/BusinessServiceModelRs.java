@@ -18,22 +18,14 @@
 
 package org.meveo.api.rest.catalog;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * @author Edward P. Legaspi
@@ -102,6 +94,15 @@ public interface BusinessServiceModelRs extends IBaseRs {
     @GET
     @Path("/list")
     public MeveoModuleDtosResponse list();
+
+    /**
+     * List Business Service Models matching a given criteria
+     *
+     * @return List of Business Service Models
+     */
+    @GET
+    @Path("/listGetAll")
+    MeveoModuleDtosResponse listGetAll();
 
     /**
      * Install business offer model module
