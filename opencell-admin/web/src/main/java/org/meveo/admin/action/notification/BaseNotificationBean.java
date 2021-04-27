@@ -40,6 +40,7 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
@@ -144,8 +145,6 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                     events.add(NotificationEventTypeEnum.VERSION_CREATED);
                     events.add(NotificationEventTypeEnum.VERSION_REMOVED);
                 }
-            } else if (clazzStr.equals(Job.class.getName())) {
-                events.add(NotificationEventTypeEnum.PROCESSED);
             } else if (clazzStr.equals(Invoice.class.getName())) {
                 events.add(NotificationEventTypeEnum.INVOICE_NUMBER_ASSIGNED);
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
@@ -161,6 +160,9 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
 //            } else
             if (clazzStr.equals(CDR.class.getName())) {
                 events.add(NotificationEventTypeEnum.REJECTED_CDR);
+            }else if (clazzStr.equals(JobExecutionResultImpl.class.getName())) {
+            	events.add(NotificationEventTypeEnum.STARTED);
+                events.add(NotificationEventTypeEnum.PROCESSED);
             }
         }
         return events;
