@@ -73,9 +73,14 @@ public abstract class Job {
     public static final String CF_NB_RUNS = "nbRuns";
 
     /**
-     * Custom field for a Milliseconds to wait before launching another async processing of data batch in a job
+     * Custom field for a Milliseconds to wait before launching another job thread
      */
     public static final String CF_WAITING_MILLIS = "waitingMillis";
+
+    /**
+     * Custom field for a number of items to process simultaneously in one transaction as a batch. If batch fails, items will be processed one by one.
+     */
+    public static final String CF_BATCH_SIZE = "batchSize";
 
     @Resource
     protected TimerService timerService;
@@ -126,11 +131,12 @@ public abstract class Job {
      * 
      * @param jobInstance Job instance to execute
      * @param executionResult Job execution results
+     * @param jobLauncher How job was launched. A value to use when job is executing with no job execution result provided and new job execution result must be created
      * @return True if job executed completely and no more data is left to process
      * @throws BusinessException business exception
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public JobExecutionResultStatusEnum execute(JobInstance jobInstance, JobExecutionResultImpl executionResult) throws BusinessException {
+    public JobExecutionResultStatusEnum execute(JobInstance jobInstance, JobExecutionResultImpl executionResult, JobLauncherEnum jobLauncher) throws BusinessException {
 
         auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
         auditOrigin.setAuditOriginName(jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
@@ -140,11 +146,11 @@ public abstract class Job {
         if (jobRunningStatus == JobRunningStatusEnum.NOT_RUNNING || jobRunningStatus == JobRunningStatusEnum.LOCKED_THIS
                 || (!jobInstance.isLimitToSingleNode() && (jobRunningStatus == JobRunningStatusEnum.RUNNING_OTHER || jobRunningStatus == JobRunningStatusEnum.LOCKED_OTHER))) {
 
-            log.info("Starting Job {} of type {}  with currentUser {}. Processors available {}, paralel procesors requested {}. Job parameters {}", jobInstance.getCode(), jobInstance.getJobTemplate(),
-                currentUser, Runtime.getRuntime().availableProcessors(), customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false), jobInstance.getParametres());
+            log.info("Starting Job {} of type {}  with currentUser {}. Processors available {}, paralel procesors requested {}. Job parameters {}", jobInstance.getCode(), jobInstance.getJobTemplate(), currentUser,
+                Runtime.getRuntime().availableProcessors(), customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false), jobInstance.getParametres());
 
             if (executionResult == null) {
-                executionResult = new JobExecutionResultImpl(jobInstance, JobLauncherEnum.TRIGGER);
+                executionResult = new JobExecutionResultImpl(jobInstance, jobLauncher != null ? jobLauncher : JobLauncherEnum.TRIGGER);
                 jobExecutionResultService.persistResult(executionResult);
             }
 

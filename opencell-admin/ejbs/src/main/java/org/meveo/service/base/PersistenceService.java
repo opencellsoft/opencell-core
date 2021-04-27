@@ -258,8 +258,27 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (ids == null || ids.isEmpty()) {
             return new ArrayList<E>();
         }
-        log.trace("Find {}/{} by ids", entityClass.getSimpleName(), ids);
         return getEntityManager().createQuery("select e from " + entityClass.getSimpleName() + " e where e.id in (:ids)", entityClass).setParameter("ids", ids).getResultList();
+    }
+
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#findById(java.util.List, java.util.List)
+     */
+    @SuppressWarnings("unchecked")
+    public List<E> findByIds(List<Long> ids, List<String> fetchFields) {
+        final Class<? extends E> productClass = getEntityClass();
+        StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
+        if (fetchFields != null && !fetchFields.isEmpty()) {
+            for (String fetchField : fetchFields) {
+                queryString.append(" left join fetch a." + fetchField);
+            }
+        }
+        queryString.append(" where a.id in :ids");
+        Query query = getEntityManager().createQuery(queryString.toString(), productClass);
+        query.setParameter("ids", ids);
+
+        List<E> results = query.getResultList();
+        return results;
     }
 
     /**
@@ -603,10 +622,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public List<E> list(PaginationConfiguration config) {
         Map<String, Object> filters = config.getFilters();
-		if(isAnEmptyListInFilter(filters)) {
-			return new ArrayList<E>();
-		}
-		
+        if (isAnEmptyListInFilter(filters)) {
+            return new ArrayList<E>();
+        }
+
         if (filters != null && filters.containsKey("$FILTER")) {
             Filter filter = (Filter) filters.get("$FILTER");
             FilteredQueryBuilder queryBuilder = (FilteredQueryBuilder) getQuery(config);
@@ -621,46 +640,43 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
-	 * @param filters
-	 * @return
-	 */
-	private boolean isAnEmptyListInFilter(Map<String, Object> filters) {
-		return filters == null ? false : filters.values().stream()
-				.filter(v -> v != null && v instanceof Collection && ((Collection) v).isEmpty()).findAny().isPresent();
-	}
+     * @param filters
+     * @return
+     */
+    private boolean isAnEmptyListInFilter(Map<String, Object> filters) {
+        return filters == null ? false : filters.values().stream().filter(v -> v != null && v instanceof Collection && ((Collection) v).isEmpty()).findAny().isPresent();
+    }
 
-	/**
+    /**
      * Used to retrieve related fields of an entity
      */
     @SuppressWarnings({ "unchecked" })
     public Map<String, Object> mapRelatedFields() {
         final Class<? extends E> productClass = getEntityClass();
-        StringBuilder queryString = new StringBuilder( "from CustomFieldTemplate" );
+        StringBuilder queryString = new StringBuilder("from CustomFieldTemplate");
         Query query = getEntityManager().createQuery(queryString.toString());
         List<CustomFieldTemplate> resultsCFTmpl = query.getResultList();
         Map<String, Object> mapAttributeAndType = new HashMap<>();
-        Set<Attribute<? super E, ?>> setAttributes = ((Session) getEntityManager().getDelegate()).getSessionFactory()
-                .getMetamodel().managedType( getEntityClass() ).getAttributes();
-        for ( Attribute<? super E, ?> att : setAttributes ) {
-            if ( att.getJavaType() != CustomFieldValues.class ) {
-                Map<String,String> mapStringAndType = new HashMap();
-                mapStringAndType.put( "fullQualifiedTypeName", att.getJavaType().toString() );
-                mapStringAndType.put( "shortTypeName", att.getJavaType().getSimpleName() );
-                mapAttributeAndType.put( att.getName(), mapStringAndType);
-            }
-            else {
-                if ( !resultsCFTmpl.isEmpty() ) {
+        Set<Attribute<? super E, ?>> setAttributes = ((Session) getEntityManager().getDelegate()).getSessionFactory().getMetamodel().managedType(getEntityClass()).getAttributes();
+        for (Attribute<? super E, ?> att : setAttributes) {
+            if (att.getJavaType() != CustomFieldValues.class) {
+                Map<String, String> mapStringAndType = new HashMap();
+                mapStringAndType.put("fullQualifiedTypeName", att.getJavaType().toString());
+                mapStringAndType.put("shortTypeName", att.getJavaType().getSimpleName());
+                mapAttributeAndType.put(att.getName(), mapStringAndType);
+            } else {
+                if (!resultsCFTmpl.isEmpty()) {
                     Map<String, Map<String, String>> mapCFValues = new HashMap();
-                    for ( CustomFieldTemplate aCFTmpl : resultsCFTmpl ) {
-                        if ( aCFTmpl.getAppliesTo().equals( productClass.getSimpleName() ) ) {
-                            Map<String,String> mapStringAndType = new HashMap();
-                            mapStringAndType.put( "fullQualifiedTypeName", aCFTmpl.getFieldType().getDataClass().toString() );
-                            mapStringAndType.put( "shortTypeName", aCFTmpl.getFieldType().getDataClass().getSimpleName() );
-                            mapCFValues.put( aCFTmpl.getCode(), mapStringAndType );
+                    for (CustomFieldTemplate aCFTmpl : resultsCFTmpl) {
+                        if (aCFTmpl.getAppliesTo().equals(productClass.getSimpleName())) {
+                            Map<String, String> mapStringAndType = new HashMap();
+                            mapStringAndType.put("fullQualifiedTypeName", aCFTmpl.getFieldType().getDataClass().toString());
+                            mapStringAndType.put("shortTypeName", aCFTmpl.getFieldType().getDataClass().getSimpleName());
+                            mapCFValues.put(aCFTmpl.getCode(), mapStringAndType);
                         }
                     }
-                    if ( ! mapCFValues.isEmpty() )
-                        mapAttributeAndType.put( att.getName(), mapCFValues );
+                    if (!mapCFValues.isEmpty())
+                        mapAttributeAndType.put(att.getName(), mapCFValues);
                 }
             }
         }
@@ -673,9 +689,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public long count(PaginationConfiguration config) {
         Map<String, Object> filters = config.getFilters();
-		if(isAnEmptyListInFilter(filters)) {
-			return 0;
-		} 
+        if (isAnEmptyListInFilter(filters)) {
+            return 0;
+        }
         List<String> fetchFields = config.getFetchFields();
         config.setFetchFields(null);
         QueryBuilder queryBuilder = getQuery(config);
@@ -838,8 +854,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * Filter key can be:
      * <ul>
      * <li>"$FILTER". Value is a filter name</li>
-     * <li>"type_class". Value is a full classname. Used to limit search results to a particular entity type in case of entity subclasses. Can be combined to condition "ne" to
-     * exclude those classes.</li>
+     * <li>"type_class". Value is a full classname. Used to limit search results to a particular entity type in case of entity subclasses. Can be combined to condition "ne" to exclude those classes.</li>
      * <li>SQL. Additional sql to apply. Value is either a sql query or an array consisting of sql query and one or more parameters to apply</li>
      * <li>&lt;condition&gt; &lt;fieldname1&gt; &lt;fieldname2&gt; ... &lt;fieldnameN&gt;. Value is a value to apply in condition</li>
      * </ul>
@@ -852,38 +867,36 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      *
      * Following conditions are supported:
      * <ul>
-     * <li><b>fromRange</b>. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=fieldValue. Applies to date and number type fields.
-     * Date value is truncated to start of the day</li>
-     * <li><b>toRange</b>. Ranged search - field value in between from - to values. Specifies "to" part value: e.g fieldValue&lt;value. Value is exclusive. Applies to date and
-     * number type fields. Date value is truncated to the start of the day</li>
-     * <li><b>toRangeInclusive</b>. Ranged search - field value in between from - to values. Specifies "to" part value: e.g fieldValue&lt;=value. Value is inclusive. Applies to
-     * date and number type fields. Date value is truncated to the end of the day</li>
-     * <li><b>fromOptionalRange</b>. Ranged search - field value in between from - to values. Field value is optional. Specifies "from" part value: e.g value&lt;=field.value.
-     * Applies to date and number type fields. Date value is truncated to start of the day</li>
-     * <li><b>toOptionalRange</b>. Ranged search - field value in between from - to values. Field value is optional. Specifies "to" part value: e.g fieldValue&lt;value. Value is
-     * inclusive. Applies to date and number type fields. Date value is truncated to the start of the day</li>
-     * <li><b>toOptionalRangeInclusive</b>. Ranged search - field value in between from - to values. Field value is optional. Specifies "to" part value: e.g fieldValue&lt;=value.
-     * Value is inclusive. Applies to date and number type fields. Date value is truncated to the end of the day</li>
+     * <li><b>fromRange</b>. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=fieldValue. Applies to date and number type fields. Date value is truncated to start of the
+     * day</li>
+     * <li><b>toRange</b>. Ranged search - field value in between from - to values. Specifies "to" part value: e.g fieldValue&lt;value. Value is exclusive. Applies to date and number type fields. Date value is truncated
+     * to the start of the day</li>
+     * <li><b>toRangeInclusive</b>. Ranged search - field value in between from - to values. Specifies "to" part value: e.g fieldValue&lt;=value. Value is inclusive. Applies to date and number type fields. Date value is
+     * truncated to the end of the day</li>
+     * <li><b>fromOptionalRange</b>. Ranged search - field value in between from - to values. Field value is optional. Specifies "from" part value: e.g value&lt;=field.value. Applies to date and number type fields. Date
+     * value is truncated to start of the day</li>
+     * <li><b>toOptionalRange</b>. Ranged search - field value in between from - to values. Field value is optional. Specifies "to" part value: e.g fieldValue&lt;value. Value is inclusive. Applies to date and number type
+     * fields. Date value is truncated to the start of the day</li>
+     * <li><b>toOptionalRangeInclusive</b>. Ranged search - field value in between from - to values. Field value is optional. Specifies "to" part value: e.g fieldValue&lt;=value. Value is inclusive. Applies to date and
+     * number type fields. Date value is truncated to the end of the day</li>
      * <li><b>list</b>. Value is in field's list value. Applies to date and number type fields.</li>
      * <li><b>listInList</b>. Value, which is a list, should be in field value (list)
-     * <li><b>inList</b>/<b>not-inList</b>. Field value is [not] in value (list). A comma separated string will be parsed into a list if values. A single value will be considered
-     * as a list value of one item</li>
-     * <li><b>minmaxRange</b>. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields. The TO field value is exclusive.
-     * Date value is truncated to the start of the day. E.f. field1Value&lt;value&ltfield2Value</li>
-     * <li><b>minmaxRangeInclusive</b>. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields. The TO field value is
-     * inclusive. Date value is truncated to the start of the day. E.g. field1Value&lt;=value&ltfield2Value</li>
-     * <li><b>minmaxOptionalRange</b>. Similar to minmaxRange. The value is in between two field values with either them being optional. TWO fieldnames must be specified. The TO
-     * field value is exclusive. Date value is truncated to the start of the day.</li>
-     * <li><b>minmaxOptionalRangeInclusive</b>. Similar to minmaxRangeOptional. The value is in between two field values with either them being optional. TWO fieldnames must be
-     * specified. The TO field value is inclusive. Date value is truncated to the start of the day.</li>
-     * <li><b>overlapOptionalRange</b>. The value range is overlapping two field values with either them being optional. TWO fieldnames must be specified. Value must be an array or
-     * a list of two values. End fields and to values are exclusive.</li>
-     * <li><b>overlapOptionalRangeInclusive</b>. The value range is overlapping two field values with either them being optional. TWO fieldnames must be specified. Value must be an
-     * array or a list of two values. End fields and to values are inclusive.</li>
-     * <li><b>likeCriterias</b>. Multiple fieldnames can be specified. Any of the multiple field values match the value (OR criteria). In case value contains *, a like criteria
-     * match will be used. In either case case insensative matching is used. Applies to String type fields.</li>
-     * <li><b>wildcardOr</b>. Similar to likeCriterias. A wildcard match will always used. A * will be appended to start and end of the value automatically if not present. Applies
-     * to
+     * <li><b>inList</b>/<b>not-inList</b>. Field value is [not] in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value of one item</li>
+     * <li><b>minmaxRange</b>. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields. The TO field value is exclusive. Date value is truncated to the start of
+     * the day. E.f. field1Value&lt;value&ltfield2Value</li>
+     * <li><b>minmaxRangeInclusive</b>. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields. The TO field value is inclusive. Date value is truncated to the
+     * start of the day. E.g. field1Value&lt;=value&ltfield2Value</li>
+     * <li><b>minmaxOptionalRange</b>. Similar to minmaxRange. The value is in between two field values with either them being optional. TWO fieldnames must be specified. The TO field value is exclusive. Date value is
+     * truncated to the start of the day.</li>
+     * <li><b>minmaxOptionalRangeInclusive</b>. Similar to minmaxRangeOptional. The value is in between two field values with either them being optional. TWO fieldnames must be specified. The TO field value is inclusive.
+     * Date value is truncated to the start of the day.</li>
+     * <li><b>overlapOptionalRange</b>. The value range is overlapping two field values with either them being optional. TWO fieldnames must be specified. Value must be an array or a list of two values. End fields and to
+     * values are exclusive.</li>
+     * <li><b>overlapOptionalRangeInclusive</b>. The value range is overlapping two field values with either them being optional. TWO fieldnames must be specified. Value must be an array or a list of two values. End
+     * fields and to values are inclusive.</li>
+     * <li><b>likeCriterias</b>. Multiple fieldnames can be specified. Any of the multiple field values match the value (OR criteria). In case value contains *, a like criteria match will be used. In either case case
+     * insensative matching is used. Applies to String type fields.</li>
+     * <li><b>wildcardOr</b>. Similar to likeCriterias. A wildcard match will always used. A * will be appended to start and end of the value automatically if not present. Applies to
      * <li><b>wildcardOrIgnoreCase</b>. Similar to wildcardOr but ignoring case String type fields.</li>
      * <li><b>eq</b>. Equals. Supports wildcards in case of string value. NOTE: This is a default behavior when condition is not specified
      * <li><b>eqOptional</b>. Equals. Supports wildcards in case of string value. Field value is optional.
@@ -902,8 +915,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      *
      *
      *
-     * To filter by a related entity's field you can either filter by related entity's field or by related entity itself specifying code as value. These two example will do the
-     * same in case when quering a customer account: customer.code=aaa OR customer=aaa
+     * To filter by a related entity's field you can either filter by related entity's field or by related entity itself specifying code as value. These two example will do the same in case when quering a customer
+     * account: customer.code=aaa OR customer=aaa
      *
      * To filter a list of related entities by a list of entity codes use "inList" on related entity field. e.g. for quering offer template by sellers: inList sellers=code1,code2
      *
@@ -917,8 +930,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>invoice number is not "1578AU": Filter key: ne invoiceNumber. Filter value: 1578AU</li>
      * <li>invoice number is null: Filter key: invoiceNumber. Filter value: IS_NULL</li>
      * <li>invoice number is not empty: Filter key: invoiceNumber. Filter value: IS_NOT_NULL</li>
-     * <li>Invoice date is between 2017-05-01 and 2017-06-01: Filter key: fromRange invoiceDate. Filter value: 2017-05-01 Filter key: toRange invoiceDate. Filter value:
-     * 2017-06-01</li>
+     * <li>Invoice date is between 2017-05-01 and 2017-06-01: Filter key: fromRange invoiceDate. Filter value: 2017-05-01 Filter key: toRange invoiceDate. Filter value: 2017-06-01</li>
      * <li>Date is between creation and update dates: Filter key: minmaxRange audit.created audit.updated. Filter value: 2017-05-25</li>
      * <li>invoice number is any of 158AU, 159KU or 189LL: Filter key: inList invoiceNumber. Filter value: 158AU,159KU,189LL</li>
      * <li>any of param1, param2 or param3 fields contains "energy": Filter key: wildcardOr param1 param2 param3. Filter value: energy</li>
@@ -1147,8 +1159,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      *
      * @param entityClass Entity class to reference
      * @param id Entity ID
-     * @return A concatenated list of entities (humanized classnames and their codes) E.g. Customer Account: first ca, second ca, third ca; Customer: first customer, second
-     *         customer
+     * @return A concatenated list of entities (humanized classnames and their codes) E.g. Customer Account: first ca, second ca, third ca; Customer: first customer, second customer
      */
     @SuppressWarnings("rawtypes")
     public String findReferencedByEntities(Class<E> entityClass, Long id) {

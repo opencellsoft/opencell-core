@@ -10,9 +10,9 @@
             <property name="hibernate.archive.autodetection" value="class" />
             <property name="hibernate.hbm2ddl.auto" value="validate" /> <!-- DB structure is managed by liquibase, not hibernate -->
             <property name="hibernate.show_sql" value="false" />
-            <property name="format_sql" value="false"/>
-            <property name="show_sql" value="false"/>
-            <property name="use_sql_comments" value="false"/>
+            <property name="format_sql" value="false" />
+            <property name="show_sql" value="false" />
+            <property name="use_sql_comments" value="false" />
             <!-- <property name="hibernate.default_schema" value="public" /> Disable for Mysql/mariaDB instalation -->
             <property name="hibernate.cache.use_second_level_cache" value="true" />
             <property name="hibernate.cache.use_query_cache" value="true" />
@@ -22,11 +22,14 @@
             <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
             <property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" /> <!-- Needed for ES -->
             <property name="hibernate.ejb.event.post-delete" value="org.meveo.jpa.event.DeleteEventListener" /> <!-- Needed for ES -->
+            <property name="hibernate.jdbc.batch_size" value="50" />
+            <property name="hibernate.order_inserts" value="true" />
+            <property name="hibernate.order_updates" value="true" />
 
             <property name="hibernate.session_factory.interceptor" value="org.meveo.interceptor.FieldAuditInterceptor" />
             <property name="hibernate.ejb.event.create" value="org.meveo.jpa.event.CreateEventListener" />
 
-            <!--skip duplicate ID_GENERATOR ERROR IN WF17-->
+            <!--skip duplicate ID_GENERATOR ERROR IN WF17 -->
             <property name="hibernate.jpa.compliance.global_id_generators" value="false" />
             <property name="hibernate.dialect" value="org.meveo.commons.persistence.MeveoSQLDialect" />
         </properties>
@@ -42,8 +45,8 @@
         <properties>
             <property name="hibernate.archive.autodetection" value="class" />
             <property name="hibernate.show_sql" value="false" />
-            <property name="format_sql" value="false"/>
-            <property name="use_sql_comments" value="false"/>
+            <property name="format_sql" value="false" />
+            <property name="use_sql_comments" value="false" />
             <property name="hibernate.cache.use_second_level_cache" value="true" />
             <property name="hibernate.cache.use_query_cache" value="true" />
             <!-- <property name="hibernate.default_schema" value="public" /> -->
@@ -54,9 +57,13 @@
             <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
             <property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" /> <!-- Needed for ES -->
             <property name="hibernate.ejb.event.post-delete" value="org.meveo.jpa.event.DeleteEventListener" /> <!-- Needed for ES -->
+            <property name="hibernate.jdbc.batch_size" value="50" />
+            <property name="hibernate.order_inserts" value="true" />
+            <property name="hibernate.order_updates" value="true" />
+
             <property name="hibernate.session_factory.interceptor" value="org.meveo.interceptor.FieldAuditInterceptor" />
             <property name="hibernate.ejb.event.create" value="org.meveo.jpa.event.CreateEventListener" />
-                        <!--skip duplicate ID_GENERATOR ERROR IN WF17-->
+            <!--skip duplicate ID_GENERATOR ERROR IN WF17 -->
             <property name="hibernate.jpa.compliance.global_id_generators" value="false" />
             <property name="hibernate.dialect" value="org.meveo.commons.persistence.MeveoSQLDialect" />
         </properties>

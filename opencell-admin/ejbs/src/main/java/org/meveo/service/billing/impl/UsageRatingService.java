@@ -137,12 +137,11 @@ public class UsageRatingService implements Serializable {
     // @PreDestroy
     // accessing Entity manager in predestroy is bugged in jboss7.1.3
     /*
-     * void saveCounters() { for (Long key : MeveoCacheContainerProvider.getCounterCache().keySet()) { CounterInstanceCache counterInstanceCache =
-     * MeveoCacheContainerProvider.getCounterCache().get(key); if (counterInstanceCache.getCounterPeriods() != null) { for (CounterPeriodCache itemPeriodCache :
-     * counterInstanceCache .getCounterPeriods()) { if (itemPeriodCache.isDbDirty()) { CounterPeriod counterPeriod = em.find( CounterPeriod.class,
-     * itemPeriodCache.getCounterPeriodId()); counterPeriod.setValue(itemPeriodCache.getValue()); counterPeriod.getAuditable().setUpdated(new Date()); em.merge(counterPeriod);
-     * log.debug("save counter with id={}, new value={}", itemPeriodCache.getCounterPeriodId(), itemPeriodCache.getValue()); // calling ejb in this predestroy method just fail...
-     * // counterInstanceService .updatePeriodValue(itemPeriodCache.getCounterPeriodId (),itemPeriodCache.getValue()); } } } } }
+     * void saveCounters() { for (Long key : MeveoCacheContainerProvider.getCounterCache().keySet()) { CounterInstanceCache counterInstanceCache = MeveoCacheContainerProvider.getCounterCache().get(key); if
+     * (counterInstanceCache.getCounterPeriods() != null) { for (CounterPeriodCache itemPeriodCache : counterInstanceCache .getCounterPeriods()) { if (itemPeriodCache.isDbDirty()) { CounterPeriod counterPeriod = em.find(
+     * CounterPeriod.class, itemPeriodCache.getCounterPeriodId()); counterPeriod.setValue(itemPeriodCache.getValue()); counterPeriod.getAuditable().setUpdated(new Date()); em.merge(counterPeriod);
+     * log.debug("save counter with id={}, new value={}", itemPeriodCache.getCounterPeriodId(), itemPeriodCache.getValue()); // calling ejb in this predestroy method just fail... // counterInstanceService
+     * .updatePeriodValue(itemPeriodCache.getCounterPeriodId (),itemPeriodCache.getValue()); } } } } }
      */
 
     /**
@@ -250,8 +249,8 @@ public class UsageRatingService implements Serializable {
      * @param usageChargeInstance Charge instance to apply
      * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
      *
-     * @return returns an RatedEDRResult object, the RatedEDRResult.eDRfullyRated is true if the charge has been fully rated (either because it has no counter or because the
-     *         counter can be fully decremented with the EDR content)
+     * @return returns an RatedEDRResult object, the RatedEDRResult.eDRfullyRated is true if the charge has been fully rated (either because it has no counter or because the counter can be fully decremented with the EDR
+     *         content)
      * @throws BusinessException Business exception
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
@@ -312,8 +311,8 @@ public class UsageRatingService implements Serializable {
     }
 
     /**
-     * Rate EDR and create wallet operation for reservation. If counter is used, and the quantity left in counter if less then quantity in EDR, EDR is updated with a left over
-     * quantity and the remaining quantity will be covered by a next charge or EDR will be marked as rejected.
+     * Rate EDR and create wallet operation for reservation. If counter is used, and the quantity left in counter if less then quantity in EDR, EDR is updated with a left over quantity and the remaining quantity will be
+     * covered by a next charge or EDR will be marked as rejected.
      * 
      * @param reservation Reservation
      * @param edr EDR to reserve
@@ -373,7 +372,7 @@ public class UsageRatingService implements Serializable {
     /**
      * Rate an EDR using counters if they apply. EDR status will be updated to Rejected even if exception is thrown
      * 
-     * @param edr EDR to rate
+     * @param edrId EDR id to rate
      * @throws BusinessException business exception.
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
@@ -391,6 +390,33 @@ public class UsageRatingService implements Serializable {
         } catch (Exception e) {
             log.error("Failed to rate EDR {}: {}", edrId, e.getMessage(), e);
             usageRatingServiceNewTX.rejectEDR(edrId, e);
+            throw e;
+        }
+    }
+
+    /**
+     * Rate a a list of EDRs a a batch. Counters are used if they apply. All EDRs MUST succeed. EDR status will NOT be updated to Rejected even if exception is thrown - any changes will simply be rolledback.
+     * 
+     * @param edrIds A list of EDR ids to rate
+     * @throws BusinessException business exception.
+     * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
+     */
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void ratePostpaidUsage(List<Long> edrIds) throws BusinessException, RatingException {
+        try {
+            List<EDR> edrs = edrService.findByIds(edrIds, Arrays.asList("subscription"));
+
+            for (EDR edr : edrs) {
+                rateUsageWithinTransaction(edr, false, false, 0, 0);
+            }
+
+        } catch (RatingException e) {
+            log.trace("Failed to rate EDRs {}: {}", edrIds, e.getRejectionReason());
+            throw e;
+
+        } catch (Exception e) {
+            log.error("Failed to rate EDRs {}: {}", edrIds, e.getMessage(), e);
             throw e;
         }
     }
@@ -422,8 +448,7 @@ public class UsageRatingService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<WalletOperation> rateUsageInNewTransaction(Long edrId, boolean rateTriggeredEdr, int maxDeep, int currentRatingDepth) throws BusinessException, RatingException {
 
-        EDR edr =edrService.findById(edrId, Arrays.asList("subscription"));
-
+        EDR edr = edrService.findById(edrId, Arrays.asList("subscription"));
         return rateUsageWithinTransaction(edr, false, rateTriggeredEdr, maxDeep, currentRatingDepth);
     }
 
@@ -466,16 +491,12 @@ public class UsageRatingService implements Serializable {
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
                     throw new NoChargeException("No active usage charges are associated with subscription " + edr.getSubscription().getId());
                 }
-            } else if(edr.getSubscription().getServiceInstances() != null) {
-                usageChargeInstances = edr.getSubscription().getServiceInstances()
-                                            .stream()
-                                            .flatMap(si -> si.getUsageChargeInstances().stream())
-                                            .collect(toList());
+            } else if (edr.getSubscription().getServiceInstances() != null) {
+                usageChargeInstances = edr.getSubscription().getServiceInstances().stream().flatMap(si -> si.getUsageChargeInstances().stream()).collect(toList());
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
                     throw new NoChargeException("No usage charges are associated with subscription " + edr.getSubscription().getId());
                 }
             }
-
 
             boolean foundPricePlan = true;
 
@@ -668,7 +689,7 @@ public class UsageRatingService implements Serializable {
         UsageChargeTemplate chargeTemplate = null;
         for (UsageChargeInstance usageChargeInstance : charges) {
             chargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
-  
+
             try {
                 if (isChargeMatch(usageChargeInstance, edr, true)) {
 
@@ -740,4 +761,5 @@ public class UsageRatingService implements Serializable {
 
         rejectedEdrProducer.fire(edr);
     }
+
 }

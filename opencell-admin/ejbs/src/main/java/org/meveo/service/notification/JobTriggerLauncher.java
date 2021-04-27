@@ -25,6 +25,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.notification.JobTrigger;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.security.MeveoUser;
@@ -90,7 +91,7 @@ public class JobTriggerLauncher {
             HashMap<String, Object> params = new HashMap<String, Object>();
             params.put("event", entityOrEvent);
 
-            jobExecutionService.executeJob(jobInstanceService.retrieveIfNotManaged(jobTrigger.getJobInstance()), params, null);
+            jobExecutionService.executeJob(jobInstanceService.retrieveIfNotManaged(jobTrigger.getJobInstance()), params, JobLauncherEnum.TRIGGER);
 
             log.debug("launch jobTrigger:{} launched", jobTrigger);
             if (jobTrigger.isSaveSuccessfulNotifications()) {

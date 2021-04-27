@@ -113,7 +113,7 @@ public class JobExecutionService extends BaseService {
         Map<String, Object> runTimeValues = jobInstance.getRunTimeValues();
 
         jobInstance = jobInstanceService.findById(jobInstance.getId());
-        
+
         jobInstance.setRunTimeValues(runTimeValues);
 
         log.info("Execute a job {} of type {} with parameters {} from {}", jobInstance, jobInstance.getJobTemplate(), params, jobLauncher);
@@ -168,11 +168,11 @@ public class JobExecutionService extends BaseService {
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
-        JobExecutionResultStatusEnum jobResultStatus = job.execute(jobInstance, jobExecutionResult);
+        JobExecutionResultStatusEnum jobResultStatus = job.execute(jobInstance, jobExecutionResult, null);
 
         int i = 0;
         while (jobResultStatus == JobExecutionResultStatusEnum.COMPLETED_MORE && i < MAX_TIMES_TO_RUN_INCOMPLETE_JOB) {
-            jobResultStatus = job.execute(jobInstance, null);
+            jobResultStatus = job.execute(jobInstance, null, JobLauncherEnum.INCOMPLETE);
             i++;
         }
 
