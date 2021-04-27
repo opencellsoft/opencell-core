@@ -1236,6 +1236,7 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setMailingType(postData.getMailingType());
         billingAccountDto.setEmailTemplate(postData.getEmailTemplate());
         billingAccountDto.setCcedEmails(postData.getCcedEmails());
+        billingAccountDto.setTaxCategoryCode(postData.getTaxCategoryCode());
         CustomFieldsDto cfsDto = new CustomFieldsDto();
         if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
             Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(BillingAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
