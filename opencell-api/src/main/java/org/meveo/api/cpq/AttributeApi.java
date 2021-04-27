@@ -12,7 +12,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
-import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.TagDto;
@@ -24,9 +23,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
@@ -218,8 +215,8 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 			attributeDto=new AttributeDTO(attr);
 			assignedAttributes.add(attributeDto);
 		}
-		
 		GetAttributeDtoResponse result = new GetAttributeDtoResponse(attribute,chargeTemplateDtos,tagDtos,assignedAttributes,true); 
+		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(attribute));
 		return result;
 	}
 
@@ -266,6 +263,7 @@ public class AttributeApi extends BaseCrudApi<Attribute, AttributeDTO> {
 		
 		GetProductDtoResponse result = new GetProductDtoResponse(product);   
 		result.setCurrentProductVersion(getProductVersionResponse);
+		result.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(product));
 		return result;
 	}
 

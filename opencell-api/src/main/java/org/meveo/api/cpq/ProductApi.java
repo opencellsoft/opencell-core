@@ -699,6 +699,7 @@ public class ProductApi extends BaseApi {
 					product=oc.getProduct();
 					if(products.contains(product)) {
 						prodDto=new ProductDto(product);
+						prodDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(product));
 						result.addProduct(prodDto);
 				}}
 			}  
@@ -846,7 +847,9 @@ public class ProductApi extends BaseApi {
 
 		 if(totalCount > 0) {
 			 productService.list(paginationConfiguration).stream().forEach(p -> {
-				 result.getProducts().add(new ProductDto(p));
+				 ProductDto dto = new ProductDto(p);
+				 dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(p));
+				 result.getProducts().add(dto);
 			 });
 		 }
 		 return result;
