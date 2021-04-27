@@ -18,21 +18,14 @@
 
 package org.meveo.api.rest.catalog;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
+import org.meveo.api.dto.response.CounterTemplatesResponseDto;
 import org.meveo.api.dto.response.catalog.GetCounterTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.CounterTemplate}.
@@ -114,4 +107,13 @@ public interface CounterTemplateRs extends IBaseRs {
     @POST
     @Path("/{code}/disable")
     ActionStatus disable(@PathParam("code") String code);
+
+    /**
+     * List CounterTemplates matching a given criteria
+     *
+     * @return List of CounterTemplates
+     */
+    @GET
+    @Path("/listGetAll")
+    CounterTemplatesResponseDto listGetAll();
 }

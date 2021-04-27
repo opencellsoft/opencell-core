@@ -24,7 +24,7 @@ import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.UsageChargeTemplateResponseDto;
 import org.meveo.api.exception.*;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
