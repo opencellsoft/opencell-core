@@ -18,11 +18,7 @@
 
 package org.meveo.model.finance;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -44,6 +40,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.annotation.ImageType;
@@ -117,6 +114,23 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
 
     private transient Date startDate;
     private transient Date endDate;
+
+    @Column(name = "custom_table_code", length = 100)
+    private String customTableCode;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "accumulate")
+    private boolean accumulate;
+
+    @Column(name = "decimal_separator")
+    private Character decimalSeparator;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "generate_empty_report")
+    private boolean generateEmptyReport;
+
+    @Column(name = "maximum_line")
+    private Long maximumLine;
 
     public String getFilenameFormat() {
         return filenameFormat;
@@ -230,4 +244,43 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
         this.executionResults = executionResults;
     }
 
+    public String getCustomTableCode() {
+        return customTableCode;
+    }
+
+    public void setCustomTableCode(String customTableCode) {
+        this.customTableCode = customTableCode;
+    }
+
+    public boolean isAccumulate() {
+        return accumulate;
+    }
+
+    public void setAccumulate(boolean accumulate) {
+        this.accumulate = accumulate;
+    }
+
+    public boolean isGenerateEmptyReport() {
+        return generateEmptyReport;
+    }
+
+    public void setGenerateEmptyReport(boolean generateEmptyReport) {
+        this.generateEmptyReport = generateEmptyReport;
+    }
+
+    public Long getMaximumLine() {
+        return maximumLine;
+    }
+
+    public void setMaximumLine(Long maximumLine) {
+        this.maximumLine = maximumLine;
+    }
+
+    public Character getDecimalSeparator() {
+        return decimalSeparator;
+    }
+
+    public void setDecimalSeparator(Character decimalSeparator) {
+        this.decimalSeparator = decimalSeparator;
+    }
 }
