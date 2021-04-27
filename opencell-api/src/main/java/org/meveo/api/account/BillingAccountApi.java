@@ -50,7 +50,7 @@ import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.BeanUtils;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;

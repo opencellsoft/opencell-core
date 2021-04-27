@@ -26,7 +26,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.tax.TaxCategoryListResponseDto;
 import org.meveo.api.dto.tax.TaxCategoryDto;
 import org.meveo.api.exception.*;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.tax.TaxCategoryService;

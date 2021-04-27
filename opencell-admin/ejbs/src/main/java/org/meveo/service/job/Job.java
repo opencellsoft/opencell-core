@@ -44,6 +44,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.event.qualifier.Processed;
+import org.meveo.event.qualifier.Started;
 import org.meveo.model.audit.ChangeOriginEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
@@ -107,6 +108,10 @@ public abstract class Job {
     @Inject
     @Processed
     private Event<JobExecutionResultImpl> eventJobProcessed;
+    
+    @Inject
+    @Started
+    private Event<JobExecutionResultImpl> eventJobStarted;
 
     @Inject
     protected ResourceBundle resourceMessages;
@@ -166,6 +171,7 @@ public abstract class Job {
             }
 
             try {
+            	eventJobStarted.fire(executionResult);
                 executionResult = execute(executionResult, jobInstance);
 
                 boolean jobCanceled = jobExecutionService.isJobCancelled(jobInstance.getId());

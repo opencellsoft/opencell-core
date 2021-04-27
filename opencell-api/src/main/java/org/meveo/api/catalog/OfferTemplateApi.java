@@ -782,6 +782,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         			offerProductsDto = new OfferProductsDto();
         			if (product != null && ProductStatusEnum.ACTIVE.equals(product.getStatus())) {
         				ProductDto productDTO=new ProductDto(product);
+        				productDTO.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(product));
     					offerProductsDto.setOfferTemplateCode(offerTemplate.getCode()); 
         				productVersionList=productVersionService.getVersionsByStatusAndProduct(VersionStatusEnum.PUBLISHED, product.getCode());
         				if(productVersionList!=null && !productVersionList.isEmpty()) {  
@@ -830,8 +831,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             List<Attribute> attributes = offerTemplate.getAttributes();
             if (attributes != null && !attributes.isEmpty()) {
                 List<AttributeDTO> attributesDto = new ArrayList<>();
-                for (Attribute discountPlan : attributes) {
-                    attributesDto.add(new AttributeDTO(discountPlan));
+                for (Attribute attribute : attributes) {
+                    attributesDto.add(new AttributeDTO(attribute, entityToDtoConverter.getCustomFieldsDTO(attribute)));
                 }
                 dto.setAttributes(attributesDto);
             }

@@ -57,6 +57,7 @@ import org.meveo.event.qualifier.Processed;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.event.qualifier.Removed;
+import org.meveo.event.qualifier.Started;
 import org.meveo.event.qualifier.Terminated;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.event.qualifier.VersionCreated;
@@ -192,6 +193,11 @@ public class DefaultObserver {
     public void entityTerminated(@Observes @Terminated BaseEntity e) throws BusinessException {
         log.debug("Defaut observer: Entity {} with id {} terminated", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.TERMINATED, e);
+    }
+    
+    public void entityStarted(@Observes @Started BaseEntity e) throws BusinessException {
+        log.debug("Defaut observer: Entity {} with id {} started", e.getClass().getName(), e.getId());
+        checkEvent(NotificationEventTypeEnum.STARTED, e);
     }
 
     public void entityProcessed(@Observes @Processed BaseEntity e) throws BusinessException {
