@@ -30,8 +30,7 @@ public class JobExecutionInterceptor {
     MetricRegistry registry;
 
     /**
-     * Update metrics for Prometheus
-     * a method on an entity
+     * Update metrics for Prometheus a method on an entity
      *
      * @param context the method invocation context
      * @return the method result if update is OK
@@ -39,20 +38,21 @@ public class JobExecutionInterceptor {
      */
     @AroundInvoke
     public Object aroundInvoke(InvocationContext context) throws Exception {
-        Object[] entity = context.getParameters();
-        List<Future> result = (List<Future>) entity[3];
+        Object[] params = context.getParameters();
 
         long numberOfThreads = 0;
 
-        if(result != null && !result.isEmpty()) {
-            numberOfThreads = result.size();
+        if (params.length == 4) {
+            List<Future> futures = (List<Future>) params[3];
+            if (futures != null && !futures.isEmpty()) {
+                numberOfThreads = futures.size();
+            }
         }
+        counterInc((JobInstance) params[0], "number_of_Threads", numberOfThreads);
 
-        counterInc((JobInstance) entity[0], "number_of_Threads", numberOfThreads);
-
-        try{
+        try {
             return context.proceed();
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.warn(" update of metrics failed because of : {}", e);
             return null;
         }
