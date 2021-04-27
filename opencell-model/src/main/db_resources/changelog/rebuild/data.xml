@@ -12481,25 +12481,8 @@ public class DeleteCustomersScript extends Script {
         </sql>
     </changeSet>
 
-
-    <!-- DONT REMOVE THIS CHANGESET -->
+    <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
-		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
-    </changeSet>
-
-    <changeSet   id="#20210123_540_281_1" author="TarikFA.">
-        <sql>update ${db.schema.adapted}adm_role set uuid = 'role'||id</sql>
-    </changeSet>
-    <changeSet   id="#20210123_540_281_2" author="TarikFA.">
-        <sql>update ${db.schema.adapted}cpq_quote_attribute set uuid = 'quote_attribute'||id</sql>
-    </changeSet>
-    <changeSet   id="#20210123_540_281_3" author="TarikFA.">
-        <sql>update ${db.schema.adapted}cpq_order_attribute  set uuid = 'order_item'||id</sql>
-    </changeSet>
-    <changeSet   id="#20210123_540_281_4" author="TarikFA.">
-        <sql>update ${db.schema.adapted}cpq_attribute_instance set uuid = 'attribute_instance'||id</sql>
-    </changeSet>
-    <changeSet   id="#20210123_540_281_5" author="TarikFA.">
-        <sql>update ${db.schema.adapted}ar_payment_token set uuid = 'payment_token'||id</sql>
+        <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>
     </changeSet>
 </databaseChangeLog>

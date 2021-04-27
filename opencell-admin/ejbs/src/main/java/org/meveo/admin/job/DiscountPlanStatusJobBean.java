@@ -50,14 +50,17 @@ public class DiscountPlanStatusJobBean extends BaseJobBean {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void expireDiscountPlan(JobExecutionResultImpl result, Long discountPlanId) {
-        try {
-            DiscountPlan discountPlan = discountPlanService.findById(discountPlanId);
-            discountPlan.setStatus(DiscountPlanStatusEnum.EXPIRED);
-            discountPlanService.update(discountPlan);
-            jobExecutionService.registerSucces(result);
-        } catch (Exception e) {
-            log.error("Failed to process status of discountPlan {} ", discountPlanId, e);
-            jobExecutionService.registerError(result, "Failed to process status of discountPlan " + discountPlanId + ":" + e.getMessage());
-        }
+        
+
+     // AKK change job logic           
+//        try {
+//            DiscountPlan discountPlan = discountPlanService.findById(discountPlanId);
+//            discountPlan.setStatus(DiscountPlanStatusEnum.EXPIRED);
+//            discountPlanService.update(discountPlan);
+//            jobExecutionService.registerSucces(result);
+//        } catch (Exception e) {
+//            log.error("Failed to process status of discountPlan {} ", discountPlanId, e);
+//            jobExecutionService.registerError(result, "Failed to process status of discountPlan " + discountPlanId + ":" + e.getMessage());
+//        }
     }
 }

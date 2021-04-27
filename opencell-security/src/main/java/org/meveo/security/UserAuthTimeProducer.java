@@ -41,18 +41,6 @@ public class UserAuthTimeProducer implements Serializable {
      */
     protected String authenticationTokenId;
 
-    private int authTime = 0;
-
-    public int getAuthTime() {
-        return authTime;
-    }
-
-    public void setAuthTime(int authTime) {
-        if (this.authTime != authTime) {
-            this.authTime = authTime;
-        }
-    }
-
     /**
      * @return Timestamp when user has authenticated or token was issued
      */
