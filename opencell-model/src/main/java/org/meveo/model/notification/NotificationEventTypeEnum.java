@@ -53,6 +53,11 @@ public enum NotificationEventTypeEnum {
      * Entity was disabled
      */
     DISABLED,
+    
+    /**
+     * Job execution has started
+     */
+    STARTED,
 
     /**
      * Job execution has completed
