@@ -78,10 +78,10 @@ public class OrderProduct extends AuditableCFEntity {
     
     
     /**
-   	 * quote product attached to this orderOffer
+   	 * quote product attached to this OrderProduct
    	 */
        
-   	@OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+   	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_prodcut_id")
    	private QuoteProduct quoteProduct;
 	

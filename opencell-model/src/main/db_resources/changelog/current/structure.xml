@@ -8720,7 +8720,7 @@ public class OrderAdvancement extends ModuleScript {
         </sql>
     </changeSet>
     
-     <changeSet id="#446_20210427" author="Mbarek">
+     <changeSet id="#5623_20210427" author="Mbarek">
        <addColumn tableName="cpq_order_offer">
             <column name="quote_offer_id" type="bigint"/>
         </addColumn>

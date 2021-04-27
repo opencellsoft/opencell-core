@@ -72,7 +72,7 @@ public class OrderOffer extends AuditableCFEntity {
 	 * quote offer attached to this orderOffer
 	 */
     
-	@OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_offer_id")
 	private QuoteOffer QuoteOffer;
     

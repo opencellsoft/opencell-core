@@ -46,10 +46,10 @@ public class OrderLot extends BusinessCFEntity{
 	
 	
     /**
-   	 * quote product attached to this orderOffer
+   	 * quote lot attached to this orderLot
    	 */
        
-   	@OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+   	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_lot_id")
    	private QuoteLot quoteLot;
 
