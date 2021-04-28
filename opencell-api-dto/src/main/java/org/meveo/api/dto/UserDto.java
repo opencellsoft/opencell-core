@@ -103,6 +103,9 @@ public class UserDto extends AuditableEntityDto {
     @XmlElement(name = "permission")
     private List<String> permissions;
 
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
+
     /**
      * Instantiates a new user dto.
      */
@@ -391,6 +394,14 @@ public class UserDto extends AuditableEntityDto {
      */
     public void setPermissions(List<String> permissions) {
         this.permissions = permissions;
+    }
+
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
     }
 
     @Override

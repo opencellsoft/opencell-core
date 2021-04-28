@@ -274,15 +274,15 @@
 
                                                     <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.CARD}">
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.cardType']}"
-                                                            field="cardType" required="true" edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" />
+                                                            field="cardType" edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.cardOwner']}"
-                                                            field="owner" required="true" edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" />
+                                                            field="owner" edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}"
-                                                            label="#{messages['paymentMethod.cardExpirationMonth']}" field="monthExpiration" required="true"
+                                                            label="#{messages['paymentMethod.cardExpirationMonth']}" field="monthExpiration"
                                                             edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" minValue="1" maxValue="12" size="2"
                                                             componentWidth="15" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}"
-                                                            label="#{messages['paymentMethod.cardExpirationYear']}" field="yearExpiration" required="true"
+                                                            label="#{messages['paymentMethod.cardExpirationYear']}" field="yearExpiration"
                                                             edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" size="2" componentWidth="15" minValue="0"
                                                             maxValue="99" />
                                                         <hftl:decorateFormField fieldId="cardNr" label="#{messages['paymentMethod.cardNumber']}"
@@ -294,7 +294,7 @@
                                                             rendered="#{customerAccountBean.selectedPaymentMethod.tokenId==null}"
                                                             edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" required="true">
                                                             <p:inputMask id="cardNr" mask="9999 9999 9999 9999" value="#{customerAccountBean.selectedPaymentMethod.cardNumber}"
-                                                                required="true" />
+                                                                />
                                                         </hftl:decorateFormField>
                                                     </c:if>
 
