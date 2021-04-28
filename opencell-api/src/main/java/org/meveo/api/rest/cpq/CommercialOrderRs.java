@@ -3,13 +3,11 @@ package org.meveo.api.rest.cpq;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -76,7 +74,8 @@ public interface CommercialOrderRs {
 					@ApiResponse(responseCode = "412", description = "Missing required parameters", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 					@ApiResponse(responseCode = "404", description = "One of attached fields is unknown", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 			})
-	Response updateUserAccount(@Parameter(required = true) @PathParam("commercialOrderId") Long commercialOrderId, @Parameter(required = true) @PathParam("userAccountCode") String userAccountCode);
+	Response updateUserAccount(@Parameter(description = "The id of the commercial order", required = true) @PathParam("commercialOrderId") Long commercialOrderId, 
+								@Parameter(description = "The code of the user account", required = true) @PathParam("userAccountCode") String userAccountCode);
 
 	@PUT
 	@Path("/{commercialOrderId}/invoicingPlans/{invoicingPlanCode}")
@@ -88,7 +87,8 @@ public interface CommercialOrderRs {
 					@ApiResponse(responseCode = "412", description = "Missing required parameters", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 					@ApiResponse(responseCode = "404", description = "One of attached fields is unknown", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 			})
-	Response updateOrderInvoicingPlan(@Parameter(required = true) @PathParam("commercialOrderId") Long commercialOrderId, @Parameter(required = true) @PathParam("invoicingPlanCode") String invoicingPlanCode);
+	Response updateOrderInvoicingPlan(@Parameter(description = "The id of the commercial order", required = true) @PathParam("commercialOrderId") Long commercialOrderId, 
+									@Parameter(description = "The code of the invoicing plan", required = true) @PathParam("invoicingPlanCode") String invoicingPlanCode);
 	
 	@DELETE
 	@Path("/{orderId}")
@@ -100,7 +100,7 @@ public interface CommercialOrderRs {
 	            @ApiResponse(responseCode = "412", description = "id of order is missing", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 	            @ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 	    })
-	public Response delete(@Parameter(required = true) @PathParam("orderId") Long orderId);
+	public Response delete(@Parameter(description = "The id of the commercial order", required = true) @PathParam("orderId") Long orderId);
 	
 
 	@PUT
@@ -113,7 +113,8 @@ public interface CommercialOrderRs {
 	            @ApiResponse(responseCode = "412", description = "id of order is missing", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 	            @ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 	    })
-	public Response updateStatus(@Parameter(required = true) @PathParam("orderId") Long orderId, @Parameter(required = true) @PathParam("statusTarget") String statusTarget);
+	public Response updateStatus(@Parameter(description = "The id of the commercial order", required = true) @PathParam("orderId") Long orderId, 
+								@Parameter(description = "The status to be updated", required = true) @PathParam("statusTarget") String statusTarget);
 	
 
 	@POST
@@ -126,7 +127,7 @@ public interface CommercialOrderRs {
 	            @ApiResponse(responseCode = "412", description = "id of order is missing", content = @Content(schema = @Schema(implementation = MissingParameterException.class))),
 	            @ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 	    })
-	public Response duplicate(@Parameter(required = true) @PathParam("orderId") Long orderId);
+	public Response duplicate(@Parameter(description = "The id of the commercial order", required = true) @PathParam("orderId") Long orderId);
 	
 	@POST
     @Path("/list")
@@ -148,7 +149,7 @@ public interface CommercialOrderRs {
             @ApiResponse(responseCode="200", description = "The order is succefully retrieved",content = @Content(schema = @Schema(implementation = GetCommercialOrderDtoResponse.class))),
             @ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
      	   })
-    public Response findByOrderNumber(@Parameter(required = true) @PathParam("orderNumber") String orderNumber);
+    public Response findByOrderNumber(@Parameter(description = "The order number for an existing commercial order", required = true) @PathParam("orderNumber") String orderNumber);
 
 	@POST
 	@Path("/{orderId}/orderValidation")
@@ -159,7 +160,7 @@ public interface CommercialOrderRs {
 					@ApiResponse(responseCode="200", description = "The order is successfully validated",content = @Content(schema = @Schema(implementation = GetCommercialOrderDtoResponse.class))),
 					@ApiResponse(responseCode = "404", description = "Order Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 			})
-	public Response orderValidationProcess(@Parameter(required = true) @PathParam("orderId") Long orderId);
+	public Response orderValidationProcess(@Parameter(description = "The id of the commercial order", required = true) @PathParam("orderId") Long orderId);
 	
 	
 	@POST
@@ -176,7 +177,7 @@ public interface CommercialOrderRs {
 	})
 
 	Response createOrderOffer(	@Parameter( name = "orderOfferDto",
-	description = "order offer dto for a new insertion")OrderOfferDto orderOfferDto);
+	description = "order offer dto for a new insertion") OrderOfferDto orderOfferDto);
 
 
 	@PUT
@@ -216,7 +217,7 @@ public interface CommercialOrderRs {
 			@ApiResponse(responseCode="200", description = "The order type is succefully retrieved",content = @Content(schema = @Schema(implementation = GetOrderOfferDtoResponse.class))),
 			@ApiResponse(responseCode = "404", description = "Order offer Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
 	})
-	public Response findOrderOffer(@Parameter(required = true) @PathParam("id") Long id);
+	public Response findOrderOffer(@Parameter(description = "The id of the order offer", required = true) @PathParam("id") Long id);
 	
 	
 	@PUT
@@ -228,7 +229,8 @@ public interface CommercialOrderRs {
 					@ApiResponse(responseCode="200", description = "The order progress is succeffully updated",content = @Content(schema = @Schema(implementation = GetQuoteDtoResponse.class))),
 					@ApiResponse(responseCode = "412", description = "Missing required parameters", content = @Content(schema = @Schema(implementation = MissingParameterException.class)))
 			})
-	Response updateOrderProgress(@Parameter(required = true) @PathParam("commercialOrderId") Long commercialOrderId, @Parameter(required = true) @PathParam("progressValue") Integer progressValue);
+	Response updateOrderProgress(@Parameter(description = "The id of the commercial order", required = true) @PathParam("commercialOrderId") Long commercialOrderId,
+								@Parameter(description = "The value of order to be progress", required = true) @PathParam("progressValue") Integer progressValue);
 }
 	
 	

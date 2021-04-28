@@ -34,13 +34,9 @@ import javax.ws.rs.core.UriInfo;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.cpq.GetListAccountingArticlePricesResponseDto;
-import org.meveo.api.dto.cpq.GetPdfQuoteRequestDto;
 import org.meveo.api.dto.cpq.QuoteDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
-import org.meveo.api.dto.invoice.GetPdfInvoiceRequestDto;
-import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.cpq.CpqQuotesListResponseDto;
 import org.meveo.api.dto.response.cpq.GetPdfQuoteResponseDto;
@@ -51,7 +47,6 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
-import org.meveo.model.quote.QuoteStatusEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -351,7 +346,9 @@ public interface CpqQuoteRs {
     responses = {
             @ApiResponse(responseCode="200", description = "quote XML is succefully generated!",content = @Content(schema = @Schema(implementation = GetPdfQuoteResponseDto.class)))
     })
-    GetPdfQuoteResponseDto generateQuoteXml(@PathParam("quoteCode") String quoteCode, @PathParam("currentVersion") int currentVersion, @QueryParam("generatePdf") boolean generatePdf);
+    GetPdfQuoteResponseDto generateQuoteXml(@Parameter(description = "The code of the quote", required = true) @PathParam("quoteCode") String quoteCode, 
+    										@Parameter(description = "The version of the quote", required = true) @PathParam("currentVersion") int currentVersion, 
+    										@Parameter(description = "Indicate if the quote will generate a new xml", required = true) @QueryParam("generatePdf") boolean generatePdf);
     
     
     
@@ -366,7 +363,9 @@ public interface CpqQuoteRs {
     responses = {
             @ApiResponse(responseCode="200", description = "quote PDF is succefully returned!",content = @Content(schema = @Schema(implementation = GetPdfQuoteResponseDto.class)))
     })
-    GetPdfQuoteResponseDto getQuotePDF(@PathParam("quoteCode") String quoteCode, @PathParam("currentVersion") int currentVersion, @QueryParam("generatePdf") boolean generatePdf);
+    GetPdfQuoteResponseDto getQuotePDF(@Parameter(description = "The code of the quote", required = true) @PathParam("quoteCode") String quoteCode,
+    								   @Parameter(description = "The version of the quote", required = true) @PathParam("currentVersion") int currentVersion, 
+    								   @Parameter(description = "Indicate if the quote will generate a new pdf", required = true) @QueryParam("generatePdf") boolean generatePdf);
     
 
     /**

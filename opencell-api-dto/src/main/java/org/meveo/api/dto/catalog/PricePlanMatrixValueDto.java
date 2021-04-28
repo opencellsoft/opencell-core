@@ -9,6 +9,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.catalog.PricePlanMatrixValue;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanMatrixValueDto extends BaseEntityDto {
 
@@ -17,24 +19,35 @@ public class PricePlanMatrixValueDto extends BaseEntityDto {
 	 */
 	private static final long serialVersionUID = 6095766234485840716L;
 
+    @Schema(description = "The price plan matrix value id")
 	private Long ppmValueId;
 
 	@NotNull
+    @Schema(description = "The price plan column code", required = true)
     private String ppmColumnCode ;
 
+    @Schema(description = "The long value")
     private Long longValue;
 
+    @Schema(description = "The double value")
     private Double doubleValue;
 
+    @Schema(description = "The string value")
     private String stringValue;
 
+    @Schema(description = "The date value")
     private Date dateValue;
 
+    @Schema(description = "The from date value")
     private Date fromDateValue;
+    
+    @Schema(description = "The to date value")
     private Date toDateValue;
 
+    @Schema(description = "The from double value")
     private Double fromDoubleValue;
 
+    @Schema(description = "The to double value")
     private Double toDoubleValue;
 
 	public PricePlanMatrixValueDto() {

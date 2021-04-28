@@ -4,6 +4,8 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.catalog.ColumnTypeEnum;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -16,28 +18,37 @@ public class PricePlanMatrixColumnDto extends BaseEntityDto {
 	 */
 	private static final long serialVersionUID = 6095766234485840716L;
 
+    @Schema(description = "The price plan matrix column code")
 	@NotNull
     private String code;
 
+    @Schema(description = "The price plan matrix code")
     @NotNull
     private String pricePlanMatrixCode;
 
+    @Schema(description = "The price plan matrix version")
     @NotNull
     private int pricePlanMatrixVersion;
 
+    @Schema(description = "The product code")
     private String productCode;
 
+    @Schema(description = "The offer template code")
     private String offerTemplateCode;
 
+    @Schema(description = "The attribute code")
     private String attributeCode;
-   
+
+    @Schema(description = "The position of price plan column")
     private int position;
 
+    @Schema(description = "The type of the price plan column")
     private ColumnTypeEnum type;
 
-   
+    @Schema(description = "The el value of price plan matrix column")
     private String elValue;
 
+    @Schema(description = "Indicate if the price plan matrix column is a range")
     private Boolean isRange;
 
     public PricePlanMatrixColumnDto() {

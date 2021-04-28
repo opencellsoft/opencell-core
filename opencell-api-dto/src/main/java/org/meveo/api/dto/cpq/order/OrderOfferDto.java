@@ -10,19 +10,25 @@ import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderOffer;
 import org.meveo.model.cpq.commercial.OrderProduct;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @SuppressWarnings("serial") 
 public class OrderOfferDto extends BaseEntityDto {
  
+	@Schema(description = "The id of the order offer")
 	private Long orderOfferId;
 	
-    /** The commercial order id. */ 
+    /** The commercial order id. */
+	@Schema(description = "The commercial order id") 
     private Long commercialOrderId;
 	
 	
-    /** The offer template code. */ 
+    /** The offer template code. */
+	@Schema(description = "The offer template code") 
     private String offerTemplateCode;
     
-    /** The discountPlan code. */ 
+    /** The discountPlan code. */
+	@Schema(description = "The discountPlan code") 
     private String discountPlanCode;
     
     private List<OrderProductDto> orderProducts = new ArrayList<OrderProductDto>();

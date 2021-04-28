@@ -4,12 +4,20 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadPricesRequest {
+
+    @Schema(description = "The price plan matrix code", required = true)
     @NotNull
     private String ppmCode;
+    
+    @Schema(description = "The price plan matrix veriosn", required = true)
     @NotNull
     private Integer ppmVersion;
+
+    @Schema(description = "The quote product id", required = true)
     @NotNull
     private Long quoteProductId;
 

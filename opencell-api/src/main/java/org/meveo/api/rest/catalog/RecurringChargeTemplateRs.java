@@ -149,7 +149,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus remove(@Parameter(required = true) @PathParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
+    ActionStatus remove(@Parameter(description = "The recurring charge template code", required = true) @PathParam("recurringChargeTemplateCode") String recurringChargeTemplateCode);
 
     /**
      * Create new or update an existing recurring charge template
@@ -197,7 +197,7 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus enable(@Parameter(required = true) @PathParam("code") String code);
+    ActionStatus enable(@Parameter(description = "The code of recurring charge template to be enabled", required = true) @PathParam("code") String code);
 
     /**
      * Disable a Recurring charge template with a given code
@@ -221,5 +221,5 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus disable(@Parameter(required = true) @PathParam("code") String code);
+    ActionStatus disable(@Parameter(description = "The code of recurring charge template to be disabled", required = true) @PathParam("code") String code);
 }

@@ -54,9 +54,11 @@ public interface InvoiceResource {
 							@Header(name = "ETag", description = "a pseudo-unique identifier that represents the version of the data sent back.", schema = @Schema(type = "integer", format = "int64")) }, description = "list of invoices", content = @Content(schema = @Schema(implementation = Invoices.class))),
 					@ApiResponse(responseCode = "304", description = "Lists invoices with filtering, sorting, paging."),
 					@ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content(schema = @Schema(implementation = ApiException.class))) })
-	Response getInvoices(@DefaultValue("0") @QueryParam("offset") Long offset,
-			@DefaultValue("50") @QueryParam("limit") Long limit, @QueryParam("sort") String sort,
-			@QueryParam("orderBy") String orderBy, @QueryParam("filter") String filter, @Context Request request);
+	Response getInvoices(@Parameter(description = "The offset of the list") @DefaultValue("0") @QueryParam("offset") Long offset,
+						@Parameter(description = "The limit per page") @DefaultValue("50") @QueryParam("limit") Long limit, 
+						@Parameter(description = "The sort by field") @QueryParam("sort") String sort,
+						@Parameter(description = "The order by") @QueryParam("orderBy") String orderBy, 
+						@Parameter(description = "The filter") @QueryParam("filter") String filter, @Context Request request);
 
 	@GET
 	@Path("/{id}")
@@ -107,9 +109,11 @@ public interface InvoiceResource {
 							@Header(name = "ETag", description = "a pseudo-unique identifier that represents the version of the data sent back.", schema = @Schema(type = "integer", format = "int64")) }, description = "list of advancedPayment invoices", content = @Content(schema = @Schema(implementation = Invoices.class))),
 					@ApiResponse(responseCode = "304", description = "Lists advancedPayment invoices with filtering, sorting, paging."),
 					@ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content(schema = @Schema(implementation = ApiException.class))) })
-	Response getAdvancedPaymentInvoices(@DefaultValue("0") @QueryParam("offset") Long offset,
-			@DefaultValue("50") @QueryParam("limit") Long limit, @QueryParam("sort") String sort,
-			@QueryParam("orderBy") String orderBy, @QueryParam("filter") String filter, @Context Request request);
+	Response getAdvancedPaymentInvoices(@Parameter(description = "The offset of the list") @DefaultValue("0") @QueryParam("offset") Long offset,
+										@Parameter(description = "The limit per page") @DefaultValue("50") @QueryParam("limit") Long limit, 
+										@Parameter(description = "The sort by field") @QueryParam("sort") String sort,
+										@Parameter(description = "The order") @QueryParam("orderBy") String orderBy, 
+										@Parameter(description = "The filter") @QueryParam("filter") String filter, @Context Request request);
 
 	@POST
 	@Path("/advancedPaymentInvoices")
