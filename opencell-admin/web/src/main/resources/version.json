@@ -1,5 +1,5 @@
 {
-  "name" : "Opencell Community Edition",
+  "name" : "Opencell Core",
   "version" : "@VERSION_NUMBER@",
   "commit" : "@BUILD_NUMBER@"
 }

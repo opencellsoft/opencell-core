@@ -1,0 +1,329 @@
+[
+  {
+    "entityName": "Seller",
+    "configs": [
+      {
+        "method": "find|remove",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "validate": [
+              {
+                "entityClass": "org.meveo.model.admin.Seller"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "entityName": "Customer",
+    "configs": [
+      {
+        "method": "find|remove",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "validate": [
+              {
+                "entityClass": "org.meveo.model.crm.Customer"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "code",
+                "entityClass": "org.meveo.model.crm.Customer"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "entityName": "CustomerAccount",
+    "configs": [
+      {
+        "method": "find|remove",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "validate": [
+              {
+                "entityClass": "org.meveo.model.payments.CustomerAccount"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "entityName": "BillingAccount",
+    "configs": [
+      {
+        "method": "find|remove",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "validate": [
+              {
+                "entityClass": "org.meveo.model.billing.BillingAccount"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "entityName": "UserAccount",
+    "configs": [
+      {
+        "method": "find",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "validate": [
+              {
+                "entityClass": "org.meveo.model.billing.UserAccount"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "entityName": "Subscription",
+    "configs": [
+      {
+        "method": "find",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ObjectFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller"
+              },
+              {
+                "property": "userAccount",
+                "entityClass": "org.meveo.model.billing.UserAccount"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller"
+              },
+              {
+                "property": "userAccount",
+                "entityClass": "org.meveo.model.billing.UserAccount"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "entityName": "OfferTemplate",
+    "configs": [
+      {
+        "method": "create|update",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "validate": [
+              {
+                "property": "sellers",
+                "entityClass": "org.meveo.model.admin.Seller",
+                "parser": "org.meveo.api.security.parameter.ObjectPropertyParser"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "method": "find",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ObjectFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "sellers",
+                "entityClass": "org.meveo.model.admin.Seller",
+                "allowAccessIfNull": "true"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "sellers",
+                "entityClass": "org.meveo.model.admin.Seller",
+                "allowAccessIfNull": "true"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "entityName": "PaymentHistory",
+    "configs": [
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "sellerCode",
+                "entityClass": "org.meveo.model.admin.Seller"
+              },
+              {
+                "property": "customerAccountCode",
+                "entityClass": "org.meveo.model.payments.CustomerAccount"
+              },
+              {
+                "property": "customerCode",
+                "entityClass": "org.meveo.model.crm.Customer"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "entityName": "Contact",
+    "configs": [
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "code",
+                "entityClass": "org.meveo.model.communication.contact.Contact"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "entityName": "BundleTemplate",
+    "configs": [
+      {
+        "method": "find",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ObjectFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller",
+                "allowAccessIfNull": "true"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller",
+                "allowAccessIfNull": "true"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "entityName": "ProductTemplate",
+    "configs": [
+      {
+        "method": "find",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ObjectFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller",
+                "allowAccessIfNull": "true"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller",
+                "allowAccessIfNull": "true"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+]

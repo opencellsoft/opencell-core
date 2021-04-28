@@ -16,27 +16,19 @@
  * <https://www.gnu.org/licenses/agpl-3.0.en.html>.
  */
 
-package org.meveo.apiv2.models;
+package org.meveo.apiv2.ordering.resource.orderItem;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
+import org.meveo.apiv2.models.Resource;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.core.Response;
-import java.util.List;
 
 @Value.Immutable
-@JsonSerialize
-public interface ApiException extends Resource{
+@Value.Style(jdkOnly=true)
+@JsonDeserialize(as = ImmutableServiceInstance.class)
+public interface ServiceInstance extends Resource {
     @Nullable
-    Long getId();
-    @Nullable
-    String getCode();
-    @Nullable
-    Response.Status getStatus();
-    @Nullable
-    String getDetails();
-    @Nullable
-    List<Cause> getCauses();
+    Long getQuantity();
+    Resource getServiceTemplate();
 }
-
