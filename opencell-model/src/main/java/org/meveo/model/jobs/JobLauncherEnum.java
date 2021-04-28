@@ -34,8 +34,14 @@ public enum JobLauncherEnum {
      * Launched from GUI
      */
     GUI,
+
     /**
-     * Launched by as result of another action, a notification trigger, or as a next or incomplete job
+     * Launched by as result of incomplete job
+     */
+    INCOMPLETE,
+
+    /**
+     * Launched by as result of another action, a notification trigger, or as a next job
      */
     TRIGGER,
 
