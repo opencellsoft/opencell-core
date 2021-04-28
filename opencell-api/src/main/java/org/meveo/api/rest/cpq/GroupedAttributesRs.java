@@ -114,7 +114,7 @@ public interface GroupedAttributesRs extends IBaseRs {
             @ApiResponse(responseCode = "500", description = "No grouped attribute is found for the groupedAttributeCode param", 
     		content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
-    ActionStatus remove(@Parameter(required = true) @PathParam("groupedAttributeCode") String groupedAttributeCode);
+    ActionStatus remove(@Parameter(description = "The code of the grouped attribute", required = true) @PathParam("groupedAttributeCode") String groupedAttributeCode);
     
     @GET
     @Path("/")
@@ -128,7 +128,7 @@ public interface GroupedAttributesRs extends IBaseRs {
             @ApiResponse(responseCode = "500", description = "No grouped attribute is found for the groupedAttributeCode param", 
             		content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
-    Response find(@Parameter(required = true) @QueryParam("groupedAttributeCode") String groupedAttributeCode);
+    Response find(@Parameter(description = "The code of the grouped attribute", required = true) @QueryParam("groupedAttributeCode") String groupedAttributeCode);
 
 
 }

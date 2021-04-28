@@ -30,6 +30,8 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 import org.meveo.model.cpq.commercial.OrderProduct;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * DTO to create or update a order product
  * 
@@ -46,21 +48,29 @@ public class OrderProductDto extends BaseEntityDto{
 	 */
 	private static final long serialVersionUID = 7231556751341912018L;
 
+	@Schema(description = "The order product id")
 	private Long orderProductId;
-	 
+
+	@Schema(description = "The commercial order id")
 	private Long commercialOrderId;
     
-     
+
+	@Schema(description = "The order lot code")
     private String orderLotCode;
-    
+
+	@Schema(description = "The order offer id")
     private Long orderOfferId; 
-    
+
+	@Schema(description = "The discount plan code")
     private String discountPlanCode;
-    
+
+	@Schema(description = "The proudct version")
     private Integer productVersion;
-    
+
+	@Schema(description = "The product code")
     private String productCode;
- 
+
+	@Schema(description = "The quantity")
     private BigDecimal quantity;
     
     private List<OrderAttributeDto> orderAttributes=new ArrayList<OrderAttributeDto>(); 

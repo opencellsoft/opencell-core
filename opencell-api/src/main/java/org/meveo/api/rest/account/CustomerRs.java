@@ -36,6 +36,7 @@ import org.meveo.api.serialize.RestDateParam;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -97,8 +98,9 @@ public interface CustomerRs extends IBaseRs {
     @Path("/")
     @Operation(summary = "Search for a customer with a given code", deprecated = true,
     tags = { "Deprecated" })
-    GetCustomerResponseDto find(@QueryParam("customerCode") String customerCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
-                                @QueryParam("includeCustomerAccounts") boolean includeCustomerAccounts);
+    GetCustomerResponseDto find(@Parameter(description = "The customer code") @QueryParam("customerCode") String customerCode, 
+    							@Parameter(description = "The type of the customer ") @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
+    							@Parameter(description = "Indicate if account of the customer will included") @QueryParam("includeCustomerAccounts") boolean includeCustomerAccounts);
 
     /**
      * Search for a customer with a given code
@@ -112,8 +114,9 @@ public interface CustomerRs extends IBaseRs {
     @Path("/{customerCode}")
     @Operation(summary = "Search for a customer with a given code",
             tags = { "Customer management" })
-    GetCustomerResponseDto findV2(@PathParam("customerCode") String customerCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
-                                @QueryParam("includeCustomerAccounts") boolean includeCustomerAccounts);
+    GetCustomerResponseDto findV2(@Parameter(description = "The customer code") @PathParam("customerCode") String customerCode, 
+    							  @Parameter(description = "The type of the customer ") @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
+    							  @Parameter(description = "Indicate if account of the customer will included") @QueryParam("includeCustomerAccounts") boolean includeCustomerAccounts);
 
     /**
      * Remove customer with a given code
@@ -125,7 +128,7 @@ public interface CustomerRs extends IBaseRs {
     @Path("/{customerCode}")
     @Operation(summary = "Remove customer with a given code",
     tags = { "Customer management" })
-    ActionStatus remove(@PathParam("customerCode") String customerCode);
+    ActionStatus remove(@Parameter(description = "The customer code", required = true) @PathParam("customerCode") String customerCode);
 
     /**
      * Filters are: category, seller, brand and provider.
@@ -141,9 +144,13 @@ public interface CustomerRs extends IBaseRs {
      */
     @POST
     @Path("/list47")
-    CustomersResponseDto list47(@Deprecated CustomerDto postData, @QueryParam("firstRow") @Deprecated Integer firstRow,
-            @QueryParam("numberOfRows") @Deprecated Integer numberOfRows, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
-            @DefaultValue("c.code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+    CustomersResponseDto list47(@Parameter(description = "The customer's data") @Deprecated CustomerDto postData, 
+    							@Parameter(description = "from record number. Deprecated in v.4.7, use 'from' instead") @QueryParam("firstRow") @Deprecated Integer firstRow,
+    							@Parameter(description = "Pagination - number of records to retrieve. Deprecated in v.4.7, use 'limit' instead")  @QueryParam("numberOfRows") @Deprecated Integer numberOfRows, 
+    							@Parameter(description = "Pagination - from record number") @QueryParam("offset") Integer offset, 
+    							@Parameter(description = "Pagination - number of records to retrieve") @QueryParam("limit") Integer limit,
+    							@Parameter(description = "sort by field") @DefaultValue("c.code") @QueryParam("sortBy") String sortBy, 
+    							@Parameter(description = "sort Order") @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
      * List customers matching a given criteria
@@ -161,9 +168,13 @@ public interface CustomerRs extends IBaseRs {
     @Path("/list")
     @Operation(summary = "List customers matching a given criteria", deprecated = true,
     tags = { "Deprecated" })
-    CustomersResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
-            @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
-            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+    CustomersResponseDto listGet(@Parameter(description = "query Search criteria" ) @QueryParam("query") String query, 
+    							@Parameter(description = "fields Data retrieval options/fieldnames separated by a comma" ) @QueryParam("fields") String fields, 
+    							@Parameter(description = "offset Pagination - from record number" ) @QueryParam("offset") Integer offset,
+    							@Parameter(description = "limit Pagination - number of records to retrieve" ) @QueryParam("limit") Integer limit, 
+    							@Parameter(description = "Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields" ) @DefaultValue("code") @QueryParam("sortBy") String sortBy, 
+    							@Parameter(description = "sort order" ) @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
+    							@Parameter(description = "Should inherited custom fields be retrieved. Defaults to INHERIT_NO_MERGE" ) @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * List customers matching a given criteria
@@ -316,7 +327,7 @@ public interface CustomerRs extends IBaseRs {
     @Path("/category/{categoryCode}")
     @Operation(summary = "Search for a customer category with a given code", deprecated = true,
     tags = { "Deprecated" })
-    GetCustomerCategoryResponseDto findCategory(@PathParam("categoryCode") String categoryCode);
+    GetCustomerCategoryResponseDto findCategory(@Parameter(description = "The category code") @PathParam("categoryCode") String categoryCode);
 
     /**
      * Search for a customer category with a given code
@@ -328,7 +339,7 @@ public interface CustomerRs extends IBaseRs {
     @Path("/categories/{categoryCode}")
     @Operation(summary = "Search for a customer category with a given code",
             tags = { "Customer management" })
-    GetCustomerCategoryResponseDto findCategoryV2(@PathParam("categoryCode") String categoryCode);
+    GetCustomerCategoryResponseDto findCategoryV2(@Parameter(description = "The category code", required = true) @PathParam("categoryCode") String categoryCode);
 
 
     /**
@@ -353,7 +364,7 @@ public interface CustomerRs extends IBaseRs {
     @Path("/removeBrand/{brandCode}")
     @Operation(summary = "Remove existing customer brand with a given brand code", deprecated = true,
     tags = { "Deprecated" })
-    ActionStatus removeBrand(@PathParam("brandCode") String brandCode);
+    ActionStatus removeBrand(@Parameter(description = "The customer brand code", required = true) @PathParam("brandCode") String brandCode);
 
     /**
      * Remove an existing customer category with a given category code
@@ -365,7 +376,7 @@ public interface CustomerRs extends IBaseRs {
     @Path("/removeCategory/{categoryCode}")
     @Operation(summary = "Remove an existing customer category with a given category code", deprecated = true,
     tags = { "Deprecated" })
-    ActionStatus removeCategory(@PathParam("categoryCode") String categoryCode);
+    ActionStatus removeCategory(@Parameter(description = "The category code", required = true) @PathParam("categoryCode") String categoryCode);
 
     /**
      * Remove existing customer brand with a given brand code
@@ -377,7 +388,7 @@ public interface CustomerRs extends IBaseRs {
     @Path("/brands/{brandCode}")
     @Operation(summary = "Remove existing customer brand with a given brand code",
             tags = { "Customer management" })
-    ActionStatus removeBrandV2(@PathParam("brandCode") String brandCode);
+    ActionStatus removeBrandV2(@Parameter(description = "The customer brand code", required = true) @PathParam("brandCode") String brandCode);
 
     /**
      * Remove an existing customer category with a given category code
@@ -389,7 +400,7 @@ public interface CustomerRs extends IBaseRs {
     @Path("/categories/{categoryCode}")
     @Operation(summary = "Remove an existing customer category with a given category code",
             tags = { "Customer management" })
-    ActionStatus removeCategoryV2(@PathParam("categoryCode") String categoryCode);
+    ActionStatus removeCategoryV2(@Parameter(description = "The category code", required = true) @PathParam("categoryCode") String categoryCode);
 
     /**
      * Create new or update existing customer
@@ -415,7 +426,7 @@ public interface CustomerRs extends IBaseRs {
     @Path("/exportCustomerHierarchy")
     @Operation(summary = " Exports an account hierarchy given a specific customer", deprecated = true,
     tags = { "Deprecated" })
-    ActionStatus exportCustomerHierarchy(@QueryParam("customerCode") String customerCode);
+    ActionStatus exportCustomerHierarchy(@Parameter(description = "The customer code") @QueryParam("customerCode") String customerCode);
 
     /**
      * Exports an account hierarchy given a specific customer selected in the GUI.
@@ -429,7 +440,7 @@ public interface CustomerRs extends IBaseRs {
     @Path("/{customerCode}/exportation")
     @Operation(summary = " Exports an account hierarchy given a specific customer",
             tags = { "Customer management" })
-    ActionStatus exportCustomerHierarchyV2(@PathParam("customerCode") String customerCode);
+    ActionStatus exportCustomerHierarchyV2(@Parameter(description = "The customer code") @PathParam("customerCode") String customerCode);
     
     /**
      * Right to be forgotten. This concerns listing of risky or grey/black listed customers and their data.
@@ -442,7 +453,7 @@ public interface CustomerRs extends IBaseRs {
     @Path("/anonymizeGdpr")
     @Operation(summary = "Anonymization of a specific customer", deprecated = true,
             tags = { "Deprecated" })
-    ActionStatus anonymizeGdpr(@QueryParam("customerCode") String customerCode);
+    ActionStatus anonymizeGdpr(@Parameter(description = "The customer code") @QueryParam("customerCode") String customerCode);
 
     /**
      * Right to be forgotten. This concerns listing of risky or grey/black listed customers and their data.
@@ -453,7 +464,7 @@ public interface CustomerRs extends IBaseRs {
      */
     @GET
     @Path("/{customerCode}/gdprAnonymization")
-    ActionStatus anonymizeGdprV2(@PathParam("customerCode") String customerCode);
+    ActionStatus anonymizeGdprV2(@Parameter(description = "The customer code") @PathParam("customerCode") String customerCode);
 
     /**
 	 * Update the Provider's customer number sequence configuration.
@@ -510,7 +521,7 @@ public interface CustomerRs extends IBaseRs {
 	@Path("/sequence/{code}/next")
 	 @Operation(summary = "Generates the next customer sequence number",
 	    tags = { "Customer management" })
-	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@PathParam("code") String code);
+	GenericSequenceValueResponseDto getNextCustomerSequenceNumber(@Parameter(description = "The code of the sequence", required = true) @PathParam("code") String code);
 
     /**
      * Filter counters by period date.
@@ -523,7 +534,8 @@ public interface CustomerRs extends IBaseRs {
     @Path("/filterCountersByPeriod")
     @Operation(summary = "Filter counters by period date",
     tags = { "Deprecated" })
-    GetCountersInstancesResponseDto filterCustomerCountersByPeriod(@QueryParam("customerCode") String customerCode, @QueryParam("date") @RestDateParam Date date);
+    GetCountersInstancesResponseDto filterCustomerCountersByPeriod(@Parameter(description = "The customer code") @QueryParam("customerCode") String customerCode, 
+    															   @Parameter(description = "The date to compare ", required = true) @QueryParam("date") @RestDateParam Date date);
 
     /**
      * Filter counters by period date.
@@ -536,7 +548,8 @@ public interface CustomerRs extends IBaseRs {
     @Path("{customerCode}/filterCountersByPeriod")
     @Operation(summary = "Filter counters by period date",
             tags = { "Customer management" })
-    GetCountersInstancesResponseDto filterCustomerCountersByPeriodV2(@PathParam("customerCode") String customerCode, @QueryParam("date") @RestDateParam Date date);
+    GetCountersInstancesResponseDto filterCustomerCountersByPeriodV2(@Parameter(description = "The customer code") @QueryParam("customerCode") String customerCode, 
+			   														@Parameter(description = "The date to compare ", required = true) @QueryParam("date") @RestDateParam Date date);
 
 
 }

@@ -30,6 +30,8 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobSpeedEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The Class JobInstanceDto.
  * 
@@ -48,12 +50,15 @@ public class JobInstanceDto extends EnableBusinessDto {
 
     /** Job template. */
     @XmlAttribute(required = true)
+    @Schema(description = "Job template", required = true)
     private String jobTemplate;
 
     /** Following job to execute. */
+    @Schema(description = "Following job to execute")
     private String followingJob;
 
     /** Parameter to job execution. */
+    @Schema(description = "Parameter to job execution")
     private String parameter;
 
     /**
@@ -61,6 +66,7 @@ public class JobInstanceDto extends EnableBusinessDto {
      * 
      */
     @Deprecated
+    @Schema(description = "Is job active. A negative of Disabled. Deprecated in 5.0.1. Use Disabled field instead", deprecated = true)
     private Boolean active;
 
     /** Custom fields. */
@@ -68,26 +74,31 @@ public class JobInstanceDto extends EnableBusinessDto {
 
     /** Job scheduling timer code. */
     @XmlAttribute(required = false)
+    @Schema(description = "Job scheduling timer code")
     private String timerCode;
 
     /**
      * What cluster nodes job could/should run on. A comma separated list of custer nodes. A job can/will be run on any node if value is null.
      */
+    @Schema(description = "What cluster nodes job could/should run on. A comma separated list of custer nodes. A job can/will be run on any node if value is null")
     private String runOnNodes;
 
     /**
      * Can job be run in parallel on several cluster nodes. Value of True indicates that job can be run on a single node at a time.
      */
+    @Schema(description = "Can job be run in parallel on several cluster nodes. Value of True indicates that job can be run on a single node at a time")
     private Boolean limitToSingleNode;
 
     /**
      * Whether a verbose error log will be kept.
      */
+    @Schema(description = "Whether a verbose error log will be kept")
     private Boolean verboseReport;
 
     /**
      * Job execution speed. Defines how often job execution history gets updated.
      */
+    @Schema(description = "Job execution speed. Defines how often job execution history gets updated")
     private JobSpeedEnum jobSpeed;
 
     /**

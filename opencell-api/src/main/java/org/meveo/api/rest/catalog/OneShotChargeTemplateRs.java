@@ -27,6 +27,7 @@ import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -118,7 +119,7 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    GetOneShotChargeTemplateResponseDto find(@QueryParam("oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
+    GetOneShotChargeTemplateResponseDto find(@Parameter(description = "The One shot charge template code", required = true) @QueryParam("oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
     /**
      * List one shot charge template with the following filters.
@@ -146,8 +147,11 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(@QueryParam("languageCode") String languageCode, @QueryParam("countryCode") String countryCode,
-            @QueryParam("currencyCode") String currencyCode, @QueryParam("sellerCode") String sellerCode, @QueryParam("date") @RestDateParam Date date);
+    OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(@Parameter(description = "The language code") @QueryParam("languageCode") String languageCode, 
+    																@Parameter(description = "The country code") @QueryParam("countryCode") String countryCode,
+    																@Parameter(description = "The currency code") @QueryParam("currencyCode") String currencyCode, 
+    																@Parameter(description = "The seller code") @QueryParam("sellerCode") String sellerCode, 
+    																@Parameter(description = "The subscription date") @QueryParam("date") @RestDateParam Date date);
 
     /**
      * Return the list of oneShotChargeTemplates.
@@ -180,7 +184,7 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus remove(@PathParam("oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
+    ActionStatus remove(@Parameter(description = "The one shot charge template code") @PathParam("oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
     /**
      * Create new or update an existing.
@@ -228,7 +232,7 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus enable(@PathParam("code") String code);
+    ActionStatus enable(@Parameter(description = "The code of One shot charge template to be enabled", required = true) @PathParam("code") String code);
 
     /**
      * Disable a One shot charge template with a given code
@@ -252,5 +256,5 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus disable(@PathParam("code") String code);
+    ActionStatus disable(@Parameter(description = "The code of One shot charge template to be disabled", required = true)@PathParam("code") String code);
 }

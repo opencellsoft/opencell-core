@@ -84,12 +84,12 @@ public interface OrderTypeRs {
 
 	@GET
     @Path("/{orderTypeCode}")
-    @Operation(summary = "Get commercial orders matching the given order number",
+    @Operation(summary = "Get order type matching the given order number",
     tags = { "Order type" },
-    description ="Get commercial order matching the given order number",
+    description ="Get order type matching the given order number",
     responses = {
             @ApiResponse(responseCode="200", description = "The order type is succefully retrieved",content = @Content(schema = @Schema(implementation = GetOrderTypeDtoResponse.class))),
             @ApiResponse(responseCode = "404", description = "Order type Does not exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
      	   })
-    public Response find(@Parameter(required = true) @PathParam("orderTypeCode") String orderTypeCode);
+    public Response find(@Parameter(description = "The code of the order type", required = true) @PathParam("orderTypeCode") String orderTypeCode);
 }

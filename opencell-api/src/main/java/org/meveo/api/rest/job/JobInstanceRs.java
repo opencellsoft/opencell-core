@@ -20,11 +20,16 @@ package org.meveo.api.rest.job;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.JobInstanceDto;
+import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.job.JobInstanceListResponseDto;
 import org.meveo.api.dto.response.job.JobInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -47,6 +52,12 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+    @Operation(summary = "Search for list of jobInstances",
+    tags = { "Jobs management" },
+    responses = {
+            @ApiResponse(responseCode="200", description = "Return the list of jobInsttance successfully",
+                    content = @Content(schema = @Schema(implementation = JobInstanceListResponseDto.class)))
+    })
     JobInstanceListResponseDto list();
 
     /**
@@ -105,7 +116,7 @@ public interface JobInstanceRs extends IBaseRs {
     @Path("/")
     @Operation(summary = "Find a job with a given code",
     tags = { "Jobs management" })
-    JobInstanceResponseDto find(@QueryParam("jobInstanceCode") String jobInstanceCode);
+    JobInstanceResponseDto find(@Parameter(description = "The job instance's code", required = true) @QueryParam("jobInstanceCode") String jobInstanceCode);
 
     /**
      * Remove an existing job instance with a given code
@@ -117,7 +128,7 @@ public interface JobInstanceRs extends IBaseRs {
     @Path("/{jobInstanceCode}")
     @Operation(summary = "Remove an existing job with a given code",
     tags = { "Jobs management" })
-    ActionStatus remove(@PathParam("jobInstanceCode") String jobInstanceCode);
+    ActionStatus remove(@Parameter(description = "The job instance's code", required = true) @PathParam("jobInstanceCode") String jobInstanceCode);
 
     /**
      * Enable a Job instance with a given code
@@ -129,7 +140,7 @@ public interface JobInstanceRs extends IBaseRs {
     @Path("/{code}/enable")
     @Operation(summary = "Enable a Job with a given code",
     tags = { "Jobs management" })
-    ActionStatus enable(@PathParam("code") String code);
+    ActionStatus enable(@Parameter(description = "The job instance's code", required = true) @PathParam("code") String code);
 
     /**
      * Disable a Job instance with a given code
@@ -141,6 +152,6 @@ public interface JobInstanceRs extends IBaseRs {
     @Path("/{code}/disable")
     @Operation(summary = "Disable a Job with a given code",
     tags = { "Jobs management" })
-    ActionStatus disable(@PathParam("code") String code);
+    ActionStatus disable(@Parameter(description = "The job instance's code", required = true) @PathParam("code") String code);
 
 }

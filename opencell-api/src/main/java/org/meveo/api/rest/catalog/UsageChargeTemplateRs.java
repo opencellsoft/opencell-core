@@ -117,7 +117,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    GetUsageChargeTemplateResponseDto find(@Parameter(required = true) @QueryParam("usageChargeTemplateCode") String usageChargeTemplateCode);
+    GetUsageChargeTemplateResponseDto find(@Parameter(description = "The usage charge template code", required = true) @QueryParam("usageChargeTemplateCode") String usageChargeTemplateCode);
 
     /**
      * Remove usage charge template with a given code.
@@ -141,7 +141,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus remove(@Parameter(required = true) @PathParam("usageChargeTemplateCode") String usageChargeTemplateCode);
+    ActionStatus remove(@Parameter(description = "The usage charge template code", required = true) @PathParam("usageChargeTemplateCode") String usageChargeTemplateCode);
 
     /**
      * Create new or update an existing charge template with a given code.
@@ -189,7 +189,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus enable(@Parameter(required = true)  @PathParam("code") String code);
+    ActionStatus enable(@Parameter(description = "The code of the usage charge template to be enabled", required = true)  @PathParam("code") String code);
 
     /**
      * Disable a Usage charge template with a given code
@@ -213,7 +213,7 @@ public interface UsageChargeTemplateRs extends IBaseRs {
 								)
 				)}
 	)
-    ActionStatus disable(@Parameter(required = true)  @PathParam("code") String code);
+    ActionStatus disable(@Parameter(description = "The code of the usage charge template to be disabeled", required = true)  @PathParam("code") String code);
     
     /**
      * List UsageChargeTemplate matching a given criteria

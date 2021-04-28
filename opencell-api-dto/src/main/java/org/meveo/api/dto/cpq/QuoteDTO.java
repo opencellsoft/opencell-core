@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * DTO to create or update a quote
  * 
@@ -40,10 +42,12 @@ public class QuoteDTO extends BaseQuoteDTO{
 	
     private QuoteVersionDto quoteVersion;
 
+    @Schema(description = "The name of the pdf file")
     private String pdfFilename;
 
 	
 	/** Discount plan code */
+    @Schema(description = "The code of the discount plan")
 	private String discountPlanCode;
 	/**
 	 * @return the quoteVersion

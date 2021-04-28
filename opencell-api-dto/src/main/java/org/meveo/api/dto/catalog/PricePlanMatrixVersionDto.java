@@ -5,6 +5,8 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -22,22 +24,43 @@ public class PricePlanMatrixVersionDto extends BaseEntityDto {
      */
     private static final long serialVersionUID = 1105680934764861643L;
 
+    @Schema(description = "The price plan matrix version id")
     private Long id; 
     
     @NotNull
+    @Schema(description = "The price plan matrix code")
     private String pricePlanMatrixCode;
 
+    @Schema(description = "The status of price plan matrix version")
     private VersionStatusEnum statusEnum;
+    
+    @Schema(description = "the current version of price plan matrix")
     protected int version;
+    
+    @Schema(description = "The status date. it set automatically when the status change")
     private Date statusDate;
+    
+    @Schema(description = "The label of price plan matrix version")
     private String label;
+    
     protected DatePeriod validity = new DatePeriod();
     @NotNull
+    @Schema(description = "Indicate is the price plan is a matrix")
     private Boolean isMatrix;
+    
+    @Schema(description = "The amount without tax")
     private BigDecimal amountWithoutTax;
+    
+    @Schema(description = "The amount with tax")
     private BigDecimal amountWithTax;
+    
+    @Schema(description = "The amount without tax EL")
     private String amountWithoutTaxEL;
+    
+    @Schema(description = "The amount with tax EL")
     private String amountWithTaxEL;
+    
+    @Schema(description = "The priority")
     protected int priority=0;
 
     private Set<PricePlanMatrixColumnDto> columns;

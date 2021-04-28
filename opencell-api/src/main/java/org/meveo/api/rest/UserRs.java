@@ -27,6 +27,8 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
@@ -75,7 +77,7 @@ public interface UserRs extends IBaseRs {
     @Path("/{username}")
     @Operation(summary = "Remove user with a given username",
     tags = { "User management" })
-    ActionStatus remove(@PathParam("username") String username);
+    ActionStatus remove(@Parameter(description = "The usename of user to be deleted", required = true) @PathParam("username") String username);
 
     /**
      * Search user with a given username.
@@ -88,7 +90,7 @@ public interface UserRs extends IBaseRs {
     @Operation(summary = "Search user with a given username.",
             deprecated = true,
             tags = { "Deprecated" })
-    GetUserResponse find(@QueryParam("username") String username);
+    GetUserResponse find(@Parameter(description = "The usename of user", required = true) @QueryParam("username") String username);
 
     /**
      * Search user with a given username.
@@ -100,7 +102,7 @@ public interface UserRs extends IBaseRs {
     @Path("/name/{username}")
     @Operation(summary = "Search user with a given username.",
             tags = { "User management" })
-    GetUserResponse findV2(@QueryParam("username") String username);
+    GetUserResponse findV2(@Parameter(description = "The usename of user", required = true) @QueryParam("username") String username);
 
     /**
      * Get info of currently logged in user
@@ -157,7 +159,7 @@ public interface UserRs extends IBaseRs {
     @Path("/external/{username}")
     @Operation(summary = " Deletes a user in keycloak and core given a username.",
     tags = { "User management" })
-    ActionStatus deleteExternalUser(@PathParam("username") String username);
+    ActionStatus deleteExternalUser(@Parameter(description = "The usename of user to be deleted in keykloak", required = true) @PathParam("username") String username);
 
     /**
      * List users matching a given criteria.
@@ -174,8 +176,12 @@ public interface UserRs extends IBaseRs {
     @Path("/list")
     @Operation(summary = " List users matching a given criteria.", deprecated = true,
     tags = { "Deprecated" })
-    UsersDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
-            @DefaultValue("userName") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+    UsersDto listGet(@Parameter(description = "query Search criteria. Query is composed of the following" , example ="filterKey1:filterValue1|filterKey2:filterValue2") @QueryParam("query") String query, 
+    				@Parameter(description = "ields Data retrieval options/fieldnames separated by a comma. Specify \"securedEntities\" in fields to include the secured entities") @QueryParam("fields") String fields, 
+    				@Parameter(description = "offset Pagination - from record number") @QueryParam("offset") Integer offset, 
+    				@Parameter(description = "limit Pagination - number of records to retrieve") @QueryParam("limit") Integer limit,
+    				@Parameter(description = "sort by Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields") @DefaultValue("userName") @QueryParam("sortBy") String sortBy, 
+    				@Parameter(description = "sort order Sorting") @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
 
     /**
@@ -193,8 +199,12 @@ public interface UserRs extends IBaseRs {
     @Path("/filtering")
     @Operation(summary = " List users matching a given criteria.",
             tags = { "User management" })
-    UsersDto listGetV2(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
-                     @DefaultValue("userName") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+    UsersDto listGetV2(@Parameter(description = "query Search criteria. Query is composed of the following" , example ="filterKey1:filterValue1|filterKey2:filterValue2") @QueryParam("query") String query, 
+			@Parameter(description = "ields Data retrieval options/fieldnames separated by a comma. Specify \"securedEntities\" in fields to include the secured entities") @QueryParam("fields") String fields, 
+			@Parameter(description = "offset Pagination - from record number") @QueryParam("offset") Integer offset, 
+			@Parameter(description = "limit Pagination - number of records to retrieve") @QueryParam("limit") Integer limit,
+			@Parameter(description = "sort by Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields") @DefaultValue("userName") @QueryParam("sortBy") String sortBy, 
+			@Parameter(description = "sort order Sorting") @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
      * List users matching a given criteria

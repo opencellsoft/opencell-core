@@ -14,6 +14,8 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteVersion;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * 
  * @author Mbarek-Ay
@@ -26,24 +28,36 @@ public class QuoteVersionDto extends BaseEntityDto {
 	private static final long serialVersionUID = -7824004884683019697L;
 	/** The shortDescription. */
 	@XmlAttribute()
+    @Schema(description = "The short description")
 	private String shortDescription;
 	/** The product code. */
 	@NotNull
 	@XmlElement(required = true)
+    @Schema(description = "The code quote", required = true)
 	private String quoteCode;
+	
 	/** The currentVersion. */
+    @Schema(description = "The current version")
 	private int currentVersion;
 
 	/** The status. */
+    @Schema(description = "Status of quote version", example = "Possible value : DRAFT, PUBLISHED, CLOSED")
 	private VersionStatusEnum status;
 
 	/** The statusDate. */
+    @Schema(description = "The status date, it set automaically when status is changed")
 	private Date statusDate;
+    
 	/** The startDate */
+    @Schema(description = "The start date")
 	private Date startDate;
+    
 	/** The endDate */
+    @Schema(description = "The end date")
 	private Date endDate;
+    
 	/** billing code */
+    @Schema(description = "The code of the billing plan")
 	private String billingPlanCode;
 
 	/**
