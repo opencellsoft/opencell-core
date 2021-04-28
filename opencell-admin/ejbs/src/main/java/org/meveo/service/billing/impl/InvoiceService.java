@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -1313,9 +1314,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public Invoice produceInvoicePdf(Invoice invoice) throws BusinessException {
+        return produceInvoicePdf(invoice, true);
+    }
+
+    /**
+     * Produce invoice's PDF file and update invoice record in DB.
+     *
+     *
+     * @param invoice Invoice
+     * @param updateStatus updateStatus
+     * @return Update invoice entity
+     * @throws BusinessException business exception
+     */
+    public Invoice produceInvoicePdf(Invoice invoice, boolean updateStatus) throws BusinessException {
 
         produceInvoicePdfNoUpdate(invoice);
-        invoice.setStatus(InvoiceStatusEnum.GENERATED);
+        if (updateStatus) {
+            invoice.setStatus(InvoiceStatusEnum.GENERATED);
+        }
 
         pdfGeneratedEventProducer.fire(invoice);
 
@@ -2094,6 +2110,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public Invoice generateXmlAndPdfInvoice(Invoice invoice, boolean regenerate) throws BusinessException {
+        return generateXmlAndPdfInvoice(invoice, regenerate, true);
+    }
+
+    public Invoice generateXmlAndPdfInvoice(Invoice invoice, boolean regenerate, boolean updateStatus) throws BusinessException {
 
         if (invoice.isPrepaid()) {
             return invoice;
@@ -2102,7 +2122,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (regenerate || invoice.getXmlFilename() == null || !isInvoiceXmlExist(invoice)) {
             produceInvoiceXmlNoUpdate(invoice);
         }
-        invoice = produceInvoicePdf(invoice);
+        invoice = produceInvoicePdf(invoice, updateStatus);
         return invoice;
     }
 
