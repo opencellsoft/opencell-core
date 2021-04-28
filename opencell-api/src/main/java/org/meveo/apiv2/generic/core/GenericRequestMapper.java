@@ -1,18 +1,19 @@
 package org.meveo.apiv2.generic.core;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.assertj.core.util.VisibleForTesting;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.GenericPagingAndFiltering;
 import org.meveo.apiv2.generic.ImmutableGenericPagingAndFiltering;
 import org.meveo.apiv2.generic.core.filter.FactoryFilterMapper;
 import org.meveo.model.IEntity;
+import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.service.base.PersistenceService;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GenericRequestMapper {
     private final Class entityClass;
@@ -37,13 +38,14 @@ public class GenericRequestMapper {
     }
     @VisibleForTesting
     public Map<String, Object> evaluateFilters(Map<String, Object> filters, Class<? extends IEntity> entity) {
-        return Stream.of(filters.keySet().toArray())
+    	String cetCode=(CustomEntityInstance.class.equals(entity) && filters.containsKey("cetCode"))?(String)filters.get("cetCode"):null;
+    	return Stream.of(filters.keySet().toArray())
                 .map(key -> {
                     String keyObject = (String) key;
                     if(!"SQL".equalsIgnoreCase(keyObject) && !"$FILTER".equalsIgnoreCase(keyObject)){
 
                         String fieldName = keyObject.contains(" ") ? keyObject.substring(keyObject.indexOf(" ")).trim() : keyObject;
-                        return Collections.singletonMap(keyObject, new FactoryFilterMapper().create(fieldName, filters.get(key), entity, serviceFunction).map());
+                        return Collections.singletonMap(keyObject, new FactoryFilterMapper().create(fieldName, filters.get(key), entity, serviceFunction, cetCode).map());
                     }
                     return Collections.singletonMap(keyObject, filters.get(key));
                 })

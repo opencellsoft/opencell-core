@@ -30,9 +30,9 @@ import org.slf4j.LoggerFactory;
 public interface FactoryMapper {
 	static final Logger log = LoggerFactory.getLogger(FactoryMapper.class);
     Set<String> simpleField = new HashSet<>(Arrays.asList("id", "type_class", "cfValues"));
-    default FilterMapper create(String property, Object value, Class clazz, Function<Class, PersistenceService> entityManagerResolver) {
+    default FilterMapper create(String property, Object value, Class clazz, Function<Class, PersistenceService> entityManagerResolver, String cetCode) {
         if(simpleField.contains(property) || clazz != null && clazz.getSimpleName().equalsIgnoreCase(property)){
-            return resolveFilterMapperType(property, value, clazz, entityManagerResolver);
+            return resolveFilterMapperType(property, value, clazz, entityManagerResolver, cetCode);
         }
         try {
             Field field = ReflectionUtils.getFieldThrowException(clazz, property);
@@ -41,10 +41,10 @@ public interface FactoryMapper {
                     Type type = field.getGenericType();
                     if (type instanceof ParameterizedType) {
                         Type[] pt = ((ParameterizedType) type).getActualTypeArguments();
-                        return resolveFilterMapperType(property, value, (Class) pt[0], entityManagerResolver);
+                        return resolveFilterMapperType(property, value, (Class) pt[0], entityManagerResolver, cetCode);
                     }
                 }
-                return resolveFilterMapperType(property.substring(property.lastIndexOf(".")+1), value, field.getType(), entityManagerResolver);
+                return resolveFilterMapperType(property.substring(property.lastIndexOf(".")+1), value, field.getType(), entityManagerResolver, cetCode);
             }
         } catch (NoSuchFieldException e) {
             log.error("error = {}", e);
@@ -53,13 +53,13 @@ public interface FactoryMapper {
         return null;
     }
 
-    default FilterMapper resolveFilterMapperType(String property, Object value, Class clazz, Function<Class, PersistenceService> entityManagerResolver){
+    default FilterMapper resolveFilterMapperType(String property, Object value, Class clazz, Function<Class, PersistenceService> entityManagerResolver, String cetCode){
         // TODO : to switch
         if(value instanceof Map && ((Map) value).containsKey("id")){
             return new ReferenceMapper(property, ((Map) value).get("id"), clazz, entityManagerResolver);
         }
         if("cfValues".equalsIgnoreCase(property)){
-            return new CustomFieldMapper(property, value, clazz, entityManagerResolver);
+            return new CustomFieldMapper(property, value, clazz, entityManagerResolver, cetCode);
         }
         if(Date.class.isAssignableFrom(clazz)){
             return new DateMapper(property, value);
