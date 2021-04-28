@@ -20,6 +20,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.offer.QuoteOffer;
@@ -30,7 +31,7 @@ import org.meveo.model.cpq.offer.QuoteOffer;
  *
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "OrderOffer")
+@CustomFieldEntity(cftCodePrefix = "OrderOffer",inheritCFValuesFrom = "quoteOffer")
 @Table(name = "cpq_order_offer")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_offer_seq")})
@@ -74,8 +75,16 @@ public class OrderOffer extends AuditableCFEntity {
     
 	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_offer_id")
-	private QuoteOffer QuoteOffer;
+	private QuoteOffer quoteOffer;
     
+	
+    @Override
+	public ICustomFieldEntity[] getParentCFEntities() {
+		if (quoteOffer != null) {
+			return new ICustomFieldEntity[] { quoteOffer };
+		}
+		return null;
+	}
     
 	/**
 	 * @return the order
@@ -136,12 +145,14 @@ public class OrderOffer extends AuditableCFEntity {
 	}
 
 	public QuoteOffer getQuoteOffer() {
-		return QuoteOffer;
+		return quoteOffer;
 	}
 
 	public void setQuoteOffer(QuoteOffer quoteOffer) {
-		QuoteOffer = quoteOffer;
+		this.quoteOffer = quoteOffer;
 	}
+
+
 	
 	
 	
