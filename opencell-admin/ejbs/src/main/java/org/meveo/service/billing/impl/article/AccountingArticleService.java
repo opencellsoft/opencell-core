@@ -1,6 +1,5 @@
 package org.meveo.service.billing.impl.article;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +13,7 @@ import javax.ws.rs.BadRequestException;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
+import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 import org.meveo.service.base.BusinessService;
@@ -26,7 +26,14 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	@Inject private AttributeService attributeService;
 	
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) {
-		List<ArticleMappingLine> articleMappingLines = articleMappingLineService.findByProductCode(product);
+		List<ChargeTemplate> productCharges = product.getProductCharges().stream()
+				.map(pc -> pc.getChargeTemplate())
+				.collect(Collectors.toList());
+		List<ArticleMappingLine> articleMappingLines = articleMappingLineService.findByProductCode(product)
+				.stream()
+				.filter(aml -> aml.getChargeTemplate() == null || productCharges.contains(aml.getChargeTemplate()))
+				.collect(Collectors.toList());
+
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
 		articleMappingLines.forEach(aml -> {
 			aml.getAttributesMapping().size();
@@ -71,11 +78,11 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			}
 			
 		});
-		if(attributeMappingLineMatch.getFullMatchs().size() > 1)
+		if(attributeMappingLineMatch.getFullMatchsArticle().size() > 1)
 			throw new BadRequestException("More than one article found");
 		AccountingArticle result = null;
-		if(attributeMappingLineMatch.getFullMatchs().size() == 1) {
-			result = attributeMappingLineMatch.getFullMatchs().get(0).getAccountingArticle();
+		if(attributeMappingLineMatch.getFullMatchsArticle().size() == 1) {
+			result = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
 		} else {
 			ArticleMappingLine bestMatch = attributeMappingLineMatch.getBestMatch();
 			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode("ART-STD");

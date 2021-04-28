@@ -1,11 +1,15 @@
 package org.meveo.service.billing.impl.article;
 
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 public class AttributeMappingLineMatch {
 
@@ -21,8 +25,10 @@ public class AttributeMappingLineMatch {
         partialMatchMappingLines.add(new PartialMatchMappingLine(numberOfMatchedAttribute, articleMappingLine));
     }
 
-    public List<ArticleMappingLine> getFullMatchs() {
-        return fullMatches;
+    public Set<AccountingArticle> getFullMatchsArticle() {
+        return fullMatches.stream()
+                .map(ArticleMappingLine::getAccountingArticle)
+                .collect(toSet());
     }
 
     public ArticleMappingLine getBestMatch() {
