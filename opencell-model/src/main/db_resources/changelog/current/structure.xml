@@ -8728,9 +8728,9 @@ public class OrderAdvancement extends ModuleScript {
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
                                                      
       <addColumn tableName="cpq_order_product">
-            <column name="quote_prodcut_id" type="bigint"/>
+            <column name="quote_product_id" type="bigint"/>
         </addColumn>
-      <addForeignKeyConstraint baseColumnNames="quote_prodcut_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_quote_prodcut_id" deferrable="false" initiallyDeferred="false"
+      <addForeignKeyConstraint baseColumnNames="quote_product_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_quote_product_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
                                  
       <addColumn tableName="cpq_order_lot">

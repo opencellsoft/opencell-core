@@ -9747,7 +9747,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
             <column name="discount_plan_id" type="bigint"/>
-            <column name="quote_prodcut_id" type="bigint"/>
+            <column name="quote_product_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-480" author="NabilOUACHI">
@@ -13948,7 +13948,7 @@
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
      </changeSet>
       <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1625">
-      <addForeignKeyConstraint baseColumnNames="quote_prodcut_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_quote_prodcut_id" deferrable="false" initiallyDeferred="false"
+      <addForeignKeyConstraint baseColumnNames="quote_product_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_quote_product_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
      </changeSet>
       <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1626">

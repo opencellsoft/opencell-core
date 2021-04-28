@@ -82,7 +82,7 @@ public class OrderProduct extends AuditableCFEntity {
    	 */
        
    	@OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "quote_prodcut_id")
+    @JoinColumn(name = "quote_product_id")
    	private QuoteProduct quoteProduct;
 	
 	
