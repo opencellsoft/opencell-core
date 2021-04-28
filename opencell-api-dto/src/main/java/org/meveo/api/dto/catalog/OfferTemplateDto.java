@@ -184,6 +184,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
         super(offerTemplate, customFieldsDto, asLink);
         id = offerTemplate.getId();
         statusDate=offerTemplate.getStatusDate();
+        isModel=offerTemplate.getIsModel();
 
         if (offerTemplate.getBusinessOfferModel() != null) {
             setBomCode(offerTemplate.getBusinessOfferModel().getCode());

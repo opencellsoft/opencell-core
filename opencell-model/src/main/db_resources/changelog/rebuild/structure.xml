@@ -9747,6 +9747,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
             <column name="discount_plan_id" type="bigint"/>
+            <column name="quote_product_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-480" author="NabilOUACHI">
@@ -9779,6 +9780,7 @@
             </column>
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
+             <column name="quote_lot_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-481" author="NabilOUACHI">
@@ -9810,6 +9812,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
             <column name="discount_plan_id" type="bigint"/>
+            <column name="quote_offer_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-482" author="NabilOUACHI">
@@ -9858,6 +9861,7 @@
             <column name="rc_tax_rate" type="int" />
             <column name="rc_price_with_tax" type="numeric(23, 12)" />
             <column name="order_product_id" type="bigint"/>
+             <column name="quote_offer_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-483" author="NabilOUACHI">
@@ -13938,7 +13942,19 @@
         <addForeignKeyConstraint baseColumnNames="ppm_id" baseTableName="cpq_price_plan_version" constraintName="fk_cpq_price_pla_version_price_plan_matrix" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_price_plan_matrix" />
     </changeSet>
-
+    
+    <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1624">
+      <addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_quote_offer_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
+     </changeSet>
+      <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1625">
+      <addForeignKeyConstraint baseColumnNames="quote_product_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_quote_product_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
+     </changeSet>
+      <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1626">
+       <addForeignKeyConstraint baseColumnNames="quote_lot_id" baseTableName="cpq_order_lot" constraintName="fk_cpq_order_lot_quote_lot_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" /> 
+     </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15628,6 +15644,8 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#20210416_441" author="TarikFA."></changeSet>
 
     <changeSet id="#470_20210422" author="Mbarek-Ay"></changeSet>
+    
+    <changeSet id="#446_20210427" author="Mbarek-Ay"></changeSet>
 
     <changeSet   id="#20210123_540_281_1" author="TarikFA.">
         <sql>update ${db.schema.adapted}adm_role set uuid = 'role'||id</sql>

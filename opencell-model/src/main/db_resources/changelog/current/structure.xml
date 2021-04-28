@@ -8776,4 +8776,24 @@ public class OrderAdvancement extends ModuleScript {
 			referencedColumnNames="id" />
 	</changeSet>
 	
+    
+     <changeSet id="#5623_20210427" author="Mbarek">
+       <addColumn tableName="cpq_order_offer">
+            <column name="quote_offer_id" type="bigint"/>
+        </addColumn>
+      <addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_quote_offer_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
+                                                     
+      <addColumn tableName="cpq_order_product">
+            <column name="quote_product_id" type="bigint"/>
+        </addColumn>
+      <addForeignKeyConstraint baseColumnNames="quote_product_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_quote_product_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
+                                 
+      <addColumn tableName="cpq_order_lot">
+            <column name="quote_lot_id" type="bigint"/>
+        </addColumn>
+      <addForeignKeyConstraint baseColumnNames="quote_lot_id" baseTableName="cpq_order_lot" constraintName="fk_cpq_order_lot_quote_lot_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />                                                   
+    </changeSet>
 </databaseChangeLog>
