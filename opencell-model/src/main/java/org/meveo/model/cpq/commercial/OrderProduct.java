@@ -22,6 +22,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.quote.QuoteProduct;
@@ -33,7 +34,7 @@ import org.meveo.model.quote.QuoteProduct;
  */
 @Entity
 @Table(name = "cpq_order_product")
-@CustomFieldEntity(cftCodePrefix = "OrderProduct")
+@CustomFieldEntity(cftCodePrefix = "OrderProduct",inheritCFValuesFrom = "quoteProduct")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_product_seq")})
 public class OrderProduct extends AuditableCFEntity {
@@ -95,7 +96,17 @@ public class OrderProduct extends AuditableCFEntity {
 		this.productVersion = other.productVersion;
 		this.orderAttributes = other.orderAttributes;
         this.discountPlan=other.getDiscountPlan();
+        this.quoteProduct=other.getQuoteProduct();
     }
+	
+	
+	@Override
+	public ICustomFieldEntity[] getParentCFEntities() {
+		if (quoteProduct != null) {
+			return new ICustomFieldEntity[] { quoteProduct };
+		}
+		return null;
+	}
 	
 	/**
 	 * @return the order

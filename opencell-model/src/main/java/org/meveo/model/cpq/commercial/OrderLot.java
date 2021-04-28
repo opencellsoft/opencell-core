@@ -16,6 +16,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.quote.QuoteLot;
 
 /** 
@@ -24,7 +25,7 @@ import org.meveo.model.quote.QuoteLot;
  */
 @Entity
 @Table(name = "cpq_order_lot", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "order_id" }))
-@CustomFieldEntity(cftCodePrefix = "OrderLot")
+@CustomFieldEntity(cftCodePrefix = "OrderLot",inheritCFValuesFrom = "quoteLot")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_lot_seq")})
 public class OrderLot extends BusinessCFEntity{
@@ -53,6 +54,15 @@ public class OrderLot extends BusinessCFEntity{
     @JoinColumn(name = "quote_lot_id")
    	private QuoteLot quoteLot;
 
+   	
+   	@Override
+   	public ICustomFieldEntity[] getParentCFEntities() {
+   		if (quoteLot != null) {
+   			return new ICustomFieldEntity[] { quoteLot };
+   		}
+   		return null;
+   	}
+   	
 	/**
 	 * @return the order
 	 */
