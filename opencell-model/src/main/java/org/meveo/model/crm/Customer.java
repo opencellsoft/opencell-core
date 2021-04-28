@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -69,7 +68,6 @@ import org.meveo.model.payments.CustomerAccount;
  * @lastModifiedVersion 10.0
  */
 @Entity
-@Cacheable
 @WorkflowedEntity
 @CustomFieldEntity(cftCodePrefix = "Customer", inheritCFValuesFrom = "seller")
 @ExportIdentifier({ "code" })

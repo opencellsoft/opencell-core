@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -75,7 +74,6 @@ import org.meveo.model.intcrm.AddressBook;
  * @lastModifiedVersion 7.0
  */
 @Entity
-@Cacheable
 @WorkflowedEntity
 @CustomFieldEntity(cftCodePrefix = "CustomerAccount", inheritCFValuesFrom = "customer")
 @ExportIdentifier({ "code" })
@@ -92,7 +90,6 @@ import org.meveo.model.intcrm.AddressBook;
 		@NamedQuery(name = "CustomerAccount.getCustomerAccountsWithMinAmountELNotNullByBA", query = "select ca from CustomerAccount ca where ca.minimumAmountEl is not null AND ca.status = org.meveo.model.billing.AccountStatusEnum.ACTIVE AND ca=:customerAccount"),
         @NamedQuery(name = "CustomerAccount.getCountByParent", query = "select count(*) from CustomerAccount ca where ca.customer=:parent")		
 })
-
 public class CustomerAccount extends AccountEntity implements IWFEntity, ICounterEntity {
 
 	public static final String ACCOUNT_TYPE = ((DiscriminatorValue) CustomerAccount.class.getAnnotation(DiscriminatorValue.class)).value();
@@ -110,7 +107,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	 * Currency of account
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_currency_id")
+	@JoinColumn(name = "trading_currency_id", nullable = false)
 	private TradingCurrency tradingCurrency;
 
 	/**
@@ -124,7 +121,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	 * Credit category
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "credit_category_id")
+	@JoinColumn(name = "credit_category_id", nullable = false)
 	private CreditCategory creditCategory;
 
 	// TODO : Add orphanRemoval annotation.
@@ -175,7 +172,7 @@ public class CustomerAccount extends AccountEntity implements IWFEntity, ICounte
 	 * Parent cusg
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "customer_id")
+	@JoinColumn(name = "customer_id", nullable = false)
 	private Customer customer;
 
 	/**

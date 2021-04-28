@@ -72,6 +72,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
+import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -359,37 +360,45 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         BigDecimal creditDebitCardAmount = BigDecimal.ZERO;
         BigDecimal npmAmount = BigDecimal.ZERO;
 
-        List<Invoice> invoices = getEntityManager().createNamedQuery("Invoice.byBr", Invoice.class).setParameter("billingRunId", billingRun.getId()).getResultList();
+        List<Object[]> invoiceSummary = getEntityManager().createNamedQuery("Invoice.portInvoiceReport").setParameter("billingRunId", billingRun.getId()).getResultList();
 
-        for (Invoice invoice : invoices) {
+        for (Object[] invoiceData : invoiceSummary) {
 
-            if ((invoice.getAmountWithoutTax() != null) && (invoice.getAmountWithTax() != null) && (invoice.getPaymentMethodType() != null)) {
-                switch (invoice.getPaymentMethodType()) {
+            BigDecimal amountWithTax = (BigDecimal) invoiceData[0];
+            BigDecimal amountWithoutTax = (BigDecimal) invoiceData[1];
+            BigDecimal amountTax = (BigDecimal) invoiceData[2];
+            PaymentMethodEnum paymentMethodType = (PaymentMethodEnum) invoiceData[3];
+            Integer yearExpiration = (Integer) invoiceData[4];
+            Integer monthExpiration = (Integer) invoiceData[5];
+            boolean isElectronicBilling = (boolean) invoiceData[6];
+
+            if ((amountWithoutTax != null) && (amountWithTax != null) && (paymentMethodType != null)) {
+                switch (paymentMethodType) {
                 case CHECK:
                     checkInvoicesNumber++;
-                    checkAmuontHT = checkAmuontHT.add(invoice.getAmountWithoutTax());
-                    checkAmuont = checkAmuont.add(invoice.getAmountWithTax());
+                    checkAmuontHT = checkAmuontHT.add(amountWithoutTax);
+                    checkAmuont = checkAmuont.add(amountWithTax);
                     break;
                 case DIRECTDEBIT:
                     directDebitInvoicesNumber++;
-                    directDebitAmuontHT = directDebitAmuontHT.add(invoice.getAmountWithoutTax());
-                    directDebitAmuont = directDebitAmuont.add(invoice.getAmountWithTax());
+                    directDebitAmuontHT = directDebitAmuontHT.add(amountWithoutTax);
+                    directDebitAmuont = directDebitAmuont.add(amountWithTax);
                     break;
                 case WIRETRANSFER:
                     wiretransferInvoicesNumber++;
-                    wiretransferAmuontHT = wiretransferAmuontHT.add(invoice.getAmountWithoutTax());
-                    wiretransferAmuont = wiretransferAmuont.add(invoice.getAmountWithTax());
+                    wiretransferAmuontHT = wiretransferAmuontHT.add(amountWithoutTax);
+                    wiretransferAmuont = wiretransferAmuont.add(amountWithTax);
                     break;
                 case CARD:
                     // check if card is expired
-                    if ((invoice.getPaymentMethod() != null) && invoice.getPaymentMethod().isExpired()) {
+                    if (yearExpiration != null && monthExpiration != null && CardPaymentMethod.isExpired(yearExpiration, monthExpiration)) {
                         npmInvoicesNumber++;
-                        npmAmountHT = npmAmountHT.add(invoice.getAmountWithoutTax());
-                        npmAmount = npmAmount.add(invoice.getAmountWithTax());
+                        npmAmountHT = npmAmountHT.add(amountWithoutTax);
+                        npmAmount = npmAmount.add(amountWithTax);
                     } else {
                         creditDebitCardInvoicesNumber++;
-                        creditDebitCardAmountHT = creditDebitCardAmountHT.add(invoice.getAmountWithoutTax());
-                        creditDebitCardAmount = creditDebitCardAmount.add(invoice.getAmountWithTax());
+                        creditDebitCardAmountHT = creditDebitCardAmountHT.add(amountWithoutTax);
+                        creditDebitCardAmount = creditDebitCardAmount.add(amountWithTax);
                     }
                     break;
 
@@ -398,32 +407,32 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 }
             }
 
-            if ((invoice.getAmountWithoutTax() != null) && (invoice.getAmountWithoutTax().compareTo(BigDecimal.ZERO) > 0)) {
+            if ((amountWithoutTax != null) && (amountWithoutTax.compareTo(BigDecimal.ZERO) > 0)) {
                 positiveInvoicesNumber++;
-                positiveInvoicesAmountHT = positiveInvoicesAmountHT.add(invoice.getAmountWithoutTax());
-                positiveInvoicesTaxAmount = positiveInvoicesTaxAmount.add(invoice.getAmountTax() == null ? BigDecimal.ZERO : invoice.getAmountTax());
-                positiveInvoicesAmount = positiveInvoicesAmount.add(invoice.getAmountWithTax());
-            } else if ((invoice.getAmountWithoutTax() == null) || (invoice.getAmountWithoutTax().compareTo(BigDecimal.ZERO) == 0)) {
+                positiveInvoicesAmountHT = positiveInvoicesAmountHT.add(amountWithoutTax);
+                positiveInvoicesTaxAmount = positiveInvoicesTaxAmount.add(amountTax == null ? BigDecimal.ZERO : amountTax);
+                positiveInvoicesAmount = positiveInvoicesAmount.add(amountWithTax);
+            } else if ((amountWithoutTax == null) || (amountWithoutTax.compareTo(BigDecimal.ZERO) == 0)) {
                 emptyInvoicesNumber++;
             } else {
                 negativeInvoicesNumber++;
-                negativeInvoicesAmountHT = negativeInvoicesAmountHT.add(invoice.getAmountWithoutTax());
-                negativeInvoicesTaxAmount = negativeInvoicesTaxAmount.add(invoice.getAmountTax());
-                negativeInvoicesAmount = negativeInvoicesAmount.add(invoice.getAmountWithTax());
+                negativeInvoicesAmountHT = negativeInvoicesAmountHT.add(amountWithoutTax);
+                negativeInvoicesTaxAmount = negativeInvoicesTaxAmount.add(amountTax);
+                negativeInvoicesAmount = negativeInvoicesAmount.add(amountWithTax);
             }
 
-            if (invoice.getBillingAccount().getElectronicBilling()) {
+            if (isElectronicBilling) {
                 electronicInvoicesNumber++;
             }
 
-            if ((invoice.getAmountWithoutTax() != null) && (invoice.getAmountWithTax() != null)) {
-                globalAmountHT = globalAmountHT.add(invoice.getAmountWithoutTax());
-                globalAmountTTC = globalAmountTTC.add(invoice.getAmountWithTax());
+            if ((amountWithoutTax != null) && (amountWithTax != null)) {
+                globalAmountHT = globalAmountHT.add(amountWithoutTax);
+                globalAmountTTC = globalAmountTTC.add(amountWithTax);
             }
 
         }
 
-        postInvoicingReportsDTO.setInvoicesNumber(invoices.size());
+        postInvoicingReportsDTO.setInvoicesNumber(invoiceSummary.size());
         postInvoicingReportsDTO.setCheckAmuont(checkAmuont);
         postInvoicingReportsDTO.setCheckAmuontHT(checkAmuontHT);
         postInvoicingReportsDTO.setCheckInvoicesNumber(checkInvoicesNumber);

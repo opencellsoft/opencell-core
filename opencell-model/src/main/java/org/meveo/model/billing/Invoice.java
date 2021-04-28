@@ -102,7 +102,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
         @NamedQuery(name = "Invoice.billingAccountIdByBrItSelDate", query = "select distinct inv.billingAccount.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.seller.id = :sellerId and inv.invoiceDate=:invoiceDate"),
         @NamedQuery(name = "Invoice.nullifyInvoiceFileNames", query = "update Invoice inv set inv.pdfFilename = null , inv.xmlFilename = null where inv.billingRun = :billingRun"),
-        @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId"),
+        @NamedQuery(name = "Invoice.portInvoiceReport", query = "select inv.amountWithTax, inv.amountWithoutTax, inv.amountTax, inv.paymentMethodType, pm.yearExpiration, pm.monthExpiration, ba.electronicBilling from Invoice inv inner join inv.billingAccount ba left join inv.paymentMethod pm where inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.deleteByBR", query = "delete from Invoice inv where inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.moveToBRByIds", query = "update Invoice inv set inv.billingRun=:billingRun where inv.id in (:invoiceIds)"),
         @NamedQuery(name = "Invoice.moveToBR", query = "update Invoice inv set inv.billingRun=:nextBR where inv.billingRun.id=:billingRunId and inv.status in(:statusList)"),
@@ -115,7 +115,7 @@ import org.meveo.model.shared.DateUtils;
                 + "FROM Invoice inv where inv.billingRun.id=:billingRunId group by inv.id, inv.billingAccount.id, inv.billingAccount.customerAccount.id, inv.billingAccount.customerAccount.customer.id"),
         @NamedQuery(name = "Invoice.deleteByIds", query = "delete from Invoice inv where inv.id IN (:invoicesIds)"),
         @NamedQuery(name = "Invoice.excludePrpaidInvoices", query = "select inv.id from Invoice inv where inv.id IN (:invoicesIds) and inv.prepaid=false"),
-        @NamedQuery(name = "Invoice.isRejectedByBillingRun", query = "select id from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED") 
+        @NamedQuery(name = "Invoice.isRejectedByBillingRun", query = "select id from Invoice where billingRun.id =:billingRunId and status = org.meveo.model.billing.InvoiceStatusEnum.REJECTED")
 
 })
 public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISearchable {
@@ -126,7 +126,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
      * Billing account that invoice was issued to
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "billing_account_id")
+    @JoinColumn(name = "billing_account_id", nullable = false)
     private BillingAccount billingAccount;
 
     /**
@@ -418,7 +418,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "external_ref", length = 255)
     @Size(max = 255)
     private String externalRef;
-    
+
     /**
      * Invoicing error reason
      */
@@ -432,7 +432,7 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     @Column(name = "initial_collection_date")
     private Date initialCollectionDate;
 
-	@Transient
+    @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
 
     @Transient
@@ -484,8 +484,8 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
 
     public void setInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
-        if(this.status ==null || this.status==InvoiceStatusEnum.DRAFT) {
-        	this.status=InvoiceStatusEnum.CREATED;
+        if (this.status == null || this.status == InvoiceStatusEnum.DRAFT) {
+            this.status = InvoiceStatusEnum.CREATED;
         }
     }
 
@@ -1149,13 +1149,12 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
         this.initialCollectionDate = initialCollectionDate;
     }
 
-	public String getRejectReason() {
-		return rejectReason;
-	}
+    public String getRejectReason() {
+        return rejectReason;
+    }
 
-	public void setRejectReason(String rejectReason) {
-		this.rejectReason = rejectReason;
-	}
-    
-    
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
+    }
+
 }

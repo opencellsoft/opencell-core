@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -73,7 +72,6 @@ import org.meveo.model.tax.TaxCategory;
  * @lastModifiedVersion 7.0
  */
 @Entity
-@Cacheable
 @WorkflowedEntity
 @CustomFieldEntity(cftCodePrefix = "BillingAccount", inheritCFValuesFrom = "customerAccount")
 @ExportIdentifier({ "code" })
@@ -139,7 +137,7 @@ public class BillingAccount extends AccountEntity implements IBillableEntity, IW
      * Customer account
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_account_id")
+    @JoinColumn(name = "customer_account_id", nullable = false)
     private CustomerAccount customerAccount;
 
     // TODO : Add orphanRemoval annotation.
