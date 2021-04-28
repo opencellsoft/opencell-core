@@ -42,7 +42,8 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
     /**
      * Number of EDRS to process in a single job run
      */
-    private static int PROCESS_NR_IN_JOB_RUN = 2000000;
+    private static final int PROCESS_NR_IN_JOB_RUN = 2000000;
+
 
     @Inject
     private EdrService edrService;
@@ -56,7 +57,9 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::rateEDR, this::hasMore, null);
+        
+        
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::rateEDR, this::rateEDRBatch,  this::hasMore, null);
 
         rateUntilDate = null;
         ratingGroup = null;
@@ -94,6 +97,16 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
      */
     private void rateEDR(Long edrId, JobExecutionResultImpl jobExecutionResult) {
         usageRatingService.ratePostpaidUsage(edrId);
+    }
+
+    /**
+     * Rate EDR usage
+     * 
+     * @param edrId A list of EDR ids to rate
+     * @param jobExecutionResult Job execution result
+     */
+    private void rateEDRBatch(List<Long> edrIds, JobExecutionResultImpl jobExecutionResult) {
+        usageRatingService.ratePostpaidUsage(edrIds);
     }
 
     private boolean hasMore(JobInstance jobInstance) {
