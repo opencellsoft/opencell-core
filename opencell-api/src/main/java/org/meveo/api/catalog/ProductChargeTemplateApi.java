@@ -48,14 +48,6 @@ public class ProductChargeTemplateApi extends ChargeTemplateApi<ProductChargeTem
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(ProductChargeTemplate.class.getName(), postData);
         }
-        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-            missingParameters.add("invoiceSubCategory");
-        }
-        if (StringUtils.isBlank(postData.getTaxClassCode())) {
-            missingParameters.add("taxClassCode");
-        }
-
-        handleMissingParametersAndValidate(postData);
 
         // check if code already exists
         if (productChargeTemplateService.findByCode(postData.getCode()) != null) {
