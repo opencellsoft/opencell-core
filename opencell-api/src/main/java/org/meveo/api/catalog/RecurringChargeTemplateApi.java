@@ -66,9 +66,6 @@ public class RecurringChargeTemplateApi extends ChargeTemplateApi<RecurringCharg
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(RecurringChargeTemplate.class.getName(), postData);
         }
-        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-            missingParameters.add("invoiceSubCategory");
-        }
         if (StringUtils.isBlank(postData.getCalendar())) {
             missingParameters.add("calendar");
         } 

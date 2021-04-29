@@ -59,15 +59,7 @@ public class UsageChargeTemplateApi extends ChargeTemplateApi<UsageChargeTemplat
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(UsageChargeTemplate.class.getName(), postData);
         }
-        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-            missingParameters.add("invoiceSubCategory");
-        }
-        if (StringUtils.isBlank(postData.getTaxClassCode())) {
-            missingParameters.add("taxClassCode");
-        }
-
         handleMissingParametersAndValidate(postData);
-
         UsageChargeTemplate chargeTemplate = usageChargeTemplateService.findByCode(postData.getCode());
         if (chargeTemplate != null) {
             throw new EntityAlreadyExistsException(UsageChargeTemplate.class, postData.getCode());

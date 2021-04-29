@@ -72,9 +72,6 @@ public class OneShotChargeTemplateApi extends ChargeTemplateApi<OneShotChargeTem
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(OneShotChargeTemplate.class.getName(), postData);
         }
-        if (StringUtils.isBlank(postData.getInvoiceSubCategory())) {
-            missingParameters.add("invoiceSubCategory");
-        }
         if (StringUtils.isBlank(postData.getOneShotChargeTemplateType())) {
             missingParameters.add("oneShotChargeTemplateType");
         } 
