@@ -244,6 +244,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 * @param ddRequestLOT the dd request LOT
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	public void createPaymentsOrRefundsForDDRequestLot(DDRequestLOT ddRequestLOT, Boolean isToMatching, PaymentStatusEnum paymentStatus, Long nbRuns, Long waitingMillis, JobExecutionResultImpl result) throws Exception {
 		ddRequestLOT = refreshOrRetrieve(ddRequestLOT);
 		log.info("createPaymentsForDDRequestLot ddRequestLotId: {}, size:{}", ddRequestLOT.getId(), ddRequestLOT.getDdrequestItems().size());
@@ -362,7 +363,7 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 			return prefix + "recordedInvoice.ca";
 		}
 		prefix = "CA.code:"+ca.getCode()+" AO.id:" + accountOperation.getId() + " : ";
-		if (ca.getName() == null) {
+		if (ca.getName() == null && ca.getCustomer().getName() == null ) {
 			return prefix + "ca.name";
 		}
 		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
