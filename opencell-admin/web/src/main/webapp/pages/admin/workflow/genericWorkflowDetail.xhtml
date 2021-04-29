@@ -41,7 +41,7 @@
 
 		<hftl:formPanel formId="genericWFFormId" backingBean="#{genericWorkflowBean}"
 						showEnableDisableButton="true">
-			<p:tabView id="tabView" activeIndex="#{genericWorkflowBean.activeTab}">
+			<p:tabView id="tabView" activeIndex="#{genericWorkflowBean.activeTab}" dynamic="true">
 				<p:tab title="#{messages['generic.wf.title']}">
 
 						<hftl:formField label="#{messages['businessEntity.code']}"
