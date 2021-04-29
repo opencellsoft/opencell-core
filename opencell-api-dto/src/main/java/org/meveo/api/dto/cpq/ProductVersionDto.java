@@ -102,18 +102,24 @@ public class ProductVersionDto extends BaseEntityDto {
          this.statusDate = productVersion.getStatusDate();
          this.longDescription =productVersion.getLongDescription();
          this.validity = productVersion.getValidity();
+         if(productVersion.getTags() != null && !productVersion.getTags().isEmpty()) {
          this.tagCodes = productVersion.getTags()
                  .stream()
                  .map(tag -> tag.getCode())
                  .collect(Collectors.toSet());
+         }
+         if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
          this.attributeCodes = productVersion.getAttributes()
                  .stream()
                  .map(tag -> tag.getCode())
                  .collect(Collectors.toSet());
+         }
+         if(productVersion.getGroupedAttributes() != null && !productVersion.getGroupedAttributes().isEmpty()) {
          this.groupedAttributeCodes = productVersion.getGroupedAttributes()
                  .stream()
                  .map(tag -> tag.getCode())
                  .collect(Collectors.toSet());
+         }
     }
    
     
