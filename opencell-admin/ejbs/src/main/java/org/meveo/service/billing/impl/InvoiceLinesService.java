@@ -62,12 +62,12 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
 @Stateless
-public class InvoiceLinesService extends BusinessService<InvoiceLine> {
+public class InvoiceLinesService extends PersistenceService<InvoiceLine> {
 
     private static final String INVOICING_PROCESS_TYPE = "InvoiceLine";
     private static final String INVOICE_MINIMUM_COMPLEMENT_CODE = "MIN-STD";
@@ -146,8 +146,6 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
 
     public void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
         InvoiceLine invoiceLine = new InvoiceLine();
-        invoiceLine.setCode("COMMERCIAL-GEN");
-        invoiceLine.setCode(findDuplicateCode(invoiceLine));
         invoiceLine.setAccountingArticle(accountingArticle);
         invoiceLine.setLabel(accountingArticle.getDescription());
         invoiceLine.setProduct(productVersion.getProduct());
@@ -247,8 +245,7 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
             String mapKey = mapKeyPrefix + invoiceSubCategory.getId();
             TaxMappingService.TaxInfo taxInfo = taxMappingService.determineTax(defaultMinAccountingArticle.getTaxClass(), seller, billingAccount,
                     null, minRatingDate, true, false);
-            String code = getMinAmountInvoiceLineCode(entity, accountClass);
-            InvoiceLine invoiceLine = createInvoiceLine(code, minAmountLabel, billableEntity, billingAccount, minRatingDate,
+            InvoiceLine invoiceLine = createInvoiceLine( minAmountLabel, billableEntity, billingAccount, minRatingDate,
                     entity, seller, defaultMinAccountingArticle, taxInfo, diff);
             minAmountsResult.addMinAmountIL(invoiceLine);
             minILAmountMap.put(mapKey, new Amounts(invoiceLine.getAmountWithoutTax(), invoiceLine.getAmountWithTax(), invoiceLine.getAmountTax()));
@@ -290,14 +287,14 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
                 .toString();
     }
 
-    private InvoiceLine createInvoiceLine(String code, String minAmountLabel, IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate,
+    private InvoiceLine createInvoiceLine( String minAmountLabel, IBillableEntity billableEntity, BillingAccount billingAccount, Date minRatingDate,
                                           BusinessEntity entity, Seller seller, AccountingArticle defaultAccountingArticle,
                                           TaxMappingService.TaxInfo taxInfo, BigDecimal ilMinAmount) {
         Tax tax = taxInfo.tax;
         BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(ilMinAmount, ilMinAmount, tax.getPercent(), appProvider.isEntreprise(),
                 appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         InvoiceLine invoiceLine = new InvoiceLine(minRatingDate, BigDecimal.ONE, amounts[0], amounts[1], amounts[2], OPEN,
-                billingAccount, code, minAmountLabel, tax, tax.getPercent(), defaultAccountingArticle);
+                billingAccount, minAmountLabel, tax, tax.getPercent(), defaultAccountingArticle);
         if (entity instanceof ServiceInstance) {
             invoiceLine.setServiceInstance((ServiceInstance) entity);
         }
@@ -325,7 +322,6 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
 	 */
 	public InvoiceLine create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource) {
 		InvoiceLine invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, null);
-		invoiceLine.setCode(invoice.getCode());
 		invoiceLine.setInvoice(invoice);
 		create(invoiceLine);
 		return invoiceLine;
@@ -350,7 +346,6 @@ public class InvoiceLinesService extends BusinessService<InvoiceLine> {
 		Optional.ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
 		Optional.ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
 		Optional.ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
-		Optional.ofNullable(resource.getDescription()).ifPresent(invoiceLine::setDescription);
 		
 		if(resource.getServiceInstanceCode()!=null) {
 			invoiceLine.setServiceInstance((ServiceInstance)tryToFindByEntityClassAndCode(ServiceInstance.class, resource.getServiceInstanceCode()));

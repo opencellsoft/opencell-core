@@ -63,7 +63,6 @@ public class InvoiceLinesFactory {
 
     private InvoiceLine initInvoiceLine(Map<String, Object> record) {
         InvoiceLine invoiceLine = new InvoiceLine();
-        invoiceLine.setCode("INV_LINE_" + randomUUID());
         ofNullable(record.get("billing_account__id"))
                 .ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.findById(((BigInteger) id).longValue())));
         ofNullable(record.get("billing_run_id"))

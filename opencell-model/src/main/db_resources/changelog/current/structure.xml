@@ -8806,4 +8806,11 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
    	</changeSet>
 	
+    
+     <changeSet id="#5937_20210428" author="Mbarek-Ay">
+     <dropColumn tableName="cpq_invoice_line">
+       <column name="code"></column>
+       <column name="description"></column>
+     </dropColumn>
+     </changeSet>
 </databaseChangeLog>
