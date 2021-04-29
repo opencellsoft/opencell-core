@@ -41,7 +41,7 @@
 
 		<hftl:formPanel formId="genericWFFormId" backingBean="#{genericWorkflowBean}"
 						showEnableDisableButton="true">
-			<p:tabView id="tabView" activeIndex="#{genericWorkflowBean.activeTab}">
+			<p:tabView id="tabView" activeIndex="#{genericWorkflowBean.activeTab}" dynamic="true">
 				<p:tab title="#{messages['generic.wf.title']}">
 
 						<hftl:formField label="#{messages['businessEntity.code']}"
@@ -151,7 +151,6 @@
 							</p:panel>
 						</h:panelGroup>
 				</p:tab>
-				
 				<p:tab title="#{messages['dunningPlan.transitions']}" id="tab2" rendered="#{!genericWorkflowBean.entity.isTransient()}">
                     <p:outputPanel id="dunningPlanTransition_panel">
                         <p:messages id="messages" rendered="#{!genericWorkflowBean.showDetailPage}" />
