@@ -1,4 +1,4 @@
-package org.meveo.apiv2.generic;
+package org.meveo.api.restful.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -18,17 +18,6 @@
 
 package org.meveo.api.rest.account;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CRMAccountTypeSearchDto;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
@@ -36,6 +25,9 @@ import org.meveo.api.dto.response.ParentListResponse;
 import org.meveo.api.dto.response.account.BusinessAccountModelResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * @author Edward P. Legaspi
@@ -93,6 +85,15 @@ public interface BusinessAccountModelRs extends IBaseRs {
     @GET
     @Path("/list")
     MeveoModuleDtosResponse list();
+
+    /**
+     * List MeveoModuleDtos matching a given criteria
+     *
+     * @return List of MeveoModuleDtos
+     */
+    @GET
+    @Path("/listGetAll")
+    MeveoModuleDtosResponse listGetAll();
 
     
     /**

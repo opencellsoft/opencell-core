@@ -27,7 +27,7 @@ import org.meveo.api.dto.response.tax.TaxMappingListResponseDto;
 import org.meveo.api.dto.tax.TaxMappingDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;

@@ -25,7 +25,7 @@ import org.meveo.api.dto.TaxesDto;
 import org.meveo.api.dto.response.GetTaxesResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.*;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Tax;

@@ -18,28 +18,12 @@
 
 package org.meveo.api;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.BusinessEntityDto;
-import org.meveo.api.dto.CustomEntityTemplateDto;
-import org.meveo.api.dto.CustomFieldTemplateDto;
-import org.meveo.api.dto.EntityCustomActionDto;
-import org.meveo.api.dto.EntityCustomizationDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.dto.*;
+import org.meveo.api.exception.*;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -55,6 +39,14 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.EntityCustomActionService;
 import org.meveo.util.EntityCustomizationUtils;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Andrius Karpavicius
@@ -236,12 +228,12 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         List<CustomEntityTemplate> cets = null;
         if (StringUtils.isBlank(code)) {
-            cets = customEntityTemplateService.list();
+            cets = customEntityTemplateService.list(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         } else {
             cets = customEntityTemplateService.findByCodeLike(code);
         }
 
-        List<CustomEntityTemplateDto> cetDtos = new ArrayList<CustomEntityTemplateDto>();
+        List<CustomEntityTemplateDto> cetDtos = new ArrayList<>();
 
         for (CustomEntityTemplate cet : cets) {
             cetDtos.add(convertCustomEntityTemplateToDTO(cet));

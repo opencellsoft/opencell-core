@@ -30,7 +30,7 @@ import org.meveo.api.dto.response.crm.ContactsResponseDto;
 import org.meveo.api.dto.response.crm.GetContactResponseDto;
 import org.meveo.api.rest.crm.ContactRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.model.communication.contact.Contact;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 

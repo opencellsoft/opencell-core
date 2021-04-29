@@ -174,6 +174,12 @@ public class ReportExtractApi extends BaseCrudApi<ReportExtract, ReportExtractDt
         reportExtract.setStyle(dto.getStyle());
         reportExtract.setImagePath(dto.getImagePath());
         reportExtract.setReportExtractResultType(dto.getReportExtractResultType());
+        reportExtract.setGenerateEmptyReport(dto.isGenerateEmptyReport());
+        reportExtract.setAccumulate(dto.isAccumulate());
+        reportExtract.setSeparator(dto.getSeparator());
+        reportExtract.setDecimalSeparator(dto.getDecimalSeparator());
+        reportExtract.setMaximumLine(dto.getMaximumLine());
+        reportExtract.setCustomTableCode(dto.getCustomTableCode());
         if (dto.getScriptType().equals(ReportExtractScriptTypeEnum.JAVA)) {
             ScriptInstance scriptInstance = scriptInstanceService.findByCode(dto.getScriptInstanceCode());
             if (scriptInstance == null) {

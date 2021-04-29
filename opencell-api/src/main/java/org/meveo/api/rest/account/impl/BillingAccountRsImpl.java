@@ -29,7 +29,7 @@ import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.BillingAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;

@@ -18,40 +18,11 @@
 
 package org.meveo.api.dto.module;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
-
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.api.dto.CustomEntityTemplateDto;
-import org.meveo.api.dto.CustomFieldTemplateDto;
-import org.meveo.api.dto.EnableBusinessDto;
-import org.meveo.api.dto.EntityCustomActionDto;
-import org.meveo.api.dto.FilterDto;
-import org.meveo.api.dto.ScriptInstanceDto;
+import org.meveo.api.dto.*;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
-import org.meveo.api.dto.catalog.BundleTemplateDto;
-import org.meveo.api.dto.catalog.BusinessOfferModelDto;
-import org.meveo.api.dto.catalog.BusinessProductModelDto;
-import org.meveo.api.dto.catalog.BusinessServiceModelDto;
-import org.meveo.api.dto.catalog.CounterTemplateDto;
-import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
-import org.meveo.api.dto.catalog.OfferTemplateDto;
-import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
-import org.meveo.api.dto.catalog.PricePlanMatrixDto;
-import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
-import org.meveo.api.dto.catalog.ProductTemplateDto;
-import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
-import org.meveo.api.dto.catalog.ServiceTemplateDto;
-import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
+import org.meveo.api.dto.catalog.*;
 import org.meveo.api.dto.dwh.BarChartDto;
 import org.meveo.api.dto.dwh.LineChartDto;
 import org.meveo.api.dto.dwh.MeasurableQuantityDto;
@@ -65,9 +36,14 @@ import org.meveo.api.dto.notification.WebHookDto;
 import org.meveo.api.dto.payment.DDRequestBuilderDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.WorkflowDto;
+import org.meveo.api.mapper.ModuleItemListDeserializer;
 import org.meveo.model.IEntity;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.ModuleLicenseEnum;
+
+import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class MeveoModuleDto.
@@ -95,6 +71,7 @@ public class MeveoModuleDto extends EnableBusinessDto implements IEntity {
     private ScriptInstanceDto script;
 
     /** The module items. */
+    @JsonDeserialize(using = ModuleItemListDeserializer.class)
     @XmlElementWrapper(name = "moduleItems")
     @XmlElements({ @XmlElement(name = "customEntityTemplate", type = CustomEntityTemplateDto.class), @XmlElement(name = "customFieldTemplate", type = CustomFieldTemplateDto.class),
             @XmlElement(name = "filter", type = FilterDto.class), @XmlElement(name = "jobInstance", type = JobInstanceDto.class),

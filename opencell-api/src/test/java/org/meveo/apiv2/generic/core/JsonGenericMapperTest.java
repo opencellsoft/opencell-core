@@ -1,6 +1,7 @@
 package org.meveo.apiv2.generic.core;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -223,8 +224,9 @@ public class JsonGenericMapperTest {
         // When
         HashSet<String> fields = new HashSet<>();
         fields.addAll(Arrays.asList("channels"));
+        jsonGenericMapper1.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
         String transform = jsonGenericMapper1.toJson(fields, offerTemplate.getClass(), immutableGenericPaginatedResource);
-        assertThat(transform).isEqualTo("{\"total\":1,\"limit\":0,\"offset\":0,\"data\":[{\"channels\":[{\"id\":1,\"historized\":false,\"notified\":false,\"code\":\"c1\",\"appendGeneratedCode\":false,\"disabled\":false,\"active\":true,\"descriptionOrCode\":\"c1\",\"referenceCode\":\"c1\"},{\"id\":2,\"historized\":false,\"notified\":false,\"code\":\"c2\",\"appendGeneratedCode\":false,\"disabled\":false,\"active\":true,\"descriptionOrCode\":\"c2\",\"referenceCode\":\"c2\"}]}]}");
+        assertThat(transform).isEqualTo("{\"data\":[{\"channels\":[{\"active\":true,\"appendGeneratedCode\":false,\"code\":\"c1\",\"descriptionOrCode\":\"c1\",\"disabled\":false,\"historized\":false,\"id\":1,\"notified\":false,\"referenceCode\":\"c1\"},{\"active\":true,\"appendGeneratedCode\":false,\"code\":\"c2\",\"descriptionOrCode\":\"c2\",\"disabled\":false,\"historized\":false,\"id\":2,\"notified\":false,\"referenceCode\":\"c2\"}]}],\"limit\":0,\"offset\":0,\"total\":1}");
     }
 
     @Test
