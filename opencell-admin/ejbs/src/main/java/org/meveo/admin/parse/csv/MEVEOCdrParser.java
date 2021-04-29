@@ -25,18 +25,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
@@ -59,7 +57,7 @@ import org.meveo.service.medina.impl.InvalidFormatException;
  * @author Andrius Karpavicius
  * @author h.znibar
  */
-@Named
+@Stateless
 public class MEVEOCdrParser implements ICdrParser {
 
     @Inject

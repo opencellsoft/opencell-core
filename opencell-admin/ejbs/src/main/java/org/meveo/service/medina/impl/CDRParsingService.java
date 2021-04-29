@@ -42,7 +42,6 @@ import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.mediation.CDRRejectionCauseEnum;
 import org.meveo.model.rating.CDR;
@@ -393,7 +392,11 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	 */
 	private ICdrParser getParser(String customParser) throws BusinessException {
 	    if(customParser != null) {
-	        return (ICdrParser) EjbUtils.getServiceInterface(customParser);
+	        ICdrParser cdrParser = (ICdrParser) EjbUtils.getServiceInterface(customParser);
+	        if(cdrParser == null) {
+                throw new BusinessException("Failed to find CDR Parser "+cdrParser);
+            }
+	        return cdrParser;
 	    } else {
 	        log.debug("Use default cdr parser={}", meveoCdrParser.getClass());
             return meveoCdrParser;
@@ -420,7 +423,11 @@ public class CDRParsingService extends PersistenceService<EDR> {
      */
     private ICdrCsvReader getReader(String readerCode) throws BusinessException {
         if (readerCode != null) {
-            return (ICdrCsvReader) EjbUtils.getServiceInterface(readerCode);
+            ICdrCsvReader cdrReader = (ICdrCsvReader) EjbUtils.getServiceInterface(readerCode);
+            if(cdrReader == null) {
+                throw new BusinessException("Failed to find CDR Reader "+readerCode);
+            }
+            return cdrReader;
         } else {
             log.debug("Use default cdr reader={}", meveoCdrReader.getClass());
             return meveoCdrReader;
