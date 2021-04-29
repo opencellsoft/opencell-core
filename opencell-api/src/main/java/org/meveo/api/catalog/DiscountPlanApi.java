@@ -65,10 +65,6 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (StringUtils.isBlank(postData.getCode())) {
             addGenericCodeIfAssociated(DiscountPlan.class.getName(), postData);
         }
-		if (postData.getStartDate() != null && postData.getEndDate() == null && postData.getDefaultDuration() == null) {
-			missingParameters.add("defaultDuration");
-		}
-        handleMissingParametersAndValidate(postData);
         if (discountPlanService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(DiscountPlan.class, postData.getCode());
         }
@@ -93,6 +89,7 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         discountPlan.setApplicationFilterEL(postData.getApplicationFilterEL());
         discountPlan.setIncompatibleDiscountPlans(getIncompatibleDiscountPlans(postData.getIncompatibleDiscountPlans()));
         discountPlan.setDiscountPlanaApplicableEntities(getApplicableEntities(postData.getApplicableEntities()));
+        discountPlan.setUsedQuantity(postData.getUsedQuantity());
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), discountPlan, true);
@@ -128,9 +125,6 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
-        }
-        if (postData.getStartDate() != null && postData.getEndDate() == null && postData.getDefaultDuration() == null) {
-            missingParameters.add("defaultDuration");
         }
         handleMissingParametersAndValidate(postData);
 
@@ -197,6 +191,8 @@ public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> 
         if (applicableEntities != null && !applicableEntities.isEmpty()) {
             discountPlan.setDiscountPlanaApplicableEntities(applicableEntities);
         }
+        if(postData.getUsedQuantity() != null)
+        	discountPlan.setUsedQuantity(postData.getUsedQuantity());
 
         // populate customFields
         try {
