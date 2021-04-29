@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.cpq.commercial.OrderAttribute;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * DTO to create or update a order attribute
  * 
@@ -43,23 +45,38 @@ public class OrderAttributeDto extends BaseEntityDto{
 	 * 
 	 */
 	private static final long serialVersionUID = 8115890992793236496L;
-	
+
+	@Schema(description = "The commercial order id")
 	private Long commercialOrderId;
+	
+	@Schema(description = "The order attribute code")
 	private String orderAttributeCode;
+	
+	@Schema(description = "The order attribute id")
     private Long orderAttributeId;
+	
+	@Schema(description = "The order lot code")
     private String orderLotCode;
+	
+	@Schema(description = "The order product id")
     private Long orderProductId;
+	
+	@Schema(description = "The order offer id")
     private Long orderOfferId;
-    
+	
+	@Schema(description = "The access point")
     private String accessPoint;
    
 
     private List<OrderAttributeDto> linkedOrderAttribute = new ArrayList<>();
-    
+
+	@Schema(description = "The string value")
     private String stringValue;
 
+	@Schema(description = "The double value")
 	private Double doubleValue;
 
+	@Schema(description = "The date value")
 	private Date dateValue;
  
 	

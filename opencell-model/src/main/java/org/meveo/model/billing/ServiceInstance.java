@@ -304,7 +304,7 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     private String initialServiceRenewal;
 
     @OneToMany(mappedBy = "serviceInstance", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AttributeInstance> attributeInstances;
+    private List<AttributeInstance> attributeInstances = new ArrayList<>();
 
     /**
      * Corresponding to minimum invoice AccountingArticle

@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.catalog.PricePlanMatrixLine;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanMatrixLineDto extends BaseEntityDto {
 
@@ -19,18 +21,24 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 	 */
 	private static final long serialVersionUID = -3498847257781821440L;
 
+    @Schema(description = "The price plan line id")
 	private Long ppmLineId;
 
+    @Schema(description = "The price without tax")
 	private BigDecimal pricetWithoutTax;
 
+    @Schema(description = "The price plan matrix code")
 	private String pricePlanMatrixCode;
 
+    @Schema(description = "The price plan matrix version")
 	private int pricePlanMatrixVersion;
 
+    @Schema(description = "The description price plan line")
 	private String description;
 
 	private List<PricePlanMatrixValueDto> pricePlanMatrixValues = new ArrayList<PricePlanMatrixValueDto>();
 
+    @Schema(description = "The priority")
 	private Integer priority;
 
 	public PricePlanMatrixLineDto() {
@@ -96,7 +104,7 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 	}
 
 	public void setPricePlanMatrixCode(String pricePlanMatrixCode) {
-		pricePlanMatrixCode = pricePlanMatrixCode;
+		this.pricePlanMatrixCode = pricePlanMatrixCode;
 	}
 
 	public int getPricePlanMatrixVersion() {

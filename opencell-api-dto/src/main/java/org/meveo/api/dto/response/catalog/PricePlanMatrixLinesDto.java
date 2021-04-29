@@ -9,6 +9,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlRootElement(name = "PricePlanMatrixLinesDto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanMatrixLinesDto extends BaseEntityDto {
@@ -17,8 +19,11 @@ public class PricePlanMatrixLinesDto extends BaseEntityDto {
 	 * 
 	 */
 	private static final long serialVersionUID = -5865367313960284545L;
+
+    @Schema(description = "The price plan matrix code")
 	private String pricePlanMatrixCode;
 
+    @Schema(description = "The price plan matrix version")
 	private int pricePlanMatrixVersion;
 	
 	private List<PricePlanMatrixLineDto> pricePlanMatrixLinesDto;

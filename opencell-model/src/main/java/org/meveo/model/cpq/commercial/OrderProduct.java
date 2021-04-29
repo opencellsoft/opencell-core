@@ -14,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -21,8 +22,10 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.quote.QuoteProduct;
 
 /** 
  * @author Tarik F.
@@ -31,7 +34,7 @@ import org.meveo.model.cpq.ProductVersion;
  */
 @Entity
 @Table(name = "cpq_order_product")
-@CustomFieldEntity(cftCodePrefix = "OrderProduct")
+@CustomFieldEntity(cftCodePrefix = "OrderProduct",inheritCFValuesFrom = "quoteProduct")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_product_seq")})
 public class OrderProduct extends AuditableCFEntity {
@@ -73,6 +76,15 @@ public class OrderProduct extends AuditableCFEntity {
     @ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
 	private DiscountPlan discountPlan;
+    
+    
+    /**
+   	 * quote product attached to this OrderProduct
+   	 */
+       
+   	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quote_product_id")
+   	private QuoteProduct quoteProduct;
 	
 	
 	public void update(OrderProduct other) {
@@ -84,7 +96,17 @@ public class OrderProduct extends AuditableCFEntity {
 		this.productVersion = other.productVersion;
 		this.orderAttributes = other.orderAttributes;
         this.discountPlan=other.getDiscountPlan();
+        this.quoteProduct=other.getQuoteProduct();
     }
+	
+	
+	@Override
+	public ICustomFieldEntity[] getParentCFEntities() {
+		if (quoteProduct != null) {
+			return new ICustomFieldEntity[] { quoteProduct };
+		}
+		return null;
+	}
 	
 	/**
 	 * @return the order
@@ -180,6 +202,16 @@ public class OrderProduct extends AuditableCFEntity {
 
 	public void setDiscountPlan(DiscountPlan discountPlan) {
 		this.discountPlan = discountPlan;
+	}
+	
+	
+
+	public QuoteProduct getQuoteProduct() {
+		return quoteProduct;
+	}
+
+	public void setQuoteProduct(QuoteProduct quoteProduct) {
+		this.quoteProduct = quoteProduct;
 	}
 
 	@Override

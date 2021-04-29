@@ -22,6 +22,8 @@ import javax.validation.constraints.NotNull;
 
 import org.meveo.api.dto.BusinessEntityDto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Customer Sequence value DTO representation.
  * 
@@ -36,6 +38,7 @@ public class CustomerSequenceDto extends BusinessEntityDto {
 
 	/** Code of the seller */
 	@NotNull
+    @Schema(description = "Code of the seller")
 	private String seller;
 
 	public String getSeller() {

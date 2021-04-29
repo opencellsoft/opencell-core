@@ -24,6 +24,8 @@ import javax.validation.constraints.Pattern;
 
 import org.meveo.model.sequence.GenericSequence;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Sequence value DTO representation.
  * 
@@ -38,17 +40,20 @@ public class GenericSequenceDto implements Serializable {
 	 * Prefix of sequence.
 	 */
 	@Pattern(regexp = "^[\\p{Upper}-]{1,16}$")
+    @Schema(description = "Prefix of sequence")
 	private String prefix = "";
 
 	/**
 	 * Size of the sequence. Maximum allowable for RUM is 35. That means 35 -
 	 * prefix.length.
 	 */
+    @Schema(description = "Size of the sequence. Maximum allowable for RUM is 35")
 	private Long sequenceSize;
 
 	/**
 	 * Current value of the sequence.
 	 */
+    @Schema(description = "Current value of the sequence")
 	private Long currentSequenceNb = 0L;
 
 	public GenericSequenceDto() {

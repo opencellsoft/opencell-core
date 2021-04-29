@@ -29,6 +29,8 @@ import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.crm.CustomerCategory;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.List;
 
 /**
@@ -44,34 +46,42 @@ public class CustomerCategoryDto extends BusinessEntityDto {
     private static final long serialVersionUID = -8778571285967620018L;
 
     /** The exonerated from taxes. */
+    @Schema(description = "The exonerated from taxes")
     private Boolean exoneratedFromTaxes;
 
     /** The exoneration tax el. */
+    @Schema(description = "The exoneration tax el")
     private String exonerationTaxEl;
 
     /** The exoneration tax el for Spark. */
+    @Schema(description = "The exoneration tax el for Spark")
     private String exonerationTaxElSpark;
 
     /** The exoneration reason. */
+    @Schema(description = "The exoneration reason")
     private String exonerationReason;
 
     /** The accounting code. */
+    @Schema(description = "The accounting code", required = true)
     @XmlElement(required = true)
     private String accountingCode;
 
     /**
      * Account tax category - code
      **/
+    @Schema(description = "Account tax category code")
     private String taxCategoryCode;
 
     /**
      * Expression to determine tax category code
      */
+    @Schema(description = "Expression to determine tax category code")
     private String taxCategoryEl;
 
     /**
      * Expression to determine tax category code - for Spark
      */
+    @Schema(description = "Expression to determine tax category code - for Spark")
     private String taxCategoryElSpark;
 
     private List<LanguageDescriptionDto> languageDescriptions;

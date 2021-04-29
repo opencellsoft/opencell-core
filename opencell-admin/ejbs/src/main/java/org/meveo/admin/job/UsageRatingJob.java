@@ -35,9 +35,9 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
 
-
 /**
  * The Class UsageRatingJob rate all opened EDRs.
+ * 
  * @author Abdellatif BARI
  * @lastModifiedVersion 7.0
  */
@@ -96,7 +96,7 @@ public class UsageRatingJob extends Job {
         rateUntilDate.setMaxValue(50L);
         rateUntilDate.setGuiPosition("tab:Configuration:0;field:2");
         result.put("rateUntilDate", rateUntilDate);
-        
+
         CustomFieldTemplate ratingGroup = new CustomFieldTemplate();
         ratingGroup.setCode("ratingGroup");
         ratingGroup.setAppliesTo("JobInstance_UsageRatingJob");
@@ -108,6 +108,18 @@ public class UsageRatingJob extends Job {
         ratingGroup.setMaxValue(50L);
         ratingGroup.setGuiPosition("tab:Configuration:0;field:3");
         result.put("ratingGroup", ratingGroup);
+
+        CustomFieldTemplate batchSize = new CustomFieldTemplate();
+        batchSize.setCode(CF_BATCH_SIZE);
+        batchSize.setAppliesTo("JobInstance_UsageRatingJob");
+        batchSize.setActive(true);
+        batchSize.setDescription(resourceMessages.getString("jobExecution.batchSize"));
+        batchSize.setFieldType(CustomFieldTypeEnum.LONG);
+        batchSize.setValueRequired(false);
+        batchSize.setDefaultValue("1");
+        batchSize.setMaxValue(10000L);
+        batchSize.setGuiPosition("tab:Configuration:0;field:4");
+        result.put(batchSize.getCode(), batchSize);
 
         return result;
     }

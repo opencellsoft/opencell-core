@@ -34,6 +34,8 @@ import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.catalog.PricePlanMatrix;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * DTO for {@link PricePlanMatrix}.
  * 
@@ -49,99 +51,130 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
 
     /** The event code. */
     @XmlElement(required = true)
+    @Schema(description = "The event code")
     private String eventCode;
 
     /** The seller. */
+    @Schema(description = "The seller code")
     private String seller;
 
     /** The country. */
+    @Schema(description = "The country code")
     private String country;
 
     /** The currency. */
+    @Schema(description = "The currency code")
     private String currency;
 
     /** The min quantity. */
+    @Schema(description = "The min quantity")
     private BigDecimal minQuantity;
 
     /** The max quantity. */
+    @Schema(description = "The max quantity")
     private BigDecimal maxQuantity;
 
     /** The offer template. */
+    @Schema(description = "The offer template code")
     private String offerTemplate;
 
     /** The offer template version. */
     private OfferTemplateDto offerTemplateVersion;
 
     /** The start subscription date. */
+    @Schema(description = "The start subscription date")
     private Date startSubscriptionDate;
 
     /** The end subscription date. */
+    @Schema(description = "The end subscription date")
     private Date endSubscriptionDate;
 
     /** The start rating date. */
+    @Schema(description = "The start rating date")
     private Date startRatingDate;
 
     /** The end rating date. */
+    @Schema(description = "The end rating date")
     private Date endRatingDate;
 
     /** The min subscription age in month. */
+    @Schema(description = "The min subscription age in month")
     private Long minSubscriptionAgeInMonth;
 
     /** The max subscription age in month. */
+    @Schema(description = "The max subscription age in month")
     private Long maxSubscriptionAgeInMonth;
 
     /** The amount without tax. */
+    @Schema(description = "The amount without tax")
     private BigDecimal amountWithoutTax;
 
     /** The amount with tax. */
+    @Schema(description = "The amount with tax")
     private BigDecimal amountWithTax;
 
     /** The amount without tax EL. */
+    @Schema(description = "The amount without tax EL")
     private String amountWithoutTaxEL;
 
     /** The amount without tax EL - for Spark */
+    @Schema(description = "The amount without tax EL - for Spark")
     private String amountWithoutTaxELSpark;
 
     /** The amount with tax EL. */
+    @Schema(description = "The amount with tax EL")
     private String amountWithTaxEL;
 
     /** The amount with tax EL - for Spark */
+    @Schema(description = "The amount with tax EL - for Spark")
     private String amountWithTaxELSpark;
 
     /** The minimum amount without tax el. */
+    @Schema(description = "The minimum amount without tax el")
     private String minimumAmountWithoutTaxEl;
 
     /** The minimum amount without tax el - for Spark */
+    @Schema(description = "The minimum amount without tax el - for Spark")
     private String minimumAmountWithoutTaxELSpark;
 
     /** The minimum amount with tax el. */
+    @Schema(description = "The minimum amount with tax el")
     private String minimumAmountWithTaxEl;
 
     /** The minimum amount with tax el - for Spark */
+    @Schema(description = "The minimum amount with tax el - for Spark")
     private String minimumAmountWithTaxELSpark;
 
     /** The priority. */
+    @Schema(description = "The priority")
     private Integer priority;
 
     /** The criteria 1. */
+    @Schema(description = "The criteria 1")
     private String criteria1;
 
     /** The criteria 2. */
+    @Schema(description = "The criteria 2")
     private String criteria2;
 
     /** The criteria 3. */
+    @Schema(description = "The criteria 3")
     private String criteria3;
 
     /** The criteria EL. */
+    @Schema(description = "The criteria EL")
     private String criteriaEL;
 
     /** The criteria EL - for Spark */
+    @Schema(description = "The criteria EL - for Spark")
     private String criteriaELSpark;
 
     /** The validity calendar code. */
+    @Schema(description = "The validity calendar code")
     private String validityCalendarCode;
 
     /** The script instance. */
+    @Schema(description = "The script instance")
     private String scriptInstance;
 
     /** The custom fields. */
@@ -151,33 +184,39 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
     private List<LanguageDescriptionDto> languageDescriptions;
 
     /** The wo description EL. */
+    @Schema(description = "")
     private String woDescriptionEL;
 
     /** The wo description EL - for Spark */
+    @Schema(description = "The wo description EL - for Spark")
     private String woDescriptionELSpark;
 
     /**
      * Expression to calculate price with tax.
      */
     @Size(max = 2000)
+    @Schema(description = "")
     private String ratingWithTaxEL;
 
     /**
      * Expression to calculate price with tax - for Spark.
      */
     @Size(max = 2000)
+    @Schema(description = "Expression to calculate price with tax - for Spark")
     private String ratingWithTaxELSpark;
 
     /**
      * Expression to calculate price without tax
      */
     @Size(max = 2000)
+    @Schema(description = "Expression to calculate price without tax")
     private String ratingWithoutTaxEL;
 
     /**
      * Expression to calculate price without tax - for Spark.
      */
     @Size(max = 2000)
+    @Schema(description = "Expression to calculate price without tax - for Spark")
     private String ratingWithoutTaxELSpark;
 
     private List<PricePlanMatrixVersionDto> versions;
@@ -185,43 +224,51 @@ public class PricePlanMatrixDto extends EnableBusinessDto {
     /**
      * Expression for getting the InvoiceSubCategory.
      */
+    @Schema(description = "Expression for getting the InvoiceSubCategory")
     private String invoiceSubCategoryEL;
     
     /**
      * Expression to calculate price with/without tax. It overrides quantity x unitPrice when set.
      */
+    @Schema(description = "Expression to calculate price with/without tax. It overrides quantity x unitPrice when set")
     private String totalAmountEL;
     
     /**
      * Expression to calculate price with/without tax, It overrides quantity x unitPrice when set - for Spark.
      */
+    @Schema(description = "Expression to calculate price with/without tax, It overrides quantity x unitPrice when set - for Spark")
     private String totalAmountELSpark;
     
     /**
      * Minimum allowed amount for a walletOperation. If this amount is less than the
      * walletOperation this amount is save and the old value is save in rawAmount.
      */
+    @Schema(description = "Minimum allowed amount for a walletOperation. If this amount is less than the walletOperation this amount is save and the old value is save in rawAmount")
     private String minimumAmountEL;
 
     /**
      * Minimum allowed amount for a walletOperation. If this amount is less than the
      * walletOperation this amount is save and the old value is save in rawAmount - for Spark.
      */
+    @Schema(description = "Minimum allowed amount for a walletOperation. If this amount is less than the walletOperation this amount is save and the old value is save in rawAmount - for Spark")
     private String minimumAmountELSpark;
 
     /**
      * An El expression used to override wallet operation's parameter1El.
      */
+    @Schema(description = "An El expression used to override wallet operation's parameter1El")
     private String parameter1El;
 
     /**
      * An El expression used to override wallet operation's parameter2El.
      */
+    @Schema(description = "An El expression used to override wallet operation's parameter2El")
     private String parameter2El;
 
     /**
      * An El expression used to override wallet operation's parameter3El.
      */
+    @Schema(description = "An El expression used to override wallet operation's parameter3El")
     private String parameter3El;
 
     /**

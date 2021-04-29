@@ -33,6 +33,8 @@ import org.meveo.model.quote.QuoteStatusEnum;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * DTO to create or update a quote
  * 
@@ -48,34 +50,52 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	 */
 	private static final long serialVersionUID = 8115890992793236496L;
 
-	
+
+    @Schema(description = "The date of the quote")
     private Date quoteDate = new Date();
 
     private DatePeriod validity = new DatePeriod();
 
+    @Schema(description = "The status of the quote", example = "Possible value : IN_PROGRESS, PENDING, CANCELLED, APPROVED, ACCEPTED, REJECTED", defaultValue = "IN_PROGRESS")
     private String status = QuoteStatusEnum.IN_PROGRESS.toString();
  
     @NotNull
+    @Schema(description = "The code of the billing account of the applicant", required = true)
 	private String applicantAccountCode;
+    
+    @Schema(description = "The code of the billing account of the billable")
 	private String billableAccountCode;
-	
+
+    @Schema(description = "The code of the contract")
 	private String contractCode;
+    
 	@JsonSerialize(using = CustomDateSerializer.class)
+    @Schema(description = "The begin of date of quote lot ")
 	private Date quoteLotDateBegin;
+	
+    @Schema(description = "Duration of the quote lot")
 	private int quoteLotDuration;
+    
+    @Schema(description = "The opportunity ref")
 	private String opportunityRef;
+    
+    @Schema(description = "The code of the seller")
 	private String sellerCode;
+    
+    @Schema(description = "The send date")
 	@JsonSerialize(using = CustomDateSerializer.class)
 	private Date sendDate;
+    
+    @Schema(description = "The quote number")
 	private String quoteNumber;
 
-
+    @Schema(description = "The external id")
     private String externalId;
-    
+
     private CustomFieldsDto customFields;
 
-
 	@JsonSerialize(using = CustomDateSerializer.class)
+    @Schema(description = "The status date")
 	private Date statusDate;
 
 	/**

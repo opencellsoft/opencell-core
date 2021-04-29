@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -19,8 +20,10 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.cpq.offer.QuoteOffer;
 
 /** 
  * @author Tarik F.
@@ -28,7 +31,7 @@ import org.meveo.model.catalog.OfferTemplate;
  *
  */
 @Entity
-@CustomFieldEntity(cftCodePrefix = "OrderOffer")
+@CustomFieldEntity(cftCodePrefix = "OrderOffer",inheritCFValuesFrom = "quoteOffer")
 @Table(name = "cpq_order_offer")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_order_offer_seq")})
@@ -64,6 +67,24 @@ public class OrderOffer extends AuditableCFEntity {
     @ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
 	private DiscountPlan discountPlan;
+    
+    
+    /**
+	 * quote offer attached to this orderOffer
+	 */
+    
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quote_offer_id")
+	private QuoteOffer quoteOffer;
+    
+	
+    @Override
+	public ICustomFieldEntity[] getParentCFEntities() {
+		if (quoteOffer != null) {
+			return new ICustomFieldEntity[] { quoteOffer };
+		}
+		return null;
+	}
     
 	/**
 	 * @return the order
@@ -122,6 +143,17 @@ public class OrderOffer extends AuditableCFEntity {
 	public void setDiscountPlan(DiscountPlan discountPlan) {
 		this.discountPlan = discountPlan;
 	}
+
+	public QuoteOffer getQuoteOffer() {
+		return quoteOffer;
+	}
+
+	public void setQuoteOffer(QuoteOffer quoteOffer) {
+		this.quoteOffer = quoteOffer;
+	}
+
+
+	
 	
 	
 	

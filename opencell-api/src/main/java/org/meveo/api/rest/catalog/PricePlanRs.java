@@ -111,7 +111,7 @@ public interface PricePlanRs extends IBaseRs {
             @ApiResponse(responseCode="200", description = "the price plan is successfully retreived",content = @Content(schema = @Schema(implementation = GetPricePlanResponseDto.class))),
             @ApiResponse(responseCode = "400", description = "Internat error")
     })
-    GetPricePlanResponseDto find(@QueryParam("pricePlanCode") String pricePlanCode);
+    GetPricePlanResponseDto find(@Parameter(description = "The price plan code", required = true) @QueryParam("pricePlanCode") String pricePlanCode);
 
     /**
      * Remove an existing price plan matrix with a given code
@@ -128,7 +128,7 @@ public interface PricePlanRs extends IBaseRs {
             @ApiResponse(responseCode="200", description = "the price plan is successfully removed",content = @Content(schema = @Schema(implementation = ActionStatus.class))),
             @ApiResponse(responseCode = "400", description = "Internat error")
     })
-    ActionStatus remove(@PathParam("pricePlanCode") String pricePlanCode);
+    ActionStatus remove(@Parameter(description = "The price plan code", required = true) @PathParam("pricePlanCode") String pricePlanCode);
 
     /**
      * List price plan matrix.
@@ -145,7 +145,7 @@ public interface PricePlanRs extends IBaseRs {
             @ApiResponse(responseCode="200", description = "price plans are successfully retreived",content = @Content(schema = @Schema(implementation = PricePlanMatrixesResponseDto.class))),
             @ApiResponse(responseCode = "400", description = "Internat error")
     })
-    PricePlanMatrixesResponseDto listPricePlanByEventCode(@QueryParam("eventCode") String eventCode);
+    PricePlanMatrixesResponseDto listPricePlanByEventCode(@Parameter(description = "The event code", required = true) @QueryParam("eventCode") String eventCode);
 
     /**
      * List PricePlanMatrixes
@@ -188,7 +188,7 @@ public interface PricePlanRs extends IBaseRs {
             @ApiResponse(responseCode="200", description = "the price plan is successfully enabled"),
             @ApiResponse(responseCode = "400", description = "Internat error")
     })
-    ActionStatus enable(@PathParam("code") String code);
+    ActionStatus enable(@Parameter(description = "The price plan code", required = true) @PathParam("code") String code);
 
     /**
      * Disable a Price plan with a given code
@@ -205,7 +205,7 @@ public interface PricePlanRs extends IBaseRs {
             @ApiResponse(responseCode="200", description = "the price plan is successfully disabled"),
             @ApiResponse(responseCode = "400", description = "Internat error")
     })
-    ActionStatus disable(@PathParam("code") String code);
+    ActionStatus disable(@Parameter(description = "The price plan code", required = true) @PathParam("code") String code);
 
 
     @POST
@@ -239,7 +239,8 @@ public interface PricePlanRs extends IBaseRs {
                     ,
                     @ApiResponse(responseCode = "400", description = "the price plan version with price plan code and current version in param does not exist or the price plan matrix version is attached to a price plan matrix")
             })
-    Response removeMatrixPricePlanVersion(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,@Parameter @PathParam("pricePlanMatrixVersion")  int pricePlanMatrixVersion);
+    Response removeMatrixPricePlanVersion(@Parameter(description = "The price plan matrix code", required = true)  @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
+    									 @Parameter(description = "The price plan matrix version", required = true)  @PathParam("pricePlanMatrixVersion")  int pricePlanMatrixVersion);
 
     /**
      *
@@ -258,7 +259,9 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode = "404", description = "Unknown price plan version"),
                     @ApiResponse(responseCode = "400", description = "the status of the price plan matrix is already closed")
             })
-    Response updatePricePlanMatrixVersionStatus(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode, @Parameter @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion, @Parameter @QueryParam("status") VersionStatusEnum status);
+    Response updatePricePlanMatrixVersionStatus(@Parameter(description = "The price plan matrix code", required = true)  @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode, 
+    											@Parameter(description = "The price plan matrix version", required = true)  @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion, 
+    											@Parameter(description = "The status of Price plan", required = true)  @QueryParam("status") VersionStatusEnum status);
 
     @POST
     @Path("/pricePlanMatrixVersions")
@@ -286,8 +289,8 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode="200", description = "the price plan version successfully duplicated"),
                     @ApiResponse(responseCode = "404", description = "the price plan version with price plan code and current version in param does not exist ")
             })
-    Response duplicatePricePlanVersion(@Parameter @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
-                                       @Parameter @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion);
+    Response duplicatePricePlanVersion(@Parameter(description = "The price plan matrix code", required = true)  @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
+    								   @Parameter(description = "The price plan matrix version to be duplicated", required = true)  @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion);
 
 
     /**
@@ -341,7 +344,7 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode="200", description = "the price plan column successfully loaded"),
                     @ApiResponse(responseCode = "400", description = "Internat error")
             })
-    Response findPricePlanMatrixColumn(@QueryParam("pricePlanMatrixColumnCode") String pricePlanMatrixColumnCode);
+    Response findPricePlanMatrixColumn(@Parameter(description = "The price plan matrix column code", required = true) @QueryParam("pricePlanMatrixColumnCode") String pricePlanMatrixColumnCode);
 
     /**
      * Remove an existing price plan matrix column with a given code
@@ -358,7 +361,7 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode="200", description = "the price plan column successfully deleted"),
                     @ApiResponse(responseCode = "400", description = "Internat error")
             })
-    Response removePricePlanMatrixColumnCode(@PathParam("pricePlanMatrixColumnCode") String pricePlanMatrixColumnCode);
+    Response removePricePlanMatrixColumnCode(@Parameter(description = "The price plan matrix column code", required = true) @PathParam("pricePlanMatrixColumnCode") String pricePlanMatrixColumnCode);
 
 
     /**
@@ -404,7 +407,7 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode="200", description = "the price plan line successfully deleted"),
                     @ApiResponse(responseCode = "400", description = "Internal error")
             })
-    ActionStatus removePricePlanMatrixLine(@PathParam("pricePlanMatrixLineId") Long pricePlanMatrixLineId);
+    ActionStatus removePricePlanMatrixLine(@Parameter(description = "The price plan matrix line id", required = true) @PathParam("pricePlanMatrixLineId") Long pricePlanMatrixLineId);
 
     @GET
     @Path("/pricePlanMatrixLine/{pricePlanMatrixLineId}")
@@ -415,7 +418,7 @@ public interface PricePlanRs extends IBaseRs {
                     @ApiResponse(responseCode="200", description = "the price plan line successfully loaded"),
                     @ApiResponse(responseCode = "400", description = "Internal error")
             })
-    Response getPricePlanMatrixLine(@PathParam("pricePlanMatrixLineId") Long pricePlanMatrixLineId);
+    Response getPricePlanMatrixLine(@Parameter(description = "The price plan matrix line id", required = true) @PathParam("pricePlanMatrixLineId") Long pricePlanMatrixLineId);
 
     @POST
     @Path("/loadPrices")

@@ -107,8 +107,8 @@ public class CardPaymentMethod extends PaymentMethod {
         this.preferred = preferred;
     }
 
-    public CardPaymentMethod(CustomerAccount customerAccount, boolean isDisabled, String alias, String cardNumber, String owner, boolean preferred, String issueNumber,
-            Integer yearExpiration, Integer monthExpiration, CreditCardTypeEnum cardType) {
+    public CardPaymentMethod(CustomerAccount customerAccount, boolean isDisabled, String alias, String cardNumber, String owner, boolean preferred, String issueNumber, Integer yearExpiration, Integer monthExpiration,
+            CreditCardTypeEnum cardType) {
         super();
         setDisabled(isDisabled);
         setPaymentType(PaymentMethodEnum.CARD);
@@ -179,7 +179,7 @@ public class CardPaymentMethod extends PaymentMethod {
     public void setHiddenCardNumber(String hiddenCardNumber) {
         this.hiddenCardNumber = hiddenCardNumber;
     }
-    
+
     public void anonymize(String code) {
         super.anonymize(code);
         setOwner(code);
@@ -188,7 +188,7 @@ public class CardPaymentMethod extends PaymentMethod {
         setCardNumber(code);
         setCardType(null);
         setIssueNumber(code);
-     }
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -196,10 +196,10 @@ public class CardPaymentMethod extends PaymentMethod {
     }
 
     public String getExpirationMonthAndYear() {
-        if(monthExpiration != null && yearExpiration != null) {
+        if (monthExpiration != null && yearExpiration != null) {
             return (monthExpiration != null && monthExpiration < 10 ? "0" : "") + monthExpiration + "/" + yearExpiration;
         }
-        
+
         return "";
     }
 
@@ -239,7 +239,7 @@ public class CardPaymentMethod extends PaymentMethod {
      * @return True is expiration date is beyond a given date
      */
     public boolean isValidForDate(Date date) {
-        if(yearExpiration != null && monthExpiration != null) {
+        if (yearExpiration != null && monthExpiration != null) {
             int year = new Integer(DateUtils.getYearFromDate(date).toString().substring(2, 4));
             int month = DateUtils.getMonthFromDate(new Date());
             return yearExpiration.intValue() > year || (yearExpiration.intValue() == year && monthExpiration >= month);
@@ -249,9 +249,9 @@ public class CardPaymentMethod extends PaymentMethod {
 
     @Override
     public String toString() {
-        return "CardPaymentMethod [tokenId=" + getTokenId() + ", cardType=" + getCardType() + ", owner=" + getOwner() + ", monthExpiration=" + getMonthExpiration()
-                + ", yearExpiration=" + getYearExpiration() + ", cardNumber=" + getHiddenCardNumber() + ", userId=" + getUserId() + ", info1=" + getInfo1() + ", info2="
-                + getInfo2() + ", info3=" + getInfo3() + ", info4=" + getInfo4() + ", info5=" + getInfo5() + ", issueNumber=" + getIssueNumber() + "]";
+        return "CardPaymentMethod [tokenId=" + getTokenId() + ", cardType=" + getCardType() + ", owner=" + getOwner() + ", monthExpiration=" + getMonthExpiration() + ", yearExpiration=" + getYearExpiration()
+                + ", cardNumber=" + getHiddenCardNumber() + ", userId=" + getUserId() + ", info1=" + getInfo1() + ", info2=" + getInfo2() + ", info3=" + getInfo3() + ", info4=" + getInfo4() + ", info5=" + getInfo5()
+                + ", issueNumber=" + getIssueNumber() + "]";
     }
 
     public static String hideCardNumber(String cardNumber) {
@@ -267,10 +267,23 @@ public class CardPaymentMethod extends PaymentMethod {
 
     @Override
     public boolean isExpired() {
-        if(yearExpiration == null || monthExpiration == null) {
+
+        return isExpired(yearExpiration, monthExpiration);
+    }
+
+    /**
+     * Check if card is expired as compared to a current date
+     * 
+     * @param yearExpiration Year of expiration
+     * @param monthExpiration Month of expiration
+     * @return True if expiration is before the current date
+     */
+    public static boolean isExpired(Integer yearExpiration, Integer monthExpiration) {
+
+        if (yearExpiration == null || monthExpiration == null) {
             return false;
         }
-        
+
         Calendar now = Calendar.getInstance();
 
         Calendar expiration = Calendar.getInstance();

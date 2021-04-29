@@ -24,6 +24,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.job.Job;
 
 /**
  * Implements job logic to iterate over data and process one item at a time, checking if job is still running and update job progress in DB periodically
@@ -49,6 +50,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
     public abstract void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance);
 
     /**
+     * Execute a job - retrieve a list of data to process, iterate over the data and process one item at a time, checking if job is still running and update job progress in DB periodically
      * 
      * @param jobExecutionResult Job execution result
      * @param jobInstance Job instance
@@ -57,9 +59,30 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * @param hasMoreFunction A function to determine if the are more data to process even though this job run has completed. Optional.
      * @param finalizeFunction A function to finalize data to process. Optional.
      */
-    @SuppressWarnings("rawtypes")
     protected void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance, Function<JobExecutionResultImpl, Optional<Iterator<T>>> initFunction,
             BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, Predicate<JobInstance> hasMoreFunction, Consumer<JobExecutionResultImpl> finalizeFunction) {
+
+        execute(jobExecutionResult, jobInstance, initFunction, processSingleItemFunction, null, hasMoreFunction, finalizeFunction);
+    }
+
+    /**
+     * Execute a job - retrieve a list of data to process, iterate over the data and process one or multiple items at a time, checking if job is still running and update job progress in DB periodically. <br/>
+     * <br/>
+     * 
+     * If processMultipleItemFunction is provided at first an atempt to process multiple items in one transaction will be atempted. If any items fail, each item will be processed one by one in a separate transaction.
+     * 
+     * @param jobExecutionResult Job execution result
+     * @param jobInstance Job instance
+     * @param initFunction A function to initialize the data to process
+     * @param processSingleItemFunction A function to process a single item. Will be executed in its own transaction
+     * @param processMultipleItemFunction A function to process multiple items. Will be executed in its own transaction.
+     * @param hasMoreFunction A function to determine if the are more data to process even though this job run has completed. Optional.
+     * @param finalizeFunction A function to finalize data to process. Optional.
+     */
+    @SuppressWarnings("rawtypes")
+    protected void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance, Function<JobExecutionResultImpl, Optional<Iterator<T>>> initFunction,
+            BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, Predicate<JobInstance> hasMoreFunction,
+            Consumer<JobExecutionResultImpl> finalizeFunction) {
 
         jobExecutionErrorService.purgeJobErrors(jobExecutionResult.getJobInstance());
 
@@ -98,6 +121,10 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
         boolean isNewTx = isProcessItemInNewTx();
 
+        // Multiple item processing will happen only of batch size is greater than one,
+        Long batchSize = (Long) getParamOrCFValue(jobInstance, Job.CF_BATCH_SIZE, 0L);
+        boolean useMultipleItemProcessing = batchSize > 1 && processMultipleItemFunction != null;
+
         List<Runnable> tasks = new ArrayList<Runnable>(nbThreads.intValue());
 
         for (int k = 0; k < nbThreads; k++) {
@@ -113,41 +140,61 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 long globalI = 0;
 
                 T itemToProcess = iterator.next();
-                while (itemToProcess != null) {
+                mainLoop: while (itemToProcess != null) {
 
                     if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
                         break;
                     }
 
-                    // Process each item
-                    try {
-                        T itemToProcessFinal = itemToProcess;
-                        if (isNewTx) {
-                            methodCallingUtils.callMethodInNewTx(() -> processSingleItemFunction.accept(itemToProcessFinal, jobExecutionResult));
-                        } else {
-                            processSingleItemFunction.accept(itemToProcessFinal, jobExecutionResult);
+                    if (useMultipleItemProcessing) {
+
+                        final List<T> itemsToProcess = new ArrayList<T>();
+                        itemsToProcess.add(itemToProcess);
+                        int nrOfItemsInBatch = 1;
+
+                        while (nrOfItemsInBatch < batchSize) {
+                            itemToProcess = iterator.next();
+                            if (itemToProcess == null) {
+                                break;
+                            }
+
+                            itemsToProcess.add(itemToProcess);
+
+                            if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
+                                break mainLoop;
+                            }
+                            i++;
+                            nrOfItemsInBatch++;
                         }
 
-                        globalI = jobExecutionResult.registerSucces();
+                        // Process items in batch
+                        try {
+                            if (isNewTx) {
+                                methodCallingUtils.callMethodInNewTx(() -> processMultipleItemFunction.accept(itemsToProcess, jobExecutionResult));
+                            } else {
+                                processMultipleItemFunction.accept(itemsToProcess, jobExecutionResult);
+                            }
 
-                        // Register errors
-                    } catch (Exception e) {
+                            for (int l = 0; l < nrOfItemsInBatch; l++) {
+                                globalI = jobExecutionResult.registerSucces();
+                            }
 
-                        Long itemId = null;
-                        if (itemToProcess instanceof Long) {
-                            itemId = (Long) itemToProcess;
-                        } else if (itemToProcess instanceof IEntity) {
-                            itemId = (Long) ((IEntity) itemToProcess).getId();
+                            // Batch processing has failed, so process item one by one
+                        } catch (Exception e) {
+
+                            // reset counter to previous value, so job continuity check would still be valid
+                            i = i - itemsToProcess.size();
+
+                            for (T itemToProcessFromFailedBatch : itemsToProcess) {
+                                globalI = processItem(itemToProcessFromFailedBatch, isNewTx, processSingleItemFunction, jobExecutionResult);
+                                i++;
+                            }
                         }
 
-                        if (itemId != null) {
-                            jobExecutionErrorService.registerJobError(jobExecutionResult.getJobInstance(), itemId, e);
-                            globalI = jobExecutionResult.registerError(itemId, e.getMessage());
-                            log.error("Failed to process item {}", itemId, e);
-                        } else {
-                            globalI = jobExecutionResult.registerError(e.getMessage());
-                            log.error("Failed to process item", e);
-                        }
+                    } else {
+
+                        // Process each item
+                        globalI = processItem(itemToProcess, isNewTx, processSingleItemFunction, jobExecutionResult);
                     }
 
                     try {
@@ -211,7 +258,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
             }
 
-             wasCanceled = wasKilled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
+            wasCanceled = wasKilled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
 
             // Check if there are any more data to process and mark job as completed if there are none
             if (!wasCanceled && hasMoreFunction != null) {
@@ -225,6 +272,48 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
         if (!wasCanceled && finalizeFunction != null) {
             finalizeFunction.accept(jobExecutionResult);
+        }
+    }
+
+    /**
+     * Process a single item
+     * 
+     * @param itemToProcess Item to process
+     * @param isNewTx Shall a new trasaction be initiated. If false, its expected that transaction handling will be provided by the function itself
+     * @param processSingleItemFunction A function to process a single item
+     * @param jobExecutionResult Job execution results
+     * @return A total number of processed items, successful or failed
+     */
+    private long processItem(T itemToProcess, boolean isNewTx, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, JobExecutionResultImpl jobExecutionResult) {
+
+        try {
+            if (isNewTx) {
+                methodCallingUtils.callMethodInNewTx(() -> processSingleItemFunction.accept(itemToProcess, jobExecutionResult));
+            } else {
+                processSingleItemFunction.accept(itemToProcess, jobExecutionResult);
+            }
+
+            return jobExecutionResult.registerSucces();
+
+            // Register errors
+        } catch (Exception e) {
+
+            Long itemId = null;
+            if (itemToProcess instanceof Long) {
+                itemId = (Long) itemToProcess;
+            } else if (itemToProcess instanceof IEntity) {
+                itemId = (Long) ((IEntity) itemToProcess).getId();
+            }
+
+            if (itemId != null) {
+                log.error("Failed to process item {}", itemId, e);
+                jobExecutionErrorService.registerJobError(jobExecutionResult.getJobInstance(), itemId, e);
+                return jobExecutionResult.registerError(itemId, e.getMessage());
+
+            } else {
+                log.error("Failed to process item", e);
+                return jobExecutionResult.registerError(e.getMessage());
+            }
         }
     }
 

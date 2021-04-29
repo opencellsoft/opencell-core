@@ -81,8 +81,11 @@ public interface AccountingArticleResource {
             @ApiResponse(responseCode="200", description = "return list of accounting article"),
             @ApiResponse(responseCode = "400", description = "bad request when article information contains an error")
     })
-    Response list(@DefaultValue("0") @QueryParam("offset") Long offset, @DefaultValue("50") @QueryParam("limit") Long limit,
-            @QueryParam("sort") String sort, @QueryParam("orderBy") String orderBy, Map<String, Object> filter,
+    Response list(@Parameter(description = "The offset of the list") @DefaultValue("0") @QueryParam("offset") Long offset, 
+    		@Parameter(description = "The limit element per page") @DefaultValue("50") @QueryParam("limit") Long limit,
+    		@Parameter(description = "The sort by field") @QueryParam("sort") String sort, 
+    		@Parameter(description = "The ordering by field") @QueryParam("orderBy") String orderBy, 
+    		@Parameter(description = "Map of filters") Map<String, Object> filter,
             @Context Request request);
     
     @GET
@@ -94,6 +97,7 @@ public interface AccountingArticleResource {
             @ApiResponse(responseCode="200", description = "return accounting article"),
             @ApiResponse(responseCode = "400", description = "bad request when article information contains an error")
     })
-    Response getAccountingArticles(@PathParam("productCode") String productCode, Map<String, Object> attribues, @Context Request request);
+    Response getAccountingArticles(@Parameter(description = "product code", required = true) @PathParam("productCode") String productCode, 
+    								@Parameter(description = "Map of attributes") Map<String, Object> attribues, @Context Request request);
     
 }
