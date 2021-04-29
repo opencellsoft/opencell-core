@@ -8396,12 +8396,12 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
         <addColumn tableName="billing_invoice">
             <column name="raw_amount" type="numeric(23, 12)">
-                <constraints nullable="false"/>
+                <!--  <constraints nullable="false"/>  -->
             </column>
         </addColumn>
         <addColumn tableName="billing_invoice">
             <column name="discount_amount" type="numeric(23, 12)">
-                <constraints nullable="false"/>
+                <!--  <constraints nullable="false"/>  -->
             </column>
         </addColumn>
         <addColumn tableName="billing_invoice">
@@ -8775,5 +8775,12 @@ public class OrderAdvancement extends ModuleScript {
 			baseTableName="billing_invoice_configuration"
 			referencedColumnNames="id" />
 	</changeSet>
+	
+	<changeSet id="#cpq_add_missing_migration" author="AbdelmounaimAkadid">
+        <createSequence sequenceName="cpq_contract_item_seq" />
+        <addColumn tableName="cat_discount_plan">
+            <column name="discount_plan_type" type="varchar(50)" />
+        </addColumn>
+   	</changeSet>
 	
 </databaseChangeLog>
