@@ -32,4 +32,13 @@ public class DoublePostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFunc
       return DoubleType.INSTANCE;
    }
 
+    @Override
+    public String getCastType() {
+        return "numeric(23,12)";
+    }
+
+    @Override
+    public String getValuePropertyName() {
+        return "double";
+    }
 }
