@@ -8807,10 +8807,12 @@ public class OrderAdvancement extends ModuleScript {
    	</changeSet>
 	
     
-     <changeSet id="#5937_20210428" author="Mbarek-Ay">
-     <dropColumn tableName="cpq_invoice_line">
-       <column name="code"></column>
-       <column name="description"></column>
-     </dropColumn>
-     </changeSet>
+      <changeSet id="#5937_20210428" author="Mbarek-Ay">
+      <preConditions onFail="WARN">
+        <columnExists tableName="cpq_invoice_line" columnName="code"/>
+        <columnExists tableName="cpq_invoice_line" columnName="description"/>
+      </preConditions>
+      <dropColumn tableName="cpq_invoice_line" columnName="code"/>
+      <dropColumn tableName="cpq_invoice_line" columnName="description"/>
+    </changeSet>
 </databaseChangeLog>
