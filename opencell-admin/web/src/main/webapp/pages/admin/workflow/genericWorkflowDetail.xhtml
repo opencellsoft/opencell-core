@@ -213,7 +213,7 @@
                                     <p:commandButton action="#{genericWorkflowBean.saveWfTransition}" value="#{messages['action.save']}" process="@form" update=":genericWFFormId:tabView:dunningPlanTransition_panel" />
                                     <p:commandButton action="#{genericWorkflowBean.cancelTransitionDetail}" value="#{messages['action.cancel']}" process="@this"
                                         update=":genericWFFormId:tabView:dunningPlanTransition_panel" />
-									<p:commandButton action="#{genericWorkflowBean.showTransitionActions(genericWorkflowBean.entity.code, gWFTransitionBean.entity.uuid)}"
+									<p:commandButton action="#{genericWorkflowBean.showTransitionActions(genericWorkflowBean.entity.code, genericWorkflowBean.gWFTransition.uuid)}"
 													 value="#{messages['action.show']}" process="@this"/>
                                 </p:panel>
                             </hftl:formPanel>
