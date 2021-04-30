@@ -15661,6 +15661,8 @@ $$ LANGUAGE plpgsql;
         <sql>update ${db.schema.adapted}ar_payment_token set uuid = 'payment_token'||id</sql>
     </changeSet>
 
+    <changeSet id="#5595_540498_20210430" author="TarikFA." />
+    
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
 		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where filename='src/main/db_resources/changelog/rebuild/structure.xml'</sql>

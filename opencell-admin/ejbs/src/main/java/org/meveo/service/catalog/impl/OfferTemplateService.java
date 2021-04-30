@@ -238,6 +238,8 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offer.setVersion(0);
         offer.setAuditable(new Auditable());
         offer.clearUuid();
+        
+    	offer.setOfferModel(offerToDuplicate.getIsModel() ? offerToDuplicate : null);
 
         List<OfferServiceTemplate> offerServiceTemplates = offer.getOfferServiceTemplates();
         offer.setOfferServiceTemplates(new ArrayList<OfferServiceTemplate>());

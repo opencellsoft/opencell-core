@@ -226,6 +226,10 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
     @Type(type = "numeric_boolean")
     @Column(name = "is_model")
     private Boolean isModel;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "offer_model_id")
+    private OfferTemplate offerModel;
 
     public List<OfferServiceTemplate> getOfferServiceTemplates() {
         return offerServiceTemplates;
@@ -645,6 +649,20 @@ public class OfferTemplate extends ProductOffering implements IWFEntity, ISearch
 
 	public void setIsModel(Boolean isModel) {
 		this.isModel = isModel;
+	}
+
+	/**
+	 * @return the offerModel
+	 */
+	public OfferTemplate getOfferModel() {
+		return offerModel;
+	}
+
+	/**
+	 * @param offerModel the offerModel to set
+	 */
+	public void setOfferModel(OfferTemplate offerModel) {
+		this.offerModel = offerModel;
 	}
     
     

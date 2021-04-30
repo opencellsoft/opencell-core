@@ -165,6 +165,9 @@ public class OfferTemplateDto extends ProductOfferingDto {
     
     @Schema(description = "allowing to create,update and delete an offer from a model")
     protected Boolean isModel=Boolean.FALSE;
+    
+    @Schema(description = "Offer template code")
+    protected String offerModelCode;
 
     /**
      * Instantiates a new offer template dto.
@@ -192,6 +195,9 @@ public class OfferTemplateDto extends ProductOfferingDto {
         if (!asLink) {
             setRenewalRule(new SubscriptionRenewalDto(offerTemplate.getSubscriptionRenewal()));
         }
+        
+        if(offerTemplate.getOfferModel() != null)
+        	offerModelCode = offerTemplate.getOfferModel().getCode();
     }
 
     @Override
@@ -533,6 +539,20 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
 	public void setIsModel(Boolean isModel) {
 		this.isModel = isModel;
+	}
+
+	/**
+	 * @return the offerModelCode
+	 */
+	public String getOfferModelCode() {
+		return offerModelCode;
+	}
+
+	/**
+	 * @param offerModelCode the offerModelCode to set
+	 */
+	public void setOfferModelCode(String offerModelCode) {
+		this.offerModelCode = offerModelCode;
 	}
 	
 	
