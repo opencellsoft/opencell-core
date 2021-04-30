@@ -8662,6 +8662,10 @@ public class OrderAdvancement extends ModuleScript {
 
     	<dropColumn columnName="action_script_id" tableName="wf_generic_transition" />
     </changeSet>
+    
+    <changeSet id="#liquibase_fix_#4742_20191030" author="AbdelmounaimAkadid">
+		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where id='#4742_20191030'</sql>
+    </changeSet>
 
     <changeSet id="#4742_20191030" author="MohamedSTITANE">
         <createSequence sequenceName="meveo_metrics_config_seq" />
