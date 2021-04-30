@@ -2241,17 +2241,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 		    line.setAttribute("periodEndDate", DateUtils.formatDateWithPattern(periodEndDateRT, invoiceDateFormat));
 		    line.setAttribute("periodStartDate", DateUtils.formatDateWithPattern(periodStartDateRT, invoiceDateFormat));
 		    line.setAttribute("taxPercent", invoiceLine.getTaxRate().toPlainString());
-
-		    String code = invoiceLine.getCode();
-		    String description = invoiceLine.getDescription();
-
-		    line.setAttribute("code", code != null ? code : "");
-
-		    Element label = doc.createElement("label");
-		    Text labelTxt = doc.createTextNode(description != null ? description : "");
-		    label.appendChild(labelTxt);
-		    line.appendChild(label);
-
+ 
 		    appendElementTo(doc, line, invoiceLine.getUnitPrice().toPlainString(), "unitPrice");
 		    appendElementTo(doc, line, toPlainString(invoiceLine.getAmountWithoutTax()), "amountWithoutTax");
 		    appendElementTo(doc, line, toPlainString(invoiceLine.getAmountWithTax()), "amountWithTax");
