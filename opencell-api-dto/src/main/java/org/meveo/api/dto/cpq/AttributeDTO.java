@@ -160,6 +160,7 @@ public class AttributeDTO extends EnableBusinessDto {
         unitNbDecimal = attribute.getUnitNbDecimal(); 
         readOnly = attribute.getReadOnly();
         defaultValue = attribute.getDefaultValue();
+        this.setDisabled(attribute.isDisabled());
         if (attribute.getAssignedAttributes()!=null) {
         	for (Attribute attr:attribute.getAssignedAttributes()) {
         		assignedAttributeCodes.add(attr.getCode());

@@ -43,7 +43,7 @@ public class InboundServletClient {
 		log.info("calling inbound servlet...");
 		URL inboundServlet = null;
 		try {
-			inboundServlet = new URL("http://192.168.0.120:8080/meveo/inbound/demo/");
+			inboundServlet = new URL("http://localhost:8080/meveo/inbound/demo/");
 			HttpURLConnection servletConnection = (HttpURLConnection) inboundServlet.openConnection();
 
 			// String userCredentials = "meveo.admin:meveo.admin";
