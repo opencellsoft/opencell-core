@@ -199,7 +199,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     @Override
     public Invoice initEntity() {
     	final String id = facesContext.getExternalContext().getRequestParameterMap().get("objectId");
-    	initialRTList = new ArrayList<RatedTransaction>();
+    	initialRTList = new ArrayList<>();
 		if (id != null) {
     		setObjectId(Long.parseLong(id));
     		entity = super.initEntity();
@@ -461,7 +461,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     @ActionMethod
     public void deleteLinkedInvoiceCategoryDetaild() {
 
-        List<RatedTransaction> listToRemove = new ArrayList<RatedTransaction>();
+        List<RatedTransaction> listToRemove = new ArrayList<>();
         listToRemove.addAll(selectedSubCategoryInvoiceAgregateDetaild.getRatedtransactionsToAssociate());
 		for (RatedTransaction rt : listToRemove) {
             aggregateHandler.removeRT(rt);
@@ -560,9 +560,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             if (invoiceCopy.getSeller() == null) {
                 invoiceCopy.setSeller(customer.getSeller());
             }
-            invoiceCopy.setInvoiceAgregates(new ArrayList<InvoiceAgregate>());
+            invoiceCopy.setInvoiceAgregates(new ArrayList<>());
 
-            Map<String, TaxInvoiceAgregate> taxInvAgregateMapCopy = new HashMap<String, TaxInvoiceAgregate>();
+            Map<String, TaxInvoiceAgregate> taxInvAgregateMapCopy = new HashMap<>();
             for (Entry<String, TaxInvoiceAgregate> taxInvAggr : aggregateHandler.getTaxInvAgregateMap().entrySet()) {
                 TaxInvoiceAgregate taxInvAggrCopy = new TaxInvoiceAgregate();
                 BeanUtils.copyProperties(taxInvAggrCopy, taxInvAggr.getValue());
@@ -572,8 +572,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 taxInvAgregateMapCopy.put(taxInvAggr.getKey(), taxInvAggrCopy);
             }
 
-            List<SubCategoryInvoiceAgregate> subCategoryInvoiceAggregatesCopy = new ArrayList<SubCategoryInvoiceAgregate>();
-            List<RatedTransaction> ratedTransactionCopy = new ArrayList<RatedTransaction>();
+            List<SubCategoryInvoiceAgregate> subCategoryInvoiceAggregatesCopy = new ArrayList<>();
+            List<RatedTransaction> ratedTransactionCopy = new ArrayList<>();
             for (SubCategoryInvoiceAgregate subCatInvAggr : subCategoryInvoiceAggregates) {
 
                 CategoryInvoiceAgregate catInvAggrCopy = new CategoryInvoiceAgregate();
@@ -581,7 +581,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 catInvAggrCopy.setId(null);
                 catInvAggrCopy.updateAudit(currentUser);
                 catInvAggrCopy.setInvoice(invoiceCopy);
-                catInvAggrCopy.setSubCategoryInvoiceAgregates(new HashSet<SubCategoryInvoiceAgregate>());
+                catInvAggrCopy.setSubCategoryInvoiceAgregates(new HashSet<>());
 
                 SubCategoryInvoiceAgregate subCatInvAggrCopy = new SubCategoryInvoiceAgregate();
                 BeanUtils.copyProperties(subCatInvAggrCopy, subCatInvAggr);
@@ -589,7 +589,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 subCatInvAggrCopy.updateAudit(currentUser);
                 subCatInvAggrCopy.setInvoice(invoiceCopy);
                 subCatInvAggrCopy.setCategoryInvoiceAgregate(catInvAggrCopy);
-                subCatInvAggrCopy.setRatedtransactionsToAssociate(new ArrayList<RatedTransaction>());
+                subCatInvAggrCopy.setRatedtransactionsToAssociate(new ArrayList<>());
                 subCategoryInvoiceAggregatesCopy.add(subCatInvAggrCopy);
 
                 for (RatedTransaction rt : subCatInvAggr.getRatedtransactionsToAssociate()) {
@@ -604,7 +604,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                     ratedTransactionCopy.add(rtCopy);
                 }
             }
-
+            invoiceCopy.setId(null);
+            invoiceCopy.assignTemporaryInvoiceNumber();
             getPersistenceService().create(invoiceCopy);
 
             for (RatedTransaction rtCopy : ratedTransactionCopy) {
@@ -642,11 +643,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     @Override
-
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) {
     	List<RatedTransaction> rts = null;
-    	for (Entry<String, TaxInvoiceAgregate> entry : aggregateHandler.getTaxInvAgregateMap().entrySet()) {
+        for (Entry<String, TaxInvoiceAgregate> entry : aggregateHandler.getTaxInvAgregateMap().entrySet()) {
             TaxInvoiceAgregate taxInvAgr = entry.getValue();
             taxInvAgr.setInvoice(entity);
             taxInvAgr.updateAudit(currentUser);
@@ -656,8 +656,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             CategoryInvoiceAgregate catInvAgr = entry.getValue();
             catInvAgr.setInvoice(entity);
             catInvAgr.updateAudit(currentUser);
-            catInvAgr.setSubCategoryInvoiceAgregates(new HashSet<SubCategoryInvoiceAgregate>());
+            catInvAgr.setSubCategoryInvoiceAgregates(new HashSet<>());
         }
+
         rts = saveRTs();
     	if(entity.getId()==null) {
 	        BillingAccount billingAccount = getFreshBA();
@@ -675,12 +676,14 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     	if(entity.getInvoiceNumber() == null) {
     		entity = serviceSingleton.assignInvoiceNumberVirtual(entity);
     	}
+    	
     	try {
-            entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
-        } catch (Exception e) {
-            log.error("Failed to create an XML and PDF invoice", e);
-            messages.error("Error generating xml / pdf invoice=" + e.getMessage());
-        }
+                entity = invoiceService.generateXmlAndPdfInvoice(entity, true, entity.isTransient());
+    	} catch (Exception e) {
+                log.error("Failed to create an XML and PDF invoice", e);
+                messages.error("Error generating xml / pdf invoice=" + e.getMessage());
+    	}
+
         if("DRAFT".equals(entity.getInvoiceType().getCode())){
             for (RatedTransaction rt : rts) {
                 ratedTransactionService.remove(rt);
@@ -690,7 +693,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
     }
 
 	private List<RatedTransaction> saveRTs() {
-		List<RatedTransaction> rts = new ArrayList<RatedTransaction>();
+		List<RatedTransaction> rts = new ArrayList<>();
 
 		for (SubCategoryInvoiceAgregate subCatInvAggr : subCategoryInvoiceAggregates) {
 		    subCatInvAggr.setInvoice(entity);
