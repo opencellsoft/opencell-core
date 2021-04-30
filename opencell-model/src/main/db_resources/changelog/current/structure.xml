@@ -6534,10 +6534,6 @@ END $$;]]>
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_invoice_line" />
             </column>
             <!-- BusinessEntity Start -->
-            <column name="code" type="varchar(255)" >
-                <constraints nullable="false" unique="true" />
-            </column>
-            <column name="description" type="varchar(255)" />
             <column name="version" type="int4" />
             <!-- BusinessEntity End -->
             <!-- Auditable Start -->
