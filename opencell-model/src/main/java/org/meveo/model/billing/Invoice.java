@@ -18,12 +18,7 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -970,7 +965,14 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
     public void assignTemporaryInvoiceNumber() {
 
         StringBuffer num1 = new StringBuffer("000000000");
-        num1.append(id + "");
+
+        if(id == null) {
+            Random random = new Random();
+            num1.append(random.nextInt() + "");
+        } else {
+            num1.append(id + "");
+        }
+
         String invoiceNumber = num1.substring(num1.length() - 9);
         int key = 0;
 
