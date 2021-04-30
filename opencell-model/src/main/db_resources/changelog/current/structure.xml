@@ -6534,10 +6534,6 @@ END $$;]]>
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_invoice_line" />
             </column>
             <!-- BusinessEntity Start -->
-            <column name="code" type="varchar(255)" >
-                <constraints nullable="false" unique="true" />
-            </column>
-            <column name="description" type="varchar(255)" />
             <column name="version" type="int4" />
             <!-- BusinessEntity End -->
             <!-- Auditable Start -->
@@ -8810,4 +8806,13 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
    	</changeSet>
 	
+    
+      <changeSet id="#5937_20210428" author="Mbarek-Ay">
+      <preConditions onFail="WARN">
+        <columnExists tableName="cpq_invoice_line" columnName="code"/>
+        <columnExists tableName="cpq_invoice_line" columnName="description"/>
+      </preConditions>
+      <dropColumn tableName="cpq_invoice_line" columnName="code"/>
+      <dropColumn tableName="cpq_invoice_line" columnName="description"/>
+    </changeSet>
 </databaseChangeLog>

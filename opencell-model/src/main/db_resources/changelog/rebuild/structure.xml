@@ -9994,10 +9994,6 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_invoice_line" />
             </column>
             <!-- BusinessEntity Start -->
-            <column name="code" type="varchar(255)" >
-                <constraints nullable="false" unique="true" />
-            </column>
-            <column name="description" type="varchar(255)" />
             <column name="version" type="int4" />
             <!-- BusinessEntity End -->
             <!-- Auditable Start -->
@@ -15646,6 +15642,8 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#470_20210422" author="Mbarek-Ay"></changeSet>
     
     <changeSet id="#446_20210427" author="Mbarek-Ay"></changeSet>
+    
+    <changeSet id="#5937_20210428" author="Mbarek-Ay"></changeSet>
 
     <changeSet   id="#20210123_540_281_1" author="TarikFA.">
         <sql>update ${db.schema.adapted}adm_role set uuid = 'role'||id</sql>

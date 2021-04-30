@@ -3,22 +3,49 @@ package org.meveo.model.cpq.commercial;
 import static javax.persistence.FetchType.LAZY;
 import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.NumberUtils;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.*;
-import org.meveo.model.catalog.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.OfferServiceTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.Date;
 
 /** 
  * @author Tarik F.
@@ -27,7 +54,7 @@ import java.util.Date;
  */
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "cpq_invoice_line", uniqueConstraints = @UniqueConstraint(columnNames = {"code"}))
+@Table(name = "cpq_invoice_line")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_invoice_line_seq")})
 @NamedQueries({
@@ -63,7 +90,7 @@ import java.util.Date;
 		
 
 })
-public class InvoiceLine extends BusinessEntity {
+public class InvoiceLine extends AuditableEntity {
 
 	
 	@ManyToOne(fetch = LAZY)
@@ -200,8 +227,7 @@ public class InvoiceLine extends BusinessEntity {
 	}
 
 	public InvoiceLine(Date valueDate, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, InvoiceLineStatusEnum status,
-					   BillingAccount billingAccount, String code, String label, Tax tax, BigDecimal taxRate, AccountingArticle accountingArticle) {
-		this.code = code;
+					   BillingAccount billingAccount, String label, Tax tax, BigDecimal taxRate, AccountingArticle accountingArticle) {
 		this.label = label;
 		this.valueDate = valueDate;
 		this.quantity = quantity;
