@@ -8797,7 +8797,14 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
 	
 	<changeSet id="#cpq_add_missing_migration" author="AbdelmounaimAkadid">
+		<createSequence sequenceName="cpq_price_plan_version_seq" />
+        <createSequence sequenceName="cpq_price_plan_matrix_item_seq" />
+        <createSequence sequenceName="cpq_quote_version_seq" />
+        <createSequence sequenceName="cpq_quote_product_seq" />
+        <createSequence sequenceName="cpq_quote_lot_seq" />
+        <createSequence sequenceName="cpq_contract_seq" />
         <createSequence sequenceName="cpq_contract_item_seq" />
+        
         <addColumn tableName="cat_discount_plan">
             <column name="discount_plan_type" type="varchar(50)" />
         </addColumn>
