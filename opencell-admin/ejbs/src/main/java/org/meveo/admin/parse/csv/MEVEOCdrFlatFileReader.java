@@ -27,7 +27,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.commons.parsers.FileParserBeanio;
@@ -64,9 +63,6 @@ public class MEVEOCdrFlatFileReader extends FileParserBeanio implements ICdrCsvR
     private String batchName;
     private String username;
     private CDR_ORIGIN_ENUM origin;
-    
-    @Inject
-    MEVEOCdrParser meveoCdrParser;
 
     @Override
     public void init(File cdrFile) throws FileNotFoundException {        

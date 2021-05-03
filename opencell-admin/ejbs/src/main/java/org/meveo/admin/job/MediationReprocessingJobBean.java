@@ -35,6 +35,7 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.medina.impl.ICdrCsvReader;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.ICdrReader;
 import org.slf4j.Logger;
@@ -57,12 +58,6 @@ public class MediationReprocessingJobBean {
     
     @Inject
     private MediationReprocessing mediationReprocessing;
-
-    @Inject
-    private MEVEOCdrReader meveoCdrReader;
-
-    @Inject
-    private MEVEOCdrParser meveoCdrParser;
 
     @Inject
     @CurrentUser
@@ -90,13 +85,13 @@ public class MediationReprocessingJobBean {
         try {
             cdrReader = (ICdrReader) EjbUtils.getServiceInterface(readerCode);
             if(cdrReader == null) {
-                cdrReader = meveoCdrReader;
+                cdrReader = (ICdrCsvReader) EjbUtils.getServiceInterface(MEVEOCdrReader.class.getSimpleName());
             }
             cdrReader.init("DB");
 
             cdrParser = (ICdrParser) EjbUtils.getServiceInterface(parserCode);
             if(cdrParser == null) {
-                cdrParser = meveoCdrParser;
+                cdrParser = (ICdrParser) EjbUtils.getServiceInterface(MEVEOCdrParser.class.getSimpleName());
             }
 
             // Launch parallel processing of a file
