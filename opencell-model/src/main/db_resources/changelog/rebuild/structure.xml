@@ -4029,6 +4029,7 @@
             <column name="minimum_article_id" type="bigint" />
             <column name="offer_template_id" type="bigint"/>
             <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="offer_model_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-217">
@@ -13951,6 +13952,10 @@
        <addForeignKeyConstraint baseColumnNames="quote_lot_id" baseTableName="cpq_order_lot" constraintName="fk_cpq_order_lot_quote_lot_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" /> 
      </changeSet>
+    <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1627">
+        <addForeignKeyConstraint baseColumnNames="offer_model_id" baseTableName="cat_offer_template" constraintName="fk_offer_template_offer_model_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15644,6 +15649,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#446_20210427" author="Mbarek-Ay"></changeSet>
     
     <changeSet id="#5937_20210428" author="Mbarek-Ay"></changeSet>
+    <changeSet id="#5595_540498_20210430" author="TarikFA."></changeSet>
 
     <changeSet   id="#20210123_540_281_1" author="TarikFA.">
         <sql>update ${db.schema.adapted}adm_role set uuid = 'role'||id</sql>

@@ -451,7 +451,7 @@ public class CpqQuoteApi extends BaseApi {
                     String quoteXmlScript = scriptInstance.getCode();
                     ScriptInterface script = scriptInstanceService.getScriptInstance(quoteXmlScript);
                     Map<String, Object> methodContext = new HashMap<String, Object>();
-                    methodContext.put("cpqQuote", quoteVersion);
+                    methodContext.put("quoteVersion", quoteVersion);
                     methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
                     methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
                     methodContext.put("XMLQuoteCreator", this);
