@@ -115,12 +115,21 @@ public class ProductService extends BusinessService<Product> {
 		product.getOfferComponents().size();
 		product.getMedias().size();
 		product.getProductCharges().size();
+		product.getServiceRecurringCharges().size();
+		product.getServiceSubscriptionCharges().size();
+		product.getServiceTerminationCharges().size();
+		product.getServiceUsageCharges().size();
 
 		product.getOfferComponents().forEach(oc -> oc.getTagsList().size());
 		product.getProductCharges().forEach(pct -> {
 			pct.getAccumulatorCounterTemplates().size();
 			pct.getWalletTemplates().size();
 		});
+		product.getCommercialRuleHeader().size();
+		product.getCommercialRuleHeader().forEach(crh -> {
+			crh.getCommercialRuleItems().size();
+		});
+		product.getCommercialRuleLines().size();
 		
 		var productVersions = product.getProductVersions();
 		var discountPlans = new HashSet<>(product.getDiscountList());
@@ -128,6 +137,8 @@ public class ProductService extends BusinessService<Product> {
 		var offerComponents = new ArrayList<>(product.getOfferComponents());
 		var medias = new ArrayList<>(product.getMedias());
 		var productCharge = new ArrayList<>(product.getProductCharges());
+		var commercialRuleHeader = new ArrayList<>(product.getCommercialRuleHeader());
+		var commercialRuleLine = new ArrayList<>(product.getCommercialRuleLines());
 		
 		detach(product);
 
@@ -175,11 +186,12 @@ public class ProductService extends BusinessService<Product> {
    	 	try{
             BeanUtils.copyProperties(duplicate, product);
 	       } catch (IllegalAccessException | InvocationTargetException e) {
-	           throw new BusinessException("Failed to clone offer template", e);
+	           throw new BusinessException("Failed to clone Product", e);
 	       }
    	 	
 	   	 duplicate.setId(null);
 	   	 duplicate.setBrand(null);
+	   	 duplicate.setCurrentVersion(null);
 	   	 duplicate.setModelChildren(new HashSet<>());
 	   	 duplicate.setProductVersions(new ArrayList<>());
 	   	 duplicate.setStatus(ProductStatusEnum.DRAFT);
@@ -194,6 +206,8 @@ public class ProductService extends BusinessService<Product> {
    		 duplicate.setMedias(new ArrayList<>());
    		 duplicate.setUuid(UUID.randomUUID().toString());
    		 duplicate.setProductCharges(new ArrayList<>());
+   		 duplicate.setCommercialRuleHeader(new ArrayList<>());
+   		 duplicate.setCommercialRuleLines(new ArrayList<>());
    		 
    		 duplicate.setProductModel(product.getIsModel() != null && product.getIsModel() == Boolean.TRUE ? product : null);
 	   	 
@@ -209,7 +223,8 @@ public class ProductService extends BusinessService<Product> {
 	   	 }
 	   	 
 	   	 if(duplicateHierarchy) {
-	   		catalogHierarchyBuilderService.duplicateProduct(duplicate, productVersion, discountPlans, modelChildren, offerComponents, medias, productCharge, duplicate.getId() + "_");
+	   		catalogHierarchyBuilderService.duplicateProduct(duplicate, productVersion, discountPlans, modelChildren, 
+	   														offerComponents, medias, productCharge, duplicate.getId() + "_", commercialRuleHeader, commercialRuleLine);
 	   	 }
 	   	 return duplicate;
 	}

@@ -77,6 +77,8 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.cpq.tags.Tag;
+import org.meveo.model.cpq.trade.CommercialRuleHeader;
+import org.meveo.model.cpq.trade.CommercialRuleLine;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
@@ -87,6 +89,7 @@ import org.meveo.model.quote.QuoteVersion;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.cpq.CommercialRuleHeaderService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.OfferComponentService;
@@ -176,6 +179,8 @@ public class CatalogHierarchyBuilderService {
     private MediaService mediaService;
     
     @Inject ProductChargeTemplateMappingService productChargeTemplateMappingService;
+    
+    @Inject private CommercialRuleHeaderService commercialRuleHeaderService;
 
     @Inject
     @CurrentUser
@@ -229,7 +234,8 @@ public class CatalogHierarchyBuilderService {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void duplicateProduct(Product entity, ProductVersion productVersion, Set<DiscountPlan> discountPlans, 
 										Set<String> modelChildren, List<OfferComponent> offerComponents, List<Media> medias, 
-										List<ProductChargeTemplateMapping> productCharge, String prefix) {
+										List<ProductChargeTemplateMapping> productCharge, String prefix,
+										List<CommercialRuleHeader> commercialRuleHeader, List<CommercialRuleLine> commercialRuleLine) {
     	if(productVersion != null) {
     		ProductVersion tmpProductVersion = productVersionService.findById(productVersion.getId());
     		tmpProductVersion.getTags().size();
@@ -318,6 +324,17 @@ public class CatalogHierarchyBuilderService {
     			duplicat.setWalletTemplates(new ArrayList<>());
     			productChargeTemplateMappingService.create(duplicat);
     			entity.getProductCharges().add(duplicat);
+    		});
+    	}
+    	
+    	if(commercialRuleHeader != null) {
+    		commercialRuleHeader.forEach(crh -> {
+    			crh.getCommercialRuleItems().size();
+        		commercialRuleHeaderService.detach(crh);
+        		CommercialRuleHeader duplicate = new CommercialRuleHeader(crh);
+        		duplicate.setTargetProduct(entity);
+        		commercialRuleHeaderService.create(duplicate);
+        		entity.getCommercialRuleHeader().add(duplicate);
     		});
     	}
     }
