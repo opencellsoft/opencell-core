@@ -305,6 +305,7 @@ public class CpqQuoteApi extends BaseApi {
 			quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
 		}
 		quoteVersion.setQuote(cpqQuote);
+		populateCustomFields(quoteVersionDto.getCustomFields(), quoteVersion, true);
 		return quoteVersion;
 	}
 	
@@ -676,7 +677,6 @@ public class CpqQuoteApi extends BaseApi {
         dto.setStatusDate(quote.getStatusDate());
         if(quote.getDiscountPlan() != null)
         	dto.setDiscountPlanCode(quote.getDiscountPlan().getCode());
-        
         return dto;
     }
 
@@ -687,6 +687,7 @@ public class CpqQuoteApi extends BaseApi {
         GetQuoteVersionDtoResponse quoteVersionDto = null;
         for (QuoteVersion version : quoteVersions) {
             quoteVersionDto = new GetQuoteVersionDtoResponse(version, true, true, true,true);
+            quoteVersionDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(version));
             result.addQuoteVersion(quoteVersionDto);
         }
         return result;
