@@ -1128,7 +1128,6 @@ public class InvoiceServiceTest {
         minInvoiceLine.setTaxRate(new BigDecimal(20));
         minInvoiceLine.setTax(tax20);
         minInvoiceLine.setLabel("Min");
-        minInvoiceLine.setCode("Min_amount");
         minInvoiceLines.add(minInvoiceLine);
 
         ba.setMinInvoiceLines(minInvoiceLines);
@@ -1217,8 +1216,7 @@ public class InvoiceServiceTest {
                 accountingArticle.setDescription("accounting");
                 accountingArticle.setInvoiceSubCategory(subCategory);
                 InvoiceLine invoiceLine = new InvoiceLine(new Date(), new BigDecimal(1),new BigDecimal((double) ilData[0]),
-                        new BigDecimal((double) ilData[1]), new BigDecimal((double) ilData[1]),InvoiceLineStatusEnum.OPEN, ba,
-                        "code1", "label", (Tax) ilData[3], ((Tax) ilData[3]).getPercent(),  accountingArticle);
+                        new BigDecimal((double) ilData[1]), new BigDecimal((double) ilData[1]),InvoiceLineStatusEnum.OPEN, ba, "label", (Tax) ilData[3], ((Tax) ilData[3]).getPercent(),  accountingArticle);
                 invoiceLine.setId(i);
                 invoiceLines.add(invoiceLine);
                 i++;
