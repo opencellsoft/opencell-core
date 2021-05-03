@@ -47,6 +47,9 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.rest.IBaseRs;
 
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+
 /**
  * File format resource
  *
@@ -202,6 +205,15 @@ public interface FileFormatRs extends IBaseRs {
 	)
     public FileFormatListResponseDto searchGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List fileFormats matching a given criteria
+     *
+     * @return List of fileFormats
+     */
+    @GET
+    @Path("/listGetAll")
+    FileFormatListResponseDto listGetAll();
 
     /**
      * Search for File formats by matching a given criteria

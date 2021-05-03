@@ -44,6 +44,9 @@ import org.meveo.api.dto.response.catalog.GetDiscountPlanResponseDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlansResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+
 @Path("/catalog/discountPlan")
 @Tag(name = "DiscountPlan", description = "@%DiscountPlan")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -187,6 +190,15 @@ public interface DiscountPlanRs extends IBaseRs {
 				)}
 	)
     GetDiscountPlansResponseDto list();
+
+    /**
+     * List DiscountPlans matching a given criteria
+     *
+     * @return List of DiscountPlans
+     */
+    @GET
+    @Path("/listGetAll")
+    GetDiscountPlansResponseDto listGetAll();
 
     /**
      * Enable a Discount plan with a given code

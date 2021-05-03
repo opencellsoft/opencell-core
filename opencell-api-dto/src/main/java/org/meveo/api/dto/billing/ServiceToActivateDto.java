@@ -64,6 +64,9 @@ public class ServiceToActivateDto implements Serializable {
     /** The subscription date. */
     private Date subscriptionDate;
 
+    /** The service calendar  init date. */
+    private Date calendarInitDate;
+
     /** The charge instance overrides. */
     private ChargeInstanceOverridesDto chargeInstanceOverrides;
 
@@ -176,6 +179,24 @@ public class ServiceToActivateDto implements Serializable {
      */
     public void setSubscriptionDate(Date subscriptionDate) {
         this.subscriptionDate = subscriptionDate;
+    }
+
+    /**
+     * Gets the service calendar init date
+     *
+     * @return the service calendar init date
+     */
+    public Date getCalendarInitDate() {
+        return calendarInitDate;
+    }
+
+    /**
+     * Set the service calendar init date
+     *
+     * @param calendarInitDate the service calendar init date
+     */
+    public void setCalendarInitDate(Date calendarInitDate) {
+        this.calendarInitDate = calendarInitDate;
     }
 
     /**

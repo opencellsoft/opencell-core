@@ -18,15 +18,14 @@
 
 package org.meveo.api.dto.response.catalog;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.meveo.api.dto.catalog.ProductTemplateDto;
+import org.meveo.api.dto.response.SearchResponse;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.meveo.api.dto.catalog.ProductTemplateDto;
-import org.meveo.api.dto.response.SearchResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class GetListProductTemplateResponseDto.
@@ -55,6 +54,8 @@ public class GetListProductTemplateResponseDto extends SearchResponse {
      * @return the list product template
      */
     public List<ProductTemplateDto> getListProductTemplate() {
+        if ( listProductTemplate == null )
+            listProductTemplate = new ArrayList<>();
         return listProductTemplate;
     }
 

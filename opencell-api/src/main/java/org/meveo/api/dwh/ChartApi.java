@@ -18,31 +18,25 @@
 
 package org.meveo.api.dwh;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.dwh.BarChartDto;
 import org.meveo.api.dto.dwh.ChartDto;
 import org.meveo.api.dto.dwh.LineChartDto;
 import org.meveo.api.dto.dwh.PieChartDto;
-import org.meveo.api.exception.EntityAlreadyExistsException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.InvalidParameterException;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.dto.response.ChartsResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.exception.*;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.dwh.BarChart;
-import org.meveo.model.dwh.Chart;
-import org.meveo.model.dwh.LineChart;
-import org.meveo.model.dwh.MeasurableQuantity;
-import org.meveo.model.dwh.PieChart;
+import org.meveo.model.dwh.*;
 import org.meveocrm.services.dwh.ChartService;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -191,6 +185,22 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         }
 
         return chartDtos;
+    }
+
+    public ChartsResponseDto list(PagingAndFiltering pagingAndFiltering) {
+        ChartsResponseDto result = new ChartsResponseDto();
+        Long totalCount = chartService.count(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
+        result.setPaging( pagingAndFiltering );
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        List<Chart> charts = chartService.list( GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration() );
+        if (charts != null) {
+            for (Chart chart : charts) {
+                result.getCharts().add(new ChartDto(chart));
+            }
+        }
+
+        return result;
     }
 
     private PieChart fromDTO(PieChartDto dto, PieChart chartToUpdate) throws MeveoApiException, BusinessException {

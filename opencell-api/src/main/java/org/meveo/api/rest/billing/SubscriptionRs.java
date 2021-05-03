@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.billing;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
@@ -57,7 +66,20 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/")
-    ActionStatus create(SubscriptionDto postData);
+	@Operation(
+			summary=" Create a subscription. It does not activate it  ",
+			description=" Create a subscription. It does not activate it  ",
+			operationId="    POST_Subscription_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
+    public ActionStatus create(SubscriptionDto postData);
 
     /**
      * Updates a subscription. It cannot update a subscription with status=RESILIATED
@@ -67,6 +89,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Updates a subscription. It cannot update a subscription with status=RESILIATED  ",
+			description=" Updates a subscription. It cannot update a subscription with status=RESILIATED  ",
+			operationId="    PUT_Subscription_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(SubscriptionDto postData);
 
     /**
@@ -77,6 +112,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/instantiateServices")
+	@Operation(
+			summary=" Instantiate a Service subscription   ",
+			description=" Instantiate a Service subscription   ",
+			operationId="    POST_Subscription_instantiateServices",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus instantiateServices(InstantiateServicesRequestDto postData);
 
     /**
@@ -89,6 +137,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/activateServices")
+	@Operation(
+			summary=" Activate services",
+			description=" Activate services. Subscription should not be in status (RESILIATED OR CANCELLED). This service allows to override the charge instance price before activation. This service is actually a 2 step process: service instantiation then activation. If service.subscriptionDate is not set a service is only instantiated else it's instantiated then activated.  ",
+			operationId="    POST_Subscription_activateServices",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus activateServices(ActivateServicesRequestDto postData);
 
     /**
@@ -99,6 +160,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/applyOneShotChargeInstance")
+	@Operation(
+			summary=" Apply one shot charge. Subscription should not be in status (RESILIATED OR CANCELLED).  ",
+			description=" Apply one shot charge. Subscription should not be in status (RESILIATED OR CANCELLED).  ",
+			operationId="    POST_Subscription_applyOneShotChargeInstance",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus applyOneShotChargeInstance(ApplyOneShotChargeInstanceRequestDto postData);
 
     /**
@@ -109,6 +183,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/terminate")
+	@Operation(
+			summary=" Terminate a subscription. If subscription status is RESILIATED, an error is thrown  ",
+			description=" Terminate a subscription. If subscription status is RESILIATED, an error is thrown  ",
+			operationId="    POST_Subscription_terminate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus terminateSubscription(TerminateSubscriptionRequestDto postData);
 
     /**
@@ -119,6 +206,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @PUT
     @Path("/terminate")
+	@Operation(
+			summary=" Terminate a subscription. If subscription status is RESILIATED, an error is thrown ",
+			description=" Terminate a subscription. If subscription status is RESILIATED, an error is thrown ",
+			operationId="    PUT_Subscription_terminate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus terminateSubscriptionPut(TerminateSubscriptionRequestDto postData);
 
     /**
@@ -129,6 +229,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/terminateServices")
+	@Operation(
+			summary=" Terminate a list of services. If a service is already TERMINATED, an error is thrown.  ",
+			description=" Terminate a list of services. If a service is already TERMINATED, an error is thrown.  ",
+			operationId="    POST_Subscription_terminateServices",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus terminateServices(TerminateSubscriptionServicesRequestDto postData);
 
     /**
@@ -147,6 +260,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List subscriptions matching a given criteria  ",
+			description=" List subscriptions matching a given criteria  ",
+			operationId="    GET_Subscription_list",
+			responses= {
+				@ApiResponse(description=" List of subscriptions ",
+						content=@Content(
+									schema=@Schema(
+											implementation= SubscriptionsListResponseDto.class
+											)
+								)
+				)}
+	)
     public SubscriptionsListResponseDto listGet(@Deprecated @QueryParam("userAccountCode") String userAccountCode, @QueryParam("mergedCF") Boolean mergedCF,
             @QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
@@ -159,6 +285,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List subscriptions matching a given criteria ",
+			description=" List subscriptions matching a given criteria ",
+			operationId="    GET_Subscription_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of subscriptions ",
+						content=@Content(
+									schema=@Schema(
+											implementation= SubscriptionsListResponseDto.class
+											)
+								)
+				)}
+	)
     SubscriptionsListResponseDto list();
     
     /**
@@ -169,6 +308,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/findByCustomer")
+	@Operation(
+			summary=" List subscriptions matching a given criteria  ",
+			description=" List subscriptions matching a given criteria  ",
+			operationId="    GET_Subscription_findByCustomer",
+			responses= {
+				@ApiResponse(description=" List of subscriptions ",
+						content=@Content(
+									schema=@Schema(
+											implementation= SubscriptionsListResponseDto.class
+											)
+								)
+				)}
+	)
     public SubscriptionsListResponseDto findByCustomer(@QueryParam("customerCode") String customerCode);
 
     /**
@@ -179,6 +331,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" List subscriptions matching a given criteria  ",
+			description=" List subscriptions matching a given criteria  ",
+			operationId="    POST_Subscription_list",
+			responses= {
+				@ApiResponse(description=" List of subscriptions ",
+						content=@Content(
+									schema=@Schema(
+											implementation= SubscriptionsListResponseDto.class
+											)
+								)
+				)}
+	)
     public SubscriptionsListResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -194,6 +359,20 @@ public interface SubscriptionRs extends IBaseRs {
     @GET
     @Deprecated
     @Path("/listAll")
+	@Operation(
+			summary=" Deprecated in v.4.7.2 Use /list instead.  ",
+			description=" Deprecated in v.4.7.2 Use /list instead.  ",
+			deprecated=true,
+			operationId="    GET_Subscription_listAll",
+			responses= {
+				@ApiResponse(description=" list of all subscriptions. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= SubscriptionsListResponseDto.class
+											)
+								)
+				)}
+	)
     SubscriptionsListResponseDto listAll(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
             @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -207,6 +386,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for a subscription with a given code.  ",
+			description=" Search for a subscription with a given code.  ",
+			operationId="    GET_Subscription_search",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetSubscriptionResponseDto.class
+											)
+								)
+				)}
+	)
     GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode,
             @Deprecated @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
@@ -221,6 +413,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @DELETE
     @Path("/oneShotCharge/{subscriptionCode}/{oneshotChargeCode}")
+	@Operation(
+			summary=" Search for a subscription with a given code.  ",
+			description=" Search for a subscription with a given code.  ",
+			operationId="    DELETE_Subscription_oneShotCharge_{subscriptionCode}_{oneshotChargeCode}",
+			responses= {
+				@ApiResponse(description=" A subscription ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus terminateOneShotCharge(@PathParam("subscriptionCode") String subscriptionCode, @PathParam("oneshotChargeCode") String oneshotChargeCode, @QueryParam("validityDate") Date validityDate);
 
 
@@ -232,6 +437,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/listOneshotChargeOthers")
+	@Operation(
+			summary=" Search for a subscription with a given code.   ",
+			description=" Search for a subscription with a given code.   ",
+			operationId="    GET_Subscription_listOneshotChargeOthers",
+			responses= {
+				@ApiResponse(description=" list of one-shot other charges. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetOneShotChargesResponseDto.class
+											)
+								)
+				)}
+	)
     GetOneShotChargesResponseDto getOneShotChargeOthers(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("validityDate") Date validityDate);
 
     /**
@@ -242,6 +460,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update subscription information ONLY. Does not include access, services nor products  ",
+			description=" Create or update subscription information ONLY. Does not include access, services nor products  ",
+			operationId="    POST_Subscription_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(SubscriptionDto subscriptionDto);
 
     /**
@@ -254,6 +485,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdatePartial")
+	@Operation(
+			summary=" Create or update subscription information WITH access, services and products",
+			description=" Create or update subscription information WITH access, services and products. Terminates subscription if termination date is provided on subscription. Terminates service if termination date is provided on service. Activates inactive service if service subscription date is provided. Instantiates service if no matching service found. Updates service if matching service found. Only those services, access and products passed will be afected.   ",
+			operationId="    POST_Subscription_createOrUpdatePartial",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdateSubscriptionPartial(SubscriptionDto subscriptionDto);
 
     /**
@@ -264,6 +508,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/applyProduct")
+	@Operation(
+			summary=" Apply a product on a subscription. ",
+			description=" Apply a product on a subscription. ",
+			operationId="    POST_Subscription_applyProduct",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus applyProduct(ApplyProductRequestDto postData);
 
     /**
@@ -274,6 +531,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @PUT
     @Path("suspend")
+	@Operation(
+			summary=" Suspend an existing subscription  ",
+			description=" Suspend an existing subscription  ",
+			operationId="    PUT_Subscriptionsuspend",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus suspendSubscription(OperationSubscriptionRequestDto postData);
 
     /**
@@ -284,6 +554,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @PUT
     @Path("resume")
+	@Operation(
+			summary=" Resume an existing subscription  ",
+			description=" Resume an existing subscription  ",
+			operationId="    PUT_Subscriptionresume",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus resumeSubscription(OperationSubscriptionRequestDto postData);
 
     /**
@@ -294,6 +577,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @PUT
     @Path("suspendServices")
+	@Operation(
+			summary=" Suspend an existing services  ",
+			description=" Suspend an existing services  ",
+			operationId="    PUT_SubscriptionsuspendServices",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus suspendServices(OperationServicesRequestDto postData);
 
     /**
@@ -304,6 +600,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @PUT
     @Path("resumeServices")
+	@Operation(
+			summary=" Resume an existing services  ",
+			description=" Resume an existing services  ",
+			operationId="    PUT_SubscriptionresumeServices",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus resumeServices(OperationServicesRequestDto postData);
 
     /**
@@ -314,6 +623,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @PUT
     @Path("updateServices")
+	@Operation(
+			summary=" Update existing services  ",
+			description=" Update existing services  ",
+			operationId="    PUT_SubscriptionupdateServices",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus updateServices(UpdateServicesRequestDto postData);
 
     /**
@@ -326,6 +648,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("serviceInstance")
+	@Operation(
+			summary=" Find service instance.  ",
+			description=" Find service instance.  ",
+			operationId="    GET_SubscriptionserviceInstance",
+			responses= {
+				@ApiResponse(description=" Service instance ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetServiceInstanceResponseDto.class
+											)
+								)
+				)}
+	)
     GetServiceInstanceResponseDto findServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("serviceInstanceId") Long serviceInstanceId,
             @QueryParam("serviceInstanceCode") String serviceInstanceCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
 
@@ -339,6 +674,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("serviceInstances")
+	@Operation(
+			summary=" Returns a list of service instances.  ",
+			description=" Returns a list of service instances.  ",
+			operationId="    GET_SubscriptionserviceInstances",
+			responses= {
+				@ApiResponse(description=" list of service instances ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetListServiceInstanceResponseDto.class
+											)
+								)
+				)}
+	)
     GetListServiceInstanceResponseDto listServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate, @QueryParam("serviceInstanceCode") String serviceInstanceCode);
 
     /**
@@ -352,6 +700,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/dueDateDelay")
+	@Operation(
+			summary=" Returns the due date delay information.  ",
+			description=" Returns the due date delay information.  ",
+			operationId="    GET_Subscription_dueDateDelay",
+			responses= {
+				@ApiResponse(description=" list of due date delay ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetDueDateDelayResponseDto.class
+											)
+								)
+				)}
+	)
     GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate ,@QueryParam("invoiceNumber") String invoiceNumber,
             @QueryParam("invoiceTypeCode") String invoiceTypeCode, @QueryParam("orderCode") String orderCode);
     
@@ -363,6 +724,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/rate")
+	@Operation(
+			summary=" Give a rate data for subscription  ",
+			description=" Give a rate data for subscription  ",
+			operationId="    POST_Subscription_rate",
+			responses= {
+				@ApiResponse(description=" list of service instances ",
+						content=@Content(
+									schema=@Schema(
+											implementation= RateSubscriptionResponseDto.class
+											)
+								)
+				)}
+	)
     RateSubscriptionResponseDto rate(RateSubscriptionRequestDto postData);
 
     /**
@@ -374,6 +748,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/activate")
+	@Operation(
+			summary=" Activate a given Subscription. ",
+			description=" Activate a given Subscription. ",
+			operationId="    POST_Subscription_activate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus activate(String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
     
     /**
@@ -384,6 +771,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @PUT
     @Path("/activate")
+	@Operation(
+			summary=" Activate a given Subscription.  ",
+			description=" Activate a given Subscription.  ",
+			operationId="    PUT_Subscription_activate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus activate(ActivateSubscriptionRequestDto putData);
     
     /**
@@ -394,6 +794,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/activateForCustomer")
+	@Operation(
+			summary=" Activate a given Subscription for a customer. ",
+			description=" Activate a given Subscription for a customer. ",
+			operationId="    POST_Subscription_activateForCustomer",
+			responses= {
+				@ApiResponse(description=" the raw result holding the Subscription EndAgreementDate in its response. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= SubscriptionForCustomerResponseDto.class
+											)
+								)
+				)}
+	)
     SubscriptionForCustomerResponseDto activateForCustomer(SubscriptionForCustomerRequestDto postData);
 
     /**
@@ -403,6 +816,19 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/cancelSubscriptionRenewal/{subscriptionCode}")
+	@Operation(
+			summary=" Cancels the renewal term of an active subscription. ",
+			description=" Cancels the renewal term of an active subscription. ",
+			operationId="    POST_Subscription_cancelSubscriptionRenewal_{subscriptionCode}",
+			responses= {
+				@ApiResponse(description=" status of the request ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus cancelSubscriptionRenewal(@PathParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate);
 
     /**
@@ -413,13 +839,62 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @POST
     @Path("/subscribeAndActivateServices")
+	@Operation(
+			summary=" Create a subscription and activate services in a single transaction.  ",
+			description=" Create a subscription and activate services in a single transaction.  ",
+			operationId="    POST_Subscription_subscribeAndActivateServices",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus subscribeAndActivateServices(SubscriptionAndServicesToActivateRequestDto postData);
 
+    /** patch a subscription
+     * @param code
+     * @param subscriptionPatchDto
+     * @return
+     */
     @PATCH
     @Path("/{code}/offer")
+	@Operation(
+			summary=" patch a subscription ",
+			description=" patch a subscription ",
+			operationId="    PATCH_Subscription_{code}_offer",
+			responses= {
+				@ApiResponse(description=" ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus patchSubscription(@PathParam("code") String code, SubscriptionPatchDto subscriptionPatchDto);
 
+    /** rollBack an offer
+     * @param code
+     * @param offerRollbackDto
+     * @return
+     */
     @PATCH
     @Path("{code}/offer/rollback")
+	@Operation(
+			summary=" rollBack an offer ",
+			description=" rollBack an offer ",
+			operationId="    PATCH_Subscription{code}_offer_rollback",
+			responses= {
+				@ApiResponse(description=" ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus rollbackOffer(@PathParam("code") String code, OfferRollbackDto offerRollbackDto);
 }

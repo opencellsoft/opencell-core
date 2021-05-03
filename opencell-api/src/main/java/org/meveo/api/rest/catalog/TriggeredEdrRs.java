@@ -40,8 +40,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
+import org.meveo.api.dto.response.TriggeredEdrsResponseDto;
 import org.meveo.api.dto.response.catalog.GetTriggeredEdrResponseDto;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * @author Edward P. Legaspi
@@ -167,4 +171,13 @@ public interface TriggeredEdrRs extends IBaseRs {
 				)}
 	)
     ActionStatus createOrUpdate(TriggeredEdrTemplateDto postData);
+
+    /**
+     * Gets a triggeredEdrs list.
+     *
+     * @return Return triggeredEdrs list
+     */
+    @GET
+    @Path("/listGetAll")
+    TriggeredEdrsResponseDto listGetAll();
 }

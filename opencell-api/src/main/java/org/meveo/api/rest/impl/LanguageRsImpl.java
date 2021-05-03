@@ -26,7 +26,7 @@ import org.meveo.api.dto.response.GetTradingLanguageResponse;
 import org.meveo.api.dto.response.TradingLanguagesResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.LanguageRs;
-import org.meveo.apiv2.generic.GenericPagingAndFilteringUtils;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;

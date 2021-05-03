@@ -18,28 +18,19 @@
 
 package org.meveo.api.rest.custom.impl;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.api.CustomEntityTemplateApi;
 import org.meveo.api.CustomFieldTemplateApi;
 import org.meveo.api.EntityCustomActionApi;
-import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.dto.CustomEntityTemplateDto;
-import org.meveo.api.dto.CustomFieldTemplateDto;
-import org.meveo.api.dto.EntityCustomActionDto;
-import org.meveo.api.dto.EntityCustomizationDto;
-import org.meveo.api.dto.response.BusinessEntityResponseDto;
-import org.meveo.api.dto.response.CustomEntityTemplateResponseDto;
-import org.meveo.api.dto.response.CustomEntityTemplatesResponseDto;
-import org.meveo.api.dto.response.EntityCustomActionResponseDto;
-import org.meveo.api.dto.response.EntityCustomizationResponseDto;
-import org.meveo.api.dto.response.GetCustomFieldTemplateReponseDto;
+import org.meveo.api.dto.*;
+import org.meveo.api.dto.response.*;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.custom.EntityCustomizationRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 /**
  * @author Andrius Karpavicius
@@ -127,6 +118,7 @@ public class EntityCustomizationRsImpl extends BaseRs implements EntityCustomiza
     public CustomEntityTemplatesResponseDto listEntityTemplates(String code) {
 
         CustomEntityTemplatesResponseDto result = new CustomEntityTemplatesResponseDto();
+        result.setPaging(GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
 
         try {
             result.setCustomEntityTemplates(customEntityTemplateApi.listCustomEntityTemplates(code));

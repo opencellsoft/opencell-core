@@ -43,8 +43,12 @@ import org.meveo.api.dto.dwh.BarChartDto;
 import org.meveo.api.dto.dwh.ChartDto;
 import org.meveo.api.dto.dwh.LineChartDto;
 import org.meveo.api.dto.dwh.PieChartDto;
+import org.meveo.api.dto.response.ChartsResponseDto;
 import org.meveo.api.dto.response.dwh.GetChartResponse;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 @Path("/chart")
 @Tag(name = "Chart", description = "@%Chart")
@@ -282,6 +286,15 @@ public interface ChartRs extends IBaseRs {
 				)}
 	)
     GetChartResponse find(@QueryParam("chartCode") String chartCode);
+
+    /**
+     * List Calendars matching a given criteria
+     *
+     * @return List of Calendars
+     */
+    @GET
+    @Path("/listGetAll")
+    ChartsResponseDto listGetAll();
 
     /**
      * Create new or update an existing chart with a given code

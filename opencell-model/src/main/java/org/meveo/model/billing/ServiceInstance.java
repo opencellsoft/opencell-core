@@ -130,6 +130,11 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Column(name = "status_date")
     private Date statusDate;
 
+    /** The calendar init date */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "calendar_init_date")
+    private Date calendarInitDate;
+
     /** Subscription timestamp. */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
@@ -394,6 +399,24 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
      */
     public void setSubscriptionDate(Date subscriptionDate) {
         this.subscriptionDate = subscriptionDate;
+    }
+
+    /**
+     * get calendar initial date
+     *
+     * @return calendar initial date
+     */
+    public Date getCalendarInitDate() {
+        return calendarInitDate;
+    }
+
+    /**
+     * set calendar initial date
+     *
+     * @param calendarInitDate calendar initial date
+     */
+    public void setCalendarInitDate(Date calendarInitDate) {
+        this.calendarInitDate = calendarInitDate;
     }
 
     /**

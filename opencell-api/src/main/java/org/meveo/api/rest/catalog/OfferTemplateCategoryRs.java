@@ -40,8 +40,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
+import org.meveo.api.dto.response.OfferTemplateCategoriesResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateCategoryResponseDto;
 import org.meveo.api.rest.IBaseRs;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 @Path("/catalog/offerTemplateCategory")
 @Tag(name = "OfferTemplateCategory", description = "@%OfferTemplateCategory")
@@ -210,5 +214,14 @@ public interface OfferTemplateCategoryRs extends IBaseRs {
 				)}
 	)
     ActionStatus disable(@PathParam("code") String code);
+
+    /**
+     * List DiscountPlanItems matching a given criteria
+     *
+     * @return List of DiscountPlanItems
+     */
+    @GET
+    @Path("/listGetAll")
+    OfferTemplateCategoriesResponseDto listGetAll();
 
 }

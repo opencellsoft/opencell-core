@@ -222,7 +222,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     public Date initChargeDateAndGetNextChargeDate(RecurringChargeInstance chargeInstance) throws BusinessException {
 
         Calendar cal = resolveCalendar(chargeInstance);
-        cal.setInitDate(chargeInstance.getSubscriptionDate());
+        cal.setInitDate(chargeInstance.getCalendarInitDate() != null ?
+                chargeInstance.getCalendarInitDate() : chargeInstance.getSubscriptionDate());
 
         Date chargeDate = cal.truncateDateTime(chargeInstance.getSubscriptionDate());
         Date nextChargeDate = cal.nextCalendarDate(chargeDate);
@@ -239,7 +240,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      */
     public void updateChargeDate(RecurringChargeInstance chargeInstance) throws BusinessException {
         Calendar cal = resolveCalendar(chargeInstance);
-        cal.setInitDate(chargeInstance.getSubscriptionDate());
+        // set calendar initial date
+       cal.setInitDate(chargeInstance.getCalendarInitDate() != null ?
+                    chargeInstance.getCalendarInitDate() : chargeInstance.getSubscriptionDate());
 
         Date chargeDate = cal.truncateDateTime(chargeInstance.getNextChargeDate());
         Date nextChargeDate = cal.nextCalendarDate(chargeInstance.getNextChargeDate());
@@ -279,7 +282,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         Date subscriptionDate = chargeInstance.getSubscriptionDate(); // AKK Need to be truncated?? cal.truncateDateTime(chargeInstance.getSubscriptionDate());
 
         Calendar cal = resolveCalendar(chargeInstance);
-        cal.setInitDate(subscriptionDate);
+        cal.setInitDate(chargeInstance.getCalendarInitDate() != null ?
+                chargeInstance.getCalendarInitDate() : subscriptionDate);
 
         Date applyChargeOnDate = chargeInstance.getChargeDate(); // Charge date is already truncated based on calendar, so no need to truncate here again
         Date previousChargeDate = cal.previousCalendarDate(applyChargeOnDate);
@@ -440,8 +444,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         if (cal == null) {
             throw new IncorrectChargeTemplateException("Recurring charge template has no calendar: code=" + recurringChargeTemplate.getCode());
         }
-
-        cal.setInitDate(chargeInstance.getSubscriptionDate());
+        cal.setInitDate(chargeInstance.getCalendarInitDate() != null ?
+                chargeInstance.getCalendarInitDate() : chargeInstance.getSubscriptionDate());
 
         BigDecimal inputQuantity = chargeInstance.getQuantity();
 
@@ -532,7 +536,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
 
         Calendar cal = resolveCalendar(chargeInstance);
-        cal.setInitDate(serviceInstance.getSubscriptionDate());
+        cal.setInitDate(chargeInstance.getCalendarInitDate() != null ?
+                chargeInstance.getCalendarInitDate() : chargeInstance.getSubscriptionDate());
 
         Date applyChargeFromDate = null;
         Date applyChargeToDate = null;
@@ -682,7 +687,9 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
         Date applyChargeFromDate = fromDate;
         Calendar cal = resolveCalendar(chargeInstance);
-        cal.setInitDate(chargeInstance.getSubscriptionDate());
+        cal.setInitDate(chargeInstance.getCalendarInitDate() != null ?
+                chargeInstance.getCalendarInitDate() : chargeInstance.getSubscriptionDate());
+
         if (cal.getInitDate() == null) {
             ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
             if (serviceInstance != null) {
@@ -729,7 +736,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             throws BusinessException, RatingException {
 
         Calendar cal = resolveCalendar(chargeInstance);
-        cal.setInitDate(chargeInstance.getSubscriptionDate());
+        cal.setInitDate(chargeInstance.getCalendarInitDate() != null ?
+                chargeInstance.getCalendarInitDate() : chargeInstance.getSubscriptionDate());
 
         // For non-reimbursement it will cover only one calendar period cycle
         Date applyChargeFromDate = chargeInstance.getChargeDate(); // Charge date is already truncated based on calendar, so no need to truncate here again
@@ -852,7 +860,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         }
 
         Calendar cal = resolveCalendar(chargeInstance);
-        cal.setInitDate(chargeInstance.getSubscriptionDate());
+        cal.setInitDate(chargeInstance.getCalendarInitDate() != null ?
+                chargeInstance.getCalendarInitDate() : chargeInstance.getSubscriptionDate());
         log.debug("Will apply recurring charge {} for supplement charge agreement for {} - {}", chargeInstance.getId(), applyChargeFromDate, endAgreementDate);
 
         boolean isTerminationProrata = recurringChargeTemplate.getTerminationProrata() == null ? false : recurringChargeTemplate.getTerminationProrata();

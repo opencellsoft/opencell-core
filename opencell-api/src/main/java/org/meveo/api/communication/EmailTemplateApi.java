@@ -18,21 +18,21 @@
 
 package org.meveo.api.communication;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.service.communication.impl.EmailTemplateService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -130,7 +130,7 @@ public class EmailTemplateApi extends BaseApi {
 	}
 	public List<EmailTemplateDto> list() throws MeveoApiException{
 		List<EmailTemplateDto> result=new ArrayList<EmailTemplateDto>();
-		List<EmailTemplate> emailTemplates=emailTemplateService.list();
+		List<EmailTemplate> emailTemplates=emailTemplateService.list(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
 		if(emailTemplates!=null){
 			for(EmailTemplate emailTemplate:emailTemplates){
 				result.add(new EmailTemplateDto(emailTemplate));
