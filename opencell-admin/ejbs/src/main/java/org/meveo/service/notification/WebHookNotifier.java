@@ -147,8 +147,10 @@ public class WebHookNotifier {
             conn = (HttpURLConnection) obj.openConnection();
 
             Map<String, String> headers = evaluateMap(webHook.getHeaders(), entityOrEvent, context);
-            if (!StringUtils.isBlank(webHook.getUsername()) && !headers.containsKey("Authorization")) {
-                byte[] bytes = Base64.encodeBase64((webHook.getUsername() + ":" + webHook.getPassword()).getBytes());
+            String username = evaluate(webHook.getUsername(), entityOrEvent, context);
+            String password = evaluate(webHook.getPassword(), entityOrEvent, context);
+            if (!StringUtils.isBlank(username) && !headers.containsKey("Authorization")) {
+                byte[] bytes = Base64.encodeBase64((username + ":" + password).getBytes());
                 headers.put("Authorization", "Basic " + new String(bytes));
             }
 
