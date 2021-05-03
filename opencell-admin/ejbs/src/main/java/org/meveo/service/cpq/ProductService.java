@@ -195,7 +195,7 @@ public class ProductService extends BusinessService<Product> {
    		 duplicate.setUuid(UUID.randomUUID().toString());
    		 duplicate.setProductCharges(new ArrayList<>());
    		 
-	   	
+   		 duplicate.setProductModel(product.getIsModel() != null && product.getIsModel() == Boolean.TRUE ? product : null);
 	   	 
 	   	 if(!preserveCode) {
 	         String code = findDuplicateCode(duplicate);

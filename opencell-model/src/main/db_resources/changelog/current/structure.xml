@@ -8819,6 +8819,7 @@ public class OrderAdvancement extends ModuleScript {
       <dropColumn tableName="cpq_invoice_line" columnName="code"/>
       <dropColumn tableName="cpq_invoice_line" columnName="description"/>
     </changeSet>
+
     <changeSet id="#5595_540498_20210430" author="TarikFA.">
     	<addColumn tableName="cat_offer_template">
     		<column name="offer_model_id" type="bigint"/>
@@ -8826,5 +8827,14 @@ public class OrderAdvancement extends ModuleScript {
     	
       <addForeignKeyConstraint baseColumnNames="offer_model_id" baseTableName="cat_offer_template" constraintName="fk_offer_template_offer_model_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />    
+	</changeSet>  
+	  
+    <changeSet id="#5595_540499_20210430" author="TarikFA.">
+        <addColumn tableName="cpq_product">
+            <column name="product_model_id" type="bigint"/>
+        </addColumn>
+        
+      <addForeignKeyConstraint baseColumnNames="product_model_id" baseTableName="cpq_product" constraintName="fk_cpq_product_model_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />    
     </changeSet>
 </databaseChangeLog>
