@@ -42,7 +42,6 @@ import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.mediation.CDRRejectionCauseEnum;
 import org.meveo.model.rating.CDR;
@@ -77,16 +76,6 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	
 	@Inject
 	ScriptInstanceService scriptInstance;
-
-	/**
-	 * The default parser.
-	 */
-	@Inject
-	private MEVEOCdrParser meveoCdrParser;
-	
-	/** The default cdr reader. */
-	@Inject
-    private MEVEOCdrReader meveoCdrReader;
 
 	/**
 	 * Source of CDR record
@@ -392,13 +381,18 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	 * @throws BusinessException the business exception
 	 */
 	private ICdrParser getParser(String customParser) throws BusinessException {
-	    if(customParser != null) {
-	        return (ICdrParser) EjbUtils.getServiceInterface(customParser);
-	    } else {
-	        log.debug("Use default cdr parser={}", meveoCdrParser.getClass());
-            return meveoCdrParser;
-	    }
-	}
+        ICdrParser cdrParser;
+        if(customParser != null) {
+            cdrParser = (ICdrParser) EjbUtils.getServiceInterface(customParser);
+            if(cdrParser == null) {
+                throw new BusinessException("Failed to find CDR Parser "+cdrParser);
+            }
+        } else {
+            log.debug("Use default cdr parser= MEVEOCdrParser");
+            cdrParser = (ICdrParser) EjbUtils.getServiceInterface(MEVEOCdrParser.class.getSimpleName());            
+        }
+        return cdrParser;
+    }
 		
     /**
      * Gets the reader.
@@ -419,13 +413,19 @@ public class CDRParsingService extends PersistenceService<EDR> {
      * @throws BusinessException the business exception
      */
     private ICdrCsvReader getReader(String readerCode) throws BusinessException {
+        ICdrCsvReader cdrReader;
         if (readerCode != null) {
-            return (ICdrCsvReader) EjbUtils.getServiceInterface(readerCode);
+            cdrReader = (ICdrCsvReader) EjbUtils.getServiceInterface(readerCode);
+            if(cdrReader == null) {
+                throw new BusinessException("Failed to find CDR Reader "+readerCode);
+            }
         } else {
-            log.debug("Use default cdr reader={}", meveoCdrReader.getClass());
-            return meveoCdrReader;
+            log.debug("Use default cdr reader=MeveoCdrReader");
+            cdrReader = (ICdrCsvReader) EjbUtils.getServiceInterface(MEVEOCdrReader.class.getSimpleName());
         }
+        return cdrReader;
     }
+    
     public void cleanReprocessedCDR(CDR cdr) {
         getEntityManager().createNamedQuery("CDR.cleanReprocessedCDR").setParameter("originRecord", cdr.getOriginRecord()).executeUpdate();                    
     }
