@@ -35,9 +35,10 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IReferenceEntity;
+import org.meveo.model.ObservableEntity;
 import org.meveo.model.ReferenceIdentifierCode;
 import org.meveo.model.ReferenceIdentifierDescription;
-import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -46,6 +47,8 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 
 @SuppressWarnings("serial")
 @Entity
+@WorkflowedEntity
+@ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "QuoteVersion")
 @ReferenceIdentifierCode("quote")
 @ReferenceIdentifierDescription("quoteVersion")
@@ -284,20 +287,18 @@ public class QuoteVersion extends BaseEntity implements ICustomFieldEntity, IRef
 
 	@Override
 	public String getReferenceCode() {
-		// TODO Auto-generated method stub
-		return null;
+		return quote.getCode();
 	}
 
 	@Override
 	public void setReferenceCode(Object value) {
-		// TODO Auto-generated method stub
+		setQuote((CpqQuote) value);
 		
 	}
 
 	@Override
 	public String getReferenceDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return "" + quoteVersion;
 	}
 	
 	/**
