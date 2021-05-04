@@ -288,7 +288,7 @@ public class RoleApi extends BaseApi {
             throw new EntityDoesNotExistsException(Role.class, name, "name");
         }
         roleDto = new RoleDto(role, true, true, includeSecuredEntities);
-
+        roleDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(role));
         return roleDto;
     }
 
