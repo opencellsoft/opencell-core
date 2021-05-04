@@ -8849,6 +8849,11 @@
             <column name="billing_plan_code" type="varchar(20)" />
             <column name="short_description" type="varchar(255)"/>
             <column name="invoicing_plan_id" type="bigint"/>
+            <column name="cf_values" type="${type.json}" />
+            <column name="cf_values_accum" type="${type.json}" />
+            <column name="uuid" type="varchar(60)" defaultValue="" >
+            	<constraints unique="true" uniqueConstraintName="cpq_quote_version_uuid_unique"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -9293,11 +9298,6 @@
             <column name="pdf_filename" type="varchar(255)" />
             <column name="xml_filename" type="varchar(255)" />
             <column name="discount_plan_id" type="bigint"></column>
-            <column name="uuid" type="varchar(60)">
-                <constraints nullable="false" unique="true"/>
-            </column>
-            <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
         </createTable>
     </changeSet>
 
@@ -15694,15 +15694,6 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#5595_540498_20210430" author="TarikFA." />
 	<changeSet id="#5595_540499_20210430" author="TarikFA." />
     
-    <changeSet id="#5595_540504_20210503" author="TarikFA.">
-    	<addColumn tableName="cpq_quote_version">
-            <column name="cf_values" type="${type.json}" />
-            <column name="cf_values_accum" type="${type.json}" />
-            <column name="uuid" type="varchar(60)" defaultValue="" />
-    	</addColumn>
-    	<addUniqueConstraint columnNames="uuid" constraintName="cpq_quote_version_uuid_unique" deferrable="false" disabled="false"
-                             initiallyDeferred="false" tableName="cpq_quote_version" />
-    </changeSet>
     
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

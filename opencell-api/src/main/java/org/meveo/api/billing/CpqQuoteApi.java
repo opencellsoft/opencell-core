@@ -274,7 +274,6 @@ public class CpqQuoteApi extends BaseApi {
         cpqQuote.setOrderInvoiceType(invoiceTypeService.getDefaultQuote());
         
         try {
-            populateCustomFields(quote.getCustomFields(), cpqQuote, true);
             cpqQuoteService.create(cpqQuote);
             quoteVersionService.create(populateNewQuoteVersion(quote.getQuoteVersion(), cpqQuote));
         }catch(BusinessApiException e) {
@@ -317,11 +316,12 @@ public class CpqQuoteApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CpqQuote.class, quoteVersionDto.getQuoteCode());
 		final QuoteVersion quoteVersion = populateNewQuoteVersion(quoteVersionDto, quote);
 		try {
+            populateCustomFields(quoteVersionDto.getCustomFields(), quoteVersion, true);
 			quoteVersionService.create(quoteVersion);
 		}catch(BusinessApiException e) {
 			throw new MeveoApiException(e);
 		}
-		return new GetQuoteVersionDtoResponse(quoteVersion);
+		return new GetQuoteVersionDtoResponse(quoteVersion, entityToDtoConverter.getCustomFieldsDTO(quoteVersion));
 	}
 	
 	
@@ -555,7 +555,6 @@ public class CpqQuoteApi extends BaseApi {
         	quote.setDiscountPlan(loadEntityByCode(discountPlanService, quoteDto.getDiscountPlanCode(), DiscountPlan.class));
         }
         try {
-            populateCustomFields(quoteDto.getCustomFields(), quote, false);
             cpqQuoteService.update(quote);
             QuoteVersionDto quoteVersionDto = quoteDto.getQuoteVersion();
             if(quoteVersionDto != null) {
@@ -672,7 +671,6 @@ public class CpqQuoteApi extends BaseApi {
         dto.setDescription(quote.getDescription());
         dto.setCode(quote.getCode());
         dto.setQuoteNumber(quote.getQuoteNumber());
-        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(quote));
         dto.setId(quote.getId());
         dto.setStatusDate(quote.getStatusDate());
         if(quote.getDiscountPlan() != null)
@@ -1081,6 +1079,7 @@ public class CpqQuoteApi extends BaseApi {
          
       
         GetQuoteVersionDtoResponse response = new GetQuoteVersionDtoResponse(quoteVersion, true, true, true,true);
+        response.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(quoteVersion));
         response.setPrices(pricesDTO);
         return response;
     }
