@@ -18,11 +18,6 @@
 
 package org.meveo.model.finance;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.*;
 
 import javax.persistence.CascadeType;
@@ -126,8 +121,8 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     @Column(name = "separator", length = 5)
     private String separator;
 
-    @Column(name = "decimal_separator")
-    private Character decimalSeparator;
+    @Column(name = "decimal_separator", length = 5)
+    private String decimalSeparator;
 
     @Type(type = "numeric_boolean")
     @Column(name = "generate_empty_report")
@@ -280,11 +275,11 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
         this.maximumLine = maximumLine;
     }
 
-    public Character getDecimalSeparator() {
+    public String getDecimalSeparator() {
         return decimalSeparator;
     }
 
-    public void setDecimalSeparator(Character decimalSeparator) {
+    public void setDecimalSeparator(String decimalSeparator) {
         this.decimalSeparator = decimalSeparator;
     }
 }

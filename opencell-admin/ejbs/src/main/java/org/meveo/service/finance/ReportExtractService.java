@@ -22,6 +22,7 @@ import java.io.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -163,8 +164,10 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 reportExtractExecutionResult.setLineCount(resultList.size());
             }
 
-            if(resultList == null && entity.isGenerateEmptyReport()) {
+            if((resultList == null || resultList.isEmpty()) && entity.isGenerateEmptyReport()) {
                 generateEmptyReport(filename, reportDir, entity.getReportExtractResultType());
+                reportExtractExecutionResult.setFilePath(filename);
+                reportExtractExecutionResult.setLineCount(0);
             }
 
         } else {
@@ -277,7 +280,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
     @SuppressWarnings("rawtypes")
     private List<String> writeAsFile(String filename, StringBuilder sbDir, List<Map<String, Object>> resultList,
-                             String separator, long maxLinePerFile, char decimalSeparator) throws BusinessException {
+                             String separator, long maxLinePerFile, String decimalSeparator) throws BusinessException {
         FileWriter fileWriter = null;
         StringBuilder line;
 
@@ -344,9 +347,9 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         }
     }
 
-    private String formatDecimal(Number item, char decimalSeparator) {
+    private String formatDecimal(Number item, String decimalSeparator) {
         DecimalFormatSymbols symbol = new DecimalFormatSymbols();
-        symbol.setDecimalSeparator(decimalSeparator);
+        symbol.setDecimalSeparator(decimalSeparator.charAt(0));
         DecimalFormat formatter = new DecimalFormat("0.##########", symbol);
         return formatter.format(item);
     }
@@ -388,7 +391,15 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     private int storeDataInCT(String customTableCode, List<Map<String, Object>> data, boolean append) {
         CustomEntityTemplate customTable = ofNullable(customEntityTemplateService.findByCode(customTableCode))
                 .orElseThrow(() -> new BusinessException("No custom table found with the given code : " + customTableCode));
-        return customTableService.importData(customTable, data, append);
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Map<String, Object> resultList : data) {
+            Map<String, Object> newResultList = new HashMap<>();
+            for (String key: resultList.keySet()) {
+                newResultList.put(key.replaceAll("\\s+","_").toUpperCase(), resultList.get(key));
+            }
+            result.add(newResultList);
+        }
+        return customTableService.importData(customTable, result, append);
     }
 
     private List<Map<String, Object>> readGeneratedFile(String path, String separator) {
