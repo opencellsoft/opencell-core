@@ -8457,6 +8457,7 @@
             <column name="cf_values_accum" type="${type.json}" />
             <column name="product_version_id" type="bigint" />
             <column name="is_model" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="product_model_id" type="bigint"/>
         </createTable>
     </changeSet>
 
@@ -13956,6 +13957,11 @@
         <addForeignKeyConstraint baseColumnNames="offer_model_id" baseTableName="cat_offer_template" constraintName="fk_offer_template_offer_model_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
     </changeSet>
+    
+    <changeSet author="TarikFA." id="rebuild-str-fk-1628">
+      <addForeignKeyConstraint baseColumnNames="product_model_id" baseTableName="cpq_product" constraintName="fk_cpq_product_model_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />   
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15668,6 +15674,7 @@ $$ LANGUAGE plpgsql;
     </changeSet>
 
     <changeSet id="#5595_540498_20210430" author="TarikFA." />
+	<changeSet id="#5595_540499_20210430" author="TarikFA." />
     
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

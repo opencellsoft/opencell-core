@@ -284,6 +284,9 @@ public class ProductApi extends BaseApi {
 			if(productDto.getCustomFields() != null) {
 				populateCustomFields(productDto.getCustomFields(), product, false);
 			}
+			if(!StringUtils.isBlank(productDto.getProductModelCode())) {
+	    		product.setProductModel(loadEntityByCode(productService, productDto.getProductModelCode(), Product.class));
+	    	}
 			processMedias(productDto, product);
 			productService.updateProduct(product);
 		} catch (BusinessException e) {
@@ -562,6 +565,9 @@ public class ProductApi extends BaseApi {
     	product.setCode(productDto.getCode());
     	product.setDescription(productDto.getLabel());
     	
+    	if(!StringUtils.isBlank(productDto.getProductModelCode())) {
+    		product.setProductModel(loadEntityByCode(productService, productDto.getProductModelCode(), Product.class));
+    	}
     	if(!StringUtils.isBlank(productDto.getProductLineCode())) {
     		ProductLine productLine=productLineService.findByCode(productDto.getProductLineCode());
     		if (productLine == null) {

@@ -89,6 +89,9 @@ public class ProductDto extends BaseEntityDto{
     @Schema(description = "allowing to create,update and delete an product from a model")
     protected Boolean isModel=Boolean.FALSE;
     
+    @Schema(description = "product model code")
+    protected String productModelCode;
+    
     
     public ProductDto() {}
     
@@ -113,6 +116,8 @@ public class ProductDto extends BaseEntityDto{
     	this.discountList = p.getDiscountList().stream()
 				.map(dl -> new DiscountPlanDto(dl, null))
 				.collect(Collectors.toSet()); 
+    	if(p.getProductModel() != null)
+    		this.productModelCode = p.getProductModel().getCode();
     }
 	/**
 	 * @return the status
@@ -379,6 +384,20 @@ public class ProductDto extends BaseEntityDto{
 
 	public void setIsModel(Boolean isModel) {
 		this.isModel = isModel;
+	}
+
+	/**
+	 * @return the productModelCode
+	 */
+	public String getProductModelCode() {
+		return productModelCode;
+	}
+
+	/**
+	 * @param productModelCode the productModelCode to set
+	 */
+	public void setProductModelCode(String productModelCode) {
+		this.productModelCode = productModelCode;
 	}
 	
 	
