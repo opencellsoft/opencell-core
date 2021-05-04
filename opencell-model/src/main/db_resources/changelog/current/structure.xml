@@ -3931,38 +3931,6 @@ END $$;]]>
         </addColumn>
     </changeSet>
 
-	<changeSet id="#5627_20201212" author="MohammedELAZZOUZI">
-        <addColumn tableName="billing_billing_run">
-            <column name="skip_validation_script" type="${type.boolean}"/>
-        </addColumn>
-        <addColumn tableName="billing_billing_run">
-            <column name="suspect_auto_action" type="varchar(255)"/>
-        </addColumn>
-        <addColumn tableName="billing_billing_run">
-            <column name="reject_auto_action" type="varchar(255)"/>
-        </addColumn>
-        <addColumn tableName="billing_billing_run">
-            <column name="next_billing_run_id" type="bigint"/>
-        </addColumn>
-
-        <addColumn tableName="billing_invoice">
-            <column name="reject_reason" type="varchar(255)"/>
-        </addColumn>
-
-        <addColumn tableName="billing_cycle">
-            <column name="billing_run_validation_script_id" type="bigint"/>
-        </addColumn>
-        <addColumn tableName="billing_invoice_type">
-            <column name="invoice_validation_script_id" type="bigint"/>
-        </addColumn>
-        <addForeignKeyConstraint baseColumnNames="next_billing_run_id" baseTableName="billing_billing_run" constraintName="fk_billing_billing_run_next_billing_run"
-              referencedColumnNames="id" referencedTableName="billing_billing_run"/>
-        <addForeignKeyConstraint baseColumnNames="billing_run_validation_script_id" baseTableName="billing_cycle" constraintName="fk_billing_cycle_billing_run_validation_script"
-              referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
-        <addForeignKeyConstraint baseColumnNames="invoice_validation_script_id" baseTableName="billing_invoice_type" constraintName="fk_billing_invoice_type_invoice_validation_script"
-              referencedColumnNames="id" referencedTableName="meveo_script_instance"/>
-    </changeSet>
-
     <changeSet id="#4427_20201202" author="ZBariki">
         <createSequence sequenceName="generic_sequence_seq" startValue="1" />
         <createTable tableName="generic_sequence" >
@@ -4566,11 +4534,6 @@ END $$;]]>
     <changeSet author="Mbarek-Ay" id="rebuild-mediapost-fk-26">
         <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="cpq_commercial_rule_header" constraintName="fk_hhokb05o32yhp50" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_tag" />
-    </changeSet>
-
-    <changeSet author="Rachid-Ay" id="rebuild-mediapost-fk-28">
-        <addForeignKeyConstraint baseColumnNames="offer_id" baseTableName="cpq_media" constraintName="fk_co5zjq6jdn5vcovoo52" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
     </changeSet>
 
     <changeSet id="21112020-540-23-entity-quoteCustomerService" author="TarikFAKHOURI">
@@ -8366,6 +8329,12 @@ public class OrderAdvancement extends ModuleScript {
         <sql>UPDATE ${db.schema.adapted}billing_billing_run SET skip_validation_script=0 WHERE skip_validation_script IS NULL</sql>
     </changeSet>
     <changeSet id="#5884_20210119" author="MohammedELAZZOUZI">
+    	<preConditions onFail="MARK_RAN">
+	       <not>
+	         <columnExists tableName="billing_invoice" columnName="status_date" />
+	       </not> 
+		</preConditions>
+		
         <addColumn tableName="billing_invoice">
             <column name="status_date" type="datetime"/>
         </addColumn>
@@ -8413,6 +8382,11 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     <changeSet id="#5946_20210110" author="KhalidHORRI">
+    	<preConditions onFail="MARK_RAN">
+	       <not>
+	         <columnExists tableName="cat_discount_plan" columnName="status" />
+	       </not> 
+		</preConditions>
         <addColumn tableName="cat_discount_plan">
             <column name="status" type="varchar(50)"/>
             <column name="status_date" type="datetime"/>
@@ -8720,6 +8694,11 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
 
 	<changeSet id="#5991_20210224" author="HatimOUDAD">
+		<preConditions onFail="MARK_RAN">
+	       <not>
+	         <columnExists tableName="billing_invoice_configuration" columnName="default_invoice_subcategory_id" />
+	       </not> 
+		</preConditions>
 		<addColumn tableName="billing_invoice_configuration">
 			<column name="default_invoice_subcategory_id" type="bigint" />
 		</addColumn>
@@ -8777,6 +8756,11 @@ public class OrderAdvancement extends ModuleScript {
 	</changeSet>
 	
 	<changeSet id="#5623_20210427" author="Mbarek">
+		<preConditions onFail="MARK_RAN">
+	       <not>
+	         <columnExists tableName="cpq_order_offer" columnName="quote_offer_id" />
+	       </not> 
+		</preConditions>
        <addColumn tableName="cpq_order_offer">
             <column name="quote_offer_id" type="bigint"/>
         </addColumn>
@@ -8797,6 +8781,11 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
 	
 	<changeSet id="#cpq_add_missing_migration" author="AbdelmounaimAkadid">
+		<preConditions onFail="MARK_RAN">
+	       <not>
+			<sequenceExists sequenceName="cpq_price_plan_version_seq" />
+	       </not>
+		</preConditions>
 		<createSequence sequenceName="cpq_price_plan_version_seq" />
         <createSequence sequenceName="cpq_price_plan_matrix_item_seq" />
         <createSequence sequenceName="cpq_quote_version_seq" />
@@ -8811,7 +8800,7 @@ public class OrderAdvancement extends ModuleScript {
    	</changeSet>
 	
     
-      <changeSet id="#5937_20210428" author="Mbarek-Ay">
+    <changeSet id="#5937_20210428" author="Mbarek-Ay">
       <preConditions onFail="WARN">
         <columnExists tableName="cpq_invoice_line" columnName="code"/>
         <columnExists tableName="cpq_invoice_line" columnName="description"/>

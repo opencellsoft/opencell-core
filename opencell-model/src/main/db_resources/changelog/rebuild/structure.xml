@@ -15257,6 +15257,15 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#5627_20210112" author="MohammedELAZZOUZI">
     </changeSet>
+    
+    <changeSet id="#5884_20210119" author="MohammedELAZZOUZI">
+    </changeSet>
+    
+    <changeSet id="#5946_20210110" author="KhalidHORRI">
+    </changeSet>
+    
+    <changeSet id="#5951_20210209_structure" author="AbdelmounaimAkadid">
+    </changeSet>
 
     <changeSet id="#5627_20210107" author="AndriusKarpavicius">
     </changeSet>
@@ -15310,6 +15319,12 @@ $$ LANGUAGE plpgsql;
     </changeSet>
 
     <changeSet id="#6076_20210419" author="Zbariki">
+    </changeSet>
+    
+    <changeSet id="#5991_20210224" author="HatimOUDAD">
+    </changeSet>
+    
+    <changeSet id="#5623_20210427" author="Mbarek">
     </changeSet>
 
     <!--  For Media post -->
@@ -15653,6 +15668,9 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#470_20210422" author="Mbarek-Ay"></changeSet>
     
     <changeSet id="#446_20210427" author="Mbarek-Ay"></changeSet>
+    
+	<changeSet id="#cpq_add_missing_migration" author="AbdelmounaimAkadid">
+	</changeSet>
     
     <changeSet id="#5937_20210428" author="Mbarek-Ay"></changeSet>
     <changeSet id="#5595_540498_20210430" author="TarikFA."></changeSet>
