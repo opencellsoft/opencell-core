@@ -8818,7 +8818,16 @@ public class OrderAdvancement extends ModuleScript {
       <addForeignKeyConstraint baseColumnNames="offer_model_id" baseTableName="cat_offer_template" constraintName="fk_offer_template_offer_model_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />    
 	</changeSet>  
-	
+    
+      <changeSet id="#5595_540499_20210430" author="TarikFA.">
+        <addColumn tableName="cpq_product">
+            <column name="product_model_id" type="bigint"/>
+        </addColumn>
+        
+      <addForeignKeyConstraint baseColumnNames="product_model_id" baseTableName="cpq_product" constraintName="fk_cpq_product_model_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />    
+    </changeSet>
+    
     <changeSet id="#5595_540504_20210503" author="TarikFA.">
         <addColumn tableName="cpq_quote_version">
             <column name="cf_values" type="${type.json}" />
@@ -8827,10 +8836,12 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
         <addUniqueConstraint columnNames="uuid" constraintName="cpq_quote_version_uuid_unique" deferrable="false" disabled="false"
                              initiallyDeferred="false" tableName="cpq_quote_version" />
+        <sql>update ${db.schema.adapted}cpq_quote_version set uuid = id</sql>
 		<dropColumn tableName="cpq_quote">
 			<column name="cf_values"/>
             <column name="cf_values_accum"/>
             <column name="uuid" />
 		</dropColumn>
     </changeSet>
+    
 </databaseChangeLog>
