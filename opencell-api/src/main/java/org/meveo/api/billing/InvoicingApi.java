@@ -289,7 +289,6 @@ public class InvoicingApi extends BaseApi {
 	 * Delete canceled invoices for a given billing run
 	 * 
 	 * @param billingRunId
-	 * @param billingRunId
 	 */
 	public void canceledInvoices(Long billingRunId) {
 		invoiceService.deleteInvoices(billingRunId);
