@@ -122,8 +122,8 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
     @Column(name = "accumulate")
     private boolean accumulate;
 
-    @Column(name = "decimal_separator")
-    private Character decimalSeparator;
+    @Column(name = "decimal_separator", length = 1)
+    private String decimalSeparator;
 
     @Type(type = "numeric_boolean")
     @Column(name = "generate_empty_report")
@@ -276,11 +276,11 @@ public class ReportExtract extends EnableBusinessCFEntity implements IImageUploa
         this.maximumLine = maximumLine;
     }
 
-    public Character getDecimalSeparator() {
+    public String getDecimalSeparator() {
         return decimalSeparator;
     }
 
-    public void setDecimalSeparator(Character decimalSeparator) {
+    public void setDecimalSeparator(String decimalSeparator) {
         this.decimalSeparator = decimalSeparator;
     }
 }
