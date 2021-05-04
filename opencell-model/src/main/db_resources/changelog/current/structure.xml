@@ -8636,12 +8636,13 @@ public class OrderAdvancement extends ModuleScript {
 
     	<dropColumn columnName="action_script_id" tableName="wf_generic_transition" />
     </changeSet>
-    
-    <changeSet id="#liquibase_fix_#4742_20191030" author="AbdelmounaimAkadid">
-		<sql>update databasechangelog set filename='src/main/db_resources/changelog/current/structure.xml' where id='#4742_20191030'</sql>
-    </changeSet>
 
     <changeSet id="#4742_20191030" author="MohamedSTITANE">
+    	<preConditions onFail="MARK_RAN">
+	       <not>
+			<sequenceExists sequenceName="meveo_metrics_config_seq" />
+	       </not>
+		</preConditions>
         <createSequence sequenceName="meveo_metrics_config_seq" />
         <createTable tableName="meveo_metrics_config">
             <column name="id" type="BIGINT">
@@ -8801,7 +8802,7 @@ public class OrderAdvancement extends ModuleScript {
 	
     
     <changeSet id="#5937_20210428" author="Mbarek-Ay">
-      <preConditions onFail="WARN">
+      <preConditions onFail="MARK_RAN">
         <columnExists tableName="cpq_invoice_line" columnName="code"/>
         <columnExists tableName="cpq_invoice_line" columnName="description"/>
       </preConditions>
