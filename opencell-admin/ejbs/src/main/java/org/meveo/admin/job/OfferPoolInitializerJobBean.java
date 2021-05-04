@@ -44,7 +44,7 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
 //            + "where cast(offer.cf_values as json)#>>'{sharingLevel, 0, string}' = 'OF' \n"
 //            + "and sub.status='ACTIVE' \n"
 //            + "and sub.subscription_date <= :counterEndDate \n"
-//            + "and (sub.termination_date is null or (sub.termination_date - INTERVAL ':termination_delay DAYS') >= :counterEndDate ) \n"
+//            + "and (sub.termination_date is null or (sub.termination_date - INTERVAL ':termination_delay DAYS') >= :counterStartDate ) \n"
 //            + "group by sub.user_account_id, offerId \n"
 //            + "having count(sub.id) > 0";
 
@@ -66,10 +66,12 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
             + "              join cat_offer_template offer on s.offer_id=offer.id\n"
             + "              where cast(offer.cf_values as json)#>>'{sharingLevel, 0, string}'='OF'\n"
             + "              and s.status='ACTIVE'\n"
-            + "          ) sub \n"
-            + "      on si.subscription_id=sub.id\n"
+            + "              and ( s.termination_date is null or \n"
+            + "                    (cast(s.cf_values as json)#>>'{dateTerminated, 0, date}')\\:\\:timestamp >= :counterStartDate \n"
+            + "                  )\n"
+            + "          ) sub on si.subscription_id = sub.id\n"
             + "    where si.code like '%_SUBSCRIPTION'\n"
-            + "    and si.status='ACTIVE'\n"
+            + "    and si.status = 'ACTIVE'\n"
             + ") t\n"
             + "where t.activated_at <= :counterEndDate \n"
             + "group by t.user_account_id, t.offer_id";
@@ -104,7 +106,9 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
 
         try {
             BigInteger offerCountersNbr = (BigInteger) emWrapper.getEntityManager()
-                .createNativeQuery(OFFER_INIT_COUNT_QUERY).setParameter("counterEndDate", counterEndDate)
+                .createNativeQuery(OFFER_INIT_COUNT_QUERY)
+                .setParameter("counterStartDate", counterStartDate)
+                .setParameter("counterEndDate", counterEndDate)
                 .getSingleResult();
 
             log.info("Total of agencies/offers counters to be initialized: {}", offerCountersNbr.longValue());
@@ -112,7 +116,9 @@ public class OfferPoolInitializerJobBean extends BaseJobBean {
 
             @SuppressWarnings("unchecked")
             List<BigInteger> offerIds = emWrapper.getEntityManager().createNativeQuery(OFFERS_TO_INITILIZE)
-                .setParameter("counterEndDate", counterEndDate).getResultList();
+                .setParameter("counterStartDate", counterStartDate)
+                .setParameter("counterEndDate", counterEndDate)
+                .getResultList();
 
             log.info("Total of sahred offers that pools should be initialized: {}", offerIds.size());
 

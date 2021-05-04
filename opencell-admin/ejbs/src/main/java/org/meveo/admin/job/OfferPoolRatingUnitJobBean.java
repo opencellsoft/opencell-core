@@ -78,8 +78,8 @@ public class OfferPoolRatingUnitJobBean {
 
             Map<String, Double> offerAgenciesCountersMap = (Map<String, Double>) cfiService.getCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, walletOperation.getOperationDate());
             if (offerAgenciesCountersMap == null || offerAgenciesCountersMap.get(agencyCounterKey) == null) {
-                throw new IllegalStateException(String.format("Pool counter not yet initialized for operation date %tF " + "ServiceTemplate=%s Agency=%s",
-                    walletOperation.getOperationDate(), serviceTemplate.getCode(), agencyCode));
+                throw new IllegalStateException(String.format("Pool not yet initialized or does not exist for usage date %tF" + " Offer='%s' ServiceTemplate='%s' Agency='%s'",
+                    walletOperation.getOperationDate(), walletOperation.getOfferCode(), serviceTemplate.getCode(), agencyCode));
             }
             Double agencyCounter = offerAgenciesCountersMap.get(agencyCounterKey);
 
@@ -117,7 +117,7 @@ public class OfferPoolRatingUnitJobBean {
         UsageChargeInstance overCharge = walletOperationService.getEntityManager().createQuery(OVER_CHARGE_INSTANCE_QUERY, UsageChargeInstance.class)
             .setParameter("serviceInstance", wo.getServiceInstance()).setParameter("code", overChargeCode).getSingleResult();
         if (overCharge == null) {
-            throw new IllegalStateException(String.format("No Over UCI with code=%s " + "is defined on SI[id=%s, code=%s]", overChargeCode, wo.getServiceInstance().getId(),
+            throw new IllegalStateException(String.format("No over chargeCodeInstance with code=%s " + "is defined on ServiceInstance[id=%s, code=%s]", overChargeCode, wo.getServiceInstance().getId(),
                 wo.getServiceInstance().getCode()));
         }
         overageWO.setChargeInstance(overCharge);
