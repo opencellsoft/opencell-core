@@ -157,7 +157,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             if (resultList != null && !resultList.isEmpty()) {
                 log.debug("{} record/s found", resultList.size());
                 if (entity.getReportExtractResultType().equals(ReportExtractResultTypeEnum.CSV)) {
-                    writeAsFile(filename, reportDir, resultList, entity.getSeparator(), entity.getMaximumLine(), entity.getDecimalSeparator());
+                    writeAsFile(filename, reportDir, resultList, ofNullable(entity.getSeparator()).orElse(";"),
+                            ofNullable(entity.getMaximumLine()).orElse(0L), ofNullable(entity.getDecimalSeparator()).orElse("."));
                 } else {
                     writeAsHtml(filename, reportDir, resultList, entity);
                 }
@@ -177,7 +178,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             }
 
             Map<String, Object> resultContext = scriptInstanceService.execute(entity.getScriptInstance().getCode(), context);
-            resultList = readGeneratedFile(resultContext.get("DIR") +"\\"+ resultContext.get("FILENAME"), entity.getSeparator());
+            resultList = readGeneratedFile(resultContext.get("DIR") +"\\"+ resultContext.get("FILENAME"), ofNullable(entity.getSeparator()).orElse(";"));
             reportExtractExecutionResult.setErrorMessage((String) resultContext.getOrDefault(ReportExtractScript.ERROR_MESSAGE, ""));
             reportExtractExecutionResult.setLineCount((int) resultContext.getOrDefault(ReportExtractScript.LINE_COUNT, 0));
         }
