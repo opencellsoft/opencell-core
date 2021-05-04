@@ -143,8 +143,8 @@ public interface ProductRs extends IBaseRs{
      * @param pagingAndFiltering Pagination and filtering criteria
      * @return List of offer templates
      */
-    @POST
-    @Path("/filtering")
+    @GET
+    @Path("/")
     @Operation(summary = "Get products matching the given criteria",
     tags = { "Product" },
     description ="Get products matching the given criteria",
@@ -277,8 +277,8 @@ public interface ProductRs extends IBaseRs{
 	 * @param productVersion
 	 * @return
 	 */
-	@POST
-	@Path("/{productCode}/productVersions/{productVersion}")
+	@PUT
+	@Path("/{productCode}/productVersions/{productVersion}/status/{status}")
     @Operation(summary = "This endpoint allows to update the product version status",
     tags = { "Product" },
     description ="the product with status DRAFT can be change to PUBLIED or CLOSED ",
@@ -289,7 +289,7 @@ public interface ProductRs extends IBaseRs{
     })
 	Response updateProductVersionStatus(@Parameter @PathParam("productCode") String productCode,
 											@Parameter @PathParam("productVersion") int productVersion,
-											@Parameter @QueryParam("status") VersionStatusEnum status);
+											@Parameter @PathParam("status") VersionStatusEnum status);
 
 
 

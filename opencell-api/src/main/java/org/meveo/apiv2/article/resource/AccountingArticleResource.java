@@ -72,8 +72,8 @@ public interface AccountingArticleResource {
     })
     Response delete(@Parameter(description = "accounting article code", required = true) @PathParam("accountingArticleCode") String accountingArticleCode, @Context Request request);
     
-    @POST
-    @Path("/filtering")
+    @GET
+    @Path("/")
     @Operation(summary = "This endpoint allows to find list of accounting article resource",
     tags = { "AccountingArticle" },
     description ="find list of an existing accounting article",

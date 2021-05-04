@@ -86,7 +86,7 @@ public interface AttributeRs extends IBaseRs {
 	Response delete(@Parameter(description = "contain the code of Attribute te be deleted by its code", required = true) @PathParam("code") String code);
 
 	@GET
-	@Path("/")
+	@Path("/{code}")
     @Operation(summary = "This endpoint allows to find an attribute by its code",
     description ="Finding an attribute by its code ",
     tags = { "Attribute" },
@@ -94,12 +94,12 @@ public interface AttributeRs extends IBaseRs {
             @ApiResponse(responseCode="200", description = "The Attribute successfully retrieved",
             		content = @Content(schema = @Schema(implementation = GetAttributeDtoResponse.class))),
     })
-	Response findByCode(@Parameter(description = "retrieving a attribute with its code") @QueryParam("code") String code);
+	Response findByCode(@Parameter(description = "retrieving a attribute with its code") @PathParam("code") String code);
 	
 	
     
     @POST
-    @Path("/cpq/list/{productCode}/{productVersion}")
+    @Path("/cpq/offers/{productCode}/{productVersion}")
     @Operation(summary = "Get attributes related to the given product that match the quote offer context",
     tags = { "Catalog browsing" },
     description ="Get attributes related to the given product that match the quote offer context",

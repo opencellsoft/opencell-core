@@ -98,8 +98,8 @@ public interface CommercialRuleRs extends IBaseRs {
      * @param pagingAndFiltering Pagination and filtering criteria
      * @return List of offer templates
      */
-    @POST
-    @Path("/filtering")
+    @GET
+    @Path("/")
     @Operation(summary = "Get commercial rules matching the given criteria",
     tags = { "CommercialRules" },
     description ="Get commercial rules matching the given criteria",

@@ -263,8 +263,8 @@ public interface PricePlanRs extends IBaseRs {
     											@Parameter(description = "The price plan matrix version", required = true)  @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion,
     											@Parameter(description = "The status of Price plan", required = true)  @QueryParam("status") VersionStatusEnum status);
 
-    @POST
-    @Path("/pricePlanMatrixVersions/filtering")
+    @GET
+    @Path("/pricePlanMatrixVersions")
     @Operation(summary = "get the price plan versions",
             tags = { "Price Plan" },
             description ="load the list of ppm versions",

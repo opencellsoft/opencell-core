@@ -129,8 +129,8 @@ public interface CommercialOrderRs {
 	    })
 	public Response duplicate(@Parameter(description = "The id of the commercial order", required = true) @PathParam("orderId") Long orderId);
 	
-	@POST
-    @Path("/filtering")
+	@GET
+    @Path("/")
     @Operation(summary = "Get commercial orders matching the given criteria",
     tags = { "Order management" },
     description ="Get commercial orders matching the given criteria",

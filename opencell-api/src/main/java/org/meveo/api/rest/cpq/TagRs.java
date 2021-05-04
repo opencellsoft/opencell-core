@@ -104,7 +104,7 @@ public interface TagRs extends IBaseRs {
 	Response findByCode(@Parameter(description = "retrieving a tag with its code") @QueryParam("codeTag") String codeTag);
 	
 	@POST
-	@Path("/tagType")
+	@Path("/tagTypes")
     @Operation(summary = "This endpoint allows to create new tag type",
     description ="Creating a new tag type",
     tags = { "Tag" },
@@ -116,7 +116,7 @@ public interface TagRs extends IBaseRs {
 	Response createTagType(@Parameter(description = "tag type dto for new insertion", required = true)TagTypeDto tagTypeDto);
 	
 	@PUT
-	@Path("/tagType")
+	@Path("/tagTypes")
     @Operation(summary = "This endpoint allows to update new tag type",
     description ="updating a new tag type",
     tags = { "Tag" },
@@ -130,7 +130,7 @@ public interface TagRs extends IBaseRs {
 	Response updateTagType(@Parameter(description = "tag type dto for updating an existing tag type", required = true) TagTypeDto tagTypeDto);
 	
 	@GET
-	@Path("/tagType")
+	@Path("/tagTypes/{codeTagType}")
     @Operation(summary = "This endpoint allows to retrieve a tag type",
     description ="Retrieving a tag type with code tag type parameter",
     tags = { "Tag" },
@@ -139,11 +139,11 @@ public interface TagRs extends IBaseRs {
             @ApiResponse(responseCode = "400", description = "No tag type was found with the code", 
     		content = @Content(schema = @Schema(implementation = BusinessException.class)))
     })
-	Response findTagTypeBycode(@Parameter(description = "code tag type for retrieving an existing one", required = true) @QueryParam("codeTagType") String codeTagType);
+	Response findTagTypeBycode(@Parameter(description = "code tag type for retrieving an existing one", required = true) @PathParam("codeTagType") String codeTagType);
 
 
 	@DELETE
-	@Path("/tagType/{codeTagType}")
+	@Path("/tagTypes/{codeTagType}")
     @Operation(summary = "This endpoint allows to  delete an existing Tag type",
     description ="Deleting an existing Tag type",
     tags = { "Tag" },
