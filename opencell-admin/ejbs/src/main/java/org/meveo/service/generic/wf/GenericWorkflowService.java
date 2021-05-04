@@ -17,21 +17,6 @@
  */
 package org.meveo.service.generic.wf;
 
-import static java.util.Optional.ofNullable;
-import static org.meveo.admin.job.GenericWorkflowJob.*;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -43,12 +28,20 @@ import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
-import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.service.script.ScriptInterface;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.Optional.ofNullable;
 
 @Stateless
 public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
@@ -119,25 +112,6 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
         return executeWorkflow(businessEntity, workflowInstance, genericWorkflow);
     }
-    
-    /**
-     * List Transitions By From Status
-     *
-     * @param workflowInstance
-     * @param genericWorkflow
-     * @return list of transitions
-     * @throws BusinessException
-     */
-    private List<GWFTransition> listTransitionsByFromStatus(WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
-
-        WFStatus currentWFStatus = workflowInstance.getCurrentStatus();
-        String currentStatus = currentWFStatus != null ? currentWFStatus.getCode() : null;
-        log.trace("Actual status: {}", currentStatus);
-        log.trace("GenericWorkflow.getTransitions(): {}",  genericWorkflow.getTransitions());
-
-        return genericWorkflow.getTransitions().stream()
-                .filter(transition -> (transition.getFromStatus() == null || currentStatus.equals(transition.getFromStatus()))).collect(Collectors.toList());
-    }
 
     /**
      * Execute workflow for wf instance
@@ -147,31 +121,40 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
      * @return workflowInstance
      * @throws BusinessException
      */
-	public WorkflowInstance executeWorkflow(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
-		log.debug("Executing generic workflow script:{} on instance {}", genericWorkflow.getCode(), workflowInstance);
-		try {
-		    List<GWFTransition> listByFromStatus = listTransitionsByFromStatus(workflowInstance, genericWorkflow);
-			log.trace("listByFromStatus: {}",  listByFromStatus);
-			
-			List<GWFTransition> executedTransitions = getExecutedTransitions(genericWorkflow, workflowInstance, listByFromStatus);
-			log.trace("executedTransition: {}",  executedTransitions);
-			
-			while (!listByFromStatus.isEmpty()) {
-    			for (GWFTransition gWFTransition : listByFromStatus) {
-    				if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransitions, genericWorkflow)) {
-    				    workflowInstance = gWFTransitionService.executeTransition(gWFTransition, iwfEntity, workflowInstance, genericWorkflow);
-                        listByFromStatus = listTransitionsByFromStatus(workflowInstance, genericWorkflow);
-    					executedTransitions.add(gWFTransition);
-    				}
-    			}
-			}
-		} catch (Exception e) {
-			log.error("Failed to execute generic workflow {} on {}", genericWorkflow.getCode(), workflowInstance, e);
-			throw new BusinessException(e);
-		}
+    public WorkflowInstance executeWorkflow(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
+        log.debug("Executing generic workflow script:{} on instance {}", genericWorkflow.getCode(), workflowInstance);
+        try {
 
-		return workflowInstance;
-	}
+            WFStatus currentWFStatus = workflowInstance.getCurrentStatus();
+            String currentStatus = currentWFStatus != null ? currentWFStatus.getCode() : null;
+            log.trace("Actual status: {}", currentStatus);
+
+            int endIndex = genericWorkflow.getTransitions().size();
+            if (!genericWorkflow.getTransitions().get(endIndex - 1).getToStatus().equalsIgnoreCase(currentStatus)) {
+                List<GWFTransition> listByFromStatus = genericWorkflow.getTransitions().stream().filter(tx -> tx.getFromStatus().equals(currentStatus))
+                        .collect(Collectors.toList());
+                List<GWFTransition> executedTransitions = getExecutedTransitions(genericWorkflow, workflowInstance, listByFromStatus);
+
+                for (GWFTransition gWFTransition : listByFromStatus) {
+
+                    if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransitions, genericWorkflow)) {
+                        workflowInstance = gWFTransitionService.executeTransition(gWFTransition, iwfEntity, workflowInstance, genericWorkflow);
+                        executedTransitions.add(gWFTransition);
+                        if (!workflowInstance.getCurrentStatus().equals(currentWFStatus)) {
+                            executeWorkflow(iwfEntity, workflowInstance, genericWorkflow);
+                            break;
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to execute generic workflow {} on {}", genericWorkflow.getCode(), workflowInstance, e);
+            throw new BusinessException(e);
+        }
+
+        return workflowInstance;
+    }
 
     private List<GWFTransition> getExecutedTransitions(GenericWorkflow genericWorkflow, WorkflowInstance workflowInstance, List<GWFTransition> listByFromStatus) {
         List<GWFTransition> executedTransition = new ArrayList<>();
@@ -236,8 +219,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
         return 0 < previousTransitions.size();
     }
 
-    public WorkflowInstance executeTransition(GWFTransition transition, BusinessEntity entity,
-                                              GenericWorkflow genericWorkflow, boolean ignoreConditionEL) {
+    public WorkflowInstance executeTransition(GWFTransition transition, BusinessEntity entity, GenericWorkflow genericWorkflow, boolean ignoreConditionEL) {
         WorkflowInstance workflowInstance = ofNullable(workflowInstanceService.findByEntityIdAndGenericWorkflow(entity.getId(), genericWorkflow))
                 .orElseThrow(() -> new BusinessException("No workflow instance found for business entity " + entity.getId()));
         if (ignoreConditionEL) {
@@ -247,8 +229,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
         }
     }
 
-    public WorkflowInstance executeTransitionWithConditionEL(GWFTransition transition, BusinessEntity entity,
-                                                                       WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
+    public WorkflowInstance executeTransitionWithConditionEL(GWFTransition transition, BusinessEntity entity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
         if (matchExpression(transition.getConditionEl(), entity)) {
             return gWFTransitionService.executeTransition(transition, entity, workflowInstance, genericWorkflow);
         } else {
