@@ -214,6 +214,10 @@ public class Product extends ServiceCharge {
     @Type(type = "numeric_boolean")
     @Column(name = "is_model")
     private Boolean isModel;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_model_id")
+    private Product productModel;
 
 	/**
 	 * @return the status
@@ -618,6 +622,22 @@ public class Product extends ServiceCharge {
 
 	public void setIsModel(Boolean isModel) {
 		this.isModel = isModel;
+	}
+
+
+	/**
+	 * @return the productModel
+	 */
+	public Product getProductModel() {
+		return productModel;
+	}
+
+
+	/**
+	 * @param productModel the productModel to set
+	 */
+	public void setProductModel(Product productModel) {
+		this.productModel = productModel;
 	}
 	
 	
