@@ -119,6 +119,25 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
         return executeWorkflow(businessEntity, workflowInstance, genericWorkflow);
     }
+    
+    /**
+     * List Transitions By From Status
+     *
+     * @param workflowInstance
+     * @param genericWorkflow
+     * @return list of transitions
+     * @throws BusinessException
+     */
+    private List<GWFTransition> listTransitionsByFromStatus(WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
+
+        WFStatus currentWFStatus = workflowInstance.getCurrentStatus();
+        String currentStatus = currentWFStatus != null ? currentWFStatus.getCode() : null;
+        log.trace("Actual status: {}", currentStatus);
+        log.trace("GenericWorkflow.getTransitions(): {}",  genericWorkflow.getTransitions());
+
+        return genericWorkflow.getTransitions().stream()
+                .filter(transition -> (transition.getFromStatus() == null || currentStatus.equals(transition.getFromStatus()))).collect(Collectors.toList());
+    }
 
     /**
      * Execute workflow for wf instance
@@ -131,30 +150,21 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 	public WorkflowInstance executeWorkflow(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
 		log.debug("Executing generic workflow script:{} on instance {}", genericWorkflow.getCode(), workflowInstance);
 		try {
-
-			WFStatus currentWFStatus = workflowInstance.getCurrentStatus();
-			String currentStatus = currentWFStatus != null ? currentWFStatus.getCode() : null;
-			log.trace("Actual status: {}", currentStatus);
-			
-			log.trace(" genericWorkflow.getTransitions(): {}",  genericWorkflow.getTransitions());
-
-			List<GWFTransition> listByFromStatus = genericWorkflow.getTransitions().stream()
-					.filter(transition -> (transition.getFromStatus() == null || currentStatus.equals(transition.getFromStatus()))).collect(Collectors.toList());
-			
+		    List<GWFTransition> listByFromStatus = listTransitionsByFromStatus(workflowInstance, genericWorkflow);
 			log.trace("listByFromStatus: {}",  listByFromStatus);
 			
-			List<GWFTransition> executedTransition = getExecutedTransitions(genericWorkflow, workflowInstance, listByFromStatus);
-			log.trace("executedTransition: {}",  executedTransition);
-
-			for (GWFTransition gWFTransition : listByFromStatus) {
-				if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransition, genericWorkflow)) {
-				    workflowInstance = gWFTransitionService.executeTransition(gWFTransition, iwfEntity, workflowInstance, genericWorkflow);
-					executedTransition.add(gWFTransition);
-					
-					executeWorkflow(iwfEntity, workflowInstance, genericWorkflow);
-				}
+			List<GWFTransition> executedTransitions = getExecutedTransitions(genericWorkflow, workflowInstance, listByFromStatus);
+			log.trace("executedTransition: {}",  executedTransitions);
+			
+			while (!listByFromStatus.isEmpty()) {
+    			for (GWFTransition gWFTransition : listByFromStatus) {
+    				if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransitions, genericWorkflow)) {
+    				    workflowInstance = gWFTransitionService.executeTransition(gWFTransition, iwfEntity, workflowInstance, genericWorkflow);
+                        listByFromStatus = listTransitionsByFromStatus(workflowInstance, genericWorkflow);
+    					executedTransitions.add(gWFTransition);
+    				}
+    			}
 			}
-
 		} catch (Exception e) {
 			log.error("Failed to execute generic workflow {} on {}", genericWorkflow.getCode(), workflowInstance, e);
 			throw new BusinessException(e);
