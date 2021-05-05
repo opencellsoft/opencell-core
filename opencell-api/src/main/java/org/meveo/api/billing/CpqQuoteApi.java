@@ -1095,6 +1095,9 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
             quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
             quotePrice.setTaxRate(a.getTaxRate().add(b.getTaxRate()));
+            quotePrice.setQuoteArticleLine(a.getQuoteArticleLine());
+            quotePrice.setPriceTypeEnum(a.getPriceTypeEnum());
+            quotePrice.setChargeTemplate(a.getChargeTemplate());
             return quotePrice;
         });
     }
