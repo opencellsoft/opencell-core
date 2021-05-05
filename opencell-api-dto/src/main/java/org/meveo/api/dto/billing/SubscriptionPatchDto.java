@@ -21,7 +21,7 @@ public class SubscriptionPatchDto {
     private Boolean updateSubscriptionDate;
     private Boolean resetRenewalTerms;
     /** if we should apply prorata on offer change */
-    private Boolean offerChangeProrata;
+    private Boolean offerChangeProrata = Boolean.FALSE;
     List<String> subscriptionCustomFieldsToCopy;
 
     public String getOfferTemplate() {
