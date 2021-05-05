@@ -66,6 +66,8 @@ public class ServiceToInstantiateDto implements Serializable {
     /** The subscription date. */
     private Date calendarInitDate;
 
+    /** if we should apply prorata on offer change */
+    private Boolean offerChangeProrata;
 
     /** The charge instance overrides. */
     private ChargeInstanceOverridesDto chargeInstanceOverrides;
@@ -167,6 +169,14 @@ public class ServiceToInstantiateDto implements Serializable {
 
     public void setCalendarInitDate(Date calendarInitDate) {
         this.calendarInitDate = calendarInitDate;
+    }
+
+    public Boolean getOfferChangeProrata() {
+        return offerChangeProrata;
+    }
+
+    public void setOfferChangeProrata(Boolean offerChangeProrata) {
+        this.offerChangeProrata = offerChangeProrata;
     }
 
     /**
