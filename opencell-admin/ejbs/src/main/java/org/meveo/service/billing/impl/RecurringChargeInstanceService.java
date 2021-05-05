@@ -173,8 +173,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         log.debug("create chargeInstance for charge {}", chargeCode);
         RecurringChargeInstance chargeInstance = new RecurringChargeInstance(null, null,
                 recurringChargeTemplate, serviceInstance, InstanceStatusEnum.INACTIVE, recurringChargeTemplate.getCalendar(),
-                serviceInstance.getCalendarInitDate(), (serviceInstance.getOfferChangeProrata() != null ?
-                serviceInstance.getOfferChangeProrata() : recurringChargeTemplate.getApplyInAdvance()));
+                serviceInstance.getCalendarInitDate(), recurringChargeTemplate.getApplyInAdvance());
 
         ServiceChargeTemplateRecurring recChTmplServ = serviceInstance.getServiceTemplate().getServiceRecurringChargeByChargeCode(chargeCode);
         // getEntityManager().merge(recChTmplServ); - does not make sence as
