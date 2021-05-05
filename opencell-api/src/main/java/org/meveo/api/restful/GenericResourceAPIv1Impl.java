@@ -72,15 +72,15 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
         String getAnEntityPath = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder;
 
         // to get all entities
-        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( aGetPath ) ) {
+        if ( GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.containsKey( aGetPath ) ) {
             return getService.getAllEntities( uriInfo, aGetPath );
         }
         // to get a particular entity
-        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( getAnEntityPath ) ) {
+        else if ( GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.containsKey( getAnEntityPath ) ) {
             return getService.getEntity( uriInfo, getAnEntityPath );
         }
         // to handle get requests containing regular expressions
-        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( aGetPath ) ) {
+        else if ( GenericOpencellRestfulAPIv1.MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( aGetPath ) ) {
             return getService.getWithRegex( uriInfo, aGetPath );
         }
         else {
@@ -100,10 +100,10 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
                     + PAIR_QUERY_PARAM_SEPARATOR );
         }
 
-        if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( postPath ) ) {
+        if ( GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.containsKey( postPath ) ) {
             return postService.createEntity( uriInfo, postPath, jsonDto );
         }
-        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( postPath ) ) {
+        else if ( GenericOpencellRestfulAPIv1.MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( postPath ) ) {
             return postService.enableOrDisableEntity( uriInfo, postPath, jsonDto );
         }
         else {
@@ -120,10 +120,10 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
             suffixPathBuilder.append( FORWARD_SLASH + segmentsOfPathAPIv1.get(i).getPath() );
         String pathUpdateAnEntity = GenericOpencellRestfulAPIv1.API_VERSION + suffixPathBuilder;
 
-        if ( GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( putPath ) ) {
+        if ( GenericOpencellRestfulAPIv1.MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.containsKey( putPath ) ) {
             return putService.updateService( uriInfo, putPath, jsonDto );
         }
-        else if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey( pathUpdateAnEntity ) ) {
+        else if ( GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.containsKey( pathUpdateAnEntity ) ) {
             return putService.updateEntity( uriInfo, pathUpdateAnEntity, jsonDto );
         }
 

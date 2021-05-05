@@ -52,7 +52,7 @@ public class Apiv1PostService {
     public Response createEntity(UriInfo uriInfo, String postPath, String jsonDto) throws JsonProcessingException, URISyntaxException {
         URI redirectURI;
 
-        pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( postPath );
+        pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.get( postPath );
 
         if ( pathIBaseRS.equals( "/jobInstance" ) || pathIBaseRS.equals( "/job" ) )
             redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
@@ -87,7 +87,7 @@ public class Apiv1PostService {
                     + PAIR_QUERY_PARAM_SEPARATOR );
         }
 
-        pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( postPath );
+        pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.get( postPath );
 
         // Handle the generic special endpoint: enable a service
         if ( segmentsOfPathAPIv1.get( segmentsOfPathAPIv1.size() - 1 ).getPath().equals(ENABLE_SERVICE) ) {
@@ -144,8 +144,8 @@ public class Apiv1PostService {
                 aPathBd.append( FORWARD_SLASH + segmentsOfPathAPIv1.get(i) );
             String aPath = aPathBd.toString();
 
-            if ( GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.containsKey(aPath) ) {
-                pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get(aPath);
+            if ( GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.containsKey(aPath) ) {
+                pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.get(aPath);
                 String entityClassName = Inflector.getInstance().singularize(segmentsOfPathAPIv1.get(segmentsOfPathAPIv1.size() - 3));
 
                 if ( pathIBaseRS.equals( Apiv1ConstantDictionary.TRIGGERED_EDR ) )
