@@ -1163,6 +1163,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
 	private void adaptOrdering(PaginationConfiguration config, Map<String, Object> filters) {
+		if(config==null) {
+			return;
+		}
 		List<String> orderings = new ArrayList<String>();
 		for (Object x : config.getOrderings()) {
 			String orderElement = x.toString();
