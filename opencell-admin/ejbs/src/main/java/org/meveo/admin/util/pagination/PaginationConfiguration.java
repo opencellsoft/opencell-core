@@ -172,6 +172,13 @@ public class PaginationConfiguration implements Serializable {
     public void setFilters(Map<String, Object> filters) {
         this.filters = filters;
     }
+    
+    /**
+     * @param Sort field and sort order
+     */
+    public void setOrderings(Object[] ordering) {
+        this.ordering = ordering;
+    }
 
     public String getFullTextFilter() {
         return fullTextFilter;
