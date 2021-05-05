@@ -22,6 +22,8 @@ import org.primefaces.model.SortOrder;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -103,6 +105,14 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         PricePlanMatrix pricePlanMatrix = pricePlanMatrixService.findByCode(pricePlanMatrixVersionDto.getPricePlanMatrixCode());
         if (pricePlanMatrix == null)
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanMatrixVersionDto.getPricePlanMatrixCode());
+        pricePlanMatrix.getVersions().forEach(ppmv -> {
+        	if(ppmv.getValidity().isCorrespondsToPeriod(pricePlanMatrixVersionDto.getValidity(), false)) {
+        		var formatter = new SimpleDateFormat("dd/MM/yyyy");
+        		String from = ppmv.getValidity() != null && ppmv.getValidity().getFrom() != null ? formatter.format(ppmv.getValidity().getFrom()) : "";
+        		String to = ppmv.getValidity() != null && ppmv.getValidity().getTo() != null ? formatter.format(ppmv.getValidity().getTo()) : "";
+        		throw new MeveoApiException("The current period is overlapping date with [" + from + " - "+ to +"]");
+        	}
+        });
         pricePlanMatrixVersion.setPricePlanMatrix(pricePlanMatrix);
         if(pricePlanMatrixVersion.getId() == null) 
             pricePlanMatrixVersion.setCurrentVersion(pricePlanMatrixVersionService.getLastVersion(pricePlanMatrixVersionDto.getPricePlanMatrixCode()) + 1);
