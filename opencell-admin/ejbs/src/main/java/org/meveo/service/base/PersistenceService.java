@@ -52,6 +52,7 @@ import javax.persistence.metamodel.Attribute;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.FilteredQueryBuilder;
@@ -81,6 +82,8 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.expressions.ExpressionFactory;
@@ -89,6 +92,8 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
 import org.meveo.service.index.ElasticClient;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -137,9 +142,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     public static final String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
 
-    public static final String FROM_JSON_FUNCTION = "FromJson(a.cfValues,";
-
+    public static final String FROM_JSON_FUNCTION = "FromJson(a.";
+    public static final String CF_VALUES_FIELD = "cfValues";
+    
     protected static boolean accumulateCF = true;
+    
+    protected static Map<Class, String> jsonTypes = new HashMap<Class, String>();
 
     @PostConstruct
     private void init() {
@@ -935,8 +943,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         Map<String, Object> filters = config.getFilters();
 
+        adaptOrdering(config, filters);
+        
         QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", config.getFetchFields());
-
         if (filters != null && !filters.isEmpty()) {
 
             if (filters.containsKey(SEARCH_FILTER)) {
@@ -969,6 +978,95 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return queryBuilder;
     }
 
+	private void adaptOrdering(PaginationConfiguration config, Map<String, Object> filters) {
+		List<String> orderings = new ArrayList<String>();
+		for (Object x : config.getOrderings()) {
+			String orderElement = x.toString();
+			if ((orderElement.startsWith(CF_VALUES_FIELD) || orderElement.contains("." + CF_VALUES_FIELD))
+					&& !orderElement.contains(FROM_JSON_FUNCTION)) {
+				String fieldName = ((String) x).substring(orderElement.lastIndexOf(".") + 1);
+				Class cetClass = extractCETClass(orderElement);
+				CustomFieldTemplate cft = extractCFT(filters, fieldName, cetClass);
+				String type = getJsonType(cft.getFieldType().getDataClass());
+				String nested = orderElement.startsWith(CF_VALUES_FIELD) ? ""
+						: orderElement.substring(0, orderElement.indexOf(CF_VALUES_FIELD));
+				orderElement = extractCustomFieldSyntax(type, cft.getFieldType().getDataClass(), "", fieldName, nested);
+			}
+			orderings.add(orderElement);
+		}
+		config.setOrderings(orderings.toArray());
+	}
+
+	private Class extractCETClass(String orderElement) {
+		Class currentEntity = entityClass;
+		final String[] elements = orderElement.split("\\.");
+		for (String element : elements) {
+			if (CF_VALUES_FIELD.equals(element)) {
+				break;
+			}
+			try {
+				currentEntity = currentEntity.getDeclaredField(element).getType();
+			} catch (NoSuchFieldException | SecurityException e) {
+				throw new BusinessException("error when tryin to get field " + element + " from entity "
+						+ currentEntity.getSimpleName() + " : " + e.getStackTrace());
+			}
+		}
+		return currentEntity;
+	}
+
+	private CustomFieldTemplate extractCFT(Map<String, Object> filters, String fieldName, Class currentEntity) {
+		String appliesTo = currentEntity.getSimpleName();
+		if (currentEntity == CustomEntityInstance.class) {
+			String cetCode = (String) filters.get("cetCode");
+			if (cetCode == null) {
+				throw new ValidationException("cetCode is mandatory on filter to order by custom fields values");
+			}
+			appliesTo = CustomEntityTemplate.CFT_PREFIX + "_" + cetCode;
+		}
+		CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(fieldName, appliesTo);
+		if (cft == null) {
+			throw new ValidationException("no CustomFieldTemplate found for fieldName=" + fieldName + " and appliesTo= " + appliesTo);
+		}
+		return cft;
+	}
+
+    /**
+	 * @param dataClass
+	 * @return
+	 */
+	public static String getJsonType(Class dataClass) {
+		if (jsonTypes.isEmpty()) {
+			final Field[] declaredFields = CustomFieldValue.class.getDeclaredFields();
+			for (final Field field : declaredFields) {
+				if (field.isAnnotationPresent(JsonProperty.class) && field.getName().endsWith("Value")) {
+					jsonTypes.put(field.getType(), field.getAnnotation(JsonProperty.class).value());
+				}
+			}
+		}
+		return jsonTypes.get(dataClass);
+	}
+
+	/**
+     * @param fieldName
+     * @return
+     */
+    private boolean isFieldCollection(String fieldName) {
+        if (fieldName.contains(FROM_JSON_FUNCTION)) {
+            return false;
+        }
+        final Class<? extends E> entityClass = getEntityClass();
+        Field field = ReflectionUtils.getField(entityClass, fieldName);
+        Class<?> fieldClassType = field.getType();
+        return Collection.class.isAssignableFrom(fieldClassType);
+    }
+
+    private String extractFieldWithAlias(String fieldName) {
+        if (StringUtils.isBlank(fieldName)) {
+            return fieldName;
+        }
+        return fieldName.contains(FROM_JSON_FUNCTION) ? fieldName : "a." + fieldName;
+    }
+
     private Map<String, Object> extractCustomFieldsFilters(Map<String, Object> filters) {
         Map<String, Object> cftFilters = new TreeMap<String, Object>();
         for (Object filterValue : filters.values()) {
@@ -986,8 +1084,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                     String[] fields = fieldInfo.length == 1 ? fieldInfo : Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
                     String transformedFilter = fieldInfo.length == 1 ? "" : fieldInfo[0] + " ";
                     for (String fieldName : fields) {
-                        String searchFunction = getCustomFieldSearchFunctionPrefix(value.getClass());
-                        transformedFilter = transformedFilter + searchFunction + FROM_JSON_FUNCTION + fieldName + "," + type + ") ";
+                        transformedFilter = extractCustomFieldSyntax(type, value.getClass(), transformedFilter, fieldName, "");
                     }
                     if (value instanceof EntityReferenceWrapper) {
                         cftFilters.put(transformedFilter, ((EntityReferenceWrapper) value).getCode());
@@ -999,6 +1096,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
         return cftFilters;
     }
+
+	private String extractCustomFieldSyntax(String type, Class clazz, String transformedFilter, String fieldName, String nestedFields) {
+		nestedFields=nestedFields==null?"":nestedFields;
+		String searchFunction = getCustomFieldSearchFunctionPrefix(clazz);
+		transformedFilter = transformedFilter + searchFunction + FROM_JSON_FUNCTION+nestedFields+"cfValues," + fieldName + "," + type + ") ";
+		return transformedFilter;
+	}
 
     /**
      * add a creterion to check if all filterValue (Array) elements are elements of the fieldName (Array)
