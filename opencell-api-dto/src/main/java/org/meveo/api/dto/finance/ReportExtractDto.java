@@ -93,7 +93,7 @@ public class ReportExtractDto extends EnableBusinessDto {
     /**
      *  Decimal separator by default “.”
      */
-    private Character decimalSeparator;
+    private String decimalSeparator;
 
     /**
      * Allow empty file Generation
@@ -371,11 +371,11 @@ public class ReportExtractDto extends EnableBusinessDto {
         this.maximumLine = maximumLine;
     }
 
-    public Character getDecimalSeparator() {
+    public String getDecimalSeparator() {
         return decimalSeparator;
     }
 
-    public void setDecimalSeparator(Character decimalSeparator) {
+    public void setDecimalSeparator(String decimalSeparator) {
         this.decimalSeparator = decimalSeparator;
     }
 }

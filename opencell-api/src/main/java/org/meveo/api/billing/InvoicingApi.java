@@ -18,6 +18,8 @@
 
 package org.meveo.api.billing;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.Date;
 import java.util.List;
 
@@ -267,25 +269,26 @@ public class InvoicingApi extends BaseApi {
 
 	/**
 	 * @param billingRunId
-	 * @param invoices
+	 * @param invoices to move
+	 * @return the id of the new billing run
 	 */
-	public void moveInvoice(Long billingRunId, List<Long> invoices) {
-		invoiceService.moveInvoices(billingRunId, invoices);
+	public Long moveInvoice(Long billingRunId, List<Long> invoices) {
+		return invoiceService.moveInvoices(billingRunId, invoices);
 	}
 
 	/**
 	 * @param billingRunId
-	 * @param invoices
+	 * @param invoices invoices to cancel
+	 * @param deleteCanceledInvoices if canceled invoices should be deleted entirely
 	 */
 	public void cancelInvoice(Long billingRunId, List<Long> invoices, Boolean deleteCanceledInvoices) {
-		invoiceService.cancelInvoices(billingRunId, invoices, deleteCanceledInvoices == null ? false : deleteCanceledInvoices);
+		invoiceService.cancelInvoices(billingRunId, invoices, ofNullable(deleteCanceledInvoices).orElse(false));
 	}
 
 	/**
 	 * Delete canceled invoices for a given billing run
 	 * 
 	 * @param billingRunId
-	 * @param invoices
 	 */
 	public void canceledInvoices(Long billingRunId) {
 		invoiceService.deleteInvoices(billingRunId);
