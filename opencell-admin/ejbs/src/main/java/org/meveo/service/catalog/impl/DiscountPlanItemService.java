@@ -148,7 +148,8 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 
         final String dpValueEL = discountPlanItem.getDiscountValueEL();
         if (isNotBlank(dpValueEL)) {
-            final BigDecimal evalDiscountValue = evaluateDiscountPercentExpression(dpValueEL, scAggregate.getBillingAccount(), scAggregate.getWallet(), invoice, amount);
+            final BigDecimal evalDiscountValue = evaluateDiscountPercentExpression(dpValueEL, scAggregate == null ? null : scAggregate.getBillingAccount(), 
+            																					scAggregate == null ? null : scAggregate.getWallet(), invoice, amount);
             log.debug("for discountPlan {} percentEL -> {}  on amount={}", discountPlanItem.getCode(), computedDiscount, amount);
             if (evalDiscountValue != null) {
                 computedDiscount = evalDiscountValue;
@@ -184,7 +185,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
             return null;
         }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
-        userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, billingAccount.getCustomerAccount());
+        userMap.put(ValueExpressionWrapper.VAR_CUSTOMER_ACCOUNT, billingAccount != null ? billingAccount.getCustomerAccount() : null);
         userMap.put(ValueExpressionWrapper.VAR_BILLING_ACCOUNT, billingAccount);
         userMap.put("iv", invoice);
         userMap.put("invoice", invoice);
