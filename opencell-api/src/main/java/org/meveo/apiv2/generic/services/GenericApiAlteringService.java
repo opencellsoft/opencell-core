@@ -29,6 +29,8 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -164,11 +166,36 @@ public class GenericApiAlteringService {
             if(cft != null){
                 CustomFieldDto customFieldDto = new CustomFieldDto();
                 customFieldDto.setCode(code);
+                if(cfsValuesByCode.get(code) == null || ((List) cfsValuesByCode.get(code)).isEmpty() ){
+                    customFieldsDto.getCustomField().add(customFieldDto);
+                    continue;
+                }
+                if(cft.isVersionable()){
+                    Object newValue = ((List) cfsValuesByCode.get(code)).get(0);
+                    customFieldDto.setValuePeriodPriority((Integer) ((Map) newValue).get("priority"));
+                    if(((Map) newValue).get("from") != null){
+                        customFieldDto.setValuePeriodStartDate(resolveDate(((Map) newValue).get("from")));
+                    }
+                    if(((Map) newValue).get("to") != null){
+                        customFieldDto.setValuePeriodEndDate(resolveDate(((Map) newValue).get("to")));
+                    }
+                }
                 writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), cfsValuesByCode.get(code));
                 customFieldsDto.getCustomField().add(customFieldDto);
             }
         }
         return customFieldsDto;
+    }
+
+    private Date resolveDate(Object stringDate) {
+        if(stringDate instanceof String) {
+            try {
+                return ((String) stringDate).matches("^\\d{4}-\\d{1,2}-\\d{1,2}.*$") ? new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(stringDate)) : new SimpleDateFormat("dd/MM/yyyy").parse(String.valueOf(stringDate));
+            } catch (ParseException e) {
+                throw new IllegalArgumentException(stringDate + " is not a valid value format, hint : dd/MM/yyyy or yyyy-MM-dd");
+            }
+        }
+        return new Date((Long) stringDate);
     }
 
     private void writeValueToCFDto(CustomFieldDto customFieldDto, CustomFieldTypeEnum fieldType, CustomFieldStorageTypeEnum storageType, Object value) {
