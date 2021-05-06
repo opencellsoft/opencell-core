@@ -20,6 +20,8 @@ public class SubscriptionPatchDto {
     private ServicesToActivateDto servicesToActivate;
     private Boolean updateSubscriptionDate;
     private Boolean resetRenewalTerms;
+    /** if we should apply prorata on offer change */
+    private Boolean offerChangeProrata = Boolean.FALSE;
     List<String> subscriptionCustomFieldsToCopy;
 
     public String getOfferTemplate() {
@@ -86,7 +88,15 @@ public class SubscriptionPatchDto {
         this.resetRenewalTerms = resetRenewalTerms;
     }
 
-	/**
+    public Boolean getOfferChangeProrata() {
+        return offerChangeProrata;
+    }
+
+    public void setOfferChangeProrata(Boolean offerChangeProrata) {
+        this.offerChangeProrata = offerChangeProrata;
+    }
+
+    /**
 	 * @return the subscriptionCustomFieldsToCopy
 	 */
 	public List<String> getSubscriptionCustomFieldsToCopy() {

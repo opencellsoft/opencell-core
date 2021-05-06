@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.ServiceTemplate;
 
 /**
@@ -66,6 +65,9 @@ public class ServiceToActivateDto implements Serializable {
 
     /** The service calendar  init date. */
     private Date calendarInitDate;
+
+    /** if we should apply prorata on offer change */
+    private Boolean offerChangeProrata;
 
     /** The charge instance overrides. */
     private ChargeInstanceOverridesDto chargeInstanceOverrides;
@@ -197,6 +199,23 @@ public class ServiceToActivateDto implements Serializable {
      */
     public void setCalendarInitDate(Date calendarInitDate) {
         this.calendarInitDate = calendarInitDate;
+    }
+
+    /**
+     * get ApplyChargesInAdvance
+     * @return applyChargesInAdvance
+     */
+    public Boolean getOfferChangeProrata() {
+        return offerChangeProrata;
+    }
+
+    /**
+     * set ApplyChargesInAdvance
+     *
+     * @param offerChangeProrata applyChargesInAdvance
+     */
+    public void setOfferChangeProrata(Boolean offerChangeProrata) {
+        this.offerChangeProrata = offerChangeProrata;
     }
 
     /**

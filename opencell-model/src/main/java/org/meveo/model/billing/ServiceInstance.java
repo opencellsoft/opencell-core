@@ -135,6 +135,12 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Column(name = "calendar_init_date")
     private Date calendarInitDate;
 
+    /** if we should apply prorata on offer change for this service */
+    @Type(type = "numeric_boolean")
+    @Column(name = "offer_change_prorata")
+    private Boolean offerChangeProrata;
+
+
     /** Subscription timestamp. */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "subscription_date")
@@ -417,6 +423,24 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
      */
     public void setCalendarInitDate(Date calendarInitDate) {
         this.calendarInitDate = calendarInitDate;
+    }
+
+    /**
+     * get applyChargesInAdvance
+     * @return if associated recurring charges prorata
+     * should be applied on offer change
+     */
+    public Boolean getOfferChangeProrata() {
+        return offerChangeProrata;
+    }
+
+    /**
+     * set applyChargesInAdvance
+     *
+     * @param offerChangeProrata applyChargesInAdvance
+     */
+    public void setOfferChangeProrata(Boolean offerChangeProrata) {
+        this.offerChangeProrata = offerChangeProrata;
     }
 
     /**

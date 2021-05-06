@@ -399,8 +399,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         chargeInstance.setNextChargeDate(nextChargeDate);
 
         boolean isApplyInAdvance = resolveIsApplyInAdvance(chargeInstance, recurringChargeTemplate);
+        // in case of offer change, the default behavior is to not rate charge in first time
+        // for the new offer even if isApplyInAdvance is true
+        boolean isNotOfferChangeCaseOrIsOfferChangeProrata = chargeInstance.getServiceInstance().getOfferChangeProrata() != Boolean.FALSE;
 
-        if (isApplyInAdvance) {
+        if (isApplyInAdvance && isNotOfferChangeCaseOrIsOfferChangeProrata) {
             List<WalletOperation> walletOperations = applyFirstRecurringCharge(chargeInstance, nextChargeDate, false);
             applyAccumulatorCounter(chargeInstance, walletOperations, false);
         }
