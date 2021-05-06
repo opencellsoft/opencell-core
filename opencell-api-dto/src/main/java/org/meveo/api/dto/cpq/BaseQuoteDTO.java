@@ -92,8 +92,6 @@ public class BaseQuoteDTO extends BusinessEntityDto{
     @Schema(description = "The external id")
     private String externalId;
 
-    private CustomFieldsDto customFields;
-
 	@JsonSerialize(using = CustomDateSerializer.class)
     @Schema(description = "The status date")
 	private Date statusDate;
@@ -304,23 +302,6 @@ public class BaseQuoteDTO extends BusinessEntityDto{
 	public void setQuoteNumber(String quoteNumber) {
 		this.quoteNumber = quoteNumber;
 	}
-
-
-	/**
-	 * @return the customFields
-	 */
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
-
-
-	/**
-	 * @param customFields the customFields to set
-	 */
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
-
 
 	/**
 	 * @return the statusDate

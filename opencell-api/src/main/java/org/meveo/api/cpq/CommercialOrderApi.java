@@ -125,44 +125,26 @@ public class CommercialOrderApi extends BaseApi {
 		checkParam(orderDto);
 		final CommercialOrder order = new CommercialOrder();
 		
-		final BillingAccount billingAccount = billingAccountService.findByCode(orderDto.getBillingAccountCode());
-		if(billingAccount == null)
-			throw new EntityDoesNotExistsException(BillingAccount.class, orderDto.getBillingAccountCode());
+		final BillingAccount billingAccount = loadEntityByCode(billingAccountService, orderDto.getBillingAccountCode(), BillingAccount.class);
 		order.setBillingAccount(billingAccount);
 		final Seller seller = billingAccount.getCustomerAccount().getCustomer().getSeller();
 		if(seller == null)
 			throw new EntityDoesNotExistsException(Seller.class, orderDto.getSellerCode());
 		order.setSeller(seller);
-		final OrderType orderType = orderTypeService.findByCode(orderDto.getOrderTypeCode());
-		if(orderType == null)
-			throw new EntityDoesNotExistsException(OrderType.class, orderDto.getOrderTypeCode());
-		order.setOrderType(orderType);
+		order.setOrderType(loadEntityByCode(orderTypeService,orderDto.getOrderTypeCode(), OrderType.class));
 		
 		order.setLabel(orderDto.getLabel());
 		if(!Strings.isEmpty(orderDto.getQuoteCode())) {
-			final CpqQuote quote = cpqQuoteService.findByCode(orderDto.getQuoteCode());
-			if(quote == null)
-				throw new EntityDoesNotExistsException(CpqQuote.class, orderDto.getQuoteCode());
-			order.setQuote(quote);
+			order.setQuote(loadEntityByCode(cpqQuoteService, orderDto.getQuoteCode(), CpqQuote.class));
 		}
 		if(!Strings.isEmpty(orderDto.getContractCode())) {
-			final Contract contract = contractService.findByCode(orderDto.getContractCode());
-			if(contract == null)
-				throw new EntityDoesNotExistsException(Contract.class, orderDto.getContractCode());
-			order.setContract(contract);
-				
+			order.setContract(loadEntityByCode(contractService, orderDto.getContractCode(), Contract.class));
 		}
 		if(!Strings.isEmpty(orderDto.getInvoicingPlanCode())) {
-			final InvoicingPlan billingPlan = invoicingPlanService.findByCode(orderDto.getInvoicingPlanCode());
-			if(billingPlan == null)
-				throw new EntityDoesNotExistsException(InvoicingPlan.class, orderDto.getInvoicingPlanCode());
-			order.setInvoicingPlan(billingPlan);
+			order.setInvoicingPlan(loadEntityByCode(invoicingPlanService, orderDto.getInvoicingPlanCode(), InvoicingPlan.class));
 		}
 		if(!Strings.isEmpty(orderDto.getUserAccountCode())) {
-			final UserAccount userAccount = userAccountService.findByCode(orderDto.getUserAccountCode());
-			if(userAccount == null)
-				throw new EntityDoesNotExistsException(UserAccount.class, orderDto.getUserAccountCode());
-			order.setUserAccount(userAccount);
+			order.setUserAccount(loadEntityByCode(userAccountService, orderDto.getUserAccountCode(), UserAccount.class));
 		}
 		if(orderDto.getAccessDto() != null) {
 			var accessDto = orderDto.getAccessDto();
@@ -193,10 +175,7 @@ public class CommercialOrderApi extends BaseApi {
 		order.setExternalReference(orderDto.getExternalReference());
 		populateCustomFields(orderDto.getCustomFields(), order, true);
 		if(!Strings.isEmpty(orderDto.getOrderParentCode())) {
-			final Order orderParent = orderService.findByCode(orderDto.getOrderParentCode());
-			if(orderParent == null)
-				throw new EntityDoesNotExistsException(Order.class, orderDto.getOrderParentCode());
-			order.setOrderParent(orderParent);
+			order.setOrderParent(loadEntityByCode(orderService, orderDto.getOrderParentCode(), Order.class));
 		}
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		processOrderLot(orderDto, order);
