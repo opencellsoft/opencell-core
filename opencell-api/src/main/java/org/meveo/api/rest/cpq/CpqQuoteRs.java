@@ -311,8 +311,8 @@ public interface CpqQuoteRs {
     tags = { "Quote management" },
     description ="duplicate quote and their related entities",
     responses = {
-            @ApiResponse(responseCode="200", description = "quote version status is succeffully updated",content = @Content(schema = @Schema(implementation = ActionStatus.class))),
-            @ApiResponse(responseCode = "404", description = "Quote version doesn't exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+            @ApiResponse(responseCode="200", description = "quote is succeffully duplicated",content = @Content(schema = @Schema(implementation = ActionStatus.class))),
+            @ApiResponse(responseCode = "404", description = "Quote doesn't exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
     })
     public Response duplicateQuote( @Parameter(required = true)	@PathParam("quoteCode") String quoteCode, @Parameter(required = true)	@PathParam("quoteVersion") int quoteversion);
     /*
@@ -325,8 +325,19 @@ public interface CpqQuoteRs {
             @ApiResponse(responseCode="200", description = "quote item is succeffully deleted",content = @Content(schema = @Schema(implementation = GetQuoteOfferDtoResponse.class)))
     })
     public Response findQuoteItem(@Parameter(description = "", required = true) @PathParam("quoteOfferId") Long quoteOfferId); */
-    
 
+    @POST
+    @Path("/quoteVersions/{quoteCode}/{quoteVersion}/duplication")
+    @Operation(summary = "this endpoint allow you to duplicate a quote version",
+    tags = { "Quote management" },
+    description ="duplicate quote version and their related entities",
+    responses = {
+            @ApiResponse(responseCode="200", description = "quote version  is succeffully duplicated",content = @Content(schema = @Schema(implementation = GetQuoteVersionDtoResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Quote version doesn't exist", content = @Content(schema = @Schema(implementation = EntityDoesNotExistsException.class)))
+    })
+    public Response duplicateQuoteVersion( @Parameter(required = true)	@PathParam("quoteCode") String quoteCode, @Parameter(required = true)	@PathParam("quoteVersion") int quoteversion);
+    
+    
     @POST
     @Path("/quoteVersions/{quoteCode}/{quoteVersion}/quotation")
     @Operation(summary = "Get quote quotation",

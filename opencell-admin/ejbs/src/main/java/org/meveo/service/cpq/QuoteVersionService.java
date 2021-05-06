@@ -1,7 +1,6 @@
 package org.meveo.service.cpq;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -10,13 +9,12 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
 import org.meveo.service.quote.QuoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +33,8 @@ public class QuoteVersionService extends PersistenceService<QuoteVersion>   {
 	private final String MISSING_QUOTE_VERSION = "Missing quote version for code %d";
 	private final String QUOTE_VERSION_STATUS_NOT_DRAFT = "you can not publish a quote version with status %s, the status must be DRAFT";
 	private final String QUOTE_VERSION_ALREADY_CLOSED = "Quote version code %d is already closed";
+
+	@Inject private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
 	
 //	private final String QUOTE_VERSION_ALREADY_EXIST_ALREADY = "Violation contraint : quote version code %s and version %d exist already";
 	
@@ -177,20 +177,30 @@ public class QuoteVersionService extends PersistenceService<QuoteVersion>   {
 		final QuoteVersion q = this.findById(idQuoteVersion);
 		if(q == null) 
 			throw new BusinessException(String.format(MISSING_QUOTE_VERSION, idQuoteVersion));
-		
+		final QuoteVersion duplicate = populateQuoteVersionDuplicated(q);
+		this.create(duplicate);
+		return duplicate;
+	}
+
+	
+	/**
+	 * @param idQuoteVersion
+	 * @return
+	 * @throws BusinessException
+	 */
+	public QuoteVersion duplicate(CpqQuote quote, QuoteVersion quoteVersion){
+		return catalogHierarchyBuilderService.duplicateQuoteVersion(quote, quoteVersion);
+	}
+	
+	private QuoteVersion populateQuoteVersionDuplicated(QuoteVersion quoteVersion) {
 		final QuoteVersion duplicate = new QuoteVersion();
-		
-		duplicate.setInvoicingPlan(q.getInvoicingPlan());
-		duplicate.setEndDate(q.getEndDate());
-		duplicate.setId(q.getId());
-		duplicate.setQuote(q.getQuote());
-		duplicate.setStartDate(q.getStartDate());
+		duplicate.setInvoicingPlan(quoteVersion.getInvoicingPlan());
+		duplicate.setEndDate(quoteVersion.getEndDate());
+		duplicate.setQuote(quoteVersion.getQuote());
+		duplicate.setStartDate(quoteVersion.getStartDate());
 		duplicate.setStatus(VersionStatusEnum.DRAFT);
 		duplicate.setStatusDate(Calendar.getInstance().getTime());
 		duplicate.setVersion(NEW_VERSION);
-		
-		this.create(duplicate);
-		
-		return duplicate;
+		return  duplicate;
 	}
 }

@@ -81,7 +81,7 @@ public class DiscountPlanItemApi extends BaseApi {
     private PricePlanMatrixService pricePlanMatrixService;
 
     @Inject
-    private AccountingArticleService accountingArticleService;
+    private AccountingArticleService accountingArticleService; 
 
 
     /**
@@ -328,6 +328,13 @@ public class DiscountPlanItemApi extends BaseApi {
         if (pricePlanMatrix == null)
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, source.getPricePlanMatrixCode());
         discountPlanItem.setPricePlanMatrix(pricePlanMatrix);
+        }
+        
+        if (!StringUtils.isBlank(source.getAccountingArticleCode())) {
+        	AccountingArticle accountingArticle = accountingArticleService.findByCode(source.getAccountingArticleCode());
+        	if (accountingArticle == null)
+        		throw new EntityDoesNotExistsException(AccountingArticle.class, source.getAccountingArticleCode());
+        	discountPlanItem.setAccountingArticle(accountingArticle);
         }
 
         processAccountingArticles(source,discountPlanItem);

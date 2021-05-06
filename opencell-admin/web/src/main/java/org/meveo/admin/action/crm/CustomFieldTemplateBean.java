@@ -53,6 +53,7 @@ import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEn
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.security.Role;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
@@ -214,7 +215,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
                 .filter(businessEntity -> !Modifier.isAbstract(businessEntity.getModifiers()))
                 .map(businessEntity -> new CustomizedEntity(businessEntity))
                 .collect(Collectors.toSet());
-        Set<CustomizedEntity> noBusinessEntities = Set.of( new CustomizedEntity(User.class), new CustomizedEntity(Role.class) );
+        Set<CustomizedEntity> noBusinessEntities = Set.of( new CustomizedEntity(User.class), new CustomizedEntity(Role.class), new CustomizedEntity(QuoteVersion.class) );
 
         allClassName.addAll(customizedBusinessEntities);
         allClassName.addAll(customizedEntityService.getCustomizedEntities("", true, true, false, null, null));

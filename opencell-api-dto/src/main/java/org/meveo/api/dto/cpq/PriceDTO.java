@@ -71,16 +71,23 @@ public class PriceDTO extends BaseEntityDto {
 	public PriceDTO(QuotePrice quotePrice) {
 		super();
 		priceType=quotePrice.getPriceTypeEnum();
-        amountWithtax=quotePrice.getAmountWithTax();
 	    unitPriceWithoutTax=quotePrice.getUnitPriceWithoutTax();
-	    amountWithoutTax=quotePrice.getAmountWithoutTax();
-	    amountWithoutTaxWithDiscount=quotePrice.getAmountWithoutTaxWithDiscount();
 	    taxAmount=quotePrice.getTaxAmount();
 	    taxRate=quotePrice.getTaxRate();
 	    priceOverCharged=quotePrice.getPriceOverCharged();
 	    currencyCode=quotePrice.getCurrencyCode();
 	    recurrenceDuration=quotePrice.getRecurrenceDuration();
 	    recurrencePeriodicity=quotePrice.getRecurrencePeriodicity();
+		if(recurrenceDuration != null){
+			amountWithtax=quotePrice.getAmountWithTax().multiply(BigDecimal.valueOf(recurrenceDuration));
+			amountWithoutTax=quotePrice.getAmountWithoutTax().multiply(BigDecimal.valueOf(recurrenceDuration));
+			amountWithoutTaxWithDiscount=quotePrice.getAmountWithoutTaxWithDiscount() != null ? quotePrice.getAmountWithoutTaxWithDiscount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null;
+		}else {
+			amountWithtax=quotePrice.getAmountWithTax();
+			amountWithoutTax=quotePrice.getAmountWithoutTax();
+			amountWithoutTaxWithDiscount=quotePrice.getAmountWithoutTaxWithDiscount();
+		}
+
 	    chargeCode=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getCode():null;
 	    chargeLabel=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getDescription():null;
 		

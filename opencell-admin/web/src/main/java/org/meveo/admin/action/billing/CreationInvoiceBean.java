@@ -644,6 +644,9 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 }
             }
 
+            invoiceCopy.setId(null);
+            invoiceCopy.assignTemporaryInvoiceNumber();
+            serviceSingleton.assignInvoiceNumberVirtual(invoiceCopy);
             getPersistenceService().create(invoiceCopy);
 
             for (RatedTransaction rtCopy : ratedTransactionCopy) {
@@ -1082,6 +1085,11 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     public boolean isCanAddLinkedInvoice() {
         return true;// entity.getBillingAccount() != null && entity.getInvoiceType() != null;
+    }
+
+    @Override
+    public String back() {
+        return "/pages/billing/invoicing/billingRuns.xhtml&faces-redirect=true";
     }
 
     /*
