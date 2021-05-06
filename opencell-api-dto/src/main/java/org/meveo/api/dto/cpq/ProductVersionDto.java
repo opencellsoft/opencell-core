@@ -111,13 +111,13 @@ public class ProductVersionDto extends BaseEntityDto {
          if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
          this.attributeCodes = productVersion.getAttributes()
                  .stream()
-                 .map(tag -> tag.getCode())
+                 .map(attribute -> attribute.getCode())
                  .collect(Collectors.toSet());
          }
          if(productVersion.getGroupedAttributes() != null && !productVersion.getGroupedAttributes().isEmpty()) {
          this.groupedAttributeCodes = productVersion.getGroupedAttributes()
                  .stream()
-                 .map(tag -> tag.getCode())
+                 .map(groupedAttribute -> groupedAttribute.getCode())
                  .collect(Collectors.toSet());
          }
     }
