@@ -17,22 +17,7 @@
  */
 package org.meveo.service.generic.wf;
 
-import static org.meveo.admin.job.GenericWorkflowJob.GENERIC_WF;
-import static org.meveo.admin.job.GenericWorkflowJob.IWF_ENTITY;
-import static org.meveo.admin.job.GenericWorkflowJob.WF_ACTUAL_TRANSITION;
-import static org.meveo.admin.job.GenericWorkflowJob.WF_INS;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-
+import com.google.common.collect.Maps;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -48,7 +33,20 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 
-import com.google.common.collect.Maps;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.meveo.admin.job.GenericWorkflowJob.GENERIC_WF;
+import static org.meveo.admin.job.GenericWorkflowJob.IWF_ENTITY;
+import static org.meveo.admin.job.GenericWorkflowJob.WF_ACTUAL_TRANSITION;
+import static org.meveo.admin.job.GenericWorkflowJob.WF_INS;
 
 @Stateless
 public class GWFTransitionService extends PersistenceService<GWFTransition> {
@@ -120,7 +118,7 @@ public class GWFTransitionService extends PersistenceService<GWFTransition> {
     
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public WorkflowInstance executeTransition(GWFTransition transition, BusinessEntity entity,
+    public  synchronized WorkflowInstance executeTransition(GWFTransition transition, BusinessEntity entity,
             WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
         
         log.debug("Processing transition: {} on entity {}", transition, workflowInstance);
@@ -131,6 +129,7 @@ public class GWFTransitionService extends PersistenceService<GWFTransition> {
         if (transition.getActionScript() != null) {
             executeActionScript(entity, workflowInstance, genericWorkflow, transition);
         }
+        log.trace("Entity status will be updated to {}. Entity {}", workflowInstance, transition.getToStatus());
         WFStatus toStatus = wfStatusService.findByCodeAndGWF(transition.getToStatus(), genericWorkflow);
         workflowInstance.setCurrentStatus(toStatus);
         workflowInstance = workflowInstanceService.update(workflowInstance);
@@ -148,7 +147,7 @@ public class GWFTransitionService extends PersistenceService<GWFTransition> {
         return wfHistory;
     }
     
-    public void executeActionScript(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow, GWFTransition gWFTransition) {
+    public synchronized void executeActionScript(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow, GWFTransition gWFTransition) {
         ScriptInstance scriptInstance = gWFTransition.getActionScript();
         String scriptCode = scriptInstance.getCode();
         ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
