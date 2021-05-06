@@ -8843,5 +8843,8 @@ public class OrderAdvancement extends ModuleScript {
             <column name="uuid" />
 		</dropColumn>
     </changeSet>
-    
+
+    <changeSet id="#6076_20210504" author="Zbariki">
+        <modifyDataType columnName="decimal_separator" newDataType="varchar(1)" tableName="dwh_report_extract"/>
+    </changeSet>
 </databaseChangeLog>
