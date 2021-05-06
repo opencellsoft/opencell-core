@@ -3326,8 +3326,12 @@ END $$;]]>
         <addColumn tableName="billing_service_instance">
             <column name="calendar_init_date" type="datetime" />
         </addColumn>
-        <addColumn tableName="billing_service_instance">
+    </changeSet>
+    
+    <changeSet id="#6078_20210506" author="MounirBOUKAYOUA">
+    	<addColumn tableName="billing_service_instance">
             <column name="offer_change_prorata" type="${type.boolean}" />
         </addColumn>
     </changeSet>
+    
 </databaseChangeLog>
