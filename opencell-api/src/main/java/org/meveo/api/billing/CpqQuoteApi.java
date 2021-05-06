@@ -540,7 +540,6 @@ public class CpqQuoteApi extends BaseApi {
         if(!allStatus.contains(quoteDto.getStatus().toLowerCase())) {
 			throw new MeveoApiException("Status is invalid, here is the list of available status : " + allStatus);
 		}
-        quote.setStatus(quoteDto.getStatus());
         quote.setDescription(quoteDto.getDescription());
         quote.setQuoteDate(quote.getQuoteDate());
         if(!Strings.isEmpty(quoteDto.getBillableAccountCode())) {

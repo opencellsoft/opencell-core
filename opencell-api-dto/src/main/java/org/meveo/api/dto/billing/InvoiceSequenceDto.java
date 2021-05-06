@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.model.billing.InvoiceSequence;
+import org.meveo.model.sequence.SequenceTypeEnum;
 
 /**
  * The Class InvoiceSequenceDto.
@@ -43,6 +44,10 @@ public class InvoiceSequenceDto extends BusinessEntityDto {
     /** The current invoice nb. */
     private Long currentInvoiceNb;
 
+    private String sequencePattern;
+
+    private SequenceTypeEnum sequenceType;
+
 
     /**
      * Instantiates a new invoice type dto.
@@ -60,6 +65,8 @@ public class InvoiceSequenceDto extends BusinessEntityDto {
         super(invoiceSequence);
         this.sequenceSize = invoiceSequence.getSequenceSize();
         this.currentInvoiceNb = invoiceSequence.getCurrentNumber();
+        this.sequencePattern = invoiceSequence.getSequencePattern();
+        this.sequenceType = invoiceSequence.getSequenceType();
     }
 
     public Integer getSequenceSize() {
@@ -78,7 +85,23 @@ public class InvoiceSequenceDto extends BusinessEntityDto {
 		this.currentInvoiceNb = currentInvoiceNb;
 	}
 
-	@Override
+    public String getSequencePattern() {
+        return sequencePattern;
+    }
+
+    public void setSequencePattern(String sequencePattern) {
+        this.sequencePattern = sequencePattern;
+    }
+
+    public SequenceTypeEnum getSequenceType() {
+        return sequenceType;
+    }
+
+    public void setSequenceType(SequenceTypeEnum sequenceType) {
+        this.sequenceType = sequenceType;
+    }
+
+    @Override
     public String toString() {
         return "InvoiceSequenceDto [code=" + getCode() + ", description=" + getDescription() + ", sequenceSize=" + getSequenceSize() + ", sequenceSize=" + getSequenceSize() + "]";
     }

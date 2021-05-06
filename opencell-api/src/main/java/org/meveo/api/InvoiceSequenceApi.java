@@ -80,6 +80,8 @@ public class InvoiceSequenceApi extends BaseApi {
         invoiceSequence.setDescription(postData.getDescription());
         invoiceSequence.setCurrentNumber(postData.getCurrentInvoiceNb());
         invoiceSequence.setSequenceSize(postData.getSequenceSize());
+        invoiceSequence.setSequenceType(postData.getSequenceType());
+        invoiceSequence.setSequencePattern(postData.getSequencePattern());
         invoiceSequenceService.create(invoiceSequence);
         return result;
     }
@@ -106,6 +108,8 @@ public class InvoiceSequenceApi extends BaseApi {
         invoiceSequence.setSequenceSize(invoiceSequenceDto.getSequenceSize());
         invoiceSequence.setDescription(invoiceSequenceDto.getDescription());
         invoiceSequence.setCurrentNumber(invoiceSequenceDto.getCurrentInvoiceNb());
+        invoiceSequence.setSequenceType(invoiceSequenceDto.getSequenceType());
+        invoiceSequence.setSequencePattern(invoiceSequenceDto.getSequencePattern());
         
         invoiceSequenceService.update(invoiceSequence);
         return result;

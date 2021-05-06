@@ -99,6 +99,14 @@ public class CpqQuote extends BusinessEntity  {
     @Column(name = "status", length = 20, nullable = false)
     @NotNull
     private String status = QuoteStatusEnum.IN_PROGRESS.toString();
+
+	/**
+	 * Order processing previeuw status as defined by the workflow.
+	 */
+	@Column(name = "previews_status", length = 20, nullable = false)
+	@NotNull
+	private String previewsStatus = QuoteStatusEnum.IN_PROGRESS.toString();
+
 	/**
 	 * statusDate
 	 */
@@ -403,6 +411,7 @@ public class CpqQuote extends BusinessEntity  {
 	 * @param status the status to set
 	 */
 	public void setStatus(String status) {
+		this.previewsStatus = this.status;
 		this.status = status;
 	}
 	/**
@@ -479,5 +488,13 @@ public class CpqQuote extends BusinessEntity  {
 	 */
 	public void setPdfFilename(String pdfFilename) {
 		this.pdfFilename = pdfFilename;
-	}	
+	}
+
+	public String getPreviewsStatus() {
+		return previewsStatus;
+	}
+
+	public void setPreviewsStatus(String previewsStatus) {
+		this.previewsStatus = previewsStatus;
+	}
 }
