@@ -139,18 +139,20 @@ public class QuoteValidationTemp extends ModuleScript {
 		//order.setCfValues(quoteVersion.getCfValues());
 		var customFieldsFromQuoteVersion = quoteVersion.getCfValues();
 		var customFieldOrder = customFieldTemplateService.findByAppliesTo(order);
-		customFieldsFromQuoteVersion.getValues().forEach( (key,value) -> {
-			CustomFieldTemplate template = customFieldOrder.get(key);
-			if(template != null && template.isUseInheritedAsDefaultValue()) {
-				LOGGER.info("found inherent custom field code : " + template.getCode() + " , type : " + template.getFieldType());
-				CustomFieldTemplate templateQuoteVersion = customFieldOrder.get(key);
-				if(templateQuoteVersion == null)
-					throw new BusinessException("No Custom field ("+key+") found for : Quote version");
-				if(template.getFieldType() != templateQuoteVersion.getFieldType())
-					throw new BusinessException("No Custom field ("+key+") for Quote version has different type for Order");
-				customFieldInstanceService.setCFValue(order, key, value);
-			}
-		});
+		if(customFieldsFromQuoteVersion != null && customFieldsFromQuoteVersion.getValues() != null && !customFieldsFromQuoteVersion.getValues().isEmpty()) {
+			customFieldsFromQuoteVersion.getValues().forEach( (key,value) -> {
+				CustomFieldTemplate template = customFieldOrder.get(key);
+				if(template != null && template.isUseInheritedAsDefaultValue()) {
+					LOGGER.info("found inherent custom field code : " + template.getCode() + " , type : " + template.getFieldType());
+					CustomFieldTemplate templateQuoteVersion = customFieldOrder.get(key);
+					if(templateQuoteVersion == null)
+						throw new BusinessException("No Custom field ("+key+") found for : Quote version");
+					if(template.getFieldType() != templateQuoteVersion.getFieldType())
+						throw new BusinessException("No Custom field ("+key+") for Quote version has different type for Order");
+					customFieldInstanceService.setCFValue(order, key, value);
+				}
+			});
+		}
 		
 		commercialOrderService.create(order);
 		return order;

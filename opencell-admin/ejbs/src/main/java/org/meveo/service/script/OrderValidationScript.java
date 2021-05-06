@@ -59,7 +59,6 @@ public class OrderValidationScript extends Script {
 
         for(OrderOffer offer : validOffers){
             Subscription subscription = new Subscription();
-            subscription.setCode(UUID.randomUUID().toString());
             subscription.setSeller(order.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
 
             subscription.setOffer(offer.getOfferTemplate());
@@ -69,6 +68,7 @@ public class OrderValidationScript extends Script {
             subscription.setRenewed(true);
             subscription.setUserAccount(order.getUserAccount());
             subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
+            subscription.setCode(subscription.getSeller().getCode() + "_" + subscription.getUserAccount().getCode() + "_" + offer.getId());
 
             subscriptionService.create(subscription);
 
