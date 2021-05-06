@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.security.Role;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.custom.CustomizedEntity;
@@ -88,7 +89,7 @@ public class CustomFieldTemplateBeaTest {
 		                .map(businessEntity -> new CustomizedEntity(businessEntity))
 		                .map(customizedEntity -> customizedEntity.getClassnameToDisplay())
 		                .collect(Collectors.toList());
-        list.addAll(List.of(User.class.getName(), Role.class.getName()));
+        list.addAll(List.of(User.class.getName(), Role.class.getName(), QuoteVersion.class.getName()));
         return list;
     }
 
