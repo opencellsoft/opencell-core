@@ -42,7 +42,6 @@ import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.mediation.CDRRejectionCauseEnum;
 import org.meveo.model.rating.CDR;
@@ -194,7 +193,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createEdrs(CDR cdr) throws CDRParsingException, BusinessException {
 		List<EDR> edrs = getEDRList(cdr);
-		if (edrs != null && edrs.size() > 0) {
+		if (edrs != null && !edrs.isEmpty()) {
 			for (EDR edr : edrs) {
 				createEdr(edr, cdr);
 			}
@@ -203,8 +202,8 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	
 	@JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void createEdrs(List<EDR> edrs, CDR cdr) throws CDRParsingException, BusinessException {
-        if (edrs != null && edrs.size() > 0) {
+    public void createEdrs(List<EDR> edrs, CDR cdr) throws BusinessException {
+        if (edrs != null && !edrs.isEmpty()) {
             createEdr(edrs.get(0),cdr);
             for (int i = 1; i < edrs.size(); i++) {
                 createEdr(edrs.get(i));
@@ -304,9 +303,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	 */
 	public EDR getEDRForVirtual(CDR cdr, Subscription subscription) throws CDRParsingException {
 
-		EDR edr = cdrToEdr(cdr, null, subscription);
-
-		return edr;
+		return cdrToEdr(cdr, null, subscription);
 	}
 
 	/**
@@ -377,7 +374,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
 
 		List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
-		if (accesses == null || accesses.size() == 0) {
+		if (accesses == null || accesses.isEmpty()) {
 			rejectededCdrEventProducer.fire(cdr);
 			throw new InvalidAccessException(cdr, CDRRejectionCauseEnum.ACCESS_NOT_FOUND);
 		}

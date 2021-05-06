@@ -32,11 +32,9 @@ import javax.inject.Named;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
@@ -267,7 +265,7 @@ public class MEVEOCdrParser implements ICdrParser {
     @Override
     public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
         List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
-        if (accesses == null || accesses.size() == 0) {
+        if (accesses == null || accesses.isEmpty()) {
             rejectededCdrEventProducer.fire(cdr);
             throw new InvalidAccessException(cdr);
         }
