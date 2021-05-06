@@ -1233,7 +1233,7 @@ public class CatalogHierarchyBuilderService {
     }
     
     
-    public void duplicateQuoteVersion(CpqQuote entity, QuoteVersion quoteVersion) {
+    public QuoteVersion duplicateQuoteVersion(CpqQuote entity, QuoteVersion quoteVersion) {
     	final QuoteVersion duplicate = new QuoteVersion();
     	breakLazyLoadForQuoteVersion(quoteVersion);
     	quoteVersionService.detach(quoteVersion);
@@ -1252,6 +1252,7 @@ public class CatalogHierarchyBuilderService {
     	
     	quoteVersionService.create(duplicate);
     	duplicateQuoteOffer(quoteOffer, duplicate);
+    	return duplicate;
     }
     
     private void duplicateQuoteOffer(List<QuoteOffer> offers, QuoteVersion entity) {
