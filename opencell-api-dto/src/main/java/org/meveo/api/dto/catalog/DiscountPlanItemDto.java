@@ -171,6 +171,13 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
     
     
     /**
+     * accounting article code
+     */
+    @Schema(description = "accounting article code")
+    private String accountingArticleCode;
+    
+    
+    /**
      * Instantiates a new discount plan item dto.
      */
     public DiscountPlanItemDto() {
@@ -203,6 +210,7 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
         customFields = customFieldInstances;
         this.description = discountPlanItem.getDescription();
         this.priority=discountPlanItem.getPriority();
+        this.accountingArticleCode= discountPlanItem.getAccountingArticle() != null ? discountPlanItem.getAccountingArticle().getCode() : null;
     }
 
     /**
@@ -478,6 +486,16 @@ public class DiscountPlanItemDto extends BaseEntityDto implements IEnableDto {
 	public void setPriority(Long priority) {
 		this.priority = priority;
 	}
+
+	public String getAccountingArticleCode() {
+		return accountingArticleCode;
+	}
+
+	public void setAccountingArticleCode(String accountingArticleCode) {
+		this.accountingArticleCode = accountingArticleCode;
+	}
+	
+	
 	
 	
 
