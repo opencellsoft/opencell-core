@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.cpq.QuoteOfferDTO;
 import org.meveo.api.dto.cpq.QuoteVersionDto;
@@ -51,6 +52,10 @@ public class GetQuoteVersionDtoResponse extends QuoteVersionDto{
 	public GetQuoteVersionDtoResponse(QuoteVersion q) {
 		super(q);
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+	}
+	public GetQuoteVersionDtoResponse(QuoteVersion q, CustomFieldsDto customFieldsDto) {
+		this(q);
+		this.customFields = customFieldsDto;
 	}
 	public GetQuoteVersionDtoResponse() {
 		super();

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.CpqQuote;
@@ -22,12 +24,15 @@ import org.meveo.model.cpq.commercial.OrderPrice;
 import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.OrderType;
 import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.cpq.QuoteVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
@@ -40,6 +45,8 @@ import org.meveo.service.cpq.order.OrderProductService;
 import org.meveo.service.cpq.order.OrderTypeService;
 import org.meveo.service.cpq.order.QuotePriceService;
 import org.meveo.service.crm.impl.CurrentUserProducer;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.script.module.ModuleScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +68,8 @@ public class QuoteValidationTemp extends ModuleScript {
     private QuotePriceService quotePriceService = (QuotePriceService) getServiceInterface(QuotePriceService.class.getSimpleName());
     private OrderTypeService orderTypeService = (OrderTypeService) getServiceInterface(OrderTypeService.class.getSimpleName());
     private MeveoUser currentUser = ((CurrentUserProducer) getServiceInterface(CurrentUserProducer.class.getSimpleName())).getCurrentUser();
-
+    private CustomFieldInstanceService customFieldInstanceService = (CustomFieldInstanceService) getServiceInterface(CustomFieldInstanceService.class.getSimpleName());
+    private CustomFieldTemplateService customFieldTemplateService = (CustomFieldTemplateService) getServiceInterface(CustomFieldTemplateService.class.getSimpleName());
 	
 	@Override
 	public void execute(Map<String, Object> methodContext) throws BusinessException {
@@ -127,6 +135,23 @@ public class QuoteValidationTemp extends ModuleScript {
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		order.setProgressDate(Calendar.getInstance().getTime());
 		order.setUserAccount(account.getUsersAccounts().size() > 0 ? account.getUsersAccounts().get(0) : null);
+		order.setQuoteVersion(quoteVersion);
+		//order.setCfValues(quoteVersion.getCfValues());
+		var customFieldsFromQuoteVersion = quoteVersion.getCfValues();
+		var customFieldOrder = customFieldTemplateService.findByAppliesTo(order);
+		customFieldsFromQuoteVersion.getValues().forEach( (key,value) -> {
+			CustomFieldTemplate template = customFieldOrder.get(key);
+			if(template != null && template.isUseInheritedAsDefaultValue()) {
+				LOGGER.info("found inherent custom field code : " + template.getCode() + " , type : " + template.getFieldType());
+				CustomFieldTemplate templateQuoteVersion = customFieldOrder.get(key);
+				if(templateQuoteVersion == null)
+					throw new BusinessException("No Custom field ("+key+") found for : Quote version");
+				if(template.getFieldType() != templateQuoteVersion.getFieldType())
+					throw new BusinessException("No Custom field ("+key+") for Quote version has different type for Order");
+				customFieldInstanceService.setCFValue(order, key, value);
+			}
+		});
+		
 		commercialOrderService.create(order);
 		return order;
 	}

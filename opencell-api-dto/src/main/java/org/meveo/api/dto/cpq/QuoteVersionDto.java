@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import org.meveo.api.dto.BaseEntityDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuoteVersion;
@@ -59,6 +60,9 @@ public class QuoteVersionDto extends BaseEntityDto {
 	/** billing code */
     @Schema(description = "The code of the billing plan")
 	private String billingPlanCode;
+
+	@Schema(description = "The custom fields")
+    protected CustomFieldsDto customFields;
 
 	/**
 	 * Instantiates a new product version dto.
@@ -186,6 +190,20 @@ public class QuoteVersionDto extends BaseEntityDto {
 	 */
 	public void setBillingPlanCode(String billingPlanCode) {
 		this.billingPlanCode = billingPlanCode;
+	}
+
+	/**
+	 * @return the customFields
+	 */
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	/**
+	 * @param customFields the customFields to set
+	 */
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
 
 

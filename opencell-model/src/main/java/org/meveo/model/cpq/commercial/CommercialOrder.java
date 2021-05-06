@@ -38,8 +38,11 @@ import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.contract.Contract;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.Order;
+import org.meveo.model.quote.QuoteStatusEnum;
+import org.meveo.model.quote.QuoteVersion;
 
 
 /** 
@@ -51,7 +54,7 @@ import org.meveo.model.order.Order;
 @WorkflowedEntity
 @Entity
 @Table(name = "cpq_commercial_order")
-@CustomFieldEntity(cftCodePrefix = "CommercialOrder",inheritCFValuesFrom = "quote")
+@CustomFieldEntity(cftCodePrefix = "CommercialOrder",inheritCFValuesFrom = {"quoteVersion"})
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_commercial_order_seq")})
 public class CommercialOrder extends AuditableCFEntity implements IBillableEntity  {
@@ -209,13 +212,15 @@ public class CommercialOrder extends AuditableCFEntity implements IBillableEntit
 	
     @Column(name = "oneshot_total_amount")
     private BigDecimal oneShotTotalAmount;
+    
+    @Transient
+    private QuoteVersion quoteVersion;
 	
     
     @Override
 	public ICustomFieldEntity[] getParentCFEntities() {
-		if (quote != null) {
-			return new ICustomFieldEntity[] { quote };
-		}
+		if(quoteVersion != null && quoteVersion.getStatus().equals(VersionStatusEnum.PUBLISHED))
+			return new ICustomFieldEntity[] { quoteVersion };
 		return null;
 	}
     
@@ -723,6 +728,20 @@ public class CommercialOrder extends AuditableCFEntity implements IBillableEntit
 	public void setMinInvoiceLines(List<InvoiceLine> invoiceLines) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	/**
+	 * @return the quoteVersion
+	 */
+	public QuoteVersion getQuoteVersion() {
+		return quoteVersion;
+	}
+
+	/**
+	 * @param quoteVersion the quoteVersion to set
+	 */
+	public void setQuoteVersion(QuoteVersion quoteVersion) {
+		this.quoteVersion = quoteVersion;
 	}
 	
 	
