@@ -311,7 +311,7 @@ public class ProductService extends BusinessService<Product> {
 			throw new EntityDoesNotExistsException(Product.class,codeProduct);
 		} 
 		
-		if(product.getCommercialRuleHeader().isEmpty() || product.getCommercialRuleLines().isEmpty()) {
+		if(!product.getCommercialRuleHeader().isEmpty() || !product.getCommercialRuleLines().isEmpty()) {
 			throw new MeveoApiException("Product ("+codeProduct+") can not be deleted. There are rules applied to this product");
 		}
 
