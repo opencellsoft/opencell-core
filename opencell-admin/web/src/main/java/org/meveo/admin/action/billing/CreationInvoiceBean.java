@@ -50,18 +50,7 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.CategoryInvoiceAgregate;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceAgregate;
-import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.model.billing.TaxInvoiceAgregate;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.order.Order;
@@ -606,6 +595,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
             }
             invoiceCopy.setId(null);
             invoiceCopy.assignTemporaryInvoiceNumber();
+            serviceSingleton.assignInvoiceNumberVirtual(invoiceCopy);
             getPersistenceService().create(invoiceCopy);
 
             for (RatedTransaction rtCopy : ratedTransactionCopy) {
@@ -1020,6 +1010,11 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
     public boolean isCanAddLinkedInvoice() {
         return true;// entity.getBillingAccount() != null && entity.getInvoiceType() != null;
+    }
+
+    @Override
+    public String back() {
+        return "/pages/billing/invoicing/billingRuns.xhtml&faces-redirect=true";
     }
 
     /*
