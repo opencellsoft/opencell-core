@@ -3903,5 +3903,9 @@ END $$;]]>
             <column name="maximum_line" type="bigint" defaultValueNumeric="0" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#6076_20210504" author="Zbariki">
+        <modifyDataType columnName="decimal_separator" newDataType="varchar(5)" tableName="dwh_report_extract"/>
+    </changeSet>
 
 </databaseChangeLog>
