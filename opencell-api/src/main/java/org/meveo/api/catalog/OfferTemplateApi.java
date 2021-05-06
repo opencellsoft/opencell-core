@@ -35,6 +35,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.billing.SubscriptionApi;
+import org.meveo.api.cpq.AttributeApi;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.CpqOfferDto;
@@ -53,6 +54,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
+import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -173,6 +175,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     
     @Inject
     private MediaService mediaService;
+    
+    @Inject
+    private AttributeApi attributeApi;
     
     
     @Override
@@ -793,14 +798,24 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         					  
         					for(ProductVersion productVersion : productVersionList) {  
         						if(productVersion.getValidity()!=null) {
-        								if(productVersion.getValidity().isCorrespondsToPeriod(new Date())) {
-        							if(requestedTagTypes!=null && !requestedTagTypes.isEmpty()) {
-        							   tags=productVersionService.getProductTagsByType(requestedTagTypes);
-        					           productVersion.setTags(new HashSet<Tag>(tags));
-        							}
-        							getProductVersionResponse =new GetProductVersionResponse(productVersion,loadAttributes, loadTags);
-        							productDTO.setCurrentProductVersion(getProductVersionResponse);
-        							break;
+        							if(productVersion.getValidity().isCorrespondsToPeriod(new Date())) {
+        								if(requestedTagTypes!=null && !requestedTagTypes.isEmpty()) {
+        									tags=productVersionService.getProductTagsByType(requestedTagTypes);
+        									productVersion.setTags(new HashSet<Tag>(tags));
+        								}
+
+        								getProductVersionResponse =new GetProductVersionResponse(productVersion,false,true);
+
+        								if(productVersion.getAttributes()!= null && !productVersion.getAttributes().isEmpty()) {
+        									Set<AttributeDTO> attributes = productVersion.getAttributes().stream().map(d -> {
+        										GetAttributeDtoResponse result =attributeApi.findByCode(d.getCode());
+        										return result;
+        									}).collect(Collectors.toSet());  
+
+        									getProductVersionResponse.setAttributes(attributes);
+        								}
+        								productDTO.setCurrentProductVersion(getProductVersionResponse);
+        								break;
         							}}
         					}  	
         				}
