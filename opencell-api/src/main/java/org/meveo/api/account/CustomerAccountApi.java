@@ -207,7 +207,9 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (businessAccountModel != null) {
             customerAccount.setBusinessAccountModel(businessAccountModel);
         }
-        customerAccount.setExcludedFromPayment(postData.isExcludedFromPayment());
+        if (postData.isExcludedFromPayment() != null) {
+            customerAccount.setExcludedFromPayment(postData.isExcludedFromPayment());
+        }
         customerAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
         customerAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
         if (postData.getInvoicingThreshold() != null) {
@@ -318,7 +320,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccount.setDueDateDelayELSpark(postData.getDueDateDelayELSpark());
         }
 
-        if (!StringUtils.isBlank(postData.isExcludedFromPayment())) {
+        if (postData.isExcludedFromPayment() != null) {
             customerAccount.setExcludedFromPayment(postData.isExcludedFromPayment());
         }
 
