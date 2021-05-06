@@ -452,7 +452,7 @@ public class CpqQuoteApi extends BaseApi {
                     String quoteXmlScript = scriptInstance.getCode();
                     ScriptInterface script = scriptInstanceService.getScriptInstance(quoteXmlScript);
                     Map<String, Object> methodContext = new HashMap<String, Object>();
-                    methodContext.put("quoteVersion", quoteVersion);
+                    methodContext.put("cpqQuote", quoteVersion.getQuote());
                     methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
                     methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
                     methodContext.put("XMLQuoteCreator", this);
@@ -1068,14 +1068,14 @@ public class CpqQuoteApi extends BaseApi {
                 .map(price -> {
                     QuotePrice quotePrice = price.get();
                     quotePriceService.create(quotePrice);
-                    pricesDTO.add(new PriceDTO(quotePrice));
                     if(quoteVersion.getQuote().getDiscountPlan()!=null) {
-                    	 List<QuotePrice> quotePrices=discountCalculator(quotePrice, quoteVersion.getQuote().getDiscountPlan(),quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(), quoteVersion);
-                         pricesDTO.addAll(populateToDTO(quotePrices));
+                        List<QuotePrice> quotePrices=discountCalculator(quotePrice, quoteVersion.getQuote().getDiscountPlan(),quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(), quoteVersion);
+                        pricesDTO.addAll(populateToDTO(quotePrices));
                     }
+                    pricesDTO.add(new PriceDTO(quotePrice));
                     return pricesDTO;
                 }).collect(Collectors.toList());
-         
+
          
       
         GetQuoteVersionDtoResponse response = new GetQuoteVersionDtoResponse(quoteVersion, true, true, true,true);

@@ -445,7 +445,7 @@ public class CommercialOrderApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderId);
 
 		if(order.getInvoicingPlan() != null)
-			throw new BusinessException("Order id: " + order.getId() + ", please go throw the validation plan in order to validate it");
+			throw new BusinessException("Order id: " + order.getId() + ", please go through the validation plan in order to validate it");
 
 		return validateOrder(order, false);
 	}
