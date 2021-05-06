@@ -6977,7 +6977,7 @@
             <column name="file_separator" type="varchar(1)" defaultValue="," />
             <column name="custom_table_code" type="varchar(255)" />
             <column name="accumulate" type="${type.boolean}" defaultValueNumeric="1" />
-            <column name="decimal_separator" type="character" defaultValue="." />
+            <column name="decimal_separator" type="varchar(1)" defaultValue="." />
             <column name="generate_empty_report" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="maximum_line" type="bigint" defaultValueNumeric="0" />
         </createTable>
@@ -15693,7 +15693,8 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#5595_540498_20210430" author="TarikFA." />
 	<changeSet id="#5595_540499_20210430" author="TarikFA." />
-	<changeSet id="#5595_540504_20210503" author="TarikFA." /> 
+	<changeSet id="#5595_540504_20210503" author="TarikFA." />
+    <changeSet id="#6076_20210504" author="Zbariki" />
     
     
     <!-- DONT REMOVE THIS CHANGESET -->

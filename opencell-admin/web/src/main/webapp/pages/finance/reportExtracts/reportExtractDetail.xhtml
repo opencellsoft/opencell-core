@@ -76,8 +76,8 @@
 					<hftl:formField label="#{messages['reportExtract.customTableCode']}" field="customTableCode" />
 					<hftl:formField label="#{messages['reportExtract.generateEmptyReport']}" field="generateEmptyReport" />
 					<hftl:formField label="#{messages['reportExtract.accumulate']}" field="accumulate" />
-					<hftl:formField label="#{messages['reportExtract.maximumLine']}" field="maximumLine" />
-					<hftl:formField label="#{messages['reportExtract.decimalSeparator']}" field="decimalSeparator" />
+					<hftl:formField label="#{messages['reportExtract.decimalSeparator']}" field="decimalSeparator" size="1" maxlength="1"/>
+					<hftl:formField label="#{messages['reportExtract.maximumLine']}" field="maximumLine" required="true"/>
 				</p:panel>
             </p:panelGrid>
             <ui:param name="buttons" value="true" />
