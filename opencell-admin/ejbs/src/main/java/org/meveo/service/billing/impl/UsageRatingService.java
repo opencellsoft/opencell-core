@@ -134,15 +134,6 @@ public class UsageRatingService implements Serializable {
     @Rejected
     private Event<Serializable> rejectedEdrProducer;
 
-    // @PreDestroy
-    // accessing Entity manager in predestroy is bugged in jboss7.1.3
-    /*
-     * void saveCounters() { for (Long key : MeveoCacheContainerProvider.getCounterCache().keySet()) { CounterInstanceCache counterInstanceCache = MeveoCacheContainerProvider.getCounterCache().get(key); if
-     * (counterInstanceCache.getCounterPeriods() != null) { for (CounterPeriodCache itemPeriodCache : counterInstanceCache .getCounterPeriods()) { if (itemPeriodCache.isDbDirty()) { CounterPeriod counterPeriod = em.find(
-     * CounterPeriod.class, itemPeriodCache.getCounterPeriodId()); counterPeriod.setValue(itemPeriodCache.getValue()); counterPeriod.getAuditable().setUpdated(new Date()); em.merge(counterPeriod);
-     * log.debug("save counter with id={}, new value={}", itemPeriodCache.getCounterPeriodId(), itemPeriodCache.getValue()); // calling ejb in this predestroy method just fail... // counterInstanceService
-     * .updatePeriodValue(itemPeriodCache.getCounterPeriodId (),itemPeriodCache.getValue()); } } } } }
-     */
 
     /**
      * This method first look if there is a counter and a counter period for an event date.
@@ -168,7 +159,6 @@ public class UsageRatingService implements Serializable {
             counterPeriod = counterInstanceService.getOrCreateCounterPeriod(usageChargeInstance.getCounter(), edr.getEventDate(), usageChargeInstance.getServiceInstance().getSubscriptionDate(), usageChargeInstance,
                 usageChargeInstance.getServiceInstance());
         }
-        // CachedCounterPeriod cachedCounterPeriod = ratingCacheContainerProvider.getCounterPeriod(usageChargeInstance.getCounter().getId(), edr.getEventDate());
 
         if (counterPeriod == null) {
             return new DeducedCounter();
@@ -189,7 +179,6 @@ public class UsageRatingService implements Serializable {
 
         // synchronized (this) {// cachedCounterPeriod) { TODO how to ensure one at a time update?
         counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterPeriod, quantityToDeduce, isVirtual);
-        // }
         // Quantity is not tracked in counter (no initial value)
         if (counterValueChangeInfo == null) {
             deducedQuantityInEDRUnit = edr.getQuantityLeftToRate();
@@ -255,7 +244,6 @@ public class UsageRatingService implements Serializable {
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
     private RatingResult rateEDRonChargeAndCounters(EDR edr, UsageChargeInstance usageChargeInstance, boolean isVirtual) throws BusinessException, RatingException {
-        // boolean stopEDRRating_fullyRated = false;
 
         BigDecimal deducedQuantity = null;
         DeducedCounter deducedCounter = null;
@@ -278,7 +266,7 @@ public class UsageRatingService implements Serializable {
             fullyRated = true;
         }
 
-        BigDecimal quantityToCharge = null;
+        BigDecimal quantityToCharge;
         if (useFullQuantity(deducedCounter)) {
             quantityToCharge = edr.getQuantityLeftToRate();
 
@@ -304,10 +292,7 @@ public class UsageRatingService implements Serializable {
         if (deducedCounter.getDeducedQuantity() == null) {
             return true;
         }
-        if (deducedCounter.getCounterPeriod() != null && deducedCounter.getCounterPeriod().getAccumulator() != null && deducedCounter.getCounterPeriod().getAccumulator()) {
-            return true;
-        }
-        return false;
+        return deducedCounter.getCounterPeriod() != null && deducedCounter.getCounterPeriod().getAccumulator() != null && deducedCounter.getCounterPeriod().getAccumulator();
     }
 
     /**
@@ -479,22 +464,21 @@ public class UsageRatingService implements Serializable {
                 throw new RatingException(EDRRejectReasonEnum.SUBSCRIPTION_IS_NULL);
             }
 
-            // edr.setLastUpdate(new Date());
-
             RatingResult ratedEDRResult = new RatingResult();
 
             List<UsageChargeInstance> usageChargeInstances = null;
 
             // Charges should be already ordered by priority and id (why id??)
-            if (edr.getSubscription().getId() != null) {
-                usageChargeInstances = usageChargeInstanceService.getUsageChargeInstancesValidForDateBySubscriptionId(edr.getSubscription().getId(), edr.getEventDate());
+            Long subscriptionId = edr.getSubscription().getId();
+            if (subscriptionId != null) {
+                usageChargeInstances = usageChargeInstanceService.getUsageChargeInstancesValidForDateBySubscriptionId(subscriptionId, edr.getEventDate());
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
-                    throw new NoChargeException("No active usage charges are associated with subscription " + edr.getSubscription().getId());
+                    throw new NoChargeException("No active usage charges are associated with subscription " + subscriptionId);
                 }
             } else if (edr.getSubscription().getServiceInstances() != null) {
                 usageChargeInstances = edr.getSubscription().getServiceInstances().stream().flatMap(si -> si.getUsageChargeInstances().stream()).collect(toList());
-                if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
-                    throw new NoChargeException("No usage charges are associated with subscription " + edr.getSubscription().getId());
+                if (usageChargeInstances.isEmpty()) {
+                    throw new NoChargeException("No usage charges are associated with subscription " + subscriptionId);
                 }
             }
 
@@ -604,7 +588,7 @@ public class UsageRatingService implements Serializable {
      */
     private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, boolean requirePP) throws BusinessException, NoPricePlanException {
 
-        UsageChargeTemplate chargeTemplate = null;
+        UsageChargeTemplate chargeTemplate;
         if (chargeInstance.getChargeTemplate() instanceof UsageChargeTemplate) {
             chargeTemplate = (UsageChargeTemplate) chargeInstance.getChargeTemplate();
         } else {
@@ -686,9 +670,7 @@ public class UsageRatingService implements Serializable {
 
         reservationService.create(reservation);
 
-        UsageChargeTemplate chargeTemplate = null;
-        for (UsageChargeInstance usageChargeInstance : charges) {
-            chargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
+        for (UsageChargeInstance usageChargeInstance : charges != null ? charges : null) {
 
             try {
                 if (isChargeMatch(usageChargeInstance, edr, true)) {
@@ -701,7 +683,6 @@ public class UsageRatingService implements Serializable {
                     }
                 }
             } catch (NoPricePlanException e) {
-                continue;
             }
         }
 
@@ -713,7 +694,7 @@ public class UsageRatingService implements Serializable {
     }
 
     private boolean matchExpression(UsageChargeInstance ci, String expression, EDR edr) throws BusinessException {
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
         userMap.put("edr", edr);
         userMap.put("ci", ci);
         return ValueExpressionWrapper.evaluateToBoolean(expression, userMap);
@@ -724,7 +705,7 @@ public class UsageRatingService implements Serializable {
         if (StringUtils.isBlank(expression)) {
             return result;
         }
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
         userMap.put("edr", edr);
         userMap.put("op", walletOperation);
         if (expression.indexOf(ValueExpressionWrapper.VAR_USER_ACCOUNT) >= 0) {
