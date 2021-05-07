@@ -164,9 +164,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
     @Inject
     private ContractItemService contractItemService;
 
-    private final static BigDecimal HUNDRED = new BigDecimal("100");
-
-//    private Map<String, String> descriptionMap = new HashMap<>();
+    final private static BigDecimal HUNDRED = new BigDecimal("100");
 
     /**
      * @param level level enum
@@ -300,32 +298,31 @@ public class RatingService extends PersistenceService<WalletOperation> {
         }
 
         if (isReservation) {
-            walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
-                    orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
-                    edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                    edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
+            if (orderNumberOverride != null)
+                walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
+                        orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride,
+                        edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
+                        edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
+            else
+                walletOperation = new WalletReservation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
+                        chargeInstance.getOrderNumber(),
+                        edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
+                        edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
         } else {
-            walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
-                    orderNumberOverride != null ? (orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride) : chargeInstance.getOrderNumber(),
-                    edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
-                    edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
+            if (orderNumberOverride != null)
+                walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
+                        orderNumberOverride.equals(ChargeInstance.NO_ORDER_NUMBER) ? null : orderNumberOverride,
+                        edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
+                        edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
+            else
+                walletOperation = new WalletOperation(chargeInstance, inputQuantity, quantityInChargeUnits, applicationDate,
+                        chargeInstance.getOrderNumber(),
+                        edr != null ? edr.getParameter1() : chargeInstance.getCriteria1(), edr != null ? edr.getParameter2() : chargeInstance.getCriteria2(), edr != null ? edr.getParameter3() : chargeInstance.getCriteria3(),
+                        edr != null ? edr.getParameter4() : null, null, startdate, endDate, null, invoicingDate);
         }
         walletOperation.setChargeMode(chargeMode);
         walletOperation.setFullRatingPeriod(fullRatingPeriod);
 
-        // String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
-        //
-        // String translationKey = "CT_" + chargeTemplate.getCode() + languageCode;
-        // String descTranslated = descriptionMap.get(translationKey);
-        // if (descTranslated == null) {
-        // descTranslated = (chargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : chargeInstance.getDescription();
-        // if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().get(languageCode) != null) {
-        // descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
-        // }
-        // descriptionMap.put(translationKey, descTranslated);
-        // }
-        //
-        // walletOperation.setDescription(descTranslated);
         Integer sortIndex = getSortIndex(walletOperation);
         walletOperation.setSortIndex(sortIndex);
         walletOperation.setEdr(edr);
@@ -441,7 +438,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                     newEdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), walletOperation, ua, null, edr));
                     newEdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), walletOperation, ua, null, edr));
                     newEdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua, null, edr));
-                    newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua, null, edr)));
+                    newEdr.setQuantity(BigDecimal.valueOf(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua, null, edr)));
 
                     Subscription sub = null;
 
@@ -487,7 +484,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                     cdr.setParameter2(evaluateStringExpression(triggeredEDRTemplate.getParam2El(), walletOperation, ua, null, edr));
                     cdr.setParameter3(evaluateStringExpression(triggeredEDRTemplate.getParam3El(), walletOperation, ua, null, edr));
                     cdr.setParameter4(evaluateStringExpression(triggeredEDRTemplate.getParam4El(), walletOperation, ua, null, edr));
-                    cdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua, null, edr)));
+                    cdr.setQuantity(BigDecimal.valueOf(evaluateDoubleExpression(triggeredEDRTemplate.getQuantityEl(), walletOperation, ua, null, edr)));
 
                     String url = "api/rest/billing/mediation/chargeCdr";
                     Response response = meveoInstanceService.callTextServiceMeveoInstance(url, meveoInstance, cdr.toCsv());
@@ -541,7 +538,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         } else {
 
             RecurringChargeTemplate recChargeTemplate = null;
-            if (chargeInstance != null && chargeInstance instanceof RecurringChargeInstance) {
+            if (chargeInstance instanceof RecurringChargeInstance) {
                 recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
             }
 
@@ -686,7 +683,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
                     } else {
                         unitPriceWithTaxOverriden = unitPriceWithTaxOverriden.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                     }
-                    log.info("charge is shared " + sharedQuantity + " times, so unit price is " + unitPriceWithoutTaxOverridden);
+                    log.info("charge is shared {} times, so unit price is {}", sharedQuantity, unitPriceWithoutTaxOverridden);
                 }
             }
             // Override wallet operation parameters using PP EL parameters
@@ -840,13 +837,12 @@ public class RatingService extends PersistenceService<WalletOperation> {
      */
     private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long buyerCountryId, TradingCurrency buyerCurrency) throws BusinessException {
         // FIXME: the price plan properties could be null !
-        // log.info("ratePrice rate " + bareOperation);
         Date startDate = bareOperation.getStartDate();
         Date endDate = bareOperation.getEndDate();
 
         RecurringChargeTemplate recChargeTemplate = null;
         ChargeInstance chargeInstance = bareOperation.getChargeInstance();
-        if (chargeInstance != null && chargeInstance instanceof RecurringChargeInstance) {
+        if (chargeInstance instanceof RecurringChargeInstance) {
             recChargeTemplate = ((RecurringChargeInstance) chargeInstance).getRecurringChargeTemplate();
         }
 
@@ -887,20 +883,16 @@ public class RatingService extends PersistenceService<WalletOperation> {
             int subscriptionAge = 0;
             Date operationDate = bareOperation.getOperationDate();
             if (subscriptionDate != null && operationDate != null) {
-                // logger.info("subscriptionDate=" +bareOperation.getSubscriptionDate() + "->" +DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(),-1));
                 subscriptionAge = DateUtils.monthsBetween(operationDate, DateUtils.addDaysToDate(subscriptionDate, -1));
             }
-            // log.info("subscriptionAge=" + subscriptionAge);
 
             boolean subscriptionMinAgeOK = pricePlan.getMinSubscriptionAgeInMonth() == null || subscriptionAge >= pricePlan.getMinSubscriptionAgeInMonth();
-            // log.info("subscriptionMinAgeOK(" + pricePlan.getMinSubscriptionAgeInMonth() + ")=" +subscriptionMinAgeOK);
             if (!subscriptionMinAgeOK) {
                 log.trace("The subscription age={} is less than the priceplan subscription age min={}", subscriptionAge, pricePlan.getMinSubscriptionAgeInMonth());
                 continue;
             }
             Long maxSubscriptionAgeInMonth = pricePlan.getMaxSubscriptionAgeInMonth();
             boolean subscriptionMaxAgeOK = maxSubscriptionAgeInMonth == null || maxSubscriptionAgeInMonth == 0 || subscriptionAge < maxSubscriptionAgeInMonth;
-            // log.debug("subscriptionMaxAgeOK(" + maxSubscriptionAgeInMonth + ")=" + subscriptionMaxAgeOK);
             if (!subscriptionMaxAgeOK) {
                 log.trace("The subscription age {} is greater than the priceplan subscription age max {}", subscriptionAge, maxSubscriptionAgeInMonth);
                 continue;
@@ -910,7 +902,6 @@ public class RatingService extends PersistenceService<WalletOperation> {
             Date endRatingDate = pricePlan.getEndRatingDate();
             boolean applicationDateInPricePlanPeriod = (startRatingDate == null || operationDate.after(startRatingDate) || operationDate.equals(startRatingDate))
                     && (endRatingDate == null || operationDate.before(endRatingDate));
-            // log.debug("applicationDateInPricePlanPeriod(" + startRatingDate + " - " + endRatingDate + ")=" + applicationDateInPricePlanPeriod);
             if (!applicationDateInPricePlanPeriod) {
                 log.trace("The application date {} is not in the priceplan application range {} - {}", operationDate, startRatingDate, endRatingDate);
                 continue;
@@ -918,7 +909,6 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
             String criteria1Value = pricePlan.getCriteria1Value();
             boolean criteria1SameInPricePlan = criteria1Value == null || criteria1Value.equals(bareOperation.getParameter1());
-            // log.info("criteria1SameInPricePlan(" + pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
             if (!criteria1SameInPricePlan) {
                 log.trace("The operation param1 {} is not compatible with price plan criteria 1: {}", bareOperation.getParameter1(), criteria1Value);
                 continue;
@@ -926,14 +916,12 @@ public class RatingService extends PersistenceService<WalletOperation> {
             String criteria2Value = pricePlan.getCriteria2Value();
             String parameter2 = bareOperation.getParameter2();
             boolean criteria2SameInPricePlan = criteria2Value == null || criteria2Value.equals(parameter2);
-            // log.info("criteria2SameInPricePlan(" + pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
             if (!criteria2SameInPricePlan) {
                 log.trace("The operation param2 {} is not compatible with price plan criteria 2: {}", parameter2, criteria2Value);
                 continue;
             }
             String criteria3Value = pricePlan.getCriteria3Value();
             boolean criteria3SameInPricePlan = criteria3Value == null || criteria3Value.equals(bareOperation.getParameter3());
-            // log.info("criteria3SameInPricePlan(" + pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
             if (!criteria3SameInPricePlan) {
                 log.trace("The operation param3 {} is not compatible with price plan criteria 3: {}", bareOperation.getParameter3(), criteria3Value);
                 continue;
@@ -963,7 +951,6 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 }
             }
 
-            // log.debug("offerCodeSameInPricePlan");
             BigDecimal maxQuantity = pricePlan.getMaxQuantity();
             BigDecimal quantity = bareOperation.getQuantity();
             boolean quantityMaxOk = maxQuantity == null || maxQuantity.compareTo(quantity) > 0;
@@ -971,7 +958,6 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 log.trace("The quantity " + quantity + " is strictly greater than " + maxQuantity);
                 continue;
             }
-            // log.debug("quantityMaxOkInPricePlan");
 
             BigDecimal minQuantity = pricePlan.getMinQuantity();
             boolean quantityMinOk = minQuantity == null || minQuantity.compareTo(quantity) <= 0;
@@ -979,15 +965,12 @@ public class RatingService extends PersistenceService<WalletOperation> {
                 log.trace("The quantity " + quantity + " is less than " + minQuantity);
                 continue;
             }
-            if (recChargeTemplate != null && recChargeTemplate.isProrataOnPriceChange()) {
-                if (!isStartDateBetween(startDate, pricePlan.getValidityFrom(), pricePlan.getValidityDate()) || !isEndDateBetween(endDate, startDate, pricePlan.getValidityDate())) {
+            if ((recChargeTemplate != null && recChargeTemplate.isProrataOnPriceChange()) && (!isStartDateBetween(startDate, pricePlan.getValidityFrom(), pricePlan.getValidityDate()) || !isEndDateBetween(endDate, startDate, pricePlan.getValidityDate()))) {
                     continue;
-                }
             }
             Calendar validityCalendar = pricePlan.getValidityCalendar();
             boolean validityCalendarOK = validityCalendar == null || validityCalendar.previousCalendarDate(operationDate) != null;
             if (validityCalendarOK) {
-                // log.debug("validityCalendarOkInPricePlan calendar " + validityCalendar + " operation date " + operationDate);
                 bareOperation.setPriceplan(pricePlan);
                 return pricePlan;
             } else if (validityCalendar != null) {
@@ -999,7 +982,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
     }
 
     private boolean isStartDateBetween(Date date, Date from, Date to) {
-        return (from != null && (date.equals(from) || (date.after(from))) && (to == null || (to != null || date.before(to))));
+        return (from != null && (date.equals(from) || (date.after(from))));
     }
 
     private boolean isEndDateBetween(Date date, Date from, Date to) {
@@ -1091,7 +1074,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
         if (ratedTransaction != null) {
             if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.BILLED) {
 
-                log.error("Can not rerate an already billed Wallet Operation. Wallet Operation " + operationToRerateId + " corresponds to rated transaction " + ratedTransaction.getId());
+                log.error("Can not rerate an already billed Wallet Operation. Wallet Operation {} corresponds to rated transaction {}" ,operationToRerateId,ratedTransaction.getId());
                 getEntityManager().createNamedQuery("WalletOperation.changeStatus").setParameter("now", new Date()).setParameter("status", WalletOperationStatusEnum.TREATED).setParameter("id", operationToRerateId)
                         .executeUpdate();
 
@@ -1248,7 +1231,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
      */
     private Map<Object, Object> constructElContext(String expression, PricePlanMatrix priceplan, WalletOperation walletOperation, UserAccount ua, BigDecimal amount, EDR edr) {
 
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Map<Object, Object> userMap = new HashMap<>();
 
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
         if ((walletOperation.getChargeInstance() instanceof HibernateProxy)) {
