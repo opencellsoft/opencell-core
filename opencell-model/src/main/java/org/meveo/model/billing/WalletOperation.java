@@ -17,38 +17,6 @@
  */
 package org.meveo.model.billing;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Date;
-import java.util.UUID;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -60,19 +28,21 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.RoundingModeEnum;
-import org.meveo.model.catalog.UnitOfMeasure;
-import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.catalog.*;
 import org.meveo.model.cpq.commercial.OrderInfo;
-import org.meveo.model.catalog.ChargeTemplate.ChargeMainTypeEnum;
-import org.meveo.model.cpq.commercial.OrderLot;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
+
+import javax.persistence.*;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * Consumption operation
@@ -163,7 +133,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     /**
      * Operation code - corresponds in majority of cases to charge code
      */
-    @Column(name = "code", length = 255)
+    @Column(name = "code")
     @Size(max = 255)
     private String code;
 
@@ -1395,11 +1365,7 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
         
         if (operationDate.equals(startDate)) {
             return true;
-        } else if (operationDate.equals(endDate)) {
-            return false;
-        } else {
-            return true;
-        }
+        } else return !operationDate.equals(endDate);
     }
 
     /**

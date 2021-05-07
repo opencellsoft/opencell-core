@@ -18,32 +18,18 @@
 
 package org.meveo.service.billing.impl;
 
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.*;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.rating.EDR;
+import org.meveo.model.tax.TaxClass;
+
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.rating.EDR;
-import org.meveo.model.tax.TaxClass;
-
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 /**
  * Aggregated wallet operation.
@@ -186,44 +172,6 @@ public class AggregatedWalletOperation {
 	 * List of wallet operations.
 	 */
 	private List<Long> walletOperationsIds;
-
-	public AggregatedWalletOperation(String walletOpsIds, Long sellerId, Integer year, Integer month, Integer day, Tax tax, InvoiceSubCategory invoiceSubCategory, Object id,
-			BigDecimal amountWithTax, BigDecimal amountWithoutTax, BigDecimal amountTax, TaxClass taxClass, BigDecimal quantity, BigDecimal unitAmountWithoutTax,
-			String orderNumber, String parameter1, String parameter2, String parameter3, String parameterExtra, Integer sortIndex) {
-		String[] stringIds = walletOpsIds.split(",");
-		List<Long> ids = Arrays.asList(stringIds).stream().map(x -> Long.valueOf(x)).collect(Collectors.toList());
-		this.walletOperationsIds = ids;
-		this.sellerId = sellerId;
-		this.year = year;
-		this.month = month;
-		this.day = day;
-		this.tax = tax;
-		this.invoiceSubCategory = invoiceSubCategory;
-		this.id = id;
-		this.amountWithTax = amountWithTax;
-		this.amountWithoutTax = amountWithoutTax;
-		this.amountTax = amountTax;
-		MathContext mc = new MathContext(12, RoundingMode.HALF_UP);
-		this.unitAmountWithoutTax = (amountWithoutTax.compareTo(BigDecimal.ZERO) != 0 && quantity.compareTo(BigDecimal.ZERO) != 0) ?
-				(amountWithoutTax.divide(quantity, mc)) :
-				BigDecimal.ZERO;
-		this.unitAmountWithTax = (amountWithTax.compareTo(BigDecimal.ZERO) != 0 && quantity.compareTo(BigDecimal.ZERO) != 0) ?
-				(amountWithTax.divide(quantity, mc)) :
-				BigDecimal.ZERO;
-		this.unitAmountTax = this.unitAmountWithTax.subtract(this.unitAmountWithoutTax);
-		this.quantity = quantity;
-		this.taxClass = taxClass;
-		this.orderNumber = orderNumber;
-		this.parameter1 = parameter1;
-		this.parameter2 = parameter2;
-		this.parameter3 = parameter3;
-		this.parameterExtra = parameterExtra;
-		this.sortIndex = sortIndex;
-	}
-
-	public AggregatedWalletOperation() {
-
-	}
 
 	private Long getComputedId() {
 		String strId = getId().toString();

@@ -32,7 +32,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.shared.DateUtils;
 
 /**
@@ -180,6 +179,7 @@ public class CardPaymentMethod extends PaymentMethod {
         this.hiddenCardNumber = hiddenCardNumber;
     }
 
+    @Override
     public void anonymize(String code) {
         super.anonymize(code);
         setOwner(code);
@@ -196,8 +196,8 @@ public class CardPaymentMethod extends PaymentMethod {
     }
 
     public String getExpirationMonthAndYear() {
-        if (monthExpiration != null && yearExpiration != null) {
-            return (monthExpiration != null && monthExpiration < 10 ? "0" : "") + monthExpiration + "/" + yearExpiration;
+        if (yearExpiration != null) {
+            return (monthExpiration < 10 ? "0" : "") + monthExpiration + "/" + yearExpiration;
         }
 
         return "";
@@ -240,9 +240,9 @@ public class CardPaymentMethod extends PaymentMethod {
      */
     public boolean isValidForDate(Date date) {
         if (yearExpiration != null && monthExpiration != null) {
-            int year = new Integer(DateUtils.getYearFromDate(date).toString().substring(2, 4));
+            int year = Integer.parseInt(DateUtils.getYearFromDate(date).toString().substring(2, 4));
             int month = DateUtils.getMonthFromDate(new Date());
-            return yearExpiration.intValue() > year || (yearExpiration.intValue() == year && monthExpiration >= month);
+            return yearExpiration > year || (yearExpiration == year && monthExpiration >= month);
         }
         return true;
     }
@@ -290,6 +290,6 @@ public class CardPaymentMethod extends PaymentMethod {
         expiration.set(Calendar.MONTH, monthExpiration - 1);
         expiration.set(Calendar.YEAR, yearExpiration + 2000);
 
-        return (now.getTime().after(expiration.getTime())) ? true : false;
+        return now.getTime().after(expiration.getTime());
     }
 }
