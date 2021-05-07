@@ -21,6 +21,7 @@ public class ArticleLine {
     @XmlElementWrapper(name = "quoteLines")
     @XmlElement(name = "quoteLine")
     private List<QuoteLine> quoteLines;
+    private Product product;
 
     public ArticleLine(AccountingArticle accountingArticle, List<QuoteArticleLine> lines, String tradingLanguage) {
         this.code = accountingArticle.getCode();
