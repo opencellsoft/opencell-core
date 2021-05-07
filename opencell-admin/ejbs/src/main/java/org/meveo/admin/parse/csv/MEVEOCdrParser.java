@@ -261,7 +261,7 @@ public class MEVEOCdrParser implements ICdrParser {
     @Override
     public List<Access> accessPointLookup(CDR cdr) throws InvalidAccessException {
         List<Access> accesses = accessService.getActiveAccessByUserId(cdr.getAccessCode());
-        if (accesses == null || accesses.size() == 0) {
+        if (accesses == null || accesses.isEmpty()) {
             rejectededCdrEventProducer.fire(cdr);
             throw new InvalidAccessException(cdr);
         }

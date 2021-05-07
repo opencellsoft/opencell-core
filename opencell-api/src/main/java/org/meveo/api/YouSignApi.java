@@ -59,6 +59,7 @@ import org.meveo.api.dto.document.sign.YousignEventEnum;
 import org.meveo.api.dto.response.RawResponseDto;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ResteasyClientProxyBuilder;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -204,7 +205,13 @@ public class YouSignApi extends BaseApi {
     }
     
     private String getDownloadedFilePath(String fileName, String extension) throws MeveoApiException {
-        String signeddocsDir = this.getYousignParam(YOUSIGN_API_DOWNLOAD_DIR_KEY, false, "/signeddocs");
+        String signeddocsDirEl = this.getYousignParam(YOUSIGN_API_DOWNLOAD_DIR_KEY, false, "/signeddocs");
+        
+        Map<Object, Object> elContext = new HashMap<>();
+        elContext.put("currentUser", currentUser);
+        elContext.put("appProvider", appProvider);
+        String signeddocsDir = ValueExpressionWrapper.evaluateExpression(signeddocsDirEl, elContext, String.class);
+        
         if (!signeddocsDir.startsWith(File.separator)) {
             signeddocsDir =  File.separator +  signeddocsDir;
         }
