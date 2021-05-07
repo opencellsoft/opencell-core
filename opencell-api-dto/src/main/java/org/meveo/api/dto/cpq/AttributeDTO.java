@@ -153,10 +153,6 @@ public class AttributeDTO extends EnableBusinessDto {
         allowedValues=attribute.getAllowedValues();
         attributeType=attribute.getAttributeType();
         display=attribute.isDisplay();
-        code=attribute.getCode();
-        description=attribute.getDescription();
-        id=attribute.getId();
-        mandatory=attribute.isMandatory();
         unitNbDecimal = attribute.getUnitNbDecimal(); 
         readOnly = attribute.getReadOnly();
         defaultValue = attribute.getDefaultValue();

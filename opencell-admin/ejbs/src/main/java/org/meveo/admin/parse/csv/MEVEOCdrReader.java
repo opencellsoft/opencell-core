@@ -31,8 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.ejb.Stateless;
 
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -50,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author H.ZNIBAR
  */
-@Named
+@Stateless
 public class MEVEOCdrReader implements ICdrCsvReader {
 
     static MessageDigest messageDigest = null;
@@ -67,9 +66,6 @@ public class MEVEOCdrReader implements ICdrCsvReader {
     private String username;
     private CDR_ORIGIN_ENUM origin;
     private BufferedReader cdrReader = null;
-
-    @Inject
-    MEVEOCdrParser meveoCdrParser;
 
     private Integer totalNumberOfRecords;
 

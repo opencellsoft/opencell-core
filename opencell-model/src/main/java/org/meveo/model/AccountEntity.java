@@ -183,7 +183,7 @@ public abstract class AccountEntity extends BusinessCFEntity {
     
     @Column(name = "company")
     @Type(type = "numeric_boolean")
-    protected Boolean isCompany;
+    protected Boolean isCompany=Boolean.FALSE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "legal_entity_type_id")

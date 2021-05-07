@@ -8332,9 +8332,9 @@ public class OrderAdvancement extends ModuleScript {
     	<preConditions onFail="MARK_RAN">
 	       <not>
 	         <columnExists tableName="billing_invoice" columnName="status_date" />
-	       </not> 
+	       </not>
 		</preConditions>
-		
+
         <addColumn tableName="billing_invoice">
             <column name="status_date" type="datetime"/>
         </addColumn>
@@ -8385,7 +8385,7 @@ public class OrderAdvancement extends ModuleScript {
     	<preConditions onFail="MARK_RAN">
 	       <not>
 	         <columnExists tableName="cat_discount_plan" columnName="status" />
-	       </not> 
+	       </not>
 		</preConditions>
         <addColumn tableName="cat_discount_plan">
             <column name="status" type="varchar(50)"/>
@@ -8698,7 +8698,7 @@ public class OrderAdvancement extends ModuleScript {
 		<preConditions onFail="MARK_RAN">
 	       <not>
 	         <columnExists tableName="billing_invoice_configuration" columnName="default_invoice_subcategory_id" />
-	       </not> 
+	       </not>
 		</preConditions>
 		<addColumn tableName="billing_invoice_configuration">
 			<column name="default_invoice_subcategory_id" type="bigint" />
@@ -8760,7 +8760,7 @@ public class OrderAdvancement extends ModuleScript {
 		<preConditions onFail="MARK_RAN">
 	       <not>
 	         <columnExists tableName="cpq_order_offer" columnName="quote_offer_id" />
-	       </not> 
+	       </not>
 		</preConditions>
        <addColumn tableName="cpq_order_offer">
             <column name="quote_offer_id" type="bigint"/>
@@ -8780,7 +8780,7 @@ public class OrderAdvancement extends ModuleScript {
       <addForeignKeyConstraint baseColumnNames="quote_lot_id" baseTableName="cpq_order_lot" constraintName="fk_cpq_order_lot_quote_lot_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />                                                   
     </changeSet>
-	
+
 	<changeSet id="#cpq_add_missing_migration" author="AbdelmounaimAkadid">
 		<preConditions onFail="MARK_RAN">
 	       <not>
@@ -8794,13 +8794,13 @@ public class OrderAdvancement extends ModuleScript {
         <createSequence sequenceName="cpq_quote_lot_seq" />
         <createSequence sequenceName="cpq_contract_seq" />
         <createSequence sequenceName="cpq_contract_item_seq" />
-        
+
         <addColumn tableName="cat_discount_plan">
             <column name="discount_plan_type" type="varchar(50)" />
         </addColumn>
    	</changeSet>
-	
-    
+
+
     <changeSet id="#5937_20210428" author="Mbarek-Ay">
       <preConditions onFail="MARK_RAN">
         <columnExists tableName="cpq_invoice_line" columnName="code"/>
@@ -8817,8 +8817,8 @@ public class OrderAdvancement extends ModuleScript {
     	
       <addForeignKeyConstraint baseColumnNames="offer_model_id" baseTableName="cat_offer_template" constraintName="fk_offer_template_offer_model_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />    
-	</changeSet>  
-    
+	</changeSet>
+
       <changeSet id="#5595_540499_20210430" author="TarikFA.">
         <addColumn tableName="cpq_product">
             <column name="product_model_id" type="bigint"/>
@@ -8847,4 +8847,11 @@ public class OrderAdvancement extends ModuleScript {
     <changeSet id="#6076_20210504" author="Zbariki">
         <modifyDataType columnName="decimal_separator" newDataType="varchar(1)" tableName="dwh_report_extract"/>
     </changeSet>
+
+    <changeSet id="#5595_20210506" author="NabilOuachi">
+        <addColumn tableName="cpq_quote">
+            <column name="previews_status" type="varchar(20)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
