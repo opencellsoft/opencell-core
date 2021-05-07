@@ -45,6 +45,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.medina.impl.CDRParsingException;
 import org.meveo.service.medina.impl.CDRParsingService;
 import org.meveo.service.medina.impl.CDRService;
+import org.meveo.service.medina.impl.ICdrCsvReader;
 import org.meveo.service.medina.impl.ICdrParser;
 import org.meveo.service.medina.impl.ICdrReader;
 
@@ -61,14 +62,7 @@ import org.meveo.service.medina.impl.ICdrReader;
 public class MediationReprocessingJobBean extends BaseJobBean {
 
     private static final long serialVersionUID = -8981175215897218406L;
-
-    @Inject
-    private MEVEOCdrReader meveoCdrReader;
-
-    @Inject
-    private MEVEOCdrParser meveoCdrParser;
-
-    /** The cdr parser. */
+    
     @Inject
     private CDRParsingService cdrParserService;
 
@@ -95,7 +89,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
         try {
             cdrReader = (ICdrReader) EjbUtils.getServiceInterface(readerCode);
             if (cdrReader == null) {
-                cdrReader = meveoCdrReader;
+                cdrReader = (ICdrCsvReader) EjbUtils.getServiceInterface(MEVEOCdrReader.class.getSimpleName());
             }
             cdrReader.init("DB");
             Integer totalNummberOfRecords = cdrReader.getNumberOfRecords();
@@ -106,7 +100,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
 
             ICdrParser cdrParser = (ICdrParser) EjbUtils.getServiceInterface(parserCode);
             if (cdrParser == null) {
-                cdrParser = meveoCdrParser;
+                cdrParser = (ICdrParser) EjbUtils.getServiceInterface(MEVEOCdrParser.class.getSimpleName());
             }
 
             Long nbRuns = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
