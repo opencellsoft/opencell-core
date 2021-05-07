@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author Thang Nguyen
  */
-public class Apiv1SwaggerGetOpration {
+public class Apiv1SwaggerGetOperation {
 
     private static final String FORWARD_SLASH = "/";
 
@@ -27,10 +27,6 @@ public class Apiv1SwaggerGetOpration {
 
         // In case of retrieving all entities
         if ( GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.containsKey( aRFPath ) ) {
-//            ApiResponses responses = getOp.getResponses() != null ? getOp.getResponses() : new ApiResponses();
-//            for ( Map.Entry<String, ApiResponse>entry : responses.entrySet() ) {
-//                ApiResponse aResponse = entry.getValue();
-//            }
             ApiResponses responses = new ApiResponses();
             ApiResponse successfulRequest = new ApiResponse();
             successfulRequest.setDescription("results successfully retrieved");
@@ -47,14 +43,14 @@ public class Apiv1SwaggerGetOpration {
             if ( getOp.getParameters() != null ) {
                 List<Parameter> parameters = getOp.getParameters();
                 for ( Parameter param : parameters ) {
-                    String entityCode = aRFPath.split(FORWARD_SLASH)[ aRFPath.split(FORWARD_SLASH).length - 1 ];
+                    String entityCode = aRFPathSplit[ aRFPathSplit.length - 1 ];
                     entityCode = entityCode.substring( 1, entityCode.length() - 1 ); // Remove open accolade "{" and close accolade "}"
                     switch ( param.getIn() ) {
                         case "query" :
                             if ( param.getName().equals( entityCode ) ) {
-                                PathParameter pathParameter = new PathParameter();
-                                pathParameter.setName( param.getName() );
-                                parameters.add(pathParameter);
+                                PathParameter aPathParam = new PathParameter();
+                                aPathParam.setName( param.getName() );
+                                parameters.add(aPathParam);
                                 parameters.remove(param);
                             }
                             break;
