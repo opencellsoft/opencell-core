@@ -26,20 +26,20 @@ public class PricePlanMatrixLinesDto extends BaseEntityDto {
     @Schema(description = "The price plan matrix version")
 	private int pricePlanMatrixVersion;
 	
-	private List<PricePlanMatrixLineDto> pricePlanMatrixLinesDto;
+	private List<PricePlanMatrixLineDto> pricePlanMatrixLines;
 
 
 
     public void setPricePlanMatrixLineDto(PricePlanMatrixLineDto pricePlanMatrixLineDto) {
-        this.pricePlanMatrixLinesDto = List.of(pricePlanMatrixLineDto);
+        this.pricePlanMatrixLines = List.of(pricePlanMatrixLineDto);
     }
 
-    public List<PricePlanMatrixLineDto> getPricePlanMatrixLinesDto() {
-        return pricePlanMatrixLinesDto;
+    public List<PricePlanMatrixLineDto> getPricePlanMatrixLines() {
+        return pricePlanMatrixLines;
     }
 
-    public void setPricePlanMatrixLinesDto(List<PricePlanMatrixLineDto> pricePlanMatrixLinesDto) {
-        this.pricePlanMatrixLinesDto = pricePlanMatrixLinesDto;
+    public void setPricePlanMatrixLines(List<PricePlanMatrixLineDto> pricePlanMatrixLines) {
+        this.pricePlanMatrixLines = pricePlanMatrixLines;
     }
 
 	/**

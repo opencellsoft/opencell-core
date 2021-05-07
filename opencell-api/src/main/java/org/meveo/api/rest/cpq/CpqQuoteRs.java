@@ -109,8 +109,8 @@ public interface CpqQuoteRs {
      * @param info Http request context
      * @return A list of quotes matching search criteria
      */
-    @POST
-    @Path("/filtering")
+    @GET
+    @Path("/")
     @Operation(summary = "Get a list of quotes optionally filtered by some criteria",
     tags = { "Quote management" },
     description ="",
