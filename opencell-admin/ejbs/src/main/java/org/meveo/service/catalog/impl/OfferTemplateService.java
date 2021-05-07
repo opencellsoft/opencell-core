@@ -234,7 +234,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         }
 
         offer.setId(null);
-
+        offer.setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
         offer.setVersion(0);
         offer.setAuditable(new Auditable());
         offer.clearUuid();
