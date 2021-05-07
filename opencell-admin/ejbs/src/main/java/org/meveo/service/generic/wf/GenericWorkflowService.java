@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -132,14 +131,6 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
             WFStatus currentWFStatus = workflowInstance.getCurrentStatus();
             String currentStatus = currentWFStatus != null ? currentWFStatus.getCode() : null;
             log.trace("Actual status: {}", currentStatus);
-            int key = Objects.hash(iwfEntity.getCode(), workflowInstance.getId(), genericWorkflow.getCode(), currentStatus);
-            executedTimes.merge(key, 1, Integer::sum);
-            if (executedTimes.get(key) > 20) {
-                log.error("Key : BusinessEntity/{}, WorkflowInstance/{}, GenericWorkflow/{}, WFStatus/{}", iwfEntity.getCode(), workflowInstance.getId(), genericWorkflow.getCode(),
-                        currentStatus);
-                log.error("above key was executed {} times, we cancel this execution", executedTimes.get(key));
-                return workflowInstance;
-            }
 
             int endIndex = genericWorkflow.getTransitions().size();
             if (!genericWorkflow.getTransitions().get(endIndex - 1).getToStatus().equalsIgnoreCase(currentStatus)) {

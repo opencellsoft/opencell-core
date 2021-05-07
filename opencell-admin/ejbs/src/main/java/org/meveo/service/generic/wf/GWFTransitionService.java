@@ -19,6 +19,7 @@ package org.meveo.service.generic.wf;
 
 import com.google.common.collect.Maps;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BusinessEntity;
@@ -28,6 +29,7 @@ import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
@@ -53,7 +55,10 @@ public class GWFTransitionService extends PersistenceService<GWFTransition> {
     
     @Inject
     private ScriptInstanceService scriptInstanceService;
-    
+
+    @Inject
+    private BusinessEntityService businessEntityService;
+
     @Inject
     private WorkflowInstanceHistoryService workflowInstanceHistoryService;
     
@@ -151,6 +156,11 @@ public class GWFTransitionService extends PersistenceService<GWFTransition> {
         ScriptInstance scriptInstance = gWFTransition.getActionScript();
         String scriptCode = scriptInstance.getCode();
         ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
+
+        //refresh entity  if it was updated by previous transition
+        businessEntityService.setEntityClass((Class<BusinessEntity>) ReflectionUtils.getCleanClass(iwfEntity.getClass()));
+        iwfEntity = businessEntityService.refreshOrRetrieve(iwfEntity);
+
         Map<String, Object> methodContext = new HashMap<>();
         methodContext.put(GENERIC_WF, genericWorkflow);
         methodContext.put(WF_INS, workflowInstance);
