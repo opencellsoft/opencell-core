@@ -250,7 +250,7 @@ public interface PricePlanRs extends IBaseRs {
      * @return
      */
     @PUT
-    @Path("/{pricePlanMatrixCode}/pricePlanMatrixVersions/{pricePlanMatrixVersion}")
+    @Path("/{pricePlanMatrixCode}/pricePlanMatrixVersions/{pricePlanMatrixVersion}/status/{status}")
     @Operation(summary = "update the price plan version status",
             tags = { "Price Plan" },
             description ="the product with status DRAFT can be change to PUBLIED or CLOSED ",
@@ -261,7 +261,7 @@ public interface PricePlanRs extends IBaseRs {
             })
     Response updatePricePlanMatrixVersionStatus(@Parameter(description = "The price plan matrix code", required = true)  @PathParam("pricePlanMatrixCode") String pricePlanMatrixCode,
     											@Parameter(description = "The price plan matrix version", required = true)  @PathParam("pricePlanMatrixVersion") int pricePlanMatrixVersion,
-    											@Parameter(description = "The status of Price plan", required = true)  @QueryParam("status") VersionStatusEnum status);
+    											@Parameter(description = "The status of Price plan", required = true)  @PathParam("status") VersionStatusEnum status);
 
     @GET
     @Path("/pricePlanMatrixVersions")
@@ -421,7 +421,7 @@ public interface PricePlanRs extends IBaseRs {
      * add all price plan matrix lines
      *
      */
-    @POST
+    @PUT
     @Path("/{pricePlanMatrixCode}/pricePlanMatrixVersions/{pricePlanMatrixVersion}/pricePlanMatrixLines")
     @Operation(summary = "update all price plan matrix lines",
             tags = { "Price Plan" },

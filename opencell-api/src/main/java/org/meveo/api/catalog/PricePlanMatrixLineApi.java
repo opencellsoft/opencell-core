@@ -34,15 +34,17 @@ public class PricePlanMatrixLineApi extends BaseApi {
     public PricePlanMatrixLineDto addPricePlanMatrixLine(String pricePlanMatrixCode, int version, PricePlanMatrixLineDto dtoData) throws MeveoApiException, BusinessException {
 
         checkCommunMissingParameters(pricePlanMatrixCode, version, dtoData);
+        dtoData.setPricePlanMatrixCode(pricePlanMatrixCode);
+        dtoData.setPricePlanMatrixVersion(version);
 
         return pricePlanMatrixLineService.createPricePlanMatrixLine(dtoData);
     }
     
     public GetPricePlanVersionResponseDto addPricePlanMatrixLines(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
-            for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLinesDto()) {
+            for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
             	addPricePlanMatrixLine(pricePlanMatrixCode, pricePlanMatrixVersion, pricePlanMatrixLineDto);
             }
-           PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(dtoData.getPricePlanMatrixCode(), dtoData.getPricePlanMatrixVersion());
+           PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
           return new GetPricePlanVersionResponseDto(ppmVersion);
     }
 
@@ -51,7 +53,7 @@ public class PricePlanMatrixLineApi extends BaseApi {
         PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
         	ppmVersion.getLines().clear();
         	Set<PricePlanMatrixLine> lines = new HashSet<PricePlanMatrixLine>();
-            for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLinesDto()) {
+            for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
             	PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
             	pricePlanMatrixLine.setPricetWithoutTax(pricePlanMatrixLineDto.getPricetWithoutTax());
                 pricePlanMatrixLine.setPriority(pricePlanMatrixLineDto.getPriority());
