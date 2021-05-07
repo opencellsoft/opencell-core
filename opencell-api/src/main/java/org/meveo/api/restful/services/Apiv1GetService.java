@@ -283,8 +283,8 @@ public class Apiv1GetService {
     public Map<String, Object> customizeResponse(Response getResponse, String entityName ) throws IOException {
         Map<String, Object> customResponse = new LinkedHashMap<>();
         if ( getResponse.hasEntity() ) {
-            Object aResponse2 = getResponse.getEntity();
-            Map<String, Object> origResponse = new ObjectMapper().readValue( (InputStream) aResponse2, Map.class );
+            Object anEntity = getResponse.getEntity();
+            Map<String, Object> origResponse = new ObjectMapper().readValue( (InputStream) anEntity, Map.class );
 
             for (Map.Entry<String,Object> entry : origResponse.entrySet()) {
                 if ( entry.getKey().equals("actionStatus") || entry.getKey().equals("paging") )
