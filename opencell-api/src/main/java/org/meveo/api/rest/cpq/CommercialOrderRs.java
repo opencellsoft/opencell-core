@@ -129,8 +129,8 @@ public interface CommercialOrderRs {
 	    })
 	public Response duplicate(@Parameter(description = "The id of the commercial order", required = true) @PathParam("orderId") Long orderId);
 	
-	@POST
-    @Path("/list")
+	@GET
+    @Path("/")
     @Operation(summary = "Get commercial orders matching the given criteria",
     tags = { "Order management" },
     description ="Get commercial orders matching the given criteria",
@@ -195,7 +195,7 @@ public interface CommercialOrderRs {
 
 
 	@DELETE
-	@Path("orderOffer/{id}")
+	@Path("orderOffers/{id}")
 	@Operation(summary = "This endpoint allows to  delete an existing order offer",
 	description ="Deleting an existing order offer with its id",
 	tags = { "Order management" },
@@ -209,7 +209,7 @@ public interface CommercialOrderRs {
 
 
 	@GET
-	@Path("orderOffer/{id}")
+	@Path("orderOffers/{id}")
 	@Operation(summary = "Get order offer matching the given order id",
 	tags = { "Order management" },
 	description ="Get order offer matching the given order id",

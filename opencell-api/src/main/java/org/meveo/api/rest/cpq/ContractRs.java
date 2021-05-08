@@ -145,8 +145,8 @@ public interface ContractRs extends IBaseRs {
 	Response updateStatus(@Parameter(description = "contract code to update status") @PathParam("contractCode")String contractCode, @Parameter(description = "target contract status") @PathParam("status") ContractStatusEnum status);
 
 
-	@POST
-	@Path("/filtering")
+	@GET
+	@Path("/")
 	@Operation(summary = "This endpoint allows to find list of contract with filters and paging",
     description ="Find a list of contract by filtrering on its property",
     tags = { "Contract" },
