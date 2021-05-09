@@ -30,8 +30,8 @@ import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.script.ScriptInstanceService;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -47,14 +47,8 @@ import static java.util.Optional.ofNullable;
 @Stateless
 public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
-    @Inject
-    private ScriptInstanceService scriptInstanceService;
-
-    @Inject
+    @EJB
     private GWFTransitionService gWFTransitionService;
-
-    @Inject
-    private WFStatusService wfStatusService;
 
     @Inject
     private WorkflowInstanceService workflowInstanceService;
@@ -62,12 +56,10 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
     @Inject
     private WorkflowInstanceHistoryService workflowInstanceHistoryService;
 
-    static Set<Class<?>> WORKFLOWED_CLASSES = ReflectionUtils.getClassesAnnotatedWith(WorkflowedEntity.class, "org.meveo");
-    private Map<Integer, Integer> executedTimes = new HashMap<>();
+    static Set<Class<?>> workflowedClasses = ReflectionUtils.getClassesAnnotatedWith(WorkflowedEntity.class, "org.meveo");
 
     public List<Class<?>> getAllWorkflowedClazz() {
-        List<Class<?>> result = new ArrayList<>(WORKFLOWED_CLASSES);
-        return result;
+        return new ArrayList<>(workflowedClasses);
     }
 
     public List<GenericWorkflow> findByBusinessEntity(BusinessEntity entity) {
@@ -91,9 +83,8 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
     }
 
     public List<GenericWorkflow> findByTargetEntityClass(String targetEntityClass) {
-        List<GenericWorkflow> genericWorkflows = (List<GenericWorkflow>) getEntityManager().createNamedQuery("GenericWorkflow.findByTargetEntityClass", GenericWorkflow.class)
+        return getEntityManager().createNamedQuery("GenericWorkflow.findByTargetEntityClass", GenericWorkflow.class)
                 .setParameter("targetEntityClass", targetEntityClass).getResultList();
-        return genericWorkflows;
     }
 
     /**

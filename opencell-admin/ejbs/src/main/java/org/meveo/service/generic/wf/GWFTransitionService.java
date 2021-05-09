@@ -123,7 +123,7 @@ public class GWFTransitionService extends PersistenceService<GWFTransition> {
     
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public  synchronized WorkflowInstance executeTransition(GWFTransition transition, BusinessEntity entity,
+    public WorkflowInstance executeTransition(GWFTransition transition, BusinessEntity entity,
             WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
         
         log.debug("Processing transition: {} on entity {}", transition, workflowInstance);
@@ -152,7 +152,7 @@ public class GWFTransitionService extends PersistenceService<GWFTransition> {
         return wfHistory;
     }
     
-    public synchronized void executeActionScript(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow, GWFTransition gWFTransition) {
+    public void executeActionScript(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow, GWFTransition gWFTransition) {
         ScriptInstance scriptInstance = gWFTransition.getActionScript();
         String scriptCode = scriptInstance.getCode();
         ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
