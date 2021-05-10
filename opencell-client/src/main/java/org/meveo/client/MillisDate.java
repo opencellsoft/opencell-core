@@ -36,7 +36,7 @@ public class MillisDate implements JsonDeserializer<Date>,JsonSerializer<Date> {
     
 	@Override
 	public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {		
-		return  new Date(new Long(json.getAsString()));
+		return  new Date(Long.valueOf(json.getAsString()));
 	}
 
 	@Override

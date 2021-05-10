@@ -52,7 +52,7 @@ public class Apiv1GetService {
     public Response getAllEntities(UriInfo uriInfo, String aGetPath) throws IOException, URISyntaxException {
         URI redirectURI;
 
-        pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( aGetPath );
+        pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.get( aGetPath );
         if ( pathIBaseRS.equals( Apiv1ConstantDictionary.WALLET_OPERATION ) )
             entityClassName = "WalletOperation";
         else if ( pathIBaseRS.equals( Apiv1ConstantDictionary.PRICE_PLAN ) )
@@ -119,7 +119,7 @@ public class Apiv1GetService {
         URI redirectURI;
 
         segmentsOfPathAPIv1 = uriInfo.getPathSegments();
-        pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( getAnEntityPath );
+        pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.get( getAnEntityPath );
         entityCode = segmentsOfPathAPIv1.get( segmentsOfPathAPIv1.size() - 1 ).getPath();
 
         if ( pathIBaseRS.equals(Apiv1ConstantDictionary.USER) ) {
@@ -190,10 +190,10 @@ public class Apiv1GetService {
     public Response getWithRegex(UriInfo uriInfo, String aGetPath) throws IOException, URISyntaxException {
         URI redirectURI;
 
-        pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( aGetPath );
+        pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.get( aGetPath );
         queryParams = new StringBuilder( QUERY_PARAM_SEPARATOR );
 
-        String originalPattern = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.getPattern().toString();
+        String originalPattern = GenericOpencellRestfulAPIv1.MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.getPattern().toString();
         int indexCodeRegex = originalPattern.indexOf( GenericOpencellRestfulAPIv1.CODE_REGEX );
         String aSmallPattern;
         String smallString = null;
@@ -283,8 +283,8 @@ public class Apiv1GetService {
     public Map<String, Object> customizeResponse(Response getResponse, String entityName ) throws IOException {
         Map<String, Object> customResponse = new LinkedHashMap<>();
         if ( getResponse.hasEntity() ) {
-            Object aResponse2 = getResponse.getEntity();
-            Map<String, Object> origResponse = new ObjectMapper().readValue( (InputStream) aResponse2, Map.class );
+            Object anEntity = getResponse.getEntity();
+            Map<String, Object> origResponse = new ObjectMapper().readValue( (InputStream) anEntity, Map.class );
 
             for (Map.Entry<String,Object> entry : origResponse.entrySet()) {
                 if ( entry.getKey().equals("actionStatus") || entry.getKey().equals("paging") )

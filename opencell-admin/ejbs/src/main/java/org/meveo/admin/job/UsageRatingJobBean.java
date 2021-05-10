@@ -81,7 +81,7 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
             rateUntilDate = (Date) this.getParamOrCFValue(jobInstance, "rateUntilDate");
             ratingGroup = (String) this.getParamOrCFValue(jobInstance, "ratingGroup");
         } catch (Exception e) {
-            log.warn("Cant get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
+            log.warn("Can't get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
         }
 
         List<Long> ids = edrService.getEDRsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
