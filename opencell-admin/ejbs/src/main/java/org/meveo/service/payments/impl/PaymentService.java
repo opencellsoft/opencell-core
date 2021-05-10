@@ -541,7 +541,7 @@ public class PaymentService extends PersistenceService<Payment> {
             if (accountOperation == null) {
                 throw new BusinessException("Payment " + paymentId + " not found");
             }
-            if (accountOperation.getMatchingStatus() != MatchingStatusEnum.L) {
+            if (accountOperation.getMatchingStatus() != MatchingStatusEnum.L  && accountOperation.getMatchingStatus() != MatchingStatusEnum.P) {
                 throw new BusinessException("CallBack unexpected  for payment " + paymentId);
             }
             if (PaymentStatusEnum.ACCEPTED == paymentStatus) {
@@ -592,6 +592,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 rejectedPayment.setRejectedType(RejectedType.A);
                 rejectedPayment.setRejectedDate(new Date());
                 rejectedPayment.setTransactionDate(new Date());
+                rejectedPayment.setDueDate(accountOperation.getDueDate());
                 rejectedPayment.setRejectedDescription(errorMessage);
                 rejectedPayment.setRejectedCode(errorCode);
                 rejectedPayment.setListAaccountOperationSupposedPaid(listAoThatSupposedPaid);
