@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.Stateless;
+import javax.inject.Named;
 
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author H.ZNIBAR
  */
-@Stateless
+@Named
 public class MEVEOCdrReader implements ICdrCsvReader {
 
     static MessageDigest messageDigest = null;
