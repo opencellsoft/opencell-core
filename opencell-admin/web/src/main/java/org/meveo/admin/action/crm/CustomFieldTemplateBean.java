@@ -56,7 +56,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -202,7 +201,6 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
                 .filter(businessEntity -> isClassNameMatchQuery(query, businessEntity.getEntityClass()))
                 .map(CustomizedEntity::getClassnameToDisplay)
                 .distinct()
-                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
