@@ -388,7 +388,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
             }
 	    } else {
 	        log.debug("Use default cdr parser= MEVEOCdrParser");
-	        cdrParser = new MEVEOCdrParser();            
+	        cdrParser = (ICdrParser) EjbUtils.getServiceInterface(MEVEOCdrParser.class.getSimpleName());            
 	    }
 	    return cdrParser;
 	}

@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -56,7 +56,7 @@ import org.meveo.service.medina.impl.InvalidFormatException;
  * @author Andrius Karpavicius
  * @author h.znibar
  */
-@Named
+@Stateless
 public class MEVEOCdrParser implements ICdrParser {
 
     @Inject
