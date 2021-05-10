@@ -33,6 +33,8 @@ import org.meveo.service.base.ValueExpressionWrapper;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -115,6 +117,7 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
      * @throws BusinessException
      */
 
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public WorkflowInstance executeWorkflow(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
         log.debug("Executing generic workflow script:{} on instance {}", genericWorkflow.getCode(), workflowInstance);
         try {
@@ -133,7 +136,6 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
                     if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransition, genericWorkflow)) {
                         workflowInstance = gWFTransitionService.executeTransition(gWFTransition, iwfEntity, workflowInstance, genericWorkflow);
                         executedTransition.add(gWFTransition);
-                        executeWorkflow(iwfEntity, workflowInstance, genericWorkflow);
                         break;
                     }
                 }

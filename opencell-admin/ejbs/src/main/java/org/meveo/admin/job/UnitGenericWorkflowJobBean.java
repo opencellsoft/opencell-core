@@ -18,21 +18,22 @@
 
 package org.meveo.admin.job;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.generic.wf.GenericWorkflow;
+import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.generic.wf.GenericWorkflowService;
 import org.slf4j.Logger;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 @Stateless
 public class UnitGenericWorkflowJobBean {
@@ -49,6 +50,31 @@ public class UnitGenericWorkflowJobBean {
     public void execute(JobExecutionResultImpl result, BusinessEntity be, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
         try {
             genericWorkflowService.executeWorkflow(be, workflowInstance, genericWorkflow);
+            result.registerSucces();
+        } catch (Exception e) {
+            log.error("Failed to unit generic workflow for {}", workflowInstance, e);
+            result.registerError(workflowInstance.getClass().getName() + workflowInstance.getId(), e.getMessage());
+        }
+    }
+
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void executeWithLoop(JobExecutionResultImpl result, BusinessEntity be, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
+        try {
+            String oldStatusCode = null;
+            while (true) {
+                int endIndex = genericWorkflow.getTransitions().size();
+                if (!genericWorkflow.getTransitions().get(endIndex - 1).getToStatus().equalsIgnoreCase(oldStatusCode)) {
+                    workflowInstance = genericWorkflowService.executeWorkflow(be, workflowInstance, genericWorkflow);
+                    WFStatus currentWFStatus = workflowInstance.getCurrentStatus();
+                    String currentStatusCode = currentWFStatus != null ? currentWFStatus.getCode() : null;
+                    if (currentStatusCode != null && !currentStatusCode.equals(oldStatusCode)) {
+                        oldStatusCode = currentStatusCode;
+                    } else
+                        break;
+                } else
+                    break;
+            }
             result.registerSucces();
         } catch (Exception e) {
             log.error("Failed to unit generic workflow for {}", workflowInstance, e);
