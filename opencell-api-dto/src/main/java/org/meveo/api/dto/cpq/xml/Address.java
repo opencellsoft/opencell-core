@@ -8,10 +8,13 @@ public class Address {
     private String address1;
     private String address2;
     private String address3;
+    private String address4;
     private String city;
     private String country;
     private String countryName;
     private String state;
+    private String zipCode;
+    private CustomField customeField;
 
     public Address(org.meveo.model.shared.Address address) {
         if(address == null)
@@ -19,11 +22,20 @@ public class Address {
         this.address1 = address.getAddress1();
         this.address2 = address.getAddress2();
         this.address3 = address.getAddress3();
+        this.address4 = address.getAddress4();
+        this.zipCode = address.getZipCode();
         this.city = address.getCity();
         this.country = address.getCountry().getCountryCode();
         this.countryName = address.getCountry().getDescription();
         this.state = address.getState();
     }
+    
+    public Address(org.meveo.model.shared.Address address, CustomField customField) {
+    	this(address);
+    	this.customeField = customField;
+    }
+    
+    
 
     public String getAddress1() {
         return address1;
@@ -80,4 +92,58 @@ public class Address {
     public void setState(String state) {
         this.state = state;
     }
+
+
+
+	/**
+	 * @return the address4
+	 */
+	public String getAddress4() {
+		return address4;
+	}
+
+
+
+	/**
+	 * @param address4 the address4 to set
+	 */
+	public void setAddress4(String address4) {
+		this.address4 = address4;
+	}
+
+
+
+	/**
+	 * @return the zipCode
+	 */
+	public String getZipCode() {
+		return zipCode;
+	}
+
+
+
+	/**
+	 * @param zipCode the zipCode to set
+	 */
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
+	}
+
+
+
+	/**
+	 * @return the customeField
+	 */
+	public CustomField getCustomeField() {
+		return customeField;
+	}
+
+
+
+	/**
+	 * @param customeField the customeField to set
+	 */
+	public void setCustomeField(CustomField customeField) {
+		this.customeField = customeField;
+	}
 }
