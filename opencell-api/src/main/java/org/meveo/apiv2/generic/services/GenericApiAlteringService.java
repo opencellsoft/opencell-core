@@ -171,17 +171,25 @@ public class GenericApiAlteringService {
                     continue;
                 }
                 if(cft.isVersionable()){
-                    Object newValue = ((List) cfsValuesByCode.get(code)).get(0);
-                    customFieldDto.setValuePeriodPriority((Integer) ((Map) newValue).get("priority"));
-                    if(((Map) newValue).get("from") != null){
-                        customFieldDto.setValuePeriodStartDate(resolveDate(((Map) newValue).get("from")));
-                    }
-                    if(((Map) newValue).get("to") != null){
-                        customFieldDto.setValuePeriodEndDate(resolveDate(((Map) newValue).get("to")));
-                    }
+                	for(Object newValue : ((List) cfsValuesByCode.get(code))) {
+                		customFieldDto = new CustomFieldDto();
+                        customFieldDto.setCode(code);
+                        
+	                    customFieldDto.setValuePeriodPriority((Integer) ((Map) newValue).get("priority"));
+	                    if(((Map) newValue).get("from") != null){
+	                        customFieldDto.setValuePeriodStartDate(resolveDate(((Map) newValue).get("from")));
+	                    }
+	                    if(((Map) newValue).get("to") != null){
+	                        customFieldDto.setValuePeriodEndDate(resolveDate(((Map) newValue).get("to")));
+	                    }
+	                    writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), Arrays.asList(newValue));
+	                    customFieldsDto.getCustomField().add(customFieldDto);
+	                }
+                } else {
+                	writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), cfsValuesByCode.get(code));
+                    customFieldsDto.getCustomField().add(customFieldDto);
                 }
-                writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), cfsValuesByCode.get(code));
-                customFieldsDto.getCustomField().add(customFieldDto);
+                
             }
         }
         return customFieldsDto;
