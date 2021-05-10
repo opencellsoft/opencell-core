@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ejb.Stateless;
+import javax.inject.Named;
 
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.rating.CDR;
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author H.ZNIBAR
  */
-@Stateless
+@Named
 public class MEVEOCdrReader implements ICdrCsvReader {
 
     private static Logger log = LoggerFactory.getLogger(MEVEOCdrReader.class);
