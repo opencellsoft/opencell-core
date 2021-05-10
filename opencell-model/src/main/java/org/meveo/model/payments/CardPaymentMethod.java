@@ -196,8 +196,8 @@ public class CardPaymentMethod extends PaymentMethod {
     }
 
     public String getExpirationMonthAndYear() {
-        if (yearExpiration != null) {
-            return (monthExpiration < 10 ? "0" : "") + monthExpiration + "/" + yearExpiration;
+        if (monthExpiration != null && yearExpiration != null) {
+            return (monthExpiration != null && monthExpiration < 10 ? "0" : "") + monthExpiration + "/" + yearExpiration;
         }
 
         return "";
