@@ -20,7 +20,6 @@ package org.meveo.admin.job;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.generic.wf.WFStatus;
@@ -44,9 +43,8 @@ public class UnitGenericWorkflowJobBean {
     @Inject
     private GenericWorkflowService genericWorkflowService;
 
-    @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, BusinessEntity be, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
         try {
             genericWorkflowService.executeWorkflow(be, workflowInstance, genericWorkflow);

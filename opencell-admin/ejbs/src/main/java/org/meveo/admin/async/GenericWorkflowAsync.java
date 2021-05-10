@@ -30,6 +30,8 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -56,6 +58,7 @@ public class GenericWorkflowAsync {
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
+    protected Logger log = LoggerFactory.getLogger(getClass());
     /**
      *
      * @param wfInstances
@@ -69,8 +72,8 @@ public class GenericWorkflowAsync {
     public Future<String> launchAndForget(Map<Long, List<Object>> wfInstances, GenericWorkflow genericWorkflow, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
-        boolean execWithLoop = paramBeanFactory.getInstance().getPropertyAsBoolean("exec.workflow.with.loop", false);
-
+        boolean execWithLoop = paramBeanFactory.getInstance().getPropertyAsBoolean("wf.execution_with_loop", false);
+        log.debug("Execute workflow with loop activated {} ", execWithLoop);
         int i = 0;
         for (List<Object> value : wfInstances.values()) {
             i++;
@@ -84,6 +87,6 @@ public class GenericWorkflowAsync {
             } else
                 unitGenericWorkflowJobBean.execute(result, be, workflowInstance, genericWorkflow);
         }
-        return new AsyncResult<String>("OK");
+        return new AsyncResult<>("OK");
     }
 }
