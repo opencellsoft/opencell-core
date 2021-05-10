@@ -2752,8 +2752,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (billingRun == null) {
             return;
         }
-        if (!billingRun.getComputeDatesAtValidation() ||!billingCycle.getComputeDatesAtValidation()) return;
-        if (billingRun.getComputeDatesAtValidation() || billingCycle.getComputeDatesAtValidation()){
+        if (billingRun.getComputeDatesAtValidation() != null && !billingRun.getComputeDatesAtValidation()) {
+            return;
+        } else if (billingRun.getComputeDatesAtValidation() == null && !billingCycle.getComputeDatesAtValidation()) {
+            return;
+        }
+        if (billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) {
+            recalculateDate(invoice, billingRun, billingAccount, billingCycle);
+            update(invoice);
+        } else if (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation()) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
             update(invoice);
         }
