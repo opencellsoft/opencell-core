@@ -38,6 +38,7 @@ import org.meveo.admin.parse.csv.MEVEOCdrParser;
 import org.meveo.admin.parse.csv.MEVEOCdrReader;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BaseEntity;
@@ -380,16 +381,16 @@ public class CDRParsingService extends PersistenceService<EDR> {
 	 * @return the parser
 	 * @throws BusinessException the business exception
 	 */
-	private ICdrParser getParser(String customParser) throws BusinessException {
+	public ICdrParser getParser(String customParser) throws BusinessException {
         ICdrParser cdrParser;
-        if(customParser != null) {
+        if(StringUtils.isNotBlank(customParser)) {
             cdrParser = (ICdrParser) EjbUtils.getServiceInterface(customParser);
             if(cdrParser == null) {
                 throw new BusinessException("Failed to find CDR Parser "+cdrParser);
             }
         } else {
             log.debug("Use default cdr parser= MEVEOCdrParser");
-            cdrParser = (ICdrParser) EjbUtils.getServiceInterface(MEVEOCdrParser.class.getSimpleName());            
+            cdrParser = new MEVEOCdrParser();            
         }
         return cdrParser;
     }
@@ -412,16 +413,16 @@ public class CDRParsingService extends PersistenceService<EDR> {
      * @return the reader
      * @throws BusinessException the business exception
      */
-    private ICdrCsvReader getReader(String readerCode) throws BusinessException {
+    public ICdrCsvReader getReader(String readerCode) throws BusinessException {
         ICdrCsvReader cdrReader;
-        if (readerCode != null) {
+        if (StringUtils.isNotBlank(readerCode)) {
             cdrReader = (ICdrCsvReader) EjbUtils.getServiceInterface(readerCode);
             if(cdrReader == null) {
                 throw new BusinessException("Failed to find CDR Reader "+readerCode);
             }
         } else {
             log.debug("Use default cdr reader=MeveoCdrReader");
-            cdrReader = (ICdrCsvReader) EjbUtils.getServiceInterface(MEVEOCdrReader.class.getSimpleName());
+            cdrReader = new MEVEOCdrReader();
         }
         return cdrReader;
     }
