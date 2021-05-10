@@ -169,6 +169,30 @@ public class GenericApiAlteringService {
                 customFieldDto.setCode(code);
                 writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), cfsValuesByCode.get(code));
                 customFieldsDto.getCustomField().add(customFieldDto);
+                if(cfsValuesByCode.get(code) == null || ((List) cfsValuesByCode.get(code)).isEmpty() ){
+                    customFieldsDto.getCustomField().add(customFieldDto);
+                    continue;
+                }
+                if(cft.isVersionable()){
+                	for(Object newValue : ((List) cfsValuesByCode.get(code))) {
+                		customFieldDto = new CustomFieldDto();
+                        customFieldDto.setCode(code);
+                        
+	                    customFieldDto.setValuePeriodPriority((Integer) ((Map) newValue).get("priority"));
+	                    if(((Map) newValue).get("from") != null){
+	                        customFieldDto.setValuePeriodStartDate(resolveDate(((Map) newValue).get("from")));
+	                    }
+	                    if(((Map) newValue).get("to") != null){
+	                        customFieldDto.setValuePeriodEndDate(resolveDate(((Map) newValue).get("to")));
+	                    }
+	                    writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), Arrays.asList(newValue));
+	                    customFieldsDto.getCustomField().add(customFieldDto);
+	                }
+                } else {
+                	writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), cfsValuesByCode.get(code));
+                    customFieldsDto.getCustomField().add(customFieldDto);
+                }
+                
             }
         }
         return customFieldsDto;
