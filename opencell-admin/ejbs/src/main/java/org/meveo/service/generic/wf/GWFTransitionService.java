@@ -17,23 +17,9 @@
  */
 package org.meveo.service.generic.wf;
 
-import static org.meveo.admin.job.GenericWorkflowJob.GENERIC_WF;
-import static org.meveo.admin.job.GenericWorkflowJob.IWF_ENTITY;
-import static org.meveo.admin.job.GenericWorkflowJob.WF_ACTUAL_TRANSITION;
-import static org.meveo.admin.job.GenericWorkflowJob.WF_INS;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-
+import com.google.common.collect.Maps;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BusinessEntity;
@@ -43,19 +29,36 @@ import org.meveo.model.generic.wf.WFStatus;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 
-import com.google.common.collect.Maps;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.meveo.admin.job.GenericWorkflowJob.GENERIC_WF;
+import static org.meveo.admin.job.GenericWorkflowJob.IWF_ENTITY;
+import static org.meveo.admin.job.GenericWorkflowJob.WF_ACTUAL_TRANSITION;
+import static org.meveo.admin.job.GenericWorkflowJob.WF_INS;
 
 @Stateless
 public class GWFTransitionService extends PersistenceService<GWFTransition> {
     
     @Inject
     private ScriptInstanceService scriptInstanceService;
-    
+
+    @Inject
+    private BusinessEntityService businessEntityService;
+
     @Inject
     private WorkflowInstanceHistoryService workflowInstanceHistoryService;
     
@@ -122,7 +125,10 @@ public class GWFTransitionService extends PersistenceService<GWFTransition> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public WorkflowInstance executeTransition(GWFTransition transition, BusinessEntity entity,
             WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
-        
+
+        // refresh
+        workflowInstance = workflowInstanceService.refreshOrRetrieve(workflowInstance);
+
         log.debug("Processing transition: {} on entity {}", transition, workflowInstance);
         if (genericWorkflow.isEnableHistory()) {
             WorkflowInstanceHistory workflowInstanceHistory = processTransition(workflowInstance, transition);
@@ -131,6 +137,7 @@ public class GWFTransitionService extends PersistenceService<GWFTransition> {
         if (transition.getActionScript() != null) {
             executeActionScript(entity, workflowInstance, genericWorkflow, transition);
         }
+        log.trace("Entity status will be updated to {}. Entity {}", workflowInstance, transition.getToStatus());
         WFStatus toStatus = wfStatusService.findByCodeAndGWF(transition.getToStatus(), genericWorkflow);
         workflowInstance.setCurrentStatus(toStatus);
         workflowInstance = workflowInstanceService.update(workflowInstance);
@@ -152,6 +159,11 @@ public class GWFTransitionService extends PersistenceService<GWFTransition> {
         ScriptInstance scriptInstance = gWFTransition.getActionScript();
         String scriptCode = scriptInstance.getCode();
         ScriptInterface script = scriptInstanceService.getScriptInstance(scriptCode);
+
+        //refresh entity  if it was updated by previous transition
+        businessEntityService.setEntityClass((Class<BusinessEntity>) ReflectionUtils.getCleanClass(iwfEntity.getClass()));
+        iwfEntity = businessEntityService.refreshOrRetrieve(iwfEntity);
+
         Map<String, Object> methodContext = new HashMap<>();
         methodContext.put(GENERIC_WF, genericWorkflow);
         methodContext.put(WF_INS, workflowInstance);

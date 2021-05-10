@@ -30,9 +30,11 @@ import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.generic.wf.WorkflowInstanceHistory;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.script.ScriptInstanceService;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,20 +42,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.util.Optional.ofNullable;
 
 @Stateless
 public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
-    @Inject
-    private ScriptInstanceService scriptInstanceService;
-
-    @Inject
+    @EJB
     private GWFTransitionService gWFTransitionService;
-
-    @Inject
-    private WFStatusService wfStatusService;
 
     @Inject
     private WorkflowInstanceService workflowInstanceService;
@@ -61,11 +58,10 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
     @Inject
     private WorkflowInstanceHistoryService workflowInstanceHistoryService;
 
-    static Set<Class<?>> WORKFLOWED_CLASSES = ReflectionUtils.getClassesAnnotatedWith(WorkflowedEntity.class, "org.meveo");
+    static Set<Class<?>> workflowedClasses = ReflectionUtils.getClassesAnnotatedWith(WorkflowedEntity.class, "org.meveo");
 
     public List<Class<?>> getAllWorkflowedClazz() {
-        List<Class<?>> result = new ArrayList<>(WORKFLOWED_CLASSES);
-        return result;
+        return new ArrayList<>(workflowedClasses);
     }
 
     public List<GenericWorkflow> findByBusinessEntity(BusinessEntity entity) {
@@ -89,9 +85,8 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
     }
 
     public List<GenericWorkflow> findByTargetEntityClass(String targetEntityClass) {
-        List<GenericWorkflow> genericWorkflows = (List<GenericWorkflow>) getEntityManager().createNamedQuery("GenericWorkflow.findByTargetEntityClass", GenericWorkflow.class)
+        return getEntityManager().createNamedQuery("GenericWorkflow.findByTargetEntityClass", GenericWorkflow.class)
                 .setParameter("targetEntityClass", targetEntityClass).getResultList();
-        return genericWorkflows;
     }
 
     /**
@@ -116,11 +111,13 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
     /**
      * Execute workflow for wf instance
      *
-     * @param workflowInstance
-     * @param genericWorkflow
-     * @return workflowInstance
+     * @param workflowInstance a workflow instance
+     * @param genericWorkflow  a generic workflow
+     * @return workflowInstance an updated workflow instance
      * @throws BusinessException
      */
+
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public WorkflowInstance executeWorkflow(BusinessEntity iwfEntity, WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) throws BusinessException {
         log.debug("Executing generic workflow script:{} on instance {}", genericWorkflow.getCode(), workflowInstance);
         try {
@@ -131,19 +128,15 @@ public class GenericWorkflowService extends BusinessService<GenericWorkflow> {
 
             int endIndex = genericWorkflow.getTransitions().size();
             if (!genericWorkflow.getTransitions().get(endIndex - 1).getToStatus().equalsIgnoreCase(currentStatus)) {
-                List<GWFTransition> listByFromStatus = genericWorkflow.getTransitions().stream().filter(tx -> tx.getFromStatus().equals(currentStatus))
-                        .collect(Collectors.toList());
-                List<GWFTransition> executedTransitions = getExecutedTransitions(genericWorkflow, workflowInstance, listByFromStatus);
+                int startIndex = IntStream.range(0, endIndex).filter(idx -> genericWorkflow.getTransitions().get(idx).getFromStatus().equals(currentStatus)).findFirst().getAsInt();
+                List<GWFTransition> listByFromStatus = genericWorkflow.getTransitions().subList(startIndex, endIndex);
+                List<GWFTransition> executedTransition = getExecutedTransitions(genericWorkflow, workflowInstance, listByFromStatus);
 
                 for (GWFTransition gWFTransition : listByFromStatus) {
-
-                    if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransitions, genericWorkflow)) {
+                    if (matchExpression(gWFTransition.getConditionEl(), iwfEntity) && isInSameBranch(gWFTransition, executedTransition, genericWorkflow)) {
                         workflowInstance = gWFTransitionService.executeTransition(gWFTransition, iwfEntity, workflowInstance, genericWorkflow);
-                        executedTransitions.add(gWFTransition);
-                        if (!workflowInstance.getCurrentStatus().equals(currentWFStatus)) {
-                            executeWorkflow(iwfEntity, workflowInstance, genericWorkflow);
-                            break;
-                        }
+                        executedTransition.add(gWFTransition);
+                        break;
                     }
                 }
             }
