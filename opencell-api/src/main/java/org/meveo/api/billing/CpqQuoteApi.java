@@ -1450,6 +1450,8 @@ public class CpqQuoteApi extends BaseApi {
             Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
             for (DiscountPlanItem discountPlanItem : discountItems) {
                 AccountingArticle discountAccountingArticle = discountPlanItem.getAccountingArticle();
+                if(discountAccountingArticle == null)
+                	throw new EntityDoesNotExistsException("Discount plan item ("+discountPlanItem.getCode()+") doesn't have an accounting article");
 
                 discountAmount = discountAmount.add(discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues));
                 if (discountAmount != null && discountAmount.abs().compareTo(BigDecimal.ZERO) > 0) {

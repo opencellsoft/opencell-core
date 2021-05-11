@@ -18,6 +18,12 @@
 
 package org.meveo.service.billing.impl;
 
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.*;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.rating.EDR;
+import org.meveo.model.tax.TaxClass;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -26,24 +32,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.billing.WalletInstance;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.crm.custom.CustomFieldValues;
-import org.meveo.model.rating.EDR;
-import org.meveo.model.tax.TaxClass;
-
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 /**
  * Aggregated wallet operation.
@@ -188,8 +176,8 @@ public class AggregatedWalletOperation {
 	private List<Long> walletOperationsIds;
 
 	public AggregatedWalletOperation(String walletOpsIds, Long sellerId, Integer year, Integer month, Integer day, Tax tax, InvoiceSubCategory invoiceSubCategory, Object id,
-			BigDecimal amountWithTax, BigDecimal amountWithoutTax, BigDecimal amountTax, TaxClass taxClass, BigDecimal quantity, BigDecimal unitAmountWithoutTax,
-			String orderNumber, String parameter1, String parameter2, String parameter3, String parameterExtra, Integer sortIndex) {
+									 BigDecimal amountWithTax, BigDecimal amountWithoutTax, BigDecimal amountTax, TaxClass taxClass, BigDecimal quantity, BigDecimal unitAmountWithoutTax,
+									 String orderNumber, String parameter1, String parameter2, String parameter3, String parameterExtra, Integer sortIndex) {
 		String[] stringIds = walletOpsIds.split(",");
 		List<Long> ids = Arrays.asList(stringIds).stream().map(x -> Long.valueOf(x)).collect(Collectors.toList());
 		this.walletOperationsIds = ids;
@@ -224,6 +212,7 @@ public class AggregatedWalletOperation {
 	public AggregatedWalletOperation() {
 
 	}
+
 
 	private Long getComputedId() {
 		String strId = getId().toString();
