@@ -18,25 +18,6 @@
 
 package org.meveo.admin.action.crm;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-
-import java.lang.reflect.Modifier;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
-import javax.faces.application.FacesMessage;
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
@@ -62,6 +43,24 @@ import org.meveo.service.custom.CustomizedEntityService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.primefaces.model.DualListModel;
 import org.reflections.Reflections;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.lang.reflect.Modifier;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * The Class CustomFieldTemplateBean.
@@ -200,7 +199,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         }
         return allClassNames.stream()
                 .filter(businessEntity -> isClassNameMatchQuery(query, businessEntity.getEntityClass()))
-                .map(customizedEntity -> customizedEntity.getClassnameToDisplay())
+                .map(CustomizedEntity::getClassnameToDisplay)
                 .distinct()
                 .collect(Collectors.toList());
     }

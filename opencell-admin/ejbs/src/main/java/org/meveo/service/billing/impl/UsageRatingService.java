@@ -168,7 +168,6 @@ public class UsageRatingService implements Serializable {
             counterPeriod = counterInstanceService.getOrCreateCounterPeriod(usageChargeInstance.getCounter(), edr.getEventDate(), usageChargeInstance.getServiceInstance().getSubscriptionDate(), usageChargeInstance,
                 usageChargeInstance.getServiceInstance());
         }
-        // CachedCounterPeriod cachedCounterPeriod = ratingCacheContainerProvider.getCounterPeriod(usageChargeInstance.getCounter().getId(), edr.getEventDate());
 
         if (counterPeriod == null) {
             return new DeducedCounter();
@@ -255,7 +254,6 @@ public class UsageRatingService implements Serializable {
      * @throws RatingException EDR rejection due to lack of funds, data validation, inconsistency or other rating related failure
      */
     private RatingResult rateEDRonChargeAndCounters(EDR edr, UsageChargeInstance usageChargeInstance, boolean isVirtual) throws BusinessException, RatingException {
-        // boolean stopEDRRating_fullyRated = false;
 
         BigDecimal deducedQuantity = null;
         DeducedCounter deducedCounter = null;
@@ -342,8 +340,7 @@ public class UsageRatingService implements Serializable {
             return stopEDRRating;
         }
 
-        //
-        BigDecimal quantityToCharge = null;
+        BigDecimal quantityToCharge;
         if (deducedQuantity == null) {
             quantityToCharge = edr.getQuantityLeftToRate();
         } else {
@@ -452,17 +449,15 @@ public class UsageRatingService implements Serializable {
                 throw new RatingException(EDRRejectReasonEnum.SUBSCRIPTION_IS_NULL);
             }
 
-            // edr.setLastUpdate(new Date());
-
             RatingResult ratedEDRResult = new RatingResult();
 
             List<UsageChargeInstance> usageChargeInstances = null;
 
-            // Charges should be already ordered by priority and id (why id??)
-            if (edr.getSubscription().getId() != null) {
-                usageChargeInstances = usageChargeInstanceService.getUsageChargeInstancesValidForDateBySubscriptionId(edr.getSubscription().getId(), edr.getEventDate());
+            Long SubId = edr.getSubscription().getId();
+            if (SubId != null) {
+                usageChargeInstances = usageChargeInstanceService.getUsageChargeInstancesValidForDateBySubscriptionId(SubId, edr.getEventDate());
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
-                    throw new NoChargeException("No active usage charges are associated with subscription " + edr.getSubscription().getId());
+                    throw new NoChargeException("No active usage charges are associated with subscription " + SubId);
                 }
             } else if(edr.getSubscription().getServiceInstances() != null) {
                 usageChargeInstances = edr.getSubscription().getServiceInstances()
@@ -470,7 +465,7 @@ public class UsageRatingService implements Serializable {
                                             .flatMap(si -> si.getUsageChargeInstances().stream())
                                             .collect(toList());
                 if (usageChargeInstances == null || usageChargeInstances.isEmpty()) {
-                    throw new NoChargeException("No usage charges are associated with subscription " + edr.getSubscription().getId());
+                    throw new NoChargeException("No usage charges are associated with subscription " + SubId);
                 }
             }
 
@@ -581,7 +576,7 @@ public class UsageRatingService implements Serializable {
      */
     private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, boolean requirePP) throws BusinessException, NoPricePlanException {
 
-        UsageChargeTemplate chargeTemplate = null;
+        UsageChargeTemplate chargeTemplate;
         if (chargeInstance.getChargeTemplate() instanceof UsageChargeTemplate) {
             chargeTemplate = (UsageChargeTemplate) chargeInstance.getChargeTemplate();
         } else {
@@ -663,10 +658,10 @@ public class UsageRatingService implements Serializable {
 
         reservationService.create(reservation);
 
-        UsageChargeTemplate chargeTemplate = null;
+        UsageChargeTemplate chargeTemplate;
         for (UsageChargeInstance usageChargeInstance : charges) {
 
-        	chargeTemplate=usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
+        	chargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
             log.trace("Try  templateCache {}", chargeTemplate.getCode());
             try {
                 if (isChargeMatch(usageChargeInstance, edr, true)) {

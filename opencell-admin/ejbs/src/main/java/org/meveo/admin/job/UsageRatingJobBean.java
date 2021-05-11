@@ -77,7 +77,7 @@ public class UsageRatingJobBean extends BaseJobBean {
                 rateUntilDate = (Date) this.getParamOrCFValue(jobInstance, "rateUntilDate");
                 ratingGroup = (String) this.getParamOrCFValue(jobInstance, "ratingGroup");
             } catch (Exception e) {
-                log.warn("Cant get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
+                log.warn("Can't get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
             }
 
             List<Long> edrIds = edrService.getEDRsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
@@ -105,10 +105,7 @@ public class UsageRatingJobBean extends BaseJobBean {
                 try {
                     future.get();
 
-                } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
-
-                } catch (ExecutionException e) {
+                }catch (ExecutionException e) {
                     Throwable cause = e.getCause();
                     result.registerError(cause.getMessage());
                     result.addReport(cause.getMessage());

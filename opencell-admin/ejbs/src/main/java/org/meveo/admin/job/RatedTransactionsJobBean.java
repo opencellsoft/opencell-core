@@ -109,7 +109,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         walletOperationService.removeZeroWalletOperation();
     }
 
-    private void executeWithoutAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis) throws Exception {
+    private void executeWithoutAggregation(JobExecutionResultImpl result, Long nbRuns, Long waitingMillis) {
         List<Long> walletOperations = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
         log.info("WalletOperations to convert into rateTransactions={}", walletOperations.size());
         result.setNbItemsToProcess(walletOperations.size());
@@ -118,7 +118,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         List<Future<String>> futures = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
-            futures.add(ratedTransactionAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
+            futures.add(ratedTransactionAsync.launchAndForget(subListCreator.getNextWorkSet(), result, lastCurrentUser));
             try {
                 Thread.sleep(waitingMillis.longValue());
 
@@ -163,7 +163,7 @@ public class RatedTransactionsJobBean extends BaseJobBean {
         List<Future<String>> asyncReturns = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
-            asyncReturns.add(ratedTransactionAsync.launchAndForget((List<AggregatedWalletOperation>) subListCreator.getNextWorkSet(), result, lastCurrentUser, aggregationSetting,
+            asyncReturns.add(ratedTransactionAsync.launchAndForget(subListCreator.getNextWorkSet(), result, lastCurrentUser, aggregationSetting,
                 invoicingDate));
             try {
                 Thread.sleep(waitingMillis.longValue());

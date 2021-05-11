@@ -44,7 +44,7 @@ public class MillisDate implements JsonDeserializer<Date>, JsonSerializer<Date> 
             return sdf.parse(json.getAsString());
         } catch (Exception e) {
         }
-        return new Date(new Long(json.getAsString()));
+        return new Date(Long.valueOf(json.getAsString()));
     }
 
     @Override
