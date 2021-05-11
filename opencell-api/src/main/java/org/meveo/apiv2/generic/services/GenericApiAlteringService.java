@@ -237,16 +237,16 @@ public class GenericApiAlteringService {
     private void writeSingleValueToCFDto(CustomFieldDto customFieldDto, CustomFieldTypeEnum fieldType, Object value) {
         switch (fieldType) {
             case DATE:
-                customFieldDto.setDateValue(new Date((Long) value));
+                customFieldDto.setDateValue(value == null ? null : new Date((Long) value));
                 break;
             case LONG:
-                customFieldDto.setLongValue(Integer.toUnsignedLong((Integer) value));
+                customFieldDto.setLongValue(value == null ? null : Integer.toUnsignedLong((Integer) value));
                 break;
             case DOUBLE:
-                customFieldDto.setDoubleValue(Double.parseDouble(value.toString()));
+                customFieldDto.setDoubleValue(value == null ? null : Double.parseDouble(value.toString()));
                 break;
             case BOOLEAN:
-                customFieldDto.setBooleanValue((Boolean) value);
+                customFieldDto.setBooleanValue(value == null ? null : (Boolean) value);
                 break;
             case CHILD_ENTITY:
             case ENTITY:
