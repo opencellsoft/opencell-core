@@ -9,7 +9,6 @@ import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.DDPaymentMethod;
-import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -363,18 +362,16 @@ public class PaymentMethod {
 	public void setInfo5(String info5) {
 		this.info5 = info5;
 	}
-	/**
-	 * @return the customField
-	 */
-	public CustomField getCustomField() {
+
+	public CustomFieldDto getCustomField() {
 		return customField;
 	}
-	/**
-	 * @param customField the customField to set
-	 */
-	public void setCustomField(CustomField customField) {
+
+	public void setCustomField(CustomFieldDto customField) {
 		this.customField = customField;
 	}
+
+	
 	
 	
 }

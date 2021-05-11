@@ -14,7 +14,6 @@ public class Address {
     private String countryName;
     private String state;
     private String zipCode;
-    private CustomField customeField;
 
     public Address(org.meveo.model.shared.Address address) {
         if(address == null)
@@ -30,13 +29,6 @@ public class Address {
         this.state = address.getState();
     }
     
-    public Address(org.meveo.model.shared.Address address, CustomField customField) {
-    	this(address);
-    	this.customeField = customField;
-    }
-    
-    
-
     public String getAddress1() {
         return address1;
     }
@@ -128,22 +120,5 @@ public class Address {
 	public void setZipCode(String zipCode) {
 		this.zipCode = zipCode;
 	}
-
-
-
-	/**
-	 * @return the customeField
-	 */
-	public CustomField getCustomeField() {
-		return customeField;
-	}
-
-
-
-	/**
-	 * @param customeField the customeField to set
-	 */
-	public void setCustomeField(CustomField customeField) {
-		this.customeField = customeField;
-	}
+ 
 }
