@@ -20,8 +20,11 @@ import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteVersion;
+import org.meveo.service.api.EntityToDtoConverter;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,10 +37,15 @@ import static java.util.stream.Collectors.toList;
 
 @Stateless
 public class QuoteMapper {
+   	@Inject
+    protected EntityToDtoConverter entityToDtoConverter;
     public QuoteXmlDto map(QuoteVersion quoteVersion) {
+    	
+ 
 
         CpqQuote quote = quoteVersion.getQuote();
-        BillingAccount billingAccount = new BillingAccount(quote.getBillableAccount() == null ? quote.getApplicantAccount() : quote.getBillableAccount());
+        BillingAccount billingAccount = new BillingAccount(quote.getBillableAccount() == null ? quote.getApplicantAccount() : quote.getBillableAccount(),
+        		entityToDtoConverter.getCustomFieldsDTO(quote.getBillableAccount() == null ? quote.getApplicantAccount() : quote.getBillableAccount()));
         Header header = new Header(billingAccount);
 
         Map<org.meveo.model.billing.BillingAccount, List<QuoteArticleLine>> linesByBillingAccount = getAllOffersQuoteLineStream(quoteVersion)
@@ -109,10 +117,10 @@ public class QuoteMapper {
     }
 
     private SubCategory mapToSubCategory(InvoiceSubCategory subCategory, List<QuoteArticleLine> quoteArticleLines, org.meveo.model.billing.BillingAccount ba) {
-        Map<AccountingArticle, List<QuoteArticleLine>> linesByArticleLine = quoteArticleLines.stream()
+        Map<AccountingArticle, List<QuoteArticleLine>> linesByAccountingArticle = quoteArticleLines.stream()
                 .collect(groupingBy(line -> line.getAccountingArticle()));
-        List<ArticleLine> articleLines = linesByArticleLine.keySet().stream()
-                .map(accountingArticle -> mapToArticleLine(accountingArticle, linesByArticleLine.get(accountingArticle), ba))
+        List<ArticleLine> articleLines = linesByAccountingArticle.keySet().stream()
+                .map(accountingArticle -> mapToArticleLine(accountingArticle, linesByAccountingArticle.get(accountingArticle), ba))
                 .collect(toList());
         return new SubCategory(subCategory, articleLines, getTradingLanguage(ba));
     }

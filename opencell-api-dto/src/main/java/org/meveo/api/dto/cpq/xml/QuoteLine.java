@@ -25,6 +25,8 @@ public class QuoteLine {
     @XmlElementWrapper(name = "prices")
     @XmlElement(name = "price")
     private List<PriceDTO> prices;
+    
+    private Offer offer;
 
     public QuoteLine(QuoteArticleLine line, String code, String label) {
         this.quantity = line.getQuantity();
@@ -32,7 +34,7 @@ public class QuoteLine {
         this.accountingArticleLabel = label;
         this.prices = line.getQuotePrices().stream()
                 .map(PriceDTO::new)
-                .collect(Collectors.toList());;
+                .collect(Collectors.toList());
     }
 
     public BigDecimal getQuantity() {
@@ -50,4 +52,30 @@ public class QuoteLine {
     public void setPrices(List<PriceDTO> prices) {
         this.prices = prices;
     }
+
+	public String getAccountingArticleCode() {
+		return accountingArticleCode;
+	}
+
+	public void setAccountingArticleCode(String accountingArticleCode) {
+		this.accountingArticleCode = accountingArticleCode;
+	}
+
+	public String getAccountingArticleLabel() {
+		return accountingArticleLabel;
+	}
+
+	public void setAccountingArticleLabel(String accountingArticleLabel) {
+		this.accountingArticleLabel = accountingArticleLabel;
+	}
+
+	public Offer getOffer() {
+		return offer;
+	}
+
+	public void setOffer(Offer offer) {
+		this.offer = offer;
+	}
+    
+    
 }

@@ -1,11 +1,17 @@
 package org.meveo.api.dto.cpq.xml;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-import org.meveo.api.dto.CustomFieldDto;
-import org.meveo.model.cpq.GroupedAttributes;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.cpq.AttributeDTO;
+import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.quote.QuoteProduct;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Product {
@@ -13,22 +19,22 @@ public class Product {
 	@XmlElement
 	private String productLine;
 	@XmlElement
-	private int quantity;
-	private GroupedAttribute groupedAttribute;
-	private Attribute attribute;
-	private CustomFieldDto customField;
+	private BigDecimal quantity;  
+	private List<AttributeDTO> attributes;
+	private CustomFieldsDto customFields;
 	
 	
 	
-	protected Product(org.meveo.model.cpq.Product product, GroupedAttributes groupedAttributes, org.meveo.model.cpq.Attribute attribute, CustomFieldDto customField) {
+	protected Product(QuoteProduct quoteProduct , CustomFieldsDto customFields) {
 		super();
-		if(product.getProductLine() != null) {
-			this.productLine = product.getProductLine().getCode();
+		if(quoteProduct.getProductVersion().getProduct().getProductLine() != null) {
+			this.productLine = quoteProduct.getProductVersion().getProduct().getProductLine().getCode();
 		}
-//		this.quantity = product.get;
-//		this.groupedAttribute = groupedAttribute;
-		this.attribute = new Attribute(attribute);
-		this.customField = customField;
+	    this.quantity = quoteProduct.getQuantity(); 
+		this.attributes=quoteProduct.getProductVersion().getAttributes().stream()
+                .map(AttributeDTO::new)
+                .collect(Collectors.toList());
+		this.customFields = customFields;
 	}
 	/**
 	 * @return the productLine
@@ -42,54 +48,30 @@ public class Product {
 	public void setProductLine(String productLine) {
 		this.productLine = productLine;
 	}
-	/**
-	 * @return the quantity
-	 */
-	public int getQuantity() {
+	
+ 
+	
+	public BigDecimal getQuantity() {
 		return quantity;
 	}
-	/**
-	 * @param quantity the quantity to set
-	 */
-	public void setQuantity(int quantity) {
+	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
 	}
-	/**
-	 * @return the groupedAttribute
-	 */
-	public GroupedAttribute getGroupedAttribute() {
-		return groupedAttribute;
+	public List<AttributeDTO> getAttributes() {
+		return attributes;
 	}
-	/**
-	 * @param groupedAttribute the groupedAttribute to set
-	 */
-	public void setGroupedAttribute(GroupedAttribute groupedAttribute) {
-		this.groupedAttribute = groupedAttribute;
+	public void setAttributes(List<AttributeDTO> attributes) {
+		this.attributes = attributes;
 	}
-	/**
-	 * @return the attribute
-	 */
-	public Attribute getAttribute() {
-		return attribute;
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
 	}
-	/**
-	 * @param attribute the attribute to set
-	 */
-	public void setAttribute(Attribute attribute) {
-		this.attribute = attribute;
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
-	/**
-	 * @return the customField
-	 */
-	public CustomFieldDto getCustomField() {
-		return customField;
-	}
-	/**
-	 * @param customField the customField to set
-	 */
-	public void setCustomField(CustomFieldDto customField) {
-		this.customField = customField;
-	}
+	
+	
+	
 	
 	
 	

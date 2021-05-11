@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.quote.QuotePrice;
 
@@ -71,7 +72,7 @@ public class PriceDTO extends BaseEntityDto {
     private String taxCategory;
     private String taxCode;
     
-    private CustomFieldDto customField;
+    private CustomFieldsDto customFields;
     
     
 	public PriceDTO(QuotePrice quotePrice) {
@@ -99,9 +100,9 @@ public class PriceDTO extends BaseEntityDto {
 	    
 		
 	}
-	public PriceDTO(QuotePrice quotePrice,CustomFieldDto customField) {
+	public PriceDTO(QuotePrice quotePrice,CustomFieldsDto customFields) {
 		this(quotePrice);
-		this.customField = customField;
+		this.customFields = customFields;
 	}
 	
 	
@@ -227,12 +228,15 @@ public class PriceDTO extends BaseEntityDto {
 	public void setTaxCode(String taxCode) {
 		this.taxCode = taxCode;
 	}
-	public CustomFieldDto getCustomField() {
-		return customField;
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
 	}
-	public void setCustomField(CustomFieldDto customField) {
-		this.customField = customField;
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
+
+	
+	
     
     
 
