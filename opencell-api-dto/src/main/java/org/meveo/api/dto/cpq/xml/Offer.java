@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
+import org.meveo.api.dto.cpq.QuoteProductDTO;
 import org.meveo.model.cpq.offer.QuoteOffer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -18,21 +19,22 @@ public class Offer {
 	private String code;
 	@XmlElement
 	private String description; 
-	 private List<AttributeDTO> attributes;
+	 private List<Attribute> attributes;
+	 private List<Product> products;
 	private CustomFieldsDto customFields;
 	
 	
 	
 	
-	public Offer(String code, String description, QuoteOffer quoteOffer,CustomFieldsDto customFields) {
+	public Offer(QuoteOffer quoteOffer,CustomFieldsDto customFields) {
 		super();
-		this.code = code;
-		this.description = description;
-		this.attributes =quoteOffer.getOfferTemplate().getAttributes().stream()
-                .map(AttributeDTO::new)
-                .collect(Collectors.toList());
+		this.code = quoteOffer.getOfferTemplate().getCode();
+		this.description = quoteOffer.getOfferTemplate().getDescription();
+		
 		this.customFields = customFields;
 	}
+	
+	
 	/**
 	 * @return the productLine
 	 */
@@ -65,12 +67,18 @@ public class Offer {
 		this.description = description;
 	}
 
-	public List<AttributeDTO> getAttributes() {
+
+	
+	public List<Attribute> getAttributes() {
 		return attributes;
 	}
-	public void setAttributes(List<AttributeDTO> attributes) {
+
+
+	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
 	}
+
+
 	public CustomFieldsDto getCustomFields() {
 		return customFields;
 	}
@@ -78,6 +86,19 @@ public class Offer {
 		this.customFields = customFields;
 	}
 
+
+	public List<Product> getProducts() {
+		return products;
+	}
+
+
+	public void setProducts(List<Product> products) {
+		this.products = products;
+	}
+	
+	
+
+	
 
 
 

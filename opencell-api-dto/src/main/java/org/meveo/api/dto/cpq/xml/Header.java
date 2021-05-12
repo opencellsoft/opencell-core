@@ -16,7 +16,7 @@ public class Header {
     @XmlElement
     private Date startDate;
     @XmlElement
-    private int duration;
+    private Long duration;
     @XmlElement
     private int opportunityDuration;
     @XmlElement
@@ -34,11 +34,28 @@ public class Header {
     public Header() {
     }
 
-    public Header(BillingAccount billingAccount) {
-        this.billingAccount = billingAccount;
-    }
+    
 
-    public BillingAccount getBillingAccount() {
+    public Header(BillingAccount billingAccount, Contract contract, int quoteVersion, String quoteCode, Date startDate,
+			Long duration, int opportunityDuration, String customerReference, String registrationNumber,
+			Date validFromDate, Date validToDate) {
+		super();
+		this.billingAccount = billingAccount;
+		this.contract = contract;
+		this.quoteVersion = quoteVersion;
+		this.quoteCode = quoteCode;
+		this.startDate = startDate;
+		this.duration = duration;
+		this.opportunityDuration = opportunityDuration;
+		this.customerReference = customerReference;
+		this.registrationNumber = registrationNumber;
+		this.validFromDate = validFromDate;
+		this.validToDate = validToDate;
+	}
+
+
+
+	public BillingAccount getBillingAccount() {
         return billingAccount;
     }
 
@@ -98,19 +115,19 @@ public class Header {
 		this.startDate = startDate;
 	}
 
-	/**
-	 * @return the duration
-	 */
-	public int getDuration() {
+
+
+	public Long getDuration() {
 		return duration;
 	}
 
-	/**
-	 * @param duration the duration to set
-	 */
-	public void setDuration(int duration) {
+
+
+	public void setDuration(Long duration) {
 		this.duration = duration;
 	}
+
+
 
 	/**
 	 * @return the opportunityDuration

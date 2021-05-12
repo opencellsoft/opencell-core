@@ -76,9 +76,10 @@ public class QuoteProductDTO extends BaseEntityDto{
     }
     
 
-	public QuoteProductDTO(QuoteProduct quoteProduct) {
+	public QuoteProductDTO(QuoteProduct quoteProduct, CustomFieldsDto customFields) {
 		super();
 		init(quoteProduct);
+		this.customFields=customFields;
 		
 	}
 	

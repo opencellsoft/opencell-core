@@ -28,13 +28,17 @@ public class QuoteLine {
     
     private Offer offer;
 
-    public QuoteLine(QuoteArticleLine line, String code, String label) {
+    public QuoteLine(QuoteArticleLine line,Offer offer) {
         this.quantity = line.getQuantity();
-        this.accountingArticleCode = code;
-        this.accountingArticleLabel = label;
+        this.accountingArticleCode = line.getAccountingArticle().getCode();
+        this.accountingArticleLabel = line.getAccountingArticle().getDescription();
         this.prices = line.getQuotePrices().stream()
                 .map(PriceDTO::new)
                 .collect(Collectors.toList());
+        
+        this.offer= offer;
+        
+        
     }
 
     public BigDecimal getQuantity() {

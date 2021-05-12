@@ -1,18 +1,18 @@
 package org.meveo.api.dto.cpq.xml;
 
-import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.quote.QuoteArticleLine;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import org.meveo.model.quote.QuoteArticleLine;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ArticleLine {
+public class AccountingArticle {
 
     @XmlAttribute
     private String code;
@@ -23,12 +23,10 @@ public class ArticleLine {
     private List<QuoteLine> quoteLines;
    
 
-    public ArticleLine(AccountingArticle accountingArticle, List<QuoteArticleLine> lines, String tradingLanguage) {
+    public AccountingArticle(org.meveo.model.article.AccountingArticle accountingArticle, List<QuoteArticleLine> lines, String tradingLanguage) {
         this.code = accountingArticle.getCode();
         this.label = accountingArticle.getDescriptionI18nNotNull().get(tradingLanguage) == null ? accountingArticle.getDescription() : accountingArticle.getDescriptionI18n().get(tradingLanguage);
-        this.quoteLines = lines.stream()
-                .map(line -> new QuoteLine(line, code, label))
-                .collect(Collectors.toList());  
+        
         
     }
 

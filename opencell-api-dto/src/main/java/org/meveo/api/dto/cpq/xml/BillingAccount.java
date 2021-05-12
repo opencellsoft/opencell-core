@@ -47,10 +47,10 @@ public class BillingAccount {
         this.address = new Address(billingAccount.getAddress());
     }
     
-    public BillingAccount(org.meveo.model.billing.BillingAccount billingAccount, CustomFieldsDto customFieldsDto) {
+    public BillingAccount(org.meveo.model.billing.BillingAccount billingAccount, PaymentMethod paymentMethod, CustomFieldsDto customFieldsDto) {
     	this(billingAccount);
     	this.customFields = customFieldsDto;
-    	this.paymentMethod = new PaymentMethod(billingAccount.getPaymentMethod(), null);
+    	this.paymentMethod=paymentMethod;
     }
 
     public String getBillingCycleCode() {

@@ -20,20 +20,17 @@ public class Product {
 	private String productLine;
 	@XmlElement
 	private BigDecimal quantity;  
-	private List<AttributeDTO> attributes;
+	private List<Attribute> attributes;
 	private CustomFieldsDto customFields;
 	
 	
 	
-	protected Product(QuoteProduct quoteProduct , CustomFieldsDto customFields) {
+	public  Product(QuoteProduct quoteProduct , CustomFieldsDto customFields) {
 		super();
 		if(quoteProduct.getProductVersion().getProduct().getProductLine() != null) {
 			this.productLine = quoteProduct.getProductVersion().getProduct().getProductLine().getCode();
 		}
-	    this.quantity = quoteProduct.getQuantity(); 
-		this.attributes=quoteProduct.getProductVersion().getAttributes().stream()
-                .map(AttributeDTO::new)
-                .collect(Collectors.toList());
+	    this.quantity = quoteProduct.getQuantity();
 		this.customFields = customFields;
 	}
 	/**
@@ -57,10 +54,12 @@ public class Product {
 	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
 	}
-	public List<AttributeDTO> getAttributes() {
+
+	
+	public List<Attribute> getAttributes() {
 		return attributes;
 	}
-	public void setAttributes(List<AttributeDTO> attributes) {
+	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
 	}
 	public CustomFieldsDto getCustomFields() {
