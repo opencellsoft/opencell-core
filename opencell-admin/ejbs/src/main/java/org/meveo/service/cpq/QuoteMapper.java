@@ -44,8 +44,11 @@ import org.meveo.service.api.EntityToDtoConverter;
 
 @Stateless
 public class QuoteMapper {
+	
    	@Inject
-    protected EntityToDtoConverter entityToDtoConverter;
+    public EntityToDtoConverter entityToDtoConverter;
+   	
+   	
     public QuoteXmlDto map(QuoteVersion quoteVersion) {
     	
  
