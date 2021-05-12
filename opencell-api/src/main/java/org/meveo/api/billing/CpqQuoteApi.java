@@ -73,6 +73,7 @@ import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -443,12 +444,10 @@ public class CpqQuoteApi extends BaseApi {
 
         try {
             CpqQuote cpqQuote = quoteVersion.getQuote();
-            String sellerCode = quoteVersion.getQuote().getSeller() != null ? quoteVersion.getQuote().getSeller().getCode() : null;
+            InvoiceType invoiceType=invoiceTypeService.getDefaultQuote();
 
-            String quoteScriptCode = paramBean.getProperty("seller." + sellerCode + ".quoteScript", "");
-            if (!StringUtils.isBlank(quoteScriptCode)) {
-                ScriptInstance scriptInstance = scriptInstanceService.findByCode(quoteScriptCode);
-                if (scriptInstance != null) {
+            ScriptInstance scriptInstance = invoiceType.getCustomInvoiceXmlScriptInstance();
+            if (scriptInstance != null) {
                     String quoteXmlScript = scriptInstance.getCode();
                     ScriptInterface script = scriptInstanceService.getScriptInstance(quoteXmlScript);
                     Map<String, Object> methodContext = new HashMap<String, Object>();
@@ -461,7 +460,6 @@ public class CpqQuoteApi extends BaseApi {
                     }
                     xmlContent = (byte[]) methodContext.get(Script.RESULT_VALUE);
                     result.setXmlContent(xmlContent);
-                }
 
             } else {
                 String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion));

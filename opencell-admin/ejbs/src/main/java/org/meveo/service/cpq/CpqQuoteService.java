@@ -49,6 +49,8 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -68,6 +70,9 @@ import net.sf.jasperreports.engine.util.JRLoader;
 public class CpqQuoteService extends BusinessService<CpqQuote> {
 
 	@Inject private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
+	
+	@Inject
+	private InvoiceTypeService invoiceTypeService;
 	
 	  /** map used to store temporary jasper report. */
     private Map<String, JasperReport> jasperReportMap = new HashMap<>();
@@ -126,11 +131,34 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	    }
 	    
 	    public String generateFileName(CpqQuote quote) {
-	        String quoteDate = new SimpleDateFormat("ddMMyyyy").format(quote.getQuoteDate());
-	        ParamBean paramBean = ParamBean.getInstance();
-	        String prefix = paramBean.getProperty("quote.filename.prefix", "quote");
-	        String identifier = quote.getQuoteNumber() != null ? quote.getQuoteNumber() : quote.getCode();
-	        return String.format("%s_%s-%s", quoteDate, prefix, identifier);
+	    	if (quote.getXmlFilename()!= null) {
+	            return quote.getXmlFilename();
+	        }
+	    	 InvoiceType quoteType=invoiceTypeService.getDefaultQuote();
+	    	// Generate a name for xml file from EL expression
+	         String xmlFileName = null;
+	         String expression = quoteType.getXmlFilenameEL();
+	         if (!StringUtils.isBlank(expression)) {
+	             Map<Object, Object> contextMap = new HashMap<Object, Object>();
+	             contextMap.put("quote", quote);
+	             try {
+	                 String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
+	                 if (value != null) {
+	                     xmlFileName = value;
+	                 }
+	             } catch (BusinessException e) {
+	                 // Ignore exceptions here - a default XML filename will be used instead. Error is logged in EL evaluation
+	             }
+	         }
+	         if (StringUtils.isBlank(xmlFileName)) {
+	        	  String quoteDate = new SimpleDateFormat("ddMMyyyy").format(quote.getQuoteDate());
+	  	        ParamBean paramBean = ParamBean.getInstance();
+	  	        String prefix = paramBean.getProperty("quote.filename.prefix", "quote");
+	  	        String identifier = quote.getQuoteNumber() != null ? quote.getQuoteNumber() : quote.getCode();
+	  	        xmlFileName= String.format("%s_%s-%s", quoteDate, prefix, identifier);
+	         }
+	    	return xmlFileName;
+	      
 	    }
 	    
 	    
