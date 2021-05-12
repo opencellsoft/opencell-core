@@ -9274,9 +9274,7 @@
             <column name="status" type="varchar(20)">
                 <constraints nullable="false" />
             </column>
-            <column name="previews_status" type="varchar(20)">
-                <constraints nullable="false" />
-            </column>
+            <column name="previews_status" type="varchar(20)"/>
             <column name="status_date" type="datetime" />
             <column name="send_date" type="datetime" />
             <column name="quote_date" type="datetime" />

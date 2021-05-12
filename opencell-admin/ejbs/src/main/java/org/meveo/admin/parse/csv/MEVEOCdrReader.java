@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.commons.utils.FileUtils;
@@ -67,9 +66,6 @@ public class MEVEOCdrReader implements ICdrCsvReader {
     private String username;
     private CDR_ORIGIN_ENUM origin;
     private BufferedReader cdrReader = null;
-
-    @Inject
-    MEVEOCdrParser meveoCdrParser;
 
     private Integer totalNumberOfRecords;
 

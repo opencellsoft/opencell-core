@@ -8850,9 +8850,7 @@ public class OrderAdvancement extends ModuleScript {
 
     <changeSet id="#5595_20210506" author="NabilOuachi">
         <addColumn tableName="cpq_quote">
-            <column name="previews_status" type="varchar(20)">
-                <constraints nullable="false" />
-            </column>
+            <column name="previews_status" type="varchar(20)"/>
         </addColumn>
     </changeSet>
 

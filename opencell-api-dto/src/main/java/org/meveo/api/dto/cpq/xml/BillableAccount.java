@@ -1,5 +1,6 @@
 package org.meveo.api.dto.cpq.xml;
 
+import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.cpq.PriceDTO;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -21,13 +22,15 @@ public class BillableAccount {
     @XmlElementWrapper(name = "billingAccountPrices")
     @XmlElement(name = "price")
     List<PriceDTO> billingAccountPrices;
+    
+    private CustomFieldDto customField;
 
     public BillableAccount(String code, List<QuoteLot> quoteLots, List<PriceDTO> billingAccountPrices) {
         this.billingAccountCode = code;
         this.quoteLots = quoteLots;
         this.billingAccountPrices = billingAccountPrices;
     }
-
+ 
     public String getBillingAccountCode() {
         return billingAccountCode;
     }
@@ -43,4 +46,14 @@ public class BillableAccount {
     public void setQuoteLots(List<QuoteLot> quoteLots) {
         this.quoteLots = quoteLots;
     }
+
+	public CustomFieldDto getCustomField() {
+		return customField;
+	}
+
+	public void setCustomField(CustomFieldDto customField) {
+		this.customField = customField;
+	}
+    
+    
 }

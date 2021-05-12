@@ -520,24 +520,24 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         return pricePlanDtos;
     }
 
-    public List<PricePlanMatrixLineDto> loadPrices(LoadPricesRequest loadPricesRequest){
+    public List<PricePlanMatrixLineDto> loadPrices(String ppmCode, int version, Long quoteProductId){
 
-        if (StringUtils.isBlank(loadPricesRequest.getPpmCode())) {
+        if (StringUtils.isBlank(ppmCode)) {
             missingParameters.add("ppmCode");
         }
-        if (StringUtils.isBlank(loadPricesRequest.getPpmVersion())) {
+        if (StringUtils.isBlank(version)) {
             missingParameters.add("ppmVersion");
         }
-        if (StringUtils.isBlank(loadPricesRequest.getQuoteProductId())) {
+        if (StringUtils.isBlank(quoteProductId)) {
             missingParameters.add("quoteProductId");
         }
         handleMissingParameters();
 
-        PricePlanMatrixVersion ppmVersion = loadPublishedMatrixVersion(loadPricesRequest.getPpmCode(), loadPricesRequest.getPpmVersion());
+        PricePlanMatrixVersion ppmVersion = loadPublishedMatrixVersion(ppmCode, version);
 
-        QuoteProduct quoteProduct = quoteProductService.findById(loadPricesRequest.getQuoteProductId());
+        QuoteProduct quoteProduct = quoteProductService.findById(quoteProductId);
         if(quoteProduct == null)
-            throw new EntityDoesNotExistsException(QuoteProduct.class, loadPricesRequest.getQuoteProductId());
+            throw new EntityDoesNotExistsException(QuoteProduct.class, quoteProductId);
 
         return pricePlanMatrixService.loadPrices(ppmVersion, quoteProduct);
     }
@@ -551,21 +551,21 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         return ppm;
     }
 
-    public PricePlanMatrixLineDto loadPrices(MatrixRatingRequest request) {
-        if (StringUtils.isBlank(request.getPpmCode())) {
+    public PricePlanMatrixLineDto loadPrices(String ppmCode, int version, String chargeInstanceCode) {
+        if (StringUtils.isBlank(ppmCode)) {
             missingParameters.add("ppmCode");
         }
-        if (StringUtils.isBlank(request.getPpmVersion())) {
+        if (StringUtils.isBlank(version)) {
             missingParameters.add("ppmVersion");
         }
-        if (StringUtils.isBlank(request.getChargeInstanceCode())) {
-            missingParameters.add("quoteProductId");
+        if (StringUtils.isBlank(chargeInstanceCode)) {
+            missingParameters.add("chargeInstanceCode");
         }
         handleMissingParameters();
 
-        PricePlanMatrixVersion pricePlanMatrixVersion = loadPublishedMatrixVersion(request.getPpmCode(), request.getPpmVersion());
+        PricePlanMatrixVersion pricePlanMatrixVersion = loadPublishedMatrixVersion(ppmCode, version);
 
-        ChargeInstance chargeInstance = loadEntityByCode(serviceInstanceService, request.getChargeInstanceCode(), ChargeInstance.class);
+        ChargeInstance chargeInstance = loadEntityByCode(serviceInstanceService, chargeInstanceCode, ChargeInstance.class);
 
         return new PricePlanMatrixLineDto(pricePlanMatrixService.loadPrices(pricePlanMatrixVersion, chargeInstance));
     }

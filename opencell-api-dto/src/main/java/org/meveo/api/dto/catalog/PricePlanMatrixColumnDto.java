@@ -23,11 +23,9 @@ public class PricePlanMatrixColumnDto extends BaseEntityDto {
     private String code;
 
     @Schema(description = "The price plan matrix code")
-    @NotNull
     private String pricePlanMatrixCode;
 
     @Schema(description = "The price plan matrix version")
-    @NotNull
     private int pricePlanMatrixVersion;
 
     @Schema(description = "The product code")

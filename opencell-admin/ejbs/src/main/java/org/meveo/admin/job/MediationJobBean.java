@@ -174,7 +174,7 @@ public class MediationJobBean extends BaseJobBean {
                 jobExecutionResultService.persistResult(jobExecutionResult);
             }
 
-            if (MEVEOCdrFlatFileReader.class.isAssignableFrom(cdrReader.getClass())) {
+            if (cdrReader != null && MEVEOCdrFlatFileReader.class.isAssignableFrom(cdrReader.getClass())) {
                 ((MEVEOCdrFlatFileReader) cdrReader).setDataFile(currentFile);
                 ((MEVEOCdrFlatFileReader) cdrReader).setMappingDescriptor(mappingConf);
                 ((MEVEOCdrFlatFileReader) cdrReader).setDataName(recordVariableName);
@@ -365,7 +365,7 @@ public class MediationJobBean extends BaseJobBean {
             }
 
         } finally {
-            if (MEVEOCdrFlatFileReader.class.isAssignableFrom(cdrReader.getClass())) {
+            if (cdrReader != null && MEVEOCdrFlatFileReader.class.isAssignableFrom(cdrReader.getClass())) {
                 flatFileProcessing.updateFlatFile(fileName, fileCurrentName, rejectedfileName, processedfileName, rejectDir, outputDir, errors, jobExecutionResult.getNbItemsCorrectlyProcessed(),
                     jobExecutionResult.getNbItemsProcessedWithError(), jobExecutionResult.getJobInstance().getCode());
             }

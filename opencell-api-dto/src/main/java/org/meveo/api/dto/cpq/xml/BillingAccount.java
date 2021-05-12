@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
+import org.meveo.api.dto.CustomFieldDto;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BillingAccount {
     @XmlAttribute
@@ -26,6 +28,9 @@ public class BillingAccount {
     private String vatNo;
     private Name name;
     private Address address;
+    private CustomFieldDto customeField;
+    private PaymentMethod paymentMethod;
+    
 
     public BillingAccount(org.meveo.model.billing.BillingAccount billingAccount) {
         this.billingCycleCode = billingAccount.getBillingCycle().getCode();
@@ -39,6 +44,12 @@ public class BillingAccount {
         this.vatNo = billingAccount.getVatNo();
         this.name = new Name(billingAccount.getName());
         this.address = new Address(billingAccount.getAddress());
+    }
+    
+    public BillingAccount(org.meveo.model.billing.BillingAccount billingAccount, CustomFieldDto customField) {
+    	this(billingAccount);
+    	this.customeField = customField;
+    	this.paymentMethod = new PaymentMethod(billingAccount.getPaymentMethod(), null);
     }
 
     public String getBillingCycleCode() {
@@ -128,4 +139,33 @@ public class BillingAccount {
     public void setAddress(Address address) {
         this.address = address;
     }
+
+	/**
+	 * @return the customeField
+	 */
+	public CustomFieldDto getCustomeField() {
+		return customeField;
+	}
+
+	/**
+	 * @param customeField the customeField to set
+	 */
+	public void setCustomeField(CustomFieldDto customeField) {
+		this.customeField = customeField;
+	}
+
+	/**
+	 * @return the paymentMethod
+	 */
+	public PaymentMethod getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	/**
+	 * @param paymentMethod the paymentMethod to set
+	 */
+	public void setPaymentMethod(PaymentMethod paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+
 }
