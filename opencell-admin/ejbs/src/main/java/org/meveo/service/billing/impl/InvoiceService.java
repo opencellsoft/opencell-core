@@ -4219,9 +4219,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoiceAgregateTax = new TaxInvoiceAgregate();
         invoiceAgregateTax.setInvoice(invoice);
         invoiceAgregateTax.setBillingRun(null);
-        invoiceAgregateTax.setTax(tax);
-        invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
-        invoiceAgregateTax.setTaxPercent(tax.getPercent());
+        if(tax!=null) {
+        	 invoiceAgregateTax.setTax(tax);
+             invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
+             invoiceAgregateTax.setTaxPercent(tax.getPercent());
+        }
         invoiceAgregateTax.setAmountWithoutTax(BigDecimal.ZERO);
         invoiceAgregateTax.setAmountWithTax(BigDecimal.ZERO);
         invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
