@@ -261,19 +261,23 @@ public class GenericApiAlteringService {
                 entityReferenceDto.setClassname(entityRefDto.get("classname"));
                 entityReferenceDto.setCode(entityRefDto.get("code"));
                 customFieldDto.setEntityReferenceValue(entityReferenceDto);
+                break;
             }
-            break;
-        case LIST:
-            if (value == null) {
-                customFieldDto.setStringValue(null);
-            } else {
-                if (!((List) value).isEmpty()) {
-                    customFieldDto.setStringValue((String) ((Map) ((List) value).get(0)).get("value"));
+            case LIST:
+            	if(value == null) {
+            		customFieldDto.setStringValue(null);
+            		break;
+            	}
+                if(!((List)value).isEmpty()){
+                    customFieldDto.setStringValue((String)  ((Map)((List)value).get(0)).get("value"));
                 }
-            }
-            break;
-        default:
-            customFieldDto.setStringValue((String) value);
+                break;
+            default:
+            	if(value == null) {
+            		customFieldDto.setStringValue(null);
+            		break;
+            	}
+                customFieldDto.setStringValue((String) value);
                 break;
         }
     }
