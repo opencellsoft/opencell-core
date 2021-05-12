@@ -173,10 +173,30 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	        if (quote.getPdfFilename() != null) {
 	            return quote.getPdfFilename();
 	        } 
-	        String pdfFileName = null;   
+	        String pdfFileName = null; 
+	        InvoiceType quoteType=invoiceTypeService.getDefaultQuote();
+	    	// Generate a name for pdf file from EL expression
+	         String xmlFileName = null;
+	         String expression = quoteType.getPdfFilenameEL();
+	         if (!StringUtils.isBlank(expression)) {
+	             Map<Object, Object> contextMap = new HashMap<Object, Object>();
+	             contextMap.put("quote", quote);
+	             try {
+	                 String value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
+	                 if (value != null) {
+	                	 pdfFileName = value;
+	                 }
+	             } catch (BusinessException e) {
+	                 // Ignore exceptions here - a default XML filename will be used instead. Error is logged in EL evaluation
+	             }
+	         }
 	        if (StringUtils.isBlank(pdfFileName)) { 
 
-	            pdfFileName = generateFileName(quote);
+	        	  String quoteDate = new SimpleDateFormat("ddMMyyyy").format(quote.getQuoteDate());
+		  	        ParamBean paramBean = ParamBean.getInstance();
+		  	        String prefix = paramBean.getProperty("quote.filename.prefix", "quote");
+		  	        String identifier = quote.getQuoteNumber() != null ? quote.getQuoteNumber() : quote.getCode();
+		  	      pdfFileName= String.format("%s_%s-%s", quoteDate, prefix, identifier);
 	        }
 	        if (pdfFileName != null && !pdfFileName.toLowerCase().endsWith(".pdf")) {
 	            pdfFileName = pdfFileName + ".pdf";
