@@ -250,6 +250,10 @@ public class GenericApiAlteringService {
                 break;
             case CHILD_ENTITY:
             case ENTITY:
+            	if(value == null) {
+            		customFieldDto.setEntityReferenceValue(null);
+            		break;
+            	}
                 Map<String, String> entityRefDto = (Map<String, String>) value;
                 EntityReferenceDto entityReferenceDto = new EntityReferenceDto();
                 entityReferenceDto.setClassname(entityRefDto.get("classname"));
@@ -257,11 +261,18 @@ public class GenericApiAlteringService {
                 customFieldDto.setEntityReferenceValue(entityReferenceDto);
                 break;
             case LIST:
+            	if(value == null) {
+            		customFieldDto.setStringValue(null);
+            		break;
+            	}
                 if(!((List)value).isEmpty()){
                     customFieldDto.setStringValue((String)  ((Map)((List)value).get(0)).get("value"));
                 }
                 break;
             default:
+            	if(value == null) {
+            		customFieldDto.setStringValue(null);
+            	}
                 customFieldDto.setStringValue((String) value);
                 break;
         }
