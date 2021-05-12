@@ -21,6 +21,7 @@ package org.meveo.admin.web.servlet;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -105,12 +106,20 @@ public class PictureServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        showPicture(req, resp);
+    	try {
+    		showPicture(req, resp);
+    	}catch(IOException ioex) {
+    		log.error("Error loading image:",ioex);
+    	}
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        showPicture(req, resp);
+    	try {
+    		showPicture(req, resp);
+    	}catch(IOException ioex) {
+    		log.error("Error loading image:",ioex);
+    	}
     }
 
     private void showPicture(HttpServletRequest req, HttpServletResponse resp) throws IOException {
