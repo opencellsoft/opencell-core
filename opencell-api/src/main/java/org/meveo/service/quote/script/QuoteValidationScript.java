@@ -1,4 +1,4 @@
-package org.meveo.api.billing;
+package org.meveo.service.quote.script;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,7 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial")
-public class QuoteValidationTemp extends ModuleScript {
+public class QuoteValidationScript extends ModuleScript {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(QuoteVersionService.class);
 
