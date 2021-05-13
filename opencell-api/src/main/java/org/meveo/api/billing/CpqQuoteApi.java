@@ -1389,23 +1389,7 @@ public class CpqQuoteApi extends BaseApi {
         return cpqQuoteService.getQuotePdf(quote);
 
     }
-    /**
-     * Determine a quote template to use.
-     *
-     * @param quote quote
-     * @return quote template name
-     */
-    public String getInvoiceTemplateName(CpqQuote quote) {
-    	InvoiceType quoteType=invoiceTypeService.getDefaultQuote();
-        String billingTemplateName = null;
-        if (quoteType != null && !StringUtils.isBlank(quoteType.getBillingTemplateNameEL())) {
-            billingTemplateName = evaluateBillingTemplateName(quoteType.getBillingTemplateNameEL(), quote);
 
-        if (billingTemplateName == null) {
-            billingTemplateName = "default";
-        }
-        return billingTemplateName;
-    }
     
     private List<QuotePrice> applyDiscounts(List<QuotePrice> quotePrices,Seller seller,BillingAccount billingAccount, QuoteVersion quoteVersion) {
     	QuoteOffer quoteOffer=null;
