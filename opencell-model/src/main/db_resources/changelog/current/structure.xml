@@ -8853,5 +8853,12 @@ public class OrderAdvancement extends ModuleScript {
             <column name="previews_status" type="varchar(20)"/>
         </addColumn>
     </changeSet>
+    
+     <changeSet id="#5595_20210512" author="RachidAityaazza">
+       <renameColumn tableName="cpq_quote" newColumnName="previous_status" oldColumnName="previews_status"
+                      columnDataType="varchar(20)"/>
+    </changeSet>
+    
+    
 
 </databaseChangeLog>
