@@ -1,5 +1,22 @@
 package org.meveo.service.quote.script;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.xml.bind.JAXBException;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.cpq.xml.ArticleLine;
@@ -22,6 +39,7 @@ import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteVersion;
+import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.QuoteMapper;
 import org.meveo.service.cpq.XmlQuoteFormatter;
@@ -29,22 +47,6 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.module.ModuleScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.xml.bind.JAXBException;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 
 public class QuoteToXmlScript extends ModuleScript {
 
