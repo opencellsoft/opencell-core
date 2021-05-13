@@ -598,6 +598,7 @@ public class ValueExpressionWrapper {
         CustomerAccount customerAccount = null;
         Customer customer = null;
         Invoice invoice = null;
+        CpqQuote quote = null;
         List<Access> accessPoints = null;
 
         // Recognize passed parameters
@@ -638,6 +639,9 @@ public class ValueExpressionWrapper {
             }
             if (parameter instanceof Invoice) {
                 invoice = (Invoice) parameter;
+            }
+            if (parameter instanceof CpqQuote) {
+                quote = (CpqQuote) parameter;
             }
             if (parameter instanceof List) {
                 List list = (List) parameter;
@@ -714,6 +718,8 @@ public class ValueExpressionWrapper {
                 billingAccount = chargeInstance.getServiceInstance().getSubscription().getUserAccount().getBillingAccount();
             } else if (invoice != null) {
                 billingAccount = invoice.getBillingAccount();
+            } else if (quote != null) {
+                billingAccount = quote.getBillableAccount();
             }
             contextMap.put(VAR_BILLING_ACCOUNT, billingAccount);
         }

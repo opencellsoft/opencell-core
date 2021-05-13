@@ -72,7 +72,9 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -445,7 +447,11 @@ public class CpqQuoteApi extends BaseApi {
         try {
             CpqQuote cpqQuote = quoteVersion.getQuote();
             InvoiceType invoiceType=invoiceTypeService.getDefaultQuote();
-
+            String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
+            File quoteXmlDir = new File(meveoDir + "quotes" + File.separator + "xml");
+            if (!quoteXmlDir.exists()) {
+                quoteXmlDir.mkdirs();
+            }
             ScriptInstance scriptInstance = invoiceType.getCustomInvoiceXmlScriptInstance();
             if (scriptInstance != null) {
                     String quoteXmlScript = scriptInstance.getCode();
@@ -463,19 +469,13 @@ public class CpqQuoteApi extends BaseApi {
 
             } else {
                 String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion));
-                String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
-                File quoteXmlDir = new File(meveoDir + "quotes" + File.separator + "xml");
-                if (!quoteXmlDir.exists()) {
-                    quoteXmlDir.mkdirs();
-                }
                 xmlContent = quoteXml.getBytes();
-                String fileName = cpqQuoteService.generateFileName(cpqQuote);
-                cpqQuote.setXmlFilename(fileName);
-                String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
-                Files.write(Paths.get(xmlFilename), quoteXml.getBytes(), StandardOpenOption.CREATE);
                 result.setXmlContent(xmlContent);
             }
-
+            String fileName = cpqQuoteService.generateFileName(cpqQuote);
+            cpqQuote.setXmlFilename(fileName);
+            String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
+            Files.write(Paths.get(xmlFilename), xmlContent, StandardOpenOption.CREATE);
             if (generatePdf) {
                 result.setPdfContent(generateQuotePDF(quoteCode, currentVersion, true));
                 CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
@@ -1388,6 +1388,23 @@ public class CpqQuoteApi extends BaseApi {
         }
         return cpqQuoteService.getQuotePdf(quote);
 
+    }
+    /**
+     * Determine a quote template to use.
+     *
+     * @param quote quote
+     * @return quote template name
+     */
+    public String getInvoiceTemplateName(CpqQuote quote) {
+    	InvoiceType quoteType=invoiceTypeService.getDefaultQuote();
+        String billingTemplateName = null;
+        if (quoteType != null && !StringUtils.isBlank(quoteType.getBillingTemplateNameEL())) {
+            billingTemplateName = evaluateBillingTemplateName(quoteType.getBillingTemplateNameEL(), quote);
+
+        if (billingTemplateName == null) {
+            billingTemplateName = "default";
+        }
+        return billingTemplateName;
     }
     
     private List<QuotePrice> applyDiscounts(List<QuotePrice> quotePrices,Seller seller,BillingAccount billingAccount, QuoteVersion quoteVersion) {

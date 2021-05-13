@@ -270,8 +270,12 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	                destDir.mkdirs();
 	                FileUtils.copyDirectory(sourceFile, destDir);
 	            }   
-	  
-	            File jasperFile = new File(resDir, "quote.jasper");
+	            InvoiceType quoteType=invoiceTypeService.getDefaultQuote();
+	            String jasperFilename="quote.jasper";
+	            if(quoteType!=null && quoteType.getBillingTemplateNameEL()!=null) {
+	            	jasperFilename=evaluateQuoteTemplateName(quoteType.getBillingTemplateNameEL(), quote);
+	            }
+	            File jasperFile = new File(resDir, jasperFilename);
 	            if (!jasperFile.exists()) {
 	                throw new InvoiceJasperNotFoundException("The jasper file doesn't exist.");
 	            }
@@ -366,7 +370,27 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	        return null;
 	    }
 	     
-	    
+	    /**
+	     * Evaluate quote template name.
+	     *
+	     * @param expression the expression
+	     * @param quote the cpqquote
+	     * @return the string
+	     */
+	    public String evaluateQuoteTemplateName(String expression, CpqQuote quote) {
+
+	        try {
+	            String value = ValueExpressionWrapper.evaluateExpression(expression, String.class, quote);
+
+	            if (value != null) {
+	                return StringUtils.normalizeFileName(value);
+	            }
+	        } catch (BusinessException e) {
+	            // Ignore exceptions here - a default pdf filename will be used instead. Error is logged in EL evaluation
+	        }
+
+	        return null;
+	    }
 	    /**
 	     * Find by quote number and code. 
 	     */
