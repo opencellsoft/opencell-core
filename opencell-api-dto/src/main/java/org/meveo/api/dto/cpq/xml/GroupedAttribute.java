@@ -3,28 +3,26 @@ package org.meveo.api.dto.cpq.xml;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.meveo.model.cpq.QuoteAttribute;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GroupedAttribute {
 
-	private Attribute attribute;
+	private QuoteAttribute attribute;
 	
-	public GroupedAttribute(org.meveo.model.cpq.Attribute attribute) {
-		this.attribute = new Attribute(attribute);
+	public GroupedAttribute(org.meveo.model.cpq.QuoteAttribute attribute) { 
+      this.attribute=attribute;
 	}
 
-	/**
-	 * @return the attribute
-	 */
-	public Attribute getAttribute() {
+	public QuoteAttribute getAttribute() {
 		return attribute;
 	}
 
-	/**
-	 * @param attribute the attribute to set
-	 */
-	public void setAttribute(Attribute attribute) {
+	public void setAttribute(QuoteAttribute attribute) {
 		this.attribute = attribute;
 	}
+ 
+	
 	
 	
 	

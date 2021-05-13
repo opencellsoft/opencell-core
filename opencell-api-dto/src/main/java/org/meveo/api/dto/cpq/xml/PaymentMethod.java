@@ -42,6 +42,7 @@ public class PaymentMethod {
 	private CustomFieldsDto customFields;
 	
 	public PaymentMethod(org.meveo.model.payments.PaymentMethod p) {
+		if(p!=null) {
 		this.tokenType = p.getPaymentType();
 		if(p instanceof CardPaymentMethod) {
 			CardPaymentMethod cpm = (CardPaymentMethod) p;
@@ -71,7 +72,7 @@ public class PaymentMethod {
 		this.info4 = p.getInfo4();
 		this.info5 = p.getInfo5();
 		this.alias = p.getAlias();
-		
+		}
 	}
 	
 	public PaymentMethod(org.meveo.model.payments.PaymentMethod p, CustomFieldsDto customFields) {
