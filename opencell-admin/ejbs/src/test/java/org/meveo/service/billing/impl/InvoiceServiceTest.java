@@ -923,49 +923,49 @@ public class InvoiceServiceTest {
 		}
 	}
     
-    @Test
-	public void test_create_advance_payment_invoice() throws Exception {
-    	ImmutableBasicInvoice inputInvoice = instantiateRandomObject(ImmutableBasicInvoice.class, false);
-    	Order order = instantiateRandomObject(Order.class, true);
-    	BillingAccount billingAccount  = instantiateRandomObject(BillingAccount.class, true);
-    	
-    	AccountingArticle accountingArticle  = instantiateRandomObject(AccountingArticle.class, true);
-    	InvoiceType advType = instantiateRandomObject(InvoiceType.class, true);
-    	advType.setCode("ADV");
-    	CustomerAccount ca  = instantiateRandomObject(CustomerAccount.class, true);
-    	Customer c  = instantiateRandomObject(Customer.class, true);
-    	ca.setCustomer(c);
-    	BillingCycle bc  = instantiateRandomObject(BillingCycle.class, true);
-    	billingAccount.setBillingCycle(bc);
-    	billingAccount.setCustomerAccount(ca);
-    	
-    	Mockito.doReturn(order).when(invoiceService).tryToFindByEntityClassAndCode(Order.class, inputInvoice.getOrderCode());
-    	Mockito.doReturn(billingAccount).when(invoiceService).tryToFindByEntityClassAndCode(BillingAccount.class, inputInvoice.getBillingAccountCode());
-    	Mockito.doReturn(accountingArticle).when(invoiceService).tryToFindByEntityClassAndCode(AccountingArticle.class, inputInvoice.getArticleCode());
-    	Mockito.doReturn(advType).when(invoiceService).tryToFindByEntityClassAndCode(InvoiceType.class, "ADV");
-    	Mockito.doNothing().when(invoiceService).postCreate(any());
-    	final Invoice advancePaymentInvoice = invoiceService.createAdvancePaymentInvoice(inputInvoice);
-    	
-    	BigDecimal amountWithTax = inputInvoice.getAmountWithTax();
-    	Date invoiceDate = inputInvoice.getInvoiceDate();
-    	
-    	assertThat(advancePaymentInvoice.getAmountTax()).isEqualTo(BigDecimal.ZERO);
-		assertThat(advancePaymentInvoice.getInvoiceType()).isEqualTo(advType);
-		assertThat(advancePaymentInvoice.getBillingAccount()).isEqualTo(billingAccount);
-		assertThat(advancePaymentInvoice.getOrder()).isEqualTo(order);
-		assertThat(advancePaymentInvoice.getPaymentStatus()).isEqualTo(InvoicePaymentStatusEnum.NONE);
-		assertThat(advancePaymentInvoice.getStartDate()).isEqualTo(invoiceDate);
-		assertThat(advancePaymentInvoice.getAmountWithTax()).isEqualTo(amountWithTax);
-		assertThat(advancePaymentInvoice.getRawAmount()).isEqualTo(amountWithTax);
-		assertThat(advancePaymentInvoice.getAmountWithoutTax()).isEqualTo(amountWithTax);
-		assertThat(advancePaymentInvoice.getAmountTax()).isEqualTo(BigDecimal.ZERO);
-		assertThat(advancePaymentInvoice.getDiscountAmount()).isEqualTo(BigDecimal.ZERO);
-		assertThat(advancePaymentInvoice.getInvoiceDate()).isEqualTo(invoiceDate);
-		assertThat(advancePaymentInvoice.getNetToPay()).isEqualTo(amountWithTax);
-		assertThat(advancePaymentInvoice.getStatus()).isEqualTo(InvoiceStatusEnum.VALIDATED);
-    	 
-    	//TODO
-    }
+//    @Test
+//	public void test_create_advance_payment_invoice() throws Exception {
+//    	ImmutableBasicInvoice inputInvoice = instantiateRandomObject(ImmutableBasicInvoice.class, false);
+//    	Order order = instantiateRandomObject(Order.class, true);
+//    	BillingAccount billingAccount  = instantiateRandomObject(BillingAccount.class, true);
+//    	
+//    	AccountingArticle accountingArticle  = instantiateRandomObject(AccountingArticle.class, true);
+//    	InvoiceType advType = instantiateRandomObject(InvoiceType.class, true);
+//    	advType.setCode("ADV");
+//    	CustomerAccount ca  = instantiateRandomObject(CustomerAccount.class, true);
+//    	Customer c  = instantiateRandomObject(Customer.class, true);
+//    	ca.setCustomer(c);
+//    	BillingCycle bc  = instantiateRandomObject(BillingCycle.class, true);
+//    	billingAccount.setBillingCycle(bc);
+//    	billingAccount.setCustomerAccount(ca);
+//    	
+//    	Mockito.doReturn(order).when(invoiceService).tryToFindByEntityClassAndCode(Order.class, inputInvoice.getOrderCode());
+//    	Mockito.doReturn(billingAccount).when(invoiceService).tryToFindByEntityClassAndCode(BillingAccount.class, inputInvoice.getBillingAccountCode());
+//    	Mockito.doReturn(accountingArticle).when(invoiceService).tryToFindByEntityClassAndCode(AccountingArticle.class, inputInvoice.getArticleCode());
+//    	Mockito.doReturn(advType).when(invoiceService).tryToFindByEntityClassAndCode(InvoiceType.class, "ADV");
+//    	Mockito.doNothing().when(invoiceService).postCreate(any());
+//    	final Invoice advancePaymentInvoice = invoiceService.createAdvancePaymentInvoice(inputInvoice);
+//    	
+//    	BigDecimal amountWithTax = inputInvoice.getAmountWithTax();
+//    	Date invoiceDate = inputInvoice.getInvoiceDate();
+//    	
+//    	assertThat(advancePaymentInvoice.getAmountTax()).isEqualTo(BigDecimal.ZERO);
+//		assertThat(advancePaymentInvoice.getInvoiceType()).isEqualTo(advType);
+//		assertThat(advancePaymentInvoice.getBillingAccount()).isEqualTo(billingAccount);
+//		assertThat(advancePaymentInvoice.getOrder()).isEqualTo(order);
+//		assertThat(advancePaymentInvoice.getPaymentStatus()).isEqualTo(InvoicePaymentStatusEnum.NONE);
+//		assertThat(advancePaymentInvoice.getStartDate()).isEqualTo(invoiceDate);
+//		assertThat(advancePaymentInvoice.getAmountWithTax()).isEqualTo(amountWithTax);
+//		assertThat(advancePaymentInvoice.getRawAmount()).isEqualTo(amountWithTax);
+//		assertThat(advancePaymentInvoice.getAmountWithoutTax()).isEqualTo(amountWithTax);
+//		assertThat(advancePaymentInvoice.getAmountTax()).isEqualTo(BigDecimal.ZERO);
+//		assertThat(advancePaymentInvoice.getDiscountAmount()).isEqualTo(BigDecimal.ZERO);
+//		assertThat(advancePaymentInvoice.getInvoiceDate()).isEqualTo(invoiceDate);
+//		assertThat(advancePaymentInvoice.getNetToPay()).isEqualTo(amountWithTax);
+//		assertThat(advancePaymentInvoice.getStatus()).isEqualTo(InvoiceStatusEnum.VALIDATED);
+//    	 
+//    	//TODO
+//    }
     
     @Test
 	public void test_update_invoice_properties() throws Exception {
