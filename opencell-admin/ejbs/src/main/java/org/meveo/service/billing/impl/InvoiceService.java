@@ -4678,7 +4678,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return getInvoicePdf(invoice);
     }
 
-    public Invoice createAdvancePaymentInvoice(BasicInvoice resource) {
+    public Invoice createBasicInvoiceInvoice(BasicInvoice resource) {
         final String billingAccountCode = resource.getBillingAccountCode();
         final String articleCode = resource.getArticleCode() != null ? resource.getArticleCode() : "ADV-STD";
         final BigDecimal amountWithTax = resource.getAmountWithTax();
@@ -4687,17 +4687,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Order order = (Order)tryToFindByEntityClassAndCode(Order.class, resource.getOrderCode());
         BillingAccount billingAccount = (BillingAccount)tryToFindByEntityClassAndCode(BillingAccount.class, billingAccountCode);
         AccountingArticle accountingArticle = (AccountingArticle)tryToFindByEntityClassAndCode(AccountingArticle.class, articleCode);
-        InvoiceType advType = (InvoiceType)tryToFindByEntityClassAndCode(InvoiceType.class, "ADV");
+        final String invoiceTypeCode = resource.getInvoiceTypeCode() != null? resource.getInvoiceTypeCode() : "ADV";
+		InvoiceType advType = (InvoiceType)tryToFindByEntityClassAndCode(InvoiceType.class, invoiceTypeCode);
 
-        Invoice invoice = initAdvancePaymentInvoice(amountWithTax, invoiceDate, order, billingAccount, advType);
-        initInvoiceLineForAdvancePayment(resource, amountWithTax, order, billingAccount, accountingArticle, invoice);
-
+        Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, advType);
+        if(resource.getArticleCode()!=null) {
+        	initInvoiceLineForBasicInvoice(resource, amountWithTax, order, billingAccount, accountingArticle, invoice);
+        }
         serviceSingleton.assignInvoiceNumber(invoice);
         postCreate(invoice);
         return invoice;
     }
 
-    private Invoice initAdvancePaymentInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order,
+    private Invoice initBasicInvoiceInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order,
             BillingAccount billingAccount, InvoiceType advType) {
         Invoice invoice = new Invoice();
         invoice.setInvoiceType(advType);
@@ -4721,7 +4723,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoice;
     }
 
-    private InvoiceLine initInvoiceLineForAdvancePayment(BasicInvoice resource, final BigDecimal amountWithTax, Order order,
+    private InvoiceLine initInvoiceLineForBasicInvoice(BasicInvoice resource, final BigDecimal amountWithTax, Order order,
             BillingAccount billingAccount, AccountingArticle accountingArticle, Invoice invoice) {
         InvoiceLine line = new InvoiceLine();
         line.setInvoice(invoice);

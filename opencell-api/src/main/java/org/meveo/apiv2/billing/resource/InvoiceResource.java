@@ -91,58 +91,15 @@ public interface InvoiceResource {
 			@Parameter(description = "id of the Invoice", required = true) @PathParam("id") @NotNull Long id,
 			@QueryParam("generateIfMissing") Boolean generateIfMissing, @Context Request request);
 
-	/**
-	 * @param offset
-	 * @param limit
-	 * @param sort
-	 * @param orderBy
-	 * @param filter
-	 * @param request
-	 * @return
-	 */
-
-	@GET
-	@Path("/advancedPaymentInvoices")
-	@Operation(summary = "Return a list of advancedPayment invoices", tags = {
-			"Invoices" }, description = "Returns a list of advancedPayment invoices with pagination feature or non integers will simulate API error conditions", responses = {
-					@ApiResponse(headers = {
-							@Header(name = "ETag", description = "a pseudo-unique identifier that represents the version of the data sent back.", schema = @Schema(type = "integer", format = "int64")) }, description = "list of advancedPayment invoices", content = @Content(schema = @Schema(implementation = Invoices.class))),
-					@ApiResponse(responseCode = "304", description = "Lists advancedPayment invoices with filtering, sorting, paging."),
-					@ApiResponse(responseCode = "400", description = "Invalid parameters supplied", content = @Content(schema = @Schema(implementation = ApiException.class))) })
-	Response getAdvancedPaymentInvoices(@Parameter(description = "The offset of the list") @DefaultValue("0") @QueryParam("offset") Long offset,
-										@Parameter(description = "The limit per page") @DefaultValue("50") @QueryParam("limit") Long limit, 
-										@Parameter(description = "The sort by field") @QueryParam("sort") String sort,
-										@Parameter(description = "The order") @QueryParam("orderBy") String orderBy, 
-										@Parameter(description = "The filter") @QueryParam("filter") String filter, @Context Request request);
-
 	@POST
-	@Path("/advancedPaymentInvoices")
-	@Operation(summary = "Create a new advanced payment invoice", tags = {
+	@Path("/basicInvoices")
+	@Operation(summary = "Create a new basic invoice", tags = {
 			"Invoices" }, description = "Create a new advanced payment invoice", 
 					responses = {
-					@ApiResponse(responseCode = "200", description = "the advancedPaymentInvoice successfully created, and the id is returned in the response"),
-					@ApiResponse(responseCode = "400", description = "bad request when advancedPaymentInvoice information contains an error") })
-	Response createAdvancedPaymentInvoices(
+					@ApiResponse(responseCode = "200", description = "the basicInvoice successfully created, and the id is returned in the response"),
+					@ApiResponse(responseCode = "400", description = "bad request when basicInvoice information contains an error") })
+	Response createBasicInvoices(
 			@Parameter(description = "the advanced Payment Invoice object", required = true) BasicInvoice basicInvoice);
-	
-	@GET
-	@Path("/advancedPaymentInvoices/{id}")
-	@Operation(summary = "Return an AdvancedPaymentInvoice", tags = {
-			"Invoices" }, description = "Returns the AdvancedPaymentInvoice data", responses = { @ApiResponse(headers = {
-					@Header(name = "ETag", description = "a pseudo-unique identifier that represents the version of the data sent back", schema = @Schema(type = "integer", format = "int64")) }, description = "the searched AdvancedPaymentInvoice", content = @Content(schema = @Schema(implementation = Invoice.class))),
-					@ApiResponse(responseCode = "404", description = "invoice not found", content = @Content(schema = @Schema(implementation = ApiException.class))) })
-	Response getAdvancedPaymentInvoice(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
-			@Context Request request);
-	
-	@GET
-	@Path("/advancedPaymentInvoices/{invoiceNumber}")
-	@Operation(summary = "Return an advancedPaymentInvoice", tags = {
-			"Invoices" }, description = "Returns the advancedPaymentInvoice data", responses = { @ApiResponse(headers = {
-					@Header(name = "ETag", description = "a pseudo-unique identifier that represents the version of the data sent back", schema = @Schema(type = "integer", format = "int64")) }, description = "the searched advancedPaymentInvoice", content = @Content(schema = @Schema(implementation = Invoice.class))),
-					@ApiResponse(responseCode = "404", description = "advancedPaymentInvoice not found", content = @Content(schema = @Schema(implementation = ApiException.class))) })
-	Response getAdvancedPaymentInvoice(
-			@Parameter(description = "invoice number", required = true) @PathParam("invoiceNumber") String invoiceNumber,
-			@Context Request request);
 	
 	@POST
 	@Path("/invoices/{id}/invoiceLines")
