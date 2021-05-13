@@ -52,6 +52,7 @@ public class QuoteToXmlScript extends ModuleScript {
     private XmlQuoteFormatter quoteFormatter = (XmlQuoteFormatter) getServiceInterface(XmlQuoteFormatter.class.getSimpleName());
     private CpqQuoteService cpqQuoteService = (CpqQuoteService) getServiceInterface(CpqQuoteService.class.getSimpleName());
     protected ParamBeanFactory paramBeanFactory = (ParamBeanFactory) getServiceInterface(ParamBeanFactory.class.getSimpleName());
+    private EntityToDtoConverter entityToDtoConverter = (EntityToDtoConverter) getServiceInterface(EntityToDtoConverter.class.getSimpleName());
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
