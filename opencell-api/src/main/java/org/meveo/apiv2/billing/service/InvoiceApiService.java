@@ -3,11 +3,8 @@
  */
 package org.meveo.apiv2.billing.service;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 
 import javax.inject.Inject;
 
@@ -20,7 +17,6 @@ import org.meveo.apiv2.billing.InvoiceLineInput;
 import org.meveo.apiv2.billing.InvoiceLinesInput;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceType;
 import org.meveo.service.billing.impl.InvoiceLinesService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -111,7 +107,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 * @return
 	 */
 	public Invoice create(BasicInvoice basicInvoice) {
-		return invoiceService.createAdvancePaymentInvoice(basicInvoice);
+		return invoiceService.createBasicInvoiceInvoice(basicInvoice);
 	}
 	
 	/**
@@ -121,23 +117,6 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 */
 	public Optional<Invoice> findByInvoiceNumberAndTypeCode(String typeCode, String invoiceNumber) {
 		return Optional.ofNullable(invoiceService.findByInvoiceNumberAndTypeCode(invoiceNumber, typeCode));
-	}
-
-	/**
-	 * @param offset
-	 * @param limit
-	 * @param sort
-	 * @param orderBy
-	 * @param filter
-	 * @return
-	 */
-	public List<Invoice> listAdvancedPaymentInvoices(Long offset, Long limit, String sort, String orderBy,
-			String filter) {
-		Map<String, Object> filters = new TreeMap<String, Object>();
-		InvoiceType advType = invoiceTypeService.findByCode(ADV);
-		filters.put("invoiceType", advType);
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(), limit.intValue(), filters, filter, null, null, null);
-        return invoiceService.list(paginationConfiguration);
 	}
 
 	/**
@@ -212,5 +191,6 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	public Invoice update(Invoice invoice, Invoice input, org.meveo.apiv2.billing.Invoice invoiceRessource) {
 		return invoiceService.update(invoice, input, invoiceRessource);
 	}
+
 
 }

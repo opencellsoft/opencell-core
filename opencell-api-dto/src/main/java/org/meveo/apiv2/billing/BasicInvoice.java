@@ -42,5 +42,9 @@ public interface BasicInvoice extends Resource {
 
 	@Schema(description = "The maount with tax")
 	BigDecimal getAmountWithTax();
+	
+	@Nullable
+	@Schema(description = "The invoice type code")
+	String getInvoiceTypeCode();
 
 }
