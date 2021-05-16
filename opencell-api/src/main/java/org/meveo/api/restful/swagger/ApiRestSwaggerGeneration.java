@@ -19,7 +19,6 @@ import org.meveo.api.restful.swagger.service.Apiv1SwaggerPostOperation;
 import org.meveo.api.restful.swagger.service.Apiv1SwaggerPutOperation;
 
 import javax.inject.Inject;
-import javax.servlet.ServletConfig;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -37,22 +36,18 @@ import java.util.Map;
 public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
 
     @Inject
-    private Apiv1SwaggerPostOperation swaggerPostOperation;
+    private Apiv1SwaggerPostOperation postOperation;
 
     @Inject
-    private Apiv1SwaggerGetOperation swaggerGetOperation;
+    private Apiv1SwaggerGetOperation getOperation;
 
     @Inject
-    private Apiv1SwaggerPutOperation swaggerPutOperation;
+    private Apiv1SwaggerPutOperation putOperation;
 
     @Inject
-    private Apiv1SwaggerDeleteOperation swaggerDeleteOperation;
+    private Apiv1SwaggerDeleteOperation deleteOperation;
 
-    @Context
-    ServletConfig config;
-
-    @Context
-    Application app;
+    private static final String FORWARD_SLASH = "/";
 
     @GET
     @Produces({MediaType.APPLICATION_JSON, "application/json"})
@@ -87,7 +82,7 @@ public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
         // Populate tags, components, extensions and servers of oasRestApi
 //        oasRestApi.setTags(GenericOpencellRestfulAPIv1.API_STD_SWAGGER.getTags());
         oasRestApi.setComponents(GenericOpencellRestfulAPIv1.API_STD_SWAGGER.getComponents());
-        oasRestApi.setServers(Collections.singletonList(new Server().url("http://localhost:8080/opencell")));
+        oasRestApi.setServers(Collections.singletonList(new Server().url("/opencell")));
 
         for ( Map.Entry<String, String> mapPathEntry : MapRestUrlAndStandardUrl.MAP_RESTFUL_URL_AND_STANDARD_URL.entrySet() ) {
             String aStdPath = mapPathEntry.getKey();
@@ -103,16 +98,20 @@ public class ApiRestSwaggerGeneration extends BaseOpenApiResource {
                     // set operations for pathItem (a pathItem can have many operations CRUD)
                     switch (splitStdPath[0]) {
                         case MapRestUrlAndStandardUrl.GET :
-                            swaggerGetOperation.setGet(pathItem, pathItemInOldSwagger.getGet(), aRFPath);
+                            if ( pathItemInOldSwagger.getGet() != null )
+                                getOperation.setGet(pathItem, pathItemInOldSwagger.getGet(), aRFPath);
                             break;
                         case MapRestUrlAndStandardUrl.POST :
-                            swaggerPostOperation.setPost(pathItem, pathItemInOldSwagger.getPost(), aRFPath);
+                            if ( pathItemInOldSwagger.getPost() != null )
+                                postOperation.setPost(pathItem, pathItemInOldSwagger.getPost(), aRFPath);
                             break;
                         case MapRestUrlAndStandardUrl.PUT :
-                            swaggerPutOperation.setPut(pathItem, pathItemInOldSwagger.getPut(), aRFPath);
+                            if ( pathItemInOldSwagger.getPut() != null )
+                                putOperation.setPut(pathItem, pathItemInOldSwagger.getPut(), aRFPath);
                             break;
                         case MapRestUrlAndStandardUrl.DELETE :
-                            swaggerDeleteOperation.setDelete(pathItem, pathItemInOldSwagger.getDelete(), aRFPath);
+                            if ( pathItemInOldSwagger.getDelete() != null )
+                                deleteOperation.setDelete(pathItem, pathItemInOldSwagger.getDelete(), aRFPath);
                             break;
                     }
                     break;
