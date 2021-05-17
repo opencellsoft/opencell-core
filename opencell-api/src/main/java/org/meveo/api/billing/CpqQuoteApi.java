@@ -72,7 +72,10 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -443,16 +446,18 @@ public class CpqQuoteApi extends BaseApi {
 
         try {
             CpqQuote cpqQuote = quoteVersion.getQuote();
-            String sellerCode = quoteVersion.getQuote().getSeller() != null ? quoteVersion.getQuote().getSeller().getCode() : null;
-
-            String quoteScriptCode = paramBean.getProperty("seller." + sellerCode + ".quoteScript", "");
-            if (!StringUtils.isBlank(quoteScriptCode)) {
-                ScriptInstance scriptInstance = scriptInstanceService.findByCode(quoteScriptCode);
-                if (scriptInstance != null) {
+            InvoiceType invoiceType=invoiceTypeService.getDefaultQuote();
+            String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
+            File quoteXmlDir = new File(meveoDir + "quotes" + File.separator + "xml");
+            if (!quoteXmlDir.exists()) {
+                quoteXmlDir.mkdirs();
+            }
+            ScriptInstance scriptInstance = invoiceType.getCustomInvoiceXmlScriptInstance();
+            if (scriptInstance != null) {
                     String quoteXmlScript = scriptInstance.getCode();
                     ScriptInterface script = scriptInstanceService.getScriptInstance(quoteXmlScript);
                     Map<String, Object> methodContext = new HashMap<String, Object>();
-                    methodContext.put("cpqQuote", quoteVersion.getQuote());
+                    methodContext.put("quoteVersion", quoteVersion);
                     methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
                     methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
                     methodContext.put("XMLQuoteCreator", this);
@@ -461,23 +466,16 @@ public class CpqQuoteApi extends BaseApi {
                     }
                     xmlContent = (byte[]) methodContext.get(Script.RESULT_VALUE);
                     result.setXmlContent(xmlContent);
-                }
 
             } else {
                 String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion));
-                String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
-                File quoteXmlDir = new File(meveoDir + "quotes" + File.separator + "xml");
-                if (!quoteXmlDir.exists()) {
-                    quoteXmlDir.mkdirs();
-                }
                 xmlContent = quoteXml.getBytes();
-                String fileName = cpqQuoteService.generateFileName(cpqQuote);
-                cpqQuote.setXmlFilename(fileName);
-                String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
-                Files.write(Paths.get(xmlFilename), quoteXml.getBytes(), StandardOpenOption.CREATE);
                 result.setXmlContent(xmlContent);
             }
-
+            String fileName = cpqQuoteService.generateFileName(cpqQuote);
+            cpqQuote.setXmlFilename(fileName);
+            String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
+            Files.write(Paths.get(xmlFilename), xmlContent, StandardOpenOption.CREATE);
             if (generatePdf) {
                 result.setPdfContent(generateQuotePDF(quoteCode, currentVersion, true));
                 CpqQuote quote = cpqQuoteService.findByCode(quoteCode);
@@ -1391,6 +1389,7 @@ public class CpqQuoteApi extends BaseApi {
         return cpqQuoteService.getQuotePdf(quote);
 
     }
+
     
     private List<QuotePrice> applyDiscounts(List<QuotePrice> quotePrices,Seller seller,BillingAccount billingAccount, QuoteVersion quoteVersion) {
     	QuoteOffer quoteOffer=null;

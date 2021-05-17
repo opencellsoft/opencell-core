@@ -1,9 +1,14 @@
-package org.meveo.service.cpq;
+package org.meveo.service.quote.script;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +16,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.xml.bind.JAXBException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.cpq.xml.BillableAccount;
 import org.meveo.api.dto.cpq.xml.BillingAccount;
@@ -21,12 +27,12 @@ import org.meveo.api.dto.cpq.xml.Category;
 import org.meveo.api.dto.cpq.xml.Contract;
 import org.meveo.api.dto.cpq.xml.Details;
 import org.meveo.api.dto.cpq.xml.Header;
-import org.meveo.api.dto.cpq.xml.Offer;
 import org.meveo.api.dto.cpq.xml.PaymentMethod;
 import org.meveo.api.dto.cpq.xml.Quote;
 import org.meveo.api.dto.cpq.xml.QuoteLine;
 import org.meveo.api.dto.cpq.xml.QuoteXmlDto;
 import org.meveo.api.dto.cpq.xml.SubCategory;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -41,17 +47,62 @@ import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.api.EntityToDtoConverter;
+import org.meveo.service.cpq.CpqQuoteService;
+import org.meveo.service.cpq.QuoteMapper;
+import org.meveo.service.cpq.XmlQuoteFormatter;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.module.ModuleScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Stateless
-public class QuoteMapper {
-	
-   	@Inject
-    public EntityToDtoConverter entityToDtoConverter;
-   	
-   	
+public class QuoteToXmlScript extends ModuleScript {
+
+    private QuoteMapper quoteMapper = (QuoteMapper) getServiceInterface(QuoteMapper.class.getSimpleName());
+    private XmlQuoteFormatter quoteFormatter = (XmlQuoteFormatter) getServiceInterface(XmlQuoteFormatter.class.getSimpleName());
+    private CpqQuoteService cpqQuoteService = (CpqQuoteService) getServiceInterface(CpqQuoteService.class.getSimpleName());
+    protected ParamBeanFactory paramBeanFactory = (ParamBeanFactory) getServiceInterface(ParamBeanFactory.class.getSimpleName());
+    private EntityToDtoConverter entityToDtoConverter = (EntityToDtoConverter) getServiceInterface(EntityToDtoConverter.class.getSimpleName());
+
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+        QuoteVersion quoteVersion= (QuoteVersion) methodContext.get("quoteVersion");
+        if (quoteVersion == null) {
+            throw new BusinessException("No quote version is found");
+        }
+        byte[] xmlContent = null;
+        CpqQuote cpqQuote = quoteVersion.getQuote();
+
+        String quoteXml = null;
+        try {
+            quoteXml = quoteFormatter.format(map(quoteVersion));
+        } catch (JAXBException e) {
+            log.error("Can not format QuoteXmlDto object");
+            return;
+        }
+        String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
+
+        File quoteXmlDir = new File(meveoDir + "quotes" + File.separator + "xml");
+        if (!quoteXmlDir.exists()) {
+            quoteXmlDir.mkdirs();
+        }
+        xmlContent = quoteXml.getBytes();
+        String fileName = cpqQuoteService.generateFileName(cpqQuote);
+        cpqQuote.setXmlFilename(fileName);
+        String xmlFilename = quoteXmlDir.getAbsolutePath() + File.separator + fileName + ".xml";
+        try {
+            Files.write(Paths.get(xmlFilename), quoteXml.getBytes(), StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            log.error("Can not wrie quote xml to the input/output media");
+        }
+
+        methodContext.put(Script.RESULT_VALUE, xmlContent);
+    }
+
     public QuoteXmlDto map(QuoteVersion quoteVersion) {
     	
- 
+    	 
 
         CpqQuote quote = quoteVersion.getQuote();
         org.meveo.model.billing.BillingAccount bac=quote.getBillableAccount() == null ? quote.getApplicantAccount() : quote.getBillableAccount();

@@ -26,9 +26,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
 import org.meveo.model.quote.QuotePrice;
+import org.meveo.model.tax.TaxCategory;
+import org.meveo.model.tax.TaxClass;
 
 /**
  * The Class AccountingArticlePrices.
@@ -71,7 +73,7 @@ public class PriceDTO extends BaseEntityDto {
     private String taxCategory;
     private String taxCode;
     
-    private CustomFieldDto customField;
+    private CustomFieldsDto customFields;
     
     
 	public PriceDTO(QuotePrice quotePrice) {
@@ -96,12 +98,16 @@ public class PriceDTO extends BaseEntityDto {
 
 	    chargeCode=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getCode():null;
 	    chargeLabel=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getDescription():null;
-	    
+	   TaxCategory taxCategoryEntity = quotePrice.getQuoteArticleLine().getBillableAccount().getTaxCategory()!=null ? quotePrice.getQuoteArticleLine().getBillableAccount().getTaxCategory(): 
+	    	quotePrice.getQuoteArticleLine().getBillableAccount().getCustomerAccount().getCustomer().getCustomerCategory().getTaxCategory();
+	   taxCategory=taxCategoryEntity!=null?taxCategoryEntity.getCode():null;
+	   TaxClass taxClass=quotePrice.getQuoteArticleLine().getAccountingArticle().getTaxClass();
+	   taxCode=taxClass!=null?taxClass.getCode():null;
 		
 	}
-	public PriceDTO(QuotePrice quotePrice,CustomFieldDto customField) {
+	public PriceDTO(QuotePrice quotePrice,CustomFieldsDto customFields) {
 		this(quotePrice);
-		this.customField = customField;
+		this.customFields = customFields;
 	}
 	
 	
@@ -227,12 +233,15 @@ public class PriceDTO extends BaseEntityDto {
 	public void setTaxCode(String taxCode) {
 		this.taxCode = taxCode;
 	}
-	public CustomFieldDto getCustomField() {
-		return customField;
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
 	}
-	public void setCustomField(CustomFieldDto customField) {
-		this.customField = customField;
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
+
+	
+	
     
     
 

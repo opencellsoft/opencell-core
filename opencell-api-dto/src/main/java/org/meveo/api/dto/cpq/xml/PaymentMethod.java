@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.DDPaymentMethod;
@@ -38,9 +39,10 @@ public class PaymentMethod {
 	private String info3;
 	private String info4;
 	private String info5;
-	private CustomFieldDto customField;
+	private CustomFieldsDto customFields;
 	
-	public PaymentMethod(org.meveo.model.payments.PaymentMethod p, CustomFieldDto customField) {
+	public PaymentMethod(org.meveo.model.payments.PaymentMethod p) {
+		if(p!=null) {
 		this.tokenType = p.getPaymentType();
 		if(p instanceof CardPaymentMethod) {
 			CardPaymentMethod cpm = (CardPaymentMethod) p;
@@ -70,7 +72,12 @@ public class PaymentMethod {
 		this.info4 = p.getInfo4();
 		this.info5 = p.getInfo5();
 		this.alias = p.getAlias();
-		this.customField = customField;
+		}
+	}
+	
+	public PaymentMethod(org.meveo.model.payments.PaymentMethod p, CustomFieldsDto customFields) {
+		this(p);
+		this.customFields = customFields;
 		
 	}
 	
@@ -363,13 +370,14 @@ public class PaymentMethod {
 		this.info5 = info5;
 	}
 
-	public CustomFieldDto getCustomField() {
-		return customField;
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
 	}
 
-	public void setCustomField(CustomFieldDto customField) {
-		this.customField = customField;
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
+
 
 	
 	

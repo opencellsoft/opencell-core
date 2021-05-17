@@ -1,4 +1,4 @@
-package org.meveo.api.billing;
+package org.meveo.service.quote.script;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,7 +16,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
