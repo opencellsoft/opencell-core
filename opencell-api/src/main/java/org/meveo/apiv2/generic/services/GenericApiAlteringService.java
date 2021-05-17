@@ -169,6 +169,30 @@ public class GenericApiAlteringService {
                 customFieldDto.setCode(code);
                 writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), cfsValuesByCode.get(code));
                 customFieldsDto.getCustomField().add(customFieldDto);
+                if(cfsValuesByCode.get(code) == null || ((List) cfsValuesByCode.get(code)).isEmpty() ){
+                    customFieldsDto.getCustomField().add(customFieldDto);
+                    continue;
+                }
+                if(cft.isVersionable()){
+                	for(Object newValue : ((List) cfsValuesByCode.get(code))) {
+                		customFieldDto = new CustomFieldDto();
+                        customFieldDto.setCode(code);
+                        
+	                    customFieldDto.setValuePeriodPriority((Integer) ((Map) newValue).get("priority"));
+	                    if(((Map) newValue).get("from") != null){
+	                        customFieldDto.setValuePeriodStartDate(resolveDate(((Map) newValue).get("from")));
+	                    }
+	                    if(((Map) newValue).get("to") != null){
+	                        customFieldDto.setValuePeriodEndDate(resolveDate(((Map) newValue).get("to")));
+	                    }
+	                    writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), Arrays.asList(newValue));
+	                    customFieldsDto.getCustomField().add(customFieldDto);
+	                }
+                } else {
+                	writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), cfsValuesByCode.get(code));
+                    customFieldsDto.getCustomField().add(customFieldDto);
+                }
+                
             }
         }
         return customFieldsDto;
@@ -237,19 +261,23 @@ public class GenericApiAlteringService {
                 entityReferenceDto.setClassname(entityRefDto.get("classname"));
                 entityReferenceDto.setCode(entityRefDto.get("code"));
                 customFieldDto.setEntityReferenceValue(entityReferenceDto);
+                break;
             }
-            break;
-        case LIST:
-            if (value == null) {
-                customFieldDto.setStringValue(null);
-            } else {
-                if (!((List) value).isEmpty()) {
-                    customFieldDto.setStringValue((String) ((Map) ((List) value).get(0)).get("value"));
+            case LIST:
+            	if(value == null) {
+            		customFieldDto.setStringValue(null);
+            		break;
+            	}
+                if(!((List)value).isEmpty()){
+                    customFieldDto.setStringValue((String)  ((Map)((List)value).get(0)).get("value"));
                 }
-            }
-            break;
-        default:
-            customFieldDto.setStringValue((String) value);
+                break;
+            default:
+            	if(value == null) {
+            		customFieldDto.setStringValue(null);
+            		break;
+            	}
+                customFieldDto.setStringValue((String) value);
                 break;
         }
     }
