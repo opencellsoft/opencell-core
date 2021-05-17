@@ -8854,12 +8854,64 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     
-     <changeSet id="#5595_20210512" author="RachidAityaazza">
+    <changeSet id="#5595_20210512" author="RachidAityaazza">
        <renameColumn tableName="cpq_quote" newColumnName="previous_status" oldColumnName="previews_status"
                       columnDataType="varchar(20)"/>
         <sql>update ${db.schema.adapted}cpq_quote set previous_status='IN_PROGRESS' where previous_status is null</sql>
     </changeSet>
     
+    <changeSet id="#6122_20210517" author="AbdelmounaimAkadid">
+    	<sql>update ${db.schema.adapted}billing_invoice set is_already_added_discount = 0;</sql>
+    	<sql>update ${db.schema.adapted}billing_invoice set is_already_added_discount = 1 where invoice_id in (select invoice_id from billing_invoice_agregate where discount_aggregate = 1);</sql>
+
+    	<sql>update ${db.schema.adapted}billing_invoice set is_already_applied_minimum = 0;</sql>
+    	<sql>update ${db.schema.adapted}billing_invoice set is_already_applied_minimum = 1 where invoice_id in (select invoice_id from billing_rated_transaction where type = 'MINIMUM' group by invoice_id);</sql>
+
+    	<sql>update ${db.schema.adapted}billing_invoice set payment_status = 'NONE';</sql>
+    	<sql>update ${db.schema.adapted}billing_invoice set payment_status = 'PENDING' where recorded_invoice_id IS NOT NULL;</sql>
+    	<sql>update ${db.schema.adapted}billing_invoice set payment_status = status where status IN ('PAID', 'PPAID', 'UNPAID', 'ABANDONED', 'REFUNDED', 'DISPUTED');</sql>
+    	<sql>update ${db.schema.adapted}billing_invoice set status = 'VALIDATED' where status IN ('PAID', 'PPAID', 'UNPAID', 'ABANDONED', 'REFUNDED', 'DISPUTED');</sql>
+    	<sql>update ${db.schema.adapted}billing_invoice set status = 'NEW' where status = 'CREATED';</sql>
+    	
+    	<sql>UPDATE ${db.schema.adapted}crm_custom_field_tmpl SET field_type = 'CHECKBOX_LIST', value_required = 1, default_value = 'VALIDATED', storage_type = 'LIST' 
+    		WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code ='invoicesToProcess';</sql>
+
+
+		<sql>DELETE FROM ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (
+								SELECT id FROM "crm_custom_field_tmpl" 
+								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess');</sql>
+
+		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
+								    customfieldtemplate_id, listvalues, listvalues_key)
+								SELECT id, 'New', 'NEW' FROM "crm_custom_field_tmpl" 
+								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
+
+		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
+								    customfieldtemplate_id, listvalues, listvalues_key)
+								SELECT id, 'Draft', 'DRAFT' FROM "crm_custom_field_tmpl" 
+								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
+
+		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
+								    customfieldtemplate_id, listvalues, listvalues_key)
+								SELECT id, 'Canceled', 'CANCELED' FROM "crm_custom_field_tmpl" 
+								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
+
+		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
+								    customfieldtemplate_id, listvalues, listvalues_key)
+								SELECT id, 'Suspect', 'SUSPECT' FROM "crm_custom_field_tmpl" 
+								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
+
+		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
+								    customfieldtemplate_id, listvalues, listvalues_key)
+								SELECT id, 'Validated', 'VALIDATED' FROM "crm_custom_field_tmpl" 
+								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
+
+		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
+								    customfieldtemplate_id, listvalues, listvalues_key)
+								SELECT id, 'Rejected', 'REJECTED' FROM "crm_custom_field_tmpl" 
+								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
+    	
+    </changeSet>
     
 
 </databaseChangeLog>
