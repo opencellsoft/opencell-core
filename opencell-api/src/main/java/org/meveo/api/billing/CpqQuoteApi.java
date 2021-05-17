@@ -1269,7 +1269,7 @@ public class CpqQuoteApi extends BaseApi {
         subscription.setEndAgreementDate(null);
 
         if (billableAccount.getUsersAccounts().isEmpty())
-            throw new BusinessException("Billing account: " + billableAccount.getCode() + " has no user accounts");
+            throw new MeveoApiException("Billing account: " + billableAccount.getCode() + " has no user accounts");
         subscription.setUserAccount(billableAccount.getUsersAccounts().get(0));
 //
 //        String terminationReasonCode = null;
