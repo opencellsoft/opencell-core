@@ -64,9 +64,6 @@ public class QuoteToXmlScript extends ModuleScript {
     private EntityToDtoConverter entityToDtoConverter = (EntityToDtoConverter) getServiceInterface(EntityToDtoConverter.class.getSimpleName());
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
-    
-	@Inject
-    public EntityToDtoConverter entityToDtoConverter;
 
     @Override
     public void execute(Map<String, Object> methodContext) throws BusinessException {
