@@ -308,6 +308,21 @@ public abstract class BaseApi {
                 Object valueConverted = cfDto.getValueConverted();
 
                 try {
+                    // In cas of CF type is ENTITY, check if the referenced entity exists
+                    if (valueConverted instanceof EntityReferenceWrapper) {
+                        // check the if the referenced entity exists
+                        EntityReferenceWrapper entityRefWrapper = (EntityReferenceWrapper) valueConverted;
+                        BusinessEntity referencedEntity;
+                        try {
+                            Class entityRefClass = Class.forName(entityRefWrapper.getClassname());
+                            referencedEntity = businessEntityService.findByEntityClassAndCode(entityRefClass, entityRefWrapper.getCode());
+                        } catch (ClassNotFoundException e) {
+                            throw new InvalidParameterException("Class " + entityRefWrapper.getClassname() + " not found" );
+                        }
+                        if (referencedEntity == null) {
+                            throw new InvalidReferenceException(entityRefWrapper.getClassname(), entityRefWrapper.getCode());
+                        }
+                    }
 
                     // In case of child entity save CustomEntityInstance objects
                     // first and then set CF value to a list of
