@@ -9274,7 +9274,7 @@
             <column name="status" type="varchar(20)">
                 <constraints nullable="false" />
             </column>
-            <column name="previews_status" type="varchar(20)"/>
+            <column name="previous_status" type="varchar(20)"/>
             <column name="status_date" type="datetime" />
             <column name="send_date" type="datetime" />
             <column name="quote_date" type="datetime" />
@@ -15697,6 +15697,7 @@ $$ LANGUAGE plpgsql;
 	<changeSet id="#5595_540504_20210503" author="TarikFA." />
     <changeSet id="#6076_20210504" author="Zbariki" />
     <changeSet id="#5595_20210506" author="NabilOuachi"></changeSet>
+    <changeSet id="#5595_20210512" author="RachidAityaazza"></changeSet>
 
     
     <!-- DONT REMOVE THIS CHANGESET -->

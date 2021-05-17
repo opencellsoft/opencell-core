@@ -2733,6 +2733,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice = update(invoice);
     }
 
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Invoice updateStatus(Long invoiceId, InvoiceStatusEnum status) {
+        Invoice invoice = findById(invoiceId);
+        invoice.setStatus(status);
+        return update(invoice);
+    }
+
     /**
      * Re-computed invoice date, due date and collection date when the invoice is validated.
      *
@@ -3821,7 +3829,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         invoice.setBillingAccount(billingAccount);
         invoice.setSeller(seller);
-        invoice.setStatus(automaticInvoiceCheck? InvoiceStatusEnum.NEW : InvoiceStatusEnum.VALIDATED);
+        invoice.setStatus(InvoiceStatusEnum.DRAFT);
         invoice.setInvoiceType(invoiceType);
         invoice.setPrepaid(isPrepaid);
         invoice.setInvoiceDate(invoiceDate);

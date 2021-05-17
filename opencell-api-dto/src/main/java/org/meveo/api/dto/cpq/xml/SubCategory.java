@@ -20,9 +20,9 @@ public class SubCategory {
     private Integer sortIndex;
     @XmlElementWrapper(name = "accountingArticles")
     @XmlElement(name = "accountingArticle")
-    private List<ArticleLine> articleLines;
+    private List<AccountingArticle> articleLines;
 
-    public SubCategory(InvoiceSubCategory invoiceSubCategory, List<ArticleLine> articleLines, String tradingLanguage) {
+    public SubCategory(InvoiceSubCategory invoiceSubCategory, List<AccountingArticle> articleLines, String tradingLanguage) {
         this.code = invoiceSubCategory.getCode();
         this.label = invoiceSubCategory.getDescriptionI18nNullSafe().get(tradingLanguage) == null ? invoiceSubCategory.getDescription() : invoiceSubCategory.getDescriptionI18n().get(tradingLanguage);
         this.sortIndex = invoiceSubCategory.getSortIndex();
@@ -53,11 +53,17 @@ public class SubCategory {
         this.sortIndex = sortIndex;
     }
 
-    public List<ArticleLine> getArticleLines() {
-        return articleLines;
-    }
+	public List<AccountingArticle> getArticleLines() {
+		return articleLines;
+	}
 
-    public void setArticleLines(List<ArticleLine> articleLines) {
-        this.articleLines = articleLines;
-    }
+	public void setArticleLines(List<AccountingArticle> articleLines) {
+		this.articleLines = articleLines;
+	}
+
+
+
+
+
+
 }

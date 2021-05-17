@@ -38,15 +38,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IBillableEntity;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.BillingProcessTypesEnum;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceSequence;
-import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.*;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobExecutionResultStatusEnum;
@@ -465,6 +457,7 @@ public class InvoicingJobBean extends BaseJobBean {
             Consumer<Long> task = (invoiceId) -> {
                 invoiceService.recalculateDates(invoiceId);
                 invoiceService.assignInvoiceNumber(invoiceId, invoicesToNumberInfo);
+                invoiceService.updateStatus(invoiceId, InvoiceStatusEnum.VALIDATED);
 
             };
             iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<Long>((Collection<Long>) invoiceIds), task, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);

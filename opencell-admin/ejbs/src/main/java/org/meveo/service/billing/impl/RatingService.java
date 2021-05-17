@@ -39,6 +39,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
 import org.meveo.admin.exception.NoPricePlanException;
+import org.meveo.admin.exception.NoTaxException;
 import org.meveo.admin.exception.PriceELErrorException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.RatingScriptExecutionErrorException;
@@ -547,7 +548,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
             if (bareWalletOperation.getTax() == null) {
 
                 TaxInfo taxInfo = taxMappingService.determineTax(chargeInstance, bareWalletOperation.getOperationDate());
-
+                if(taxInfo==null) {
+                	throw new BusinessException("No tax found for the chargeInstance "+chargeInstance.getCode());
+                }
                 bareWalletOperation.setTaxClass(taxInfo.taxClass);
                 bareWalletOperation.setTax(taxInfo.tax);
                 bareWalletOperation.setTaxPercent(taxInfo.tax.getPercent());
