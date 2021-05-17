@@ -1,5 +1,29 @@
 package org.meveo.apiv2.generic.services;
 
+import static org.meveo.apiv2.generic.ValidationUtils.checkDto;
+import static org.meveo.apiv2.generic.ValidationUtils.checkId;
+
+import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.NotFoundException;
+
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.hibernate.collection.internal.PersistentBag;
 import org.hibernate.collection.internal.PersistentSet;
@@ -22,19 +46,6 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.Entity;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.NotFoundException;
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.meveo.apiv2.generic.ValidationUtils.checkDto;
-import static org.meveo.apiv2.generic.ValidationUtils.checkId;
 
 @Stateless
 public class GenericApiAlteringService {
@@ -291,6 +302,17 @@ public class GenericApiAlteringService {
             default:
                 return value;
         }
+    }
+    
+    private Date resolveDate(Object stringDate) {
+        if(stringDate instanceof String) {
+            try {
+                return ((String) stringDate).matches("^\\d{4}-\\d{1,2}-\\d{1,2}.*$") ? new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(stringDate)) : new SimpleDateFormat("dd/MM/yyyy").parse(String.valueOf(stringDate));
+            } catch (ParseException e) {
+                throw new IllegalArgumentException(stringDate + " is not a valid value format, hint : dd/MM/yyyy or yyyy-MM-dd");
+            }
+        }
+        return new Date((Long) stringDate);
     }
 
 }
