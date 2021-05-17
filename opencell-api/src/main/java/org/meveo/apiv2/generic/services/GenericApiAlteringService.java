@@ -166,6 +166,30 @@ public class GenericApiAlteringService {
                 customFieldDto.setCode(code);
                 writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), cfsValuesByCode.get(code));
                 customFieldsDto.getCustomField().add(customFieldDto);
+                if(cfsValuesByCode.get(code) == null || ((List) cfsValuesByCode.get(code)).isEmpty() ){
+                    customFieldsDto.getCustomField().add(customFieldDto);
+                    continue;
+                }
+                if(cft.isVersionable()){
+                	for(Object newValue : ((List) cfsValuesByCode.get(code))) {
+                		customFieldDto = new CustomFieldDto();
+                        customFieldDto.setCode(code);
+                        
+	                    customFieldDto.setValuePeriodPriority((Integer) ((Map) newValue).get("priority"));
+	                    if(((Map) newValue).get("from") != null){
+	                        customFieldDto.setValuePeriodStartDate(resolveDate(((Map) newValue).get("from")));
+	                    }
+	                    if(((Map) newValue).get("to") != null){
+	                        customFieldDto.setValuePeriodEndDate(resolveDate(((Map) newValue).get("to")));
+	                    }
+	                    writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), Arrays.asList(newValue));
+	                    customFieldsDto.getCustomField().add(customFieldDto);
+	                }
+                } else {
+                	writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), cfsValuesByCode.get(code));
+                    customFieldsDto.getCustomField().add(customFieldDto);
+                }
+                
             }
         }
         return customFieldsDto;
@@ -213,19 +237,23 @@ public class GenericApiAlteringService {
     private void writeSingleValueToCFDto(CustomFieldDto customFieldDto, CustomFieldTypeEnum fieldType, Object value) {
         switch (fieldType) {
             case DATE:
-                customFieldDto.setDateValue(new Date((Long) value));
+                customFieldDto.setDateValue(value == null ? null : new Date((Long) value));
                 break;
             case LONG:
-                customFieldDto.setLongValue(Integer.toUnsignedLong((Integer) value));
+                customFieldDto.setLongValue(value == null ? null : Integer.toUnsignedLong((Integer) value));
                 break;
             case DOUBLE:
-                customFieldDto.setDoubleValue(Double.parseDouble(value.toString()));
+                customFieldDto.setDoubleValue(value == null ? null : Double.parseDouble(value.toString()));
                 break;
             case BOOLEAN:
-                customFieldDto.setBooleanValue((Boolean) value);
+                customFieldDto.setBooleanValue(value == null ? null : (Boolean) value);
                 break;
             case CHILD_ENTITY:
             case ENTITY:
+            	if(value == null) {
+            		customFieldDto.setEntityReferenceValue(null);
+            		break;
+            	}
                 Map<String, String> entityRefDto = (Map<String, String>) value;
                 EntityReferenceDto entityReferenceDto = new EntityReferenceDto();
                 entityReferenceDto.setClassname(entityRefDto.get("classname"));
@@ -233,11 +261,18 @@ public class GenericApiAlteringService {
                 customFieldDto.setEntityReferenceValue(entityReferenceDto);
                 break;
             case LIST:
+            	if(value == null) {
+            		customFieldDto.setStringValue(null);
+            		break;
+            	}
                 if(!((List)value).isEmpty()){
                     customFieldDto.setStringValue((String)  ((Map)((List)value).get(0)).get("value"));
                 }
                 break;
             default:
+            	if(value == null) {
+            		customFieldDto.setStringValue(null);
+            	}
                 customFieldDto.setStringValue((String) value);
                 break;
         }
