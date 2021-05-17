@@ -126,7 +126,7 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     protected ChargeTemplate chargeTemplate;
 
     /**
-     * Calendar to use when creating Wallet operations. Service subscription start date is taken as calendar's initiation date. Invoicing calendar to calculate if operation should
+     * Invoicing calendar to calculate if operation should
      * be invoiced on an future date.
      */
     @ManyToOne(fetch = FetchType.LAZY)
