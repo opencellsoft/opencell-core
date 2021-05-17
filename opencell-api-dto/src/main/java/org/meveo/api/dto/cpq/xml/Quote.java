@@ -4,6 +4,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+
+import org.meveo.api.dto.CustomFieldsDto;
+
 import java.util.Date;
 import java.util.List;
 
@@ -15,11 +18,14 @@ public class Quote {
     private List<BillableAccount> billableAccounts;
     private String quoteNumber;
     private Date quoteDate;
+    private CustomFieldsDto customFields;
+    
 
-    public Quote(List<BillableAccount> billableAccounts, String quoteNumber, Date quoteDate) {
+    public Quote(List<BillableAccount> billableAccounts, String quoteNumber, Date quoteDate, CustomFieldsDto customFields) {
         this.billableAccounts = billableAccounts;
         this.quoteNumber = quoteNumber;
         this.quoteDate = quoteDate;
+        this.customFields=customFields;
     }
 
     public List<BillableAccount> getBillableAccounts() {
@@ -45,4 +51,14 @@ public class Quote {
     public void setQuoteDate(Date quoteDate) {
         this.quoteDate = quoteDate;
     }
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
+	}
+    
+    
 }

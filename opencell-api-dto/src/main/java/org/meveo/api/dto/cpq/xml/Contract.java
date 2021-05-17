@@ -3,19 +3,19 @@ package org.meveo.api.dto.cpq.xml;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Contract {
 
 	private String code;
 	private String description;
-	private CustomFieldDto customField;
+	private CustomFieldsDto customFields;
 	
-	public Contract(org.meveo.model.cpq.contract.Contract contract, CustomFieldDto customFieldDto) {
+	public Contract(org.meveo.model.cpq.contract.Contract contract, CustomFieldsDto customFieldDto) {
 		this.code = contract.getCode();
 		this.description = contract.getDescription();
-		this.customField = customFieldDto;
+		this.customFields = customFieldDto;
 	}
 	
 	/**
@@ -42,18 +42,16 @@ public class Contract {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	/**
-	 * @return the customField
-	 */
-	public CustomFieldDto getCustomField() {
-		return customField;
+
+	public CustomFieldsDto getCustomFields() {
+		return customFields;
 	}
-	/**
-	 * @param customField the customField to set
-	 */
-	public void setCustomField(CustomFieldDto customField) {
-		this.customField = customField;
+
+	public void setCustomFields(CustomFieldsDto customFields) {
+		this.customFields = customFields;
 	}
+
+	
 	
 	
 }
