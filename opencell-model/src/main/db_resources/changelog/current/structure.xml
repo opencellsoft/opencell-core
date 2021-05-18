@@ -8870,7 +8870,7 @@ public class OrderAdvancement extends ModuleScript {
     	<sql>update ${db.schema.adapted}billing_invoice set payment_status = 'NONE';</sql>
     	<sql>update ${db.schema.adapted}billing_invoice set payment_status = 'PENDING' where recorded_invoice_id IS NOT NULL;</sql>
     	<sql>update ${db.schema.adapted}billing_invoice set payment_status = status where status IN ('PAID', 'PPAID', 'UNPAID', 'ABANDONED', 'REFUNDED', 'DISPUTED');</sql>
-    	<sql>update ${db.schema.adapted}billing_invoice set status = 'VALIDATED' where status IN ('PAID', 'PPAID', 'UNPAID', 'ABANDONED', 'REFUNDED', 'DISPUTED');</sql>
+    	<sql>update ${db.schema.adapted}billing_invoice set status = 'VALIDATED' where status IN ('GENERATED', 'PAID', 'PPAID', 'UNPAID', 'ABANDONED', 'REFUNDED', 'DISPUTED');</sql>
     	<sql>update ${db.schema.adapted}billing_invoice set status = 'NEW' where status = 'CREATED';</sql>
     	
     	<sql>UPDATE ${db.schema.adapted}crm_custom_field_tmpl SET field_type = 'CHECKBOX_LIST', value_required = 0, default_value = 'VALIDATED', storage_type = 'LIST' 
