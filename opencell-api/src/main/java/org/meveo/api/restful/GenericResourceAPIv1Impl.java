@@ -89,7 +89,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     }
 
     @Override
-    public Response postRequest( String jsonDto ) throws URISyntaxException, JsonProcessingException {
+    public Response postRequest( String jsonDto ) throws URISyntaxException, IOException {
         String postPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
         segmentsOfPathAPIv1 = uriInfo.getPathSegments();
         queryParamsMap = uriInfo.getQueryParameters();
@@ -131,7 +131,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     }
 
     @Override
-    public Response deleteRequest() throws URISyntaxException {
+    public Response deleteRequest() throws URISyntaxException, IOException {
         return deleteService.deleteEntity(uriInfo);
     }
 

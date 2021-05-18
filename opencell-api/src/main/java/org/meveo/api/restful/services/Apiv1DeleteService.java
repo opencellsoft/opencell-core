@@ -1,13 +1,15 @@
 package org.meveo.api.restful.services;
 
-import org.meveo.api.restful.GenericOpencellRestfulAPIv1;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
+
+import org.meveo.api.restful.GenericOpencellRestfulAPIv1;
 
 /**
  * @author Thang Nguyen
@@ -24,7 +26,10 @@ public class Apiv1DeleteService {
     /*
      * Function used to delete a particular entity
      */
-    public Response deleteEntity(UriInfo uriInfo) throws URISyntaxException {
+    public Response deleteEntity(UriInfo uriInfo) throws URISyntaxException, IOException {
+    	if(uriInfo.getPathSegments() == null) {
+        	throw new IOException();
+        }
         List<PathSegment> segmentsOfPathAPIv1 = uriInfo.getPathSegments();
         URI redirectURI;
         StringBuilder suffixPathBuilder = new StringBuilder();
