@@ -1,5 +1,29 @@
 package org.meveo.apiv2.generic.services;
 
+import static org.meveo.apiv2.generic.ValidationUtils.checkDto;
+import static org.meveo.apiv2.generic.ValidationUtils.checkId;
+
+import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.NotFoundException;
+
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.hibernate.collection.internal.PersistentBag;
 import org.hibernate.collection.internal.PersistentSet;
@@ -22,19 +46,6 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.Entity;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.NotFoundException;
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.meveo.apiv2.generic.ValidationUtils.checkDto;
-import static org.meveo.apiv2.generic.ValidationUtils.checkId;
 
 @Stateless
 public class GenericApiAlteringService {
@@ -166,6 +177,30 @@ public class GenericApiAlteringService {
                 customFieldDto.setCode(code);
                 writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), cfsValuesByCode.get(code));
                 customFieldsDto.getCustomField().add(customFieldDto);
+                if(cfsValuesByCode.get(code) == null || ((List) cfsValuesByCode.get(code)).isEmpty() ){
+                    customFieldsDto.getCustomField().add(customFieldDto);
+                    continue;
+                }
+                if(cft.isVersionable()){
+                	for(Object newValue : ((List) cfsValuesByCode.get(code))) {
+                		customFieldDto = new CustomFieldDto();
+                        customFieldDto.setCode(code);
+                        
+	                    customFieldDto.setValuePeriodPriority((Integer) ((Map) newValue).get("priority"));
+	                    if(((Map) newValue).get("from") != null){
+	                        customFieldDto.setValuePeriodStartDate(resolveDate(((Map) newValue).get("from")));
+	                    }
+	                    if(((Map) newValue).get("to") != null){
+	                        customFieldDto.setValuePeriodEndDate(resolveDate(((Map) newValue).get("to")));
+	                    }
+	                    writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), Arrays.asList(newValue));
+	                    customFieldsDto.getCustomField().add(customFieldDto);
+	                }
+                } else {
+                	writeValueToCFDto(customFieldDto, cft.getFieldType(), cft.getStorageType(), cfsValuesByCode.get(code));
+                    customFieldsDto.getCustomField().add(customFieldDto);
+                }
+                
             }
         }
         return customFieldsDto;
@@ -213,19 +248,23 @@ public class GenericApiAlteringService {
     private void writeSingleValueToCFDto(CustomFieldDto customFieldDto, CustomFieldTypeEnum fieldType, Object value) {
         switch (fieldType) {
             case DATE:
-                customFieldDto.setDateValue(new Date((Long) value));
+                customFieldDto.setDateValue(value == null ? null : new Date((Long) value));
                 break;
             case LONG:
-                customFieldDto.setLongValue(Integer.toUnsignedLong((Integer) value));
+                customFieldDto.setLongValue(value == null ? null : Integer.toUnsignedLong((Integer) value));
                 break;
             case DOUBLE:
-                customFieldDto.setDoubleValue(Double.parseDouble(value.toString()));
+                customFieldDto.setDoubleValue(value == null ? null : Double.parseDouble(value.toString()));
                 break;
             case BOOLEAN:
-                customFieldDto.setBooleanValue((Boolean) value);
+                customFieldDto.setBooleanValue(value == null ? null : (Boolean) value);
                 break;
             case CHILD_ENTITY:
             case ENTITY:
+            	if(value == null) {
+            		customFieldDto.setEntityReferenceValue(null);
+            		break;
+            	}
                 Map<String, String> entityRefDto = (Map<String, String>) value;
                 EntityReferenceDto entityReferenceDto = new EntityReferenceDto();
                 entityReferenceDto.setClassname(entityRefDto.get("classname"));
@@ -233,11 +272,18 @@ public class GenericApiAlteringService {
                 customFieldDto.setEntityReferenceValue(entityReferenceDto);
                 break;
             case LIST:
+            	if(value == null) {
+            		customFieldDto.setStringValue(null);
+            		break;
+            	}
                 if(!((List)value).isEmpty()){
                     customFieldDto.setStringValue((String)  ((Map)((List)value).get(0)).get("value"));
                 }
                 break;
             default:
+            	if(value == null) {
+            		customFieldDto.setStringValue(null);
+            	}
                 customFieldDto.setStringValue((String) value);
                 break;
         }
@@ -256,6 +302,17 @@ public class GenericApiAlteringService {
             default:
                 return value;
         }
+    }
+    
+    private Date resolveDate(Object stringDate) {
+        if(stringDate instanceof String) {
+            try {
+                return ((String) stringDate).matches("^\\d{4}-\\d{1,2}-\\d{1,2}.*$") ? new SimpleDateFormat("yyyy-MM-dd").parse(String.valueOf(stringDate)) : new SimpleDateFormat("dd/MM/yyyy").parse(String.valueOf(stringDate));
+            } catch (ParseException e) {
+                throw new IllegalArgumentException(stringDate + " is not a valid value format, hint : dd/MM/yyyy or yyyy-MM-dd");
+            }
+        }
+        return new Date((Long) stringDate);
     }
 
 }
