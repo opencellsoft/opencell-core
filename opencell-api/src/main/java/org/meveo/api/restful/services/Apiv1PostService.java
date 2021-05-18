@@ -15,6 +15,8 @@ import org.meveo.util.Inflector;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.*;
+
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -75,8 +77,12 @@ public class Apiv1PostService {
     /*
      * Function used to enable or disable an entity or a service
      */
-    public Response enableOrDisableEntity(UriInfo uriInfo, String postPath, String jsonDto) throws URISyntaxException {
+    public Response enableOrDisableEntity(UriInfo uriInfo, String postPath, String jsonDto) throws URISyntaxException, IOException {
         URI redirectURI = null;
+        
+        if(uriInfo.getPathSegments() == null) {
+        	throw new IOException();
+        }
 
         segmentsOfPathAPIv1 = uriInfo.getPathSegments();
         queryParamsMap = uriInfo.getQueryParameters();

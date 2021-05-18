@@ -20,7 +20,7 @@ public interface GenericResourceAPIv1 {
 
     @POST
     @Path("/{segments:.*}")
-    Response postRequest( String postData ) throws URISyntaxException, JsonProcessingException;
+    Response postRequest( String postData ) throws URISyntaxException, JsonProcessingException, IOException;
 
     @PUT
     @Path("/{segments:.*}")
@@ -28,7 +28,7 @@ public interface GenericResourceAPIv1 {
 
     @DELETE
     @Path("/{segments:.*}")
-    Response deleteRequest() throws URISyntaxException;
+    Response deleteRequest() throws URISyntaxException, IOException;
 
     @POST
     @Path("/{segments:.*}/creationOrUpdate")
