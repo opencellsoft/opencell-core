@@ -38,9 +38,11 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
@@ -1046,7 +1048,11 @@ public class CpqQuoteApi extends BaseApi {
         quoteVersion.setStatusDate(Calendar.getInstance().getTime());
         quoteVersionService.update(quoteVersion);
         if (status.equals(VersionStatusEnum.PUBLISHED)){
-        	quoteQuotation(quoteCode, currentVersion);
+        	try {
+        		quoteQuotation(quoteCode, currentVersion);
+        	}catch(IncorrectChargeTemplateException e) {
+        		throw new MeveoApiException(e.getMessage());
+        	}
         	updateQuoteStatus(quoteCode, QuoteStatusEnum.PENDING.toString());
         }
     }
@@ -1197,7 +1203,12 @@ public class CpqQuoteApi extends BaseApi {
                         attributes.put(attributeValue.getAttribute().getCode(), value);
                     }
                 }
-                Optional<AccountingArticle> accountingArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), attributes);
+                Optional<AccountingArticle> accountingArticle = Optional.empty();
+                try {
+                	accountingArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), attributes);
+                }catch(RuntimeException e) {
+                	throw new MeveoApiException(e.getMessage());
+                }
                 if (!accountingArticle.isPresent())
                     throw new MeveoApiException("No accounting article found for product code: " + serviceInstance.getProductVersion().getProduct().getCode() + " and attributes: " + attributes.toString());
                 // Add subscription charges
@@ -1451,6 +1462,8 @@ public class CpqQuoteApi extends BaseApi {
                 AccountingArticle discountAccountingArticle = discountPlanItem.getAccountingArticle();
                 if(discountAccountingArticle == null)
                 	throw new EntityDoesNotExistsException("Discount plan item ("+discountPlanItem.getCode()+") doesn't have an accounting article");
+                if(quoteproduct == null)
+                	throw new MeveoApiException("No product found for this discount : " + discountPlanItem.getCode());
 
                 discountAmount = discountAmount.add(discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues));
                 if (discountAmount != null && discountAmount.abs().compareTo(BigDecimal.ZERO) > 0) {
