@@ -17,6 +17,27 @@
  */
 package org.meveo.service.billing.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -53,31 +74,14 @@ import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 /**
  * @author Said Ramli
  * @author Abdellatif BARI
  * @author Khalid HORRI
  * @lastModifiedVersion 6.1
  */
-@Stateless
+@Singleton
+@Lock(LockType.WRITE)
 public class CounterInstanceService extends PersistenceService<CounterInstance> {
 
     private static final String CHARGE = "charge";
@@ -395,6 +399,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return a counter period.
      * @throws BusinessException the business exception
      */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, ChargeInstance chargeInstance, ServiceInstance serviceInstance) throws BusinessException {
 
         CounterPeriod counterPeriod = new CounterPeriod();
@@ -509,6 +516,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return Found or created counter period
      * @throws BusinessException business exception
      */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CounterPeriod getOrCreateCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, ChargeInstance chargeInstance, ServiceInstance serviceInstance) throws BusinessException {
         try {
             return getCounterPeriodByDate(counterInstance, date);
@@ -583,6 +593,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return CounterValueChangeInfo, the actual deduced value and new counter value. or NULL if value is not tracked (initial counter value is not set)
      * @throws BusinessException business exception
      */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CounterValueChangeInfo deduceCounterValue(CounterPeriod counterPeriod, BigDecimal deduceBy, boolean isVirtual) throws BusinessException {
 
         CounterValueChangeInfo counterValueInfo = null;
@@ -742,6 +755,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return The new value, or NULL if value is not tracked (initial value is not set)
      * @throws BusinessException business exception
      */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public BigDecimal incrementCounterValue(Long periodId, BigDecimal incrementBy, Reservation reservation) throws BusinessException {
 
         CounterPeriod counterPeriod = counterPeriodService.findById(periodId);
@@ -786,6 +802,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param reservation the reservation
      * @param isVirtual whether the operation is virtual or not
      */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void accumulatorCounterPeriodValue(CounterPeriod counterPeriod, WalletOperation walletOperation, Reservation reservation, boolean isVirtual) {
         BigDecimal value = BigDecimal.ZERO;
         BigDecimal previousValue = counterPeriod.getValue();
