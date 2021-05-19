@@ -240,13 +240,15 @@ public class CpqQuoteApi extends BaseApi {
 
         CpqQuote cpqQuote = new CpqQuote();
         cpqQuote.setCode(quote.getCode());
-        if(!Strings.isEmpty(quote.getSellerCode())) {
-            cpqQuote.setSeller(sellerService.findByCode(quote.getSellerCode()));
-        }
         final BillingAccount applicantAccount = billingAccountService.findByCode(quote.getApplicantAccountCode());
         if(applicantAccount == null)
             throw new EntityDoesNotExistsException(BillingAccount.class, quote.getApplicantAccountCode());
         cpqQuote.setApplicantAccount(applicantAccount);
+        if(!Strings.isEmpty(quote.getSellerCode())) {
+            cpqQuote.setSeller(sellerService.findByCode(quote.getSellerCode()));
+        }else {
+        	 cpqQuote.setSeller(applicantAccount.getCustomerAccount().getCustomer().getSeller());
+        }
         if(!Strings.isEmpty(quote.getContractCode())) {
             cpqQuote.setContract(contractService.findByCode(quote.getContractCode()));
         }
