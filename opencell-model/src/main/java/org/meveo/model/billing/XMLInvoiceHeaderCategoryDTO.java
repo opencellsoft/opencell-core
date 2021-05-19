@@ -17,6 +17,8 @@
  */
 package org.meveo.model.billing;
 
+import static java.math.BigDecimal.ZERO;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,14 +29,14 @@ public class XMLInvoiceHeaderCategoryDTO {
 
     private String description;
     private String code;
-    private BigDecimal amountWithoutTax = BigDecimal.ZERO;
-    private BigDecimal amountWithTax = BigDecimal.ZERO;
-    private BigDecimal amountTax = BigDecimal.ZERO;
+    private BigDecimal amountWithoutTax = ZERO;
+    private BigDecimal amountWithTax = ZERO;
+    private BigDecimal amountTax = ZERO;
     private Integer sortIndex;
 
     private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>();
 
-    private Map<Long, RatedTransaction> ratedtransactions = new HashMap<Long, RatedTransaction>();
+    private Map<Long, RatedTransaction> ratedtransactions = new HashMap<>();
 
     public Map<Long, RatedTransaction> getRatedtransactions() {
         return ratedtransactions;
