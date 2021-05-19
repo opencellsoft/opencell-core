@@ -32,4 +32,13 @@ public class BooleanPostgreSQLJsonSearchFunction extends PostgreSQLJsonSearchFun
       return BooleanType.INSTANCE;
    }
 
+    @Override
+    public String getCastType() {
+        return "boolean";
+    }
+
+    @Override
+    public String getValuePropertyName() {
+        return "boolean";
+    }
 }

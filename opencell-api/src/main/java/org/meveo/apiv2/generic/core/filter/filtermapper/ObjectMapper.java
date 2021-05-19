@@ -36,7 +36,7 @@ public class ObjectMapper extends FilterMapper {
                 Map<String, Object> castMap = new TreeMap<String, Object>();
                 innerValue.keySet()
                         .stream()
-                        .map(key -> Collections.singletonMap(key, new FactoryFilterMapper().create(key.replaceFirst("[a-zA-Z]* ",""), innerValue.get(key), type, serviceFunction).map()))
+                        .map(key -> Collections.singletonMap(key, new FactoryFilterMapper().create(key.replaceFirst("[a-zA-Z]* ",""), innerValue.get(key), type, serviceFunction, null).map()))
                         .flatMap(entries -> entries.entrySet().stream())
                         .forEach(entry -> {
                             try {
@@ -54,7 +54,7 @@ public class ObjectMapper extends FilterMapper {
                     target = serviceFunction.apply(target.getClass()).list(new PaginationConfiguration(innerValue));
                 }
             } else{
-                target = new FactoryFilterMapper().create("id", value, type, serviceFunction).map();
+                target = new FactoryFilterMapper().create("id", value, type, serviceFunction, null).map();
             }
 
         } catch (InstantiationException | IllegalAccessException e) {

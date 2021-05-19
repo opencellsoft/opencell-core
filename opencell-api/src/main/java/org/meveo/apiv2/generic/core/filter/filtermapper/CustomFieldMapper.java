@@ -6,6 +6,8 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
+import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
@@ -17,12 +19,12 @@ import java.util.function.Function;
 
 public class CustomFieldMapper extends FilterMapper {
     private final Function<Class, PersistenceService> serviceFunction;
-    private final Class clazz;
+    private final String appliesTo;
 
-    public CustomFieldMapper(String property, Object value, Class clazz, Function<Class, PersistenceService> serviceFunction) {
+    public CustomFieldMapper(String property, Object value, Class clazz, Function<Class, PersistenceService> serviceFunction, String cetCode) {
         super(property, value);
         this.serviceFunction = serviceFunction;
-        this.clazz = clazz;
+        this.appliesTo = clazz!=CustomEntityInstance.class? clazz.getSimpleName() : CustomEntityTemplate.CFT_PREFIX + "_" + cetCode;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class CustomFieldMapper extends FilterMapper {
     public CustomFieldValues mapStrategy(Object value) {
         Map<String, CustomFieldTemplate> customFieldTemplates = ((CustomFieldTemplateService) serviceFunction
                 .apply(CustomFieldTemplate.class))
-                .findByAppliesTo(clazz.getSimpleName());
+                .findByAppliesTo(appliesTo);
         CustomFieldValues customFieldValues = new CustomFieldValues();
         ((Map) value).keySet()
                 .stream()
@@ -54,7 +56,7 @@ public class CustomFieldMapper extends FilterMapper {
         String resolvedCode = resolveCfCode((String) key);
         Object cfValue = ((Map) ((List) value.get(key)).get(0)).get("value");
         if(((String) key).contains("List ")){
-            return toCustomFieldValue(CustomFieldTypeEnum.STRING, cfValue);
+            return toCustomFieldValue(CustomFieldTypeEnum.STRING, ""+cfValue);
         }
         return toCustomFieldValue(customFieldTemplates.get(resolvedCode).getFieldType(), cfValue);
     }
