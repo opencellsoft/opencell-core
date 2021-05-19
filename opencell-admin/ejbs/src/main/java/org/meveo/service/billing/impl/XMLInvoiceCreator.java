@@ -1276,7 +1276,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     }
     
     /**
-     * Provide categories elements for min RTs and RTs without type and wallet
+     * Provide categories elements if no user account present in RT
      * 
      * @param doc dom document
      * @param ratedTransactions rated transactions
@@ -1291,7 +1291,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         LinkedHashMap<InvoiceSubCategory, Element> subCategoriesMap = new LinkedHashMap<>();
         if(ratedTransactions != null) {
             for (RatedTransaction ratedTransaction : ratedTransactions) {
-                if (ratedTransaction.getType() == RatedTransactionTypeEnum.MINIMUM || (ratedTransaction.getWallet() == null)) {
+                if (ratedTransaction.getUserAccount() == null) {
 
                     Element subCategory = null;
                     InvoiceSubCategory invoiceSubCategory = ratedTransaction.getInvoiceSubCategory();
@@ -1530,10 +1530,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                         Collections.sort(ratedTransactions, InvoiceCategoryComparatorUtils.getRatedTransactionComparator());
 
                         for (RatedTransaction ratedTransaction : ratedTransactions) {
-                            if (!(ratedTransaction.getWallet() != null && ratedTransaction.getWallet().getId().longValue() == wallet.getId()
-                                    && ratedTransaction.getInvoiceSubCategory().getId().longValue() == invoiceSubCat.getId())) {
-                                continue;
-                            }
                             BigDecimal transactionAmount = entreprise ? ratedTransaction.getAmountWithTax() : ratedTransaction.getAmountWithoutTax();
                             if (transactionAmount == null) {
                                 transactionAmount = BigDecimal.ZERO;
