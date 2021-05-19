@@ -4242,4 +4242,10 @@ END $$;]]>
     	<dropColumn columnName="action_script_id" tableName="wf_generic_transition" />
     </changeSet>    
     
+    <changeSet id="#5257_20210519" author="AndriusKarpavicius">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="refunds_wo_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>

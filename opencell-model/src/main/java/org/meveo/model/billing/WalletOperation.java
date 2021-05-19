@@ -102,7 +102,7 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "WalletOperation.setStatusToToRerate", query = "UPDATE WalletOperation o SET o.status='TO_RERATE', o.updated = :now "
                 + " WHERE (o.status='OPEN' and o.id IN :woIds) or (o.status='TREATED' AND o.ratedTransaction.id IN (SELECT o1.ratedTransaction.id FROM WalletOperation o1 WHERE o1.status='TREATED' and o1.id IN :woIds))"),
-        @NamedQuery(name = "WalletOperation.setStatusToReratedWithReratedWo", query = "UPDATE WalletOperation o SET o.status='RERATED', o.updated = :now, o.reratedWalletOperation=:newWo where o.id=:id"),
+        @NamedQuery(name = "WalletOperation.setStatusToReratedWithReratedWo", query = "UPDATE versioned WalletOperation o SET o.status='RERATED', o.updated = :now, o.reratedWalletOperation=:newWo where o.id=:id"),
         @NamedQuery(name = "WalletOperation.setStatusToFailedToRerate", query = "UPDATE WalletOperation o SET o.status='F_TO_RERATE', o.updated = :now, o.rejectReason=:rejectReason where o.id=:id"),
 
         @NamedQuery(name = "WalletOperation.setStatusToCanceledById", query = "UPDATE WalletOperation o SET o.status='CANCELED', o.updated = :now WHERE (o.status<>'CANCELED' and o.status<>'RERATED') and o.id IN :woIds"),
@@ -362,11 +362,19 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     private PricePlanMatrix priceplan;
 
     /**
-     * Rerated wallet operation
+     * Wallet operation that rerates this wallet operation
      */
     @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
+    @JoinColumn(name = "reratedwalletoperation_id")
     private WalletOperation reratedWalletOperation;
-
+    
+    /**
+     * Wallet operation that this wallet operation refunds
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "refunds_wo_id")
+    private WalletOperation refundsWalletOperation;
+    
     /**
      * Input unit description
      */
@@ -985,6 +993,20 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     public void setReratedWalletOperation(WalletOperation reratedWalletOperation) {
         this.reratedWalletOperation = reratedWalletOperation;
+    }
+    
+    /**
+     * @return Wallet operation that this wallet operation refunds
+     */
+    public WalletOperation getRefundsWalletOperation() {
+        return refundsWalletOperation;
+    }
+   
+    /**
+     * @param refundsWalletOperation Wallet operation that this wallet operation refunds
+     */
+    public void setRefundsWalletOperation(WalletOperation refundsWalletOperation) {
+        this.refundsWalletOperation = refundsWalletOperation;
     }
 
     public EDR getEdr() {

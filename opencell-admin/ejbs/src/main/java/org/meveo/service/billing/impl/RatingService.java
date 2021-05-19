@@ -988,21 +988,14 @@ public class RatingService extends PersistenceService<WalletOperation> {
     public void reRate(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException, RatingException {
 
         WalletOperation operationToRerate = getEntityManager().find(WalletOperation.class, operationToRerateId);
+        if (operationToRerate.getStatus() != WalletOperationStatusEnum.TO_RERATE) {
+            return;
+        }
 
-        // Change related Rated transaction status to Rerated
+        // Change related OPEN or REJECTED Rated transaction status to RERATED
         RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
-        if (ratedTransaction != null) {
-            if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.BILLED) {
-
-                log.error("Can not rerate an already billed Wallet Operation. Wallet Operation " + operationToRerateId + " corresponds to rated transaction " + ratedTransaction.getId());
-                getEntityManager().createNamedQuery("WalletOperation.changeStatus").setParameter("now", new Date()).setParameter("status", WalletOperationStatusEnum.TREATED).setParameter("id", operationToRerateId)
-                    .executeUpdate();
-
-                return;
-
-            } else if (ratedTransaction.getStatus() != RatedTransactionStatusEnum.CANCELED && ratedTransaction.getStatus() != RatedTransactionStatusEnum.RERATED) {
-                ratedTransaction.changeStatus(RatedTransactionStatusEnum.RERATED);
-            }
+        if (ratedTransaction != null && (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() != RatedTransactionStatusEnum.REJECTED)) {
+            ratedTransaction.changeStatus(RatedTransactionStatusEnum.RERATED);
         }
 
         WalletOperation operation = operationToRerate.getUnratedClone();
