@@ -23,7 +23,44 @@ import org.meveo.model.shared.DateUtils;
 import org.slf4j.Logger;
 
 /**
- * Service to handle wallet operation re-rating when service parameters or tariffs change
+ * Service to handle wallet operation re-rating when service parameters or tariffs change.
+ * 
+ * Rerating can be initiated for a particular service instance, or an offer + service template + charge type combination, specifying a date to rerate from. An option is provided to choose to rerate only unbilled or all
+ * wallet operations.
+ * 
+ * 
+ * <pre>
+ *
+ *One shot or usage charge:
+ * Select Wallet operations with operation date>="rerate from date".
+ * Mark Wallet operations to rerate:
+ *  For each BILLED wallet operation:
+ *    - create an identical and negative wallet operation with status OPEN
+ *    - create an identical wallet operation with status TO_RERATE (no relationship is preserved with an original WO)
+ *  For each NOT billed wallet operation:
+ *    - change related Rated transaction (unbilled) status to CANCELED
+ *    - change wallet operation status to TO_RERATE
+ * Rerate wallet operations with status "TO_RERATE" (same as running a rerating job)
+ *  Cancel Rated transaction if not canceled yet
+ *    - if Wallet operation has a BILLED rated transaction, wallet operation status will be changed to TREATED (as if rerating was not possible - definatelly some anomoly)
+ *    - if Wallet operation has a rated transaction with status OPEN (and REJECTED - dont know why??) - change rated transaction status to RERATED
+ *  Create an identical Wallet operation with status OPEN and calculate its amount with a usual rating logic
+ *  Change the status of the wallet operation from TO_RERATE to RERATED and add a link to a new wallet operation (field reratedWalletOperation)
+
+ * NOTE: I see an issue here: for the billed wallet operations a new TO_RERATE wallet operation was created, but they wont be processed further - its a bug
+ *
+ *
+ *
+ *Recurring:
+ * Determine unique charge instances and min(startDate) (will be refered to as fromDate) and max(endDate) for the wallet operations with end date>="rerate from date"
+ * For each chargeInstance
+ *  - Change NOT billed wallet operation status to CANCELED for wallet operations with startDate>= fromDate
+ *  - Refund already BILLED wallet operations with startDate>= fromDate by creating an identical wallet operation with a negated amount and status OPEN
+ *     - reset chargedToDate to a fromDate
+ *     - rate charge up to toDate as usual rating
+ * 
+ * </pre>
+ * 
  * 
  * @author Andrius Karpavicius
  */
@@ -68,8 +105,7 @@ public class ReratingService implements Serializable {
     }
 
     /**
-     * Re-rate wallet operations of a given offer and service template. Start date might be earlier for recurring charges where given date falls within rating period boundry
-     * (wallet operation start/endDate)
+     * Re-rate wallet operations of a given offer and service template. Start date might be earlier for recurring charges where given date falls within rating period boundry (wallet operation start/endDate)
      * 
      * @param reratingInfos Re-rating information
      * @param rerateInvoiced Re-rate already invoiced wallet operations if true. In such case invoiced wallet operations will be refunded.
@@ -84,8 +120,8 @@ public class ReratingService implements Serializable {
     }
 
     /**
-     * Re-rate wallet operations of a given charge instance OR offer, service template and chargeType. Start date might be earlier for recurring charges where given date falls
-     * within rating period boundary (wallet operation start/endDate)
+     * Re-rate wallet operations of a given charge instance OR offer, service template and chargeType. Start date might be earlier for recurring charges where given date falls within rating period boundary (wallet
+     * operation start/endDate)
      * 
      * @param offerTemplateId Offer template identifier
      * @param serviceTemplateId Service template identifier
