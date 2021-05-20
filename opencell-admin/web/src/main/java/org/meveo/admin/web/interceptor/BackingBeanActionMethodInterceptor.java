@@ -80,7 +80,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
 
     @AroundInvoke
     public Object aroundInvoke(InvocationContext invocationContext) throws Exception {
-
+        
         Object result = null;
         try {
 
@@ -96,6 +96,9 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
             return result;
         } catch (Exception e) {
 
+
+            log.error("Failed to execute a GUI method due to errors", e);
+            
             // See if can get to the root of the exception cause
             String message = e.getMessage();
             String messageKey = null;
