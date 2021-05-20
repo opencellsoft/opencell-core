@@ -544,6 +544,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 rejectedPayment.setRejectedType(RejectedType.A);
                 rejectedPayment.setRejectedDate(new Date());
                 rejectedPayment.setTransactionDate(new Date());
+                rejectedPayment.setDueDate(accountOperation.getDueDate());
                 rejectedPayment.setRejectedDescription(errorMessage);
                 rejectedPayment.setRejectedCode(errorCode);
                 rejectedPayment.setListAaccountOperationSupposedPaid(listAoThatSupposedPaid);
