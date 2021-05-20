@@ -546,7 +546,10 @@ public class MediationApiService {
 
                 // Trim array to the last populated position, so not to return null elements in array more than needed
                 if (cdrProcessingResult.getMode() == STOP_ON_FIRST_FAIL) {
+                    log.info("cdrProcessingResult.getChargedCDRs().length = <" + cdrProcessingResult.getChargedCDRs().length + ">");
+                    log.info("position =<" + position + ">");
                     cdrProcessingResult.setChargedCDRs(Arrays.copyOf(cdrProcessingResult.getChargedCDRs(), position + 1));
+                    log.info("cdrProcessingResult.getChargedCDRs().length after = Arrays.copyOf <" + cdrProcessingResult.getChargedCDRs().length + ">");
                     break;
                 }
 

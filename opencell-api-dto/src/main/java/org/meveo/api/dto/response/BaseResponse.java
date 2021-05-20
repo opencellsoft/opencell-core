@@ -26,6 +26,8 @@ import org.meveo.api.dto.ActionStatusEnum;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * All the Opencell API web service response must extend this class.
@@ -37,6 +39,8 @@ public abstract class BaseResponse implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -4985814323159091933L;
+
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * The status response of the web service response.

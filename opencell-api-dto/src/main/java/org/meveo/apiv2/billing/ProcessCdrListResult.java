@@ -106,8 +106,11 @@ public class ProcessCdrListResult extends BaseResponse {
     }
 
     public void addChargedCdr(int position, ChargeCDRResponseDto chargedCdr) {
-
+        log.info("####### addChargedCdr start #########");
+        log.info("position =<" + position + ">");
+        log.info("chargedCdr =<" + chargedCdr + ">");
         chargedCDRs[position] = chargedCdr;
+        log.info("####### addChargedCdr end #########");
     }
 
     /**
@@ -128,12 +131,20 @@ public class ProcessCdrListResult extends BaseResponse {
      * Update total amounts and wallet operation count based on charged CDRs
      */
     public void updateAmountAndWOCountStatistics() {
+        log.info("####### updateAmountAndWOCountStatistics start #########");
+        log.info("getChargedCDRs().toString() =<" + getChargedCDRs().toString() + ">");
+        log.info("getChargedCDRs().length =<" + getChargedCDRs().length + ">");
         for (ChargeCDRResponseDto cdrCharge : getChargedCDRs()) {
+
+            log.info("cdrCharge =<" + cdrCharge + ">");
+            log.info("getAmountWithTax() =<" + getAmountWithTax() + ">");
+            log.info("cdrCharge.getAmountWithTax() =<" + cdrCharge.getAmountWithTax() + ">");
             setAmountWithTax(getAmountWithTax().add(cdrCharge.getAmountWithTax() != null ? cdrCharge.getAmountWithTax() : BigDecimal.ZERO));
             setAmountWithoutTax(getAmountWithoutTax().add(cdrCharge.getAmountWithoutTax() != null ? cdrCharge.getAmountWithoutTax() : BigDecimal.ZERO));
             setAmountTax(getAmountTax().add(cdrCharge.getAmountTax() != null ? cdrCharge.getAmountTax() : BigDecimal.ZERO));
             setWalletOperationCount(getWalletOperationCount() + (cdrCharge.getWalletOperationCount() != null ? cdrCharge.getWalletOperationCount() : 0));
         }
+        log.info("####### updateAmountAndWOCountStatistics end #########");
     }
 
     public static class Statistics implements Serializable {
