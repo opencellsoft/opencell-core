@@ -1206,7 +1206,7 @@ public class CpqQuoteApi extends BaseApi {
                 Optional<AccountingArticle> accountingArticle = Optional.empty();
                 try {
                 	accountingArticle = accountingArticleService.getAccountingArticle(serviceInstance.getProductVersion().getProduct(), attributes);
-                }catch(RuntimeException e) {
+                }catch(BusinessException e) {
                 	throw new MeveoApiException(e.getMessage());
                 }
                 if (!accountingArticle.isPresent())
