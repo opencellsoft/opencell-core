@@ -223,7 +223,7 @@ public class CommercialOrderApi extends BaseApi {
 		if(order == null)
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderDto.getId());
 		if(!order.getStatus().equals(CommercialOrderEnum.DRAFT.toString()) && !order.getStatus().equals(CommercialOrderEnum.FINALIZED.toString())) {
-			throw new BusinessApiException("The Order can not be edited, the status must not be : " + order.getStatus());
+			throw new MeveoApiException("The Order can not be edited, the status must not be : " + order.getStatus());
 		}
 		if(order.getOrderProgress() != null)
 			order.setOrderProgressTmp(Integer.valueOf(order.getOrderProgress().intValue()));
@@ -445,7 +445,7 @@ public class CommercialOrderApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderId);
 
 		if(order.getInvoicingPlan() != null)
-			throw new BusinessException("Order id: " + order.getId() + ", please go through the validation plan in order to validate it");
+			throw new MeveoApiException("Order id: " + order.getId() + ", please go through the validation plan in order to validate it");
 
 		return validateOrder(order, false);
 	}
@@ -467,7 +467,7 @@ public class CommercialOrderApi extends BaseApi {
 					script.execute(methodContext);
 					return new CommercialOrderDto((CommercialOrder) methodContext.get(Script.RESULT_VALUE));
 				} else
-					throw new BusinessException("No script interface found with code: " + orderValidationProcess);
+					throw new MeveoApiException("No script interface found with code: " + orderValidationProcess);
 			} else
 				throw new EntityDoesNotExistsException(ScriptInstance.class, orderScriptCode);
 		}
