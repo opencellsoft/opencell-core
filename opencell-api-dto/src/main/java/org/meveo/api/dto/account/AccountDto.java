@@ -153,6 +153,8 @@ public abstract class AccountDto extends BusinessEntityDto {
         if (e.getMinimumChargeTemplate() != null){
             setMinimumChargeTemplate(e.getMinimumChargeTemplate().getCode());
         }
+        if(e.getLegalEntityType() != null)
+        	setLegalEntityType( new TitleDto(e.getLegalEntityType(), null));
     }
 
     /**

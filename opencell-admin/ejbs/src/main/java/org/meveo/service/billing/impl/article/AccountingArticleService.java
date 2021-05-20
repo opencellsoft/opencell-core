@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
@@ -25,7 +25,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	@Inject private ArticleMappingLineService articleMappingLineService;
 	@Inject private AttributeService attributeService;
 	
-	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) {
+	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) throws BusinessException {
 		List<ChargeTemplate> productCharges = product.getProductCharges().stream()
 				.map(pc -> pc.getChargeTemplate())
 				.collect(Collectors.toList());
@@ -79,7 +79,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			
 		});
 		if(attributeMappingLineMatch.getFullMatchsArticle().size() > 1)
-			throw new BadRequestException("More than one article found");
+			throw new BusinessException("More than one article found");
 		AccountingArticle result = null;
 		if(attributeMappingLineMatch.getFullMatchsArticle().size() == 1) {
 			result = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
