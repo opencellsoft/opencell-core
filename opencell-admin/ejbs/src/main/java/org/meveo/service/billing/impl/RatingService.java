@@ -994,7 +994,7 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         // Change related OPEN or REJECTED Rated transaction status to RERATED
         RatedTransaction ratedTransaction = operationToRerate.getRatedTransaction();
-        if (ratedTransaction != null && (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() != RatedTransactionStatusEnum.REJECTED)) {
+        if (ratedTransaction != null && (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN || ratedTransaction.getStatus() == RatedTransactionStatusEnum.REJECTED)) {
             ratedTransaction.changeStatus(RatedTransactionStatusEnum.RERATED);
         }
 
