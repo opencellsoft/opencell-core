@@ -71,7 +71,7 @@ public class PricePlanMatrixLineApi extends BaseApi {
                 lines.add(pricePlanMatrixLine);
             }
             ppmVersion.getLines().addAll(lines);
-            pricePlanMatrixVersionService.update(ppmVersion);
+            pricePlanMatrixVersionService.updatePricePlanMatrixVersion(ppmVersion);
           return new GetPricePlanVersionResponseDto(ppmVersion);
     }
     
