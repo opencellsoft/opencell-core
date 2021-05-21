@@ -196,7 +196,7 @@ public class QuoteValidationScript extends ModuleScript {
 		
 		product.getQuoteArticleLines().forEach(quoteArticleLine -> {
 			OrderArticleLine orderArticleLine = processOrderArticleLine(quoteArticleLine, commercialOrder, orderLot, orderProduct);
-			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffre().getQuoteVersion());
+			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffre().getQuoteVersion(),orderOffer);
 		});
 		
 		
@@ -233,7 +233,7 @@ public class QuoteValidationScript extends ModuleScript {
 		return articleLine;
 	}
 	
-	private void processOrderPrice(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion) {
+	private void processOrderPrice(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion,OrderOffer orderOffer) {
 		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(quoteArticleLineId, quoteVersion.getId());
 		quotePrices.forEach( price -> {
 			OrderPrice orderPrice = new OrderPrice();
@@ -252,6 +252,7 @@ public class QuoteValidationScript extends ModuleScript {
 			orderPrice.setRecurrenceDuration(price.getRecurrenceDuration());
 			orderPrice.setRecurrencePeriodicity(price.getRecurrencePeriodicity());
 			orderPrice.setChargeTemplate(price.getChargeTemplate());
+			orderPrice.setOrderOffer(orderOffer);
 			orderPriceService.create(orderPrice);
 		});
 	}

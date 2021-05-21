@@ -8912,6 +8912,25 @@ public class OrderAdvancement extends ModuleScript {
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
     	
     </changeSet>
+
+
+	<changeSet id="#5623-562-20210520" author="Mbarek-Ay">
+		<addColumn tableName="cpq_quote_price">
+		 <column name="quote_offer_id" type="bigint" />
+		</addColumn>
+		
+		<addColumn tableName="order_price"> 
+		<column name="order_offer_id" type="bigint" />
+		</addColumn>
+
+		<addForeignKeyConstraint
+			baseColumnNames="quote_offer_id" baseTableName="cpq_quote_price" constraintName="fk_cpq_quote_price_quote_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="quote_offer" />
+
+		<addForeignKeyConstraint
+			baseColumnNames="order_offer_id" baseTableName="cpq_tag" constraintName="fk_order_price_order_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="cpq_order_offer" />
+	</changeSet>
     
 
 </databaseChangeLog>

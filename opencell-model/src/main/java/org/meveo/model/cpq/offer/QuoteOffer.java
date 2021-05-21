@@ -1,7 +1,5 @@
 package org.meveo.model.cpq.offer;
 
-import static javax.persistence.FetchType.LAZY;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +25,7 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.quote.QuoteLot;
+import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
 
@@ -113,6 +112,11 @@ public class QuoteOffer extends AuditableCFEntity {
     
     @Column(name = "sequence")
     protected Integer sequence=0;
+    
+    
+    @OneToMany(mappedBy = "quoteOffer")
+    @OrderBy("id")
+	private List<QuotePrice> quotePrices = new ArrayList<QuotePrice>();
 
 	public DiscountPlan getDiscountPlan() {
 		return discountPlan;
@@ -274,6 +278,18 @@ public class QuoteOffer extends AuditableCFEntity {
 				+ Objects.hash(billableAccount, offerTemplate, quoteLot, quoteProduct, quoteVersion);
 		return result;
 	}
+	
+	
+
+	public List<QuotePrice> getQuotePrices() {
+		return quotePrices;
+	}
+
+
+	public void setQuotePrices(List<QuotePrice> quotePrices) {
+		this.quotePrices = quotePrices;
+	}
+
 
 	@Override
 	public boolean equals(Object obj) {
