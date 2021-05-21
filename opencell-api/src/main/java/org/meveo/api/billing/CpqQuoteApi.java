@@ -21,6 +21,7 @@ package org.meveo.api.billing;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -449,7 +450,7 @@ public class CpqQuoteApi extends BaseApi {
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
 
         try {
-            CpqQuote cpqQuote = quoteVersion.getQuote();
+        	CpqQuote cpqQuote = quoteVersion.getQuote();
             InvoiceType invoiceType=invoiceTypeService.getDefaultQuote();
             String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
             File quoteXmlDir = new File(meveoDir + "quotes" + File.separator + "xml");
@@ -473,7 +474,7 @@ public class CpqQuoteApi extends BaseApi {
 
             } else {
                 String quoteXml = quoteFormatter.format(quoteMapper.map(quoteVersion));
-                xmlContent = quoteXml.getBytes();
+                xmlContent = quoteXml.getBytes(StandardCharsets.UTF_8);
                 result.setXmlContent(xmlContent);
             }
             String fileName = cpqQuoteService.generateFileName(cpqQuote);

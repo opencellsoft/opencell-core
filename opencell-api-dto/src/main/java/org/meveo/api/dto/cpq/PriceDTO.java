@@ -98,10 +98,10 @@ public class PriceDTO extends BaseEntityDto {
 
 	    chargeCode=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getCode():null;
 	    chargeLabel=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getDescription():null;
-	   TaxCategory taxCategoryEntity = quotePrice.getQuoteArticleLine().getBillableAccount().getTaxCategory()!=null ? quotePrice.getQuoteArticleLine().getBillableAccount().getTaxCategory(): 
-	    	quotePrice.getQuoteArticleLine().getBillableAccount().getCustomerAccount().getCustomer().getCustomerCategory().getTaxCategory();
+	   TaxCategory taxCategoryEntity = quotePrice.getQuoteArticleLine() != null ? quotePrice.getQuoteArticleLine().getBillableAccount().getTaxCategory()!=null ? quotePrice.getQuoteArticleLine().getBillableAccount().getTaxCategory(): 
+	    	quotePrice.getQuoteArticleLine().getBillableAccount().getCustomerAccount().getCustomer().getCustomerCategory().getTaxCategory() : null;
 	   taxCategory=taxCategoryEntity!=null?taxCategoryEntity.getCode():null;
-	   TaxClass taxClass=quotePrice.getQuoteArticleLine().getAccountingArticle().getTaxClass();
+	   TaxClass taxClass=quotePrice.getQuoteArticleLine() != null ? quotePrice.getQuoteArticleLine().getAccountingArticle().getTaxClass() : null;
 	   taxCode=taxClass!=null?taxClass.getCode():null;
 		
 	}
