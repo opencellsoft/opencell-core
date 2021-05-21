@@ -22,18 +22,30 @@ import org.hibernate.dialect.PostgreSQL94Dialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
 
 /**
+ * JPA extensions for searching amount Custom field value fields
+ * <p>
+ * Use:
+ * <ul>
+ * <li>varcharFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;) - for search in String/Picklist/Text area type custom field</li>
+ * <li>numericFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;) - for search in Double type custom field</li>
+ * <li>bigIntFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;) - for search in Long type custom field</li>
+ * <li>timestampFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;) - for search in Date type custom field</li>
+ * <li>booleanFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;) - for search in Boolean type custom field</li>
+ * <li>entityFromJson(&lt;entity&gt;.cfValues,&lt;custom field name&gt;) - for search in Entity type custom field. Returns EntityReferenceWrapper.code field value.</li>
+ * </ul>
+ * 
  * @author M.ELAZZOUZI
  *
  */
 public class MeveoSQLDialect extends PostgreSQL94Dialect {
-	public MeveoSQLDialect() {
-		super();
-		registerFunction("string_agg", new StandardSQLFunction("string_agg", new org.hibernate.type.StringType()));
-		registerFunction("numericFromJson", new DoublePostgreSQLJsonSearchFunction());
-		registerFunction("varcharFromJson", new PostgreSQLJsonSearchFunction());
-		registerFunction("bigIntFromJson", new LongPostgreSQLJsonSearchFunction());
-		registerFunction("timestampFromJson", new DatePostgreSQLJsonSearchFunction());
-		registerFunction("booleanFromJson", new BooleanPostgreSQLJsonSearchFunction());
-		registerFunction("entityFromJson", new EntityReferencePostgreSQLJsonSearchFunction());
-	}
+    public MeveoSQLDialect() {
+        super();
+        registerFunction("string_agg", new StandardSQLFunction("string_agg", new org.hibernate.type.StringType()));
+        registerFunction("numericFromJson", new DoublePostgreSQLJsonSearchFunction());
+        registerFunction("varcharFromJson", new PostgreSQLJsonSearchFunction());
+        registerFunction("bigIntFromJson", new LongPostgreSQLJsonSearchFunction());
+        registerFunction("timestampFromJson", new DatePostgreSQLJsonSearchFunction());
+        registerFunction("booleanFromJson", new BooleanPostgreSQLJsonSearchFunction());
+        registerFunction("entityFromJson", new EntityReferencePostgreSQLJsonSearchFunction());
+    }
 }
