@@ -4,6 +4,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
@@ -17,6 +18,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -178,5 +181,12 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
         for (PricePlanMatrixLine l : linesToRemove) {
             remove(findById(l.getId()));
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+	public List<PricePlanMatrixLine> findByPriority(Integer priority) {
+    	QueryBuilder builder = new QueryBuilder(PricePlanMatrixLine.class, "ppml");
+    	builder.addCriterion("ppml.priority", "=", priority, false);
+    	return builder.getQuery(this.getEntityManager()).getResultList();
     }
 }

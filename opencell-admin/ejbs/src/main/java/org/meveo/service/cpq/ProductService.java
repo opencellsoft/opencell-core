@@ -322,6 +322,7 @@ public class ProductService extends BusinessService<Product> {
 //		});
 //		articleMappingLineService.deleteByProductCode(product);
 		remove(product); 
+		commit();
 	}
 
 	public Optional<ProductVersion> getCurrentPublishedVersion(String code, Date date) {
