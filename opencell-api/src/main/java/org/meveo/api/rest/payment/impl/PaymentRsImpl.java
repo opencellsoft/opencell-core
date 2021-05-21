@@ -586,10 +586,8 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     @Override
     public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(String customerAccountCode, String returnUrl,
             String locale, String amount, String currencyCode, String authorizationMode, String countryCode,
-            Boolean skipAuthentication, String gatewayPaymentName, String variant, String sellerCode) {
-
-        String paymentUrl = "";
-
+            Boolean skipAuthentication, String gatewayPaymentName, String variant, String sellerCode,
+            String automaticReturnUrl, String allowedActions, String returnContext, String advancedOptions) {
         HostedCheckoutInput hostedCheckoutInput = new HostedCheckoutInput();
         hostedCheckoutInput.setCustomerAccountCode(customerAccountCode);
         hostedCheckoutInput.setReturnUrl(returnUrl);
@@ -602,17 +600,19 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         hostedCheckoutInput.setGatewayPaymentName(GatewayPaymentNamesEnum.valueOf(gatewayPaymentName));
         hostedCheckoutInput.setVariant(variant);
         hostedCheckoutInput.setSellerCode(sellerCode);
+        hostedCheckoutInput.setAutomaticReturnUrl(automaticReturnUrl);
+        hostedCheckoutInput.setAllowedActions(allowedActions);
+        hostedCheckoutInput.setReturnContext(returnContext);
+        hostedCheckoutInput.setAdvancedOptions(advancedOptions);
 
+        PaymentHostedCheckoutResponseDto result = new PaymentHostedCheckoutResponseDto();
         try {
-            paymentUrl = paymentMethodApi.getHostedCheckoutUrl(hostedCheckoutInput);
+            result = paymentMethodApi.getHostedCheckoutUrl(hostedCheckoutInput);
         } catch (BusinessException e) {
-            log.error("error = {}", e);
+            processException(e, result);
         }
-        PaymentHostedCheckoutResponseDto paymentHostedCheckoutResponseDto = new PaymentHostedCheckoutResponseDto(
-                paymentUrl, customerAccountCode, returnUrl);
 
-        return paymentHostedCheckoutResponseDto;
-
+        return result;
     }
 
     @Override

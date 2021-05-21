@@ -1098,6 +1098,10 @@ public interface PaymentRs extends IBaseRs {
      * @param skipAuthentication the skipAuthentication boolean
      * @param gatewayPaymentName the gatewayPayment Name
      * @param variant the variant Look
+     * @param automaticReturnUrl the automatic return URL (currently only for ATOS Wallet)
+     * @param allowedActions the allowed actions (currently only for ATOS Wallet)
+     * @param returnContext the return context (currently only for ATOS Wallet)
+     * @param advancedOptions the advanced options (currently only for ATOS Wallet)
      * @return the PaymentHostedCheckoutResponseDto
      */
     @GET
@@ -1115,7 +1119,7 @@ public interface PaymentRs extends IBaseRs {
 								)
 				)}
 	)
-    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(@QueryParam("ca") String customerAccountCode,
+    PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(@QueryParam("ca") String customerAccountCode,
                                                                  @QueryParam("returnUrl") String returnUrl,
                                                                  @DefaultValue("fr_FR") @QueryParam("locale") String locale,
                                                                  @DefaultValue("100") @QueryParam("amount") String amount,
@@ -1125,7 +1129,11 @@ public interface PaymentRs extends IBaseRs {
                                                                  @DefaultValue("false") @QueryParam("skipAuthentication") Boolean skipAuthentication,
                                                                  @DefaultValue("INGENICO_GC") @QueryParam("gatewayPaymentName") String gatewayPaymentName,
                                                                  @DefaultValue("101") @QueryParam("variant") String variant,
-                                                                 @QueryParam("seller") String sellerCode
+                                                                 @QueryParam("seller") String sellerCode,
+                                                                 @QueryParam("automaticReturnUrl") String automaticReturnUrl,
+                                                                 @QueryParam("allowedActions") String allowedActions,
+                                                                 @QueryParam("returnContext") String returnContext,
+                                                                 @DefaultValue("") @QueryParam("advancedOptions") String advancedOptions
     );
 
     
@@ -1384,19 +1392,6 @@ public interface PaymentRs extends IBaseRs {
      */
     @GET
     @Path("/paymentScheduleInstance/list")
-	@Operation(
-			summary=" List  paymentScheduleInstance matching a given criteria  ",
-			description=" List  paymentScheduleInstance matching a given criteria  ",
-			operationId="    GET_Payment_paymentScheduleInstance_list",
-			responses= {
-				@ApiResponse(description=" An paymentScheduleInstance dto list ",
-						content=@Content(
-									schema=@Schema(
-											implementation= PaymentScheduleInstancesDto.class
-											)
-								)
-				)}
-	)
     public PaymentScheduleInstancesDto listPaymentScheduleInstance(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 

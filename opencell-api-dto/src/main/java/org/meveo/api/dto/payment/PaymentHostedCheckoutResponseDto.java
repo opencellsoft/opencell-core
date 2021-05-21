@@ -35,7 +35,7 @@ import org.meveo.api.dto.ActionStatus;
 public class PaymentHostedCheckoutResponseDto extends ActionStatus {
 
     /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = -3151651854190686940L;
+    private static final long serialVersionUID = -2805352475577374314L;
 
     /** The urlPaymentHostedCheckout. */
     private Result result;
@@ -52,6 +52,10 @@ public class PaymentHostedCheckoutResponseDto extends ActionStatus {
         this.result = result;
     }
 
+    public PaymentHostedCheckoutResponseDto(String hostedCheckoutUrl, String hostedCheckoutVersion, String ca, String returnUrl, String data, String seal) {
+        this.result = new Result(hostedCheckoutUrl, hostedCheckoutVersion, ca, returnUrl, data, seal);
+    }
+
     public Result getResult() {
         return result;
     }
@@ -59,40 +63,76 @@ public class PaymentHostedCheckoutResponseDto extends ActionStatus {
     public void setResult(Result result) {
         this.result = result;
     }
-}
 
-class Result {
-    String hostedCheckoutUrl;
-    String ca;
-    String returnUrl;
+    public static class Result {
+        String hostedCheckoutUrl;
+        String hostedCheckoutVersion;
+        String ca;
+        String returnUrl;
+        String data;
+        String seal;
 
-    public Result(String hostedCheckoutUrl, String ca, String returnUrl) {
-        this.hostedCheckoutUrl = hostedCheckoutUrl;
-        this.ca = ca;
-        this.returnUrl = returnUrl;
-    }
+        public Result(String hostedCheckoutUrl, String ca, String returnUrl) {
+            this.hostedCheckoutUrl = hostedCheckoutUrl;
+            this.ca = ca;
+            this.returnUrl = returnUrl;
+        }
 
-    public String getHostedCheckoutUrl() {
-        return hostedCheckoutUrl;
-    }
+        Result(String hostedCheckoutUrl, String hostedCheckoutVersion, String ca, String returnUrl, String data, String seal) {
+            this.hostedCheckoutUrl = hostedCheckoutUrl;
+            this.hostedCheckoutVersion = hostedCheckoutVersion;
+            this.ca = ca;
+            this.returnUrl = returnUrl;
+            this.data = data;
+            this.seal = seal;
+        }
 
-    public void setHostedCheckoutUrl(String hostedCheckoutUrl) {
-        this.hostedCheckoutUrl = hostedCheckoutUrl;
-    }
+        public String getHostedCheckoutUrl() {
+            return hostedCheckoutUrl;
+        }
 
-    public String getCa() {
-        return ca;
-    }
+        public void setHostedCheckoutUrl(String hostedCheckoutUrl) {
+            this.hostedCheckoutUrl = hostedCheckoutUrl;
+        }
 
-    public void setCa(String ca) {
-        this.ca = ca;
-    }
+        public String getHostedCheckoutVersion() {
+            return hostedCheckoutVersion;
+        }
 
-    public String getReturnUrl() {
-        return returnUrl;
-    }
+        public void setHostedCheckoutVersion(String hostedCheckoutVersion) {
+            this.hostedCheckoutVersion = hostedCheckoutVersion;
+        }
 
-    public void setReturnUrl(String returnUrl) {
-        this.returnUrl = returnUrl;
+        public String getCa() {
+            return ca;
+        }
+
+        public void setCa(String ca) {
+            this.ca = ca;
+        }
+
+        public String getReturnUrl() {
+            return returnUrl;
+        }
+
+        public void setReturnUrl(String returnUrl) {
+            this.returnUrl = returnUrl;
+        }
+
+        public String getData() {
+            return data;
+        }
+
+        public void setData(String data) {
+            this.data = data;
+        }
+
+        public String getSeal() {
+            return seal;
+        }
+
+        public void setSeal(String seal) {
+            this.seal = seal;
+        }
     }
 }

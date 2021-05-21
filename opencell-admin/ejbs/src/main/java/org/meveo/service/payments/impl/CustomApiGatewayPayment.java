@@ -25,6 +25,7 @@ import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
+import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -282,16 +283,16 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
     }
 
     @Override
-    public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
-    	 Map<String, Object> scriptContext = new HashMap<String, Object>();
+    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput) throws BusinessException {
+    	 Map<String, Object> scriptContext = new HashMap<>();
          scriptContext.put(PaymentScript.CONTEXT_PG, paymentGateway);
          scriptContext.put(PaymentScript.CONTEXT_HOSTED_CO, hostedCheckoutInput);
-        
+
          paymentScriptInterface.getHostedCheckoutUrl(scriptContext);
-  
+
          String hostedCheckoutUrl = (String) scriptContext.get(PaymentScript.RESULT_HOSTED_CO_URL);
-        
-         return hostedCheckoutUrl;
+
+         return new PaymentHostedCheckoutResponseDto(hostedCheckoutUrl, null, null);
     }
 
     @Override
