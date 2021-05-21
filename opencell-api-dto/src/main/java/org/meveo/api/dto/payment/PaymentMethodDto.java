@@ -477,7 +477,7 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
             paymentMethod.setUserId(getUserId());
         }
 
-        if (!StringUtils.isBlank(getUserId())) {
+        if (!StringUtils.isBlank(getReferenceDocumentCode())) {
             paymentMethod.setUserId(getReferenceDocumentCode());
         }
         return paymentMethod;

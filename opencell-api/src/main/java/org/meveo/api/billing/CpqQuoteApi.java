@@ -1039,9 +1039,12 @@ public class CpqQuoteApi extends BaseApi {
         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
+        if(quoteVersion.getQuoteOffers().isEmpty()) {
+        	throw new MeveoApiException("link an offer to a version before publishing it");
+        }
         if (quoteVersion.getStatus().equals(VersionStatusEnum.CLOSED) ||
                 quoteVersion.getStatus().equals(VersionStatusEnum.PUBLISHED)) {
-            throw new MeveoApiException("you can not update the quote version with status = " + quoteVersion.getStatus());
+            throw new MeveoApiException("You can not update the quote version with status = " + quoteVersion.getStatus());
         }
         var quoteVersionPublished = quoteVersionService.findByQuoteIdAndStatusActive(quoteVersion.getQuote().getId());
         var numberQuoteVersionPublished = quoteVersionPublished.stream().filter(qv -> qv.getQuoteVersion().intValue() != currentVersion).collect(Collectors.toList()).size();
