@@ -16,6 +16,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.DiscountPlanApi;
 import org.meveo.api.catalog.DiscountPlanItemApi;
 import org.meveo.api.catalog.OfferTemplateApi;
@@ -37,6 +38,7 @@ import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -653,11 +655,14 @@ public class ProductApi extends BaseApi {
 		product.getProductCharges().addAll(productCharges);
 	}
 
-	public void removeProduct(String codeProduct) {
-		try { 
-			productService.removeProduct(codeProduct);
-		} catch (BusinessException e) {
-			throw new MeveoApiException(e);
+	public void removeProduct(String codeProduct) { 
+		try {
+			productService.removeProduct(codeProduct); 
+		} catch (Exception e) {
+			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+				throw new DeleteReferencedEntityException(Product.class, codeProduct);
+			}
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
 		}
 	}
 	 
