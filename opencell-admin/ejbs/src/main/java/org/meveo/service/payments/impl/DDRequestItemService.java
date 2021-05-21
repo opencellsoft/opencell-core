@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
@@ -41,9 +40,6 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 
-    @Inject
-    private AccountOperationService accountOperationService;
-  
    
     /**
      * Creates the DD request item.
@@ -77,7 +73,6 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
         create(ddDequestItem);
         for (AccountOperation ao : listAO) {
             ao.setDdRequestItem(ddDequestItem);
-            accountOperationService.updateNoCheck(ao);
         }
         log.info("ddrequestItem: {} amount {} ", ddDequestItem.getId(), amountToPay);
         return ddDequestItem;
