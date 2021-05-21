@@ -41,7 +41,11 @@ public class PricePlanMatrixLineApi extends BaseApi {
     }
     
     public GetPricePlanVersionResponseDto addPricePlanMatrixLines(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
-            for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
+    	
+    		for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
+    			if(!pricePlanMatrixLineService.findByPriority(pricePlanMatrixLineDto.getPriority()).isEmpty()) {
+    				throw new MeveoApiException("a line having similar values with the same priority already exists, please define a different priority");
+    			}
             	addPricePlanMatrixLine(pricePlanMatrixCode, pricePlanMatrixVersion, pricePlanMatrixLineDto);
             }
            PricePlanMatrixVersion ppmVersion= pricePlanMatrixLineService.getPricePlanMatrixVersion(pricePlanMatrixCode, pricePlanMatrixVersion);
