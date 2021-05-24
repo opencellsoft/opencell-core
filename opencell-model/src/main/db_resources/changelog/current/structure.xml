@@ -8928,7 +8928,7 @@ public class OrderAdvancement extends ModuleScript {
 			referencedColumnNames="id" referencedTableName="quote_offer" />
 
 		<addForeignKeyConstraint
-			baseColumnNames="order_offer_id" baseTableName="cpq_tag" constraintName="fk_order_price_order_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			baseColumnNames="order_offer_id" baseTableName="order_price" constraintName="fk_order_price_order_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="cpq_order_offer" />
 	</changeSet>
     
