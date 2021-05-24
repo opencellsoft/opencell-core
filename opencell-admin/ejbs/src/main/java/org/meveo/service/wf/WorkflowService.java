@@ -41,6 +41,8 @@ import org.meveo.admin.wf.WorkflowTypeClass;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.wf.WFAction;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
@@ -49,6 +51,7 @@ import org.meveo.model.wf.WorkflowHistoryAction;
 import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.script.ScriptCompilerService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
@@ -73,6 +76,9 @@ public class WorkflowService extends BusinessService<Workflow> {
 
     @Inject
     private WorkflowHistoryService workflowHistoryService;
+
+    @Inject
+    private InvoiceService invoiceService;
 
     static Set<Class<?>> meveo_classes;
     static {
@@ -245,7 +251,7 @@ public class WorkflowService extends BusinessService<Workflow> {
                     WorkflowHistory wfHistory = new WorkflowHistory();
                     if (workflow.isEnableHistory()) {
                         wfHistory.setActionDate(new Date());
-                        wfHistory.setEntityInstanceCode(entity.getCode());
+                        wfHistory.setEntityInstanceCode(buildEntityInstanceCode(entity));
                         wfHistory.setFromStatus(wfTransition.getFromStatus());
                         wfHistory.setToStatus(wfTransition.getToStatus());
                         wfHistory.setTransitionName(wfTransition.getDescription());
@@ -289,6 +295,20 @@ public class WorkflowService extends BusinessService<Workflow> {
         }
 
         return entity;
+    }
+
+    /**
+     * Build entity instance code depending on entity.
+     * By default return entity's code
+     * @param entity to use to build the code
+     * @return entity instance code
+     */
+    private String buildEntityInstanceCode(BusinessEntity entity) {
+        if (entity instanceof RecordedInvoice) {
+            Invoice invoice = invoiceService.retrieveIfNotManaged(((RecordedInvoice) entity).getInvoice());
+            return invoice.getInvoiceNumber();
+        }
+        return entity.getCode();
     }
 
     /**
