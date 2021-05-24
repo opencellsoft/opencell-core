@@ -95,9 +95,6 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
             log.error("Transaction must have been rollbacked already (probably by exception thown in service and caught in backing bean): {}", e.getMessage());
             return result;
         } catch (Exception e) {
-
-
-            log.error("Failed to execute a GUI method due to errors", e);
             
             // See if can get to the root of the exception cause
             String message = e.getMessage();

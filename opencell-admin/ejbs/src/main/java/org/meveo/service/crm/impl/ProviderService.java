@@ -177,7 +177,7 @@ public class ProviderService extends PersistenceService<Provider> {
         appProvider.setLanguage(provider.getLanguage() != null ? provider.getLanguage() : null);
         appProvider.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         appProvider.setPaymentMethods(provider.getPaymentMethods());
-        appProvider.setCfValues(provider.getCfValues());
+        appProvider.setCfValues(provider.getCFValuesCopy());
 
         tenantCacheContainerProvider.addUpdateTenant(provider);
     }
