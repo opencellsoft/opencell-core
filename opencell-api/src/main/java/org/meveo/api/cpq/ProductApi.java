@@ -201,7 +201,9 @@ public class ProductApi extends BaseApi {
 			
 			if(!productCode.equalsIgnoreCase(productDto.getCode()) &&  productService.findByCode(productDto.getCode()) != null)
 				throw new EntityAlreadyExistsException(Product.class,productDto.getCode());
-			
+
+			//set current product version 
+			var versions = productVersionService.findLastVersionByCode(productCode);
 			product.setCode(productDto.getCode());
 			product.setDescription(productDto.getLabel());
 			if(!StringUtils.isBlank(productDto.getProductLineCode())) {
@@ -264,8 +266,6 @@ public class ProductApi extends BaseApi {
 			product.setPackageFlag(productDto.isPackageFlag());
 			createProductChargeTemplateMappings(product, productDto.getProductChargeTemplateMappingDto());
 			
-			//set current product version 
-			var versions = productVersionService.findLastVersionByCode(productCode);
 			var publishedVersion = versions.stream()
 											.filter(pv -> pv.getStatus().equals(VersionStatusEnum.PUBLISHED))
 												.sorted( (pv1, pv2) -> pv2.getValidity().compareFieldTo(pv1.getValidity())).collect(Collectors.toList());
