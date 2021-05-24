@@ -785,7 +785,9 @@ public class RatingService extends PersistenceService<WalletOperation> {
 
         BigDecimal amount = null;
         BigDecimal unitPrice = appProvider.isEntreprise() ? unitPriceWithoutTax : unitPriceWithTax;
-
+        if(unitPrice == null)
+        	throw new BusinessException("No unit price found");
+        	
         // process ratingEL here
         if (walletOperation.getPriceplan() != null) {
             String ratingEl = walletOperation.getPriceplan().getTotalAmountEL();
