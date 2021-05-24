@@ -8035,9 +8035,7 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="tax_category_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
+            <column name="tax_category_id" type="bigint" />
             <column name="tax_class_id" type="bigint" />
             <column name="valid_from" type="datetime" />
             <column name="valid_to" type="datetime" />
