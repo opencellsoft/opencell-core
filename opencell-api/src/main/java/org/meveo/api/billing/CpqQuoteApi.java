@@ -18,29 +18,6 @@
 
 package org.meveo.api.billing;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
@@ -70,14 +47,13 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
@@ -121,7 +97,6 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.cpq.AttributeService;
-import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ContractService;
 import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.ProductVersionService;
@@ -141,6 +116,28 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
+
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Rachid.AITYAAZZA
@@ -225,9 +222,12 @@ public class CpqQuoteApi extends BaseApi {
     
     @Inject
     private TaxMappingService taxMappingService;
-    
+
     @Inject
-    private ContractItemService contractItemService;
+    @StatusUpdated
+    protected Event<CpqQuote> cpqQuoteStatusUpdatedEvent;
+
+
 
 	public QuoteDTO createQuote(QuoteDTO quote) {
 	    if(Strings.isEmpty(quote.getApplicantAccountCode())) {
@@ -1014,6 +1014,8 @@ public class CpqQuoteApi extends BaseApi {
         if (cpqQuote == null)
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode);
 
+        if(status.equalsIgnoreCase(cpqQuote.getStatus()))
+            return;
         if (cpqQuote.getStatus().equalsIgnoreCase(QuoteStatusEnum.REJECTED.toString()) ||
                 cpqQuote.getStatus().equalsIgnoreCase(QuoteStatusEnum.CANCELLED.toString())) {
             throw new MeveoApiException("you can not update the quote with status = " + cpqQuote.getStatus());
@@ -1030,6 +1032,7 @@ public class CpqQuoteApi extends BaseApi {
         }
         try {
             cpqQuoteService.update(cpqQuote);
+            cpqQuoteStatusUpdatedEvent.fire(cpqQuote);
         } catch (BusinessApiException e) {
             throw new MeveoApiException(e);
         }
