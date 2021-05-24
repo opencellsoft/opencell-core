@@ -976,6 +976,7 @@ public class CpqQuoteApi extends BaseApi {
 
         cpqQuoteService.update(cpqQuote);
         quoteVersionService.update(quoteVersion);
+        cpqQuoteStatusUpdatedEvent.fire(cpqQuote);
 
         List<QuoteVersion> versions = quoteVersionService.findByQuoteId(cpqQuote.getId());
         versions.stream().filter(q -> q.getId() != quoteVersion.getId()).forEach(q -> {
