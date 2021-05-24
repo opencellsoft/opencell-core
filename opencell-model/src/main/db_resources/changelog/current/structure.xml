@@ -8913,5 +8913,9 @@ public class OrderAdvancement extends ModuleScript {
     	
     </changeSet>
     
+    <changeSet id="#6122_20210524" author="AbdelmounaimAkadid">
+    	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = REPLACE(cf_values, '"string":"DraftOnly"', '"listString":["DRAFT"]') where job_template = 'XMLInvoiceGenerationJob';</sql>
+    	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = REPLACE(cf_values, '"string":"FinalOnly"', '"listString":["VALIDATED"]') where job_template = 'XMLInvoiceGenerationJob';</sql>
+   	</changeSet>
 
 </databaseChangeLog>
