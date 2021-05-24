@@ -1,15 +1,6 @@
 package org.meveo.model.quote;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.model.Auditable;
-import org.meveo.model.AuditableEntity;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.cpq.CpqQuote;
-import org.meveo.model.cpq.commercial.PriceLevelEnum;
-import org.meveo.model.cpq.enums.PriceTypeEnum;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,12 +10,19 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.AuditableEntity;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.cpq.commercial.PriceLevelEnum;
+import org.meveo.model.cpq.enums.PriceTypeEnum;
+import org.meveo.model.cpq.offer.QuoteOffer;
 
 @Entity
 @Table(name = "cpq_quote_price", uniqueConstraints = @UniqueConstraint(columnNames = { "id"}))
@@ -32,6 +30,11 @@ import java.math.BigDecimal;
         @Parameter(name = "sequence_name", value = "cpq_quote_price_seq"), })
 @NamedQuery(name="QuotePrice.removeByQuoteVersionAndPriceLevel", query = "delete from QuotePrice qp where qp.quoteVersion = :quoteVersion and qp.priceLevelEnum = :priceLevelEnum")
 public class QuotePrice extends AuditableEntity {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public QuotePrice() {
 		super();
@@ -107,6 +110,11 @@ public class QuotePrice extends AuditableEntity {
 	@JoinColumn(name= "charge_template_id")
 	private ChargeTemplate chargeTemplate;
 
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "quote_offer_id")
+	private QuoteOffer quoteOffer;
+	
 	public QuoteArticleLine getQuoteArticleLine() {
 		return quoteArticleLine;
 	}
@@ -226,4 +234,15 @@ public class QuotePrice extends AuditableEntity {
 	public void setChargeTemplate(ChargeTemplate chargeTemplate) {
 		this.chargeTemplate = chargeTemplate;
 	}
+
+	public QuoteOffer getQuoteOffer() {
+		return quoteOffer;
+	}
+
+	public void setQuoteOffer(QuoteOffer quoteOffer) {
+		this.quoteOffer = quoteOffer;
+	}
+
+	
+	
 }
