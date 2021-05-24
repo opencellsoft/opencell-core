@@ -1,5 +1,12 @@
 package org.meveo.api.catalog;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudApi;
@@ -12,20 +19,12 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
-import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixValueService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
 import org.primefaces.model.SortOrder;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 @Stateless
 public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersion, PricePlanMatrixVersionDto> {
@@ -175,7 +174,7 @@ public class PricePlanMatrixVersionApi extends BaseCrudApi<PricePlanMatrixVersio
         if (!StringUtils.isBlank(pagingAndFiltering.getSortBy())) {
             sortBy = pagingAndFiltering.getSortBy();
         }
-        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, Product.class);
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration(sortBy, SortOrder.ASCENDING, null, pagingAndFiltering, PricePlanMatrixVersion.class);
         Long totalCount = pricePlanMatrixVersionService.count(paginationConfiguration);
         GetListPricePlanMatrixVersionResponseDto result = new GetListPricePlanMatrixVersionResponseDto();
         result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
