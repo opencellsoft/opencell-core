@@ -9340,6 +9340,7 @@
 
             <column name="recurrence_periodicity" type="varchar(50)" />
             <column name="charge_template_id" type="bigint"/>
+             <column name="quote_offer_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -9915,6 +9916,8 @@
 
             <column name="recurrence_periodicity" type="varchar(50)" />
             <column name="charge_template_id" type="bigint"/>
+            <column name="order_offer_id" type="bigint"/>
+            
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-484" author="NabilOUACHI">
@@ -13963,6 +13966,19 @@
       <addForeignKeyConstraint baseColumnNames="product_model_id" baseTableName="cpq_product" constraintName="fk_cpq_product_model_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />   
     </changeSet>
+    
+      <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1629">
+       <addForeignKeyConstraint
+			baseColumnNames="quote_offer_id" baseTableName="cpq_quote_price" constraintName="fk_cpq_quote_price_quote_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="quote_offer" />  
+     </changeSet>
+    
+     <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1630">
+        <addForeignKeyConstraint
+			 baseColumnNames="order_offer_id" baseTableName="order_price" constraintName="fk_order_price_order_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			 referencedColumnNames="id" referencedTableName="cpq_order_offer" /> 
+    </changeSet>
+    
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
