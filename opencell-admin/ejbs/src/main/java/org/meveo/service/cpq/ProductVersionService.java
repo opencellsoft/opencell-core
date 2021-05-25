@@ -263,5 +263,17 @@ public class ProductVersionService extends
 	    	return tags;
 	    }
 	  
+	    
+	    @SuppressWarnings("unchecked")
+	    public ProductVersion findByProductAndStatus(String productCode,VersionStatusEnum status) {  
+	    	try {
+	    		Query query = getEntityManager().createNamedQuery("ProductVersion.getProductVerionsByStatusAndProduct").setParameter("status", status).setParameter("productCode", productCode);
+	    		List<ProductVersion> productVersions=(List<ProductVersion>)query.getResultList();
+	    		return productVersions.isEmpty() ? null : productVersions.get(0);
+	    	} catch (Exception e) {
+	    		log.error("findByProductAndStatus error ", e.getMessage());
+	    	}
+	    	return null;
+	    } 
 	  
 }
