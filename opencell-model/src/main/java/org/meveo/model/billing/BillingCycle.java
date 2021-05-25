@@ -33,7 +33,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -106,12 +105,6 @@ public class BillingCycle extends BusinessCFEntity {
     @Column(name = "invoice_date_delay_el", length = 2000)
     @Size(max = 2000)
     private String invoiceDateDelayEL;
-
-    /**
-     * Billing accounts
-     */
-    @OneToMany(mappedBy = "billingCycle", fetch = FetchType.LAZY)
-    private List<BillingAccount> billingAccounts = new ArrayList<>();
 
     /**
      * Invoice amount threshold - will disregard invoices below this amount
@@ -304,14 +297,6 @@ public class BillingCycle extends BusinessCFEntity {
      */
     public void setInvoiceDateDelayEL(String invoiceDateDelayEL) {
         this.invoiceDateDelayEL = invoiceDateDelayEL;
-    }
-
-    public List<BillingAccount> getBillingAccounts() {
-        return billingAccounts;
-    }
-
-    public void setBillingAccounts(List<BillingAccount> billingAccounts) {
-        this.billingAccounts = billingAccounts;
     }
 
     /**
