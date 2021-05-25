@@ -972,7 +972,6 @@ public class CpqQuoteApi extends BaseApi {
         cpqQuote.setStatus(QuoteStatusEnum.ACCEPTED.toString());
         cpqQuote.setStatusDate(now);
         cpqQuoteService.update(cpqQuote);
-        quoteVersionService.update(quoteVersion);
         cpqQuoteStatusUpdatedEvent.fire(cpqQuote);
 
         List<QuoteVersion> versions = quoteVersionService.findByQuoteId(cpqQuote.getId());
