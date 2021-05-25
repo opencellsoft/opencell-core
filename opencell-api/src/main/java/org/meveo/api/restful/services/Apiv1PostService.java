@@ -40,8 +40,6 @@ public class Apiv1PostService {
     private static final String ENABLE_SERVICE = "enable";
     private static final String DISABLE_SERVICE = "disable";
 
-    private static final String API_REST = "api/rest";
-
     private List<PathSegment> segmentsOfPathAPIv1;
     private StringBuilder queryParams;
     private MultivaluedMap<String, String> queryParamsMap;
@@ -57,19 +55,19 @@ public class Apiv1PostService {
         pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.get( postPath );
 
         if ( pathIBaseRS.equals( "/jobInstance" ) || pathIBaseRS.equals( "/job" ) )
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + METHOD_CREATE_BIS );
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + METHOD_CREATE_BIS );
         else if ( pathIBaseRS.equals( "/invoice/sendByEmail" ) )
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS );
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS );
         else if ( pathIBaseRS.equals( Apiv1ConstantDictionary.CUSTOM_ENTITY_INSTANCE ) ) {
             CustomEntityInstanceDto aDto = new ObjectMapper().readValue( jsonDto, CustomEntityInstanceDto.class );
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + FORWARD_SLASH + aDto.getCetCode() );
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + FORWARD_SLASH + aDto.getCetCode() );
         }
         else
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + METHOD_CREATE );
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + METHOD_CREATE );
 
         return Response.temporaryRedirect( redirectURI ).entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
     }
@@ -97,15 +95,15 @@ public class Apiv1PostService {
 
         // Handle the generic special endpoint: enable a service
         if ( segmentsOfPathAPIv1.get( segmentsOfPathAPIv1.size() - 1 ).getPath().equals(ENABLE_SERVICE) ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS
                     + FORWARD_SLASH + segmentsOfPathAPIv1.get( segmentsOfPathAPIv1.size() - 2 ).getPath()
                     + FORWARD_SLASH + ENABLE_SERVICE + queryParams.substring( 0, queryParams.length() - 1 ) );
         }
         // Handle the generic special endpoint: disable a service
         else if ( segmentsOfPathAPIv1.get( segmentsOfPathAPIv1.size() - 1 ).getPath().equals(DISABLE_SERVICE) ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS
                     + FORWARD_SLASH + segmentsOfPathAPIv1.get( segmentsOfPathAPIv1.size() - 2 ).getPath()
                     + FORWARD_SLASH + DISABLE_SERVICE + queryParams.substring( 0, queryParams.length() - 1 ) );
         }
@@ -119,15 +117,15 @@ public class Apiv1PostService {
     public Response handleOther(UriInfo uriInfo, String postPath, String jsonDto) throws URISyntaxException {
         URI redirectURI;
 
-        if ( postPath.equals( "/v1/invoices/pdfInvoices" ) ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + "/invoice/fetchPdfInvoice" );
+        if ( postPath.equals( "/api/rest/v1/invoices/pdfInvoices" ) ) {
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + "/invoice/fetchPdfInvoice" );
             return Response.temporaryRedirect( redirectURI )
                     .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
         }
-        else if ( postPath.equals( "/v1/invoices/xmlInvoices" ) ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + "/invoice/fetchXMLInvoice" );
+        else if ( postPath.equals( "/api/rest/v1/invoices/xmlInvoices" ) ) {
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + "/invoice/fetchXMLInvoice" );
             return Response.temporaryRedirect( redirectURI )
                     .entity( Entity.entity(jsonDto, MediaType.APPLICATION_JSON) ).build();
         }
@@ -182,15 +180,15 @@ public class Apiv1PostService {
                 else if ( aDto instanceof CurrencyIsoDto )
                     ((CurrencyIsoDto) aDto).setCode(entityCode);
 
-                if ( aPath.equals("/v1/accountManagement/customerCategories") )
-                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                            + API_REST + pathIBaseRS + "/createOrUpdateCategory" );
-                else if ( aPath.equals("/v1/accountManagement/customerBrands") )
-                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                            + API_REST + pathIBaseRS + "/createOrUpdateBrand" );
+                if ( aPath.equals("/api/rest/v1/accountManagement/customerCategories") )
+                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                            + pathIBaseRS + "/createOrUpdateCategory" );
+                else if ( aPath.equals("/api/rest/v1/accountManagement/customerBrands") )
+                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                            + pathIBaseRS + "/createOrUpdateBrand" );
                 else
-                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                            + API_REST + pathIBaseRS + METHOD_CREATE_OR_UPDATE );
+                    redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                            + pathIBaseRS + METHOD_CREATE_OR_UPDATE );
 
                 return AuthenticationFilter.httpClient.target( redirectURI ).request()
                         .post( Entity.entity( aDto, MediaType.APPLICATION_JSON ) );
