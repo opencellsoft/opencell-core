@@ -18,20 +18,29 @@
 
 package org.meveo.api.rest.billing.impl;
 
+import java.util.Collections;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.core.Response;
 
 import org.meveo.api.billing.InvoicingPlanItemApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.cpq.AttributeDTO;
+import org.meveo.api.dto.cpq.ContractDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.InvoicingPlanItemDto;
 import org.meveo.api.dto.response.billing.InvoicingPlanItemResponseDto;
 import org.meveo.api.dto.response.billing.InvoicingPlanItemsResponseDto;
+import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.InvoicingPlanItemRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.commercial.InvoicingPlanItem;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -43,15 +52,15 @@ public class InvoicingPlanItemRsImpl extends BaseRs implements InvoicingPlanItem
 	@Override
 	public ActionStatus create(InvoicingPlanItemDto postData) {
 		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
 		try {
-			invoicingPlanItemApi.create(postData);
+			InvoicingPlanItem invoicingPlan = invoicingPlanItemApi.create(postData);
+			result.setEntityId(invoicingPlan.getId());
+			result.setEntityCode(invoicingPlan.getCode());
 		} catch (Exception e) {
 			processException(e, result);
 		}
-
 		return result;
-	}
+	} 
 
 	@Override
 	public InvoicingPlanItemResponseDto find(String invoicingPlanItemCode) {

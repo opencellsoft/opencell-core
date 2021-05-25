@@ -965,15 +965,12 @@ public class CpqQuoteApi extends BaseApi {
         if(cpqQuote.getStatus().equalsIgnoreCase(QuoteStatusEnum.CANCELLED.toString()) 
         			|| cpqQuote.getStatus().equalsIgnoreCase(QuoteStatusEnum.REJECTED.toString()))
             throw new MeveoApiException("quote status can not be publish because of its current status : " + cpqQuote.getStatus());
-        if(quoteVersion.getStatus().equals(VersionStatusEnum.CLOSED))
-            throw new MeveoApiException("Version of quote must not be CLOSED");
+        if(!quoteVersion.getStatus().equals(VersionStatusEnum.PUBLISHED))
+            throw new MeveoApiException("the current quote version is not published");
 
         Date now = Calendar.getInstance().getTime();
         cpqQuote.setStatus(QuoteStatusEnum.ACCEPTED.toString());
         cpqQuote.setStatusDate(now);
-        quoteVersion.setStatus(VersionStatusEnum.PUBLISHED);
-        quoteVersion.setStatusDate(now);
-
         cpqQuoteService.update(cpqQuote);
         quoteVersionService.update(quoteVersion);
         cpqQuoteStatusUpdatedEvent.fire(cpqQuote);
@@ -987,6 +984,7 @@ public class CpqQuoteApi extends BaseApi {
         });
 
     }
+
 
     public CpqQuote duplicateQuote(String quoteCode, int version) {
         final CpqQuote quote = cpqQuoteService.findByCode(quoteCode);

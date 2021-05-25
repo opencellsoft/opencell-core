@@ -7,6 +7,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.enums.PriceTypeEnum;
+import org.meveo.model.quote.QuotePrice;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -88,6 +89,10 @@ public class OrderPrice extends BusinessEntity {
     @OneToOne
     @JoinColumn(name= "charge_template_id")
     private ChargeTemplate chargeTemplate;
+    
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_offer_id")
+	private OrderOffer orderOffer;
 
     public OrderArticleLine getOrderArticleLine() {
         return orderArticleLine;
@@ -208,4 +213,14 @@ public class OrderPrice extends BusinessEntity {
     public void setChargeTemplate(ChargeTemplate chargeTemplate) {
         this.chargeTemplate = chargeTemplate;
     }
+
+	public OrderOffer getOrderOffer() {
+		return orderOffer;
+	}
+
+	public void setOrderOffer(OrderOffer orderOffer) {
+		this.orderOffer = orderOffer;
+	}
+    
+    
 }

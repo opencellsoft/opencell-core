@@ -2502,21 +2502,21 @@ public class ValidateBRScript extends Script {
         </insert>
 
         <insert tableName="billing_tax_mapping">
-            <column name="id" value='-1'/>
+            <column name="id" value='-11'/>
             <column name="tax_category_id" value="-2"/>
             <column name="tax_id" value='-1'/>
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
         </insert>
 		<insert tableName="billing_tax_mapping">
-		    <column name="id" value='-2'/>
+		    <column name="id" value='-12'/>
             <column name="tax_class_id" value="-3"/>
             <column name="tax_id" value='-1'/>
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
         </insert>
         <insert tableName="billing_tax_mapping">
-        	<column name="id" value='-3'/>
+        	<column name="id" value='-13'/>
             <column name="tax_category_id" value="-3"/>
             <column name="tax_class_id" value="-4"/>
             <column name="tax_id" value='-4'/>
@@ -2524,7 +2524,7 @@ public class ValidateBRScript extends Script {
             <column name="creator" value="applicationInitializer" />
         </insert>
         <insert tableName="billing_tax_mapping">
-        	<column name="id" value='-4'/>
+        	<column name="id" value='-14'/>
             <column name="tax_category_id" value="-3"/>
             <column name="tax_class_id" value="-5"/>
             <column name="tax_id" value='-5'/>
