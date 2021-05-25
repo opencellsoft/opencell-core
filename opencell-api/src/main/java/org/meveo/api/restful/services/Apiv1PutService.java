@@ -32,8 +32,6 @@ public class Apiv1PutService {
     private static final String FORWARD_SLASH = "/";
     private static final String DTO_SUFFIX = "dto";
 
-    private static final String API_REST = "api/rest";
-
     private List<PathSegment> segmentsOfPathAPIv1;
     private String entityCode;
     private String pathIBaseRS;
@@ -56,8 +54,8 @@ public class Apiv1PutService {
 
             // Handle the special endpoint, such as: activation, suspension, termination, update services of a subscription,
             // cancel/validate an existing invoice, cancel/validate a billing run, send an existing invoice by email
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS );
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS );
 
             if ( aDto instanceof ActivateSubscriptionRequestDto)
                 ((ActivateSubscriptionRequestDto) aDto).setSubscriptionCode( segmentsOfPathAPIv1.get(segmentsOfPathAPIv1.size() - 2).toString() );
@@ -78,8 +76,8 @@ public class Apiv1PutService {
         }
         else {
             // Handle the special endpoint, such as: stop a job
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + FORWARD_SLASH + segmentsOfPathAPIv1.get(segmentsOfPathAPIv1.size() - 2).toString() );
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + FORWARD_SLASH + segmentsOfPathAPIv1.get(segmentsOfPathAPIv1.size() - 2).toString() );
         }
 
         return AuthenticationFilter.httpClient.target( redirectURI ).request().put( Entity.entity(aDto, MediaType.APPLICATION_JSON) );
@@ -130,8 +128,8 @@ public class Apiv1PutService {
         else if ( aDto instanceof CurrencyIsoDto )
             ((CurrencyIsoDto) aDto).setCode(entityCode);
 
-        redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                + API_REST + pathIBaseRS + METHOD_UPDATE );
+        redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                + pathIBaseRS + METHOD_UPDATE );
 
         return AuthenticationFilter.httpClient.target( redirectURI ).request().put( Entity.entity( aDto, MediaType.APPLICATION_JSON ) );
     }

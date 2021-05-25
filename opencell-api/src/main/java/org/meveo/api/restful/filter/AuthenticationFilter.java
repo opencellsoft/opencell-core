@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-@WebFilter(filterName = "AuthenticationFilter", urlPatterns = { "/v1/*" })
+@WebFilter(filterName = "AuthenticationFilter", urlPatterns = { "/api/rest/v1/*" })
 public class AuthenticationFilter implements Filter {
 
     public static ResteasyClient httpClient;
