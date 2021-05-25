@@ -8936,5 +8936,21 @@ public class OrderAdvancement extends ModuleScript {
     	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = REPLACE(cf_values, '"string":"DraftOnly"', '"listString":["DRAFT"]') where job_template = 'XMLInvoiceGenerationJob';</sql>
     	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = REPLACE(cf_values, '"string":"FinalOnly"', '"listString":["VALIDATED"]') where job_template = 'XMLInvoiceGenerationJob';</sql>
    	</changeSet>
+   	
+   	<changeSet   id="#20210123_540_281_1" author="TarikFA.">
+        <sql>update ${db.schema.adapted}adm_role set uuid = 'role'||id where uuid is null</sql>
+    </changeSet>
+    <changeSet   id="#20210123_540_281_2" author="TarikFA.">
+        <sql>update ${db.schema.adapted}cpq_quote_attribute set uuid = 'quote_attribute'||id where uuid is null</sql>
+    </changeSet>
+    <changeSet   id="#20210123_540_281_3" author="TarikFA.">
+        <sql>update ${db.schema.adapted}cpq_order_attribute  set uuid = 'order_item'||id where uuid is null</sql>
+    </changeSet>
+    <changeSet   id="#20210123_540_281_4" author="TarikFA.">
+        <sql>update ${db.schema.adapted}cpq_attribute_instance set uuid = 'attribute_instance'||id where uuid is null</sql>
+    </changeSet>
+    <changeSet   id="#20210123_540_281_5" author="TarikFA.">
+        <sql>update ${db.schema.adapted}ar_payment_token set uuid = 'payment_token'||id where uuid is null</sql>
+    </changeSet>
 
 </databaseChangeLog>
