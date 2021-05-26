@@ -18,11 +18,16 @@
 
 package org.meveo.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 
 /**
@@ -158,15 +163,14 @@ public interface ICustomFieldEntity {
      */
     public default Map<String, Object> getCfValuesAsValues() {
         CustomFieldValues cfValues = getCfValues();
-		if (cfValues != null && cfValues.getValuesByCode() != null) {
+        if (cfValues != null && cfValues.getValuesByCode() != null) {
             return cfValues.getValues();
         }
         return null;
     }
 
     /**
-     * Get a value (not CF value entity) for a given custom field. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be
-     * returned
+     * Get a value (not CF value entity) for a given custom field. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be returned
      * 
      * @param cfCode Custom field code
      * @return Value
@@ -195,8 +199,8 @@ public interface ICustomFieldEntity {
     }
 
     /**
-     * Match custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is performed by matching a full string and then
-     * reducing one by one symbol until a match is found. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be returned
+     * Match custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is performed by matching a full string and then reducing one by one symbol until a match
+     * is found. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be returned
      * 
      * TODO can be an issue with lower/upper case mismatch
      * 
@@ -214,8 +218,8 @@ public interface ICustomFieldEntity {
     }
 
     /**
-     * Match for a given date (versionable values) custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is
-     * performed by matching a full string and then reducing one by one symbol until a match is found.
+     * Match for a given date (versionable values) custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is performed by matching a full string and then
+     * reducing one by one symbol until a match is found.
      * 
      * TODO can be an issue with lower/upper case mismatch
      * 
@@ -319,8 +323,7 @@ public interface ICustomFieldEntity {
     public void setCfAccumulatedValues(CustomFieldValues cfValues);
 
     /**
-     * Get an accumulated value (not CF value entity) for a given custom field. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a
-     * today will be returned
+     * Get an accumulated value (not CF value entity) for a given custom field. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be returned
      * 
      * @param cfCode Custom field code
      * @return Accumulated field value
@@ -349,8 +352,8 @@ public interface ICustomFieldEntity {
     }
 
     /**
-     * Match custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is performed by matching a full string and then
-     * reducing one by one symbol until a match is found. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be returned
+     * Match custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is performed by matching a full string and then reducing one by one symbol until a match
+     * is found. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be returned
      * 
      * TODO can be an issue with lower/upper case mismatch
      * 
@@ -368,8 +371,8 @@ public interface ICustomFieldEntity {
     }
 
     /**
-     * Match for a given date (versionable values) custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is
-     * performed by matching a full string and then reducing one by one symbol until a match is found.
+     * Match for a given date (versionable values) custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is performed by matching a full string and then
+     * reducing one by one symbol until a match is found.
      * 
      * TODO can be an issue with lower/upper case mismatch
      * 
@@ -388,8 +391,7 @@ public interface ICustomFieldEntity {
     }
 
     /**
-     * Match as close as possible map's key to the key provided and return a map value. Match is performed by matching a full string and then reducing one by one symbol untill a
-     * match is found.
+     * Match as close as possible map's key to the key provided and return a map value. Match is performed by matching a full string and then reducing one by one symbol untill a match is found.
      * 
      * TODO can be an issue with lower/upper case mismatch
      *
@@ -417,11 +419,23 @@ public interface ICustomFieldEntity {
         return null;
     }
 
-	/**
-	 * @return
-	 */
-	public default Boolean isDirtyCF() {
-		return getCfValues() != null && (CollectionUtils.isNotEmpty(getCfValues().getDirtyCfPeriods())
-						|| CollectionUtils.isNotEmpty(getCfValues().getDirtyCfValues()));
-	}
+    /**
+     * @return
+     */
+    public default Boolean isDirtyCF() {
+        return getCfValues() != null && (CollectionUtils.isNotEmpty(getCfValues().getDirtyCfPeriods()) || CollectionUtils.isNotEmpty(getCfValues().getDirtyCfValues()));
+    }
+
+    /**
+     * Copy Custom field values omitting all GUI related and transient fields
+     * 
+     * @return Custom field values
+     */
+    public default CustomFieldValues getCFValuesCopy() {
+        CustomFieldValues cfValues = getCfValues();
+        if (cfValues == null) {
+            return null;
+        }
+        return cfValues.clone();
+    }
 }

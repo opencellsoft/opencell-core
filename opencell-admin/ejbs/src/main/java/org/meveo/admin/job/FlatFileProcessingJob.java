@@ -45,6 +45,8 @@ import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.admin.impl.FileFormatService;
 import org.meveo.service.job.Job;
 
+import liquibase.util.StringUtils;
+
 /**
  * The Class FlatFileProcessingJob consume any flat file and execute the given script for each line/record, the beanIO is used to describe file format.
  * 
@@ -148,8 +150,11 @@ public class FlatFileProcessingJob extends Job {
             fileFormat = fileFormatService.findByCode(fileFormatWrapper.getCode());
         }
 
-        String mappingConf = (String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_MAPPING_CONF, fileFormat != null ? fileFormat.getConfigurationTemplate() : null);
-
+        String mappingConf = fileFormat != null ? fileFormat.getConfigurationTemplate() : null;
+        Object flatFileMappingConfig = this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_MAPPING_CONF);
+        if(flatFileMappingConfig != null && !flatFileMappingConfig.toString().trim().isEmpty()) {
+            mappingConf = (String) flatFileMappingConfig;
+        }
         String inputDir = paramBeanFactory.getChrootDir() + File.separator
                 + ((String) this.getParamOrCFValue(jobInstance, FLAT_FILE_PROCESSING_JOB_INPUT_DIR, fileFormat != null ? fileFormat.getInputDirectory() : null)).replaceAll(TWO_POINTS_PARENT_DIR, EMPTY_STRING);
 
@@ -345,7 +350,7 @@ public class FlatFileProcessingJob extends Job {
         mappingConf.setActive(true);
         mappingConf.setDescription(resourceMessages.getString("flatFile.mappingConf"));
         mappingConf.setFieldType(CustomFieldTypeEnum.TEXT_AREA);
-        mappingConf.setDefaultValue(EMPTY_STRING);
+        mappingConf.setDefaultValue(null);
         mappingConf.setValueRequired(false);
         mappingConf.setGuiPosition("tab:Configuration:0;fieldGroup:Record configuration:2;field:0");
         result.put(FLAT_FILE_PROCESSING_JOB_MAPPING_CONF, mappingConf);

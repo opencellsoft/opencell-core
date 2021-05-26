@@ -60,7 +60,7 @@ import org.w3c.dom.Text;
  *
  */
 @JsonIgnoreProperties({ "dirtyCfValues", "dirtyCfPeriods" })
-public class CustomFieldValues implements Serializable {
+public class CustomFieldValues implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -1733710622601844949L;
 
@@ -81,17 +81,17 @@ public class CustomFieldValues implements Serializable {
     private Set<String> dirtyCfValues = new HashSet<>();
 
     /**
-     * Tracks Custom fields (code) periods that were added or removed. Same as dirtyCfValues minus the custom fields, which had change in value only. Note, as value is transient -
-     * not stored in json, it will be lost after persistence or merge.
+     * Tracks Custom fields (code) periods that were added or removed. Same as dirtyCfValues minus the custom fields, which had change in value only. Note, as value is transient - not stored in json, it will be lost
+     * after persistence or merge.
      */
     @Transient
     private Set<String> dirtyCfPeriods = new HashSet<>();
-    
+
     /**
      * indicates if customFieldValues will be encrypted
      */
     @Transient
-	private Boolean encrypted;
+    private Boolean encrypted;
 
     /**
      * Constructor
@@ -126,8 +126,7 @@ public class CustomFieldValues implements Serializable {
     }
 
     /**
-     * Set custom field values as is. Just a regular setter for bean's valuesByCode field. DO NOT USE this method, as it does not track changes to CF field values. Use setValues()
-     * instead.
+     * Set custom field values as is. Just a regular setter for bean's valuesByCode field. DO NOT USE this method, as it does not track changes to CF field values. Use setValues() instead.
      * 
      * @param newValuesByCode values by code
      */
@@ -278,8 +277,7 @@ public class CustomFieldValues implements Serializable {
     }
 
     /**
-     * Get a single RAW custom field value entity for a given custom field. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today
-     * will be returned
+     * Get a single RAW custom field value entity for a given custom field. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be returned
      * 
      * @param cfCode Custom field code
      * @return CF value entity
@@ -359,8 +357,7 @@ public class CustomFieldValues implements Serializable {
     }
 
     /**
-     * Get a value (not CF value entity) for a given custom field. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be
-     * returned
+     * Get a value (not CF value entity) for a given custom field. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be returned
      * 
      * @param cfCode Custom field code
      * @return Value
@@ -389,8 +386,8 @@ public class CustomFieldValues implements Serializable {
     }
 
     /**
-     * Match custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is performed by matching a full string and then
-     * reducing one by one symbol until a match is found. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be returned
+     * Match custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is performed by matching a full string and then reducing one by one symbol until a match
+     * is found. In case of versioned values (more than one entry in CF value list) a CF value corresponding to a today will be returned
      * 
      * TODO can be an issue with lower/upper case mismatch
      * 
@@ -405,8 +402,8 @@ public class CustomFieldValues implements Serializable {
     }
 
     /**
-     * Match for a given date (versionable values) custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is
-     * performed by matching a full string and then reducing one by one symbol until a match is found.
+     * Match for a given date (versionable values) custom field's map's key as close as possible to the key provided and return a map value (not CF value entity). Match is performed by matching a full string and then
+     * reducing one by one symbol until a match is found.
      * 
      * TODO can be an issue with lower/upper case mismatch
      * 
@@ -766,8 +763,7 @@ public class CustomFieldValues implements Serializable {
      * Override (matching the period) existing RAW custom field value entities or append missing ones for a given custom field
      * 
      * @param cfCode Custom field code
-     * @param cfValues Custom field value holder with values to override with. If value is null or is empty, a record for a given custom field will be removed altogether as in
-     *        removeValue()
+     * @param cfValues Custom field value holder with values to override with. If value is null or is empty, a record for a given custom field will be removed altogether as in removeValue()
      */
     public void overrideOrAppendCfValues(String cfCode, CustomFieldValues cfValues) {
 
@@ -885,8 +881,7 @@ public class CustomFieldValues implements Serializable {
      * Copy Custom field values from another custom field value holder for a given custom field
      * 
      * @param cfCode Custom field code
-     * @param cfValues Custom field value holder with values to copy from. If value is null or is empty, a record for a given custom field will be removed altogether as in
-     *        removeValue()
+     * @param cfValues Custom field value holder with values to copy from. If value is null or is empty, a record for a given custom field will be removed altogether as in removeValue()
      */
     public void copyCfValues(String cfCode, CustomFieldValues cfValues) {
 
@@ -963,21 +958,35 @@ public class CustomFieldValues implements Serializable {
         return asJson();
     }
 
-	public void setEncrypted(Boolean encrypted) {
-		this.encrypted = encrypted;
-	}
+    public void setEncrypted(Boolean encrypted) {
+        this.encrypted = encrypted;
+    }
 
-	public Boolean isEncrypted() {
-		return encrypted;
-	}
+    public Boolean isEncrypted() {
+        return encrypted;
+    }
 
     public boolean containsCfValue(String code, String className) {
         return Optional.ofNullable(this.getValuesByCode()).map(Map::values)
-                .map(l -> l.stream().flatMap(Collection::stream).map(CustomFieldValue::getAllEntities).flatMap(Collection::stream).anyMatch(referenceWrapper ->
-                        (className.toLowerCase().contains(
-                                referenceWrapper.getClassnameCode() == null ? referenceWrapper.getClassname().toLowerCase() : referenceWrapper.getClassnameCode().toLowerCase())
-                                || Objects.equals(referenceWrapper.getClassname(), className)) && Objects.equals(referenceWrapper.getCode(), code))).orElse(false);
+            .map(l -> l.stream().flatMap(Collection::stream).map(CustomFieldValue::getAllEntities).flatMap(Collection::stream).anyMatch(
+                referenceWrapper -> (className.toLowerCase().contains(referenceWrapper.getClassnameCode() == null ? referenceWrapper.getClassname().toLowerCase() : referenceWrapper.getClassnameCode().toLowerCase())
+                        || Objects.equals(referenceWrapper.getClassname(), className)) && Objects.equals(referenceWrapper.getCode(), code)))
+            .orElse(false);
 
     }
-	
+
+    @Override
+    public CustomFieldValues clone() {
+        Map<String, List<CustomFieldValue>> cfCopy = new HashMap<String, List<CustomFieldValue>>();
+        for (Entry<String, List<CustomFieldValue>> cfValue : getValuesByCode().entrySet()) {
+            if (!cfValue.getValue().isEmpty()) {
+                List<CustomFieldValue> valuesCopy = new ArrayList<CustomFieldValue>();
+                for (CustomFieldValue customFieldValue : cfValue.getValue()) {
+                    valuesCopy.add(customFieldValue.clone());
+                }
+                cfCopy.put(cfValue.getKey(), valuesCopy);
+            }
+        }
+        return new CustomFieldValues(cfCopy);
+    }
 }

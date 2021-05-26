@@ -80,7 +80,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
 
     @AroundInvoke
     public Object aroundInvoke(InvocationContext invocationContext) throws Exception {
-
+        
         Object result = null;
         try {
 
@@ -95,7 +95,7 @@ public class BackingBeanActionMethodInterceptor implements Serializable {
             log.error("Transaction must have been rollbacked already (probably by exception thown in service and caught in backing bean): {}", e.getMessage());
             return result;
         } catch (Exception e) {
-
+            
             // See if can get to the root of the exception cause
             String message = e.getMessage();
             String messageKey = null;
