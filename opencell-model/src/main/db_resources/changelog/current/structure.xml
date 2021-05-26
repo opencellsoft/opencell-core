@@ -8957,4 +8957,8 @@ public class OrderAdvancement extends ModuleScript {
     	<sql>CREATE INDEX ${db.schema.adapted}idx_billing_invoice_agr_amount_on_aggr_id  ON billing_invoice_agr_amount (aggr_id);</sql>
     </changeSet>
     
+    <changeSet id="#5416_20210526" author="AbdelmounaimAkadid">
+    	<sql>CREATE INDEX ${db.schema.adapted}idx_ar_ao_payment_histories__ao_id ON ar_ao_payment_histories(ao_id);</sql>
+    </changeSet>
+    
 </databaseChangeLog>
