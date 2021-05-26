@@ -8953,6 +8953,15 @@ public class OrderAdvancement extends ModuleScript {
         <sql>update ${db.schema.adapted}ar_payment_token set uuid = 'payment_token'||id where uuid is null</sql>
     </changeSet>
     
+
+    <changeSet id="#5599_20210526" author="AbdelmounaimAkadid">
+    	<sql>CREATE INDEX ${db.schema.adapted}idx_billing_invoice_agr_amount_on_aggr_id  ON billing_invoice_agr_amount (aggr_id);</sql>
+    </changeSet>
+    
+    <changeSet id="#5416_20210526" author="AbdelmounaimAkadid">
+    	<sql>CREATE INDEX ${db.schema.adapted}idx_ar_ao_payment_histories__ao_id ON ar_ao_payment_histories(ao_id);</sql>
+    </changeSet>
+    
     <changeSet id="#5595_540582_20210526" author="TarikFA." >
         <createSequence sequenceName="cpq_product_version_attribute_seq" startValue="1"/>
     	<addColumn tableName="cpq_product_version_attributes">
@@ -8964,5 +8973,5 @@ public class OrderAdvancement extends ModuleScript {
         <addPrimaryKey columnNames="product_version_id,sequence" constraintName="cpq_product_version_attributes_pkey" tableName="cpq_product_version_attributes" />
         <sql>update ${db.schema.adapted}cpq_product_version_attributes set sequence = attribute_id where sequence = 0</sql>
     </changeSet>
-
+    
 </databaseChangeLog>
