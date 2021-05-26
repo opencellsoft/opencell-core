@@ -23,7 +23,7 @@ import org.meveo.model.BaseEntity;
  *
  */
 @Entity
-@Table(name = "cpq_product_version_attributes")
+@Table(name = "cpq_product_version_attributes_association")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_product_version_attribute_seq"), })
 public class ProductVersionAttribute extends BaseEntity{	
@@ -35,14 +35,12 @@ public class ProductVersionAttribute extends BaseEntity{
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_version_id", nullable = false)
 	@NotNull
-	@Id
     private ProductVersion productVersion;
 
     /**
      * sequence for product version and attribute
      */
     @Column(name = "sequence")
-	@Id
     protected Integer sequence = 0;
     /**
      * 

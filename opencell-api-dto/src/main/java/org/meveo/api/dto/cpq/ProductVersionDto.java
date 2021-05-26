@@ -64,6 +64,7 @@ public class ProductVersionDto extends BaseEntityDto {
     @Schema(description = "List of the attribute")
     protected Set<ProductVersionAttributeDTO> attributes=new HashSet<ProductVersionAttributeDTO>();
     
+    @Deprecated
     @XmlElementWrapper(name = "groupedAttributeCodes")
     @XmlElement(name = "groupedAttributeCodes")
     @Schema(description = "List of the grouped attribute codes")
@@ -116,9 +117,9 @@ public class ProductVersionDto extends BaseEntityDto {
                  .collect(Collectors.toSet());
          }
          if(productVersion.getGroupedAttributes() != null && !productVersion.getGroupedAttributes().isEmpty()) {
-         this.groupedAttributeCodes = productVersion.getGroupedAttributes()
+         this.attributes = productVersion.getProductAttributes()
                  .stream()
-                 .map(groupedAttribute -> groupedAttribute.getCode())
+                 .map(ProductVersionAttributeDTO::new)
                  .collect(Collectors.toSet());
          }
     }

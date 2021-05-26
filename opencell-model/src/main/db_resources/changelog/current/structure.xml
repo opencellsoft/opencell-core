@@ -8963,15 +8963,26 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
     
     <changeSet id="#5595_540582_20210526" author="TarikFA." >
-        <createSequence sequenceName="cpq_product_version_attribute_seq" startValue="1"/>
-    	<addColumn tableName="cpq_product_version_attributes">
-            <column name="id" type="bigint" autoIncrement="${id.auto}" />
-            <column name="sequence" type="INT4" defaultValue="0" />
-    	</addColumn>
-        <sql>update ${db.schema.adapted}cpq_product_version_attributes set sequence = ${id.auto} where sequence = 0</sql>
-        <addPrimaryKey columnNames="id" constraintName="cpq_product_version_attributes_id_pk" tableName="cpq_product_version_attributes" />
-        <addPrimaryKey columnNames="product_version_id,sequence" constraintName="cpq_product_version_attributes_pkey" tableName="cpq_product_version_attributes" />
-        <sql>update ${db.schema.adapted}cpq_product_version_attributes set sequence = attribute_id where sequence = 0</sql>
+        <createSequence sequenceName="cpq_product_version_attributes_association_seq" startValue="1"/>
+    	
+        <createTable tableName="cpq_product_version_attributes_association">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_attributes_association_id_pk" />
+            </column>
+            <column name="product_version_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="sequence" type="INT4" />
+        </createTable>
+        <addUniqueConstraint columnNames="product_version_id,sequence" constraintName="unique_product_version_sequence_pkey" tableName="cpq_product_version_attributes_association" />
+        
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_product_version_attributes_association" constraintName="cpq_product_version_attributes_association_attribute_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product_version_attributes_association" constraintName="cpq_product_version_attributes_association_product_version_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
     </changeSet>
     
 </databaseChangeLog>

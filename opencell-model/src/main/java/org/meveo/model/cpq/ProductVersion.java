@@ -23,6 +23,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -132,8 +133,18 @@ public class ProductVersion extends AuditableEntity{
 	/**
 	 * list of attributes attached to this product version
 	 */
-	@ManyToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "productVersion")
     private List<ProductVersionAttribute> productAttributes = new ArrayList<ProductVersionAttribute>();
+	
+
+	@Deprecated
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+				name = "cpq_product_version_attributes",
+				joinColumns = @JoinColumn(name = "product_version_id", referencedColumnName = "id"),
+				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
+			)
+    private List<Attribute> attributes = new ArrayList<Attribute>();
 	
 	
 
