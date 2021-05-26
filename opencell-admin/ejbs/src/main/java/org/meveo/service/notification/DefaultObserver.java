@@ -58,6 +58,7 @@ import org.meveo.event.qualifier.Rejected;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.event.qualifier.Removed;
 import org.meveo.event.qualifier.Started;
+import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.event.qualifier.Terminated;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.event.qualifier.VersionCreated;
@@ -73,6 +74,7 @@ import org.meveo.model.audit.AuditableFieldHistory;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.generic.wf.GenericWorkflow;
 import org.meveo.model.mediation.MeveoFtpFile;
@@ -356,6 +358,16 @@ public class DefaultObserver {
     public void commercialOrderOrderProgress(@Observes @AdvancementRateIncreased CommercialOrder commercialOrder) throws BusinessException {
         log.debug("Defaut observer: check order progress for order {}", commercialOrder.getId());
         checkEvent(NotificationEventTypeEnum.ADVT_RATE_INCREASED, commercialOrder);
+    }
+
+    public void quoteStatusUpdated(@Observes @StatusUpdated CpqQuote cpqQuote){
+        log.debug("Defaut observer: check cpq quote status updated {}", cpqQuote.getId());
+        checkEvent(NotificationEventTypeEnum.STATUS_UPDATED, cpqQuote);
+    }
+
+    public void commercialOrderStatusUpdated(@Observes @StatusUpdated CommercialOrder commercialOrder){
+        log.debug("Defaut observer: check commercial order status updated {}", commercialOrder.getId());
+        checkEvent(NotificationEventTypeEnum.STATUS_UPDATED, commercialOrder);
     }
 
     private void fieldUpdated(BaseEntity entity, AuditableFieldEvent field, NotificationEventTypeEnum notificationType) throws BusinessException {
