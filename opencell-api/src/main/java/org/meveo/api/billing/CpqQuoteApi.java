@@ -346,14 +346,22 @@ public class CpqQuoteApi extends BaseApi {
 				handleMissingParameters();
 				
 				ProductVersion productVersion = productVersionService.findByProductAndVersion(quoteProductDTO.getProductCode(), quoteProductDTO.getProductVersion());
+				
 				if(productVersion == null)
 					throw new EntityDoesNotExistsException(ProductVersion.class, "products["+index+"] = " + quoteProductDTO.getProductCode() +","+ quoteProductDTO.getProductVersion());
+				DiscountPlan discountPlan=null;
+				if(quoteProductDTO.getDiscountPlanCode()!=null) {
+			    discountPlan = discountPlanService.findByCode(quoteProductDTO.getDiscountPlanCode());
+				if(discountPlan == null) 
+					throw new EntityDoesNotExistsException(DiscountPlan.class,quoteProductDTO.getDiscountPlanCode());
+				}
 				QuoteProduct quoteProduct = null;
 				if(quoteProduct == null)
 					quoteProduct = new QuoteProduct();
 				quoteProduct.setProductVersion(productVersion);
 				quoteProduct.setQuantity(quoteProductDTO.getQuantity());
 				quoteProduct.setQuoteOffre(quoteOffer);
+				quoteProduct.setDiscountPlan(discountPlan);
 				populateCustomFields(quoteProductDTO.getCustomFields(), quoteProduct, true);
 				quoteProductService.create(quoteProduct);
 				newPopulateQuoteAttribute(quoteProductDTO.getProductAttributes(), quoteProduct);
@@ -842,6 +850,14 @@ public class CpqQuoteApi extends BaseApi {
         ProductVersion productVersion = productVersionService.findByProductAndVersion(quoteProductDTO.getProductCode(), quoteProductDTO.getProductVersion());
         if (productVersion == null)
             throw new EntityDoesNotExistsException(ProductVersion.class, "products[" + index + "] = " + quoteProductDTO.getProductCode() + "," + quoteProductDTO.getProductVersion());
+        
+    	DiscountPlan discountPlan=null;
+		if(quoteProductDTO.getDiscountPlanCode()!=null) {
+	    discountPlan = discountPlanService.findByCode(quoteProductDTO.getDiscountPlanCode());
+		if(discountPlan == null) 
+			throw new EntityDoesNotExistsException(DiscountPlan.class,quoteProductDTO.getDiscountPlanCode());
+		}
+		
         boolean isNew = false;
         QuoteProduct q = null;
         if (quoteProductDTO.getQuoteProductId() != null) {
@@ -860,6 +876,7 @@ public class CpqQuoteApi extends BaseApi {
         q.setProductVersion(productVersion);
         q.setQuantity(quoteProductDTO.getQuantity());
         q.setQuoteOffre(quoteOffer);
+        q.setDiscountPlan(discountPlan);
         if(isNew) {
         	populateCustomFields(quoteProductDTO.getCustomFields(), q, true);
             quoteProductService.create(q);
