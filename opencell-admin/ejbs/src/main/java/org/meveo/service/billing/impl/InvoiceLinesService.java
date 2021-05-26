@@ -66,6 +66,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
+import org.meveo.service.tax.TaxMappingService.TaxInfo;
 @Stateless
 public class InvoiceLinesService extends PersistenceService<InvoiceLine> {
 
@@ -161,6 +162,11 @@ public class InvoiceLinesService extends PersistenceService<InvoiceLine> {
         invoiceLine.setOrderNumber(commercialOrder.getOrderNumber());
         invoiceLine.setBillingAccount(commercialOrder.getBillingAccount());
         invoiceLine.setValueDate(new Date());
+        if(accountingArticle!=null && commercialOrder!=null) {
+         TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), commercialOrder.getSeller(), commercialOrder.getBillingAccount(),commercialOrder.getUserAccount() , commercialOrder.getOrderDate(), false, false);
+         if(taxInfo!=null)
+         invoiceLine.setTax(taxInfo.tax);
+        }
         create(invoiceLine);
     }
 

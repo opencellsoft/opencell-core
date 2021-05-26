@@ -309,6 +309,8 @@ public class CatalogHierarchyBuilderService {
     	if(medias != null) {
     		medias.forEach(media -> {
     			Media newMedia = new Media(media);
+    			newMedia.setCode(mediaService.findDuplicateCode(media));
+    			newMedia.setMediaName(media.getMediaName() + "_" + entity.getId());
     			mediaService.create(newMedia);
     			entity.getMedias().add(newMedia);
     		});

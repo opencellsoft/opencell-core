@@ -330,6 +330,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         			mediaService.detach(media);
         			Media newMedia = new Media(media);  
         			newMedia.setMediaName(media.getMediaName() + "_" + offer.getId());
+        			newMedia.setCode(mediaService.findDuplicateCode(media));
         			mediaService.create(newMedia);
     				offer.getMedias().add(newMedia);
     			}

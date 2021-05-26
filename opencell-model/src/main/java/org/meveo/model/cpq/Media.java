@@ -40,6 +40,10 @@ public class Media extends BusinessCFEntity{
 		this.main = copy.main;
 		this.mediaType = copy.mediaType;
 		this.mediaPath = copy.mediaPath;
+		this.code = copy.code;
+		this.description = copy.description;
+		this.cfValues = copy.cfValues;
+		this.cfAccumulatedValues = copy.cfAccumulatedValues;
 	}
 
 	public Media() {

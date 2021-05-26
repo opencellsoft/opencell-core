@@ -17,24 +17,11 @@
  */
 package org.meveo.admin.action.payments;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.api.dto.payment.GatewayPaymentNamesEnum;
-import org.meveo.api.dto.payment.HostedCheckoutInput;
-import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentGatewayRumSequence;
 import org.meveo.model.payments.PaymentGatewayTypeEnum;
@@ -45,6 +32,13 @@ import org.meveo.service.payments.impl.PaymentGatewayRumSequenceService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.util.PaymentGatewayClass;
 
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Standard backing bean for {@link PaymentGateway} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
@@ -53,6 +47,7 @@ import org.meveo.util.PaymentGatewayClass;
 @ViewScoped
 public class PaymentGatewayBean extends CustomFieldBean<PaymentGateway> {
     private static final long serialVersionUID = 1L;
+
     /**
      * Injected @{link PaymentGateway} service. Extends {@link PersistenceService}.
      */
@@ -60,13 +55,8 @@ public class PaymentGatewayBean extends CustomFieldBean<PaymentGateway> {
     private PaymentGatewayService paymentGatewayService;
 
     @Inject
-    private PaymentMethodApi paymentMethodApi;
-    
-    @Inject
     private PaymentGatewayRumSequenceService paymentGatewayRumSequenceService;
 
-    private String redirectionUrl;
-    
     private PaymentGatewayRumSequence selectedRumSequence;
 
     /**
@@ -78,8 +68,8 @@ public class PaymentGatewayBean extends CustomFieldBean<PaymentGateway> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     *
      * @return payment gateway.
-     * 
      */
     @Override
     public PaymentGateway initEntity() {
@@ -129,23 +119,23 @@ public class PaymentGatewayBean extends CustomFieldBean<PaymentGateway> {
 
     /**
      * Autocomplete method for implementationClassName filter field - search classes with @PaymentGatewayClass annotation
-     * 
+     *
      * @param query A partial class name (including a package)
      * @return A list of classnames
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes"})
     public List<String> autocompleteClassNames(String query) {
 
-        List<Class> classes = null;
+        List<Class> classes;
         try {
             classes = ReflectionUtils.getClasses("org.meveo.service.payments");
         } catch (Exception e) {
             log.error("Failed to get a list of classes for service payments  package", e);
-            return null;
+            return new ArrayList<>();
         }
 
         String queryLc = query.toLowerCase();
-        List<String> classNames = new ArrayList<String>();
+        List<String> classNames = new ArrayList<>();
         for (Class clazz : classes) {
             if (clazz.getName().toLowerCase().contains(queryLc) && (clazz.isAnnotationPresent(PaymentGatewayClass.class))) {
                 classNames.add(clazz.getName());
@@ -156,132 +146,44 @@ public class PaymentGatewayBean extends CustomFieldBean<PaymentGateway> {
         return classNames;
     }
 
-    public void getIngenicoUrl(
-            String customerAccountCode,
-            String returnUrl
-    ) throws BusinessException {
-
-        getIngenicoUrl(
-                customerAccountCode,
-                returnUrl,
-                false,
-                "INGENICO_GC",
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-    }
-    public void getIngenicoUrl(
-            String customerAccountCode,
-            String returnUrl,
-            Boolean skipAuthentication
-    ) throws BusinessException {
-
-        getIngenicoUrl(
-                customerAccountCode,
-                returnUrl,
-                skipAuthentication,
-                "INGENICO_GC",
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-    }
-    /**
-     * Example of use case of paymentMethodApi.createIframeUrl
-     * @param customerAccountCode
-     * @throws BusinessException
-     */
-    public void getIngenicoUrl(
-            String customerAccountCode,
-            String returnUrl,
-            Boolean skipAuthentication,
-            String gatewayPaymentName,
-            String amount,
-            String authorizationMode,
-            String countryCode,
-            String currencyCode,
-            String locale
-    ) throws BusinessException {
-
-
-        if (StringUtils.isBlank(amount)) amount = "100";
-        if (StringUtils.isBlank(authorizationMode)) authorizationMode = "FINAL_AUTHORIZATION";
-        if (StringUtils.isBlank(countryCode)) countryCode = "US";
-        if (StringUtils.isBlank(currencyCode)) currencyCode = "EUR";
-        if (StringUtils.isBlank(locale)) locale = "en_GB";
-        if (StringUtils.isBlank(skipAuthentication)) skipAuthentication = false;
-        if (StringUtils.isBlank(gatewayPaymentName)) gatewayPaymentName = "INGENICO_GC";
-
-
-
-        HostedCheckoutInput hostedCheckoutInput = new HostedCheckoutInput();
-        hostedCheckoutInput.setCustomerAccountCode(customerAccountCode);
-        hostedCheckoutInput.setReturnUrl(returnUrl);
-        hostedCheckoutInput.setAmount(amount);
-        hostedCheckoutInput.setAuthorizationMode(authorizationMode);
-        hostedCheckoutInput.setCountryCode(countryCode);
-        hostedCheckoutInput.setCurrencyCode(currencyCode);
-        hostedCheckoutInput.setLocale(locale);
-        hostedCheckoutInput.setSkipAuthentication(skipAuthentication);
-        hostedCheckoutInput.setGatewayPaymentName(GatewayPaymentNamesEnum.valueOf(gatewayPaymentName));
-
-
-        this.redirectionUrl = paymentMethodApi.getHostedCheckoutUrl(hostedCheckoutInput);
-
+    public void newRumSequence() {
+        selectedRumSequence = new PaymentGatewayRumSequence();
+        selectedRumSequence.setPaymentGateway(entity);
     }
 
-    public String getRedirectionUrl() {
-        return redirectionUrl;
+    public void selectRumSequence(PaymentGatewayRumSequence rumSequence) {
+        this.selectedRumSequence = rumSequence;
     }
 
-    public void setRedirectionUrl(String redirectionUrl) {
-        this.redirectionUrl = redirectionUrl;
+    public void deleteRumSequence(PaymentGatewayRumSequence rumSequence) throws BusinessException {
+        paymentGatewayRumSequenceService.remove(rumSequence);
+        entity = paymentGatewayService.refreshOrRetrieve(entity);
     }
-	
-	public void newRumSequence() {
-		selectedRumSequence = new PaymentGatewayRumSequence();
-		selectedRumSequence.setPaymentGateway(entity);
-	}
-	
-	public void selectRumSequence(PaymentGatewayRumSequence rumSequence) {
-		this.selectedRumSequence = rumSequence;
-	}
-	
-	public void deleteRumSequence(PaymentGatewayRumSequence rumSequence) throws BusinessException {
-		paymentGatewayRumSequenceService.remove(rumSequence);
-		entity = paymentGatewayService.refreshOrRetrieve(entity);
-	}
-	
-	public void resetRumSequence() {
+
+    public void resetRumSequence() {
         selectedRumSequence = null;
     }
-    
-	public void saveOrUpdateRumSequence() throws BusinessException {
-		if (selectedRumSequence.isTransient()) {
-			paymentGatewayRumSequenceService.create(selectedRumSequence);
-		} else {
-			paymentGatewayRumSequenceService.update(selectedRumSequence);
-		}
-		
-		entity = paymentGatewayService.refreshOrRetrieve(entity);
-		resetRumSequence();
-	}
 
-	public PaymentGatewayRumSequence getSelectedRumSequence() {
-		return selectedRumSequence;
-	}
+    public void saveOrUpdateRumSequence() throws BusinessException {
+        if (selectedRumSequence.isTransient()) {
+            paymentGatewayRumSequenceService.create(selectedRumSequence);
+        } else {
+            paymentGatewayRumSequenceService.update(selectedRumSequence);
+        }
 
-	public void setSelectedRumSequence(PaymentGatewayRumSequence selectedRumSequence) {
-		this.selectedRumSequence = selectedRumSequence;
-	}
-	
-	public List<PaymentGatewayRumSequence> getSingleListRumSequences() {
-		return entity.getRumSequence() == null ? new ArrayList<>() : Arrays.asList(entity.getRumSequence());
-	}
+        entity = paymentGatewayService.refreshOrRetrieve(entity);
+        resetRumSequence();
+    }
 
+    public PaymentGatewayRumSequence getSelectedRumSequence() {
+        return selectedRumSequence;
+    }
+
+    public void setSelectedRumSequence(PaymentGatewayRumSequence selectedRumSequence) {
+        this.selectedRumSequence = selectedRumSequence;
+    }
+
+    public List<PaymentGatewayRumSequence> getSingleListRumSequences() {
+        return entity.getRumSequence() == null ? new ArrayList<>() : Collections.singletonList(entity.getRumSequence());
+    }
 }

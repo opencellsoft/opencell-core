@@ -86,22 +86,17 @@ public class PriceDTO extends BaseEntityDto {
 	    currencyCode=quotePrice.getCurrencyCode();
 	    recurrenceDuration=quotePrice.getRecurrenceDuration();
 	    recurrencePeriodicity=quotePrice.getRecurrencePeriodicity();
-		if(recurrenceDuration != null){
-			amountWithtax=quotePrice.getAmountWithTax().multiply(BigDecimal.valueOf(recurrenceDuration));
-			amountWithoutTax=quotePrice.getAmountWithoutTax().multiply(BigDecimal.valueOf(recurrenceDuration));
-			amountWithoutTaxWithDiscount=quotePrice.getAmountWithoutTaxWithDiscount() != null ? quotePrice.getAmountWithoutTaxWithDiscount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null;
-		}else {
-			amountWithtax=quotePrice.getAmountWithTax();
-			amountWithoutTax=quotePrice.getAmountWithoutTax();
-			amountWithoutTaxWithDiscount=quotePrice.getAmountWithoutTaxWithDiscount();
-		}
+	    amountWithtax=quotePrice.getAmountWithTax();
+		amountWithoutTax=quotePrice.getAmountWithoutTax();
+		amountWithoutTaxWithDiscount=quotePrice.getAmountWithoutTaxWithDiscount();
+		
 
 	    chargeCode=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getCode():null;
 	    chargeLabel=quotePrice.getChargeTemplate()!=null?quotePrice.getChargeTemplate().getDescription():null;
-	   TaxCategory taxCategoryEntity = quotePrice.getQuoteArticleLine().getBillableAccount().getTaxCategory()!=null ? quotePrice.getQuoteArticleLine().getBillableAccount().getTaxCategory(): 
-	    	quotePrice.getQuoteArticleLine().getBillableAccount().getCustomerAccount().getCustomer().getCustomerCategory().getTaxCategory();
+	   TaxCategory taxCategoryEntity = quotePrice.getQuoteArticleLine() != null ? quotePrice.getQuoteArticleLine().getBillableAccount().getTaxCategory()!=null ? quotePrice.getQuoteArticleLine().getBillableAccount().getTaxCategory(): 
+	    	quotePrice.getQuoteArticleLine().getBillableAccount().getCustomerAccount().getCustomer().getCustomerCategory().getTaxCategory() : null;
 	   taxCategory=taxCategoryEntity!=null?taxCategoryEntity.getCode():null;
-	   TaxClass taxClass=quotePrice.getQuoteArticleLine().getAccountingArticle().getTaxClass();
+	   TaxClass taxClass=quotePrice.getQuoteArticleLine() != null ? quotePrice.getQuoteArticleLine().getAccountingArticle().getTaxClass() : null;
 	   taxCode=taxClass!=null?taxClass.getCode():null;
 		
 	}

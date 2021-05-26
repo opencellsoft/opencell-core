@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.OfferTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
@@ -35,12 +36,13 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.OfferTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
-import org.meveo.api.serialize.RestDateParam;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.api.serialize.RestDateParam;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplate;
@@ -165,10 +167,15 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            offerTemplateApi.remove(offerTemplateCode, validFrom, validTo);
+            offerTemplateApi.remove(offerTemplateCode, validFrom, validTo); 
         } catch (Exception e) {
-            processException(e, result);
-        }
+        	if (e.getCause() != null && e.getCause().getCause() != null) {
+			if (e.getCause().getCause().getMessage().indexOf("ConstraintViolationException") > -1) {
+				throw new DeleteReferencedEntityException(OfferTemplate.class, offerTemplateCode);
+			}
+        	}
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+		}
 
         return result;
     }

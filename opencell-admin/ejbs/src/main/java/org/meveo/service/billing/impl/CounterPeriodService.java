@@ -17,9 +17,7 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -142,5 +140,11 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
         } catch (NoResultException e) {
             return null;
         }
+    }
+    
+    @Override
+    public CounterPeriod update(CounterPeriod entity) throws BusinessException {
+    	entity=refreshOrRetrieve(entity);
+    	return super.update(entity);
     }
 }

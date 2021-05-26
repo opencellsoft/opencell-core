@@ -974,13 +974,18 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             }
         }
 
-        if (chargeInstanceId == null || !chargeInstance.getPrepaid()) {
+        if (chargeInstanceId == null) {
+            op.setWallet(userAccount.getWallet());
+            result.add(op);
+            // Balance and reserved balance deals with prepaid wallets.
+            // With wallet cache at all
+        } else if (!chargeInstance.getPrepaid()) {
             op.setWallet(userAccount.getWallet());
             result.add(op);
             create(op);
-
             // Prepaid charges only
-        } else {
+        }
+        else {
             result = chargeOnPrepaidWallets(chargeInstance, op);
         }
         return result;

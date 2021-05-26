@@ -8920,4 +8920,51 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     
+	<changeSet id="#5623-562-20210520" author="Mbarek-Ay">
+		<addColumn tableName="cpq_quote_price">
+		 <column name="quote_offer_id" type="bigint" />
+		</addColumn>
+		
+		<addColumn tableName="order_price"> 
+		<column name="order_offer_id" type="bigint" />
+		</addColumn>
+
+		<addForeignKeyConstraint
+			baseColumnNames="quote_offer_id" baseTableName="cpq_quote_price" constraintName="fk_cpq_quote_price_quote_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="quote_offer" />
+
+		<addForeignKeyConstraint
+			baseColumnNames="order_offer_id" baseTableName="order_price" constraintName="fk_order_price_order_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="cpq_order_offer" />
+	</changeSet>
+    
+    <changeSet id="#6122_20210524" author="AbdelmounaimAkadid">
+    	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = REPLACE(cf_values, '"string":"DraftOnly"', '"listString":["DRAFT"]') where job_template = 'XMLInvoiceGenerationJob';</sql>
+    	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = REPLACE(cf_values, '"string":"FinalOnly"', '"listString":["VALIDATED"]') where job_template = 'XMLInvoiceGenerationJob';</sql>
+   	</changeSet>
+   	
+   	<changeSet   id="#20210123_540_281_1" author="TarikFA.">
+        <sql>update ${db.schema.adapted}adm_role set uuid = 'role'||id where uuid is null</sql>
+    </changeSet>
+    <changeSet   id="#20210123_540_281_2" author="TarikFA.">
+        <sql>update ${db.schema.adapted}cpq_quote_attribute set uuid = 'quote_attribute'||id where uuid is null</sql>
+    </changeSet>
+    <changeSet   id="#20210123_540_281_3" author="TarikFA.">
+        <sql>update ${db.schema.adapted}cpq_order_attribute  set uuid = 'order_item'||id where uuid is null</sql>
+    </changeSet>
+    <changeSet   id="#20210123_540_281_4" author="TarikFA.">
+        <sql>update ${db.schema.adapted}cpq_attribute_instance set uuid = 'attribute_instance'||id where uuid is null</sql>
+    </changeSet>
+    <changeSet   id="#20210123_540_281_5" author="TarikFA.">
+        <sql>update ${db.schema.adapted}ar_payment_token set uuid = 'payment_token'||id where uuid is null</sql>
+    </changeSet>
+    
+    <changeSet id="#5599_20210526" author="AbdelmounaimAkadid">
+    	<sql>CREATE INDEX ${db.schema.adapted}idx_billing_invoice_agr_amount_on_aggr_id  ON billing_invoice_agr_amount (aggr_id);</sql>
+    </changeSet>
+    
+    <changeSet id="#5416_20210526" author="AbdelmounaimAkadid">
+    	<sql>CREATE INDEX ${db.schema.adapted}idx_ar_ao_payment_histories__ao_id ON ar_ao_payment_histories(ao_id);</sql>
+    </changeSet>
+    
 </databaseChangeLog>
