@@ -36,7 +36,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -174,13 +173,13 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * Invoices produced by a Billing run
      */
-    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Invoice> invoices = new ArrayList<Invoice>();
 
     /**
      * Billing run lists
      */
-    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "billingRun", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Set<BillingRunList> billingRunLists = new HashSet<BillingRunList>();
 
     /**
@@ -325,7 +324,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     /**
      * The next BillingRun where rejected/suspect invoices may be moved.
      */
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "next_billing_run_id")
     private BillingRun nextBillingRun;
 
