@@ -266,6 +266,7 @@
         <createSequence sequenceName="cpq_price_plan_matrix_line_sq" startValue="1" />
         <createSequence sequenceName="cpq_product_charge_template_mapping_seq" startValue="1" />
         <createSequence sequenceName="cpq_attribute_instance_seq" />
+        <createSequence sequenceName="cpq_product_version_attribute_seq" startValue="1"/>
     </changeSet>
     
      
@@ -9226,13 +9227,18 @@
     </changeSet>
     <changeSet id="rebuild-str-tbl-460" author="NabilOUACHI">
         <createTable tableName="cpq_product_version_attributes">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_attributes_id_pk" />
+            </column>
             <column name="product_version_id" type="bigint" >
                 <constraints nullable="false"/>
             </column>
             <column name="attribute_id" type="bigint" >
                 <constraints nullable="false"/>
             </column>
+            <column name="sequence" type="INT4" />
         </createTable>
+        <addPrimaryKey columnNames="product_version_id,sequence" constraintName="cpq_product_version_attributes_pkey" tableName="cpq_product_version_attributes" />
     </changeSet>
     <changeSet id="rebuild-str-tbl-461" author="NabilOUACHI">
         <createTable tableName="cpq_service_template_attributes">
@@ -15697,6 +15703,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#5595_20210506" author="NabilOuachi"></changeSet>
     <changeSet id="#5595_20210512" author="RachidAityaazza"></changeSet>
     <changeSet id="#5623-562-20210520" author="Mbarek-Ay"/>
+    <changeSet id="#5595_540582_20210526" author="TarikFA." />
     
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

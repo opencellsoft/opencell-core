@@ -8952,5 +8952,17 @@ public class OrderAdvancement extends ModuleScript {
     <changeSet   id="#20210123_540_281_5" author="TarikFA.">
         <sql>update ${db.schema.adapted}ar_payment_token set uuid = 'payment_token'||id where uuid is null</sql>
     </changeSet>
+    
+    <changeSet id="#5595_540582_20210526" author="TarikFA." >
+        <createSequence sequenceName="cpq_product_version_attribute_seq" startValue="1"/>
+    	<addColumn tableName="cpq_product_version_attributes">
+            <column name="id" type="bigint" autoIncrement="${id.auto}" />
+            <column name="sequence" type="INT4" defaultValue="0" />
+    	</addColumn>
+        <sql>update ${db.schema.adapted}cpq_product_version_attributes set sequence = ${id.auto} where sequence = 0</sql>
+        <addPrimaryKey columnNames="id" constraintName="cpq_product_version_attributes_id_pk" tableName="cpq_product_version_attributes" />
+        <addPrimaryKey columnNames="product_version_id,sequence" constraintName="cpq_product_version_attributes_pkey" tableName="cpq_product_version_attributes" />
+        <sql>update ${db.schema.adapted}cpq_product_version_attributes set sequence = attribute_id where sequence = 0</sql>
+    </changeSet>
 
 </databaseChangeLog>

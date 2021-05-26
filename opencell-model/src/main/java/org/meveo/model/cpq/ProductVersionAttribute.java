@@ -6,52 +6,63 @@ package org.meveo.model.cpq;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 
 /**
- * @author Rachid.AIT-YAAZZA
+ * @author Tarik FAKHOURI
  *
  */
 @Entity
-@Table(name = "cpq_product_version_attributes", uniqueConstraints = @UniqueConstraint(columnNames = { "productVersion" }))
+@Table(name = "cpq_product_version_attributes")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "cpq_attribute_seq"), })
-public class ProductAttribute extends BaseEntity{	
+        @Parameter(name = "sequence_name", value = "cpq_product_version_attribute_seq"), })
+public class ProductVersionAttribute extends BaseEntity{	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5934892816847168643L;
 
-	  
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_version_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_version_id", nullable = false)
+	@NotNull
+	@Id
     private ProductVersion productVersion;
-	  
-    /**
-     * 
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "attribute_id")
-    private Attribute attribute;
-	 
 
     /**
      * sequence for product version and attribute
      */
     @Column(name = "sequence")
+	@Id
     protected Integer sequence = 0;
+    /**
+     * 
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "attribute_id", nullable = false)
+	@NotNull
+    private Attribute attribute;
+	 
 
-    public ProductAttribute(){
 
+    public ProductVersionAttribute(){
+
+	}
+	  
+    public ProductVersionAttribute(ProductVersion productVersion, Attribute attribute, Integer sequence) {
+		super();
+		this.productVersion = productVersion;
+		this.attribute = attribute;
+		this.sequence = sequence;
 	}
 
 	/**
