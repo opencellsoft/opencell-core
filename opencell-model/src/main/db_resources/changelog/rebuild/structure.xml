@@ -3463,6 +3463,7 @@
             <column name="accounting_code_id" type="bigint"/>
             <column name="sort_index" type="int4"/>
             <column name="reject_reason" type="text"/>
+            <column name="refunds_wo_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-203">
