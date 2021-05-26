@@ -138,7 +138,7 @@ public class ProductVersion extends AuditableEntity{
 				joinColumns = @JoinColumn(name = "product_version_id", referencedColumnName = "id"),
 				inverseJoinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id")				
 			)
-    private List<Attribute> attributes = new ArrayList<Attribute>();
+    private List<ProductAttribute> attributes = new ArrayList<ProductAttribute>();
 	
 	
 
@@ -231,14 +231,14 @@ public class ProductVersion extends AuditableEntity{
 	/**
 	 * @return the attributes
 	 */
-	public List<Attribute> getAttributes() {
+	public List<ProductAttribute> getAttributes() {
 		return attributes;
 	}
 
 	/**
 	 * @param attributes the attributes to set
 	 */
-	public void setAttributes(List<Attribute> attributes) {
+	public void setAttributes(List<ProductAttribute> attributes) {
 		this.attributes = attributes;
 	}
 
