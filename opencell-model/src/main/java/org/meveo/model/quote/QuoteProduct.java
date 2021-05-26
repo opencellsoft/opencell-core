@@ -99,6 +99,7 @@ public class QuoteProduct extends AuditableCFEntity {
 		this.quoteVersion = copy.quoteVersion;
 		this.productVersion = copy.productVersion;
 		this.quantity = copy.quantity;
+		this.discountPlan=copy.getDiscountPlan();
 		this.quoteOffre = copy.quoteOffre;
 		this.quoteAttributes = copy.quoteAttributes;
 	}
@@ -109,6 +110,7 @@ public class QuoteProduct extends AuditableCFEntity {
 		this.quoteVersion = other.quoteVersion;
 		this.productVersion = other.productVersion;
 		this.quantity = other.quantity;
+		this.discountPlan=other.getDiscountPlan();
 		this.quoteOffre = other.quoteOffre;
 		this.quoteAttributes = other.quoteAttributes;
     }
@@ -210,7 +212,7 @@ public class QuoteProduct extends AuditableCFEntity {
 		QuoteProduct other = (QuoteProduct) obj;
 		return  Objects.equals(productVersion, other.productVersion) && Objects.equals(quantity, other.quantity)
 				&& Objects.equals(quote, other.quote)
-				&& Objects.equals(quoteOffre, other.quoteOffre) && Objects.equals(quoteVersion, other.quoteVersion);
+				&& Objects.equals(quoteOffre, other.quoteOffre) && Objects.equals(quoteVersion, other.quoteVersion) && Objects.equals(discountPlan, other.discountPlan);
 	}
 	/**
 	 * @return the quoteAttributes

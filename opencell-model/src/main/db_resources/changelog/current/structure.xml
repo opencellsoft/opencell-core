@@ -8912,8 +8912,14 @@ public class OrderAdvancement extends ModuleScript {
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
     	
     </changeSet>
+    
 
-
+    <changeSet id="#5257_20210519" author="AndriusKarpavicius">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="refunds_wo_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+    
 	<changeSet id="#5623-562-20210520" author="Mbarek-Ay">
 		<addColumn tableName="cpq_quote_price">
 		 <column name="quote_offer_id" type="bigint" />

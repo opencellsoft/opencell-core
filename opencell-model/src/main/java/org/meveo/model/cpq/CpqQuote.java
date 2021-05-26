@@ -55,6 +55,7 @@ public class CpqQuote extends BusinessEntity  {
 		this.seller = copy.seller;
 		this.applicantAccount = copy.applicantAccount;
 		this.contract = copy.contract;
+		//to move to quote version
 		this.sendDate = copy.sendDate;
 		this.quoteLotDateBegin = copy.quoteLotDateBegin;
 		this.quoteLotDuration = copy.quoteLotDuration;
@@ -65,10 +66,15 @@ public class CpqQuote extends BusinessEntity  {
 		this.registerNumber = copy.registerNumber;
 		this.salesPersonName = copy.salesPersonName;
 		this.billableAccount = copy.billableAccount;
+		//to move to quote version
 		this.validity = copy.validity;
+		//to move to quote version
 		this.pdfFilename=copy.pdfFilename;
+		//to move to quote version
 		this.xmlFilename=copy.xmlFilename;
 		this.orderInvoiceType = copy.orderInvoiceType;
+		//to move to quote version
+		this.discountPlan=copy.discountPlan;
 	}
 	/**
 	 * seller
