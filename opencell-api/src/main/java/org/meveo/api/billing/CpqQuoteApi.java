@@ -1084,7 +1084,7 @@ public class CpqQuoteApi extends BaseApi {
     public GetQuoteVersionDtoResponse quoteQuotation(String quoteCode, int currentVersion) {
         List<QuotePrice> accountingArticlePrices = new ArrayList<>();
         List<PriceDTO> pricesDTO =new ArrayList<>();
-        QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
+        final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
@@ -1114,10 +1114,10 @@ public class CpqQuoteApi extends BaseApi {
                     return pricesDTO;
                 }).collect(Collectors.toList());
 
-         
-      
-        GetQuoteVersionDtoResponse response = new GetQuoteVersionDtoResponse(quoteVersion, true, true, true,true);
-        response.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(quoteVersion));
+        //Get the updated quote version and construct the DTO
+        QuoteVersion updatedQuoteVersion=quoteVersionService.findById(quoteVersion.getId());
+        GetQuoteVersionDtoResponse response = new GetQuoteVersionDtoResponse(updatedQuoteVersion, true, true, true,true);
+        response.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(updatedQuoteVersion));
         response.setPrices(pricesDTO);
         return response;
     }
@@ -1177,9 +1177,17 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setChargeTemplate(wo.getChargeInstance().getChargeTemplate());
             if (PriceTypeEnum.RECURRING.equals(quotePrice.getPriceTypeEnum())) {
                 Integer durationTermInMonth = ((RecurringChargeTemplate) wo.getChargeInstance().getChargeTemplate()).getDurationTermInMonth();
-                if(durationTermInMonth != null)
-                    quotePrice.setRecurrenceDuration(Long.valueOf(durationTermInMonth));
-                //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
+                if(durationTermInMonth != null) {
+                	Long recurrenceDuration=Long.valueOf(durationTermInMonth);
+                    quotePrice.setRecurrenceDuration(recurrenceDuration);
+                    //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
+                    quotePrice.setAmountWithTax(quotePrice.getAmountWithTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
+                    quotePrice.setAmountWithoutTax(quotePrice.getAmountWithoutTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
+                    quotePrice.setAmountWithoutTax(quotePrice.getAmountWithoutTaxWithDiscount() != null ? 
+                    		quotePrice.getAmountWithoutTaxWithDiscount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null);
+                    quotePrice.setTaxAmount(quotePrice.getTaxAmount() != null ? 
+                    		quotePrice.getTaxAmount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null);
+                }
             }
             quotePrice.setUnitPriceWithoutTax(wo.getUnitAmountWithoutTax());
             quotePrice.setTaxRate(wo.getTaxPercent());
@@ -1528,13 +1536,24 @@ public class CpqQuoteApi extends BaseApi {
                     discountQuotePrice.setChargeTemplate(quotePrice.getChargeTemplate());
                     if (PriceTypeEnum.RECURRING.equals(discountQuotePrice.getPriceTypeEnum())) {
                         Integer durationTermInMonth = ((RecurringChargeTemplate) quotePrice.getChargeTemplate()).getDurationTermInMonth();
-                        if (durationTermInMonth != null)
-                            discountQuotePrice.setRecurrenceDuration(Long.valueOf(durationTermInMonth));
-                        //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
+                        if(durationTermInMonth != null) {
+                        	Long recurrenceDuration=Long.valueOf(durationTermInMonth);
+                        	discountQuotePrice.setRecurrenceDuration(recurrenceDuration);
+                            //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
+                        	discountQuotePrice.setAmountWithTax(discountQuotePrice.getAmountWithTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
+                        	discountQuotePrice.setAmountWithoutTax(discountQuotePrice.getAmountWithoutTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
+                            discountQuotePrice.setTaxAmount(discountQuotePrice.getTaxAmount() != null ? 
+                            		discountQuotePrice.getTaxAmount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null);
+                            
+                            //set AmountWithoutTaxWithDiscount
+                            quotePrice.setAmountWithoutTaxWithDiscount(quotePrice.getAmountWithoutTax().add(discountQuotePrice.getAmountWithoutTax()));
+                        }
                     }
                     discountQuotePrice.setUnitPriceWithoutTax(discountAmount);
                     discountQuotePrice.setTaxRate(taxPercent);
                     quotePriceService.create(discountQuotePrice);
+                    quoteArticleLine.getQuotePrices().add(quotePrice);
+                    quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
                     discountPrices.add(discountQuotePrice);
                 }
             }
