@@ -8952,5 +8952,9 @@ public class OrderAdvancement extends ModuleScript {
     <changeSet   id="#20210123_540_281_5" author="TarikFA.">
         <sql>update ${db.schema.adapted}ar_payment_token set uuid = 'payment_token'||id where uuid is null</sql>
     </changeSet>
-
+    
+    <changeSet id="#5599_20210526" author="AbdelmounaimAkadid">
+    	<sql>CREATE INDEX ${db.schema.adapted}idx_billing_invoice_agr_amount_on_aggr_id  ON billing_invoice_agr_amount (aggr_id);</sql>
+    </changeSet>
+    
 </databaseChangeLog>
