@@ -107,11 +107,11 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
         jobExecutionResultService.persistResult(jobExecutionResult);
 
-        Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, "nbRuns", -1L);
+        Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
         if (nbThreads == -1) {
             nbThreads = (long) Runtime.getRuntime().availableProcessors();
         }
-        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "waitingMillis", 0L);
+        Long waitingMillis = (Long) this.getParamOrCFValue(jobInstance, Job.CF_WAITING_MILLIS, 0L);
 
         List<Future> futures = new ArrayList<>();
         MeveoUser lastCurrentUser = currentUser.unProxy();
