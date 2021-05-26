@@ -8035,9 +8035,7 @@
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
-            <column name="tax_category_id" type="bigint">
-                <constraints nullable="false" />
-            </column>
+            <column name="tax_category_id" type="bigint" />
             <column name="tax_class_id" type="bigint" />
             <column name="valid_from" type="datetime" />
             <column name="valid_to" type="datetime" />
@@ -9274,7 +9272,7 @@
             <column name="status" type="varchar(20)">
                 <constraints nullable="false" />
             </column>
-            <column name="previews_status" type="varchar(20)"/>
+            <column name="previous_status" type="varchar(20)"/>
             <column name="status_date" type="datetime" />
             <column name="send_date" type="datetime" />
             <column name="quote_date" type="datetime" />
@@ -9340,6 +9338,7 @@
 
             <column name="recurrence_periodicity" type="varchar(50)" />
             <column name="charge_template_id" type="bigint"/>
+             <column name="quote_offer_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -9915,6 +9914,8 @@
 
             <column name="recurrence_periodicity" type="varchar(50)" />
             <column name="charge_template_id" type="bigint"/>
+            <column name="order_offer_id" type="bigint"/>
+            
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-484" author="NabilOUACHI">
@@ -13963,6 +13964,19 @@
       <addForeignKeyConstraint baseColumnNames="product_model_id" baseTableName="cpq_product" constraintName="fk_cpq_product_model_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />   
     </changeSet>
+    
+      <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1629">
+       <addForeignKeyConstraint
+			baseColumnNames="quote_offer_id" baseTableName="cpq_quote_price" constraintName="fk_cpq_quote_price_quote_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="quote_offer" />  
+     </changeSet>
+    
+     <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1630">
+        <addForeignKeyConstraint
+			 baseColumnNames="order_offer_id" baseTableName="order_price" constraintName="fk_order_price_order_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			 referencedColumnNames="id" referencedTableName="cpq_order_offer" /> 
+    </changeSet>
+    
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15676,28 +15690,13 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#5937_20210428" author="Mbarek-Ay"></changeSet>
     <changeSet id="#5595_540498_20210430" author="TarikFA."></changeSet>
 
-    <changeSet   id="#20210123_540_281_1" author="TarikFA.">
-        <sql>update ${db.schema.adapted}adm_role set uuid = 'role'||id</sql>
-    </changeSet>
-    <changeSet   id="#20210123_540_281_2" author="TarikFA.">
-        <sql>update ${db.schema.adapted}cpq_quote_attribute set uuid = 'quote_attribute'||id</sql>
-    </changeSet>
-    <changeSet   id="#20210123_540_281_3" author="TarikFA.">
-        <sql>update ${db.schema.adapted}cpq_order_attribute  set uuid = 'order_item'||id</sql>
-    </changeSet>
-    <changeSet   id="#20210123_540_281_4" author="TarikFA.">
-        <sql>update ${db.schema.adapted}cpq_attribute_instance set uuid = 'attribute_instance'||id</sql>
-    </changeSet>
-    <changeSet   id="#20210123_540_281_5" author="TarikFA.">
-        <sql>update ${db.schema.adapted}ar_payment_token set uuid = 'payment_token'||id</sql>
-    </changeSet>
-
     <changeSet id="#5595_540498_20210430" author="TarikFA." />
 	<changeSet id="#5595_540499_20210430" author="TarikFA." />
 	<changeSet id="#5595_540504_20210503" author="TarikFA." />
     <changeSet id="#6076_20210504" author="Zbariki" />
     <changeSet id="#5595_20210506" author="NabilOuachi"></changeSet>
-
+    <changeSet id="#5595_20210512" author="RachidAityaazza"></changeSet>
+    <changeSet id="#5623-562-20210520" author="Mbarek-Ay"/>
     
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

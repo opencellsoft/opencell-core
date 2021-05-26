@@ -16,6 +16,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.DiscountPlanApi;
 import org.meveo.api.catalog.DiscountPlanItemApi;
 import org.meveo.api.catalog.OfferTemplateApi;
@@ -37,6 +38,7 @@ import org.meveo.api.dto.response.cpq.GetListProductVersionsResponseDto;
 import org.meveo.api.dto.response.cpq.GetListProductsResponseDto;
 import org.meveo.api.dto.response.cpq.GetProductDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
+import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -199,7 +201,9 @@ public class ProductApi extends BaseApi {
 			
 			if(!productCode.equalsIgnoreCase(productDto.getCode()) &&  productService.findByCode(productDto.getCode()) != null)
 				throw new EntityAlreadyExistsException(Product.class,productDto.getCode());
-			
+
+			//set current product version 
+			var versions = productVersionService.findLastVersionByCode(productCode);
 			product.setCode(productDto.getCode());
 			product.setDescription(productDto.getLabel());
 			if(!StringUtils.isBlank(productDto.getProductLineCode())) {
@@ -262,8 +266,6 @@ public class ProductApi extends BaseApi {
 			product.setPackageFlag(productDto.isPackageFlag());
 			createProductChargeTemplateMappings(product, productDto.getProductChargeTemplateMappingDto());
 			
-			//set current product version 
-			var versions = productVersionService.findLastVersionByCode(productCode);
 			var publishedVersion = versions.stream()
 											.filter(pv -> pv.getStatus().equals(VersionStatusEnum.PUBLISHED))
 												.sorted( (pv1, pv2) -> pv2.getValidity().compareFieldTo(pv1.getValidity())).collect(Collectors.toList());
@@ -653,11 +655,14 @@ public class ProductApi extends BaseApi {
 		product.getProductCharges().addAll(productCharges);
 	}
 
-	public void removeProduct(String codeProduct) {
-		try { 
-			productService.removeProduct(codeProduct);
-		} catch (BusinessException e) {
-			throw new MeveoApiException(e);
+	public void removeProduct(String codeProduct) { 
+		try {
+			productService.removeProduct(codeProduct); 
+		} catch (Exception e) {
+			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+				throw new DeleteReferencedEntityException(Product.class, codeProduct);
+			}
+			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
 		}
 	}
 	 

@@ -2,7 +2,6 @@ package org.meveo.service.billing.impl;
 
 import static java.math.RoundingMode.HALF_UP;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -942,9 +941,9 @@ public class InvoiceServiceTest {
     	Mockito.doReturn(order).when(invoiceService).tryToFindByEntityClassAndCode(Order.class, inputInvoice.getOrderCode());
     	Mockito.doReturn(billingAccount).when(invoiceService).tryToFindByEntityClassAndCode(BillingAccount.class, inputInvoice.getBillingAccountCode());
     	Mockito.doReturn(accountingArticle).when(invoiceService).tryToFindByEntityClassAndCode(AccountingArticle.class, inputInvoice.getArticleCode());
-    	Mockito.doReturn(advType).when(invoiceService).tryToFindByEntityClassAndCode(InvoiceType.class, "ADV");
+    	Mockito.doReturn(advType).when(invoiceService).tryToFindByEntityClassAndCode(InvoiceType.class, inputInvoice.getInvoiceTypeCode());
     	Mockito.doNothing().when(invoiceService).postCreate(any());
-    	final Invoice advancePaymentInvoice = invoiceService.createAdvancePaymentInvoice(inputInvoice);
+    	final Invoice advancePaymentInvoice = invoiceService.createBasicInvoiceInvoice(inputInvoice);
     	
     	BigDecimal amountWithTax = inputInvoice.getAmountWithTax();
     	Date invoiceDate = inputInvoice.getInvoiceDate();
@@ -964,7 +963,6 @@ public class InvoiceServiceTest {
 		assertThat(advancePaymentInvoice.getNetToPay()).isEqualTo(amountWithTax);
 		assertThat(advancePaymentInvoice.getStatus()).isEqualTo(InvoiceStatusEnum.VALIDATED);
     	 
-    	//TODO
     }
     
     @Test

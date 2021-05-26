@@ -234,7 +234,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         }
 
         offer.setId(null);
-
+        offer.setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
         offer.setVersion(0);
         offer.setAuditable(new Auditable());
         offer.clearUuid();
@@ -330,6 +330,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         			mediaService.detach(media);
         			Media newMedia = new Media(media);  
         			newMedia.setMediaName(media.getMediaName() + "_" + offer.getId());
+        			newMedia.setCode(mediaService.findDuplicateCode(media));
         			mediaService.create(newMedia);
     				offer.getMedias().add(newMedia);
     			}

@@ -199,12 +199,12 @@ public class SepaFile extends AbstractDDRequestBuilder {
 			}
 
 			String dDRequestLOTref = orgnlGrpInfAndSts.getOrgnlMsgId();
-			if (dDRequestLOTref == null || dDRequestLOTref.indexOf(DASH_STRING) < 0) {
+			if (dDRequestLOTref == null || !dDRequestLOTref.contains(DASH_STRING)) {
 				throw new BusinessException("Unknown dDRequestLOTref:" + dDRequestLOTref);
 			}
 			String[] dDRequestLOTrefSplited = dDRequestLOTref.split(DASH_STRING);
 
-			ddRejectFileInfos.setDdRequestLotId(new Long(dDRequestLOTrefSplited[1]));
+			ddRejectFileInfos.setDdRequestLotId(Long.valueOf(dDRequestLOTrefSplited[1]));
 
 			if (orgnlGrpInfAndSts.getGrpSts() != null && REJECT_STS_CODE.equals(orgnlGrpInfAndSts.getGrpSts())) {
 				ddRejectFileInfos.setTheDDRequestFileWasRejected(true);
@@ -215,12 +215,12 @@ public class SepaFile extends AbstractDDRequestBuilder {
 			for (TxInfAndSts txInfAndSts : orgnlPmtInfAndSts.getTxInfAndSts()) {
 				try {
 					if (REJECT_STS_CODE.equals(txInfAndSts.getTxSts())) {
-						ddRejectFileInfos.getListInvoiceRefsRejected().put(new Long(txInfAndSts.getOrgnlEndToEndId()), REJECT_STS_CODE);
+						ddRejectFileInfos.getListInvoiceRefsRejected().put(Long.valueOf(txInfAndSts.getOrgnlEndToEndId()), REJECT_STS_CODE);
 						ddRejectFileInfos.addItemOk();
 					}
 				} catch (Exception e) {
 					ddRejectFileInfos.addItemKo();
-					log.error("Error on processSDDRejectedFile txInfAndSts.getOrgnlInstrId:" + txInfAndSts.getOrgnlInstrId(), e);
+					log.error("Error on processSDDRejectedFile txInfAndSts.getOrgnlInstrId:{}",txInfAndSts.getOrgnlInstrId(), e);
 					ddRejectFileInfos.getListErrors().add("Error on processSDDRejectedFile txInfAndSts.getOrgnlInstrId:" + txInfAndSts.getOrgnlInstrId());
 				}
 			}
@@ -267,7 +267,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 			outputDir = outputDir + File.separator + additionalOutputDir;
 			outputDir = outputDir.replaceAll(DOUBLE_POINT, EMPTY_STRING);
 
-			log.info("DDRequest output directory=" + outputDir);
+			log.info("DDRequest output directory={}", outputDir);
 			File dir = new File(outputDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
@@ -301,7 +301,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 			String schemaLocation = paramBean.getProperty("sepa.schemaLocation.pain008", SDD_SCHEMA_LOCATION);
 			JAXBUtils.marshaller(document, new File(ddRequestLot.getFileName()), schemaLocation);
 		} catch (Exception e) {
-			log.error("Error on generateDDRequestLotFileForSSD", e);
+			log.error("Error on generateDDRequestLotFileForSSD {}", e);
 			throw new BusinessException(e.getMessage());
 		}
 
@@ -322,10 +322,11 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		List<DDRequestItem> ddrequestItems = ddRequestLot.getDdrequestItems();
 		DDRequestItem ddrequestItem;
 		Long operationsByFile = ddRequestLot.getDdRequestBuilder().getNbOperationPerFile();
+		long ddRequestItemSize = ddrequestItems.size();
 		if (operationsByFile == null || operationsByFile <= 0) {
-			operationsByFile = (long) ddrequestItems.size();
+			operationsByFile = ddRequestItemSize;
 		}
-		int filesToGenerate = ddrequestItems.size() == 0 ? 0 : (int) Math.ceil(ddrequestItems.size() / (double) operationsByFile);
+		int filesToGenerate = ddrequestItems.isEmpty() ? 0 : (int) Math.ceil(ddRequestItemSize / (double) operationsByFile);
 		int opToGenerateByFile;
 		int generatedOps = 0;
 		int opWithErrorsByFile;
@@ -342,14 +343,13 @@ public class SepaFile extends AbstractDDRequestBuilder {
 				totalAmount = BigDecimal.ZERO;
 				opToGenerateByFile = 0;
 				opWithErrorsByFile = 0;
-				while (generatedOps < ddrequestItems.size() && opToGenerateByFile < operationsByFile) {
+				while (generatedOps < ddRequestItemSize && opToGenerateByFile < operationsByFile) {
 					ddrequestItem = ddrequestItems.get(generatedOps);
 					totalAmount = totalAmount.add(ddrequestItem.getAmount());
 					if (!ddrequestItem.hasError()) {
 						addSctPaymentInformation(message, ddrequestItem, appProvider);
 					} else {
-						log.error("ddrequestItem with id = " + ddrequestItem.getId() + " has Errors :" + ddrequestItem.getErrorMsg() + ". The file " + fileName
-								+ " will not contain all payment informations.");
+						log.error("ddrequestItem with id ={} has Errors :{} . The file {} will not contain all payment informations.", ddrequestItem.getId(), ddrequestItem.getErrorMsg(), fileName);
 						opWithErrorsByFile++;
 					}
 					opToGenerateByFile++;
@@ -382,14 +382,20 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	 * @param message      the SDD message
 	 * @param ddRequestLOT the dd request LOT
 	 * @param appProvider  the provider
-	 * @throws Exception the exception
 	 */
-	private void addHeader(CustomerDirectDebitInitiationV02 message, DDRequestLOT ddRequestLOT, Provider appProvider) throws Exception {
+	private void addHeader(CustomerDirectDebitInitiationV02 message, DDRequestLOT ddRequestLOT, Provider appProvider){
 
 		GroupHeader39 groupHeader = new GroupHeader39();
 		message.setGrpHdr(groupHeader);
 		groupHeader.setMsgId(ArConfig.getDDRequestHeaderReference() + DASH_STRING + ddRequestLOT.getId());
-		groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
+		try {
+			groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
+		}
+		catch (Exception e)
+		{
+			log.error("Error on dateToXMLGregorianCalendar {}", e);
+			throw new BusinessException(e.getMessage());
+		}
 		groupHeader.setNbOfTxs(String.valueOf(ddRequestLOT.getNbItemsOk()));
 		groupHeader.setCtrlSum(ddRequestLOT.getTotalAmount().setScale(2, RoundingMode.HALF_UP));
 		PartyIdentification32 initgPty = new PartyIdentification32();
@@ -406,17 +412,17 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	/**
 	 * Adds the payment information of SDD file.
 	 *
-	 * @param Message       the SDD message
+	 * @param message       the SDD message
 	 * @param dDRequestItem the dd request item
 	 * @param appProvider   the provider
 	 * @throws Exception the exception
 	 */
-	private void addPaymentInformation(CustomerDirectDebitInitiationV02 Message, DDRequestItem dDRequestItem, Provider appProvider) throws Exception {
+	private void addPaymentInformation(CustomerDirectDebitInitiationV02 message, DDRequestItem dDRequestItem, Provider appProvider) throws Exception {
 
-		log.info("addPaymentInformation dDRequestItem id=" + dDRequestItem.getId());
+		log.info("addPaymentInformation dDRequestItem id={}", dDRequestItem.getId());
 		ParamBean paramBean = ParamBean.getInstanceByProvider(appProvider.getCode());
 		PaymentInstructionInformation4 paymentInformation = new PaymentInstructionInformation4();
-		Message.getPmtInf().add(paymentInformation);
+		message.getPmtInf().add(paymentInformation);
 		paymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference() + DASH_STRING + dDRequestItem.getId());
 		paymentInformation.setPmtMtd(PaymentMethod2Code.DD);
 		paymentInformation.setNbOfTxs(NUMBER_OF_TRANSACTIONS_1);
@@ -480,25 +486,25 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	 * @param paymentInformation the payment information of SDD file
 	 * @throws Exception the exception
 	 */
-	private void addTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation4 paymentInformation) throws Exception {
+	private void addTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation4 paymentInformation) {
 		dDRequestItem = ddRequestItemService.findById(dDRequestItem.getId(), Arrays.asList("accountOperations"));
 		CustomerAccount ca = customerAccountService.findById(dDRequestItem.getAccountOperations().get(0).getCustomerAccount().getId(),Arrays.asList("paymentMethods"));
-		PaymentMethod preferedPaymentMethod = customerAccountService.getPreferredPaymentMethod(dDRequestItem.getAccountOperations().get(0), PaymentMethodEnum.DIRECTDEBIT);
-		if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
+		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
+		if (!(preferedPaymentMethod instanceof DDPaymentMethod)) {
 			throw new BusinessException("Payment method not valid!");
 		}
 		BankCoordinates bankCoordinates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
 
 		if (bankCoordinates == null) {
-			throw new BusinessException("Bank Coordinate is absent for Payment method " + ((DDPaymentMethod) preferedPaymentMethod).getAlias());
+			throw new BusinessException("Bank Coordinate is absent for Payment method " + preferedPaymentMethod.getAlias());
 		}
 
 		DirectDebitTransactionInformation9 directDebitTransactionInformation = new DirectDebitTransactionInformation9();
 		paymentInformation.getDrctDbtTxInf().add(directDebitTransactionInformation);
-		PaymentIdentification1 PaymentIdentification = new PaymentIdentification1();
-		directDebitTransactionInformation.setPmtId(PaymentIdentification);
-		PaymentIdentification.setInstrId(String.valueOf(dDRequestItem.getId()));
-		PaymentIdentification.setEndToEndId(String.valueOf(dDRequestItem.getId()));
+		PaymentIdentification1 paymentIdentification = new PaymentIdentification1();
+		directDebitTransactionInformation.setPmtId(paymentIdentification);
+		paymentIdentification.setInstrId(String.valueOf(dDRequestItem.getId()));
+		paymentIdentification.setEndToEndId(String.valueOf(dDRequestItem.getId()));
 		ActiveOrHistoricCurrencyAndAmount instructedAmount = new ActiveOrHistoricCurrencyAndAmount();
 		directDebitTransactionInformation.setInstdAmt(instructedAmount);
 		instructedAmount.setValue(dDRequestItem.getAmount().setScale(2, RoundingMode.HALF_UP));
@@ -509,7 +515,14 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		directDebitTransaction.setMndtRltdInf(mandateRelatedInformation);
 
 		mandateRelatedInformation.setMndtId(((DDPaymentMethod) preferedPaymentMethod).getMandateIdentification());
-		mandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendarFieldUndefined(((DDPaymentMethod) preferedPaymentMethod).getMandateDate()));
+		try{
+			mandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendarFieldUndefined(((DDPaymentMethod) preferedPaymentMethod).getMandateDate()));
+		}
+		catch (Exception e)
+		{
+			log.error("Error on dateToXMLGregorianCalendarFieldUndefined {}", e);
+			throw new BusinessException(e.getMessage());
+		}
 		BranchAndFinancialInstitutionIdentification4 debtorAgent = new BranchAndFinancialInstitutionIdentification4();
 		directDebitTransactionInformation.setDbtrAgt(debtorAgent);
 		FinancialInstitutionIdentification7 financialInstitutionIdentification = new FinancialInstitutionIdentification7();
@@ -536,9 +549,9 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	 * @param appProvider   the provider
 	 * @throws Exception the exception
 	 */
-	private void addSctPaymentInformation(CustomerCreditTransferInitiationV03 message, DDRequestItem ddrequestItem, Provider appProvider) throws Exception {
+	private void addSctPaymentInformation(CustomerCreditTransferInitiationV03 message, DDRequestItem ddrequestItem, Provider appProvider) {
 
-		log.info("addPaymentInformation dDRequestItem id=" + ddrequestItem.getId());
+		log.info("addPaymentInformation dDRequestItem id={} ", ddrequestItem.getId());
 
 		PaymentInstructionInformation3 paymentInformation = new PaymentInstructionInformation3();
 		message.getPmtInf().add(paymentInformation);
@@ -556,7 +569,14 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		paymentTypeInformation.setCtgyPurp(ctgyPurp);
 		ctgyPurp.setCd(CATEGORY_PURPOSE_CODE);
 
-		paymentInformation.setReqdExctnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(calendarBankingService.getNextBankWorkingDate(new Date())));
+		try{
+			paymentInformation.setReqdExctnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(calendarBankingService.getNextBankWorkingDate(new Date())));
+		}
+		catch (Exception e)
+		{
+			log.error("Error on dateToXMLGregorianCalendarFieldUndefined {}", e);
+			throw new BusinessException(e.getMessage());
+		}
 
 		org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32 dbtr = new org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32();
 		if (ddrequestItem.getDdRequestLOT().getSeller() != null) {
@@ -609,11 +629,17 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	 *                     one ddRequest lot
 	 * @throws Exception the exception
 	 */
-	private void addSctHeader(CustomerCreditTransferInitiationV03 message, DDRequestLOT ddRequestLot, Provider appProvider, int fileNumber) throws Exception {
+	private void addSctHeader(CustomerCreditTransferInitiationV03 message, DDRequestLOT ddRequestLot, Provider appProvider, int fileNumber) {
 		GroupHeader32 groupHeader = new GroupHeader32();
 		message.setGrpHdr(groupHeader);
 		groupHeader.setMsgId(ArConfig.getSCTRequestHeaderRefrence() + DASH_STRING + ddRequestLot.getId() + DASH_STRING + fileNumber);
-		groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
+		try{
+			groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
+		}
+		catch(Exception e){
+			log.error("Error on dateToXMLGregorianCalendar {}", e);
+			throw new BusinessException(e.getMessage());
+		}
 		org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32 initgPty = new org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32();
 		initgPty.setNm(appProvider.getDescription());
 		groupHeader.setInitgPty(initgPty);
@@ -623,20 +649,17 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	/**
 	 * Adds the transaction for SCT file.
 	 *
-	 * @param ao                 the account operation
 	 * @param paymentInformation the payment information of SCT file
-	 * @throws Exception the exception
 	 */
-	private void addSctTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation3 paymentInformation) throws Exception {
-		dDRequestItem = ddRequestItemService.findById(dDRequestItem.getId(), Arrays.asList("accountOperations"));
-		CustomerAccount ca = customerAccountService.findById(dDRequestItem.getAccountOperations().get(0).getCustomerAccount().getId(),Arrays.asList("paymentMethods"));
-		PaymentMethod preferedPaymentMethod = customerAccountService.getPreferredPaymentMethod(dDRequestItem.getAccountOperations().get(0), PaymentMethodEnum.DIRECTDEBIT);
-		if (preferedPaymentMethod == null || !(preferedPaymentMethod instanceof DDPaymentMethod)) {
+	private void addSctTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation3 paymentInformation) {
+		CustomerAccount ca = dDRequestItem.getAccountOperations().get(0).getCustomerAccount();
+		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
+		if (!(preferedPaymentMethod instanceof DDPaymentMethod)) {
 			throw new BusinessException("Payment method not valid!");
 		}
 		BankCoordinates bankCoordinates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
 		if (bankCoordinates == null) {
-			throw new BusinessException("Bank Coordinate is absent for Payment method " + ((DDPaymentMethod) preferedPaymentMethod).getAlias());
+			throw new BusinessException("Bank Coordinate is absent for Payment method " + preferedPaymentMethod.getAlias());
 		}
 
 		CreditTransferTransactionInformation10 cdtTrfTxInf = new CreditTransferTransactionInformation10();
@@ -705,7 +728,8 @@ public class SepaFile extends AbstractDDRequestBuilder {
 			return appProvider.getBankCoordinates();
 		}
 	}
-	
+
+	@Override
 	 protected Object getServiceInterface(String serviceInterfaceName) {
 	        return EjbUtils.getServiceInterface(serviceInterfaceName);
 	    }

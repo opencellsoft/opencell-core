@@ -114,15 +114,15 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 		for(OrderOffer offer : validOffers){
 			Subscription subscription = new Subscription();
-			subscription.setCode(UUID.randomUUID().toString());
 			subscription.setSeller(order.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
-
+			subscription.setUserAccount(order.getUserAccount());
+            subscription.setCode(subscription.getSeller().getCode() + "_" + subscription.getUserAccount().getCode() + "_" + offer.getId());
 			subscription.setOffer(offer.getOfferTemplate());
 			subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 			subscription.setSubscriptionDate(order.getOrderDate());
 			subscription.setEndAgreementDate(null);
 			subscription.setRenewed(true);
-			subscription.setUserAccount(order.getUserAccount());
+			
 			subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
 
 			subscriptionService.create(subscription);

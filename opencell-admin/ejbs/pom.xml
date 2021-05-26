@@ -211,7 +211,6 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>javax.mail-api</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -278,19 +277,16 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxrs</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxb-provider</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-multipart-provider</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -649,6 +645,12 @@
 		  <artifactId>stripe-java</artifactId>
 		  <version>${version.stripe-sdk}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>com.worldline.sips</groupId>
+            <artifactId>payment-sdk</artifactId>
+            <version>${version.sips-payment-sdk}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.keycloak</groupId>

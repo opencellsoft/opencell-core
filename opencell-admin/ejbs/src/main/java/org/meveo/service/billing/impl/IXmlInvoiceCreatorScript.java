@@ -32,5 +32,5 @@ public interface IXmlInvoiceCreatorScript extends ScriptInterface {
      * @throws SAXException sax exception
      * @throws IOException IO exception
      */
-    public File createDocumentAndFile(Invoice invoice, boolean isVirtual, String fullXmlFilePath) throws BusinessException, ParserConfigurationException, SAXException, IOException;
+    File createDocumentAndFile(Invoice invoice, boolean isVirtual, String fullXmlFilePath) throws BusinessException, ParserConfigurationException, SAXException, IOException;
 }

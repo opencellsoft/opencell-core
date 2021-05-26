@@ -63,7 +63,7 @@ import org.meveo.service.script.ScriptInterface;
 import org.meveo.service.script.payment.AccountOperationFilterScript;
 import org.meveo.service.script.payment.DateRangeScript;
 import org.meveo.util.ApplicationProvider;
-import org.slf4j.Logger;;
+import org.slf4j.Logger;
 
 /**
  * The Class SepaDirectDebitJobBean.
@@ -126,9 +126,8 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 
 		try {
-			Long nbRuns = new Long(1);
-			Long waitingMillis = new Long(0);
-
+			Long nbRuns;
+			Long waitingMillis;
 			try {
 				nbRuns = (Long) this.getParamOrCFValue(jobInstance, "SepaJob_nbRuns");
 				waitingMillis = (Long) this.getParamOrCFValue(jobInstance, "SepaJob_waitingMillis");
@@ -137,16 +136,16 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 				}
 
 			} catch (Exception e) {
-				nbRuns = new Long(1);
-				waitingMillis = new Long(0);
-				log.warn("Cant get nbRuns and waitingMillis customFields for " + jobInstance.getCode(), e.getMessage());
+				nbRuns = 1L;
+				waitingMillis = 0L;
+				log.warn("Cant get nbRuns and waitingMillis customFields for {},{}", jobInstance.getCode(), e.getMessage());
 			}
-			DDRequestBuilder ddRequestBuilder = null;
+			DDRequestBuilder ddRequestBuilder;
 			Seller seller = null;
-			String ddRequestBuilderCode = null;
-			String sellerCode = null;
+			String ddRequestBuilderCode;
+			String sellerCode;
 			PaymentOrRefundEnum paymentOrRefundEnum = PaymentOrRefundEnum.valueOf(((String) this.getParamOrCFValue(jobInstance, "SepaJob_paymentOrRefund")).toUpperCase());
-			if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestBuilder") != null) {
+			if (this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestBuilder") != null) {
 				ddRequestBuilderCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_ddRequestBuilder")).getCode();
 				ddRequestBuilder = ddRequestBuilderService.findByCode(ddRequestBuilderCode);
 			} else {
@@ -155,7 +154,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 			if (ddRequestBuilder == null) {
 				throw new BusinessException("Can't find ddRequestBuilder by code:" + ddRequestBuilderCode);
 			}
-			if ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_seller") != null) {
+			if (this.getParamOrCFValue(jobInstance, "SepaJob_seller") != null) {
 				sellerCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "SepaJob_seller")).getCode();
 				seller = sellerService.findByCode(sellerCode);
 			}
@@ -164,8 +163,9 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 			List<DDRequestLotOp> ddrequestOps = dDRequestLotOpService.getDDRequestOps(ddRequestBuilder, seller, paymentOrRefundEnum);
 
 			if (CollectionUtils.isNotEmpty(ddrequestOps)) {
-				log.info("ddrequestOps found:" + ddrequestOps.size());				
-
+				int nbItemsToProcess = ddrequestOps.size();
+				log.info("ddrequestOps found:{}",nbItemsToProcess);
+				result.setNbItemsToProcess(nbItemsToProcess);
 			} else {
 				final String msg = "ddrequestOps IS EMPTY !";
 				log.info(msg);
@@ -193,7 +193,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
 						log.info("start filterAoToPayOrRefund...");
 						List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
-						log.info("end filterAoToPayOrRefund listAoToPay.size:" + listAoToPay.size());
+						log.info("end filterAoToPayOrRefund listAoToPay.size: {}", listAoToPay.size());
 						DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
 						log.info("end createDDRquestLot");
 						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
@@ -283,7 +283,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 				if (scriptCode != null) {
 					log.debug(" looking for ScriptInstance with code :  [{}] ", scriptCode);
 					ScriptInterface si = scriptInstanceService.getScriptInstance(scriptCode);
-					if (si != null && si instanceof DateRangeScript) {
+					if (si instanceof DateRangeScript) {
 						return (DateRangeScript) si;
 					}
 				}
@@ -365,7 +365,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
             if (aoFilterScriptCode != null) {
                 log.debug(" looking for ScriptInstance with code :  [{}] ", aoFilterScriptCode);
                 ScriptInterface si = scriptInstanceService.getScriptInstance(aoFilterScriptCode);
-                if (si != null && si instanceof AccountOperationFilterScript) {
+                if (si instanceof AccountOperationFilterScript) {
                     return (AccountOperationFilterScript) si;
                 }
             }

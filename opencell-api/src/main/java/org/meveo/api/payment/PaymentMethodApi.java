@@ -32,6 +32,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
+import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -407,7 +408,7 @@ public class PaymentMethodApi extends BaseApi {
         }
     }
 
-    public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException {
+    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException {
         return paymentMethodService.getHostedCheckoutUrl(hostedCheckoutInput);
     }
 

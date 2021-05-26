@@ -141,7 +141,7 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
                 events.add(NotificationEventTypeEnum.RENEWAL_UPDATED);
                 events.add(NotificationEventTypeEnum.END_OF_TERM);
-                if(clazzStr.equals(Subscription.class.getName()) ) {
+                if (clazzStr.equals(Subscription.class.getName())) {
                     events.add(NotificationEventTypeEnum.VERSION_CREATED);
                     events.add(NotificationEventTypeEnum.VERSION_REMOVED);
                 }
@@ -150,8 +150,9 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
                 events.add(NotificationEventTypeEnum.XML_GENERATED);
                 events.add(NotificationEventTypeEnum.PDF_GENERATED);
-            }else if(clazzStr.equals(CommercialOrder.class.getName())) {
+            } else if (clazzStr.equals(CommercialOrder.class.getName())) {
                 events.add(NotificationEventTypeEnum.ADVT_RATE_INCREASED);
+                events.add(NotificationEventTypeEnum.STATUS_UPDATED);
             }
         } else if (hasNotificableEntity(clazz)) {
             // No longer is being used
@@ -160,8 +161,8 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
 //            } else
             if (clazzStr.equals(CDR.class.getName())) {
                 events.add(NotificationEventTypeEnum.REJECTED_CDR);
-            }else if (clazzStr.equals(JobExecutionResultImpl.class.getName())) {
-            	events.add(NotificationEventTypeEnum.STARTED);
+            } else if (clazzStr.equals(JobExecutionResultImpl.class.getName())) {
+                events.add(NotificationEventTypeEnum.STARTED);
                 events.add(NotificationEventTypeEnum.PROCESSED);
             }
         }

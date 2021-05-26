@@ -73,6 +73,7 @@ import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceModeEnum;
+import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
@@ -561,6 +562,7 @@ public class InvoiceApi extends BaseApi {
         if (invoice == null) {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
         }
+        invoice.setStatus(InvoiceStatusEnum.VALIDATED);
         invoice = serviceSingleton.assignInvoiceNumber(invoice);
         return invoice.getInvoiceNumber();
     }

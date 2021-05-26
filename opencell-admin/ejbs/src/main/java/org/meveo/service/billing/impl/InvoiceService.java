@@ -2733,6 +2733,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice = update(invoice);
     }
 
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Invoice updateStatus(Long invoiceId, InvoiceStatusEnum status) {
+        Invoice invoice = findById(invoiceId);
+        invoice.setStatus(status);
+        return update(invoice);
+    }
+
     /**
      * Re-computed invoice date, due date and collection date when the invoice is validated.
      *
@@ -2752,8 +2760,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (billingRun == null) {
             return;
         }
-        if (!billingRun.getComputeDatesAtValidation() ||!billingCycle.getComputeDatesAtValidation()) return;
-        if (billingRun.getComputeDatesAtValidation() || billingCycle.getComputeDatesAtValidation()){
+        if (billingRun.getComputeDatesAtValidation() != null && !billingRun.getComputeDatesAtValidation()) {
+            return;
+        } else if (billingRun.getComputeDatesAtValidation() == null && !billingCycle.getComputeDatesAtValidation()) {
+            return;
+        }
+        if (billingRun.getComputeDatesAtValidation() != null && billingRun.getComputeDatesAtValidation()) {
+            recalculateDate(invoice, billingRun, billingAccount, billingCycle);
+            update(invoice);
+        } else if (billingRun.getComputeDatesAtValidation() == null && billingCycle.getComputeDatesAtValidation()) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
             update(invoice);
         }
@@ -3814,7 +3829,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         invoice.setBillingAccount(billingAccount);
         invoice.setSeller(seller);
-        invoice.setStatus(automaticInvoiceCheck? InvoiceStatusEnum.NEW : InvoiceStatusEnum.VALIDATED);
+        invoice.setStatus(InvoiceStatusEnum.DRAFT);
         invoice.setInvoiceType(invoiceType);
         invoice.setPrepaid(isPrepaid);
         invoice.setInvoiceDate(invoiceDate);
@@ -4163,9 +4178,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoiceAgregateTax = new TaxInvoiceAgregate();
         invoiceAgregateTax.setInvoice(invoice);
         invoiceAgregateTax.setBillingRun(null);
-        invoiceAgregateTax.setTax(tax);
-        invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
-        invoiceAgregateTax.setTaxPercent(tax.getPercent());
+        if(tax!=null) {
+        	 invoiceAgregateTax.setTax(tax);
+             invoiceAgregateTax.setAccountingCode(tax.getAccountingCode());
+             invoiceAgregateTax.setTaxPercent(tax.getPercent());
+        }
         invoiceAgregateTax.setAmountWithoutTax(BigDecimal.ZERO);
         invoiceAgregateTax.setAmountWithTax(BigDecimal.ZERO);
         invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
@@ -4669,7 +4686,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return getInvoicePdf(invoice);
     }
 
-    public Invoice createAdvancePaymentInvoice(BasicInvoice resource) {
+    public Invoice createBasicInvoiceInvoice(BasicInvoice resource) {
         final String billingAccountCode = resource.getBillingAccountCode();
         final String articleCode = resource.getArticleCode() != null ? resource.getArticleCode() : "ADV-STD";
         final BigDecimal amountWithTax = resource.getAmountWithTax();
@@ -4678,17 +4695,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
         Order order = (Order)tryToFindByEntityClassAndCode(Order.class, resource.getOrderCode());
         BillingAccount billingAccount = (BillingAccount)tryToFindByEntityClassAndCode(BillingAccount.class, billingAccountCode);
         AccountingArticle accountingArticle = (AccountingArticle)tryToFindByEntityClassAndCode(AccountingArticle.class, articleCode);
-        InvoiceType advType = (InvoiceType)tryToFindByEntityClassAndCode(InvoiceType.class, "ADV");
+        final String invoiceTypeCode = resource.getInvoiceTypeCode() != null? resource.getInvoiceTypeCode() : "ADV";
+		InvoiceType advType = (InvoiceType)tryToFindByEntityClassAndCode(InvoiceType.class, invoiceTypeCode);
 
-        Invoice invoice = initAdvancePaymentInvoice(amountWithTax, invoiceDate, order, billingAccount, advType);
-        initInvoiceLineForAdvancePayment(resource, amountWithTax, order, billingAccount, accountingArticle, invoice);
-
+        Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, advType);
+        if(resource.getArticleCode()!=null) {
+        	initInvoiceLineForBasicInvoice(resource, amountWithTax, order, billingAccount, accountingArticle, invoice);
+        }
         serviceSingleton.assignInvoiceNumber(invoice);
         postCreate(invoice);
         return invoice;
     }
 
-    private Invoice initAdvancePaymentInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order,
+    private Invoice initBasicInvoiceInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order,
             BillingAccount billingAccount, InvoiceType advType) {
         Invoice invoice = new Invoice();
         invoice.setInvoiceType(advType);
@@ -4712,7 +4731,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoice;
     }
 
-    private InvoiceLine initInvoiceLineForAdvancePayment(BasicInvoice resource, final BigDecimal amountWithTax, Order order,
+    private InvoiceLine initInvoiceLineForBasicInvoice(BasicInvoice resource, final BigDecimal amountWithTax, Order order,
             BillingAccount billingAccount, AccountingArticle accountingArticle, Invoice invoice) {
         InvoiceLine line = new InvoiceLine();
         line.setInvoice(invoice);

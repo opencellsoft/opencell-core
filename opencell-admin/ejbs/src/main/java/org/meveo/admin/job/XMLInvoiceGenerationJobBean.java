@@ -18,9 +18,10 @@
 
 package org.meveo.admin.job;
 
-import java.util.Arrays;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -64,10 +65,8 @@ public class XMLInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
 
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
-        InvoicesToProcessEnum invoicesToProcessEnum = InvoicesToProcessEnum.valueOf((String) this.getParamOrCFValue(jobInstance, "invoicesToProcess", "FinalOnly"));
-
-        List<String> statusNamesList = (List<String>) this.getParamOrCFValue(jobInstance, "invoicesToProcess", Arrays.asList("VALIDATED"));
-        List<InvoiceStatusEnum> statusList = statusNamesList.stream().map(status->InvoiceStatusEnum.valueOf(status)).collect(Collectors.toList());
+        List<String> statusNamesList = (List<String>) this.getParamOrCFValue(jobInstance, "invoicesToProcess", asList("VALIDATED"));
+        List<InvoiceStatusEnum> statusList = statusNamesList.stream().map(status -> InvoiceStatusEnum.valueOf(status)).collect(toList());
         String parameter = jobInstance.getParametres();
 
         Long billingRunId = null;

@@ -1,7 +1,5 @@
 package org.meveo.apiv2.billing.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -17,13 +15,8 @@ import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.ImmutableFile;
 import org.meveo.apiv2.billing.ImmutableInvoice;
 import org.meveo.apiv2.billing.ImmutableInvoices;
-import org.meveo.apiv2.billing.ImmutableInvoiceLine;
-import org.meveo.apiv2.billing.ImmutableInvoiceLines;
-import org.meveo.apiv2.billing.ImmutableInvoiceLinesInput;
 import org.meveo.apiv2.billing.InvoiceInput;
-import org.meveo.apiv2.billing.InvoiceLine;
 import org.meveo.apiv2.billing.InvoiceLineInput;
-import org.meveo.apiv2.billing.InvoiceLines;
 import org.meveo.apiv2.billing.InvoiceLinesInput;
 import org.meveo.apiv2.billing.InvoiceLinesToRemove;
 import org.meveo.apiv2.billing.Invoices;
@@ -111,36 +104,12 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	}
 
 	@Override
-	public Response getAdvancedPaymentInvoices(Long offset, Long limit, String sort, String orderBy, String filter,
-			Request request) {
-		List<Invoice> invoicesEntity = invoiceApiService.listAdvancedPaymentInvoices(offset, limit, sort, orderBy, filter);
-		return buildInvoicesReturn(offset, limit, filter, request, invoicesEntity);
-	}
-
-	@Override
-	public Response createAdvancedPaymentInvoices(BasicInvoice basicInvoice) {
+	public Response createBasicInvoices(BasicInvoice basicInvoice) {
         Invoice invoice = invoiceApiService.create(basicInvoice);
         return Response
                 .created(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, invoice.getId()).build())
                 .entity(toResourceInvoiceWithLink(invoiceMapper.toResource(invoice)))
                 .build();
-	}
-
-	@Override
-	public Response getAdvancedPaymentInvoice(Long id, Request request) {
-		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
-		final String typeCode = invoice.getInvoiceType().getCode();
-		if(!InvoiceApiService.ADV.equals(typeCode)) {
-			throw new NotFoundException("invoice with id '"+id+"' is of type "+typeCode);
-		}
-		return buildInvoiceResponse(request, invoice);
-	}
-
-	@Override
-	public Response getAdvancedPaymentInvoice(String invoiceNumber, Request request) {
-		Invoice invoice = invoiceApiService.findByInvoiceNumberAndTypeCode(InvoiceApiService.ADV, invoiceNumber)
-				.orElseThrow(NotFoundException::new);
-		return buildInvoiceResponse(request, invoice);
 	}
 
 	@Override

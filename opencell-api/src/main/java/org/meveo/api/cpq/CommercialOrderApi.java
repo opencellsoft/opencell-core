@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.apache.commons.collections4.map.HashedMap;
@@ -29,6 +30,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.StatusUpdated;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
@@ -120,6 +122,10 @@ public class CommercialOrderApi extends BaseApi {
 	
 	@Inject
 	private DiscountPlanService discountPlanService;
+
+	@Inject
+	@StatusUpdated
+	private Event<CommercialOrder> commercialOrderStatusUpdatedEvent;
 	
 	public CommercialOrderDto create(CommercialOrderDto orderDto) {
 		checkParam(orderDto);
@@ -223,7 +229,7 @@ public class CommercialOrderApi extends BaseApi {
 		if(order == null)
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderDto.getId());
 		if(!order.getStatus().equals(CommercialOrderEnum.DRAFT.toString()) && !order.getStatus().equals(CommercialOrderEnum.FINALIZED.toString())) {
-			throw new BusinessApiException("The Order can not be edited, the status must not be : " + order.getStatus());
+			throw new MeveoApiException("The Order can not be edited, the status must not be : " + order.getStatus());
 		}
 		if(order.getOrderProgress() != null)
 			order.setOrderProgressTmp(Integer.valueOf(order.getOrderProgress().intValue()));
@@ -339,6 +345,8 @@ public class CommercialOrderApi extends BaseApi {
 		CommercialOrder order = commercialOrderService.findById(commercialOrderId);
 		if(order == null)
 			throw new EntityDoesNotExistsException(CommercialOrder.class, commercialOrderId);
+		if(order.getStatus().equalsIgnoreCase(statusTarget))
+			return;
 		if(order.getStatus().equalsIgnoreCase(CommercialOrderEnum.CANCELED.toString())) {
 			throw new MeveoApiException("can not change order status, because the current status is Canceled");
 		}
@@ -360,8 +368,9 @@ public class CommercialOrderApi extends BaseApi {
 		}
 		order.setStatus(statusTarget);
 		order.setStatusDate(Calendar.getInstance().getTime());
-		
+
 		commercialOrderService.update(order);
+		commercialOrderStatusUpdatedEvent.fire(order);
 	}
 	
 	public CommercialOrderDto duplicate(Long commercialOrderId) {
@@ -445,7 +454,7 @@ public class CommercialOrderApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderId);
 
 		if(order.getInvoicingPlan() != null)
-			throw new BusinessException("Order id: " + order.getId() + ", please go through the validation plan in order to validate it");
+			throw new MeveoApiException("Order id: " + order.getId() + ", please go through the validation plan in order to validate it");
 
 		return validateOrder(order, false);
 	}
@@ -467,7 +476,7 @@ public class CommercialOrderApi extends BaseApi {
 					script.execute(methodContext);
 					return new CommercialOrderDto((CommercialOrder) methodContext.get(Script.RESULT_VALUE));
 				} else
-					throw new BusinessException("No script interface found with code: " + orderValidationProcess);
+					throw new MeveoApiException("No script interface found with code: " + orderValidationProcess);
 			} else
 				throw new EntityDoesNotExistsException(ScriptInstance.class, orderScriptCode);
 		}

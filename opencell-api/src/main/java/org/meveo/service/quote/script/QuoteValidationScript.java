@@ -1,4 +1,4 @@
-package org.meveo.api.billing;
+package org.meveo.service.quote.script;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,7 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial")
-public class QuoteValidationTemp extends ModuleScript {
+public class QuoteValidationScript extends ModuleScript {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(QuoteVersionService.class);
 
@@ -196,7 +196,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		
 		product.getQuoteArticleLines().forEach(quoteArticleLine -> {
 			OrderArticleLine orderArticleLine = processOrderArticleLine(quoteArticleLine, commercialOrder, orderLot, orderProduct);
-			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffre().getQuoteVersion());
+			processOrderPrice(quoteArticleLine.getId(), orderArticleLine, commercialOrder, product.getQuoteOffre().getQuoteVersion(),orderOffer);
 		});
 		
 		
@@ -233,7 +233,7 @@ public class QuoteValidationTemp extends ModuleScript {
 		return articleLine;
 	}
 	
-	private void processOrderPrice(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion) {
+	private void processOrderPrice(Long quoteArticleLineId, OrderArticleLine orderArticleLine, CommercialOrder commercialOrder, QuoteVersion quoteVersion,OrderOffer orderOffer) {
 		var quotePrices = quotePriceService.findByQuoteArticleLineIdandQuoteVersionId(quoteArticleLineId, quoteVersion.getId());
 		quotePrices.forEach( price -> {
 			OrderPrice orderPrice = new OrderPrice();
@@ -252,6 +252,7 @@ public class QuoteValidationTemp extends ModuleScript {
 			orderPrice.setRecurrenceDuration(price.getRecurrenceDuration());
 			orderPrice.setRecurrencePeriodicity(price.getRecurrencePeriodicity());
 			orderPrice.setChargeTemplate(price.getChargeTemplate());
+			orderPrice.setOrderOffer(orderOffer);
 			orderPriceService.create(orderPrice);
 		});
 	}

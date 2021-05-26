@@ -65,6 +65,8 @@ public class ProductService extends BusinessService<Product> {
 	private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
 	@Inject private PricePlanMatrixColumnService pricePlanMatrixColumnService;
 	@Inject private ArticleMappingLineService articleMappingLineService;
+	@Inject 
+	private ProductVersionService productVersionService;
     /**
      * check if the product has any product line 
      * @param idProductLine
@@ -269,6 +271,10 @@ public class ProductService extends BusinessService<Product> {
 		if(product == null)
 			throw new EntityDoesNotExistsException(Product.class, productCode);
 		if(product.getStatus().equals(ProductStatusEnum.DRAFT)) {
+			ProductVersion productVersion= productVersionService.findByProductAndStatus(productCode,VersionStatusEnum.PUBLISHED);
+			if(productVersion==null) {
+				throw new MeveoApiException("At least one version must be published");
+			}
 			product.setStatus(status);
 			product.setStatusDate(Calendar.getInstance().getTime());
 			return  update(product);
@@ -322,6 +328,7 @@ public class ProductService extends BusinessService<Product> {
 //		});
 //		articleMappingLineService.deleteByProductCode(product);
 		remove(product); 
+		commit();
 	}
 
 	public Optional<ProductVersion> getCurrentPublishedVersion(String code, Date date) {
