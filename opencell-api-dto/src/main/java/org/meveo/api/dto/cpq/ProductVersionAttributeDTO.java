@@ -24,7 +24,7 @@ public class ProductVersionAttributeDTO {
 	@Schema(description = "Code of attribute", required = true)
 	@NotNull
     private AttributeDTO attributeDto;
-	
+    @Schema(description = "attribute order in the GUI")
     private Integer sequence = 0;
     
 

@@ -9169,7 +9169,6 @@
                 <constraints nullable="false"/>
             </column>
             <column name="priority" type="int4" />
-            <column name="sequence" type="int4" />
             <column name="display" type="${type.boolean}" >
                 <constraints nullable="false"/>
             </column>
@@ -9238,7 +9237,6 @@
             </column>
             <column name="sequence" type="INT4" />
         </createTable>
-        <addPrimaryKey columnNames="product_version_id,sequence" constraintName="cpq_product_version_attributes_pkey" tableName="cpq_product_version_attributes" />
     </changeSet>
     <changeSet id="rebuild-str-tbl-461" author="NabilOUACHI">
         <createTable tableName="cpq_service_template_attributes">
@@ -10336,6 +10334,24 @@
         </createTable>
 
         <addPrimaryKey columnNames="commercial_order_id,order_lot_id" tableName="cpq_commercial_order_order_lot"/>
+    </changeSet>
+    <changeSet id="rebuild-str-tbl-503" author="TarikFA.">
+        <createSequence sequenceName="cpq_product_version_attributes_association_seq" startValue="1"/>
+    	
+        <createTable tableName="cpq_product_version_attributes_association">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_attributes_association_id_pk" />
+            </column>
+            <column name="product_version_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="sequence" type="INT4" />
+        </createTable>
+        <addUniqueConstraint columnNames="product_version_id,sequence" constraintName="unique_product_version_sequence_pkey" tableName="cpq_product_version_attributes_association" />
     </changeSet>
 
     <!-- end tables -->
@@ -13983,6 +13999,13 @@
 			 referencedColumnNames="id" referencedTableName="cpq_order_offer" /> 
     </changeSet>
     
+     <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1631">
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_product_version_attributes_association" constraintName="cpq_product_version_attributes_association_attribute_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product_version_attributes_association" constraintName="cpq_product_version_attributes_association_product_version_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+    
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">

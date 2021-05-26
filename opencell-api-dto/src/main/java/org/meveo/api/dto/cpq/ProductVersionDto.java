@@ -64,7 +64,6 @@ public class ProductVersionDto extends BaseEntityDto {
     @Schema(description = "List of the attribute")
     protected Set<ProductVersionAttributeDTO> attributes=new HashSet<ProductVersionAttributeDTO>();
     
-    @Deprecated
     @XmlElementWrapper(name = "groupedAttributeCodes")
     @XmlElement(name = "groupedAttributeCodes")
     @Schema(description = "List of the grouped attribute codes")

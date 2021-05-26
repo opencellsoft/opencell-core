@@ -738,14 +738,21 @@ public class ProductApi extends BaseApi {
 		if(attributeCodes != null && !attributeCodes.isEmpty()){
 			List<ProductVersionAttribute> attributes=new ArrayList<ProductVersionAttribute>();
 			for(ProductVersionAttributeDTO attr:attributeCodes) {
+				var currentSequence = attr.getSequence();
 				Attribute attribute=attributeService.findByCode(attr.getAttributeDto().getCode());
 				if(attribute == null) { 
 					throw new EntityDoesNotExistsException(Attribute.class, attr.getAttributeDto().getCode());
 				}
-				ProductVersionAttribute productAttribute = new ProductVersionAttribute(productVersion, attribute, attr.getSequence());
+				boolean sequenceExist = attributeCodes
+												.stream()
+												.filter(pvad -> pvad.getSequence() == currentSequence).collect(Collectors.toList()).size() > 1;
+				if(sequenceExist) {
+					throw new MeveoApiException("Attribute sequence " + currentSequence + " already exists");
+				}
+				ProductVersionAttribute productAttribute = new ProductVersionAttribute(productVersion, attribute, currentSequence);
 				attributes.add(productAttribute);
 			}
-			productVersion.setProductAttributes(attributes);
+			productVersion.getProductAttributes().addAll(attributes);
 		}
 	} 
 	

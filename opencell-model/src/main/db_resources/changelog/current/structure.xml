@@ -8975,6 +8975,7 @@ public class OrderAdvancement extends ModuleScript {
             <column name="attribute_id" type="bigint" >
                 <constraints nullable="false"/>
             </column>
+            <column name="version" type="int4" />
             <column name="sequence" type="INT4" />
         </createTable>
         <addUniqueConstraint columnNames="product_version_id,sequence" constraintName="unique_product_version_sequence_pkey" tableName="cpq_product_version_attributes_association" />
@@ -8983,6 +8984,9 @@ public class OrderAdvancement extends ModuleScript {
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
         <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product_version_attributes_association" constraintName="cpq_product_version_attributes_association_product_version_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+		<dropColumn tableName="cpq_attribute">
+			<column name="sequence"/>
+		</dropColumn>
     </changeSet>
     
 </databaseChangeLog>
