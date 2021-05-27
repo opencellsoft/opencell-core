@@ -1104,18 +1104,13 @@ public class CpqQuoteApi extends BaseApi {
         pricesPerType
                 .keySet()
                 .stream()
-                .map(key -> reducePrices(key, pricesPerType, quoteVersion))
+                .map(key -> reducePrices(key, pricesPerType, quoteVersion,null,PriceLevelEnum.QUOTE))
                 .filter(Optional::isPresent)
                 .map(price -> {
                     QuotePrice quotePrice = price.get();
                     quotePriceService.create(quotePrice);
-                    if(quoteVersion.getQuote().getDiscountPlan()!=null) {
-                        List<QuotePrice> quotePrices=discountCalculator(quotePrice, quoteVersion.getQuote().getDiscountPlan(),quoteVersion.getQuote().getSeller(), quoteVersion.getQuote().getBillableAccount(), quoteVersion);
-                        pricesDTO.addAll(populateToDTO(quotePrices));
-                    }
-                    pricesDTO.add(new PriceDTO(quotePrice));
-                    return pricesDTO;
-                }).collect(Collectors.toList());
+                    return quotePrice;
+                });
 
         //Get the updated quote version and construct the DTO
         QuoteVersion updatedQuoteVersion=quoteVersionService.findById(quoteVersion.getId());
@@ -1125,12 +1120,13 @@ public class CpqQuoteApi extends BaseApi {
         return response;
     }
 
-    private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType, QuoteVersion quoteVersion) {
+    private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType, QuoteVersion quoteVersion,QuoteOffer quoteOffer, PriceLevelEnum level) {
         return pricesPerType.get(key).stream().reduce((a, b) -> {
             QuotePrice quotePrice = new QuotePrice();
             quotePrice.setPriceTypeEnum(key);
-            quotePrice.setPriceLevelEnum(PriceLevelEnum.QUOTE);
+            quotePrice.setPriceLevelEnum(level);
             quotePrice.setQuoteVersion(quoteVersion);
+            quotePrice.setQuoteOffer(quoteOffer);
             quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
             quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
             quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
@@ -1196,6 +1192,25 @@ public class CpqQuoteApi extends BaseApi {
             quoteArticleLine = quoteArticleLineService.update(quoteArticleLine);
             accountingPrices.add(quotePrice);
         }
+        
+        //Calculate totals by offer
+        
+        Map<PriceTypeEnum, List<QuotePrice>> pricesPerType = accountingPrices.stream()
+                .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
+
+        quotePriceService.removeByQuoteOfferAndPriceLevel(quoteOffer, PriceLevelEnum.OFFER);
+      
+        pricesPerType
+                .keySet()
+                .stream()
+                .map(key -> reducePrices(key, pricesPerType, null,quoteOffer,PriceLevelEnum.OFFER))
+                .filter(Optional::isPresent)
+                .map(price -> {
+                    QuotePrice quotePrice = price.get();
+                    quotePriceService.create(quotePrice);
+                    return quotePrice;
+                });
+        
         return accountingPrices;
     }
 
@@ -1424,11 +1439,10 @@ public class CpqQuoteApi extends BaseApi {
         if (quote == null) {
             throw new EntityDoesNotExistsException(CpqQuote.class, quoteCode, "Code");
         } 
-        if (!cpqQuoteService.isCpqQuotePdfExist(quote)) {
-            if (generatePdfIfNotExist) {
+       if (generatePdfIfNotExist) {
             	cpqQuoteService.produceQuotePdf(quote);
             }
-        }
+        
         return cpqQuoteService.getQuotePdf(quote);
 
     }
@@ -1449,10 +1463,10 @@ public class CpqQuoteApi extends BaseApi {
         		if(quoteproduct.getDiscountPlan()!=null) {
         			discountPrices.addAll(discountCalculator(quotePrice,quoteproduct.getDiscountPlan(), seller, billingAccount, quoteVersion));
         		}
-        	}else if(PriceLevelEnum.QUOTE.equals(quotePrice.getPriceLevelEnum()) && quoteVersion.getQuote().getDiscountPlan()!=null) {
-        		discountPrices.addAll(discountCalculator(quotePrice,quoteVersion.getQuote().getDiscountPlan(), seller, billingAccount, quoteVersion));
-    		}
-    		
+        		if(quoteVersion.getQuote().getDiscountPlan()!=null) {
+        			discountPrices.addAll(discountCalculator(quotePrice,quoteVersion.getQuote().getDiscountPlan(), seller, billingAccount, quoteVersion));
+        		}
+        	}
     	}
     	return discountPrices;
     }
