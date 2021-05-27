@@ -104,7 +104,6 @@ public class QuoteValidationScript extends ModuleScript {
 			BillingAccount billableAccount = billingAccount.get(ba);
 			CommercialOrder order = processCommercialOrder(cpqQuote, quoteVersion, billableAccount);
 			offers.forEach(offer -> {
-				processOrderOffer(offer, order);
 				OrderLot orderLot = processOrderCustomerService(offer.getQuoteLot(), order);
 				OrderOffer orderOffer = processOrderOffer(offer, order);
 				offer.getQuoteProduct().forEach(quoteProduct -> {
