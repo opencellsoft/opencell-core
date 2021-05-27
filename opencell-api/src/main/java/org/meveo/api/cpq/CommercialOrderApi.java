@@ -480,8 +480,12 @@ public class CommercialOrderApi extends BaseApi {
 			} else
 				throw new EntityDoesNotExistsException(ScriptInstance.class, orderScriptCode);
 		}
-		CommercialOrder commercialOrder = commercialOrderService.validateOrder(order, orderCompleted);
-		return new CommercialOrderDto(commercialOrder);
+		try {
+			CommercialOrder commercialOrder = commercialOrderService.validateOrder(order, orderCompleted);
+			return new CommercialOrderDto(commercialOrder);
+		}catch(BusinessException e) {
+			throw new BusinessApiException(e.getMessage());
+		}
 	}
 	
 	private void processOrderLot(CommercialOrderDto postData, CommercialOrder commercialOrder) {
