@@ -33,6 +33,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
@@ -133,9 +134,9 @@ public class GenericWorkflowJobBean extends IteratorBasedJobBean<Object[]> {
             genericWf = genericWorkflowService.refreshOrRetrieve(genericWf);
         }
 
-        Map<Long, BusinessEntity> mapFilteredEntities = entities.stream().collect(Collectors.toMap(x -> x.getId(), x -> x));
+        Map<Long, BusinessEntity> mapFilteredEntities = entities.stream().collect(Collectors.toMap(BaseEntity::getId, x -> x));
 
-        List<Object[]> wfInstancesFiltered = new ArrayList<Object[]>();
+        List<Object[]> wfInstancesFiltered = new ArrayList<>();
         for (WorkflowInstance workflowInstance : wfInstances) {
             Long entityInstanceId = workflowInstance.getEntityInstanceId();
             if (entityInstanceId != null) {
@@ -146,7 +147,7 @@ public class GenericWorkflowJobBean extends IteratorBasedJobBean<Object[]> {
             }
         }
 
-        return Optional.of(new SynchronizedIterator<Object[]>(wfInstancesFiltered));
+        return Optional.of(new SynchronizedIterator<>(wfInstancesFiltered));
     }
 
     /**

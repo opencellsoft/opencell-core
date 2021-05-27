@@ -40,6 +40,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.filter.FilterService;
 
 import com.google.common.collect.Maps;
+import org.meveo.service.wf.WorkflowService;
 
 @Stateless
 public class WorkflowInstanceService extends PersistenceService<WorkflowInstance> {
@@ -52,6 +53,9 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
 
     @Inject
     private GenericWorkflowService genericWorkflowService;
+
+    @Inject
+    private WorkflowService workflowService;
 
     public WorkflowInstance findByEntityIdAndGenericWorkflow(Long entityInstanceId, GenericWorkflow genericWorkflow) throws BusinessException {
         TypedQuery<WorkflowInstance> query = getEntityManager()
@@ -96,13 +100,13 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
             Filter filter = gwf.getFilter();
             List<BusinessEntity> listFilteredEntities = (List<BusinessEntity>) filterService.filteredListAsObjects(filter, null);
 
-            List<Long> listIdAllEntitiesWithoutWFInstance = new ArrayList<Long>();
-            Map<Long, BusinessEntity> mapAllEntitiesWithoutWFInstance = new HashMap<Long, BusinessEntity>();
+            List<Long> listIdAllEntitiesWithoutWFInstance = new ArrayList<>();
+            Map<Long, BusinessEntity> mapAllEntitiesWithoutWFInstance = new HashMap<>();
             for (BusinessEntity entity : listAllEntitiesWithoutWFInstance) {
                 listIdAllEntitiesWithoutWFInstance.add(entity.getId());
                 mapAllEntitiesWithoutWFInstance.put(entity.getId(), entity);
             }
-            List<Long> listIdFilteredEntities = new ArrayList<Long>();
+            List<Long> listIdFilteredEntities = new ArrayList<>();
             for (BusinessEntity entity : listFilteredEntities) {
                 listIdFilteredEntities.add(entity.getId());
             }
@@ -112,7 +116,7 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
             .filter(listIdFilteredEntities::contains)
             .collect(Collectors.toSet());
 
-            List<BusinessEntity> listFilteredEntitiesWithoutWFInstance = new ArrayList<BusinessEntity>();
+            List<BusinessEntity> listFilteredEntitiesWithoutWFInstance = new ArrayList<>();
             for (Long id : setIdAllEntitiesWithoutWFInstanceFiltered) {
                 listFilteredEntitiesWithoutWFInstance.add(mapAllEntitiesWithoutWFInstance.get(id));
             }
@@ -125,9 +129,10 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
             List<BusinessEntity> entities = (List<BusinessEntity>) executeSelectQuery(query, params);
             if (gwf.getTargetEntityClass().equals(CustomEntityInstance.class.getName())) {
                 GenericWorkflow finalGwf = gwf;
-                return entities.stream().filter(entity -> {
-                    return ((CustomEntityInstance) entity).getCetCode().equals(finalGwf.getTargetCetCode());
-                }).collect(Collectors.toList());
+                return entities.stream()
+                        .filter(entity
+                                -> ((CustomEntityInstance) entity).getCetCode().equals(finalGwf.getTargetCetCode()))
+                        .collect(Collectors.toList());
             } else {
                 return entities;
             }
@@ -138,7 +143,7 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
         WorkflowInstance linkedWFIns = new WorkflowInstance();
         linkedWFIns.setTargetEntityClass(genericWorkflow.getTargetEntityClass());
         linkedWFIns.setEntityInstanceId(e.getId());
-        linkedWFIns.setEntityInstanceCode(e.getCode());
+        linkedWFIns.setEntityInstanceCode(workflowService.mapWFBaseEntityCode(e));
         linkedWFIns.setGenericWorkflow(genericWorkflow);
         linkedWFIns.setTargetCetCode(genericWorkflow.getTargetCetCode());
 
