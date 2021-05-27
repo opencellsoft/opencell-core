@@ -2,6 +2,7 @@ package org.meveo.service.cpq.order;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -55,7 +56,14 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
     private ServiceInstanceService serviceInstanceService;
     @Inject
 	private SubscriptionService subscriptionService;
-    
+
+	@Override
+	public void create(CommercialOrder entity) throws BusinessException {
+		if(StringUtils.isBlank(entity.getCode()))
+			entity.setCode(UUID.randomUUID().toString());
+		super.create(entity);
+	}
+
 	public CommercialOrder duplicate(CommercialOrder entity) {
 		final CommercialOrder duplicate = new CommercialOrder(entity);
 		detach(entity);
@@ -89,6 +97,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 	@Override
 	public CommercialOrder update(CommercialOrder entity) throws BusinessException {
+		if(StringUtils.isBlank(entity.getCode()))
+			entity.setCode(UUID.randomUUID().toString());
 		var currentOrder = entity.getOrderProgressTmp() != null ? entity.getOrderProgressTmp() : Integer.MAX_VALUE;
 		var nextOrder = entity.getOrderProgress();
 		super.update(entity);
@@ -99,6 +109,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	}
 
     public CommercialOrder updateWithoutProgressCheck(CommercialOrder entity) throws BusinessException {
+		if(StringUtils.isBlank(entity.getCode()))
+			entity.setCode(UUID.randomUUID().toString());
         return super.update(entity);
     }
 
@@ -182,5 +194,15 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 			}
 			subscription.addServiceInstance(serviceInstance);
+	}
+
+	@Override
+	public CommercialOrder findById(Long id) {
+		CommercialOrder commercialOrder = super.findById(id);
+		if(commercialOrder.getCode() == null) {
+			commercialOrder.setCode(UUID.randomUUID().toString());
+			commercialOrder = super.update(commercialOrder);
+		}
+		return commercialOrder;
 	}
 }
