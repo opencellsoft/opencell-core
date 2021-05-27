@@ -140,6 +140,12 @@ public class CommercialOrderApi extends BaseApi {
 		order.setOrderType(loadEntityByCode(orderTypeService,orderDto.getOrderTypeCode(), OrderType.class));
 		
 		order.setLabel(orderDto.getLabel());
+		if(!Strings.isEmpty(orderDto.getCode())){
+			order.setCode(orderDto.getCode());
+		}
+		if(!Strings.isEmpty(orderDto.getDescription())){
+			order.setCode(orderDto.getDescription());
+		}
 		if(!Strings.isEmpty(orderDto.getQuoteCode())) {
 			order.setQuote(loadEntityByCode(cpqQuoteService, orderDto.getQuoteCode(), CpqQuote.class));
 		}
@@ -230,6 +236,12 @@ public class CommercialOrderApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderDto.getId());
 		if(!order.getStatus().equals(CommercialOrderEnum.DRAFT.toString()) && !order.getStatus().equals(CommercialOrderEnum.FINALIZED.toString())) {
 			throw new MeveoApiException("The Order can not be edited, the status must not be : " + order.getStatus());
+		}
+		if(!Strings.isEmpty(orderDto.getCode())){
+			order.setCode(orderDto.getCode());
+		}
+		if(!Strings.isEmpty(orderDto.getDescription())){
+			order.setCode(orderDto.getDescription());
 		}
 		if(order.getOrderProgress() != null)
 			order.setOrderProgressTmp(Integer.valueOf(order.getOrderProgress().intValue()));

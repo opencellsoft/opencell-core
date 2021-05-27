@@ -9559,6 +9559,8 @@
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cpq_commercial_order" />
             </column>
+            <column name="code" type="varchar(50)" />
+            <column name="description" type="varchar(255)" />
             <!-- Auditable Start -->
             <column name="created" type="datetime">
                 <constraints nullable="false" />
@@ -15700,6 +15702,9 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#5595_20210512" author="RachidAityaazza"></changeSet>
     <changeSet id="#5623-562-20210520" author="Mbarek-Ay"/>
     <changeSet id="#5257_20210519" author="AndriusKarpavicius"/>
+
+    <changeSet id="#533_20210526" author="NabilOuachi">
+    </changeSet>
     
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
