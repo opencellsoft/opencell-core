@@ -40,6 +40,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.filter.FilterService;
 
 import com.google.common.collect.Maps;
+import org.meveo.service.wf.WorkflowService;
 
 @Stateless
 public class WorkflowInstanceService extends PersistenceService<WorkflowInstance> {
@@ -52,6 +53,9 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
 
     @Inject
     private GenericWorkflowService genericWorkflowService;
+
+    @Inject
+    private WorkflowService workflowService;
 
     public WorkflowInstance findByEntityIdAndGenericWorkflow(Long entityInstanceId, GenericWorkflow genericWorkflow) throws BusinessException {
         TypedQuery<WorkflowInstance> query = getEntityManager()
@@ -138,7 +142,7 @@ public class WorkflowInstanceService extends PersistenceService<WorkflowInstance
         WorkflowInstance linkedWFIns = new WorkflowInstance();
         linkedWFIns.setTargetEntityClass(genericWorkflow.getTargetEntityClass());
         linkedWFIns.setEntityInstanceId(e.getId());
-        linkedWFIns.setEntityInstanceCode(e.getCode());
+        linkedWFIns.setEntityInstanceCode(workflowService.mapWFBaseEntityCode(e));
         linkedWFIns.setGenericWorkflow(genericWorkflow);
         linkedWFIns.setTargetCetCode(genericWorkflow.getTargetCetCode());
 
