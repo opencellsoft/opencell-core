@@ -1153,6 +1153,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 	 * @param automaticInvoiceCheck
 	 */
 	private void applyAutomaticInvoiceCheck(Invoice invoice, boolean automaticInvoiceCheck) {
+		if(!automaticInvoiceCheck) {
+			return;
+		}
 		InvoiceType invoiceType = invoice.getInvoiceType();
 		invoiceType = invoiceTypeService.retrieveIfNotManaged(invoiceType);
 		if (invoiceType != null && invoiceType.getInvoiceValidationScript() != null) {
@@ -3966,10 +3969,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             netToPay = invoice.getAmountWithTax().add(round(balance, invoiceRounding, invoiceRoundingMode));
         }
         invoice.setNetToPay(netToPay);
+        applyAutomaticInvoiceCheck(invoice, !invoiceDTO.getSkipValidation());
         if (invoiceDTO.isAutoValidation() == null || invoiceDTO.isAutoValidation()) {
             invoice = serviceSingleton.assignInvoiceNumberVirtual(invoice);
         }
-        applyAutomaticInvoiceCheck(invoice, !invoiceDTO.getSkipValidation());
         this.postCreate(invoice);
         return invoice;
     }
