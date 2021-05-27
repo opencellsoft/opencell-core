@@ -98,21 +98,16 @@ public class DDRequestLOTService extends PersistenceService<DDRequestLOT> {
 	 * Creates the DDRequest lot.
 	 *
 	 * @param ddrequestLotOp   the ddrequest lot op
-	 * @param listAoToPay      list of account operations
 	 * @param ddRequestBuilder direct debit request builder
 	 * @param result           the result
 	 * @return the DD request LOT
 	 * @throws BusinessEntityException the business entity exception
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public DDRequestLOT createDDRquestLot(DDRequestLotOp ddrequestLotOp, List<AccountOperation> listAoToPay, DDRequestBuilder ddRequestBuilder, JobExecutionResultImpl result)
+	public DDRequestLOT createDDRquestLot(DDRequestLotOp ddrequestLotOp, DDRequestBuilder ddRequestBuilder, JobExecutionResultImpl result)
 			throws BusinessEntityException {
 
 		try {
-			if (listAoToPay == null || listAoToPay.isEmpty()) {
-				throw new BusinessEntityException("no invoices!");
-			}
-
 			DDRequestBuilderInterface ddRequestBuilderInterface = ddRequestBuilderFactory.getInstance(ddRequestBuilder);
 
 			DDRequestLOT ddRequestLOT = new DDRequestLOT();
