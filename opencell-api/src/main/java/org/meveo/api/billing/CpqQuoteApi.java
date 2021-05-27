@@ -324,7 +324,7 @@ public class CpqQuoteApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CpqQuote.class, quoteVersionDto.getQuoteCode());
 		final QuoteVersion quoteVersion = populateNewQuoteVersion(quoteVersionDto, quote);
 		try {
-            populateCustomFields(quoteVersionDto.getCustomFields(), quoteVersion, true);
+            populateCustomFields(quoteVersionDto.getCustomFields(), quoteVersion, false);
 			quoteVersionService.create(quoteVersion);
 		}catch(BusinessApiException e) {
 			throw new MeveoApiException(e);
