@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
@@ -32,9 +33,13 @@ import org.meveo.model.generic.wf.WorkflowInstanceHistory;
 import org.meveo.service.base.PersistenceService;
 
 import com.google.common.collect.Maps;
+import org.meveo.service.wf.WorkflowService;
 
 @Stateless
 public class WorkflowInstanceHistoryService extends PersistenceService<WorkflowInstanceHistory> {
+
+    @Inject
+    private WorkflowService workflowService;
 
     public List<WorkflowInstanceHistory> findByGenericWorkflow(GenericWorkflow genericWorkflow) {
 
@@ -58,7 +63,7 @@ public class WorkflowInstanceHistoryService extends PersistenceService<WorkflowI
 
         Map<String, Object> params = Maps.newHashMap();
         String query = "From WorkflowInstanceHistory where workflowInstance.entityInstanceCode = :entityInstanceCode order by workflowInstance.genericWorkflow.code, actionDate desc";
-        params.put("entityInstanceCode", entity.getCode());
+        params.put("entityInstanceCode", workflowService.mapWFBaseEntityCode(entity));
 
         if (entity instanceof CustomEntityInstance) {
             query = "From WorkflowInstanceHistory where workflowInstance.entityInstanceCode = :entityInstanceCode and workflowInstance.targetCetCode = :targetCetCode order by workflowInstance.genericWorkflow.code, actionDate desc";
