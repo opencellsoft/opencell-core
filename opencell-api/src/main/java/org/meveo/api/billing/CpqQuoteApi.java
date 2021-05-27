@@ -1183,7 +1183,7 @@ public class CpqQuoteApi extends BaseApi {
                     //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
                     quotePrice.setAmountWithTax(quotePrice.getAmountWithTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
                     quotePrice.setAmountWithoutTax(quotePrice.getAmountWithoutTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
-                    quotePrice.setAmountWithoutTaxWithDiscount(quotePrice.getAmountWithoutTaxWithDiscount() != null ? 
+                    quotePrice.setAmountWithoutTaxWithDiscount(quotePrice.getAmountWithoutTaxWithDiscount() != null ?
                     		quotePrice.getAmountWithoutTaxWithDiscount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null);
                     quotePrice.setTaxAmount(quotePrice.getTaxAmount() != null ? 
                     		quotePrice.getTaxAmount().multiply(BigDecimal.valueOf(recurrenceDuration)) : null);
@@ -1433,7 +1433,7 @@ public class CpqQuoteApi extends BaseApi {
 
     }
 
-    
+
     private List<QuotePrice> applyDiscounts(List<QuotePrice> quotePrices,Seller seller,BillingAccount billingAccount, QuoteVersion quoteVersion) {
     	QuoteOffer quoteOffer=null;
     	QuoteProduct quoteproduct=null;

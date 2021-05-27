@@ -8912,14 +8912,14 @@ public class OrderAdvancement extends ModuleScript {
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
     	
     </changeSet>
-    
+
 
     <changeSet id="#5257_20210519" author="AndriusKarpavicius">
         <addColumn tableName="billing_wallet_operation">
             <column name="refunds_wo_id" type="bigint"/>
         </addColumn>
     </changeSet>
-    
+
 	<changeSet id="#5623-562-20210520" author="Mbarek-Ay">
 		<addColumn tableName="cpq_quote_price">
 		 <column name="quote_offer_id" type="bigint" />
@@ -8965,6 +8965,13 @@ public class OrderAdvancement extends ModuleScript {
     
     <changeSet id="#5416_20210526" author="AbdelmounaimAkadid">
     	<sql>CREATE INDEX idx_ar_ao_payment_histories__ao_id ON ar_ao_payment_histories(ao_id)</sql>
+    </changeSet>
+
+    <changeSet id="#533_20210526" author="NabilOuachi">
+        <addColumn tableName="cpq_commercial_order">
+            <column name="code" type="varchar(50)" />
+            <column name="description" type="varchar(255)" />
+        </addColumn>
     </changeSet>
     
 </databaseChangeLog>
