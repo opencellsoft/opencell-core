@@ -1087,7 +1087,7 @@ public class CpqQuoteApi extends BaseApi {
     public GetQuoteVersionDtoResponse quoteQuotation(String quoteCode, int currentVersion) {
         List<QuotePrice> accountingArticlePrices = new ArrayList<>();
         List<PriceDTO> pricesDTO =new ArrayList<>();
-        final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
+         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
@@ -1100,7 +1100,8 @@ public class CpqQuoteApi extends BaseApi {
                 .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
         quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
-      
+        log.debug("quoteQuotation pricesPerType size={}",pricesPerType.size());
+        
         pricesPerType
                 .keySet()
                 .stream()
@@ -1121,6 +1122,7 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType, QuoteVersion quoteVersion,QuoteOffer quoteOffer, PriceLevelEnum level) {
+    	log.debug("reducePrices quoteVersion={}, quoteOffer={}, level={}",quoteVersion.getId(),quoteOffer.getId(),quoteVersion);
         return pricesPerType.get(key).stream().reduce((a, b) -> {
             QuotePrice quotePrice = new QuotePrice();
             quotePrice.setPriceTypeEnum(key);
@@ -1199,7 +1201,7 @@ public class CpqQuoteApi extends BaseApi {
                 .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
         quotePriceService.removeByQuoteOfferAndPriceLevel(quoteOffer, PriceLevelEnum.OFFER);
-      
+        log.debug("offerQuotation pricesPerType size={}",pricesPerType.size());
         pricesPerType
                 .keySet()
                 .stream()
