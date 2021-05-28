@@ -39,6 +39,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
@@ -140,6 +141,12 @@ public class CommercialOrderApi extends BaseApi {
 		order.setOrderType(loadEntityByCode(orderTypeService,orderDto.getOrderTypeCode(), OrderType.class));
 		
 		order.setLabel(orderDto.getLabel());
+		if(!Strings.isEmpty(orderDto.getCode())){
+			order.setCode(orderDto.getCode());
+		}
+		if(!Strings.isEmpty(orderDto.getDescription())){
+			order.setCode(orderDto.getDescription());
+		}
 		if(!Strings.isEmpty(orderDto.getQuoteCode())) {
 			order.setQuote(loadEntityByCode(cpqQuoteService, orderDto.getQuoteCode(), CpqQuote.class));
 		}
@@ -230,6 +237,12 @@ public class CommercialOrderApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CommercialOrder.class, orderDto.getId());
 		if(!order.getStatus().equals(CommercialOrderEnum.DRAFT.toString()) && !order.getStatus().equals(CommercialOrderEnum.FINALIZED.toString())) {
 			throw new MeveoApiException("The Order can not be edited, the status must not be : " + order.getStatus());
+		}
+		if(!Strings.isEmpty(orderDto.getCode())){
+			order.setCode(orderDto.getCode());
+		}
+		if(!Strings.isEmpty(orderDto.getDescription())){
+			order.setCode(orderDto.getDescription());
 		}
 		if(order.getOrderProgress() != null)
 			order.setOrderProgressTmp(Integer.valueOf(order.getOrderProgress().intValue()));
@@ -480,8 +493,12 @@ public class CommercialOrderApi extends BaseApi {
 			} else
 				throw new EntityDoesNotExistsException(ScriptInstance.class, orderScriptCode);
 		}
-		CommercialOrder commercialOrder = commercialOrderService.validateOrder(order, orderCompleted);
-		return new CommercialOrderDto(commercialOrder);
+		try {
+			CommercialOrder commercialOrder = commercialOrderService.validateOrder(order, orderCompleted);
+			return new CommercialOrderDto(commercialOrder);
+		}catch(BusinessException e) {
+			throw new BusinessApiException(e.getMessage());
+		}
 	}
 	
 	private void processOrderLot(CommercialOrderDto postData, CommercialOrder commercialOrder) {
@@ -793,14 +810,15 @@ public class CommercialOrderApi extends BaseApi {
         	if(orderProduct!=null) {
         		orderProduct.getOrderAttributes().clear(); 
         		}
+        	
             orderAttributeDtos.stream()
-                    .map(orderAttributeDTO -> populateOrderAttribute(orderAttributeDTO, orderProduct, orderProduct!=null?orderProduct.getProductVersion().getAttributes():null,orderOffer))
+                    .map(orderAttributeDTO -> populateOrderAttribute(orderAttributeDTO, orderProduct, orderProduct!=null?orderProduct.getProductVersion().getProductAttributes():null,orderOffer))
                     .collect(Collectors.toList())
                     .forEach(orderAttribute -> orderAttributeService.create(orderAttribute));
         }
     }
 	
-    private OrderAttribute populateOrderAttribute(OrderAttributeDto orderAttributeDTO, OrderProduct  orderProduct, List<Attribute> productAttributes,OrderOffer orderOffer) {
+    private OrderAttribute populateOrderAttribute(OrderAttributeDto orderAttributeDTO, OrderProduct  orderProduct, List<ProductVersionAttribute> productVersionAttributes,OrderOffer orderOffer) {
         if (Strings.isEmpty( orderAttributeDTO.getOrderAttributeCode())) {
             missingParameters.add("orderAttributeCode");
         handleMissingParameters();
@@ -812,6 +830,7 @@ public class CommercialOrderApi extends BaseApi {
 	            throw new EntityDoesNotExistsException(Attribute.class, orderAttributeDTO.getOrderAttributeCode());
 	        }
         }
+        List<Attribute> productAttributes = productVersionAttributes.stream().map(pva -> pva.getAttribute()).collect(Collectors.toList());
         if(productAttributes != null && !productAttributes.contains(attribute) && orderProduct!=null){
             throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", orderProduct.getProductVersion().getProduct().getCode() , orderProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
         }
@@ -848,7 +867,7 @@ public class CommercialOrderApi extends BaseApi {
             List<OrderAttribute> linkedOrderAttributes = orderAttributeDTO.getLinkedOrderAttribute()
                     .stream()
                     .map(dto -> {
-                        OrderAttribute linkedAttribute = populateOrderAttribute(dto, orderProduct, productAttributes,orderOffer);
+                        OrderAttribute linkedAttribute = populateOrderAttribute(dto, orderProduct, productVersionAttributes,orderOffer);
                         linkedAttribute.setParentAttributeValue(orderAttribute);
                         return linkedAttribute;
                     })

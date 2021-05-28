@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -103,14 +104,17 @@ public class QuoteValidationScript extends ModuleScript {
 			List<QuoteOffer> offers = orderByBillingAccount.get(ba);
 			BillingAccount billableAccount = billingAccount.get(ba);
 			CommercialOrder order = processCommercialOrder(cpqQuote, quoteVersion, billableAccount);
-			offers.forEach(offer -> {
-				processOrderOffer(offer, order);
-				OrderLot orderLot = processOrderCustomerService(offer.getQuoteLot(), order);
-				OrderOffer orderOffer = processOrderOffer(offer, order);
-				offer.getQuoteProduct().forEach(quoteProduct -> {
-					processOrderProduct(quoteProduct, order, orderLot, orderOffer);
-				});
-			});
+			List<OrderOffer> orderOffers = offers.stream()
+					.map(offer -> {
+						OrderLot orderLot = processOrderCustomerService(offer.getQuoteLot(), order);
+						OrderOffer orderOffer = processOrderOffer(offer, order);
+						offer.getQuoteProduct().forEach(quoteProduct -> {
+							processOrderProduct(quoteProduct, order, orderLot, orderOffer);
+						});
+						return orderOffer;
+					}).collect(Collectors.toList());
+			order.setOffers(orderOffers);
+			commercialOrderService.update(order);
 		});
 		LOGGER.info("End creation order from quote code {}, number of order created is {}", cpqQuote.getCode(), orderByBillingAccount.size());
 		

@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -58,10 +59,10 @@ public class ProductVersionDto extends BaseEntityDto {
     protected DatePeriod validity = new DatePeriod();
  
     /** The attributeCodes. */
-    @XmlElementWrapper(name = "attributeCodes")
-    @XmlElement(name = "attributeCodes")
-    @Schema(description = "List of the attribute codes")
-    protected Set<String> attributeCodes=new HashSet<String>();
+    @XmlElementWrapper(name = "attributes")
+    @XmlElement(name = "attributes")
+    @Schema(description = "List of the attribute")
+    protected Set<ProductVersionAttributeDTO> attributes=new HashSet<ProductVersionAttributeDTO>();
     
     @XmlElementWrapper(name = "groupedAttributeCodes")
     @XmlElement(name = "groupedAttributeCodes")
@@ -108,16 +109,16 @@ public class ProductVersionDto extends BaseEntityDto {
                  .map(tag -> tag.getCode())
                  .collect(Collectors.toSet());
          }
-         if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
-         this.attributeCodes = productVersion.getAttributes()
+         if(productVersion.getProductAttributes() != null && !productVersion.getProductAttributes().isEmpty()) {
+         this.attributes = productVersion.getProductAttributes()
                  .stream()
-                 .map(attribute -> attribute.getCode())
+                 .map(ProductVersionAttributeDTO::new)
                  .collect(Collectors.toSet());
          }
          if(productVersion.getGroupedAttributes() != null && !productVersion.getGroupedAttributes().isEmpty()) {
-         this.groupedAttributeCodes = productVersion.getGroupedAttributes()
+         this.attributes = productVersion.getProductAttributes()
                  .stream()
-                 .map(groupedAttribute -> groupedAttribute.getCode())
+                 .map(ProductVersionAttributeDTO::new)
                  .collect(Collectors.toSet());
          }
     }
@@ -197,24 +198,6 @@ public class ProductVersionDto extends BaseEntityDto {
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
     }
-    
-    
-   
- 
- 
-	/**
-	 * @return the attributeCodes
-	 */
-	public Set<String> getAttributeCodes() {
-		return attributeCodes;
-	}
-	/**
-	 * @param attributeCodes the attributeCodes to set
-	 */
-	public void setAttributeCodes(Set<String> attributeCodes) {
-		this.attributeCodes = attributeCodes;
-	}
-	 
 	/**
 	 * @return the groupedAttributeCodes
 	 */
@@ -257,6 +240,18 @@ public class ProductVersionDto extends BaseEntityDto {
 	 */
 	public void setValidity(DatePeriod validity) {
 		this.validity = validity;
+	}
+	/**
+	 * @return the attributes
+	 */
+	public Set<ProductVersionAttributeDTO> getAttributes() {
+		return attributes;
+	}
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(Set<ProductVersionAttributeDTO> attributes) {
+		this.attributes = attributes;
 	}
      
 	

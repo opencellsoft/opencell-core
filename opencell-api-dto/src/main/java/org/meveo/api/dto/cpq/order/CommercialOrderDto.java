@@ -22,6 +22,10 @@ public class CommercialOrderDto extends BaseEntityDto {
 
 	@Schema(description = "id of the order")
 	private Long id;
+	@Schema(description = "code of the order")
+	private String code;
+	@Schema(description = "description of the order")
+	private String description;
 	@Schema(description = "code seller")
 	@NotNull
 	private String sellerCode;
@@ -81,6 +85,8 @@ public class CommercialOrderDto extends BaseEntityDto {
 
 	public CommercialOrderDto(CommercialOrder order) {
 		this.id = order.getId();
+		this.code = order.getCode();
+		this.description = order.getDescription();
 		this.sellerCode = order.getSeller().getCode();
 		this.orderNumber = order.getOrderNumber();
 		this.label = order.getLabel();
@@ -386,6 +392,20 @@ public class CommercialOrderDto extends BaseEntityDto {
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
-	
-	
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

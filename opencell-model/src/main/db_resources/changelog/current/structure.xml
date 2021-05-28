@@ -8912,14 +8912,14 @@ public class OrderAdvancement extends ModuleScript {
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
     	
     </changeSet>
-    
+
 
     <changeSet id="#5257_20210519" author="AndriusKarpavicius">
         <addColumn tableName="billing_wallet_operation">
             <column name="refunds_wo_id" type="bigint"/>
         </addColumn>
     </changeSet>
-    
+
 	<changeSet id="#5623-562-20210520" author="Mbarek-Ay">
 		<addColumn tableName="cpq_quote_price">
 		 <column name="quote_offer_id" type="bigint" />
@@ -8959,12 +8959,47 @@ public class OrderAdvancement extends ModuleScript {
         <sql>update ${db.schema.adapted}ar_payment_token set uuid = 'payment_token'||id where uuid is null</sql>
     </changeSet>
     
+
     <changeSet id="#5599_20210526" author="AbdelmounaimAkadid">
     	<sql>CREATE INDEX idx_billing_invoice_agr_amount_on_aggr_id  ON billing_invoice_agr_amount (aggr_id)</sql>
     </changeSet>
     
     <changeSet id="#5416_20210526" author="AbdelmounaimAkadid">
     	<sql>CREATE INDEX idx_ar_ao_payment_histories__ao_id ON ar_ao_payment_histories(ao_id)</sql>
+    </changeSet>
+
+    <changeSet id="#533_20210526" author="NabilOuachi">
+        <addColumn tableName="cpq_commercial_order">
+            <column name="code" type="varchar(50)" />
+            <column name="description" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#5595_540582_20210526" author="TarikFA." >
+        <createSequence sequenceName="cpq_product_version_attributes_association_seq" startValue="1"/>
+    	
+        <createTable tableName="cpq_product_version_attributes_association">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_attributes_association_id_pk" />
+            </column>
+            <column name="product_version_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="int4" />
+            <column name="sequence" type="INT4" />
+        </createTable>
+        <addUniqueConstraint columnNames="product_version_id,sequence" constraintName="unique_product_version_sequence_pkey" tableName="cpq_product_version_attributes_association" />
+        
+        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_product_version_attributes_association" constraintName="cpq_product_version_attributes_association_attribute_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
+        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product_version_attributes_association" constraintName="cpq_product_version_attributes_association_product_version_id" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
+		<dropColumn tableName="cpq_attribute">
+			<column name="sequence"/>
+		</dropColumn>
     </changeSet>
     
 </databaseChangeLog>

@@ -17,8 +17,13 @@
  */
 package org.meveo.service.billing.impl;
 
-import javax.ejb.Stateless;
+import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.cpq.commercial.InvoicingPlan;
 import org.meveo.model.cpq.commercial.InvoicingPlanItem;
 import org.meveo.service.base.BusinessService;
 
@@ -28,4 +33,11 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class InvoicingPlanItemService extends BusinessService<InvoicingPlanItem> {
 
+	@SuppressWarnings("unchecked")
+	public List<InvoicingPlanItem> findByInvoicingPlanCode(InvoicingPlan invoicingPlan) {
+		QueryBuilder builder = new QueryBuilder(InvoicingPlanItem.class, "ipi");
+		builder.addCriterionEntity("ipi.billingPlan", invoicingPlan);
+		Query query = builder.getQuery(this.getEntityManager());
+		return query.getResultList();
+	}
 }
