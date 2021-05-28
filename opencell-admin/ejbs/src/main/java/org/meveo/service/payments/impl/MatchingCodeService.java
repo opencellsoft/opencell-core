@@ -32,14 +32,12 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.PartialMatchingOccToSelect;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoicePaymentStatusEnum;
-import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
@@ -55,7 +53,7 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * MatchingCode service implementation.
- *
+ * @author anasseh
  * @author Abdellatif BARI
  * @lastModifiedVersion 8.0.0
  */
@@ -249,7 +247,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         if (accountOperation == null) {
             throw new BusinessException("Cant find account operation by id:" + aoID);
         }
-        if (!MatchingStatusEnum.L.name().equals(accountOperation.getMatchingStatus().name())) {
+        if (MatchingStatusEnum.L != accountOperation.getMatchingStatus() && MatchingStatusEnum.P != accountOperation.getMatchingStatus() ) {
             throw new BusinessException("The account operation is unmatched");
         }
         unmatching(accountOperation.getMatchingAmounts().get(0).getMatchingCode().getId());
