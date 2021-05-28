@@ -45,12 +45,16 @@ public class JobExecutionResultInterceptor {
         long numberOfOKs = result.getNbItemsCorrectlyProcessed();
         long numberOfKOs = result.getNbItemsProcessedWithError();
         long numberOfRemainingValues = (result.getNbItemsToProcess() - numberOfOKs - numberOfKOs);
+        long numberOfWarnings = result.getNbItemsProcessedWithWarning();
 
 
 
         counterInc(result, "number_of_OKs", numberOfOKs);
         counterInc(result, "number_of_KOs",numberOfKOs);
         counterInc(result, "number_of_Remaining_Items",numberOfRemainingValues);
+        counterInc(result, "is_running",1L);
+        counterInc(result, "is_stopped",-1L);
+        counterInc(result, "number_of_Warnings",numberOfWarnings);
 
         try{
             return context.proceed();
