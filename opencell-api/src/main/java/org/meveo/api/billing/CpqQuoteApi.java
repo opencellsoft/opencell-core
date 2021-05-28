@@ -1052,7 +1052,7 @@ public class CpqQuoteApi extends BaseApi {
         }
         try {
             cpqQuoteService.update(cpqQuote);
-            //cpqQuoteStatusUpdatedEvent.fire(cpqQuote);
+            cpqQuoteStatusUpdatedEvent.fire(cpqQuote);
         } catch (BusinessApiException e) {
             throw new MeveoApiException(e);
         }
