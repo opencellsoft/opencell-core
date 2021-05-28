@@ -8,6 +8,7 @@ import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.cpq.commercial.PriceLevelEnum;
+import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
@@ -35,6 +36,13 @@ public class QuotePriceService extends PersistenceService<QuotePrice> {
 	public void removeByQuoteVersionAndPriceLevel(QuoteVersion quoteVersion, PriceLevelEnum priceLevel) {
 		getEntityManager().createNamedQuery("QuotePrice.removeByQuoteVersionAndPriceLevel")
 				.setParameter("quoteVersion", quoteVersion)
+				.setParameter("priceLevelEnum", priceLevel)
+				.executeUpdate();
+	}
+	
+	public void removeByQuoteOfferAndPriceLevel(QuoteOffer quoteOffer, PriceLevelEnum priceLevel) {
+		getEntityManager().createNamedQuery("QuotePrice.removeByQuoteOfferAndPriceLevel")
+				.setParameter("quoteOfferId", quoteOffer.getId())
 				.setParameter("priceLevelEnum", priceLevel)
 				.executeUpdate();
 	}

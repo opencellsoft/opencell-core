@@ -63,8 +63,8 @@ import com.google.gson.reflect.TypeToken;
  * <li>a list or a map of above mentioned data types, serialized as Json to to serializedValue field</li>
  * </ul>
  * <p>
- * A reference to an entity, child entity, list and map values should not be modified behind the scenes - an appropriate SET method has to be called to serialize the value. - This
- * limitations comes from MERGE loosing transient values and thus JPA callback @postUpdate can not be used (see CustomFieldInstance class).
+ * A reference to an entity, child entity, list and map values should not be modified behind the scenes - an appropriate SET method has to be called to serialize the value. - This limitations comes from MERGE loosing
+ * transient values and thus JPA callback @postUpdate can not be used (see CustomFieldInstance class).
  * <p>
  * Serialized value format is described in serializeValue() method for each data type.
  * <p>
@@ -80,8 +80,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
     private static final long serialVersionUID = -9038541899269528670L;
 
     /**
-     * In a deserialized matrix, represents a map key name to hold the names of matrix keys In Map/matrix value management for GUI (a list of maps), represents a map key name to
-     * hold key value
+     * In a deserialized matrix, represents a map key name to hold the names of matrix keys In Map/matrix value management for GUI (a list of maps), represents a map key name to hold key value
      */
     public static final String MAP_KEY = "key";
 
@@ -248,8 +247,7 @@ public class CustomFieldValue implements Serializable, Cloneable {
     /**
      * Contains mapValue adapted for GUI data entry in the following way:
      * <p>
-     * List item corresponds to an entry in a mapValue with the following list's map values: MAP_VALUE=mapValue.entry.value, mapValue.entry.key is parsed into separate key/value
-     * pairs and inserted into map
+     * List item corresponds to an entry in a mapValue with the following list's map values: MAP_VALUE=mapValue.entry.value, mapValue.entry.key is parsed into separate key/value pairs and inserted into map
      */
     @JsonIgnore
     private List<Map<String, Object>> matrixValuesForGUI = new ArrayList<Map<String, Object>>();
@@ -265,8 +263,8 @@ public class CustomFieldValue implements Serializable, Cloneable {
     /**
      * Contains entityReferenceValue converted into a BusinessEntity object in the following way:
      * <p>
-     * A class of entityReferenceValue.className type is instantiated with code field set to entityReferenceValue.code value and in case it is Custom Entity Instance class, a
-     * cetCode field is set to entityReferenceValue.classnameCode value
+     * A class of entityReferenceValue.className type is instantiated with code field set to entityReferenceValue.code value and in case it is Custom Entity Instance class, a cetCode field is set to
+     * entityReferenceValue.classnameCode value
      */
     @JsonIgnore
     private IReferenceEntity entityReferenceValueForGUI;
@@ -663,14 +661,14 @@ public class CustomFieldValue implements Serializable, Cloneable {
             mapBooleanValue = new LinkedHashMap<>();
             for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
                 if (mapItem.getValue() instanceof Boolean) {
-                	mapBooleanValue.put(mapItem.getKey(), mapItem.getValue() == null ? null : ((Boolean) mapItem.getValue()).booleanValue());
+                    mapBooleanValue.put(mapItem.getKey(), mapItem.getValue() == null ? null : ((Boolean) mapItem.getValue()).booleanValue());
                 }
             }
 
         } else if (itemClass == EntityReferenceWrapper.class) {
             mapEntityValue = new LinkedHashMap<>();
             for (Entry<String, Object> mapItem : mapCopy.entrySet()) {
-                mapEntityValue.put(mapItem.getKey(), mapItem.getValue() == null ? null :(EntityReferenceWrapper) mapItem.getValue());
+                mapEntityValue.put(mapItem.getKey(), mapItem.getValue() == null ? null : (EntityReferenceWrapper) mapItem.getValue());
             }
         }
     }
@@ -1835,29 +1833,54 @@ public class CustomFieldValue implements Serializable, Cloneable {
 
     @Override
     public CustomFieldValue clone() {
-        try {
-            CustomFieldValue cloned = (CustomFieldValue) super.clone();
-            if (mapStringValue != null) {
-                cloned.mapStringValue = new LinkedHashMap<>(mapStringValue);
-            } else if (mapDateValue != null) {
-                cloned.mapDateValue = new LinkedHashMap<>(mapDateValue);
-            } else if (mapDoubleValue != null) {
-                cloned.mapDoubleValue = new LinkedHashMap<>(mapDoubleValue);
-            } else if (mapBooleanValue != null) {
-                cloned.mapBooleanValue = new LinkedHashMap<>(mapBooleanValue);
-            } else if (mapLongValue != null) {
-                cloned.mapLongValue = new LinkedHashMap<>(mapLongValue);
-            } else if (mapEntityValue != null) {
-                cloned.mapEntityValue = new LinkedHashMap<>(mapEntityValue);
-            }
 
-            return cloned;
+        CustomFieldValue cloned = new CustomFieldValue();
+        cloned.booleanValue = booleanValue;
+        cloned.longValue = longValue;
+        cloned.dateValue = dateValue;
+        cloned.doubleValue = doubleValue;
+        cloned.stringValue = stringValue;
+        cloned.entityReferenceValue = entityReferenceValue;
 
-        } catch (CloneNotSupportedException e) {
-            Logger log = LoggerFactory.getLogger(CustomFieldValue.class);
-            log.error("Failed to clone", e);
-            return this;
+        cloned.customTableCode = customTableCode;
+        cloned.dataFilter = dataFilter;
+        cloned.fields = fields;
+        cloned.priority = priority;
+        cloned.source = source;
+        if (period != null) {
+            cloned.period = new DatePeriod(period.getFrom(), period.getTo());
         }
+
+        if (listStringValue != null) {
+            cloned.listStringValue = new ArrayList<String>(listStringValue);
+        } else if (listDateValue != null) {
+            cloned.listDateValue = new ArrayList<Date>(listDateValue);
+        } else if (listLongValue != null) {
+            cloned.listLongValue = new ArrayList<Long>(listLongValue);
+        } else if (listDoubleValue != null) {
+            cloned.listDoubleValue = new ArrayList<Double>(listDoubleValue);
+        } else if (listBooleanValue != null) {
+            cloned.listBooleanValue = new ArrayList<Boolean>(listBooleanValue);
+        } else if (listEntityValue != null) {
+            cloned.listEntityValue = new ArrayList<EntityReferenceWrapper>(listEntityValue);
+        }
+
+        if (mapStringValue != null) {
+            cloned.mapStringValue = new LinkedHashMap<>(mapStringValue);
+        } else if (mapDateValue != null) {
+            cloned.mapDateValue = new LinkedHashMap<>(mapDateValue);
+        } else if (mapDoubleValue != null) {
+            cloned.mapDoubleValue = new LinkedHashMap<>(mapDoubleValue);
+        } else if (mapBooleanValue != null) {
+            cloned.mapBooleanValue = new LinkedHashMap<>(mapBooleanValue);
+        } else if (mapLongValue != null) {
+            cloned.mapLongValue = new LinkedHashMap<>(mapLongValue);
+        } else if (mapEntityValue != null) {
+            cloned.mapEntityValue = new LinkedHashMap<>(mapEntityValue);
+        }
+
+        return cloned;
+
     }
 
     /**

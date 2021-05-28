@@ -33,6 +33,8 @@ import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteProduct;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * DTO to create or update a quoteProduct
  * 
@@ -65,11 +67,15 @@ public class QuoteProductDTO extends BaseEntityDto{
     @NotNull
     private BigDecimal quantity;
     
+    /** Discount plan code */
+    @Schema(description = "The code of the discount plan")
+	private String discountPlanCode;
+    
     private List<QuoteAttributeDTO> productAttributes=new ArrayList<QuoteAttributeDTO>();
     
     private List<AccountingArticlePricesDTO> accountingArticlePrices = new ArrayList<AccountingArticlePricesDTO>();
 
-	 private CustomFieldsDto customFields;
+	private CustomFieldsDto customFields;
     
     public QuoteProductDTO() {
     	super();
@@ -88,7 +94,8 @@ public class QuoteProductDTO extends BaseEntityDto{
 		productCode=quoteProduct.getProductVersion().getProduct().getCode();
 		productVersion=quoteProduct.getProductVersion().getCurrentVersion();
 		quantity=quoteProduct.getQuantity();
-	}
+		discountPlanCode=quoteProduct.getDiscountPlan() != null ?quoteProduct.getDiscountPlan().getCode() : null;
+	   }
 	
 	public QuoteProductDTO(QuoteProduct quoteProduct, boolean loadAttributes) {
 		super();
@@ -234,6 +241,17 @@ public class QuoteProductDTO extends BaseEntityDto{
 	 */
 	public CustomFieldsDto getCustomFields() {
 		return customFields;
+	}
+
+	
+
+	public String getDiscountPlanCode() {
+		return discountPlanCode;
+	}
+
+
+	public void setDiscountPlanCode(String discountPlanCode) {
+		this.discountPlanCode = discountPlanCode;
 	}
 
 

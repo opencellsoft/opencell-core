@@ -71,6 +71,7 @@ import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.GroupedAttributes;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -196,17 +197,17 @@ public class CatalogHierarchyBuilderService {
     @Inject private GroupedAttributeService groupedAttributeService;
 
 
-    public void duplicateProductVersion(ProductVersion entity, List<Attribute> attributes, List<Tag> tags, List<GroupedAttributes> groupedAttributes, String prefix) throws BusinessException {
+    public void duplicateProductVersion(ProductVersion entity, List<ProductVersionAttribute> attributes, List<Tag> tags, List<GroupedAttributes> groupedAttributes, String prefix) throws BusinessException {
     
         if(attributes != null) {
-        	entity.setAttributes(new ArrayList<Attribute>());
-        	for (Attribute attribute : attributes) {
-        		for(Media media : attribute.getMedias()) {
+        	entity.setProductAttributes(new ArrayList<ProductVersionAttribute>());
+        	for (ProductVersionAttribute productAttribute : attributes) {
+        		for(Media media : productAttribute.getAttribute().getMedias()) {
         			Media newMedia = new Media(media);
         			newMedia.setCode(media.getCode() + "_" + entity.getId());
         			mediaService.create(newMedia);
         		}
-				entity.getAttributes().add(attribute);
+				entity.getProductAttributes().add(productAttribute);
 			}
         }
         
@@ -239,10 +240,10 @@ public class CatalogHierarchyBuilderService {
     	if(productVersion != null) {
     		ProductVersion tmpProductVersion = productVersionService.findById(productVersion.getId());
     		tmpProductVersion.getTags().size();
-    		tmpProductVersion.getAttributes().size();
-    		tmpProductVersion.getAttributes().forEach(att -> {
-    			att.getMedias().size();
-    			att.getAssignedAttributes().size();
+    		tmpProductVersion.getProductAttributes().size();
+    		tmpProductVersion.getProductAttributes().forEach(att -> {
+    			att.getAttribute().getMedias().size();
+    			att.getAttribute().getAssignedAttributes().size();
     		});
 
     		tmpProductVersion.getGroupedAttributes().forEach(ga -> {
@@ -256,7 +257,7 @@ public class CatalogHierarchyBuilderService {
         	});
     		
     		var tagList = new ArrayList<>(tmpProductVersion.getTags());
-    		var serviceList = new ArrayList<>(tmpProductVersion.getAttributes());
+    		var serviceList = new ArrayList<>(tmpProductVersion.getProductAttributes());
     		var groupedAttribute = new ArrayList<>(tmpProductVersion.getGroupedAttributes());
 
     		ProductVersion newProductVersion = new ProductVersion(tmpProductVersion, entity);

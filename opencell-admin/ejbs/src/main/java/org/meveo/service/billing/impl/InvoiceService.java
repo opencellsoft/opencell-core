@@ -4688,22 +4688,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public Invoice createBasicInvoiceInvoice(BasicInvoice resource) {
         final String billingAccountCode = resource.getBillingAccountCode();
-        final String articleCode = resource.getArticleCode() != null ? resource.getArticleCode() : "ADV-STD";
         final BigDecimal amountWithTax = resource.getAmountWithTax();
         final Date invoiceDate = resource.getInvoiceDate() != null ? resource.getInvoiceDate() : new Date();
 
         Order order = (Order)tryToFindByEntityClassAndCode(Order.class, resource.getOrderCode());
         BillingAccount billingAccount = (BillingAccount)tryToFindByEntityClassAndCode(BillingAccount.class, billingAccountCode);
-        AccountingArticle accountingArticle = (AccountingArticle)tryToFindByEntityClassAndCode(AccountingArticle.class, articleCode);
         final String invoiceTypeCode = resource.getInvoiceTypeCode() != null? resource.getInvoiceTypeCode() : "ADV";
 		InvoiceType advType = (InvoiceType)tryToFindByEntityClassAndCode(InvoiceType.class, invoiceTypeCode);
 
         Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, advType);
-        if(resource.getArticleCode()!=null) {
-        	initInvoiceLineForBasicInvoice(resource, amountWithTax, order, billingAccount, accountingArticle, invoice);
-        }
-        serviceSingleton.assignInvoiceNumber(invoice);
-        postCreate(invoice);
+      
+        //postCreate(invoice);
         return invoice;
     }
 
@@ -4722,12 +4717,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setAmountTax(BigDecimal.ZERO);
         invoice.setDiscountAmount(BigDecimal.ZERO);
         invoice.setInvoiceDate(invoiceDate);
+        invoice.setDetailedInvoice(true);
         invoice.setNetToPay(amountWithTax);
         Date dueDate = calculateDueDate(invoice, billingAccount.getBillingCycle(), billingAccount,
                 billingAccount.getCustomerAccount(), order);
         invoice.setDueDate(dueDate);
         invoice.setSeller(billingAccount.getCustomerAccount().getCustomer().getSeller());
-        invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+        invoice.setStatus(InvoiceStatusEnum.NEW);
         return invoice;
     }
 

@@ -23,6 +23,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.AuditableCFEntity;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -57,7 +59,7 @@ import org.meveo.model.quote.QuoteVersion;
 @CustomFieldEntity(cftCodePrefix = "CommercialOrder",inheritCFValuesFrom = {"quoteVersion"})
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_commercial_order_seq")})
-public class CommercialOrder extends AuditableCFEntity implements IBillableEntity  {
+public class CommercialOrder extends BusinessCFEntity implements IBillableEntity  {
 
 
 	@Transient
@@ -707,12 +709,6 @@ public class CommercialOrder extends AuditableCFEntity implements IBillableEntit
 	}
 
 	@Override
-	public String getCode() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public BillingCycle getBillingCycle() {
 		// TODO Auto-generated method stub
 		return null;
@@ -743,6 +739,8 @@ public class CommercialOrder extends AuditableCFEntity implements IBillableEntit
 	public void setQuoteVersion(QuoteVersion quoteVersion) {
 		this.quoteVersion = quoteVersion;
 	}
+
+
 	
 	
 }

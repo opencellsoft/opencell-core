@@ -23,6 +23,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -132,6 +133,11 @@ public class ProductVersion extends AuditableEntity{
 	/**
 	 * list of attributes attached to this product version
 	 */
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "productVersion", orphanRemoval = true)
+    private List<ProductVersionAttribute> productAttributes = new ArrayList<ProductVersionAttribute>();
+	
+
+	@Deprecated
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 				name = "cpq_product_version_attributes",
@@ -166,7 +172,7 @@ public class ProductVersion extends AuditableEntity{
 		else
 			this.setProduct(copy.getProduct());
 		this.setTags(new HashSet<>());
-		this.setAttributes(new ArrayList<>());
+		this.setProductAttributes(new ArrayList<>());
 		this.setShortDescription(copy.getShortDescription());
 		this.setValidity(copy.getValidity()); 
 	}
@@ -226,21 +232,6 @@ public class ProductVersion extends AuditableEntity{
 		this.product = product;
 	}
 
-
-
-	/**
-	 * @return the attributes
-	 */
-	public List<Attribute> getAttributes() {
-		return attributes;
-	}
-
-	/**
-	 * @param attributes the attributes to set
-	 */
-	public void setAttributes(List<Attribute> attributes) {
-		this.attributes = attributes;
-	}
 
 	/**
 	 * @return the tags
@@ -308,6 +299,20 @@ public class ProductVersion extends AuditableEntity{
 				&& Objects.equals(shortDescription, other.shortDescription) && status == other.status
 				&& Objects.equals(statusDate, other.statusDate) && Objects.equals(tags, other.tags)
 				&& version == other.version;
+	}
+
+	/**
+	 * @return the productAttributes
+	 */
+	public List<ProductVersionAttribute> getProductAttributes() {
+		return productAttributes;
+	}
+
+	/**
+	 * @param productAttributes the productAttributes to set
+	 */
+	public void setProductAttributes(List<ProductVersionAttribute> productAttributes) {
+		this.productAttributes = productAttributes;
 	}
 
 	

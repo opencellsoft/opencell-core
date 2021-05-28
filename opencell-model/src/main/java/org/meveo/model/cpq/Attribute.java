@@ -98,12 +98,6 @@ public class Attribute extends EnableBusinessCFEntity{
     
     
 
-    /**
-     * attribute order in the GUI
-     */
-    @Column(name = "sequence")
-    protected Integer sequence;
-    
     @Enumerated(EnumType.STRING)
     @Column(name = "attribute_type")
     protected AttributeTypeEnum attributeType;
@@ -197,21 +191,6 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setAllowedValues(Set<String> allowedValues) {
 		this.allowedValues = allowedValues;
-	}
-
-
-	/**
-	 * @return the sequence
-	 */
-	public Integer getSequence() {
-		return sequence;
-	}
-
-	/**
-	 * @param sequence the sequence to set
-	 */
-	public void setSequence(Integer sequence) {
-		this.sequence = sequence;
 	}
 
 	/**

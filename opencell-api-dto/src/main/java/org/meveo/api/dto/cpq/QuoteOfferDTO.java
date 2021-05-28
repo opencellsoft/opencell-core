@@ -30,6 +30,7 @@ import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.cpq.QuoteAttribute;
 import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.quote.QuoteProduct;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -118,6 +119,13 @@ public class QuoteOfferDTO extends BaseEntityDto{
     /** Discount plan code */
 	@Schema(description = "the code of the discount plan")
 	private String discountPlanCode;
+	
+	
+	/**
+	 * List of quote prices
+	 */
+	@Schema(description = "total amounts")
+	private List<PriceDTO> prices;
     
     
 
@@ -141,6 +149,10 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	}
 	public QuoteOfferDTO(QuoteOffer quoteOffer, boolean loadQuoteProduct, boolean loadQuoteAttributes,boolean loadOfferAttributes) {
 		init(quoteOffer);
+		prices=new ArrayList<PriceDTO>();
+		for(QuotePrice quotePrice:quoteOffer.getQuotePrices()) {
+			prices.add(new PriceDTO(quotePrice));
+		}
 		if(loadQuoteProduct) {
 			products=new ArrayList<QuoteProductDTO>();
 				for(QuoteProduct quoteProduct:quoteOffer.getQuoteProduct()) {
@@ -315,6 +327,12 @@ public class QuoteOfferDTO extends BaseEntityDto{
 	 */
 	public void setOfferId(Long offerId) {
 		this.offerId = offerId;
+	}
+	public List<PriceDTO> getPrices() {
+		return prices;
+	}
+	public void setPrices(List<PriceDTO> prices) {
+		this.prices = prices;
 	}
 	
 	

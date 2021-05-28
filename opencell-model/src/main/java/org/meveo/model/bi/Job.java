@@ -89,7 +89,7 @@ public class Job extends AuditableEntity {
     /**
      * Job execution histories
      */
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "job", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<JobExecutionHisto> jobHistory;
 
     public String getName() {
