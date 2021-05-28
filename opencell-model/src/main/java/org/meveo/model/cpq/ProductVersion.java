@@ -130,14 +130,8 @@ public class ProductVersion extends AuditableEntity{
     private Set<Tag> tags = new HashSet<Tag>();
     
 
-	/**
-	 * list of attributes attached to this product version
-	 */
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "productVersion", orphanRemoval = true)
-    private List<ProductVersionAttribute> productAttributes = new ArrayList<ProductVersionAttribute>();
 	
 
-	@Deprecated
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 				name = "cpq_product_version_attributes",
@@ -172,7 +166,7 @@ public class ProductVersion extends AuditableEntity{
 		else
 			this.setProduct(copy.getProduct());
 		this.setTags(new HashSet<>());
-		this.setProductAttributes(new ArrayList<>());
+		this.setAttributes(new ArrayList<>());
 		this.setShortDescription(copy.getShortDescription());
 		this.setValidity(copy.getValidity()); 
 	}
@@ -304,15 +298,15 @@ public class ProductVersion extends AuditableEntity{
 	/**
 	 * @return the productAttributes
 	 */
-	public List<ProductVersionAttribute> getProductAttributes() {
-		return productAttributes;
+	public List<Attribute> getAttributes() {
+		return attributes;
 	}
 
 	/**
 	 * @param productAttributes the productAttributes to set
 	 */
-	public void setProductAttributes(List<ProductVersionAttribute> productAttributes) {
-		this.productAttributes = productAttributes;
+	public void setAttributes(List<Attribute> productAttributes) {
+		this.attributes = productAttributes;
 	}
 
 	

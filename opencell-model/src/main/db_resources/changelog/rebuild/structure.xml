@@ -9170,6 +9170,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="priority" type="int4" />
+            <column name="sequence" type="int4" />
             <column name="display" type="${type.boolean}" >
                 <constraints nullable="false"/>
             </column>
@@ -9227,17 +9228,17 @@
     </changeSet>
     <changeSet id="rebuild-str-tbl-460" author="NabilOUACHI">
         <createTable tableName="cpq_product_version_attributes">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_attributes_id_pk" />
-            </column>
             <column name="product_version_id" type="bigint" >
                 <constraints nullable="false"/>
             </column>
             <column name="attribute_id" type="bigint" >
                 <constraints nullable="false"/>
             </column>
-            <column name="sequence" type="INT4" />
+            <column name="sequence" type="INT4" defaultValue="0" />
+            <column name="version" type="int4" defaultValue="0" />
         </createTable>
+    	<sql>ALTER TABLE  ${db.schema.adapted}cpq_product_version_attributes ADD COLUMN id SERIAL PRIMARY KEY</sql>
+    	<sql>ALTER TABLE  ${db.schema.adapted}cpq_product_version_attributes ALTER COLUMN id TYPE int8 USING id::int8;</sql>
     </changeSet>
     <changeSet id="rebuild-str-tbl-461" author="NabilOUACHI">
         <createTable tableName="cpq_service_template_attributes">
@@ -10338,25 +10339,6 @@
 
         <addPrimaryKey columnNames="commercial_order_id,order_lot_id" tableName="cpq_commercial_order_order_lot"/>
     </changeSet>
-    <changeSet id="rebuild-str-tbl-503" author="TarikFA.">
-        <createSequence sequenceName="cpq_product_version_attributes_association_seq" startValue="1"/>
-    	
-        <createTable tableName="cpq_product_version_attributes_association">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_attributes_association_id_pk" />
-            </column>
-            <column name="product_version_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="attribute_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="version" type="int4" />
-            <column name="sequence" type="INT4" />
-        </createTable>
-        <addUniqueConstraint columnNames="product_version_id,sequence" constraintName="unique_product_version_sequence_pkey" tableName="cpq_product_version_attributes_association" />
-    </changeSet>
-
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1" dbms="postgresql">
@@ -14001,14 +13983,6 @@
 			 baseColumnNames="order_offer_id" baseTableName="order_price" constraintName="fk_order_price_order_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 			 referencedColumnNames="id" referencedTableName="cpq_order_offer" /> 
     </changeSet>
-    
-     <changeSet author="Mbarek-Ay" id="rebuild-str-fk-1631">
-        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_product_version_attributes_association" constraintName="cpq_product_version_attributes_association_attribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
-        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product_version_attributes_association" constraintName="cpq_product_version_attributes_association_product_version_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
-    
-    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15730,11 +15704,12 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#5595_20210506" author="NabilOuachi"></changeSet>
     <changeSet id="#5595_20210512" author="RachidAityaazza"></changeSet>
     <changeSet id="#5623-562-20210520" author="Mbarek-Ay"/>
-    <changeSet id="#5595_540582_20210526" author="TarikFA." />
     <changeSet id="#5257_20210519" author="AndriusKarpavicius"/>
 
     <changeSet id="#533_20210526" author="NabilOuachi">
     </changeSet>
+    
+    <changeSet id="#5595_540582_20210528" author="TarikFA." />
     
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
