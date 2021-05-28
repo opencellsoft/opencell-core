@@ -8937,6 +8937,17 @@ public class OrderAdvancement extends ModuleScript {
 			baseColumnNames="order_offer_id" baseTableName="order_price" constraintName="fk_order_price_order_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="cpq_order_offer" />
 	</changeSet>
+
+    <changeSet id="#5869_20210521" author="NabilOuachi">
+        <addColumn tableName="cpq_quote_version">
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </addColumn>
+    </changeSet>
     
     <changeSet id="#6122_20210524" author="AbdelmounaimAkadid">
     	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = REPLACE(cf_values, '"string":"DraftOnly"', '"listString":["DRAFT"]') where job_template = 'XMLInvoiceGenerationJob';</sql>

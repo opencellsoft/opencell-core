@@ -579,12 +579,12 @@ public class CpqQuoteApi extends BaseApi {
                     if(quoteVersionDto.getStatus() != null) {
                         qv.setStatus(quoteVersionDto.getStatus());
                         qv.setStatusDate(Calendar.getInstance().getTime());
-                    } 
-        			if(!StringUtils.isBlank(quoteVersionDto.getBillingPlanCode())) {
-        			InvoicingPlan invoicingPlan= invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode());  
-        			if (invoicingPlan == null) {
-        				throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
-        			}
+                    }
+                    if (!StringUtils.isBlank(quoteVersionDto.getBillingPlanCode())) {
+                        InvoicingPlan invoicingPlan = invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode());
+                        if (invoicingPlan == null) {
+                            throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
+                        }
                         qv.setInvoicingPlan(invoicingPlan);
                     }
                     populateCustomFields(quoteVersionDto.getCustomFields(), qv, false);
