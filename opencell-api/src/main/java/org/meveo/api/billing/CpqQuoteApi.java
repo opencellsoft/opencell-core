@@ -587,6 +587,7 @@ public class CpqQuoteApi extends BaseApi {
         			}
                         qv.setInvoicingPlan(invoicingPlan);
                     }
+                    populateCustomFields(quoteVersionDto.getCustomFields(), qv, false);
                     quoteVersionService.update(qv);
                     quoteVersionDto = new QuoteVersionDto(qv);
                     quoteDto.setQuoteVersion(quoteVersionDto);
@@ -1050,7 +1051,7 @@ public class CpqQuoteApi extends BaseApi {
         }
         try {
             cpqQuoteService.update(cpqQuote);
-            cpqQuoteStatusUpdatedEvent.fire(cpqQuote);
+            //cpqQuoteStatusUpdatedEvent.fire(cpqQuote);
         } catch (BusinessApiException e) {
             throw new MeveoApiException(e);
         }
