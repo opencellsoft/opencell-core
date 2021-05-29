@@ -8940,13 +8940,13 @@ public class OrderAdvancement extends ModuleScript {
 
     <changeSet id="#5869_20210521" author="NabilOuachi">
         <addColumn tableName="cpq_quote_version">
-            <column name="created" type="datetime">
-                <constraints nullable="false" />
-            </column>
+            <column name="created" type="datetime"/>
             <column name="updated" type="datetime" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
         </addColumn>
+        <sql>update ${db.schema.adapted}cpq_quote_version set created=now() where created is null</sql>
+        <addNotNullConstraint tableName="cpq_quote_version" columnName="created"/>
     </changeSet>
     
     <changeSet id="#6122_20210524" author="AbdelmounaimAkadid">
