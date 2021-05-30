@@ -18,6 +18,7 @@
 
 package org.meveo.admin.job;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -66,7 +67,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWoToRT, this::hasMore, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertWoToRT, this::convertWoToRTBatch, this::hasMore, null);
     }
 
     /**
@@ -106,8 +107,22 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
      */
     private void convertWoToRT(Long woId, JobExecutionResultImpl jobExecutionResult) {
 
-        WalletOperation walletOperation = walletOperationService.findById(woId);
+        WalletOperation walletOperation = walletOperationService.findById(woId, Arrays.asList("wallet", "chargeInstance"));
         ratedTransactionService.createRatedTransaction(walletOperation, false);
+    }
+
+    /**
+     * Convert a multiple Wallet operations to a Rated transactions
+     * 
+     * @param woIds Wallet operation ids to convert
+     * @param jobExecutionResult Job execution result
+     */
+    private void convertWoToRTBatch(List<Long> woIds, JobExecutionResultImpl jobExecutionResult) {
+
+        List<WalletOperation> walletOperations = walletOperationService.findByIds(woIds, Arrays.asList("wallet", "chargeInstance"));
+        for (WalletOperation walletOperation : walletOperations) {
+            ratedTransactionService.createRatedTransaction(walletOperation, false);
+        }
     }
 
     private boolean hasMore(JobInstance jobInstance) {
