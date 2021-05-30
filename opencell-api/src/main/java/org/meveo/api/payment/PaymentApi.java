@@ -87,109 +87,121 @@ import org.primefaces.model.SortOrder;
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class PaymentApi extends BaseApi {
 
-    private static final String DEFAULT_SORT_ORDER_ID = "id";
-    
-    @Inject
-    private PaymentService paymentService;
+	private static final String DEFAULT_SORT_ORDER_ID = "id";
 
-    @Inject
-    private AccountOperationService accountOperationService;
+	@Inject
+	private PaymentService paymentService;
 
-    @Inject
-    private RecordedInvoiceService recordedInvoiceService;
+	@Inject
+	private AccountOperationService accountOperationService;
 
-    @Inject
-    private MatchingCodeService matchingCodeService;
+	@Inject
+	private RecordedInvoiceService recordedInvoiceService;
 
-    @Inject
-    private CustomerAccountService customerAccountService;
+	@Inject
+	private MatchingCodeService matchingCodeService;
 
-    @Inject
-    private OCCTemplateService oCCTemplateService;
+	@Inject
+	private CustomerAccountService customerAccountService;
 
-    @Inject
-    private PaymentHistoryService paymentHistoryService;
+	@Inject
+	private OCCTemplateService oCCTemplateService;
 
-    /**
-     * @param paymentDto payment object which encapsulates the input data sent by client
-     * @return the id of payment if created successful otherwise null
-     * @throws NoAllOperationUnmatchedException no all operation un matched exception
-     * @throws UnbalanceAmountException balance amount exception
-     * @throws BusinessException business exception
-     * @throws MeveoApiException opencell api exception
-     */
-    public Long createPayment(PaymentDto paymentDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
-        log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching()
-                + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
+	@Inject
+	private PaymentHistoryService paymentHistoryService;
 
-        if (StringUtils.isBlank(paymentDto.getAmount())) {
-            missingParameters.add("amount");
-        }
-        if (StringUtils.isBlank(paymentDto.getCustomerAccountCode())) {
-            missingParameters.add("customerAccountCode");
-        }
-        if (StringUtils.isBlank(paymentDto.getOccTemplateCode())) {
-            missingParameters.add("occTemplateCode");
-        }
-        if (StringUtils.isBlank(paymentDto.getReference())) {
-            missingParameters.add("reference");
-        }
-        if (StringUtils.isBlank(paymentDto.getPaymentMethod())) {
-            missingParameters.add("paymentMethod");
-        }
-        handleMissingParameters();
-        CustomerAccount customerAccount = customerAccountService.findByCode(paymentDto.getCustomerAccountCode());
-        if (customerAccount == null) {
-            throw new BusinessException("Cannot find customer account with code=" + paymentDto.getCustomerAccountCode());
-        }
+	/**
+	 * @param paymentDto payment object which encapsulates the input data sent by client
+	 * @return the id of payment if created successful otherwise null
+	 * @throws NoAllOperationUnmatchedException no all operation un matched exception
+	 * @throws UnbalanceAmountException balance amount exception
+	 * @throws BusinessException business exception
+	 * @throws MeveoApiException opencell api exception
+	 */
+	public Long createPayment(PaymentDto paymentDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
+		log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching()
+				+ "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
+ 		if (StringUtils.isBlank(paymentDto.getPaymentinfo1())) {
+			missingParameters.add("payment_info1");
+		}
+		if (StringUtils.isBlank(paymentDto.getAmount())) {
+			missingParameters.add("amount");
+		}
+		if (StringUtils.isBlank(paymentDto.getCustomerAccountCode())) {
+			missingParameters.add("customerAccountCode");
+		}
+		if (StringUtils.isBlank(paymentDto.getOccTemplateCode())) {
+			missingParameters.add("occTemplateCode");
+		}
+		if (StringUtils.isBlank(paymentDto.getReference())) {
+			missingParameters.add("reference");
+		}
+		if (StringUtils.isBlank(paymentDto.getPaymentMethod())) {
+			missingParameters.add("paymentMethod");
+		}
+		handleMissingParameters();
+		CustomerAccount customerAccount = customerAccountService.findByCode(paymentDto.getCustomerAccountCode());
+		if (customerAccount == null) {
+			throw new BusinessException("Cannot find customer account with code=" + paymentDto.getCustomerAccountCode());
+		}
 
-        OCCTemplate occTemplate = oCCTemplateService.findByCode(paymentDto.getOccTemplateCode());
-        if (occTemplate == null) {
-            throw new BusinessException("Cannot find OCC Template with code=" + paymentDto.getOccTemplateCode());
-        }
+		OCCTemplate occTemplate = oCCTemplateService.findByCode(paymentDto.getOccTemplateCode());
+		if (occTemplate == null) {
+			throw new BusinessException("Cannot find OCC Template with code=" + paymentDto.getOccTemplateCode());
+		}
 
-        Payment payment = new Payment();
-        payment.setPaymentMethod(paymentDto.getPaymentMethod());
-        payment.setAmount(paymentDto.getAmount());
-        payment.setUnMatchingAmount(paymentDto.getAmount());
-        payment.setMatchingAmount(BigDecimal.ZERO);
-        payment.setAccountingCode(occTemplate.getAccountingCode());
-        payment.setCode(occTemplate.getCode());
-        payment.setDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
-        payment.setTransactionCategory(occTemplate.getOccCategory());
-        payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
-        payment.setCustomerAccount(customerAccount);
-        payment.setReference(paymentDto.getReference());
-        payment.setDueDate(paymentDto.getDueDate());
-        payment.setTransactionDate(paymentDto.getTransactionDate());
-        payment.setMatchingStatus(MatchingStatusEnum.O);
-        payment.setPaymentOrder(paymentDto.getPaymentOrder());
-        payment.setFees(paymentDto.getFees());
-        payment.setComment(paymentDto.getComment());
+		Payment payment = new Payment();
+		payment.setPaymentMethod(paymentDto.getPaymentMethod());
+		payment.setAmount(paymentDto.getAmount());
+		payment.setUnMatchingAmount(paymentDto.getAmount());
+		payment.setMatchingAmount(BigDecimal.ZERO);
+		payment.setAccountingCode(occTemplate.getAccountingCode());
+		payment.setCode(occTemplate.getCode());
+		payment.setDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
+		payment.setTransactionCategory(occTemplate.getOccCategory());
+		payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
+		payment.setCustomerAccount(customerAccount);
+		payment.setReference(paymentDto.getReference());
+		payment.setBankLot(paymentDto.getBankLot());
+		payment.setDueDate(paymentDto.getDueDate());
+		payment.setTransactionDate(paymentDto.getTransactionDate());
+		payment.setMatchingStatus(MatchingStatusEnum.O);
+		payment.setPaymentOrder(paymentDto.getPaymentOrder());
+		payment.setFees(paymentDto.getFees());
+		payment.setPaymentInfo(paymentDto.getPaymentinfo());
+		payment.setPaymentInfo1(paymentDto.getPaymentinfo1());
+		payment.setPaymentInfo2(paymentDto.getPaymentinfo2());
+		payment.setPaymentInfo3(paymentDto.getPaymentinfo3());
+		payment.setPaymentInfo4(paymentDto.getPaymentinfo4());
+		payment.setPaymentInfo5(paymentDto.getPaymentinfo5());
 
-        // populate customFields
-        try {
-            populateCustomFields(paymentDto.getCustomFields(), payment, true);
-        } catch (MissingParameterException | InvalidParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
+		payment.setComment(paymentDto.getComment());
+		//paymentDto.setPaymentinfo1(paymentDto.getPaymentinfo1());
 
-        paymentService.create(payment);
 
-        if (paymentDto.isToMatching()) {
-            matchPayment(paymentDto, customerAccount, payment);
-        } else {
-            log.info("no matching created ");
-        }
-        log.debug("payment created for amount:" + payment.getAmount());
+		// populate customFields
+		try {
+			populateCustomFields(paymentDto.getCustomFields(), payment, true);
+		} catch (MissingParameterException | InvalidParameterException e) {
+			log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+			throw e;
+		} catch (Exception e) {
+			log.error("Failed to associate custom field instance to an entity", e);
+			throw e;
+		}
 
-        return payment.getId();
+		paymentService.create(payment);
 
-    }
+		if (paymentDto.isToMatching()) {
+			matchPayment(paymentDto, customerAccount, payment);
+		} else {
+			log.info("no matching created ");
+		}
+		log.debug("payment created for amount:" + payment.getAmount());
+
+		return payment.getId();
+
+	}
 
 	private void matchPayment(PaymentDto paymentDto, CustomerAccount customerAccount, Payment payment)
 			throws BusinessApiException, BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
@@ -197,15 +209,15 @@ public class PaymentApi extends BaseApi {
 		if (paymentDto.getListAoIdsForMatching()!=null && !paymentDto.getListAoIdsForMatching().isEmpty() ) {
 			listReferenceToMatch.addAll(paymentDto.getListAoIdsForMatching());
 		} else if (paymentDto.getListOCCReferenceforMatching() != null) {
-		    for (String Reference: paymentDto.getListOCCReferenceforMatching()) {
-		        List<RecordedInvoice> accountOperationToMatch = recordedInvoiceService.getRecordedInvoice(Reference);
-		        if (accountOperationToMatch == null || accountOperationToMatch.isEmpty()) {
-		            throw new BusinessApiException("Cannot find account operation with reference:" + Reference );
-		        } else if (accountOperationToMatch.size() > 1) {
-		            throw new BusinessApiException("More than one account operation with reference:" + Reference +". Please use ListAoIdsForMatching instead of ListOCCReferenceforMatching");
-		        }
-		        listReferenceToMatch.add(accountOperationToMatch.get(0).getId());
-		    }
+			for (String Reference: paymentDto.getListOCCReferenceforMatching()) {
+				List<RecordedInvoice> accountOperationToMatch = recordedInvoiceService.getRecordedInvoice(Reference);
+				if (accountOperationToMatch == null || accountOperationToMatch.isEmpty()) {
+					throw new BusinessApiException("Cannot find account operation with reference:" + Reference );
+				} else if (accountOperationToMatch.size() > 1) {
+					throw new BusinessApiException("More than one account operation with reference:" + Reference +". Please use ListAoIdsForMatching instead of ListOCCReferenceforMatching");
+				}
+				listReferenceToMatch.add(accountOperationToMatch.get(0).getId());
+			}
 		}
 		listReferenceToMatch.add(payment.getId());
 		matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A);
@@ -214,7 +226,7 @@ public class PaymentApi extends BaseApi {
 
 	/**
 	 * Get payment list by customer account code
-	 * 
+	 *
 	 * @param customerAccountCode customer account code
 	 * @param pagingAndFiltering
 	 * @return list of payment dto
@@ -248,7 +260,9 @@ public class PaymentApi extends BaseApi {
 
 		for (AccountOperation op : ops) {
 			if (op instanceof Payment) {
+
 				Payment p = (Payment) op;
+
 				PaymentDto paymentDto = new PaymentDto();
 				paymentDto.setType(p.getType());
 				paymentDto.setAmount(p.getAmount());
@@ -260,6 +274,12 @@ public class PaymentApi extends BaseApi {
 				paymentDto.setPaymentOrder(p.getPaymentOrder());
 				paymentDto.setFees(p.getFees());
 				paymentDto.setComment(p.getComment());
+				paymentDto.setPaymentinfo1(p.getPaymentInfo1());
+				paymentDto.setPaymentinfo1(p.getPaymentInfo());
+				paymentDto.setPaymentinfo1(p.getPaymentInfo2());
+				paymentDto.setPaymentinfo1(p.getPaymentInfo3());
+				paymentDto.setPaymentinfo1(p.getPaymentInfo4());
+				paymentDto.setPaymentinfo1(p.getPaymentInfo5());
 				paymentDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
 				if (p instanceof AutomatedPayment) {
 					AutomatedPayment ap = (AutomatedPayment) p;
@@ -287,7 +307,7 @@ public class PaymentApi extends BaseApi {
 	/**
 	 * Prepare paginationConfiguration to get only Payment and OtherCreditAndCharge
 	 * operations related to the customerAccount
-	 * 
+	 *
 	 * @param pagingAndFiltering
 	 * @param customerAccount
 	 * @return
@@ -388,7 +408,7 @@ public class PaymentApi extends BaseApi {
 
 	/**
 	 * List payment histories matching filtering and query criteria
-	 * 
+	 *
 	 * @param pagingAndFiltering Paging and filtering criteria.
 	 * @return A list of payment history
 	 * @throws InvalidParameterException invalid parameter exception
@@ -417,7 +437,7 @@ public class PaymentApi extends BaseApi {
 
 	/**
 	 * Return list AO matched with a payment or refund
-	 * 
+	 *
 	 * @param paymentOrRefund
 	 * @return list AO matched
 	 */
@@ -443,7 +463,7 @@ public class PaymentApi extends BaseApi {
 
 	/**
 	 * Build paymentHistory dto from entity
-	 * 
+	 *
 	 * @param paymentHistory payment History
 	 * @return PaymentHistoryDto
 	 */
@@ -492,5 +512,5 @@ public class PaymentApi extends BaseApi {
 		}
 
 		return paymentHistoryDto;
-    }
+	}
 }
