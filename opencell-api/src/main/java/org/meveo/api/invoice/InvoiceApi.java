@@ -563,7 +563,7 @@ public class InvoiceApi extends BaseApi {
             throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
         }
         invoice.setStatus(InvoiceStatusEnum.VALIDATED);
-        invoice = serviceSingleton.assignInvoiceNumber(invoice);
+        invoice = serviceSingleton.assignInvoiceNumber(invoice,true);
         return invoice.getInvoiceNumber();
     }
 

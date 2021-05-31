@@ -498,7 +498,7 @@ public class ServiceSingleton {
      * @param isVirtual Is its a virtual invoice - should invoice be persisted
      * @throws BusinessException General business exception
      */
-    private Invoice assignInvoiceNumber(Invoice invoice, boolean isVirtual) throws BusinessException {
+    public Invoice assignInvoiceNumber(Invoice invoice, boolean isVirtual) throws BusinessException {
 		if(invoice.getStatus()!=InvoiceStatusEnum.VALIDATED) {
 			throw new BusinessException("cannot assign invoice number to invoice with status: "+invoice.getStatus());
 		}
