@@ -3907,5 +3907,9 @@ END $$;]]>
     <changeSet id="#6076_20210504" author="Zbariki">
         <modifyDataType columnName="decimal_separator" newDataType="varchar(5)" tableName="dwh_report_extract"/>
     </changeSet>
+    
+    <changeSet id="#6147_20210530" author="anasseh">
+	    <sql>CREATE INDEX idx_ar_payment_history_external_payment_id   ON ${db.schema.adapted}ar_payment_history (external_payment_id );</sql>
+    </changeSet>    
 
 </databaseChangeLog>
