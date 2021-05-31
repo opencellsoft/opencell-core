@@ -8945,7 +8945,10 @@ public class OrderAdvancement extends ModuleScript {
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
         </addColumn>
-        <sql>update ${db.schema.adapted}cpq_quote_version set created=now() where created is null</sql>
+        <sql>
+            update ${db.schema.adapted}cpq_quote_version set created=now() where created is null;
+            update ${db.schema.adapted}cpq_quote_version set creator='applicationInitializer' where creator is null;
+        </sql>
         <addNotNullConstraint tableName="cpq_quote_version" columnName="created"/>
     </changeSet>
     
