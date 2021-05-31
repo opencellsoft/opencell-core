@@ -22,7 +22,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -83,13 +82,12 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.CalendarBankingService;
-import org.meveo.service.payments.impl.AbstractDDRequestBuilder;
-import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.service.payments.impl.DDRequestItemService;
-import org.meveo.service.payments.impl.PaymentGatewayService;
+import org.meveo.service.payments.impl.*;
 import org.meveo.util.DDRequestBuilderClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.persistence.Query;
 
 /**
  * The Class SepaFile.
@@ -160,7 +158,8 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	private CalendarBankingService calendarBankingService = (CalendarBankingService) EjbUtils.getServiceInterface(CalendarBankingService.class.getSimpleName());
 	private DDRequestItemService ddRequestItemService = (DDRequestItemService) EjbUtils.getServiceInterface(DDRequestItemService.class.getSimpleName());
 	private CustomerAccountService customerAccountService = (CustomerAccountService) EjbUtils.getServiceInterface(CustomerAccountService.class.getSimpleName());
-	
+	private PaymentMethodService paymentMethodService = (PaymentMethodService) EjbUtils.getServiceInterface(PaymentMethodService.class.getSimpleName());
+
 	
 	
 	
@@ -487,16 +486,13 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	 * @throws Exception the exception
 	 */
 	private void addTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation4 paymentInformation) {
-		dDRequestItem = ddRequestItemService.findById(dDRequestItem.getId(), Arrays.asList("accountOperations"));
-		CustomerAccount ca = customerAccountService.findById(dDRequestItem.getAccountOperations().get(0).getCustomerAccount().getId(),Arrays.asList("paymentMethods"));
-		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
-		if (!(preferedPaymentMethod instanceof DDPaymentMethod)) {
+		Object[] paymentInformations = getPreferredPaymentMethod(dDRequestItem.getId());
+		if (!paymentInformations[3].equals("DIRECTDEBIT")) {
 			throw new BusinessException("Payment method not valid!");
 		}
-		BankCoordinates bankCoordinates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
 
-		if (bankCoordinates == null) {
-			throw new BusinessException("Bank Coordinate is absent for Payment method " + preferedPaymentMethod.getAlias());
+		if (paymentInformations[4] == null && paymentInformations[5] == null) {
+			throw new BusinessException("Bank Coordinate is absent for Payment method " + paymentInformations[6]);
 		}
 
 		DirectDebitTransactionInformation9 directDebitTransactionInformation = new DirectDebitTransactionInformation9();
@@ -514,31 +510,42 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		MandateRelatedInformation6 mandateRelatedInformation = new MandateRelatedInformation6();
 		directDebitTransaction.setMndtRltdInf(mandateRelatedInformation);
 
-		mandateRelatedInformation.setMndtId(((DDPaymentMethod) preferedPaymentMethod).getMandateIdentification());
-		try{
-			mandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendarFieldUndefined(((DDPaymentMethod) preferedPaymentMethod).getMandateDate()));
+		mandateRelatedInformation.setMndtId((String) paymentInformations[7]);
+		try {
+			mandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendarFieldUndefined((Date) paymentInformations[8]));
 		}
-		catch (Exception e)
-		{
+		catch (Exception e) {
 			log.error("Error on dateToXMLGregorianCalendarFieldUndefined {}", e);
 			throw new BusinessException(e.getMessage());
 		}
 		BranchAndFinancialInstitutionIdentification4 debtorAgent = new BranchAndFinancialInstitutionIdentification4();
 		directDebitTransactionInformation.setDbtrAgt(debtorAgent);
 		FinancialInstitutionIdentification7 financialInstitutionIdentification = new FinancialInstitutionIdentification7();
-		financialInstitutionIdentification.setBIC(bankCoordinates.getBic());
+		financialInstitutionIdentification.setBIC((String) paymentInformations[4]);
 		debtorAgent.setFinInstnId(financialInstitutionIdentification);
 
 		PartyIdentification32 debtor = new PartyIdentification32();
 		directDebitTransactionInformation.setDbtr(debtor);
-		debtor.setNm(ca.getDescriptionOrCode());
+		debtor.setNm((!StringUtils.isBlank((String) paymentInformations[2])) ? (String) paymentInformations[2] : (String) paymentInformations[1]);
 
 		CashAccount16 debtorAccount = new CashAccount16();
 		directDebitTransactionInformation.setDbtrAcct(debtorAccount);
 		AccountIdentification4Choice identification = new AccountIdentification4Choice();
-		identification.setIBAN(bankCoordinates.getIban());
+		identification.setIBAN((String) paymentInformations[5]);
 		debtorAccount.setId(identification);
 
+	}
+
+	private Object[] getPreferredPaymentMethod(Long customerAccountID) {
+		String queryString = "SELECT ca.id, ace.code, ace.description, pm.token_type, pm.bic, pm.iban," +
+				" pm.alias, pm.mandate_identification, pm.mandate_date FROM ar_customer_account ca \n" +
+				" JOIN account_entity ace ON ace.id = ca.id " +
+				" JOIN ar_payment_token pm on ca.id = pm.customer_account_id " +
+				"WHERE ca.id IN ( SELECT ao.customer_account_id FROM ar_account_operation ao WHERE ao.ddrequest_item_id = :id) AND is_default = 1";
+		return (Object[]) paymentMethodService.getEntityManager()
+					.createNativeQuery(queryString)
+					.setParameter("id", customerAccountID)
+					.getSingleResult();
 	}
 
 	/**

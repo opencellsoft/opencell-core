@@ -30,6 +30,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -193,8 +194,11 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 					if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
 						log.info("start filterAoToPayOrRefund...");
 						List<AccountOperation> listAoToPay = this.filterAoToPayOrRefund(ddRequestBuilderInterface, jobInstance, ddrequestLotOp);
+						if (listAoToPay == null || listAoToPay.isEmpty()) {
+							throw new BusinessEntityException("no invoices!");
+						}
 						log.info("end filterAoToPayOrRefund listAoToPay.size: {}", listAoToPay.size());
-						DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, listAoToPay, ddRequestBuilder, result);
+						DDRequestLOT ddRequestLOT = dDRequestLOTService.createDDRquestLot(ddrequestLotOp, ddRequestBuilder, result);
 						log.info("end createDDRquestLot");
 						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
 							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);

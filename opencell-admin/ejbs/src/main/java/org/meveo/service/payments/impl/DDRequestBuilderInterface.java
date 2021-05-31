@@ -43,7 +43,7 @@ public interface DDRequestBuilderInterface {
      * @return the list of account operation
      * @throws BusinessException the business exception
      */
-    public List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException;
+    List<AccountOperation> findListAoToPay(DDRequestLotOp ddrequestLotOp) throws BusinessException;
     
          
    /**
@@ -52,7 +52,7 @@ public interface DDRequestBuilderInterface {
     * @param ddRequestLot The DDRequestLot to process.
     * @throws BusinessException the BusinessException.
     */
-    public void generateDDRequestLotFile(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException;
+    void generateDDRequestLotFile(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException;
        
     
     /**
@@ -62,7 +62,7 @@ public interface DDRequestBuilderInterface {
      * @return The payment file name.
      * @throws BusinessException the BusinessException.
      */
-    public String getDDFileName(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException;
+    String getDDFileName(DDRequestLOT ddRequestLot,Provider appProvider) throws BusinessException;
       
     
     /**
@@ -71,7 +71,7 @@ public interface DDRequestBuilderInterface {
      * @param file The sdd reject file to process.
      * @throws BusinessException the BusinessException.
      */
-    public DDRejectFileInfos processSDDRejectedFile(File file) throws BusinessException;
+    DDRejectFileInfos processSDDRejectedFile(File file) throws BusinessException;
     
     /**
      * Process the sct reject file.
@@ -79,6 +79,6 @@ public interface DDRequestBuilderInterface {
      * @param file The sct reject file to process.
      * @throws BusinessException the BusinessException.
      */
-    public DDRejectFileInfos processSCTRejectedFile(File file) throws BusinessException;
+    DDRejectFileInfos processSCTRejectedFile(File file) throws BusinessException;
           
 }
