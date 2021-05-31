@@ -121,9 +121,7 @@ public class PaymentApi extends BaseApi {
 	public Long createPayment(PaymentDto paymentDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
 		log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching()
 				+ "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
- 		if (StringUtils.isBlank(paymentDto.getPaymentinfo1())) {
-			missingParameters.add("payment_info1");
-		}
+
 		if (StringUtils.isBlank(paymentDto.getAmount())) {
 			missingParameters.add("amount");
 		}
