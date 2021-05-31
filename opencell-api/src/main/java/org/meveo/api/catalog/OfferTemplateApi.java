@@ -50,7 +50,6 @@ import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.ProductDto;
-import org.meveo.api.dto.cpq.ProductVersionAttributeDTO;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
@@ -91,7 +90,6 @@ import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Media;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
-import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
@@ -808,17 +806,16 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
         								getProductVersionResponse =new GetProductVersionResponse(productVersion,false,true);
 
-        								if(productVersion.getProductAttributes()!= null && !productVersion.getProductAttributes().isEmpty()) {
-        									Set<ProductVersionAttributeDTO> attributes = productVersion.getProductAttributes()
-        																					.stream()
-        																					.map(ProductVersionAttributeDTO::new)
-        																					.collect(Collectors.toSet());  
-
-        									getProductVersionResponse.setAttributes(attributes);
+        								if(productVersion.getAttributes()!= null && !productVersion.getAttributes().isEmpty()) {
+		    									Set<AttributeDTO> attributes = productVersion.getAttributes().stream().map(d -> {
+			        										GetAttributeDtoResponse result =attributeApi.findByCode(d.getCode());
+			        										return result;
+			        									}).collect(Collectors.toSet()); 
+		    									productDTO.setCurrentProductVersion(getProductVersionResponse);
+		    									getProductVersionResponse.setAttributes(attributes);
+        									}
         								}
-        								productDTO.setCurrentProductVersion(getProductVersionResponse);
-        								break;
-        							}}
+        						}
         					}  	
         				}
         				offerProductsDto.setProduct(productDTO);
