@@ -8974,4 +8974,8 @@ public class OrderAdvancement extends ModuleScript {
             <column name="description" type="varchar(255)" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#6147_20210530" author="anasseh">
+	    <sql>CREATE INDEX idx_ar_payment_history_external_payment_id   ON ${db.schema.adapted}ar_payment_history (external_payment_id );</sql>
+    </changeSet>
 </databaseChangeLog>
