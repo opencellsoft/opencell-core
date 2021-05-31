@@ -726,7 +726,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
 
-    public List<PricePlanMatrixLineDto> loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, QuoteProduct quoteProduct) {
+    public List<PricePlanMatrixLineDto> loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, QuoteProduct quoteProduct) throws BusinessException{
 
         // add check on offerTemplate
         List<PricePlanMatrixColumn> pricePlanMatrixColumns = pricePlanMatrixColumnService.findByProduct(quoteProduct.getProductVersion().getProduct());
@@ -743,7 +743,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
     }
 
-    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) {
+    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) throws BusinessException {
         if( chargeInstance.getServiceInstance()!=null) {
         	String serviceCode=chargeInstance.getServiceInstance().getCode();
         	   Set<AttributeValue> attributeValues = chargeInstance.getServiceInstance().getAttributeInstances()

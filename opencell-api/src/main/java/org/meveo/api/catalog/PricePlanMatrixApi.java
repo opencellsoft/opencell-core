@@ -539,7 +539,11 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         if(quoteProduct == null)
             throw new EntityDoesNotExistsException(QuoteProduct.class, quoteProductId);
 
-        return pricePlanMatrixService.loadPrices(ppmVersion, quoteProduct);
+        try {
+        	return pricePlanMatrixService.loadPrices(ppmVersion, quoteProduct);
+        }catch(BusinessException e) {
+        	throw new MeveoApiException(e.getMessage());
+        }
     }
 
     private PricePlanMatrixVersion loadPublishedMatrixVersion(String ppmCode, Integer ppmVersion) {
@@ -566,8 +570,11 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         PricePlanMatrixVersion pricePlanMatrixVersion = loadPublishedMatrixVersion(ppmCode, version);
 
         ChargeInstance chargeInstance = loadEntityByCode(serviceInstanceService, chargeInstanceCode, ChargeInstance.class);
-
-        return new PricePlanMatrixLineDto(pricePlanMatrixService.loadPrices(pricePlanMatrixVersion, chargeInstance));
+        try {
+        	return new PricePlanMatrixLineDto(pricePlanMatrixService.loadPrices(pricePlanMatrixVersion, chargeInstance));
+        }catch(BusinessException e) {
+        	throw new MeveoApiException(e.getMessage());
+        }
     }
 
     public PricePlanMatrixesResponseDto list(PagingAndFiltering pagingAndFiltering) {
