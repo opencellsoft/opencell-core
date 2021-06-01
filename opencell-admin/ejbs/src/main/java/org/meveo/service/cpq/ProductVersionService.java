@@ -104,7 +104,7 @@ public class ProductVersionService extends
      */
     
     private void fetchAllListOfProductVersion(ProductVersion productVersion) {
-    	productVersion.getProductAttributes().size();
+    	productVersion.getAttributes().size();
     	productVersion.getTags().size();
     	productVersion.getGroupedAttributes().size();
     	productVersion.getGroupedAttributes().forEach(ga -> {
@@ -121,7 +121,7 @@ public class ProductVersionService extends
     	productVersion = refreshOrRetrieve(productVersion);
     	fetchAllListOfProductVersion(productVersion);
     	
-    	var serviceTemplateList = new ArrayList<>(productVersion.getProductAttributes());
+    	var serviceTemplateList = new ArrayList<>(productVersion.getAttributes());
     	var tagList = new ArrayList<>(productVersion.getTags());
     	var groupedAttribute = new ArrayList<GroupedAttributes>(productVersion.getGroupedAttributes());
 
@@ -134,7 +134,7 @@ public class ProductVersionService extends
     	duplicate.setStatus(VersionStatusEnum.DRAFT);
     	duplicate.setStatusDate(Calendar.getInstance().getTime());
     	duplicate.setTags(new HashSet<>());
-    	duplicate.setProductAttributes(new ArrayList<>());
+    	duplicate.setAttributes(new ArrayList<>());
     	duplicate.setGroupedAttributes(new ArrayList<GroupedAttributes>());
 
 

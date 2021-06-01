@@ -8937,6 +8937,20 @@ public class OrderAdvancement extends ModuleScript {
 			baseColumnNames="order_offer_id" baseTableName="order_price" constraintName="fk_order_price_order_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 			referencedColumnNames="id" referencedTableName="cpq_order_offer" />
 	</changeSet>
+
+    <changeSet id="#5869_20210521" author="NabilOuachi">
+        <addColumn tableName="cpq_quote_version">
+            <column name="created" type="datetime"/>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </addColumn>
+        <sql>
+            update ${db.schema.adapted}cpq_quote_version set created=now() where created is null;
+            update ${db.schema.adapted}cpq_quote_version set creator='applicationInitializer' where creator is null;
+        </sql>
+        <addNotNullConstraint tableName="cpq_quote_version" columnName="created"/>
+    </changeSet>
     
     <changeSet id="#6122_20210524" author="AbdelmounaimAkadid">
     	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = REPLACE(cf_values, '"string":"DraftOnly"', '"listString":["DRAFT"]') where job_template = 'XMLInvoiceGenerationJob';</sql>
@@ -8975,31 +8989,7 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
     </changeSet>
     
-    <changeSet id="#5595_540582_20210526" author="TarikFA." >
-        <createSequence sequenceName="cpq_product_version_attributes_association_seq" startValue="1"/>
-    	
-        <createTable tableName="cpq_product_version_attributes_association">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_product_version_attributes_association_id_pk" />
-            </column>
-            <column name="product_version_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="attribute_id" type="bigint" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="version" type="int4" />
-            <column name="sequence" type="INT4" />
-        </createTable>
-        <addUniqueConstraint columnNames="product_version_id,sequence" constraintName="unique_product_version_sequence_pkey" tableName="cpq_product_version_attributes_association" />
-        
-        <addForeignKeyConstraint baseColumnNames="attribute_id" baseTableName="cpq_product_version_attributes_association" constraintName="cpq_product_version_attributes_association_attribute_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_attribute" />
-        <addForeignKeyConstraint baseColumnNames="product_version_id" baseTableName="cpq_product_version_attributes_association" constraintName="cpq_product_version_attributes_association_product_version_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product_version" />
-		<dropColumn tableName="cpq_attribute">
-			<column name="sequence"/>
-		</dropColumn>
+    <changeSet id="#6147_20210530" author="anasseh">
+	    <sql>CREATE INDEX idx_ar_payment_history_external_payment_id   ON ${db.schema.adapted}ar_payment_history (external_payment_id );</sql>
     </changeSet>
-    
 </databaseChangeLog>
