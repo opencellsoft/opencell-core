@@ -1048,6 +1048,20 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         OfferTemplate offerTemplate = offerTemplateService.findByCode(offerTemplateCode, validFrom, validTo);
         if (offerTemplate == null)
             throw new EntityDoesNotExistsException(OfferTemplate.class, offerTemplateCode);
+        if(LifeCycleStatusEnum.ACTIVE.equals(status)) {
+        	if(offerTemplate.getOfferComponents().isEmpty()) {
+    			throw new MeveoApiException("Offer Template code " + offerTemplateCode + " doesn't have product");
+        	}
+	    	offerTemplate.getOfferComponents().forEach(offerComponent -> {
+	    		if(offerComponent.getProduct() != null) {
+	    			if(!offerComponent.getProduct().getStatus().equals(ProductStatusEnum.ACTIVE)) {
+		    			throw new MeveoApiException("All product must be activated before activating offer");
+	    			}
+	    		}else {
+	    			throw new MeveoApiException("Offer Template code " + offerTemplateCode + " doesn't have product");
+	    		}
+	    	});
+        }
         offerTemplate.setLifeCycleStatus(status);
         offerTemplateService.update(offerTemplate);
     }
