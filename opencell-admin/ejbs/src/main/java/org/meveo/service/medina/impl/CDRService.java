@@ -60,7 +60,7 @@ public class CDRService extends PersistenceService<CDR> {
     public CDR findByEdr(EDR edr) {
         try {
             return (CDR) getEntityManager()
-                    .createQuery("from CDR where headerEDR = :edr ")
+                    .createNamedQuery("CDR.findByEdr")
                     .setParameter("edr",edr)
                     .getSingleResult();
         } catch(NoResultException nre) {
