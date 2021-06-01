@@ -766,6 +766,7 @@ public class UsageRatingService implements Serializable {
 
         if(rejectReason!= null && rejectReason.contains("No active usage")) {
             edr.setRejectReason(rejectReason + " - CDR will be reprocessed");
+            edr.changeStatus(EDRStatusEnum.CANCELLED);
             CDR cdr = cdrService.findByEdr(edr);
             if(cdr != null) {
                 cdr.setStatus(CDRStatusEnum.TO_REPROCESS);
