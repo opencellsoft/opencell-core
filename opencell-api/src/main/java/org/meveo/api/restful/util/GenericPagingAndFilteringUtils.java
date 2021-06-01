@@ -111,6 +111,8 @@ public class GenericPagingAndFilteringUtils {
     }
 
     public PaginationConfiguration getPaginationConfiguration(){
+        if ( paginationConfig == null )
+            paginationConfig = new PaginationConfiguration(null);
         return paginationConfig;
     }
 
