@@ -689,7 +689,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
             selectedBillingAccounts = selectedBillingAccounts + sep + baId;
             sep = ",";
-            if (!isBillable && ratedTransactionService.isBillingAccountBillable(currentBA, null, lastTransactionDate)) {
+            if (!isBillable && ratedTransactionService.isBillingAccountBillable(currentBA, null, lastTransactionDate, invoiceDate)) {
                 isBillable = true;
             }
         }
@@ -990,12 +990,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         if (endDate != null && startDate == null) {
             startDate = new Date(0);
         }
-
+        
         String sqlName = billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION ? "RatedTransaction.sumTotalInvoiceableBySubscriptionInBatch"
                 : startDate == null ? "RatedTransaction.sumTotalInvoiceableByBAInBatch" : "RatedTransaction.sumTotalInvoiceableByBAInBatchLimitByNextInvoiceDate";
 
         TypedQuery<AmountsToInvoice> query = getEntityManager().createNamedQuery(sqlName, AmountsToInvoice.class).setParameter("firstTransactionDate", new Date(0))
-            .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).setParameter("billingCycle", billingCycle);
+            .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).setParameter("billingCycle", billingCycle).setParameter("invoiceUpToDate", billingRun.getInvoiceDate());
 
         if (billingCycle.getType() == BillingEntityTypeEnum.BILLINGACCOUNT && startDate != null) {
             startDate = DateUtils.setDateToEndOfDay(startDate);
@@ -1091,7 +1091,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         for (RejectedBillingAccount ba : br.getRejectedBillingAccounts()) {
             selectedBillingAccounts = selectedBillingAccounts + sep + ba.getId();
             sep = ",";
-            if (!result && ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount(), null, billingRun.getLastTransactionDate())) {
+            if (!result && ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount(), null, billingRun.getLastTransactionDate(), billingRun.getInvoiceDate())) {
                 result = true;
                 break;
             }

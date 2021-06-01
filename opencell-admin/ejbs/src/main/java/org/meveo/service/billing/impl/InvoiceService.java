@@ -228,6 +228,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /** The rated transaction service. */
     @Inject
     private RatedTransactionService ratedTransactionService;
+    
+    @Inject
+    private WalletOperationService walletOperationService;
 
     /** The rejected billing account service. */
     @Inject
@@ -600,13 +603,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param lastTransactionDate date of last transaction
      * @param isDraft Is it a draft invoice
      * @param defaultPaymentMethod The default payment method
+     * @param invoiceUpToDate Date up to which a transaction will be included in the invoice based on its invoicng date value
      * @return List of rated transaction groups for entity and a flag indicating if there are more Rated transactions to retrieve
      * @throws BusinessException BusinessException
      */
     protected RatedTransactionsToInvoice getRatedTransactionGroups(IBillableEntity entityToInvoice, BillingAccount billingAccount, BillingRun billingRun, BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType,
-            Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, PaymentMethod defaultPaymentMethod) throws BusinessException {
+            Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft, PaymentMethod defaultPaymentMethod, Date invoiceUpToDate) throws BusinessException {
 
-        List<RatedTransaction> ratedTransactions = getRatedTransactions(entityToInvoice, ratedTransactionFilter, firstTransactionDate, lastTransactionDate, isDraft);
+        List<RatedTransaction> ratedTransactions = getRatedTransactions(entityToInvoice, ratedTransactionFilter, firstTransactionDate, lastTransactionDate, invoiceUpToDate, isDraft);
 
         // If retrieved RT and pagination size does not match, it means no more RTs are pending to be processed and invoice can be closed
         boolean moreRts = ratedTransactions.size() == rtPaginationSize;
@@ -697,29 +701,29 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return defaultPaymentMethod;
     }
 
-    private List<RatedTransaction> getRatedTransactions(IBillableEntity entityToInvoice, Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, boolean isDraft) {
-        List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, ratedTransactionFilter, rtPaginationSize);
+    private List<RatedTransaction> getRatedTransactions(IBillableEntity entityToInvoice, Filter ratedTransactionFilter, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, boolean isDraft) {
+        List<RatedTransaction> ratedTransactions = ratedTransactionService.listRTsToInvoice(entityToInvoice, firstTransactionDate, lastTransactionDate, invoiceUpToDate, ratedTransactionFilter, rtPaginationSize);
         // if draft add unrated wallet operation
         if (isDraft) {
-            ratedTransactions.addAll(getDraftRatedTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate));
+            ratedTransactions.addAll(getDraftRatedTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate,  invoiceUpToDate));
         }
         return ratedTransactions;
     }
 
-    private List<RatedTransaction> getDraftRatedTransactions(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate) {
-        return ratedTransactionService.getWalletOperations(entityToInvoice, lastTransactionDate).stream()
+    private List<RatedTransaction> getDraftRatedTransactions(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate) {
+        return walletOperationService.listToRate(entityToInvoice, invoiceUpToDate).stream()
             .filter(wo -> wo.getOperationDate().before(lastTransactionDate) && (wo.getOperationDate().after(firstTransactionDate) || wo.getOperationDate().equals(firstTransactionDate))).map(RatedTransaction::new)
             .collect(Collectors.toList());
     }
 
-    private List<Long> getDrafWalletOperationIds(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate) {
-        return ratedTransactionService.getWalletOperations(entityToInvoice, lastTransactionDate).stream()
+    private List<Long> getDrafWalletOperationIds(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate) {
+        return walletOperationService.listToRate(entityToInvoice, invoiceUpToDate).stream()
             .filter(wo -> wo.getOperationDate().before(lastTransactionDate) && (wo.getOperationDate().after(firstTransactionDate) || wo.getOperationDate().equals(firstTransactionDate))).map(BaseEntity::getId)
             .collect(Collectors.toList());
     }
 
     private List<RatedTransaction> getDraftRatedTransactions(List<Long> walletOperationsIds) {
-        return ratedTransactionService.getWalletOperations(walletOperationsIds).stream().map(RatedTransaction::new).collect(Collectors.toList());
+        return walletOperationService.findByIds(walletOperationsIds).stream().map(RatedTransaction::new).collect(Collectors.toList());
     }
 
     /**
@@ -809,7 +813,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             // Instantiate additional RTs to reach minimum amount to invoice on service, subscription or BA level if needed
             if (minAmountForAccounts.isMinAmountCalculationActivated()) {
-                ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, false, minAmountForAccounts);
+                ratedTransactionService.calculateAmountsAndCreateMinAmountTransactions(entityToInvoice, firstTransactionDate, lastTransactionDate, invoiceDate, false, minAmountForAccounts);
                 minAmountTransactions = entityToInvoice.getMinRatedTransactions();
             }
 
@@ -907,15 +911,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
         boolean allRTsInOneRun = true;
 
         while (moreRatedTransactionsExpected) {
-
+            
             if (entityToInvoice instanceof Order) {
                 billingAccount = null;
                 defaultInvoiceType = null;
-            }
+            } 
 
             // Retrieve Rated transactions and split them into BA/seller combinations
             RatedTransactionsToInvoice rtsToInvoice = getRatedTransactionGroups(entityToInvoice, billingAccount, billingRun, defaultBillingCycle, defaultInvoiceType, ratedTransactionFilter, firstTransactionDate,
-                lastTransactionDate, isDraft, defaultPaymentMethod);
+                lastTransactionDate, isDraft, defaultPaymentMethod, invoiceDate);
 
             List<RatedTransactionGroup> ratedTransactionGroupsPaged = rtsToInvoice.ratedTransactionGroups;
             moreRatedTransactionsExpected = rtsToInvoice.moreRatedTransactions;
@@ -2187,7 +2191,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             try {
                 List<Long> drafWalletOperationIds;
                 if (isDraft)
-                    drafWalletOperationIds = getDrafWalletOperationIds(entityToInvoice, generateInvoiceRequestDto.getFirstTransactionDate(), generateInvoiceRequestDto.getLastTransactionDate());
+                    drafWalletOperationIds = getDrafWalletOperationIds(entityToInvoice, generateInvoiceRequestDto.getFirstTransactionDate(), generateInvoiceRequestDto.getLastTransactionDate(), generateInvoiceRequestDto.getLastTransactionDate());
                 else
                     drafWalletOperationIds = new ArrayList<>();
                 produceFilesAndAO(produceXml, producePdf, generateAO, invoice.getId(), isDraft, drafWalletOperationIds);
@@ -3206,7 +3210,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.trace("ratedTransactions.totalAmountWithoutTax={}", ratedTransactions != null ? ratedTransactions.stream().mapToDouble(e -> e.getAmountWithoutTax().doubleValue()).sum() : "0");
         }
 
-        boolean linkInvoiceToOrders = ParamBean.getInstance().getBooleanValue("order.linkInvoiceToOrders", true);
+        boolean linkInvoiceToOrders = paramBeanFactory.getInstance().getPropertyAsBoolean("order.linkInvoiceToOrders", true);
 
         boolean taxWasRecalculated = false;
         for (RatedTransaction ratedTransaction : ratedTransactions) {
@@ -4111,7 +4115,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         RatedTransaction rt = new RatedTransaction(ratedTransactionDto.getUsageDate(), ratedTransactionDto.getUnitAmountWithoutTax(), ratedTransactionDto.getUnitAmountWithTax(), ratedTransactionDto.getUnitAmountTax(),
             ratedTransactionDto.getQuantity(), amountWithoutTax, amountWithTax, amountTax, RatedTransactionStatusEnum.BILLED, userAccount != null ? userAccount.getWallet() : null, billingAccount, userAccount,
             invoiceSubCategory, null, null, null, null, null, null, ratedTransactionDto.getUnityDescription(), null, null, null, null, ratedTransactionDto.getCode(), ratedTransactionDto.getDescription(),
-            ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null, null);
+            ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null, null, null);
 
         rt.setWallet(userAccount != null ? userAccount.getWallet() : null);
         // #3355 : setting params 1,2,3

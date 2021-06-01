@@ -101,7 +101,7 @@ public class InvoiceServiceTest {
 
     @Before
     public void setUp() {
-        when(ratedTransactionService.listRTsToInvoice(any(), any(), any(), any(), anyInt())).thenAnswer(new Answer<List<RatedTransaction>>() {
+        when(ratedTransactionService.listRTsToInvoice(any(), any(), any(), any(), any(), anyInt())).thenAnswer(new Answer<List<RatedTransaction>>() {
             public List<RatedTransaction> answer(InvocationOnMock invocation) throws Throwable {
                 List<RatedTransaction> ratedTransactions = new ArrayList<>();
                 IBillableEntity entity = (IBillableEntity) invocation.getArguments()[0];
@@ -143,7 +143,7 @@ public class InvoiceServiceTest {
         BillingCycle bc = mock(BillingCycle.class);
         InvoiceType invoiceType = mock(InvoiceType.class);
         PaymentMethod paymentMethod = mock(PaymentMethod.class);
-        InvoiceService.RatedTransactionsToInvoice ratedTransactionsToInvoice = invoiceService.getRatedTransactionGroups(subscription, ba, null, bc, invoiceType, null, null, null, false, paymentMethod);
+        InvoiceService.RatedTransactionsToInvoice ratedTransactionsToInvoice = invoiceService.getRatedTransactionGroups(subscription, ba, null, bc, invoiceType, null, null, null, false, paymentMethod, null);
         assertThat(ratedTransactionsToInvoice).isNotNull();
         Assert.assertEquals(ratedTransactionsToInvoice.ratedTransactionGroups.size(), 3);
         RatedTransactionGroup ratedTransactionGroup = ratedTransactionsToInvoice.ratedTransactionGroups.get(0);
@@ -157,7 +157,7 @@ public class InvoiceServiceTest {
         BillingCycle bc = mock(BillingCycle.class);
         InvoiceType invoiceType = mock(InvoiceType.class);
         PaymentMethod paymentMethod = mock(PaymentMethod.class);
-        InvoiceService.RatedTransactionsToInvoice ratedTransactionsToInvoice = invoiceService.getRatedTransactionGroups(ba, ba, null, bc, invoiceType, null, null, null, false, paymentMethod);
+        InvoiceService.RatedTransactionsToInvoice ratedTransactionsToInvoice = invoiceService.getRatedTransactionGroups(ba, ba, null, bc, invoiceType, null, null, null, false, paymentMethod, null);
         assertThat(ratedTransactionsToInvoice).isNotNull();
         Assert.assertEquals(ratedTransactionsToInvoice.ratedTransactionGroups.size(), 3);
         RatedTransactionGroup ratedTransactionGroup = ratedTransactionsToInvoice.ratedTransactionGroups.get(0);
@@ -175,7 +175,7 @@ public class InvoiceServiceTest {
         PaymentMethod paymentMethod = new CardPaymentMethod();
 
         InvoiceService.RatedTransactionsToInvoice ratedTransactionsToInvoice = invoiceService.getRatedTransactionGroups(order, ba, new BillingRun(), bc, invoiceType, mock(Filter.class), mock(Date.class),
-            mock(Date.class), false, paymentMethod);
+            mock(Date.class), false, paymentMethod, null);
 
         assertThat(ratedTransactionsToInvoice).isNotNull();
         Assert.assertEquals(ratedTransactionsToInvoice.ratedTransactionGroups.size(), 3);
@@ -275,49 +275,49 @@ public class InvoiceServiceTest {
 
         RatedTransaction rt111 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
             RatedTransactionStatusEnum.OPEN, ua1.getWallet(), ba, ua1, subCat11, null, null, null, null, null, subscription1, null, null, null, null, null, "rt111", "RT111", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null);
+            tax.getPercent(), null, taxClass, accountingCode, null, null);
         rt111.setId(20L);
         rts.add(rt111);
 
         RatedTransaction rt112 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
             RatedTransactionStatusEnum.OPEN, ua1.getWallet(), ba, ua1, subCat12, null, null, null, null, null, subscription1, null, null, null, null, null, "rt112", "RT112", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null);
+            tax.getPercent(), null, taxClass, accountingCode, null, null);
         rt112.setId(21L);
         rts.add(rt112);
 
         RatedTransaction rt121 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
             RatedTransactionStatusEnum.OPEN, ua1.getWallet(), ba, ua1, subCat21, null, null, null, null, null, subscription1, null, null, null, null, null, "rt121", "RT121", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null);
+            tax.getPercent(), null, taxClass, accountingCode, null, null);
         rt121.setId(22L);
         rts.add(rt121);
 
         RatedTransaction rt122 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
             RatedTransactionStatusEnum.OPEN, ua1.getWallet(), ba, ua1, subCat22, null, null, null, null, null, subscription1, null, null, null, null, null, "rt122", "RT122", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null);
+            tax.getPercent(), null, taxClass, accountingCode, null, null);
         rt122.setId(23L);
         rts.add(rt122);
 
         RatedTransaction rt211 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
             RatedTransactionStatusEnum.OPEN, ua2.getWallet(), ba, ua2, subCat11, null, null, null, null, null, subscription2, null, null, null, null, null, "rt211", "RT211", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null);
+            tax.getPercent(), null, taxClass, accountingCode, null, null);
         rt211.setId(24L);
         rts.add(rt211);
 
         RatedTransaction rt212 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
             RatedTransactionStatusEnum.OPEN, ua2.getWallet(), ba, ua2, subCat12, null, null, null, null, null, subscription2, null, null, null, null, null, "rt212", "RT212", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null);
+            tax.getPercent(), null, taxClass, accountingCode, null, null);
         rt212.setId(25L);
         rts.add(rt212);
 
         RatedTransaction rt221 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
             RatedTransactionStatusEnum.OPEN, ua2.getWallet(), ba, ua2, subCat21, null, null, null, null, null, subscription2, null, null, null, null, null, "rt221", "RT221", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null);
+            tax.getPercent(), null, taxClass, accountingCode, null, null);
         rt221.setId(26L);
         rts.add(rt221);
 
         RatedTransaction rt222 = new RatedTransaction(new Date(), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1), new BigDecimal(2), new BigDecimal(15), new BigDecimal(16), new BigDecimal(1),
             RatedTransactionStatusEnum.OPEN, ua2.getWallet(), ba, ua2, subCat22, null, null, null, null, null, subscription2, null, null, null, null, null, "rt222", "RT222", new Date(), new Date(), seller, tax,
-            tax.getPercent(), null, taxClass, accountingCode, null);
+            tax.getPercent(), null, taxClass, accountingCode, null, null);
         rt222.setId(27L);
         rts.add(rt222);
 
@@ -573,7 +573,7 @@ public class InvoiceServiceTest {
                 RatedTransaction rt = new RatedTransaction(new Date(), new BigDecimal((double) rtData[0]), new BigDecimal((double) rtData[1]), new BigDecimal((double) rtData[2]), new BigDecimal(1),
                     new BigDecimal((double) rtData[0]), new BigDecimal((double) rtData[1]), new BigDecimal((double) rtData[2]), RatedTransactionStatusEnum.OPEN, ua1.getWallet(), ba, ua1, subCategory, null, null, null,
                     null, null, subscription1, null, null, null, null, null, "rt_" + subCategory.getCode() + "_" + i, "RT", new Date(), new Date(), seller, (Tax) rtData[3], ((Tax) rtData[3]).getPercent(), null,
-                    (TaxClass) rtData[4], accountingCode, null);
+                    (TaxClass) rtData[4], accountingCode, null, null);
                 rt.setId(i);
                 rts.add(rt);
                 i++;
@@ -600,6 +600,7 @@ public class InvoiceServiceTest {
 
         ParamBean paramBean = mock(ParamBean.class);
         when(paramBean.getPropertyAsBoolean(eq("invoice.agregateByUA"), anyBoolean())).thenReturn(true);
+        when(paramBean.getPropertyAsBoolean(eq("order.linkInvoiceToOrders"), anyBoolean())).thenReturn(true);
 
         when(paramBeanFactory.getInstance()).thenReturn(paramBean);
 

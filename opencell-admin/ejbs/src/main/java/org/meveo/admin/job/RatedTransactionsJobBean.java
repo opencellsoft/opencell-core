@@ -94,7 +94,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
         log.info("Remove wallet operations rated to 0");
         walletOperationService.removeZeroWalletOperation();
 
-        List<Long> ids = walletOperationService.listToRate(new Date(), PROCESS_NR_IN_JOB_RUN);
+        List<Long> ids = walletOperationService.listToRate(PROCESS_NR_IN_JOB_RUN);
 
         return Optional.of(new SynchronizedIterator<Long>(ids));
     }
@@ -126,7 +126,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
     }
 
     private boolean hasMore(JobInstance jobInstance) {
-        List<Long> ids = walletOperationService.listToRate(new Date(), 1);
+        List<Long> ids = walletOperationService.listToRate(1);
         return !ids.isEmpty();
     }
 }

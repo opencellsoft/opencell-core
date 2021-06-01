@@ -811,8 +811,8 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * @param nbToRetrieve Number of items to retrieve for processing
      * @return A list of Wallet operation ids
      */
-    public List<Long> listToRate(Date invoicingDate, int nbToRetrieve) {
-        return getEntityManager().createNamedQuery("WalletOperation.listToRateIds", Long.class).setParameter("invoicingDate", invoicingDate).setMaxResults(nbToRetrieve).getResultList();
+    public List<Long> listToRate(int nbToRetrieve) {
+        return getEntityManager().createNamedQuery("WalletOperation.listToRateIds", Long.class).setMaxResults(nbToRetrieve).getResultList();
     }
 
     public WalletOperation findByUserAccountAndCode(String code, UserAccount userAccount) {

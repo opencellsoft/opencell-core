@@ -2982,6 +2982,7 @@
             <column name="cf_values" type="${type.json}"/>
             <column name="uuid" type="varchar(60)"/>
             <column name="type" type="VARCHAR(25)"/>
+            <column name="invoicing_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-187">
@@ -11027,7 +11028,8 @@ execute 'create table '||schema_name||'.billing_rated_transaction (
     charge_instance_id bigint,
     tax_id bigint,
     tax_percent numeric(23,12),
-    user_account_id bigint,    
+    user_account_id bigint,   
+    invoicing_date datetime, 
     constraint billing_rated_transaction_pkey primary key (id, usage_date),
     constraint fk_8g8jlmakt1wyw73oxs5yltlsd foreign key (aggregate_id_t)
         references '||schema_name||'.billing_invoice_agregate (id) match simple on update no action on delete no action,
