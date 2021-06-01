@@ -168,7 +168,10 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
     @SuppressWarnings("rawtypes")
     public BusinessEntity findByEntityClassAndCode(Class clazz, String code) {
         QueryBuilder qb = new QueryBuilder(clazz, "be", null);
+        qb.startOrClause();
         qb.addCriterion("be.code", "=", code, true);
+        qb.addCriterion("be.id", "=", code, false);
+        qb.endOrClause();
 
         try {
             return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
