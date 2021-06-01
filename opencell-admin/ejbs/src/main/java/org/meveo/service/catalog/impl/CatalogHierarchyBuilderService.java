@@ -1251,6 +1251,7 @@ public class CatalogHierarchyBuilderService {
     	duplicate.setStatus(VersionStatusEnum.DRAFT);
     	duplicate.setStatusDate(Calendar.getInstance().getTime());
     	duplicate.setQuoteVersion(1);
+    	duplicate.setUuid(UUID.randomUUID().toString());
     	
     	quoteVersionService.create(duplicate);
     	duplicateQuoteOffer(quoteOffer, duplicate);

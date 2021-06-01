@@ -580,16 +580,18 @@ public class CpqQuoteApi extends BaseApi {
                     if(quoteVersionDto.getStatus() != null) {
                         qv.setStatus(quoteVersionDto.getStatus());
                         qv.setStatusDate(Calendar.getInstance().getTime());
-                    } 
-        			if(!StringUtils.isBlank(quoteVersionDto.getBillingPlanCode())) {
-        			InvoicingPlan invoicingPlan= invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode());  
-        			if (invoicingPlan == null) {
-        				throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
-        			}
+                    }
+                    if (!StringUtils.isBlank(quoteVersionDto.getBillingPlanCode())) {
+                        InvoicingPlan invoicingPlan = invoicingPlanService.findByCode(quoteVersionDto.getBillingPlanCode());
+                        if (invoicingPlan == null) {
+                            throw new EntityDoesNotExistsException(InvoicingPlan.class, quoteVersionDto.getBillingPlanCode());
+                        }
                         qv.setInvoicingPlan(invoicingPlan);
                     }
+                    populateCustomFields(quoteVersionDto.getCustomFields(), qv, false);
                     quoteVersionService.update(qv);
                     quoteVersionDto = new QuoteVersionDto(qv);
+                    quoteVersionDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(qv));
                     quoteDto.setQuoteVersion(quoteVersionDto);
                 }else {
                     throw new EntityDoesNotExistsException("No quote version with number = " + quoteVersionDto.getCurrentVersion() + " for the quote code = " + quoteCode);

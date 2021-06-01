@@ -8832,6 +8832,12 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cpq_quote_version_pkey" />
             </column>
             <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
             <column name="cpq_quote_id" type="bigint" >
                 <constraints nullable="false"/>
             </column>
@@ -14091,6 +14097,8 @@
         <sql>CREATE INDEX billing_invoice_br_index on ${db.schema.adapted}billing_invoice (billing_run_id)</sql>
         <sql>CREATE INDEX billing_invoice_agregate_br_index on ${db.schema.adapted}billing_invoice_agregate (billing_run_id)</sql>
         <sql>CREATE INDEX rt_br_index ON billing_rated_transaction (billing_run_id) where status='BILLED'</sql>
+    	<sql>CREATE INDEX idx_billing_invoice_agr_amount_on_aggr_id  ON billing_invoice_agr_amount (aggr_id)</sql>
+    	<sql>CREATE INDEX idx_ar_ao_payment_histories__ao_id ON ar_ao_payment_histories(ao_id)</sql>
     </changeSet>
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-index-997" dbms="postgresql">
@@ -15709,10 +15717,15 @@ $$ LANGUAGE plpgsql;
 
     <changeSet id="#533_20210526" author="NabilOuachi">
     </changeSet>
+    <changeSet id="#5869_20210521" author="NabilOuachi">
+    </changeSet>
     
     <changeSet id="#5595_540582_20210528" author="TarikFA." />
     
     <changeSet id="#6147_20210530" author="anasseh" />
+    
+    <changeSet id="#5599_20210526" author="AbdelmounaimAkadid" />
+    <changeSet id="#5416_20210526" author="AbdelmounaimAkadid" />
     
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
