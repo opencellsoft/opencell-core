@@ -60,6 +60,8 @@ import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.rating.CDR;
+import org.meveo.model.rating.CDRStatusEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRRejectReasonEnum;
 import org.meveo.model.rating.EDRStatusEnum;
@@ -69,6 +71,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
+import org.meveo.service.medina.impl.CDRService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -94,6 +97,9 @@ public class UsageRatingService implements Serializable {
 
     @Inject
     private EdrService edrService;
+
+    @Inject
+    private CDRService cdrService;
 
     @Inject
     private UsageChargeInstanceService usageChargeInstanceService;
@@ -754,11 +760,17 @@ public class UsageRatingService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void rejectEDR(Long edrId, Exception e) {
         String rejectReason = org.meveo.commons.utils.StringUtils.truncate(e.getMessage(), 255, true);
-
         EDR edr = edrService.findById(edrId);
         edr.changeStatus(EDRStatusEnum.REJECTED);
         edr.setRejectReason(rejectReason);
 
+        if(rejectReason!= null && rejectReason.contains("No active usage")) {
+            edr.setRejectReason(rejectReason + " - CDR will be reprocessed");
+            CDR cdr = cdrService.findByEdr(edr);
+            if(cdr != null) {
+                cdr.setStatus(CDRStatusEnum.TO_REPROCESS);
+            }
+        }
         rejectedEdrProducer.fire(edr);
     }
 
