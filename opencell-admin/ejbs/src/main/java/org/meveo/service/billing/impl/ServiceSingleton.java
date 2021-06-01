@@ -382,27 +382,26 @@ public class ServiceSingleton {
      * @param invoice invoice
      * @throws BusinessException business exception
      */
-    @Lock(LockType.WRITE)
+    
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice assignInvoiceNumberVirtual(Invoice invoice) throws BusinessException {
         return assignInvoiceNumber(invoice, false);
     }
+ 
 
     /**
      * Assign invoice number to an invoice. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
      *
      * @param invoice invoice
      * @throws BusinessException business exception
-     */
-    @Lock(LockType.WRITE)
+     */ 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice assignInvoiceNumber(Invoice invoice) throws BusinessException {
         return assignInvoiceNumber(invoice, true);
     }
-
-
+    
     public CpqQuote assignCpqQuoteNumber(CpqQuote cpqQuote) {
         InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(cpqQuote.getOrderInvoiceType());
         if(invoiceType == null)
@@ -495,10 +494,11 @@ public class ServiceSingleton {
      * Assign invoice number to an invoice
      *
      * @param invoice invoice
-     * @param isVirtual Is its a virtual invoice - should invoice be persisted
+     * @param saveInvoice Should invoice be persisted
      * @throws BusinessException General business exception
      */
-    public Invoice assignInvoiceNumber(Invoice invoice, boolean isVirtual) throws BusinessException {
+    @Lock(LockType.WRITE)
+    public Invoice assignInvoiceNumber(Invoice invoice, boolean saveInvoice) throws BusinessException {
 		if(invoice.getStatus()!=InvoiceStatusEnum.VALIDATED) {
 			throw new BusinessException("cannot assign invoice number to invoice with status: "+invoice.getStatus());
 		}
@@ -541,10 +541,8 @@ public class ServiceSingleton {
         // request to store invoiceNo in alias field
         invoice.setAlias(invoiceNumber);
         invoice.setInvoiceNumber((prefix == null ? "" : prefix) + invoiceNumber);
-        if (isVirtual) {
-
+        if (saveInvoice) {
             invoiceNumberAssignedEventProducer.fire(invoice);
-
             if (invoice.getId() == null) {
                 invoiceService.create(invoice);
             } else {
