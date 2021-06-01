@@ -250,9 +250,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         updateAudit(entity);
-        E mergedEntity = getEntityManager().merge(entity);
 
-        return mergedEntity;
+        EntityManager em = getEntityManager();
+        if (!em.contains(entity)) { // https://vladmihalcea.com/jpa-persist-and-merge/
+            entity = getEntityManager().merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
+        }
+
+        return entity;
     }
 
     /**
@@ -515,8 +519,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
         }
 
-        entity = getEntityManager().merge(entity);
-
+        EntityManager em = getEntityManager();
+        if (!em.contains(entity)) { // https://vladmihalcea.com/jpa-persist-and-merge/
+            entity = getEntityManager().merge(entity); // here could also use session.update(); see https://vladmihalcea.com/how-to-optimize-the-merge-operation-using-update-while-batching-with-jpa-and-hibernate/
+        }
+        
         // Update entity in Elastic Search. ICustomFieldEntity is updated
         // partially, as entity itself does not have Custom field values
         if (entity instanceof BusinessCFEntity || entity instanceof ISearchable) {

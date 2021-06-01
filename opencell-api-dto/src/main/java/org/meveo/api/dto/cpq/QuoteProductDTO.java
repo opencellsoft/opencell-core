@@ -95,7 +95,7 @@ public class QuoteProductDTO extends BaseEntityDto{
 		productCode=quoteProduct.getProductVersion().getProduct().getCode();
 		productVersion=quoteProduct.getProductVersion().getCurrentVersion();
 		quantity=quoteProduct.getQuantity();
-		discountPlanCode=quoteProduct.getDiscountPlan().getCode();
+		discountPlanCode=quoteProduct.getDiscountPlan() != null ?quoteProduct.getDiscountPlan().getCode() : null;
 	   }
 	
 	public QuoteProductDTO(QuoteProduct quoteProduct, boolean loadAttributes) {

@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -28,7 +29,10 @@ import org.meveo.model.cpq.offer.QuoteOffer;
 @Table(name = "cpq_quote_price", uniqueConstraints = @UniqueConstraint(columnNames = { "id"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_quote_price_seq"), })
-@NamedQuery(name="QuotePrice.removeByQuoteVersionAndPriceLevel", query = "delete from QuotePrice qp where qp.quoteVersion = :quoteVersion and qp.priceLevelEnum = :priceLevelEnum")
+@NamedQueries({
+	@NamedQuery(name="QuotePrice.removeByQuoteVersionAndPriceLevel", query = "delete from QuotePrice qp where qp.quoteVersion = :quoteVersion and qp.priceLevelEnum = :priceLevelEnum"),
+	@NamedQuery(name="QuotePrice.removeByQuoteOfferAndPriceLevel", query = "delete from QuotePrice qp where qp.quoteOffer.id = :quoteOfferId and qp.priceLevelEnum = :priceLevelEnum")
+	})
 public class QuotePrice extends AuditableEntity {
 
 	/**

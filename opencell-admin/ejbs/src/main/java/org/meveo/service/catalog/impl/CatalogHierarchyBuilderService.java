@@ -200,13 +200,13 @@ public class CatalogHierarchyBuilderService {
     
         if(attributes != null) {
         	entity.setAttributes(new ArrayList<Attribute>());
-        	for (Attribute attribute : attributes) {
-        		for(Media media : attribute.getMedias()) {
+        	for (Attribute productAttribute : attributes) {
+        		for(Media media : productAttribute.getMedias()) {
         			Media newMedia = new Media(media);
         			newMedia.setCode(media.getCode() + "_" + entity.getId());
         			mediaService.create(newMedia);
         		}
-				entity.getAttributes().add(attribute);
+				entity.getAttributes().add(productAttribute);
 			}
         }
         
@@ -1251,6 +1251,7 @@ public class CatalogHierarchyBuilderService {
     	duplicate.setStatus(VersionStatusEnum.DRAFT);
     	duplicate.setStatusDate(Calendar.getInstance().getTime());
     	duplicate.setQuoteVersion(1);
+    	duplicate.setUuid(UUID.randomUUID().toString());
     	
     	quoteVersionService.create(duplicate);
     	duplicateQuoteOffer(quoteOffer, duplicate);

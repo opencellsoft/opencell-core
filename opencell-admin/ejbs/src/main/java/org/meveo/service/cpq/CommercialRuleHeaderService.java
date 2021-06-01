@@ -201,7 +201,8 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 								return false;
 							}
 						}
-						if (line.getSourceAttribute() != null && productContext != null) {
+						if (line.getSourceAttribute() != null && productContext!=null) {
+
 							LinkedHashMap<String, Object> selectedAttributes = productContext.getSelectedAttributes();
 							for (Entry<String, Object> entry : selectedAttributes.entrySet()) {
 								String attributeCode = entry.getKey();
@@ -245,7 +246,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 								}
 							}
 						}
-						if (line.getSourceGroupedAttributes() != null && productContext != null) {
+						if (line.getSourceGroupedAttributes() != null) {
 							LinkedHashMap<String, Object> selectedGroupedAttributes = productContext.getSelectedGroupedAttributes();
 							for (Entry<String, Object> entry : selectedGroupedAttributes.entrySet()) {
 								String groupedAttributeCode = entry.getKey();

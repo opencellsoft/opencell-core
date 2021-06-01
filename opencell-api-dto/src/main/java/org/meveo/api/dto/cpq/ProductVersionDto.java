@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.meveo.api.dto.BaseEntityDto;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 
@@ -60,7 +61,7 @@ public class ProductVersionDto extends BaseEntityDto {
     /** The attributeCodes. */
     @XmlElementWrapper(name = "attributeCodes")
     @XmlElement(name = "attributeCodes")
-    @Schema(description = "List of the attribute codes")
+    @Schema(description = "List of the attribute")
     protected Set<String> attributeCodes=new HashSet<String>();
     
     @XmlElementWrapper(name = "groupedAttributeCodes")
@@ -111,13 +112,13 @@ public class ProductVersionDto extends BaseEntityDto {
          if(productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
          this.attributeCodes = productVersion.getAttributes()
                  .stream()
-                 .map(attribute -> attribute.getCode())
+                 .map(Attribute::getCode)
                  .collect(Collectors.toSet());
          }
          if(productVersion.getGroupedAttributes() != null && !productVersion.getGroupedAttributes().isEmpty()) {
-         this.groupedAttributeCodes = productVersion.getGroupedAttributes()
+         this.attributeCodes = productVersion.getAttributes()
                  .stream()
-                 .map(groupedAttribute -> groupedAttribute.getCode())
+                 .map(Attribute::getCode)
                  .collect(Collectors.toSet());
          }
     }
@@ -197,24 +198,6 @@ public class ProductVersionDto extends BaseEntityDto {
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
     }
-    
-    
-   
- 
- 
-	/**
-	 * @return the attributeCodes
-	 */
-	public Set<String> getAttributeCodes() {
-		return attributeCodes;
-	}
-	/**
-	 * @param attributeCodes the attributeCodes to set
-	 */
-	public void setAttributeCodes(Set<String> attributeCodes) {
-		this.attributeCodes = attributeCodes;
-	}
-	 
 	/**
 	 * @return the groupedAttributeCodes
 	 */
@@ -257,6 +240,18 @@ public class ProductVersionDto extends BaseEntityDto {
 	 */
 	public void setValidity(DatePeriod validity) {
 		this.validity = validity;
+	}
+	/**
+	 * @return the attributes
+	 */
+	public Set<String> getAttributeCodes() {
+		return attributeCodes;
+	}
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributeCodes(Set<String> attributeCodes) {
+		this.attributeCodes = attributeCodes;
 	}
      
 	

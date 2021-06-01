@@ -96,8 +96,6 @@ public class Attribute extends EnableBusinessCFEntity{
     @JoinTable(name = "cpq_attribute_charge", joinColumns = @JoinColumn(name = "attribute_id"), inverseJoinColumns = @JoinColumn(name = "charge_id"))
     private Set<ChargeTemplate> chargeTemplates = new HashSet<ChargeTemplate>();
     
-    
-
     /**
      * attribute order in the GUI
      */
@@ -197,21 +195,6 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setAllowedValues(Set<String> allowedValues) {
 		this.allowedValues = allowedValues;
-	}
-
-
-	/**
-	 * @return the sequence
-	 */
-	public Integer getSequence() {
-		return sequence;
-	}
-
-	/**
-	 * @param sequence the sequence to set
-	 */
-	public void setSequence(Integer sequence) {
-		this.sequence = sequence;
 	}
 
 	/**
@@ -367,6 +350,20 @@ public class Attribute extends EnableBusinessCFEntity{
 	 */
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
+	}
+
+	/**
+	 * @return the sequence
+	 */
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	/**
+	 * @param sequence the sequence to set
+	 */
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 	
 	

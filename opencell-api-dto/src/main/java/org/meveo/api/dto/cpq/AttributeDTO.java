@@ -70,17 +70,17 @@ public class AttributeDTO extends EnableBusinessDto {
      */
     @Schema(description = "diplay the attribute")
     protected boolean display;
-    /**
-     * attribute order in the GUI
-     */
-    @Schema(description = "attribute order in the GUI")
-    protected Integer sequence;
     
     /**
      * The lower number, the higher the priority is
      */
     @Schema(description = "The lower number, the higher the priority is")
     protected Integer priority ;
+    /**
+     * attribute order in the GUI
+     */
+    @Schema(description = "attribute order in the GUI")
+    protected Integer sequence;
     /**
      * Mandatory
      */
@@ -214,25 +214,6 @@ public class AttributeDTO extends EnableBusinessDto {
 	public void setDisplay(boolean display) {
 		this.display = display;
 	}
-
-
-
-	/**
-	 * @return the sequence
-	 */
-	public Integer getSequence() {
-		return sequence;
-	}
-
-
-
-	/**
-	 * @param sequence the sequence to set
-	 */
-	public void setSequence(Integer sequence) {
-		this.sequence = sequence;
-	}
-
 
 
 	/**
@@ -471,6 +452,24 @@ public class AttributeDTO extends EnableBusinessDto {
 	 */
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
+	}
+
+
+
+	/**
+	 * @return the sequence
+	 */
+	public Integer getSequence() {
+		return sequence;
+	}
+
+
+
+	/**
+	 * @param sequence the sequence to set
+	 */
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 
 

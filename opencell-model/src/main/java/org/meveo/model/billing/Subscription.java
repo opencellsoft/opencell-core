@@ -166,7 +166,7 @@ public class Subscription extends BusinessCFEntity implements IBillableEntity, I
     /**
      * Account operations associated with a Subscription
      */
-    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<AccountOperation> accountOperations = new ArrayList<>();
 
     /**

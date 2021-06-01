@@ -732,18 +732,17 @@ public class ProductApi extends BaseApi {
 	}
 	private void processAttributes(ProductVersionDto postData, ProductVersion productVersion) {
 		Set<String> attributeCodes = postData.getAttributeCodes(); 
+		productVersion.getAttributes().clear();
 		if(attributeCodes != null && !attributeCodes.isEmpty()){
 			List<Attribute> attributes=new ArrayList<Attribute>();
-			for(String code:attributeCodes) {
-				Attribute attribute=attributeService.findByCode(code);
+			for(String attr:attributeCodes) {
+				Attribute attribute=attributeService.findByCode(attr);
 				if(attribute == null) { 
-					throw new EntityDoesNotExistsException(Attribute.class,code);
+					throw new EntityDoesNotExistsException(Attribute.class, attr);
 				}
 				attributes.add(attribute);
 			}
-			productVersion.setAttributes(attributes);
-		}else{
-			productVersion.setAttributes(null);
+			productVersion.getAttributes().addAll(attributes);
 		}
 	} 
 	
@@ -916,7 +915,7 @@ public class ProductApi extends BaseApi {
 					 if(sourceRules!=null && !sourceRules.isEmpty()) {
 						 attributeDto.setRuled(true); 
 					 } 
-				 }  
+				 }   
 				
 				 
 					 for(GroupedAttributeDto groupedAttributeDTO:productVersionResponse.getGroupedAttributes()) { 

@@ -23,6 +23,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -129,9 +130,8 @@ public class ProductVersion extends AuditableEntity{
     private Set<Tag> tags = new HashSet<Tag>();
     
 
-	/**
-	 * list of attributes attached to this product version
-	 */
+	
+
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 				name = "cpq_product_version_attributes",
@@ -227,21 +227,6 @@ public class ProductVersion extends AuditableEntity{
 	}
 
 
-
-	/**
-	 * @return the attributes
-	 */
-	public List<Attribute> getAttributes() {
-		return attributes;
-	}
-
-	/**
-	 * @param attributes the attributes to set
-	 */
-	public void setAttributes(List<Attribute> attributes) {
-		this.attributes = attributes;
-	}
-
 	/**
 	 * @return the tags
 	 */
@@ -308,6 +293,20 @@ public class ProductVersion extends AuditableEntity{
 				&& Objects.equals(shortDescription, other.shortDescription) && status == other.status
 				&& Objects.equals(statusDate, other.statusDate) && Objects.equals(tags, other.tags)
 				&& version == other.version;
+	}
+
+	/**
+	 * @return the productAttributes
+	 */
+	public List<Attribute> getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param productAttributes the productAttributes to set
+	 */
+	public void setAttributes(List<Attribute> productAttributes) {
+		this.attributes = productAttributes;
 	}
 
 	

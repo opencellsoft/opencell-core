@@ -379,22 +379,22 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             fillUpRestfulURLsMap( ACCOUNT_MANAGEMENT + "/subscriptions", aMapRestful );
 
                             // Handling different services of subscription: activation, suspension, termination, update of existing services
-                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/activation" ) ,
+                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/activate" ) ,
                                     ((Path) anAnnotation).value() + "/activate" );
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/activate", ActivateSubscriptionRequestDto.class );
 
-                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/suspension" ) ,
+                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/suspend" ) ,
                                     ((Path) anAnnotation).value() + "/suspend" );
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/suspend", OperationSubscriptionRequestDto.class );
 
-                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/termination" ) ,
+                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/terminate" ) ,
                                     ((Path) anAnnotation).value() + "/terminate" );
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/terminate", TerminateSubscriptionRequestDto.class );
 
-                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/services" ) ,
+                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/accountManagement\\/subscriptions\\/" + CODE_REGEX + "\\/updateServices" ) ,
                                     ((Path) anAnnotation).value() + "/updateServices" );
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/updateServices", UpdateServicesRequestDto.class );
@@ -422,7 +422,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/billing/ratedTransaction" ) ) {
                             MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/ratedTransactions",
                                     ((Path) anAnnotation).value() );
-                            MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/ratedTransactions/cancellation",
+                            MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.put( API_VERSION + BILLING + "/ratedTransactions/cancel",
                                     ((Path) anAnnotation).value() + "/cancelRatedTransactions" );
 
                             fillUpRestfulURLsMap( BILLING + "/ratedTransactions", aMapRestful );
@@ -609,21 +609,21 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices",
                                     ((Path) anAnnotation).value() );
 
-                            MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices/generation",
+                            MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices/generate",
                                     ((Path) anAnnotation).value() + "/generateInvoice" );
 
-                            MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices/emailSending",
+                            MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/invoices/sendByEmail",
                                     ((Path) anAnnotation).value() + "/sendByEmail" );
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/sendByEmail", InvoiceDto.class );
 
                             // Handling different services of invoice: cancellation, validation
-                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/invoices\\/" + CODE_REGEX + "\\/cancellation" ) ,
+                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/invoices\\/" + CODE_REGEX + "\\/cancel" ) ,
                                     ((Path) anAnnotation).value() + "/cancel" );
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/cancel", CancelInvoiceRequestDto.class );
 
-                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/invoices\\/" + CODE_REGEX + "\\/validation" ) ,
+                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/invoices\\/" + CODE_REGEX + "\\/validate" ) ,
                                     ((Path) anAnnotation).value() + "/validate" );
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/validate", ValidateInvoiceRequestDto.class );
@@ -631,16 +631,16 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                             fillUpRestfulURLsMap( "/invoices", aMapRestful );
                         }
                         else if ( ((Path) anAnnotation).value().equals( "/billing/invoicing" ) ) {
-                            MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/billing/invoicings/creation",
+                            MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/billing/invoicings/billingRuns",
                                     ((Path) anAnnotation).value() + "/createBillingRun" );
 
                             // Handling different services of billing: cancellation of a billing run, validation of a billing run
-                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/billing/invoicings\\/" + CODE_REGEX + "\\/cancellation" ) ,
+                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/billing/invoicings/billingRuns\\/" + CODE_REGEX + "\\/cancel" ) ,
                                     ((Path) anAnnotation).value() + "/cancelBillingRun" );
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/cancelBillingRun", CancelBillingRunRequestDto.class );
 
-                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/billing/invoicings\\/" + CODE_REGEX + "\\/validation" ) ,
+                            MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.put( Pattern.compile( API_VERSION + "\\/billing/invoicings/billingRuns\\/" + CODE_REGEX + "\\/validate" ) ,
                                     ((Path) anAnnotation).value() + "/validateBillingRun" );
 
                             MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.put( ((Path) anAnnotation).value() + "/validateBillingRun", ValidateBillingRunRequestDto.class );
@@ -648,7 +648,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
                         else if ( ((Path) anAnnotation).value().equals( "/job" ) ) {
                             MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobs", ((Path) anAnnotation).value() );
 
-                            MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobs/execution", ((Path) anAnnotation).value() + "/execute" );
+                            MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobs/execute", ((Path) anAnnotation).value() + "/execute" );
 
                             MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.put( API_VERSION + "/jobs/jobReports", ((Path) anAnnotation).value() + "/jobReport" );
 

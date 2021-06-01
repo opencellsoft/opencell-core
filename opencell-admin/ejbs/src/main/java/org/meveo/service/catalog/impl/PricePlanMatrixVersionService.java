@@ -126,7 +126,7 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return result.isEmpty()?null:result.get(0);
     }
     
-    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) {
+    public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, ChargeInstance chargeInstance) throws BusinessException {
     	return pricePlanMatrixService.loadPrices(pricePlanMatrixVersion, chargeInstance);
     }
     

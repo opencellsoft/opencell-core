@@ -38,6 +38,7 @@ import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.admin.exception.ElementNotFoundException;
@@ -50,6 +51,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptInstanceError;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 import org.meveo.service.base.BusinessService;
+
 
 /**
  * Compiles scripts and provides compiled script classes.
@@ -364,7 +366,8 @@ public class ScriptCompilerService extends BusinessService<ScriptInstance> {
                         if (location.endsWith("!/")) {
                             location = location.substring(0, location.length() - 2);
                         }
-                        if (location.startsWith("/")) {
+                        // Remove a starting / if its a windows server
+                        if (SystemUtils.IS_OS_WINDOWS && location.startsWith("/")) {
                             location = location.substring(1);
                         }
 
