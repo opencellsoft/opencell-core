@@ -167,11 +167,16 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
     @SuppressWarnings("rawtypes")
     public BusinessEntity findByEntityClassAndCode(Class clazz, String code) {
         QueryBuilder qb = new QueryBuilder(clazz, "be", null);
-        qb.startOrClause();
-        qb.addCriterion("be.code", "=", code, true);
-        qb.addCriterion("be.id", "=", code, false);
-        qb.endOrClause();
-
+        
+        try {
+            qb.startOrClause();
+            qb.addCriterion("be.code", "=", code, true);
+            qb.addCriterion("be.id", "=", Long.parseLong(code), false);
+            qb.endOrClause();
+        } catch (NumberFormatException e) {
+            qb.addCriterion("be.code", "=", code, true);
+        }
+        
         try {
             return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
