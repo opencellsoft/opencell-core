@@ -23,10 +23,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.BankCoordinatesDto;
-import org.meveo.api.dto.payment.CardPaymentMethodDto;
-import org.meveo.api.dto.payment.HostedCheckoutInput;
-import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.payment.PaymentMethodTokensDto;
+import org.meveo.api.dto.payment.*;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -372,7 +369,7 @@ public class PaymentMethodApi extends BaseApi {
         }
     }
 
-    public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException {
+    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException {
         return paymentMethodService.getHostedCheckoutUrl(hostedCheckoutInput);
     }
 

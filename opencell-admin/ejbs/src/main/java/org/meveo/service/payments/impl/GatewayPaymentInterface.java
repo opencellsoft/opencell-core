@@ -23,6 +23,7 @@ import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.HostedCheckoutInput;
 import org.meveo.api.dto.payment.MandatInfoDto;
+import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -37,14 +38,14 @@ import org.meveo.model.payments.PaymentMethodEnum;
 /**
  * @author anasseh
  * @author Mounir Bahije
- * @lastModifiedVersion 9.2
+ * @lastModifiedVersion 9.5
  *
  */
 public interface GatewayPaymentInterface {
-    
+
     /**
      * Set the payment gateway to use.
-     * 
+     *
      * @param paymentGateway
      */
     public void setPaymentGateway(PaymentGateway paymentGateway);
@@ -57,7 +58,7 @@ public interface GatewayPaymentInterface {
 
     /**
      * Declare a card on the psp and return the token for the future uses.
-     * 
+     *
      * @param customerAccount customer account.
      * @param alias An alias for the token. This can be used to visually represent the token. If no alias is given in Create token calls, a payment product specific default is
      *        used, e.g. the obfuscated card number for card payment products.Do not include any unobfuscated sensitive data in the alias.
@@ -74,7 +75,7 @@ public interface GatewayPaymentInterface {
 
     /**
      * Initiate a payment with token.
-     * 
+     *
      * @param paymentToken payment token
      * @param ctsAmount amount in cent
      * @param additionalParams additional params
@@ -85,7 +86,7 @@ public interface GatewayPaymentInterface {
 
     /**
      * Initiate a payment with card and save the token for this card.
-     * 
+     *
      * @param customerAccount customer account
      * @param ctsAmount amount in cent
      * @param cardNumber card number
@@ -103,7 +104,7 @@ public interface GatewayPaymentInterface {
 
     /**
      * Initiate a payment sepa whit valid mandat.
-     * 
+     *
      * @param paymentToken payment token(mandat)
      * @param ctsAmount amount in cent
      * @param additionalParams additional params
@@ -111,10 +112,10 @@ public interface GatewayPaymentInterface {
      * @throws BusinessException business exception.
      */
     public PaymentResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
-    
+
     /**
      * Initiate a payment out sepa whit valid mandat.
-     * 
+     *
      * @param paymentToken payment token(mandat)
      * @param ctsAmount amount in cent
      * @param additionalParams additional params
@@ -125,22 +126,22 @@ public interface GatewayPaymentInterface {
 
     /**
      * Check a payment.
-     * 
+     *
      * @param paymentID payment id
      * @param paymentMethodType payment method (CARD or DIRECTDEBIT)
      * @return payment response dto
      * @throws BusinessException business exception
      */
     public PaymentResponseDto checkPayment(String paymentID,PaymentMethodEnum paymentMethodType) throws BusinessException;
-    
+
     /**
      * Cancel a pending payment.
-     * 
+     *
      * @param paymentID payment id
      * @throws BusinessException business exception
      */
     public void cancelPayment(String paymentID) throws BusinessException;
-    
+
 
     // TODO PaymentRun
     /**
@@ -150,8 +151,8 @@ public interface GatewayPaymentInterface {
     public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException;
 
     /**
-     * Initiate a refund with token. 
-     * 
+     * Initiate a refund with token.
+     *
      * @param paymentToken payment token
      * @param ctsAmount amount in cent
      * @param additionalParams additional params.
@@ -162,7 +163,7 @@ public interface GatewayPaymentInterface {
 
     /**
      * Initiate a refund with card.
-     * 
+     *
      * @param customerAccount customer account
      * @param ctsAmount amount in cent
      * @param cardNumber car number
@@ -180,11 +181,11 @@ public interface GatewayPaymentInterface {
 
     /**
      * Check mandate by RUM or ID.
-     * 
+     *
      * @param mandatReference Mandate reference (RUM) to check
      * @param mandateId Mandate id to check
      * @return MandatInfoDto
-     * @throws BusinessException Business Exception 
+     * @throws BusinessException Business Exception
      */
     public MandatInfoDto checkMandat(String mandatReference,String mandateId) throws BusinessException;
 
@@ -197,7 +198,7 @@ public interface GatewayPaymentInterface {
      *
      * @author Mounir Bahije
      */
-    public String getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException;
-    
+    public PaymentHostedCheckoutResponseDto getHostedCheckoutUrl(HostedCheckoutInput hostedCheckoutInput)  throws BusinessException;
+
     public String createInvoice(Invoice invoice)  throws BusinessException;
 }
