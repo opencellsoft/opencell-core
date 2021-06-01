@@ -19,6 +19,7 @@
 package org.meveo.cache;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
@@ -150,9 +152,24 @@ public class TenantCacheContainerProvider implements Serializable { // CacheCont
 
         provider = PersistenceUtils.initializeAndUnproxy(provider);
 
+        Provider providerCopy = new Provider();
+        try {
+            BeanUtils.copyProperties(providerCopy, provider);
+
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            log.error("Failed to update appProvider fields");
+        }
+
+        providerCopy.setCurrency(provider.getCurrency() != null ? provider.getCurrency() : null);
+        providerCopy.setCountry(provider.getCountry() != null ? provider.getCountry() : null);
+        providerCopy.setLanguage(provider.getLanguage() != null ? provider.getLanguage() : null);
+        providerCopy.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
+        providerCopy.setPaymentMethods(provider.getPaymentMethods());
+        providerCopy.setCfValues(provider.getCFValuesCopy());
+        
         // detach(provider);
 
-        tenants.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(currentUser.getProviderCode() == null ? "null" : currentUser.getProviderCode(), provider);
+        tenants.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(currentUser.getProviderCode() == null ? "null" : currentUser.getProviderCode(), providerCopy);
     }
 
     /**
