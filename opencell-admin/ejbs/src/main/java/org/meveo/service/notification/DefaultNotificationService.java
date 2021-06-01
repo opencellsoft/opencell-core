@@ -226,8 +226,6 @@ public class DefaultNotificationService {
      * @return Future boolean value
      * @throws BusinessException exception when notification fail
      */
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public boolean fireNotification(Notification notif, Object entityOrEvent) throws BusinessException {
 
         if (notif == null) {

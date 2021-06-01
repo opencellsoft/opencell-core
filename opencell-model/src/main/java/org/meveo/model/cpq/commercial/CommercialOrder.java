@@ -364,7 +364,7 @@ public class CommercialOrder extends AuditableCFEntity implements IBillableEntit
 	/**
 	 * @param orderProgress the orderProgress to set
 	 */
-	public void setOrderProgress(Integer orderProgress) {
+	public void OsetOrderProgress(Integer orderProgress) {
 		this.orderProgress = orderProgress;
 	}
 

@@ -1261,7 +1261,7 @@ public class QuoteApi extends BaseApi {
 		quoteVersion.setShortDescription(quoteVersionDto.getShortDescription());
 
 		try {
-            populateCustomFields(quoteVersionDto.getCustomFields(), quoteVersion, true);
+            populateCustomFields(quoteVersionDto.getCustomFields(), quoteVersion, false);
 			quoteVersionService.updateQuoteVersion(quoteVersion);
 		}catch(BusinessException e) {
 			throw new MeveoApiException(e);
