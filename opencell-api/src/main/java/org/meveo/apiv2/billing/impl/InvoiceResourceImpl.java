@@ -137,8 +137,8 @@ public class InvoiceResourceImpl implements InvoiceResource {
 	private Invoice findInvoiceEligibleToUpdate(Long id) {
 		Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
 		final InvoiceStatusEnum status = invoice.getStatus();
-		if(!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status))) {
-			throw new ActionForbiddenException("Can only update invoices in statuses DRAFT/SUSPECT/REJECTED. current invoice status is :"+status.name()) ;
+		if(!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status)|| InvoiceStatusEnum.NEW.equals(status))) {
+			throw new ActionForbiddenException("Can only update invoices in statuses NEW/DRAFT/SUSPECT/REJECTED. current invoice status is :"+status.name()) ;
 		}
 		return invoice;
 	}
