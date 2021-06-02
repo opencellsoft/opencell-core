@@ -90,6 +90,7 @@ public class QuoteProductDTO extends BaseEntityDto{
 	}
 	
 	public void init(QuoteProduct quoteProduct) {
+    	quoteProductId = quoteProduct.getId();
 		quoteCode=quoteProduct.getQuote()!=null?quoteProduct.getQuote().getCode():null;
 		productCode=quoteProduct.getProductVersion().getProduct().getCode();
 		productVersion=quoteProduct.getProductVersion().getCurrentVersion();

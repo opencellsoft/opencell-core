@@ -1090,7 +1090,7 @@ public class CpqQuoteApi extends BaseApi {
     public GetQuoteVersionDtoResponse quoteQuotation(String quoteCode, int currentVersion) {
         List<QuotePrice> accountingArticlePrices = new ArrayList<>();
         List<PriceDTO> pricesDTO =new ArrayList<>();
-        final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
+         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
@@ -1103,17 +1103,18 @@ public class CpqQuoteApi extends BaseApi {
                 .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
         quotePriceService.removeByQuoteVersionAndPriceLevel(quoteVersion, PriceLevelEnum.QUOTE);
-      
+        log.debug("quoteQuotation pricesPerType size={}",pricesPerType.size());
+        
         pricesPerType
-                .keySet()
-                .stream()
-                .map(key -> reducePrices(key, pricesPerType, quoteVersion,null,PriceLevelEnum.QUOTE))
-                .filter(Optional::isPresent)
-                .map(price -> {
-                    QuotePrice quotePrice = price.get();
-                    quotePriceService.create(quotePrice);
-                    return quotePrice;
-                });
+        .keySet()
+        .stream()
+        .map(key -> reducePrices(key, pricesPerType, quoteVersion,null,PriceLevelEnum.QUOTE))
+        .filter(Optional::isPresent)
+        .map(price -> {
+            QuotePrice quotePrice = price.get();
+            pricesDTO.add(new PriceDTO(quotePrice));
+            return pricesDTO;
+        }).collect(Collectors.toList());;
 
         //Get the updated quote version and construct the DTO
         QuoteVersion updatedQuoteVersion=quoteVersionService.findById(quoteVersion.getId());
@@ -1124,23 +1125,44 @@ public class CpqQuoteApi extends BaseApi {
     }
 
     private Optional<QuotePrice> reducePrices(PriceTypeEnum key, Map<PriceTypeEnum, List<QuotePrice>> pricesPerType, QuoteVersion quoteVersion,QuoteOffer quoteOffer, PriceLevelEnum level) {
-        return pricesPerType.get(key).stream().reduce((a, b) -> {
-            QuotePrice quotePrice = new QuotePrice();
+    	log.debug("reducePrices quoteVersion={}, quoteOffer={}, level={}",quoteVersion!=null?quoteVersion.getId():null,quoteOffer!=null?quoteOffer.getId():null,level);
+    	if(pricesPerType.get(key).size()==1){
+    		QuotePrice accountingArticlePrice =pricesPerType.get(key).get(0);
+    		QuotePrice quotePrice = new QuotePrice();
             quotePrice.setPriceTypeEnum(key);
             quotePrice.setPriceLevelEnum(level);
-            quotePrice.setQuoteVersion(quoteVersion);
+            quotePrice.setQuoteVersion(quoteVersion!=null?quoteVersion:quoteOffer.getQuoteVersion());
+            quotePrice.setQuoteOffer(quoteOffer);
+            quotePrice.setTaxAmount(accountingArticlePrice.getTaxAmount());
+            quotePrice.setAmountWithTax(accountingArticlePrice.getAmountWithTax());
+            quotePrice.setAmountWithoutTax(accountingArticlePrice.getAmountWithoutTax());
+            quotePrice.setUnitPriceWithoutTax(accountingArticlePrice.getUnitPriceWithoutTax());
+            quotePrice.setTaxRate(accountingArticlePrice.getTaxRate());
+            quotePriceService.create(quotePrice);
+            log.debug("reducePrices1 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
+            return Optional.of(quotePrice);
+    	}
+    	return pricesPerType.get(key).stream().reduce((a, b) -> {
+    		QuotePrice quotePrice = new QuotePrice();
+            quotePrice.setPriceTypeEnum(key);
+            quotePrice.setPriceLevelEnum(level);
+            quotePrice.setQuoteVersion(quoteVersion!=null?quoteVersion:quoteOffer.getQuoteVersion());
             quotePrice.setQuoteOffer(quoteOffer);
             quotePrice.setTaxAmount(a.getTaxAmount().add(b.getTaxAmount()));
             quotePrice.setAmountWithTax(a.getAmountWithTax().add(b.getAmountWithTax()));
             quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
             quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
             quotePrice.setTaxRate(a.getTaxRate().add(b.getTaxRate()));
+            quotePriceService.create(quotePrice);
+            log.debug("reducePrices2 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
+            
             return quotePrice;
         });
     }
 
     public List<QuotePrice> offerQuotation(QuoteOffer quoteOffer) {
         Subscription subscription = instantiateVirtualSubscription(quoteOffer);
+        List<PriceDTO> pricesDTO =new ArrayList<>();
         List<WalletOperation> walletOperations = quoteRating(subscription, true);
         QuoteArticleLine quoteArticleLine = null;
         Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
@@ -1202,17 +1224,17 @@ public class CpqQuoteApi extends BaseApi {
                 .collect(Collectors.groupingBy(QuotePrice::getPriceTypeEnum));
 
         quotePriceService.removeByQuoteOfferAndPriceLevel(quoteOffer, PriceLevelEnum.OFFER);
-      
+        log.debug("offerQuotation pricesPerType size={}",pricesPerType.size());
         pricesPerType
-                .keySet()
-                .stream()
-                .map(key -> reducePrices(key, pricesPerType, null,quoteOffer,PriceLevelEnum.OFFER))
-                .filter(Optional::isPresent)
-                .map(price -> {
-                    QuotePrice quotePrice = price.get();
-                    quotePriceService.create(quotePrice);
-                    return quotePrice;
-                });
+        .keySet()
+        .stream()
+        .map(key -> reducePrices(key, pricesPerType, null,quoteOffer,PriceLevelEnum.OFFER))
+        .filter(Optional::isPresent)
+        .map(price -> {
+            QuotePrice quotePrice = price.get();
+            pricesDTO.add(new PriceDTO(quotePrice));
+            return pricesDTO;
+        }).collect(Collectors.toList());
         
         return accountingPrices;
     }

@@ -75,7 +75,6 @@ public enum ColumnTypeEnum {
                 case INTEGER:
                 case COUNT:
                 case TOTAL:
-                case LIST_NUMERIC:
                 case NUMERIC: {
                     {
 
@@ -86,6 +85,7 @@ public enum ColumnTypeEnum {
                         return (Double) quote == value.doubleValue();
                     }
                 }
+                case LIST_NUMERIC:
                 case LIST_MULTIPLE_NUMERIC: {
                     if (attributeValue.getStringValue() == null) {
                         return true;

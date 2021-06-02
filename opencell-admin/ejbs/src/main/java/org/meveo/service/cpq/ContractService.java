@@ -123,10 +123,8 @@ public class ContractService extends BusinessService<Contract>  {
 					.setParameter("customerId", customer.getId()).setParameter("billingAccountId", billingAccount.getId())
 					.setParameter("customerAccountId",customerAccount.getId()).getSingleResult();
 		} catch (Exception e) {
-			log.error("getContractByAccount error ", e.getMessage());
 		}
 		return contract;
 	}
-	
 	
 }
