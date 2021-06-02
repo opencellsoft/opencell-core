@@ -139,11 +139,20 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     public static final String FROM_JSON_FUNCTION = "FromJson(a.cfValues,";
 
+    /**
+     * Is custom field accumulation being used
+     */
     protected static boolean accumulateCF = true;
+    
+    /**
+     * Is generic workflow being used
+     */
+    protected static boolean applyGenericWorkflow = true;
 
     @PostConstruct
     private void init() {
-        accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("accumulateCF", "false"));
+        accumulateCF = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("customFields.accumulateCF", "false"));
+        applyGenericWorkflow = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("workflow.enabled", "true"));
     }
 
     @Inject
@@ -290,15 +299,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public E findById(Long id, boolean refresh) {
-        log.trace("start of find {}/{} by id ..", entityClass.getSimpleName(), id);
+        log.trace("Find {}/{} by id with refresh {}", entityClass.getSimpleName(), id, refresh);
         E e = getEntityManager().find(entityClass, id);
         if (e != null) {
             if (refresh) {
-                log.debug("refreshing loaded entity");
                 getEntityManager().refresh(e);
             }
         }
-        log.trace("end of find {}/{} by id. Result found={}.", entityClass.getSimpleName(), id, e != null);
         return e;
 
     }
@@ -316,7 +323,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @SuppressWarnings("unchecked")
     public E findById(Long id, List<String> fetchFields, boolean refresh) {
-        log.debug("start of find {}/{} by id ..", getEntityClass().getSimpleName(), id);
+        log.trace("Find {}/{} by id with refresh {}", entityClass.getSimpleName(), id, refresh);
         final Class<? extends E> productClass = getEntityClass();
         StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
         if (fetchFields != null && !fetchFields.isEmpty()) {
@@ -333,11 +340,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (!results.isEmpty()) {
             e = (E) results.get(0);
             if (refresh) {
-                log.debug("refreshing loaded entity");
                 getEntityManager().refresh(e);
             }
         }
-        log.trace("end of find {}/{} by id. Result found={}.", getEntityClass().getSimpleName(), id, e != null);
         return e;
     }
 
@@ -562,7 +567,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             entityCreatedEventProducer.fire((BaseEntity) entity);
         }
 
-        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(WorkflowedEntity.class)) {
+        if (applyGenericWorkflow && entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(WorkflowedEntity.class)) {
             entityInstantiateWFEventProducer.fire((BaseEntity) entity);
         }
 
