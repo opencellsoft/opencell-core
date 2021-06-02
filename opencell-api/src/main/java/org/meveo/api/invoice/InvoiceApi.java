@@ -557,13 +557,7 @@ public class InvoiceApi extends BaseApi {
             missingParameters.add("invoiceId");
         }
         handleMissingParameters();
-
-        Invoice invoice = invoiceService.findById(invoiceId);
-        if (invoice == null) {
-            throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
-        }
-        invoice.setStatus(InvoiceStatusEnum.VALIDATED);
-        invoice = serviceSingleton.assignInvoiceNumber(invoice,true);
+       Invoice invoice = serviceSingleton.validateAndAssignInvoiceNumber(invoiceId);
         return invoice.getInvoiceNumber();
     }
 
