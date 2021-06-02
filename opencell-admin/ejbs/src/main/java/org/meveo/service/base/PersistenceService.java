@@ -50,6 +50,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.metamodel.Attribute;
 
 import org.hibernate.SQLQuery;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
@@ -1089,6 +1091,27 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         List<Map<String, Object>> aliasToValueMapList = q.list();
 
         return aliasToValueMapList;
+    }
+
+    /**
+     * Get scrollable result from a native select query
+     *
+     * @param query Sql query to execute
+     * @param params Parameters to pass
+     * @return Scrollable results
+     */
+    public ScrollableResults getScrollableResultNativeQuery(String query, Map<String, Object> params) {
+        Session session = getEntityManager().unwrap(Session.class);
+        SQLQuery q = session.createSQLQuery(query);
+
+        q.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
+
+        if (params != null) {
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                q.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        return q.scroll(ScrollMode.FORWARD_ONLY);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

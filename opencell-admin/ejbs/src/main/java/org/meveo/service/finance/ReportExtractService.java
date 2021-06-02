@@ -31,6 +31,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.hibernate.ScrollableResults;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ReportExtractExecutionException;
 import org.meveo.admin.util.ModuleUtil;
@@ -52,6 +53,7 @@ import org.meveo.service.script.finance.ReportExtractScript;
  * Service for managing ReportExtract entity.
  * 
  * @author Edward P. Legaspi
+ * @author Mohammed Amine TAZI
  * @author Abdellatif BARI
  * @version %I%, %G%
  * @since 5.0
@@ -77,7 +79,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     @SuppressWarnings("rawtypes")
     public ReportExtractExecutionResult runReport(ReportExtract entity, Map<String, String> mapParams, ReportExtractExecutionOrigin origin) throws ReportExtractExecutionException, BusinessException {
         Map<String, Object> context = new HashMap<>();
-
+        int reportSize = 0;
         // use params parameter if set, otherwise use the set from entity
         Map<String, String> params = new HashMap<>();
         if (mapParams != null && !mapParams.isEmpty()) {
@@ -125,10 +127,9 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
         ReportExtractExecutionException be = null;
         if (entity.getScriptType().equals(ReportExtractScriptTypeEnum.SQL)) {
-            List<Map<String, Object>> resultList = null;
-
+            ScrollableResults results = null;
             try {
-                resultList = scriptInstanceService.executeNativeSelectQuery(entity.getSqlQuery(), context);
+                results = scriptInstanceService.getScrollableResultNativeQuery(entity.getSqlQuery(), context);
             } catch (Exception e) {
                 if (e.getCause() != null && e.getCause().getCause() != null) {
                     reportExtractExecutionResult.setErrorMessage(e.getCause().getCause().getMessage());
@@ -138,15 +139,14 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 log.error("Invalid SQL query: {}", e.getMessage());
                 be = new ReportExtractExecutionException("Invalid SQL query.");
             }
-
-            if (resultList != null && !resultList.isEmpty()) {
-                log.debug("{} record/s found", resultList.size());
+            if (results != null && results.next()) {
+                log.debug("{} record/s found", reportSize);
                 if (entity.getReportExtractResultType().equals(ReportExtractResultTypeEnum.CSV)) {
-                    writeAsFile(filename, entity.getFileSeparator(), reportDir, resultList);
+                    reportSize = writeAsFile(filename, entity.getFileSeparator(), reportDir, results);
                 } else {
-                    writeAsHtml(filename, reportDir, resultList, entity);
+                    reportSize = writeAsHtml(filename, reportDir, results, entity);
                 }
-                reportExtractExecutionResult.setLineCount(resultList.size());
+                reportExtractExecutionResult.setLineCount(reportSize);
             }
 
         } else {
@@ -170,9 +170,11 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         return reportExtractExecutionResult;
     }
 
-    @SuppressWarnings("rawtypes")
-    private void writeAsHtml(String filename, StringBuilder sbDir, List<Map<String, Object>> resultList, ReportExtract entity) throws BusinessException {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private int writeAsHtml(String filename, StringBuilder sbDir, ScrollableResults results, ReportExtract entity) throws BusinessException {
         FileWriter fileWriter = null;
+        Map<String, Object> row = null;
+        int rowNumber = 0;
         StringBuilder tableHeader = new StringBuilder();
         StringBuilder tableBody = new StringBuilder();
         StringBuilder table = new StringBuilder("<table>");
@@ -186,7 +188,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             String template = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("reportExtract/default_html_report.html"));
 
             // get the header
-            Map<String, Object> firstRow = resultList.get(0);
+            Map<String, Object> firstRow = (Map<String, Object>) results.get()[0];
             Iterator ite = firstRow.keySet().iterator();
             tableHeader.append("<thead><tr>");
             while (ite.hasNext()) {
@@ -197,14 +199,16 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 
             int ctr = 1;
             tableBody.append("<tbody>");
-            for (Map<String, Object> row : resultList) {
+            do {
+                row = (Map<String, Object>) results.get()[0];
                 ite = firstRow.keySet().iterator();
                 tableBody.append("<tr class='" + (ctr++ % 2 == 0 ? "odd" : "even") + "'>");
                 while (ite.hasNext()) {
                     tableBody.append("<td>" + row.get(ite.next()) + "</td>");
                 }
                 tableBody.append("</tr>");
-            }
+                rowNumber++;
+            } while(results.next());
             tableBody.append("</tbody>");
             table.append(tableBody);
 
@@ -235,7 +239,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             file.createNewFile();
             fileWriter = new FileWriter(file);
             fileWriter.write(template);
-            
+            return rowNumber;
         } catch (Exception e) {
             log.error("Cannot write report to file: {}", e);
             throw new BusinessException("Cannot write report to file.");
@@ -252,11 +256,12 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
 		return entity.getStyle();
 	}
 
-    @SuppressWarnings("rawtypes")
-    private void writeAsFile(String filename, String fileSeparator, StringBuilder sbDir, List<Map<String, Object>> resultList) throws BusinessException {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private int writeAsFile(String filename, String fileSeparator, StringBuilder sbDir, ScrollableResults results) throws BusinessException {
         FileWriter fileWriter = null;
         StringBuilder line = new StringBuilder("");
-
+        int rowNumber = 0;
+        Map<String, Object> row = null;
         try {
             File dir = new File(sbDir.toString());
             if (!dir.exists()) {
@@ -267,7 +272,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             fileWriter = new FileWriter(file);
 
             // get the header
-            Map<String, Object> firstRow = resultList.get(0);
+            Map<String, Object> firstRow = (Map<String, Object>) results.get()[0];
             Iterator ite = firstRow.keySet().iterator();
             while (ite.hasNext()) {
                 line.append(ite.next() + fileSeparator);
@@ -277,7 +282,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             fileWriter.write(System.lineSeparator());
 
             line = new StringBuilder("");
-            for (Map<String, Object> row : resultList) {
+            do {
+                row = (Map<String, Object>) results.get()[0];
                 ite = firstRow.keySet().iterator();
                 while (ite.hasNext()) {
                     line.append(row.get(ite.next()) + fileSeparator);
@@ -286,7 +292,9 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 fileWriter.write(line.toString());
                 fileWriter.write(System.lineSeparator());
                 line = new StringBuilder("");
-            }
+                rowNumber++;
+            } while (results.next());
+            return rowNumber;
         } catch (Exception e) {
             log.error("Cannot write report to file: {}", e);
             throw new BusinessException("Cannot write report to file.");
