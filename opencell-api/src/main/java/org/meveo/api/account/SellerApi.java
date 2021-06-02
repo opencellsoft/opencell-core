@@ -525,7 +525,7 @@ public class SellerApi extends AccountEntityApi {
     public SellersDto list() {
         SellersDto result = new SellersDto();
 
-        List<Seller> sellers = sellerService.list();
+        List<Seller> sellers = sellerService.list(GenericPagingAndFilteringUtils.getInstance().getPaginationConfiguration());
         if (sellers != null) {
             for (Seller seller : sellers) {
                 result.getSeller().add(new SellerDto(seller, entityToDtoConverter.getCustomFieldsDTO(seller, CustomFieldInheritanceEnum.INHERIT_NO_MERGE)));
