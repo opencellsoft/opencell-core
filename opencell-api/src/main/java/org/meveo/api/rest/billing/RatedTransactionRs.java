@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.billing;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -35,6 +44,7 @@ import javax.ws.rs.core.MediaType;
  * @lastModifiedVersion 5.2
  */
 @Path("/billing/ratedTransaction")
+@Tag(name = "RatedTransaction", description = "@%RatedTransaction")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface RatedTransactionRs extends IBaseRs {
@@ -53,6 +63,19 @@ public interface RatedTransactionRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" Get a list of rated transactions ",
+			description=" Get a list of rated transactions ",
+			operationId="    GET_RatedTransaction_list",
+			responses= {
+				@ApiResponse(description=" A list of Rated transactions ",
+						content=@Content(
+									schema=@Schema(
+											implementation= RatedTransactionListResponseDto.class
+											)
+								)
+				)}
+	)
     RatedTransactionListResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("false") @QueryParam("returnUserAccountCode") Boolean returnUserAccountCode);
@@ -64,6 +87,19 @@ public interface RatedTransactionRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List ratedTransactions matching a given criteria ",
+			description=" List ratedTransactions matching a given criteria ",
+			operationId="    GET_RatedTransaction_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of ratedTransactions ",
+						content=@Content(
+									schema=@Schema(
+											implementation= RatedTransactionListResponseDto.class
+											)
+								)
+				)}
+	)
     RatedTransactionListResponseDto list();
 
     /**
@@ -74,6 +110,19 @@ public interface RatedTransactionRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" Get a list of rated transactions ",
+			description=" Get a list of rated transactions ",
+			operationId="    POST_RatedTransaction_list",
+			responses= {
+				@ApiResponse(description=" A list of Rated transactions ",
+						content=@Content(
+									schema=@Schema(
+											implementation= RatedTransactionListResponseDto.class
+											)
+								)
+				)}
+	)
     RatedTransactionListResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -84,5 +133,18 @@ public interface RatedTransactionRs extends IBaseRs {
      */
     @POST
     @Path("/cancelRatedTransactions")
+	@Operation(
+			summary=" Call service to cancel one or many opened Rated Transactions according to the passed query, cancel an opened Rated Transaction is to set status to CANCELED",
+			description=" Call service to cancel one or many opened Rated Transactions according to the passed query, cancel an opened Rated Transaction is to set status to CANCELED.  ",
+			operationId="    POST_RatedTransaction_cancelRatedTransactions",
+			responses= {
+				@ApiResponse(description=" ActionStatus with SUCESS or FAIL status inside ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus cancelRatedTransactions(PagingAndFiltering pagingAndFiltering);
 }

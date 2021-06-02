@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.response.QueryResponse;
 
 import javax.ws.rs.Consumes;
@@ -37,6 +46,7 @@ import javax.ws.rs.core.UriInfo;
  * @lastModifiedVersion 5.1
  */
 @Path("/query")
+@Tag(name = "Query", description = "@%Query")
 @Consumes({ MediaType.APPLICATION_JSON})
 @Produces({ MediaType.APPLICATION_JSON})
 public interface QueryRs {
@@ -62,6 +72,19 @@ public interface QueryRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" THIS IS A TEMPORARY API FOR DYNAMIC PORTAL USE ONLY.  IT MAY BE REMOVED AT ANY TIME. ",
+			description=" THIS IS A TEMPORARY API FOR DYNAMIC PORTAL USE ONLY.  IT MAY BE REMOVED AT ANY TIME. ",
+			operationId="    GET_Query_search",
+			responses= {
+				@ApiResponse(description=" QueryResponse object that contains the status, pagination, and the result in json string form. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= QueryResponse.class
+											)
+								)
+				)}
+	)
     QueryResponse list(@Context UriInfo params);
 
 }

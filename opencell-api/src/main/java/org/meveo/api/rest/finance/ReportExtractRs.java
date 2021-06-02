@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.finance;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -49,6 +58,7 @@ import org.meveo.api.rest.IBaseRs;
  * @lastModifiedVersion 5.1
  **/
 @Path("/finance/reportExtracts")
+@Tag(name = "ReportExtract", description = "@%ReportExtract")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface ReportExtractRs extends IBaseRs {
@@ -61,6 +71,19 @@ public interface ReportExtractRs extends IBaseRs {
 	 */
     @POST
     @Path("/")
+	@Operation(
+			summary="	  Creates a report extract with the given data.	  	  ",
+			description="	  Creates a report extract with the given data.	  	  ",
+			operationId="    POST_ReportExtract_create",
+			responses= {
+				@ApiResponse(description=" status of the call	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(ReportExtractDto postData);
 
     /**
@@ -70,6 +93,19 @@ public interface ReportExtractRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Updates a report extract with the given data. ",
+			description=" Updates a report extract with the given data. ",
+			operationId="    POST_ReportExtract_create",
+			responses= {
+				@ApiResponse(description=" status of the call ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(ReportExtractDto postData);
 
     /**
@@ -79,6 +115,19 @@ public interface ReportExtractRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create / update a report extract with the given data. ",
+			description=" Create / update a report extract with the given data. ",
+			operationId="    POST_ReportExtract_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" status of the call ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(ReportExtractDto postData);
 
     /**
@@ -89,6 +138,19 @@ public interface ReportExtractRs extends IBaseRs {
      */
     @DELETE
     @Path("/")
+	@Operation(
+			summary=" Delete a Report Extract with a given code.  ",
+			description=" Delete a Report Extract with a given code.  ",
+			operationId="    DELETE_ReportExtract_delete",
+			responses= {
+				@ApiResponse(description=" status of the call ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(String reportExtractCode);
 
     /**
@@ -104,6 +166,19 @@ public interface ReportExtractRs extends IBaseRs {
      */
 	@GET
 	@Path("/list")
+	@Operation(
+			summary=" Returns a paginated list of ReportExtract.  ",
+			description=" Returns a paginated list of ReportExtract.  ",
+			operationId="GET_ReportExtract_list",
+			responses= {
+				@ApiResponse(description=" list of ReportExtract ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ReportExtractsResponseDto.class
+											)
+								)
+				)}
+	)
 	ReportExtractsResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields,
 			@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
 			@DefaultValue("code") @QueryParam("sortBy") String sortBy,
@@ -117,6 +192,19 @@ public interface ReportExtractRs extends IBaseRs {
      */
     @POST
     @Path("/executionHistory/list")
+	@Operation(
+			summary=" Returns a list of filtered and paginated ReportExtract.  ",
+			description=" Returns a list of filtered and paginated ReportExtract.  ",
+			operationId="    POST_ReportExtract_executionHistory_list",
+			responses= {
+				@ApiResponse(description=" list of ReportExtract ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ReportExtractsResponseDto.class
+											)
+								)
+				)}
+	)
     ReportExtractsResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -126,6 +214,19 @@ public interface ReportExtractRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for a report extract with a given code. ",
+			description=" Search for a report extract with a given code. ",
+			operationId="    GET_ReportExtract_search",
+			responses= {
+				@ApiResponse(description=" matched report extract ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ReportExtractResponseDto.class
+											)
+								)
+				)}
+	)
     ReportExtractResponseDto find(@QueryParam("reportExtractCode") String reportExtractCode);
 
     /**
@@ -135,6 +236,19 @@ public interface ReportExtractRs extends IBaseRs {
      */
     @POST
     @Path("/run")
+	@Operation(
+			summary=" Runs a report extract with the given parameter. ",
+			description=" Runs a report extract with the given parameter. ",
+			operationId="    POST_ReportExtract_run",
+			responses= {
+				@ApiResponse(description=" status of the call ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ReportExtractExecutionResultResponseDto.class
+											)
+								)
+				)}
+	)
     ReportExtractExecutionResultResponseDto runReport(RunReportExtractDto postData);
 
     /**
@@ -145,6 +259,19 @@ public interface ReportExtractRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Report extract with a given code  ",
+			description=" Enable a Report extract with a given code  ",
+			operationId="    POST_ReportExtract_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -155,6 +282,19 @@ public interface ReportExtractRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Report extract with a given code  ",
+			description=" Disable a Report extract with a given code  ",
+			operationId="    POST_ReportExtract_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
     
     /**
@@ -165,6 +305,19 @@ public interface ReportExtractRs extends IBaseRs {
      */
     @POST
     @Path("/executionHistory/list")
+	@Operation(
+			summary=" Returns a list of filtered and paginated report extract execution history.  ",
+			description=" Returns a list of filtered and paginated report extract execution history.  ",
+			operationId="    POST_ReportExtract_executionHistory_list",
+			responses= {
+				@ApiResponse(description=" list of ReportExtract run history ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ReportExtractExecutionResultsResponseDto.class
+											)
+								)
+				)}
+	)
     ReportExtractExecutionResultsResponseDto listReportExtractRunHistoryPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -180,6 +333,19 @@ public interface ReportExtractRs extends IBaseRs {
      */
     @GET
     @Path("/executionHistory/list")
+	@Operation(
+			summary=" Returns a list of filtered and paginated report extract execution history.  ",
+			description=" Returns a list of filtered and paginated report extract execution history.  ",
+			operationId="    GET_ReportExtract_executionHistory_list",
+			responses= {
+				@ApiResponse(description=" list of ReportExtract run history ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ReportExtractExecutionResultsResponseDto.class
+											)
+								)
+				)}
+	)
     ReportExtractExecutionResultsResponseDto listReportExtractRunHistoryGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("DESCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -191,6 +357,19 @@ public interface ReportExtractRs extends IBaseRs {
      */
     @GET
     @Path("/executionHistory")
+	@Operation(
+			summary=" Finds and returns the ReportExtract history of a given id.  ",
+			description=" Finds and returns the ReportExtract history of a given id.  ",
+			operationId="    GET_ReportExtract_executionHistory",
+			responses= {
+				@ApiResponse(description=" report extract execution detail ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ReportExtractExecutionResultResponseDto.class
+											)
+								)
+				)}
+	)
     ReportExtractExecutionResultResponseDto findReportExtractHistory(@QueryParam("id") Long id);
     
     /**
@@ -201,6 +380,19 @@ public interface ReportExtractRs extends IBaseRs {
      */
     @GET
     @Path("/executionHistory")
+	@Operation(
+			summary=" Finds and returns a list of ReportExtract history for a given code.  ",
+			description=" Finds and returns a list of ReportExtract history for a given code.  ",
+			operationId="    GET_ReportExtract_executionHistory",
+			responses= {
+				@ApiResponse(description=" list of report extract execution detail ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ReportExtractExecutionResultsResponseDto.class
+											)
+								)
+				)}
+	)
     ReportExtractExecutionResultsResponseDto findReportExtractHistory(@QueryParam("code") String code);
 
 }

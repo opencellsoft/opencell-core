@@ -2,16 +2,27 @@ package org.meveo.api.rest.impl;
 
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.rest.exception.*;
+import org.meveo.api.rest.exception.AlreadyExistException;
+import org.meveo.api.rest.exception.BadRequestException;
+import org.meveo.api.rest.exception.ForbiddenException;
+import org.meveo.api.rest.exception.InternalServerErrorException;
+import org.meveo.api.rest.exception.NotAuthorizedException;
+import org.meveo.api.rest.exception.NotFoundException;
 import org.meveo.api.ws.impl.ExceptionProcessorWs;
 import org.meveo.commons.utils.StringUtils;
 
 public class ExceptionProcessorRs extends ExceptionProcessorWs {
 
+    /**
+     * @param resourceMessages
+     */
     public ExceptionProcessorRs(ResourceBundle resourceMessages) {
         super(resourceMessages);
     }
 
+    /**
+     *
+     */
     @Override
     public void process(Exception e, ActionStatus status) {
         super.process(e, status);

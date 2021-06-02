@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.response.GetInvoiceSubCategoryResponse;
@@ -33,6 +42,7 @@ import javax.ws.rs.core.MediaType;
  * @author Edward P. Legaspi
  **/
 @Path("/invoiceSubCategory")
+@Tag(name = "InvoiceSubCategory", description = "@%InvoiceSubCategory")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -45,6 +55,19 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" Search for list of invoiceSubCategories. ",
+			description=" Search for list of invoiceSubCategories. ",
+			operationId="    GET_InvoiceSubCategory_list",
+			responses= {
+				@ApiResponse(description=" list of invoiceSubCategories ",
+						content=@Content(
+									schema=@Schema(
+											implementation= InvoiceSubCategoryResponseDto.class
+											)
+								)
+				)}
+	)
     InvoiceSubCategoryResponseDto list();
 
     /**
@@ -55,6 +78,19 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create invoice sub category.  ",
+			description=" Create invoice sub category.  ",
+			operationId="    POST_InvoiceSubCategory_create",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(InvoiceSubCategoryDto postData);
 
     /**
@@ -65,6 +101,19 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update invoice sub category.  ",
+			description=" Update invoice sub category.  ",
+			operationId="    PUT_InvoiceSubCategory_update",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(InvoiceSubCategoryDto postData);
 
     /**
@@ -75,6 +124,19 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update invoice sub category.  ",
+			description=" Create or update invoice sub category.  ",
+			operationId="    POST_InvoiceSubCategory_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(InvoiceSubCategoryDto postData);
 
     /**
@@ -85,6 +147,19 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for invoice sub category with a given code.  ",
+			description=" Search for invoice sub category with a given code.  ",
+			operationId="    GET_InvoiceSubCategory_search",
+			responses= {
+				@ApiResponse(description=" invoice sub category ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetInvoiceSubCategoryResponse.class
+											)
+								)
+				)}
+	)
     GetInvoiceSubCategoryResponse find(@QueryParam("invoiceSubCategoryCode") String invoiceSubCategoryCode);
 
     /**
@@ -95,6 +170,19 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
      */
     @DELETE
     @Path("/{invoiceSubCategoryCode}")
+	@Operation(
+			summary=" Remove invoice sub category with a given code.  ",
+			description=" Remove invoice sub category with a given code.  ",
+			operationId="    DELETE_InvoiceSubCategory_{invoiceSubCategoryCode}",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode);
     
     /**
@@ -105,6 +193,19 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" List InvoiceSubCategory matching a given criteria ",
+			description=" List InvoiceSubCategory matching a given criteria ",
+			operationId="    POST_InvoiceSubCategory_list",
+			responses= {
+				@ApiResponse(description=" List of InvoiceSubCategory ",
+						content=@Content(
+									schema=@Schema(
+											implementation= InvoiceSubCategoryResponseDto.class
+											)
+								)
+				)}
+	)
     InvoiceSubCategoryResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

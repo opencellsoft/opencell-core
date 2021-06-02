@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlanResponseDto;
@@ -195,14 +204,14 @@ public interface DiscountPlanRs extends IBaseRs {
     @POST
     @Path("/{code}/enable")
 	@Operation(
-			summary=" Enable a Discount plan with a given code  ",
-			description=" Enable a Discount plan with a given code  ",
+			summary=" List DiscountPlans matching a given criteria ",
+			description=" List DiscountPlans matching a given criteria ",
 			operationId="    POST_DiscountPlan_{code}_enable",
 			responses= {
-				@ApiResponse(description=" Request processing status ",
+				@ApiResponse(description=" List of DiscountPlans ",
 						content=@Content(
 									schema=@Schema(
-											implementation= ActionStatus.class
+											implementation= GetDiscountPlansResponseDto.class
 											)
 								)
 				)}
@@ -218,8 +227,8 @@ public interface DiscountPlanRs extends IBaseRs {
     @POST
     @Path("/{code}/disable")
 	@Operation(
-			summary=" Disable a Discount plan with a given code  ",
-			description=" Disable a Discount plan with a given code  ",
+			summary=" Enable a Discount plan with a given code  ",
+			description=" Enable a Discount plan with a given code  ",
 			operationId="    POST_DiscountPlan_{code}_disable",
 			responses= {
 				@ApiResponse(description=" Request processing status ",

@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.billing;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.*;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -38,6 +47,7 @@ import javax.ws.rs.core.MediaType;
  * @lastModifiedVersion 5.1
  **/
 @Path("/billing/wallet")
+@Tag(name = "Wallet", description = "@%Wallet")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -51,6 +61,19 @@ public interface WalletRs extends IBaseRs {
      */
     @POST
     @Path("/template")
+	@Operation(
+			summary=" Create a new wallet template  ",
+			description=" Create a new wallet template  ",
+			operationId="    POST_Wallet_template",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createWalletTemplate(WalletTemplateDto postData);
 
     /**
@@ -61,6 +84,19 @@ public interface WalletRs extends IBaseRs {
      */
     @PUT
     @Path("/template")
+	@Operation(
+			summary=" Update an existing wallet template  ",
+			description=" Update an existing wallet template  ",
+			operationId="    PUT_Wallet_template",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus updateWalletTemplate(WalletTemplateDto postData);
 
     /**
@@ -71,6 +107,19 @@ public interface WalletRs extends IBaseRs {
      */
     @DELETE
     @Path("/template/{walletTemplateCode}")
+	@Operation(
+			summary=" Remove an existing wallet template with a given code  ",
+			description=" Remove an existing wallet template with a given code  ",
+			operationId="    DELETE_Wallet_template_{walletTemplateCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus removeWalletTemplate(@PathParam("walletTemplateCode") String walletTemplateCode);
 
     /**
@@ -81,6 +130,19 @@ public interface WalletRs extends IBaseRs {
      */
     @GET
     @Path("/template")
+	@Operation(
+			summary=" Search for a wallet template with a given code  ",
+			description=" Search for a wallet template with a given code  ",
+			operationId="    GET_Wallet_template",
+			responses= {
+				@ApiResponse(description=" A wallet template ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetWalletTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     GetWalletTemplateResponseDto findWalletTemplate(@QueryParam("walletTemplateCode") String walletTemplateCode);
 
     /**
@@ -91,6 +153,19 @@ public interface WalletRs extends IBaseRs {
      */
     @POST
     @Path("/balance/current")
+	@Operation(
+			summary=" Gets the current (open or reserved) wallet balance amount at a given level and date period. In wallet operation, status='OPEN OR RESERVED'.  ",
+			description=" Gets the current (open or reserved) wallet balance amount at a given level and date period. In wallet operation, status='OPEN OR RESERVED'.  ",
+			operationId="    POST_Wallet_balance_current",
+			responses= {
+				@ApiResponse(description=" Request processing status and balance amounts ",
+						content=@Content(
+									schema=@Schema(
+											implementation= WalletBalanceResponseDto.class
+											)
+								)
+				)}
+	)
     WalletBalanceResponseDto currentBalance(WalletBalanceDto calculateParameters);
 
     /**
@@ -101,6 +176,19 @@ public interface WalletRs extends IBaseRs {
      */
     @POST
     @Path("/balance/reserved")
+	@Operation(
+			summary=" Gets the reserved wallet balance amount at a given level and date period. In wallet operation, status='RESERVED'.  ",
+			description=" Gets the reserved wallet balance amount at a given level and date period. In wallet operation, status='RESERVED'.  ",
+			operationId="    POST_Wallet_balance_reserved",
+			responses= {
+				@ApiResponse(description=" Request processing status and balance amounts ",
+						content=@Content(
+									schema=@Schema(
+											implementation= WalletBalanceResponseDto.class
+											)
+								)
+				)}
+	)
     WalletBalanceResponseDto reservedBalance(WalletBalanceDto calculateParameters);
 
     /**
@@ -111,6 +199,19 @@ public interface WalletRs extends IBaseRs {
      */
     @POST
     @Path("/balance/open")
+	@Operation(
+			summary=" Gets the open wallet balance amount at a given level and date period. In wallet operation, status='OPEN'.  ",
+			description=" Gets the open wallet balance amount at a given level and date period. In wallet operation, status='OPEN'.  ",
+			operationId="    POST_Wallet_balance_open",
+			responses= {
+				@ApiResponse(description=" Request processing status and balance amounts status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= WalletBalanceResponseDto.class
+											)
+								)
+				)}
+	)
     WalletBalanceResponseDto openBalance(WalletBalanceDto calculateParameters);
 
     /**
@@ -121,6 +222,19 @@ public interface WalletRs extends IBaseRs {
      */
     @POST
     @Path("/reservation")
+	@Operation(
+			summary=" Create reservation for a given offer, user account, seller, provider and date.  ",
+			description=" Create reservation for a given offer, user account, seller, provider and date.  ",
+			operationId="    POST_Wallet_reservation",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createReservation(WalletReservationDto postData);
 
     /**
@@ -131,6 +245,19 @@ public interface WalletRs extends IBaseRs {
      */
     @PUT
     @Path("/reservation")
+	@Operation(
+			summary=" Updates a reservation. Same as create we just need to pass the id of the reservation.  ",
+			description=" Updates a reservation. Same as create we just need to pass the id of the reservation.  ",
+			operationId="    PUT_Wallet_reservation",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus updateReservation(WalletReservationDto postData);
 
     /**
@@ -141,6 +268,19 @@ public interface WalletRs extends IBaseRs {
      */
     @DELETE
     @Path("/reservation/{reservationId:[0-9]+}")
+	@Operation(
+			summary=" Cancel a reservation given an id.  ",
+			description=" Cancel a reservation given an id.  ",
+			operationId="    DELETE_Wallet_reservation_{reservationId:[0-9]+}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus cancelReservation(@PathParam("reservationId") Long reservationId);
 
     /**
@@ -151,6 +291,19 @@ public interface WalletRs extends IBaseRs {
      */
     @POST
     @Path("/reservation/confirm")
+	@Operation(
+			summary=" Confirm a reservation given an id.  ",
+			description=" Confirm a reservation given an id.  ",
+			operationId="    POST_Wallet_reservation_confirm",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus confirmReservation(WalletReservationDto postData);
 
     /**
@@ -161,6 +314,19 @@ public interface WalletRs extends IBaseRs {
      */
     @POST
     @Path("/operation")
+	@Operation(
+			summary=" Create a new operation  ",
+			description=" Create a new operation  ",
+			operationId="    POST_Wallet_operation",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOperation(WalletOperationDto postData);
 
     /**
@@ -176,6 +342,20 @@ public interface WalletRs extends IBaseRs {
     @Deprecated
     @POST
     @Path("/operation/find")
+	@Operation(
+			summary=" Search for an operation with a given (example) code. Deprecated in v.4.7.2  ",
+			description=" Search for an operation with a given (example) code. Deprecated in v.4.7.2  ",
+			deprecated=true,
+			operationId="    POST_Wallet_operation_find",
+			responses= {
+				@ApiResponse(description=" List of wallet operations ",
+						content=@Content(
+									schema=@Schema(
+											implementation= FindWalletOperationsResponseDto.class
+											)
+								)
+				)}
+	)
     FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -193,6 +373,19 @@ public interface WalletRs extends IBaseRs {
      */
     @GET
     @Path("/operation/list")
+	@Operation(
+			summary=" List wallet operations matching a given criteria  ",
+			description=" List wallet operations matching a given criteria  ",
+			operationId="    GET_Wallet_operation_list",
+			responses= {
+				@ApiResponse(description=" List of wallet operations ",
+						content=@Content(
+									schema=@Schema(
+											implementation= FindWalletOperationsResponseDto.class
+											)
+								)
+				)}
+	)
     FindWalletOperationsResponseDto listOperationsGet(@QueryParam("query") String query,
                                             @QueryParam("fields") String fields, 
                                             @QueryParam("offset") Integer offset,
@@ -208,6 +401,19 @@ public interface WalletRs extends IBaseRs {
      */
     @GET
     @Path("/operation/listGetAll")
+	@Operation(
+			summary=" List wallet operations matching a given criteria ",
+			description=" List wallet operations matching a given criteria ",
+			operationId="    GET_Wallet_operation_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of wallet operations ",
+						content=@Content(
+									schema=@Schema(
+											implementation= FindWalletOperationsResponseDto.class
+											)
+								)
+				)}
+	)
     FindWalletOperationsResponseDto list( @DefaultValue("false") @QueryParam("withRTs") Boolean withRTs );
 
     /**
@@ -219,6 +425,19 @@ public interface WalletRs extends IBaseRs {
      */
     @POST
     @Path("/operation/list")
+	@Operation(
+			summary=" List wallet operations matching a given criteria  ",
+			description=" List wallet operations matching a given criteria  ",
+			operationId="    POST_Wallet_operation_list",
+			responses= {
+				@ApiResponse(description=" List of wallet operations ",
+						content=@Content(
+									schema=@Schema(
+											implementation= FindWalletOperationsResponseDto.class
+											)
+								)
+				)}
+	)
     FindWalletOperationsResponseDto listOperationsPost(PagingAndFiltering pagingAndFiltering, @DefaultValue("false") @QueryParam("withRTs") Boolean withRTs);
 
     /**
@@ -229,5 +448,18 @@ public interface WalletRs extends IBaseRs {
      */
     @POST
     @Path("/template/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing wallet template  ",
+			description=" Create new or update an existing wallet template  ",
+			operationId="    POST_Wallet_template_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdateWalletTemplate(WalletTemplateDto postData);
 }

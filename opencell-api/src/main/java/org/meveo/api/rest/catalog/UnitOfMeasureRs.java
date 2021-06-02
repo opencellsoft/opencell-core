@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.UnitOfMeasureDto;
 import org.meveo.api.dto.response.catalog.GetListUnitOfMeasureResponseDto;
@@ -31,6 +40,7 @@ import javax.ws.rs.core.MediaType;
  **/
 
 @Path("/catalog/unitOfMeasure")
+@Tag(name = "UnitOfMeasure", description = "@%UnitOfMeasure")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -43,6 +53,18 @@ public interface UnitOfMeasureRs extends IBaseRs {
      * @return Request processing status
      */
     @Path("/")
+	@Operation(
+			summary=" Create a new unitOfMeasure  ",
+			description=" Create a new unitOfMeasure  ",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     @POST
     ActionStatus create(UnitOfMeasureDto postData);
 
@@ -53,6 +75,18 @@ public interface UnitOfMeasureRs extends IBaseRs {
      * @return Request processing status
      */
     @Path("/")
+	@Operation(
+			summary=" Update an existing unitOfMeasure  ",
+			description=" Update an existing unitOfMeasure  ",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     @PUT
     ActionStatus update(UnitOfMeasureDto postData);
 
@@ -64,6 +98,19 @@ public interface UnitOfMeasureRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for a unitOfMeasure with a given code  ",
+			description=" Search for a unitOfMeasure with a given code  ",
+			operationId="    GET_UnitOfMeasure_search",
+			responses= {
+				@ApiResponse(description=" A unitOfMeasure ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetUnitOfMeasureResponseDto.class
+											)
+								)
+				)}
+	)
     GetUnitOfMeasureResponseDto find(@QueryParam("unitOfMeasureCode") String unitOfMeasureCode);
 
     /**
@@ -73,6 +120,18 @@ public interface UnitOfMeasureRs extends IBaseRs {
      * @return Request processing status
      */
     @Path("/{code}")
+	@Operation(
+			summary=" Remove an existing unitOfMeasure with a given code  ",
+			description=" Remove an existing unitOfMeasure with a given code  ",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     @DELETE
     ActionStatus delete(@PathParam("code") String unitOfMeasureCode);
 
@@ -83,6 +142,18 @@ public interface UnitOfMeasureRs extends IBaseRs {
      * @return Request processing status
      */
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing unitOfMeasure  ",
+			description=" Create new or update an existing unitOfMeasure  ",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     @POST
     ActionStatus createOrUpdate(UnitOfMeasureDto postData);
 
@@ -92,6 +163,19 @@ public interface UnitOfMeasureRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List all currencies. ",
+			description=" List all currencies. ",
+			operationId="    GET_UnitOfMeasure_list",
+			responses= {
+				@ApiResponse(description=" list of all unitOfMeasure/ ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetListUnitOfMeasureResponseDto.class
+											)
+								)
+				)}
+	)
     GetListUnitOfMeasureResponseDto list();
 
     /**
@@ -101,5 +185,18 @@ public interface UnitOfMeasureRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List UnitOfMeasures matching a given criteria ",
+			description=" List UnitOfMeasures matching a given criteria ",
+			operationId="    GET_UnitOfMeasure_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of UnitOfMeasures ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetListUnitOfMeasureResponseDto.class
+											)
+								)
+				)}
+	)
     GetListUnitOfMeasureResponseDto listGetAll();
 }

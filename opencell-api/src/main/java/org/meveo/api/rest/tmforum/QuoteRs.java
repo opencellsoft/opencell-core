@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.tmforum;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -198,6 +207,13 @@ public interface QuoteRs {
     public Response createQuoteItem(@Parameter(description = "Product quote item information", required = false) ProductQuoteItem productQuoteItem, @Context UriInfo info);
 
     
+    /**
+     * create quote version
+     * 
+     * @param quoteVersion
+     * @param info
+     * @return
+     */
     @POST
     @Path("/quoteVersion")
     @Operation(summary = "Create a quote version",
@@ -210,6 +226,13 @@ public interface QuoteRs {
     public Response createQuoteVersion(@Parameter(description = "Product quote version information", required = false) QuoteVersionDto quoteVersion, @Context UriInfo info);
 
     
+    /**
+     * update quote version
+     * 
+     * @param quoteVersion
+     * @param info
+     * @return
+     */
     @PUT
     @Path("/quoteVersion")
     @Operation(summary = "Update a quote version",
@@ -221,6 +244,14 @@ public interface QuoteRs {
     public Response updateQuoteVersion(@Parameter(description = "Product quote version information", required = false) QuoteVersionDto quoteVersion, @Context UriInfo info);
 
     
+    /**
+     * delete quote version
+     * 
+     * @param quoteCode
+     * @param quoteVersion
+     * @param info
+     * @return
+     */
     @DELETE
     @Path("/quoteVersion/{quoteCode}/{quoteVersion}")
     @Operation(summary = "Delete a quote version",
