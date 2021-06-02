@@ -29,12 +29,15 @@ import java.util.concurrent.Future;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.IEvent;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.CustomTableEvent;
 import org.meveo.model.IEntity;
 import org.meveo.model.notification.EmailNotification;

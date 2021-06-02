@@ -202,7 +202,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 							}
 						}
 						if (line.getSourceAttribute() != null && productContext!=null) {
-							
+
 							LinkedHashMap<String, Object> selectedAttributes = productContext.getSelectedAttributes();
 							for (Entry<String, Object> entry : selectedAttributes.entrySet()) {
 								String attributeCode = entry.getKey();
