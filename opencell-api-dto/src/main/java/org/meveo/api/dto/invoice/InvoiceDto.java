@@ -262,6 +262,11 @@ public class InvoiceDto extends AuditableEntityDto {
      * Invoice payment collection date.
      */
     private Date initialCollectionDate;
+    
+    /**
+     * if true then validation script is NOT executed
+     */
+    private Boolean skipValidation = false;
 
     public List<String> getPaymentIncidents() {
         return paymentIncidents;
@@ -945,4 +950,18 @@ public class InvoiceDto extends AuditableEntityDto {
     public void setInitialCollectionDate(Date intialCollectionDate) {
         this.initialCollectionDate = intialCollectionDate;
     }
+
+	/**
+	 * @return the skipValidation
+	 */
+	public Boolean getSkipValidation() {
+		return skipValidation;
+	}
+
+	/**
+	 * @param skipValidation the skipValidation to set
+	 */
+	public void setSkipValidation(Boolean skipValidation) {
+		this.skipValidation = skipValidation;
+	}
 }

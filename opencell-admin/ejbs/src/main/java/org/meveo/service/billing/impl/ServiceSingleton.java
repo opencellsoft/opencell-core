@@ -373,7 +373,6 @@ public class ServiceSingleton {
      * @throws BusinessException General business exception
      */
     private Invoice assignInvoiceNumber(Invoice invoice, boolean isVirtual) throws BusinessException {
-
         InvoiceType invoiceType = invoiceTypeService.retrieveIfNotManaged(invoice.getInvoiceType());
 
         String cfName = invoiceTypeService.getCustomFieldCode(invoiceType);
