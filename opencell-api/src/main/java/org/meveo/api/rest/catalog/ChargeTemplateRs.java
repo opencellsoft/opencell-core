@@ -60,7 +60,7 @@ public interface ChargeTemplateRs extends IBaseRs {
 			summary=" Search for a charge template with a given code   ",
 			tags = { "ChargeTemplates" },
 			description=" Search for a charge template with a given code   ",
-			operationId="    GET_ChargeTemplate_search",
+			operationId="    GET_ChargeTemplate_chargeTemplate",
 			deprecated = true,
 			responses= {
 				@ApiResponse(description=" A charge template ",
@@ -83,12 +83,12 @@ public interface ChargeTemplateRs extends IBaseRs {
 	@GET
 	@Path("/chargeTemplates/{chargeTemplateCode}")
 	@Operation(
-			summary=" Search for a charge template with a given code   ",
+			summary="	  Search for a charge template with a given code	 	  ",
 			tags = { "ChargeTemplates" },
-			description=" Search for a charge template with a given code   ",
-			operationId="    GET_ChargeTemplate_search",
+			description="	  Search for a charge template with a given code	 	  ",
+			operationId="GET_ChargeTemplate_chargeTemplates_{chargeTemplateCode}",
 			responses= {
-					@ApiResponse(description=" A charge template ",
+				@ApiResponse(description=" A charge template	  ",
 							content=@Content(
 									schema=@Schema(
 											implementation= GetChargeTemplateResponseDto.class

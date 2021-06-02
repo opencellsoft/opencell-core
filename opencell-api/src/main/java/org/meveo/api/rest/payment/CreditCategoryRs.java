@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.payment;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
@@ -32,6 +41,7 @@ import javax.ws.rs.core.MediaType;
  * @since 22 Aug 2017
  */
 @Path("/payment/creditCategory")
+@Tag(name = "CreditCategory", description = "@%CreditCategory")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface CreditCategoryRs extends IBaseRs {
@@ -44,6 +54,19 @@ public interface CreditCategoryRs extends IBaseRs {
      */
 	@POST
 	@Path("/")
+	@Operation(
+			summary=" Create a new credit category  ",
+			description=" Create a new credit category  ",
+			operationId="POST_CreditCategory_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
 	ActionStatus create(CreditCategoryDto postData);
 
     /**
@@ -54,6 +77,19 @@ public interface CreditCategoryRs extends IBaseRs {
      */
 	@PUT
 	@Path("/")
+	@Operation(
+			summary=" Update a credit category payment  ",
+			description=" Update a credit category payment  ",
+			operationId="PUT_CreditCategory_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
 	ActionStatus update(CreditCategoryDto postData);
 
     /**
@@ -64,6 +100,19 @@ public interface CreditCategoryRs extends IBaseRs {
      */
 	@POST
 	@Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update a credit category payment  ",
+			description=" Create or update a credit category payment  ",
+			operationId="POST_CreditCategory_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
 	ActionStatus createOrUpdate(CreditCategoryDto postData);
 
     /**
@@ -74,6 +123,19 @@ public interface CreditCategoryRs extends IBaseRs {
      */
 	@GET
 	@Path("/")
+	@Operation(
+			summary=" Get a credit category payment with a credit category code ",
+			description=" Get a credit category payment with a credit category code ",
+			operationId="GET_CreditCategory_search",
+			responses= {
+				@ApiResponse(description=" Credit Category Response data ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CreditCategoryResponseDto.class
+											)
+								)
+				)}
+	)
 	CreditCategoryResponseDto find(@QueryParam("creditCategoryCode") String creditCategoryCode);
 
     /**
@@ -84,6 +146,19 @@ public interface CreditCategoryRs extends IBaseRs {
      */
 	@GET
 	@Path("/list")
+	@Operation(
+			summary=" Retrieve the list of credit category paiement  ",
+			description=" Retrieve the list of credit category paiement  ",
+			operationId="GET_CreditCategory_list",
+			responses= {
+				@ApiResponse(description=" List of Credit Categories ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CreditCategoriesResponseDto.class
+											)
+								)
+				)}
+	)
 	CreditCategoriesResponseDto list();
 
 	/**
@@ -93,6 +168,19 @@ public interface CreditCategoryRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/listGetAll")
+	@Operation(
+			summary="	  List creditCategories matching a given criteria	 	  ",
+			description="	  List creditCategories matching a given criteria	 	  ",
+			operationId="GET_CreditCategory_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of creditCategories	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CreditCategoriesResponseDto.class
+											)
+								)
+				)}
+	)
 	CreditCategoriesResponseDto listGetAll();
 
     /**
@@ -103,6 +191,19 @@ public interface CreditCategoryRs extends IBaseRs {
      */
 	@DELETE
 	@Path("/{creditCategoryCode}")
+	@Operation(
+			summary=" Delete a credit category with his given code  ",
+			description=" Delete a credit category with his given code  ",
+			operationId="DELETE_CreditCategory_{creditCategoryCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
 	ActionStatus remove(@PathParam("creditCategoryCode") String creditCategoryCode);
 
 }

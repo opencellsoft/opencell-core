@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceListDto;
@@ -171,15 +180,15 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
     @DELETE
     @Path("/{oneShotChargeTemplateCode}")
 	@Operation(
-			summary=" Remove one shot charge tesmplate with a given code.  ",
+			summary=" Return the list of oneShotChargeTemplates. ",
 			tags = { "ChargeTemplates" },
-			description=" Remove one shot charge tesmplate with a given code.  ",
+			description=" Return the list of oneShotChargeTemplates. ",
 			operationId="    DELETE_OneShotChargeTemplate_{oneShotChargeTemplateCode}",
 			responses= {
-				@ApiResponse(description=" Request processing status ",
+				@ApiResponse(description=" list of oneShotChargeTemplates ",
 						content=@Content(
 									schema=@Schema(
-											implementation= ActionStatus.class
+											implementation= OneShotChargeTemplateResponseDto.class
 											)
 								)
 				)}
@@ -195,9 +204,9 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
 	@Operation(
-			summary=" Create new or update an existing.  ",
+			summary=" Remove one shot charge tesmplate with a given code.  ",
 		    tags = { "ChargeTemplates" },
-			description=" Create new or update an existing.  ",
+			description=" Remove one shot charge tesmplate with a given code.  ",
 			operationId="    POST_OneShotChargeTemplate_createOrUpdate",
 			responses= {
 				@ApiResponse(description=" Request processing status ",
@@ -219,9 +228,9 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
     @POST
     @Path("/{code}/enable")
 	@Operation(
-			summary=" Enable a One shot charge template with a given code  ",
+			summary=" Create new or update an existing.  ",
 		    tags = { "ChargeTemplates" },
-			description=" Enable a One shot charge template with a given code  ",
+			description=" Create new or update an existing.  ",
 			operationId="    POST_OneShotChargeTemplate_{code}_enable",
 			responses= {
 				@ApiResponse(description=" Request processing status ",
@@ -243,9 +252,9 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
     @POST
     @Path("/{code}/disable")
 	@Operation(
-			summary=" Disable a One shot charge template with a given code  ",
+			summary=" Enable a One shot charge template with a given code  ",
 			tags = { "ChargeTemplates" },
-			description=" Disable a One shot charge template with a given code  ",
+			description=" Enable a One shot charge template with a given code  ",
 			operationId="    POST_OneShotChargeTemplate_{code}_disable",
 			responses= {
 				@ApiResponse(description=" Request processing status ",

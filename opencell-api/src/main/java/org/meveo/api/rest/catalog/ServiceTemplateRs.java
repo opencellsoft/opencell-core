@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -80,7 +89,7 @@ public interface ServiceTemplateRs extends IBaseRs {
 			description=" Create a new service template.  ",
 			operationId="    POST_ServiceTemplate_create",
 			responses= {
-				@ApiResponse(responseCode = "200", description=" Request processing status ",
+			description=" Create a new service template.  ",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -135,7 +144,7 @@ public interface ServiceTemplateRs extends IBaseRs {
 			description=" Update an existing service template.  ",
 			operationId="    PUT_ServiceTemplate_update",
 			responses= {
-				@ApiResponse(responseCode = "200", description=" Request processing status ",
+			description=" Update an existing service template.  ",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -401,8 +410,8 @@ public interface ServiceTemplateRs extends IBaseRs {
     @POST
     @Path("/list")
 	@Operation(
-			summary=" Gets a service template list matching given criteria",
-			description=" Gets a service template list matching given criteria",
+			summary=" Gets a service template list matching given criteria .  ",
+			description=" Gets a service template list matching given criteria .  ",
 			operationId="    POST_ServiceTemplate_list",
 			responses= {
 				@ApiResponse(description=" Return serviceTemplate list ",

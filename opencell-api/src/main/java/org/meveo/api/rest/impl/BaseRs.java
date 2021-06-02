@@ -79,6 +79,9 @@ public abstract class BaseRs implements IBaseRs {
 
 
 
+    /**
+     * Get version of application
+     */
     public ActionStatus index() {
         return new ActionStatus(ActionStatusEnum.SUCCESS, "Opencell Rest API version " + Version.appVersion + " commit " + Version.buildNumber);
     }

@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.response.RecurringChargeTemplateResponseDto;
@@ -112,15 +121,15 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
     @PUT
     @Path("/")
 	@Operation(
-			summary=" Update an existing recurring charge template.  ",
+			summary=" Return the list of recurringChargeTemplates. ",
 			tags = { "ChargeTemplates" },
-			description=" Update an existing recurring charge template.  ",
+			description=" Return the list of recurringChargeTemplates. ",
 			operationId="    PUT_RecurringChargeTemplate_update",
 			responses= {
-				@ApiResponse(description=" Request processing status ",
+				@ApiResponse(description=" list of recurringChargeTemplates ",
 						content=@Content(
 									schema=@Schema(
-											implementation= ActionStatus.class
+											implementation= RecurringChargeTemplateResponseDto.class
 											)
 								)
 				)}
@@ -136,9 +145,9 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
     @DELETE
     @Path("/{recurringChargeTemplateCode}")
 	@Operation(
-			summary=" Remove an existing recurring charge template with a given code.  ",
+			summary=" Update an existing recurring charge template.  ",
 		    tags = { "ChargeTemplates" },
-			description=" Remove an existing recurring charge template with a given code.  ",
+			description=" Update an existing recurring charge template.  ",
 			operationId="    DELETE_RecurringChargeTemplate_{recurringChargeTemplateCode}",
 			responses= {
 				@ApiResponse(description=" Request processing status ",
@@ -160,9 +169,9 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
 	@Operation(
-			summary=" Create new or update an existing recurring charge template  ",
+			summary=" Remove an existing recurring charge template with a given code.  ",
 			tags = { "ChargeTemplates" },
-			description=" Create new or update an existing recurring charge template  ",
+			description=" Remove an existing recurring charge template with a given code.  ",
 			operationId="    POST_RecurringChargeTemplate_createOrUpdate",
 			responses= {
 				@ApiResponse(description=" Request processing status ",
@@ -184,9 +193,9 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
     @POST
     @Path("/{code}/enable")
 	@Operation(
-			summary=" Enable a Recurring charge template with a given code  ",
+			summary=" Create new or update an existing recurring charge template  ",
 			tags = { "ChargeTemplates" },
-			description=" Enable a Recurring charge template with a given code  ",
+			description=" Create new or update an existing recurring charge template  ",
 			operationId="    POST_RecurringChargeTemplate_{code}_enable",
 			responses= {
 				@ApiResponse(description=" Request processing status ",
@@ -208,9 +217,9 @@ public interface RecurringChargeTemplateRs extends IBaseRs {
     @POST
     @Path("/{code}/disable")
 	@Operation(
-			summary=" Disable a Recurring charge template with a given code  ",
+			summary=" Enable a Recurring charge template with a given code  ",
 			tags = { "ChargeTemplates" },
-			description=" Disable a Recurring charge template with a given code  ",
+			description=" Enable a Recurring charge template with a given code  ",
 			operationId="    POST_RecurringChargeTemplate_{code}_disable",
 			responses= {
 				@ApiResponse(description=" Request processing status ",

@@ -22,6 +22,15 @@
  */
 package org.meveo.api.rest.account;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -46,6 +55,7 @@ import org.meveo.api.rest.IBaseRs;
  */
 
 @Path("/account/providerContact")
+@Tag(name = "ProviderContact", description = "@%ProviderContact")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -58,6 +68,19 @@ public interface ProviderContactRs extends IBaseRs {
 	 */
     @POST
     @Path("/")
+	@Operation(
+			summary="	  Create a provider contact	  ",
+			description="	  Create a provider contact	  ",
+			operationId="    POST_ProviderContact_create",
+			responses= {
+				@ApiResponse(description=" Request processing status	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(ProviderContactDto providerContactDto);
 
     /**
@@ -68,6 +91,19 @@ public interface ProviderContactRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing provider contact  ",
+			description=" Update an existing provider contact  ",
+			operationId="    PUT_ProviderContact_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(ProviderContactDto providerContactDto);
 
     /**
@@ -77,6 +113,19 @@ public interface ProviderContactRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for a provider contact with a given code  ",
+			description=" Search for a provider contact with a given code  ",
+			operationId="    GET_ProviderContact_search",
+			responses= {
+				@ApiResponse(description=" A provider contact ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ProviderContactResponseDto.class
+											)
+								)
+				)}
+	)
     ProviderContactResponseDto find(@QueryParam("providerContactCode") String providerContactCode);
 
     /**
@@ -87,6 +136,19 @@ public interface ProviderContactRs extends IBaseRs {
      */
     @DELETE
     @Path("/{code}")
+	@Operation(
+			summary=" Remove an existing provider contact with a given code   ",
+			description=" Remove an existing provider contact with a given code   ",
+			operationId="    DELETE_ProviderContact_{code}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("code") String providerContactCode);
 
     /**
@@ -96,6 +158,19 @@ public interface ProviderContactRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List of provider contacts ",
+			description=" List of provider contacts ",
+			operationId="    GET_ProviderContact_list",
+			responses= {
+				@ApiResponse(description=" A list of provider contacts ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ProviderContactsResponseDto.class
+											)
+								)
+				)}
+	)
     ProviderContactsResponseDto list();
     
     /**
@@ -106,6 +181,19 @@ public interface ProviderContactRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing provider contact  ",
+			description=" Create new or update an existing provider contact  ",
+			operationId="    POST_ProviderContact_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(ProviderContactDto providerContactDto);
 }
 
