@@ -81,7 +81,7 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 			Subscription subscription = subscriptionService.findById(subscriptionId);
 			// Handle subscription renewal or termination
 			if (subscription.isSubscriptionExpired() && (subscription.getStatus() == SubscriptionStatusEnum.ACTIVE
-					|| subscription.getStatus() == SubscriptionStatusEnum.CREATED)) {
+					|| subscription.getStatus() == SubscriptionStatusEnum.CREATED || subscription.getStatus() == SubscriptionStatusEnum.SUSPENDED)) {
 
 				if (subscription.getSubscriptionRenewal().isAutoRenew()) {
 					Date subscribedTillDate = subscription.getSubscribedTillDate();
