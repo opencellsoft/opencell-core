@@ -18,15 +18,6 @@
 
 package org.meveo.api.rest.catalog;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
-
 import java.util.Date;
 
 import javax.ws.rs.Consumes;
@@ -150,7 +141,7 @@ public interface OfferTemplateRs extends IBaseRs {
 			description=" Update offer template.  ",
 			operationId="    PUT_OfferTemplate_update",
 			responses= {
-			description=" Update offer template.  ",
+				@ApiResponse(description=" Update offer template.  ",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class

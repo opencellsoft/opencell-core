@@ -18,17 +18,6 @@
 
 package org.meveo.api.rest.catalog;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
-
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -43,7 +32,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.catalog.ServiceTemplateDto; 
+import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
@@ -89,7 +78,7 @@ public interface ServiceTemplateRs extends IBaseRs {
 			description=" Create a new service template.  ",
 			operationId="    POST_ServiceTemplate_create",
 			responses= {
-			description=" Create a new service template.  ",
+					@ApiResponse(description=" Create a new service template.  ",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -144,7 +133,7 @@ public interface ServiceTemplateRs extends IBaseRs {
 			description=" Update an existing service template.  ",
 			operationId="    PUT_ServiceTemplate_update",
 			responses= {
-			description=" Update an existing service template.  ",
+					@ApiResponse(description=" Update an existing service template.  ",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
