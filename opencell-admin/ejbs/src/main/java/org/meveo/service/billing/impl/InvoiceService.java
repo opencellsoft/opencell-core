@@ -5628,8 +5628,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public Invoice update(Invoice toUpdate, Invoice input, org.meveo.apiv2.billing.Invoice invoiceRessource) {
         final InvoiceStatusEnum status = toUpdate.getStatus();
-        if(!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status))) {
-            throw new BusinessException("Can only update invoices in statuses DRAFT/SUSPECT/REJECTED");
+        if(!(InvoiceStatusEnum.REJECTED.equals(status) || InvoiceStatusEnum.SUSPECT.equals(status) || InvoiceStatusEnum.DRAFT.equals(status)|| InvoiceStatusEnum.NEW.equals(status))) {
+            throw new BusinessException("Can only update invoices in statuses NEW/DRAFT/SUSPECT/REJECTED");
         }
         if(input.getComment()!=null) {
             toUpdate.setComment(input.getComment());
