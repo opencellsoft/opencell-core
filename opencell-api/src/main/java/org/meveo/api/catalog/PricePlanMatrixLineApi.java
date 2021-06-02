@@ -43,7 +43,7 @@ public class PricePlanMatrixLineApi extends BaseApi {
     public GetPricePlanVersionResponseDto addPricePlanMatrixLines(String pricePlanMatrixCode, int pricePlanMatrixVersion, PricePlanMatrixLinesDto dtoData) throws MeveoApiException, BusinessException {
     	
     		for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
-    			if(!pricePlanMatrixLineService.findByPriority(pricePlanMatrixLineDto.getPriority()).isEmpty()) {
+    			if(!pricePlanMatrixLineService.findByPriority(pricePlanMatrixLineDto.getPriority(), pricePlanMatrixVersion).isEmpty()) {
     				throw new MeveoApiException("a line having similar values with the same priority already exists, please define a different priority");
     			}
             	addPricePlanMatrixLine(pricePlanMatrixCode, pricePlanMatrixVersion, pricePlanMatrixLineDto);
@@ -58,6 +58,13 @@ public class PricePlanMatrixLineApi extends BaseApi {
         	ppmVersion.getLines().clear();
         	Set<PricePlanMatrixLine> lines = new HashSet<PricePlanMatrixLine>();
             for (PricePlanMatrixLineDto pricePlanMatrixLineDto:dtoData.getPricePlanMatrixLines()) {
+            	var priorityExist = 
+            			dtoData.getPricePlanMatrixLines()
+            			.stream()
+            			.anyMatch(ppml -> (ppml.getPriority() == pricePlanMatrixLineDto.getPriority() 
+            								&& ppml.getPpmLineId() != pricePlanMatrixLineDto.getPpmLineId()));
+            	if(priorityExist)
+    				throw new MeveoApiException("a line having similar values with the same priority already exists, please define a different priority");
             	PricePlanMatrixLine pricePlanMatrixLine = new PricePlanMatrixLine();
             	pricePlanMatrixLine.setPricetWithoutTax(pricePlanMatrixLineDto.getPricetWithoutTax());
                 pricePlanMatrixLine.setPriority(pricePlanMatrixLineDto.getPriority());

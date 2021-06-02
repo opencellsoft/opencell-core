@@ -4697,6 +4697,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		InvoiceType advType = (InvoiceType)tryToFindByEntityClassAndCode(InvoiceType.class, invoiceTypeCode);
 
         Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, advType);
+        invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);
         postCreate(invoice);
         return invoice;
