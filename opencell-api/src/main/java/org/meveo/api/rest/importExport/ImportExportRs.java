@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.importExport;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
@@ -40,6 +49,7 @@ import org.meveo.api.rest.IBaseRs;
  * @author Andrius Karpavicius
  **/
 @Path("/importExport")
+@Tag(name = "ImportExport", description = "@%ImportExport")
 @Consumes({ MULTIPART_FORM_DATA, APPLICATION_JSON })
 @Produces({ APPLICATION_JSON, APPLICATION_XML })
 public interface ImportExportRs extends IBaseRs {
@@ -53,6 +63,19 @@ public interface ImportExportRs extends IBaseRs {
      */
     @POST
     @Path("/importData")
+	@Operation(
+			summary=" Send a file to be imported. ImportExportResponseDto.executionId contains  ",
+			description=" Send a file to be imported. ImportExportResponseDto.executionId contains  ",
+			operationId="    POST_ImportExport_importData",
+			responses= {
+				@ApiResponse(description=" As import is async process, ImportExportResponseDto.executionId contains and ID to be used to query for execution results via a call to/importExport/checkImportDataResult?id=.. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ImportExportResponseDto.class
+											)
+								)
+				)}
+	)
     @Consumes(MULTIPART_FORM_DATA)
     ImportExportResponseDto importData(MultipartFormDataInput input);
 
@@ -64,10 +87,42 @@ public interface ImportExportRs extends IBaseRs {
      */
     @GET
     @Path("/checkImportDataResult")
+	@Operation(
+			summary=" Check for execution results for a given execution identifier  ",
+			description=" Check for execution results for a given execution identifier  ",
+			operationId="    GET_ImportExport_checkImportDataResult",
+			responses= {
+				@ApiResponse(description=" the execution result ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ImportExportResponseDto.class
+											)
+								)
+				)}
+	)
     ImportExportResponseDto checkImportDataResult(@QueryParam("executionId") String executionId);
 
+    /**
+     * export data
+     * 
+     * @param importExportRequestDto
+     * @return
+     */
     @POST
     @Path("/exportData")
+	@Operation(
+			summary=" export data  ",
+			description=" export data  ",
+			operationId="    POST_ImportExport_exportData",
+			responses= {
+				@ApiResponse(description=" ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ImportExportResponseDto.class
+											)
+								)
+				)}
+	)
     ImportExportResponseDto exportData(ImportExportRequestDto importExportRequestDto);
 
     /**
@@ -75,10 +130,42 @@ public interface ImportExportRs extends IBaseRs {
      */
     @POST
     @Path("/generateEntityList")
+	@Operation(
+			summary=" returns an entity list CSV ",
+			description=" returns an entity list CSV ",
+			operationId="    POST_ImportExport_generateEntityList",
+			responses= {
+				@ApiResponse(description="type ImportExportResponseDto.class s an entity list CSV ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ImportExportResponseDto.class
+											)
+								)
+				)}
+	)
     ImportExportResponseDto entityList(ImportExportRequestDto importExportRequestDto);
 
+    /**
+     * export Data From Entity List
+     * 
+     * @param input
+     * @return
+     */
     @POST
     @Path("/exportDataFromEntityList")
+	@Operation(
+			summary=" export Data From Entity List  ",
+			description=" export Data From Entity List  ",
+			operationId="    POST_ImportExport_exportDataFromEntityList",
+			responses= {
+				@ApiResponse(description=" ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ImportExportResponseDto.class
+											)
+								)
+				)}
+	)
     @Consumes(MULTIPART_FORM_DATA)
     ImportExportResponseDto exportDataFromEntityList(MultipartFormDataInput input);
 }

@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.response.GetTradingLanguageResponse;
@@ -33,6 +42,7 @@ import javax.ws.rs.core.MediaType;
  * 
  **/
 @Path("/language")
+@Tag(name = "Language", description = "@%Language")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -45,6 +55,19 @@ public interface LanguageRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" Search for list of trading languages. ",
+			description=" Search for list of trading languages. ",
+			operationId="    GET_Language_list",
+			responses= {
+				@ApiResponse(description=" list of trading languages ",
+						content=@Content(
+									schema=@Schema(
+											implementation= TradingLanguagesResponseDto.class
+											)
+								)
+				)}
+	)
     TradingLanguagesResponseDto list();
 
     /**
@@ -55,6 +78,19 @@ public interface LanguageRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Creates tradingLanguage base on language code. If the language code does not exists, a language record is created.  ",
+			description=" Creates tradingLanguage base on language code. If the language code does not exists, a language record is created.  ",
+			operationId="    POST_Language_create",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(LanguageDto postData);
 
     /**
@@ -65,6 +101,19 @@ public interface LanguageRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search language given a code.  ",
+			description=" Search language given a code.  ",
+			operationId="    GET_Language_search",
+			responses= {
+				@ApiResponse(description=" language ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetTradingLanguageResponse.class
+											)
+								)
+				)}
+	)
     GetTradingLanguageResponse find(@QueryParam("languageCode") String languageCode);
 
     /**
@@ -75,6 +124,19 @@ public interface LanguageRs extends IBaseRs {
      */
     @DELETE
     @Path("/{languageCode}")
+	@Operation(
+			summary=" Does not delete a language but the tradingLanguage associated to it.  ",
+			description=" Does not delete a language but the tradingLanguage associated to it.  ",
+			operationId="    DELETE_Language_{languageCode}",
+			responses= {
+				@ApiResponse(description=" action satus ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("languageCode") String languageCode);
 
     /**
@@ -85,6 +147,19 @@ public interface LanguageRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" modify a language",
+			description=" modify a language. Same input parameter as create. The language and trading Language are created if they don't exists. The operation fails if the tradingLanguage is null.  ",
+			operationId="    PUT_Language_update",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(LanguageDto postData);
 
     /**
@@ -95,6 +170,19 @@ public interface LanguageRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update a language if it doesn't exists.  ",
+			description=" Create or update a language if it doesn't exists.  ",
+			operationId="    POST_Language_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(LanguageDto postData);
 
     /**
@@ -105,6 +193,19 @@ public interface LanguageRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Trading language with a given language code  ",
+			description=" Enable a Trading language with a given language code  ",
+			operationId="    POST_Language_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -115,5 +216,18 @@ public interface LanguageRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Trading language with a given language code  ",
+			description=" Disable a Trading language with a given language code  ",
+			operationId="    POST_Language_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 }

@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CountryDto;
 import org.meveo.api.dto.response.TradingCountriesResponseDto;
@@ -33,6 +42,7 @@ import javax.ws.rs.core.MediaType;
  * 
  **/
 @Path("/country")
+@Tag(name = "Country", description = "@%Country")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -45,6 +55,19 @@ public interface CountryRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" Search for list of trading countries. ",
+			description=" Search for list of trading countries. ",
+			operationId="    GET_Country_list",
+			responses= {
+				@ApiResponse(description=" list of trading countries ",
+						content=@Content(
+									schema=@Schema(
+											implementation= TradingCountriesResponseDto.class
+											)
+								)
+				)}
+	)
     TradingCountriesResponseDto list();
 
     /**
@@ -55,6 +78,19 @@ public interface CountryRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Creates a Trading Country base from the supplied country code",
+			description=" Creates a Trading Country base from the supplied country code. If the country code does not exists, a country and tradingCountry records are created  ",
+			operationId="    POST_Country_create",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(CountryDto countryDto);
 
     /**
@@ -65,6 +101,19 @@ public interface CountryRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search Trading country with a given country code.  ",
+			description=" Search Trading country with a given country code.  ",
+			operationId="    GET_Country_search",
+			responses= {
+				@ApiResponse(description="link org.meveo.api.dto.response.GetCountryResponse}. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetTradingCountryResponse.class
+											)
+								)
+				)}
+	)
     GetTradingCountryResponse find(@QueryParam("countryCode") String countryCode);
 
     /**
@@ -76,6 +125,19 @@ public interface CountryRs extends IBaseRs {
      */
     @DELETE
     @Path("/{countryCode}/{currencyCode}")
+	@Operation(
+			summary=" Does not delete a country but the tradingCountry associated to it.  ",
+			description=" Does not delete a country but the tradingCountry associated to it.  ",
+			operationId="    DELETE_Country_{countryCode}_{currencyCode}",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("countryCode") String countryCode, @PathParam("currencyCode") String currencyCode);
 
     /**
@@ -86,6 +148,19 @@ public interface CountryRs extends IBaseRs {
      */
     @DELETE
     @Path("/{countryCode}")
+	@Operation(
+			summary=" Does not delete a country but the tradingCountry associated to it. ",
+			description=" Does not delete a country but the tradingCountry associated to it. ",
+			operationId="    DELETE_Country_{countryCode}",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("countryCode") String countryCode);
 
     /**
@@ -96,6 +171,19 @@ public interface CountryRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Modify a country",
+			description=" Modify a country. Same input parameter as create. The country and tradingCountry are created if they don't exists. The operation fails if the tradingCountry is null.  ",
+			operationId="    PUT_Country_update",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(CountryDto countryDto);
 
     /**
@@ -106,6 +194,19 @@ public interface CountryRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update a Trading Country base from the supplied country code",
+			description=" Create or update a Trading Country base from the supplied country code. If the country code does not exists, a country and tradingCountry records are created ",
+			operationId="    POST_Country_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(CountryDto countryDto);
 
     /**
@@ -116,6 +217,19 @@ public interface CountryRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Trading country with a given country code  ",
+			description=" Enable a Trading country with a given country code  ",
+			operationId="    POST_Country_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -126,5 +240,18 @@ public interface CountryRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Trading country with a given country code  ",
+			description=" Disable a Trading country with a given country code  ",
+			operationId="    POST_Country_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 }

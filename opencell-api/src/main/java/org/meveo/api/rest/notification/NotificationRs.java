@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.notification;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -42,6 +51,7 @@ import org.meveo.api.rest.IBaseRs;
  * @author Edward P. Legaspi
  **/
 @Path("/notification")
+@Tag(name = "Notification", description = "@%Notification")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -55,6 +65,19 @@ public interface NotificationRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new notification  ",
+			description=" Create a new notification  ",
+			operationId="    POST_Notification_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(ScriptNotificationDto postData);
 
     /**
@@ -65,6 +88,19 @@ public interface NotificationRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing notification  ",
+			description=" Update an existing notification  ",
+			operationId="    PUT_Notification_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(ScriptNotificationDto postData);
 
     /**
@@ -75,6 +111,19 @@ public interface NotificationRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Find a notification with a given code  ",
+			description=" Find a notification with a given code  ",
+			operationId="    GET_Notification_search",
+			responses= {
+				@ApiResponse(description=" Script notification information ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetScriptNotificationResponseDto.class
+											)
+								)
+				)}
+	)
     GetScriptNotificationResponseDto find(@QueryParam("notificationCode") String notificationCode);
 
     /**
@@ -85,6 +134,19 @@ public interface NotificationRs extends IBaseRs {
      */
     @DELETE
     @Path("/{notificationCode}")
+	@Operation(
+			summary=" Remove an existing notification with a given code  ",
+			description=" Remove an existing notification with a given code  ",
+			operationId="    DELETE_Notification_{notificationCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("notificationCode") String notificationCode);
 
     /**
@@ -95,6 +157,19 @@ public interface NotificationRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Script type notification with a given code  ",
+			description=" Enable a Script type notification with a given code  ",
+			operationId="    POST_Notification_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -105,6 +180,19 @@ public interface NotificationRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Script type notification with a given code  ",
+			description=" Disable a Script type notification with a given code  ",
+			operationId="    POST_Notification_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 
     /**
@@ -114,6 +202,19 @@ public interface NotificationRs extends IBaseRs {
      */
     @GET
     @Path("/listNotificationHistory")
+	@Operation(
+			summary=" List the notification history  ",
+			description=" List the notification history  ",
+			operationId="    GET_Notification_listNotificationHistory",
+			responses= {
+				@ApiResponse(description=" Notification history list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= NotificationHistoriesResponseDto.class
+											)
+								)
+				)}
+	)
     NotificationHistoriesResponseDto listNotificationHistory();
 
     /**
@@ -123,6 +224,19 @@ public interface NotificationRs extends IBaseRs {
      */
     @GET
     @Path("/listInboundRequest")
+	@Operation(
+			summary=" List inbound requests  ",
+			description=" List inbound requests  ",
+			operationId="    GET_Notification_listInboundRequest",
+			responses= {
+				@ApiResponse(description=" A list of inbound requests ",
+						content=@Content(
+									schema=@Schema(
+											implementation= InboundRequestsResponseDto.class
+											)
+								)
+				)}
+	)
     InboundRequestsResponseDto listInboundRequest();
 
     /**
@@ -133,5 +247,18 @@ public interface NotificationRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing notification with a given code  ",
+			description=" Create new or update an existing notification with a given code  ",
+			operationId="    POST_Notification_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(ScriptNotificationDto postData);
 }

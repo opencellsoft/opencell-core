@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.billing;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -37,6 +46,7 @@ import org.meveo.api.dto.response.billing.InvoicingPlanItemsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 @Path("/billing/invoicingPlanItems")
+@Tag(name = "InvoicingPlanItem", description = "@%InvoicingPlanItem")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface InvoicingPlanItemRs extends IBaseRs {
@@ -48,6 +58,19 @@ public interface InvoicingPlanItemRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/")
+	@Operation(
+			summary="	  Create a new invoicingPlanItem	  	  ",
+			description="	  Create a new invoicingPlanItem	  	  ",
+			operationId="POST_InvoicingPlanItem_create",
+			responses= {
+				@ApiResponse(description=" Request processing status	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
 	ActionStatus create(InvoicingPlanItemDto postData);
 
 	/**
@@ -58,6 +81,19 @@ public interface InvoicingPlanItemRs extends IBaseRs {
 	 */
 	@GET
 	@Path("/")
+	@Operation(
+			summary="	  Search for a invoicingPlanItem with a given code	  	  ",
+			description="	  Search for a invoicingPlanItem with a given code	  	  ",
+			operationId="GET_InvoicingPlanItem_search",
+			responses= {
+				@ApiResponse(description=" A invoicingPlanItem's data	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= InvoicingPlanItemResponseDto.class
+											)
+								)
+				)}
+	)
 	InvoicingPlanItemResponseDto find(@QueryParam("invoicingPlanItemCode") String invoicingPlanItemCode);
 
 	/**
@@ -68,6 +104,19 @@ public interface InvoicingPlanItemRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/list")
+	@Operation(
+			summary="	  List invoicingPlanItems matching a given criteria	  	  ",
+			description="	  List invoicingPlanItems matching a given criteria	  	  ",
+			operationId="POST_InvoicingPlanItem_list",
+			responses= {
+				@ApiResponse(description=" A list of invoicingPlanItems	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= InvoicingPlanItemsResponseDto.class
+											)
+								)
+				)}
+	)
 	InvoicingPlanItemsResponseDto list(PagingAndFiltering pagingAndFiltering);
 
 	/**
@@ -78,6 +127,19 @@ public interface InvoicingPlanItemRs extends IBaseRs {
 	 */
 	@PUT
 	@Path("/")
+	@Operation(
+			summary="	  Update an existing invoicingPlanItem	  	  ",
+			description="	  Update an existing invoicingPlanItem	  	  ",
+			operationId="PUT_InvoicingPlanItem_update",
+			responses= {
+				@ApiResponse(description=" Request processing status	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
 	ActionStatus update(InvoicingPlanItemDto postData);
 
 	/**
@@ -88,6 +150,19 @@ public interface InvoicingPlanItemRs extends IBaseRs {
 	 */
 	@DELETE
 	@Path("/{invoicingPlanItemCode}")
+	@Operation(
+			summary="	  Remove an existing invoicingPlanItem with a given code	  	  ",
+			description="	  Remove an existing invoicingPlanItem with a given code	  	  ",
+			operationId="DELETE_InvoicingPlanItem_{invoicingPlanItemCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
 	public ActionStatus remove(@PathParam("invoicingPlanItemCode") String invoicingPlanItemCode);
 
 	/**
@@ -98,5 +173,18 @@ public interface InvoicingPlanItemRs extends IBaseRs {
 	 */
 	@POST
 	@Path("/createOrUpdate")
+	@Operation(
+			summary="	  Create new or update an existing invoicingPlanItem	  	  ",
+			description="	  Create new or update an existing invoicingPlanItem	  	  ",
+			operationId="POST_InvoicingPlanItem_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status	  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
 	ActionStatus createOrUpdate(InvoicingPlanItemDto postData);
 }

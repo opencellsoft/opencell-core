@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.hierarchy;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -42,6 +51,7 @@ import org.meveo.api.rest.IBaseRs;
  * @author Phu Bach
  **/
 @Path("/hierarchy/userGroupLevel")
+@Tag(name = "UserHierarchyLevel", description = "@%UserHierarchyLevel")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -55,6 +65,19 @@ public interface UserHierarchyLevelRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new user hierarchy level  ",
+			description=" Create a new user hierarchy level  ",
+			operationId="    POST_UserHierarchyLevel_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(UserHierarchyLevelDto postData);
 
     /**
@@ -65,6 +88,19 @@ public interface UserHierarchyLevelRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing user hierarchy level  ",
+			description=" Update an existing user hierarchy level  ",
+			operationId="    PUT_UserHierarchyLevel_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(UserHierarchyLevelDto postData);
 
     /**
@@ -75,6 +111,19 @@ public interface UserHierarchyLevelRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for a user group level with a given code.  ",
+			description=" Search for a user group level with a given code.  ",
+			operationId="    GET_UserHierarchyLevel_search",
+			responses= {
+				@ApiResponse(description=" the UserHierarchyLevel given the hierarchyCode ",
+						content=@Content(
+									schema=@Schema(
+											implementation= UserHierarchyLevelResponseDto.class
+											)
+								)
+				)}
+	)
     UserHierarchyLevelResponseDto find(@QueryParam("hierarchyLevelCode") String hierarchyLevelCode);
 
     /**
@@ -85,6 +134,19 @@ public interface UserHierarchyLevelRs extends IBaseRs {
      */
     @DELETE
     @Path("/{hierarchyLevelCode}")
+	@Operation(
+			summary=" Remove an existing hierarchy level with a given code  ",
+			description=" Remove an existing hierarchy level with a given code  ",
+			operationId="    DELETE_UserHierarchyLevel_{hierarchyLevelCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("hierarchyLevelCode") String hierarchyLevelCode);
 
     /**
@@ -95,6 +157,19 @@ public interface UserHierarchyLevelRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing user hierarchy level with a given code  ",
+			description=" Create new or update an existing user hierarchy level with a given code  ",
+			operationId="    POST_UserHierarchyLevel_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(UserHierarchyLevelDto postData);
 
     /**
@@ -110,6 +185,19 @@ public interface UserHierarchyLevelRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List user hierarchy levels matching a given criteria  ",
+			description=" List user hierarchy levels matching a given criteria  ",
+			operationId="    GET_UserHierarchyLevel_list",
+			responses= {
+				@ApiResponse(description=" A list of user hierarchy levels ",
+						content=@Content(
+									schema=@Schema(
+											implementation= UserHierarchyLevelsDto.class
+											)
+								)
+				)}
+	)
     public UserHierarchyLevelsDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -121,6 +209,19 @@ public interface UserHierarchyLevelRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" List user hierarchy levels matching a given criteria  ",
+			description=" List user hierarchy levels matching a given criteria  ",
+			operationId="    POST_UserHierarchyLevel_list",
+			responses= {
+				@ApiResponse(description=" A list of user hierarchy levels ",
+						content=@Content(
+									schema=@Schema(
+											implementation= UserHierarchyLevelsDto.class
+											)
+								)
+				)}
+	)
     public UserHierarchyLevelsDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

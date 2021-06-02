@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.generic.wf;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -36,7 +45,11 @@ import org.meveo.api.dto.response.generic.wf.GenericWorkflowsResponseDto;
 import org.meveo.api.dto.response.generic.wf.WorkflowInsHistoryResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
+/**
+ *
+ */
 @Path("/admin/genericWorkflow")
+@Tag(name = "GenericWorkflow", description = "@%GenericWorkflow")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -50,6 +63,19 @@ public interface GenericWorkflowRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new workflow  ",
+			description=" Create a new workflow  ",
+			operationId="    POST_GenericWorkflow_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(GenericWorkflowDto genericWorkflowDto);
 
     /**
@@ -60,6 +86,19 @@ public interface GenericWorkflowRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing workflow  ",
+			description=" Update an existing workflow  ",
+			operationId="    PUT_GenericWorkflow_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(GenericWorkflowDto genericWorkflowDto);
 
     /**
@@ -70,6 +109,19 @@ public interface GenericWorkflowRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Find a workflow with a given code  ",
+			description=" Find a workflow with a given code  ",
+			operationId="    GET_GenericWorkflow_search",
+			responses= {
+				@ApiResponse(description=" Generic Work flow Response data ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GenericWorkflowResponseDto.class
+											)
+								)
+				)}
+	)
     GenericWorkflowResponseDto find(@QueryParam("code") String code);
 
     /**
@@ -80,6 +132,19 @@ public interface GenericWorkflowRs extends IBaseRs {
      */
     @DELETE
     @Path("/{code}")
+	@Operation(
+			summary=" Remove an existing workflow with a given code  ",
+			description=" Remove an existing workflow with a given code  ",
+			operationId="    DELETE_GenericWorkflow_{code}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("code") String code);
 
     /**
@@ -89,6 +154,19 @@ public interface GenericWorkflowRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List of workflows.  ",
+			description=" List of workflows.  ",
+			operationId="    GET_GenericWorkflow_list",
+			responses= {
+				@ApiResponse(description=" A list of workflow ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GenericWorkflowsResponseDto.class
+											)
+								)
+				)}
+	)
     GenericWorkflowsResponseDto list();
 
     /**
@@ -99,6 +177,19 @@ public interface GenericWorkflowRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing workflow with a given code  ",
+			description=" Create new or update an existing workflow with a given code  ",
+			operationId="    POST_GenericWorkflow_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(GenericWorkflowDto genericWorkflowDto);
 
     /**
@@ -109,6 +200,19 @@ public interface GenericWorkflowRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Workflow with a given code  ",
+			description=" Enable a Workflow with a given code  ",
+			operationId="    POST_GenericWorkflow_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -119,6 +223,19 @@ public interface GenericWorkflowRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Workflow with a given code  ",
+			description=" Disable a Workflow with a given code  ",
+			operationId="    POST_GenericWorkflow_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 
     /**
@@ -131,6 +248,19 @@ public interface GenericWorkflowRs extends IBaseRs {
      */
     @POST
     @Path("/execute")
+	@Operation(
+			summary=" Execute a workflow  ",
+			description=" Execute a workflow  ",
+			operationId="    POST_GenericWorkflow_execute",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus execute(@QueryParam("baseEntityName") String baseEntityName, @QueryParam("entityInstanceCode") String entityInstanceCode,
             @QueryParam("workflowCode") String workflowCode);
 
@@ -142,6 +272,19 @@ public interface GenericWorkflowRs extends IBaseRs {
      */
     @GET
     @Path("/findByEntity")
+	@Operation(
+			summary=" Find a workflow by entity  ",
+			description=" Find a workflow by entity  ",
+			operationId="    GET_GenericWorkflow_findByEntity",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GenericWorkflowsResponseDto.class
+											)
+								)
+				)}
+	)
     GenericWorkflowsResponseDto findByEntity(@QueryParam("baseEntityName") String baseEntityName);
 
     /**
@@ -155,11 +298,47 @@ public interface GenericWorkflowRs extends IBaseRs {
      */
     @GET
     @Path("/history")
+	@Operation(
+			summary=" Find workflow history  ",
+			description=" Find workflow history  ",
+			operationId="    GET_GenericWorkflow_history",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= WorkflowInsHistoryResponseDto.class
+											)
+								)
+				)}
+	)
     WorkflowInsHistoryResponseDto findHistory(@QueryParam("entityInstanceCode") String entityInstanceCode, @QueryParam("workflowCode") String workflowCode,
             @QueryParam("fromStatus") String fromStatus, @QueryParam("toStatus") String toStatus);
 
+    /**
+     * execute transition
+     * 
+     * @param baseEntityName
+     * @param entityInstanceCode
+     * @param workflowCode
+     * @param transitionUUID
+     * @param ignoreConditionEL
+     * @return
+     */
     @POST
     @Path("/executeTransition")
+	@Operation(
+			summary=" execute transition  ",
+			description=" execute transition  ",
+			operationId="    POST_GenericWorkflow_executeTransition",
+			responses= {
+				@ApiResponse(description=" ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus executeTransition(@QueryParam("baseEntityName") String baseEntityName,
                                    @QueryParam("entityInstanceCode") String entityInstanceCode, @QueryParam("workflowCode") String workflowCode,
                                    @QueryParam("transition") String transitionUUID, @QueryParam("force") boolean ignoreConditionEL);

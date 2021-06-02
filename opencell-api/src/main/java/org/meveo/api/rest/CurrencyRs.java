@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.response.TradingCurrenciesResponseDto;
@@ -32,6 +41,7 @@ import javax.ws.rs.core.MediaType;
  * @author Edward P. Legaspi
  **/
 @Path("/currency")
+@Tag(name = "Currency", description = "@%Currency")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -44,6 +54,19 @@ public interface CurrencyRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" Search for list of trading currencies. ",
+			description=" Search for list of trading currencies. ",
+			operationId="    GET_Currency_list",
+			responses= {
+				@ApiResponse(description=" list of trading currencies ",
+						content=@Content(
+									schema=@Schema(
+											implementation= TradingCurrenciesResponseDto.class
+											)
+								)
+				)}
+	)
     TradingCurrenciesResponseDto list();
 
     /**
@@ -54,6 +77,19 @@ public interface CurrencyRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created  ",
+			description=" Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created  ",
+			operationId="    POST_Currency_create",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(CurrencyDto postData);
 
     /**
@@ -64,6 +100,19 @@ public interface CurrencyRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search currency with a given currency code.  ",
+			description=" Search currency with a given currency code.  ",
+			operationId="    GET_Currency_search",
+			responses= {
+				@ApiResponse(description=" currency if exists ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetTradingCurrencyResponse.class
+											)
+								)
+				)}
+	)
     GetTradingCurrencyResponse find(@QueryParam("currencyCode") String currencyCode);
 
     /**
@@ -74,6 +123,19 @@ public interface CurrencyRs extends IBaseRs {
      */
     @DELETE
     @Path("/{currencyCode}")
+	@Operation(
+			summary=" Remove currency with a given currency code.  ",
+			description=" Remove currency with a given currency code.  ",
+			operationId="    DELETE_Currency_{currencyCode}",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("currencyCode") String currencyCode);
 
     /**
@@ -85,6 +147,19 @@ public interface CurrencyRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Modify a tradingCurrency",
+			description=" Modify a tradingCurrency. Same input parameter as create. The currency and tradingCurrency are created if they don't exists. The operation fails if the tradingCurrency is null  ",
+			operationId="    PUT_Currency_update",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(CurrencyDto postData);
 
     /**
@@ -95,6 +170,19 @@ public interface CurrencyRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or Update tradingCurrency base on currency code. If the currency code does not exists, a currency record is created ",
+			description=" Create or Update tradingCurrency base on currency code. If the currency code does not exists, a currency record is created ",
+			operationId="    POST_Currency_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(CurrencyDto postData);
 
     /**
@@ -105,6 +193,19 @@ public interface CurrencyRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Trading currency with a given currency code  ",
+			description=" Enable a Trading currency with a given currency code  ",
+			operationId="    POST_Currency_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -115,5 +216,18 @@ public interface CurrencyRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Trading currency with a given currency code  ",
+			description=" Disable a Trading currency with a given currency code  ",
+			operationId="    POST_Currency_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 }
