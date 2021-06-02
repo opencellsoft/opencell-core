@@ -68,10 +68,6 @@ public class CpqQuote extends BusinessEntity  {
 		this.billableAccount = copy.billableAccount;
 		//to move to quote version
 		this.validity = copy.validity;
-		//to move to quote version
-		this.pdfFilename=copy.pdfFilename;
-		//to move to quote version
-		this.xmlFilename=copy.xmlFilename;
 		this.orderInvoiceType = copy.orderInvoiceType;
 		//to move to quote version
 		this.discountPlan=copy.discountPlan;
