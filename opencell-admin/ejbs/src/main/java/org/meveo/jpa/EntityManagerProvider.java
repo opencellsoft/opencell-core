@@ -76,8 +76,6 @@ public class EntityManagerProvider {
     public EntityManagerWrapper getEntityManager() {
         String providerCode = currentUserProvider.getCurrentUserProviderCode();
 
-        log.trace("Produce EM for provider {}", providerCode);
-
         if (providerCode == null || !isMultiTenancyEnabled) {
 
             // Create an container managed persistence context main provider, for API and JOBs

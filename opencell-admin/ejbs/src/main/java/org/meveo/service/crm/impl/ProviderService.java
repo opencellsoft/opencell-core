@@ -212,13 +212,15 @@ public class ProviderService extends PersistenceService<Provider> {
      * @throws BusinessException Failed to create a user
      */
     private void createProviderUserInKC(Provider provider) throws BusinessException {
-        KeycloakSecurityContext session = (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
-        log.info("> addTenant > getTokenString : " + session.getTokenString());
 
+        String name = (provider.getCode() + "." + "superadmin").toLowerCase();
+        
+        KeycloakSecurityContext session = (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
+        
+        log.info("Add provider user in {} KC with token: {}", name, session.getTokenString());
+        
         // Create user
         UserDto userDto = new UserDto();
-        String name = (provider.getCode() + "." + "superadmin").toLowerCase();
-        log.info("> addTenant > name " + name);
         userDto.setUsername(name);
         userDto.setPassword(name);
         if (!StringUtils.isBlank(provider.getEmail())) {
