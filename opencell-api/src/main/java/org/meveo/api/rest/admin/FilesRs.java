@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.admin;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -39,6 +48,7 @@ import org.meveo.api.rest.admin.impl.FileUploadForm;
  * @lastModifiedVersion 5.4
  */
 @Path("/admin/files")
+@Tag(name = "Files", description = "@%Files")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface FilesRs extends IBaseRs {
@@ -50,6 +60,19 @@ public interface FilesRs extends IBaseRs {
      */
     @GET
     @Path("/all")
+	@Operation(
+			summary=" Get the list of files  ",
+			description=" Get the list of files  ",
+			operationId="    GET_Files_all",
+			responses= {
+				@ApiResponse(description=" List of all files  ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetFilesResponseDto.class
+											)
+								)
+				)}
+	)
     GetFilesResponseDto listFiles();
 
     /**
@@ -60,6 +83,19 @@ public interface FilesRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Get the list of files in a specific directory ",
+			description=" Get the list of files in a specific directory ",
+			operationId="    GET_Files_search",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetFilesResponseDto.class
+											)
+								)
+				)}
+	)
     GetFilesResponseDto listFiles(@QueryParam("dir") String dir);
 
     /**
@@ -70,6 +106,19 @@ public interface FilesRs extends IBaseRs {
      */
     @POST
     @Path("/createDir")
+	@Operation(
+			summary=" Create a directory ",
+			description=" Create a directory ",
+			operationId="    POST_Files_createDir",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createDir(String dir);
 
     /**
@@ -80,6 +129,19 @@ public interface FilesRs extends IBaseRs {
      */
     @POST
     @Path("/zipFile")
+	@Operation(
+			summary=" Will make a archive of a file ",
+			description=" Will make a archive of a file ",
+			operationId="    POST_Files_zipFile",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus zipFile(String file);
 
     /**
@@ -90,6 +152,19 @@ public interface FilesRs extends IBaseRs {
      */
     @POST
     @Path("/zipDirectory")
+	@Operation(
+			summary=" Will make a archive of a directory  ",
+			description=" Will make a archive of a directory  ",
+			operationId="    POST_Files_zipDirectory",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus zipDir(String dir);
 
     /**
@@ -100,6 +175,19 @@ public interface FilesRs extends IBaseRs {
      */
     @POST
     @Path("/suppressFile")
+	@Operation(
+			summary=" Suppress the file  ",
+			description=" Suppress the file  ",
+			operationId="    POST_Files_suppressFile",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus suppressFile(String file);
 
     /**
@@ -110,6 +198,19 @@ public interface FilesRs extends IBaseRs {
      */
     @POST
     @Path("/suppressDirectory")
+	@Operation(
+			summary=" Suppress the directory  ",
+			description=" Suppress the directory  ",
+			operationId="    POST_Files_suppressDirectory",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus suppressDir(String dir);
 
     /**
@@ -120,6 +221,19 @@ public interface FilesRs extends IBaseRs {
      */    
     @POST
     @Path("/upload")
+	@Operation(
+			summary=" Upload the file form. ",
+			description=" Upload the file form. ",
+			operationId="    POST_Files_upload",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     ActionStatus uploadFile(@MultipartForm FileUploadForm form);
 
@@ -131,6 +245,19 @@ public interface FilesRs extends IBaseRs {
      */
     @POST
     @Path("/uploadFileBase64")
+	@Operation(
+			summary=" Upload the file with the specific file data in 64 base. ",
+			description=" Upload the file with the specific file data in 64 base. ",
+			operationId="    POST_Files_uploadFileBase64",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus uploadFileBase64(FileRequestDto postData);
 
     /**
@@ -141,6 +268,19 @@ public interface FilesRs extends IBaseRs {
      */
     @POST
     @Path("/uploadZippedFileBase64")
+	@Operation(
+			summary=" Upload the zipped file with the file data.  ",
+			description=" Upload the zipped file with the file data.  ",
+			operationId="    POST_Files_uploadZippedFileBase64",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus uploadZippedFileBase64(FileRequestDto postData);
 
     /**
@@ -151,6 +291,19 @@ public interface FilesRs extends IBaseRs {
      */
     @GET
     @Path("/downloadFile")
+	@Operation(
+			summary=" Download file with a given file name. ",
+			description=" Download file with a given file name. ",
+			operationId="    GET_Files_downloadFile",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus downloadFile(@QueryParam("file") String file);
 
 }

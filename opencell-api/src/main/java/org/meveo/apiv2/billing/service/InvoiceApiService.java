@@ -107,7 +107,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 * @return
 	 */
 	public Invoice create(BasicInvoice basicInvoice) {
-		return invoiceService.createBasicInvoiceInvoice(basicInvoice);
+		return invoiceService.createBasicInvoice(basicInvoice);
 	}
 	
 	/**

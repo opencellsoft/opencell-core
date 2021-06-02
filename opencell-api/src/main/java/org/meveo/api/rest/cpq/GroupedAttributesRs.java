@@ -36,7 +36,6 @@ import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.dto.response.cpq.GetGroupedAttributesResponse;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.rest.IBaseRs;
-import org.meveo.model.cpq.GroupedAttributes;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

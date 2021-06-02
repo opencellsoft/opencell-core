@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -42,6 +51,7 @@ import org.meveo.api.rest.IBaseRs;
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/businessOfferModel")
+@Tag(name = "BusinessOfferModel", description = "@%BusinessOfferModel")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -55,6 +65,19 @@ public interface BusinessOfferModelRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new business offer model.  ",
+			description=" Create a new business offer model.  ",
+			operationId="    POST_BusinessOfferModel_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(BusinessOfferModelDto postData);
 
     /**
@@ -65,6 +88,19 @@ public interface BusinessOfferModelRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing business offer model.  ",
+			description=" Update an existing business offer model.  ",
+			operationId="    PUT_BusinessOfferModel_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(BusinessOfferModelDto postData);
 
     /**
@@ -79,6 +115,19 @@ public interface BusinessOfferModelRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Remove an existing business offer model with a given code.  ",
+			description=" Remove an existing business offer model with a given code.  ",
+			operationId="    GET_BusinessOfferModel_search",
+			responses= {
+				@ApiResponse(description=" A business offer model ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetBusinessOfferModelResponseDto.class
+											)
+								)
+				)}
+	)
     GetBusinessOfferModelResponseDto find(@QueryParam("businessOfferModelCode") String businessOfferModelCode,
             @QueryParam("loadOfferServiceTemplate") @DefaultValue("false") boolean loadOfferServiceTemplate, @QueryParam("loadOfferProductTemplate") @DefaultValue("false") boolean loadOfferProductTemplate,
             @QueryParam("loadServiceChargeTemplate") @DefaultValue("false") boolean loadServiceChargeTemplate, @QueryParam("loadProductChargeTemplate") @DefaultValue("false") boolean loadProductChargeTemplate);
@@ -92,6 +141,19 @@ public interface BusinessOfferModelRs extends IBaseRs {
      */
     @DELETE
     @Path("/{businessOfferModelCode}")
+	@Operation(
+			summary=" Remove an existing business offer model with a given code.  ",
+			description=" Remove an existing business offer model with a given code.  ",
+			operationId="    DELETE_BusinessOfferModel_{businessOfferModelCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("businessOfferModelCode") String businessOfferModelCode);
 
     /**
@@ -102,6 +164,19 @@ public interface BusinessOfferModelRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing business offer model.  ",
+			description=" Create new or update an existing business offer model.  ",
+			operationId="    POST_BusinessOfferModel_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(BusinessOfferModelDto postData);
 
     
@@ -119,6 +194,19 @@ public interface BusinessOfferModelRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List business offer models. ",
+			description=" List business offer models. ",
+			operationId="    GET_BusinessOfferModel_list",
+			responses= {
+				@ApiResponse(description=" A list of business offer models ",
+						content=@Content(
+									schema=@Schema(
+											implementation= MeveoModuleDtosResponse.class
+											)
+								)
+				)}
+	)
     MeveoModuleDtosResponse listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
     
@@ -130,6 +218,19 @@ public interface BusinessOfferModelRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" List business offer models.  ",
+			description=" List business offer models.  ",
+			operationId="    POST_BusinessOfferModel_list",
+			responses= {
+				@ApiResponse(description=" A list of business offer models ",
+						content=@Content(
+									schema=@Schema(
+											implementation= MeveoModuleDtosResponse.class
+											)
+								)
+				)}
+	)
     MeveoModuleDtosResponse listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -139,5 +240,18 @@ public interface BusinessOfferModelRs extends IBaseRs {
      */
     @PUT
     @Path("/install")
+	@Operation(
+			summary=" Install business offer model module. ",
+			description=" Install business offer model module. ",
+			operationId="    PUT_BusinessOfferModel_install",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus install(BusinessOfferModelDto moduleDto);
 }

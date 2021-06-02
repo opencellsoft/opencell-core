@@ -87,7 +87,7 @@ public interface OfferTemplateRs extends IBaseRs {
 			responses= {
 				@ApiResponse(
 						responseCode = "200",
-						description=" Request processing status ",
+			description=" Create offer template.  ",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -141,7 +141,7 @@ public interface OfferTemplateRs extends IBaseRs {
 			description=" Update offer template.  ",
 			operationId="    PUT_OfferTemplate_update",
 			responses= {
-				@ApiResponse(responseCode = "200", description=" Request processing status ",
+				@ApiResponse(description=" Update offer template.  ",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -296,12 +296,12 @@ public interface OfferTemplateRs extends IBaseRs {
     @POST
     @Path("/list")
 	@Operation(
-			summary=" List offerTemplates matching a given criteria  ",
+			summary=" List Offer templates matching a given criteria ",
 			tags = { "OfferTemplate" },
-			description=" List offerTemplates matching a given criteria  ",
+			description=" List Offer templates matching a given criteria ",
 			operationId="    POST_OfferTemplate_list",
 			responses= {
-				@ApiResponse(description=" List of offer templates ",
+				@ApiResponse(description=" List of Offer templates ",
 						content=@Content(
 									schema=@Schema(
 											implementation= GetListOfferTemplateResponseDto.class
@@ -351,15 +351,15 @@ public interface OfferTemplateRs extends IBaseRs {
     @DELETE
     @Path("/{offerTemplateCode}")
 	@Operation(
-			summary=" Remove offer template with a given code and validity dates",
+			summary=" List offerTemplates matching a given criteria  ",
 		    tags = { "OfferTemplate" },
-			description=" Remove offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be deleted.  ",
+			description=" List offerTemplates matching a given criteria  ",
 			operationId="    DELETE_OfferTemplate_{offerTemplateCode}",
 			responses= {
-				@ApiResponse(description=" Request processing status ",
+				@ApiResponse(description=" List of offer templates ",
 						content=@Content(
 									schema=@Schema(
-											implementation= ActionStatus.class
+											implementation= Response.class
 											)
 								)
 				),
@@ -390,9 +390,9 @@ public interface OfferTemplateRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
 	@Operation(
-			summary=" Create or update offer template based on a given code.  ",
+			summary=" Remove offer template with a given code and validity dates",
 	        tags = { "OfferTemplate" },
-			description=" Create or update offer template based on a given code.  ",
+			description=" Remove offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be deleted.  ",
 			operationId="    POST_OfferTemplate_createOrUpdate",
 			responses= {
 				@ApiResponse(description=" Request processing status ",
@@ -416,9 +416,9 @@ public interface OfferTemplateRs extends IBaseRs {
     @POST
     @Path("/{code}/enable")
 	@Operation(
-			summary=" Enable a Offer template with a given code  ",
+			summary=" Create or update offer template based on a given code.  ",
 			tags = { "OfferTemplate" },
-			description=" Enable a Offer template with a given code  ",
+			description=" Create or update offer template based on a given code.  ",
 			operationId="    POST_OfferTemplate_{code}_enable",
 			responses= {
 				@ApiResponse(description=" Request processing status ",
@@ -463,9 +463,9 @@ public interface OfferTemplateRs extends IBaseRs {
     @POST
     @Path("/{code}/disable")
 	@Operation(
-			summary=" Disable a Offer template with a given code  ",
+			summary=" Enable a Offer template with a given code  ",
 			tags = { "OfferTemplate" },
-			description=" Disable a Offer template with a given code  ",
+			description=" Enable a Offer template with a given code  ",
 			operationId="    POST_OfferTemplate_{code}_disable",
 			responses= {
 				@ApiResponse(description=" Request processing status ",
@@ -497,6 +497,16 @@ public interface OfferTemplateRs extends IBaseRs {
 	)
     ActionStatus disable(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
     
+    /**
+     * duplicate offer
+     * 
+     * @param offerTemplateCode
+     * @param duplicateHierarchy
+     * @param preserveCode
+     * @param validFrom
+     * @param validTo
+     * @return
+     */
     @POST
     @Path("/duplicate/{offerTemplateCode}")
     Response duplicateOffer(@Parameter(description = "code of the offer that will be duplicate", required = true) @PathParam("offerTemplateCode") String offerTemplateCode,
@@ -505,6 +515,15 @@ public interface OfferTemplateRs extends IBaseRs {
 			@Parameter(name = "date valid from") @QueryParam("validFrom") @RestDateParam Date validFrom, 
 			@Parameter(name = "date valid to") @QueryParam("validTo") @RestDateParam Date validTo);
     
+    /**
+     * update Status
+     * 
+     * @param offerTemplateCode
+     * @param status
+     * @param validFrom
+     * @param validTo
+     * @return
+     */
     @POST
     @Path("/{offerTemplateCode}/update/status")
     Response updateStatus(@Parameter(name = "offer template for updating status", required = true) @PathParam("offerTemplateCode") String offerTemplateCode,

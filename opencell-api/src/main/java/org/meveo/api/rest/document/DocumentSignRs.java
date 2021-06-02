@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.document;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -38,6 +47,7 @@ import org.meveo.api.rest.IBaseRs;
  * @author Said Ramli 
  */ 
 @Path("/document/sign") 
+@Tag(name = "DocumentSign", description = "@%DocumentSign")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML }) 
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML }) 
 public interface DocumentSignRs extends IBaseRs { 
@@ -49,7 +59,20 @@ public interface DocumentSignRs extends IBaseRs {
      * @return the sign procedure response dto
      */
     @POST 
-    @Path("/procedures") 
+    @Path("/procedures")
+	@Operation(
+			summary=" Creates the procedure. ",
+			description=" Creates the procedure. ",
+			operationId="    POST _DocumentSign_procedures ",
+			responses= {
+				@ApiResponse(description=" the sign procedure response dto ",
+						content=@Content(
+									schema=@Schema(
+											implementation= SignProcedureResponseDto.class
+											)
+								)
+				)}
+	)
     public SignProcedureResponseDto createProcedure(CreateProcedureRequestDto postData); 
     
     /**
@@ -59,7 +82,20 @@ public interface DocumentSignRs extends IBaseRs {
      * @return the procedure by id
      */    
     @GET 
-    @Path("/procedures/{id}") 
+    @Path("/procedures/{id}")
+	@Operation(
+			summary=" Gets the procedure by id. ",
+			description=" Gets the procedure by id. ",
+			operationId="    GET _DocumentSign_procedures_{id} ",
+			responses= {
+				@ApiResponse(description=" the procedure by id ",
+						content=@Content(
+									schema=@Schema(
+											implementation= SignProcedureResponseDto.class
+											)
+								)
+				)}
+	)
     public SignProcedureResponseDto getProcedureById(@PathParam("id") String id); 
     
     /**
@@ -69,7 +105,20 @@ public interface DocumentSignRs extends IBaseRs {
      * @return the procedure status by id
      */    
     @GET 
-    @Path("/procedures/{id}/status") 
+    @Path("/procedures/{id}/status")
+	@Operation(
+			summary=" Gets the procedure status by id. ",
+			description=" Gets the procedure status by id. ",
+			operationId="    GET _DocumentSign_procedures_{id}_status ",
+			responses= {
+				@ApiResponse(description=" the procedure status by id ",
+						content=@Content(
+									schema=@Schema(
+											implementation= RawResponseDto.class
+											)
+								)
+				)}
+	)
     public RawResponseDto<String> getProcedureStatusById(@PathParam("id") String id); 
     
     /**
@@ -79,7 +128,20 @@ public interface DocumentSignRs extends IBaseRs {
      * @return the file by id
      */    
     @GET 
-    @Path("/files/{id}/download") 
+    @Path("/files/{id}/download")
+	@Operation(
+			summary=" Download the files with the given id ",
+			description=" Download the files with the given id ",
+			operationId="    GET _DocumentSign_files_{id}_download ",
+			responses= {
+				@ApiResponse(description=" the file by id ",
+						content=@Content(
+									schema=@Schema(
+											implementation= SignFileResponseDto.class
+											)
+								)
+				)}
+	)
     public SignFileResponseDto downloadFileById(@PathParam("id") String id); 
 
 }

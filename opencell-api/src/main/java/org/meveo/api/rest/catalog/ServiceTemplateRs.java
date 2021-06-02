@@ -18,8 +18,6 @@
 
 package org.meveo.api.rest.catalog;
 
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -34,7 +32,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
-import org.meveo.api.dto.catalog.ServiceTemplateDto; 
+import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListServiceTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceTemplateResponseDto;
@@ -80,7 +78,7 @@ public interface ServiceTemplateRs extends IBaseRs {
 			description=" Create a new service template.  ",
 			operationId="    POST_ServiceTemplate_create",
 			responses= {
-				@ApiResponse(responseCode = "200", description=" Request processing status ",
+					@ApiResponse(description=" Create a new service template.  ",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -135,7 +133,7 @@ public interface ServiceTemplateRs extends IBaseRs {
 			description=" Update an existing service template.  ",
 			operationId="    PUT_ServiceTemplate_update",
 			responses= {
-				@ApiResponse(responseCode = "200", description=" Request processing status ",
+					@ApiResponse(description=" Update an existing service template.  ",
 						content=@Content(
 									schema=@Schema(
 											implementation= ActionStatus.class
@@ -401,8 +399,8 @@ public interface ServiceTemplateRs extends IBaseRs {
     @POST
     @Path("/list")
 	@Operation(
-			summary=" Gets a service template list matching given criteria",
-			description=" Gets a service template list matching given criteria",
+			summary=" Gets a service template list matching given criteria .  ",
+			description=" Gets a service template list matching given criteria .  ",
 			operationId="    POST_ServiceTemplate_list",
 			responses= {
 				@ApiResponse(description=" Return serviceTemplate list ",

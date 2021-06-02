@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.payment;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -49,6 +58,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  * @lastModifiedVersion 8.0.0
  */
 @Path("/accountOperation")
+@Tag(name = "AccountOperation", description = "@%AccountOperation")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -62,6 +72,19 @@ public interface AccountOperationRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new account operation  ",
+			description=" Create a new account operation  ",
+			operationId="    POST_AccountOperation_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(AccountOperationDto postData);
 
     /**
@@ -78,6 +101,19 @@ public interface AccountOperationRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List account operations matching a given criteria  ",
+			description=" List account operations matching a given criteria  ",
+			operationId="    GET_AccountOperation_list",
+			responses= {
+				@ApiResponse(description=" A list of account operations ",
+						content=@Content(
+									schema=@Schema(
+											implementation= AccountOperationsResponseDto.class
+											)
+								)
+				)}
+	)
     public AccountOperationsResponseDto listGet(@Deprecated @QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("query") String query,
             @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("DESCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
@@ -90,6 +126,19 @@ public interface AccountOperationRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" List account operations matching a given criteria  ",
+			description=" List account operations matching a given criteria  ",
+			operationId="    POST_AccountOperation_list",
+			responses= {
+				@ApiResponse(description=" List of account operations ",
+						content=@Content(
+									schema=@Schema(
+											implementation= AccountOperationsResponseDto.class
+											)
+								)
+				)}
+	)
     public AccountOperationsResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -100,6 +149,19 @@ public interface AccountOperationRs extends IBaseRs {
      */
     @POST
     @Path("/matchOperations")
+	@Operation(
+			summary=" Match operations  ",
+			description=" Match operations  ",
+			operationId="    POST_AccountOperation_matchOperations",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus matchOperations(MatchOperationRequestDto postData);
 
     /**
@@ -110,6 +172,19 @@ public interface AccountOperationRs extends IBaseRs {
      */
     @POST
     @Path("/unMatchingOperations")
+	@Operation(
+			summary=" Unmatching operations  ",
+			description=" Unmatching operations  ",
+			operationId="    POST_AccountOperation_unMatchingOperations",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus unMatchingOperations(UnMatchingOperationRequestDto postData);
 
     /**
@@ -120,6 +195,19 @@ public interface AccountOperationRs extends IBaseRs {
      */
     @POST
     @Path("/addLitigation")
+	@Operation(
+			summary=" Add a new litigation  ",
+			description=" Add a new litigation  ",
+			operationId="    POST_AccountOperation_addLitigation",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus addLitigation(LitigationRequestDto postData);
 
     /**
@@ -130,6 +218,19 @@ public interface AccountOperationRs extends IBaseRs {
      */
     @POST
     @Path("/cancelLitigation")
+	@Operation(
+			summary=" Cancel a litigation  ",
+			description=" Cancel a litigation  ",
+			operationId="    POST_AccountOperation_cancelLitigation",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus cancelLitigation(LitigationRequestDto postData);
 
     /**
@@ -140,6 +241,19 @@ public interface AccountOperationRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Finds an accountOperation given an id.  ",
+			description=" Finds an accountOperation given an id.  ",
+			operationId="    GET_AccountOperation_search",
+			responses= {
+				@ApiResponse(description=" Account operation response ",
+						content=@Content(
+									schema=@Schema(
+											implementation= AccountOperationResponseDto.class
+											)
+								)
+				)}
+	)
     AccountOperationResponseDto find(@QueryParam("id") Long id);
 
     /**
@@ -150,6 +264,19 @@ public interface AccountOperationRs extends IBaseRs {
      */
     @GET
     @Path("/{accountOperationId}/listMatchedOperations")
+	@Operation(
+			summary=" List matched operations for a given account operation  ",
+			description=" List matched operations for a given account operation  ",
+			operationId="    GET_AccountOperation_{accountOperationId}_listMatchedOperations",
+			responses= {
+				@ApiResponse(description=" A list of matched operations ",
+						content=@Content(
+									schema=@Schema(
+											implementation= MatchedOperationsResponseDto.class
+											)
+								)
+				)}
+	)
     public MatchedOperationsResponseDto listMatchedOperations(@PathParam("accountOperationId") Long accountOperationId);
 
     /**
@@ -160,6 +287,19 @@ public interface AccountOperationRs extends IBaseRs {
      */
     @POST
     @Path("/transferAccountOperation")
+	@Operation(
+			summary=" Transfer an account operation from one customer to another. ",
+			description=" Transfer an account operation from one customer to another. ",
+			operationId="    POST_AccountOperation_transferAccountOperation",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus transferAccountOperation(TransferAccountOperationDto transferAccountOperationDto);
     
     /**
@@ -172,5 +312,18 @@ public interface AccountOperationRs extends IBaseRs {
      */
     @GET
     @Path("/findByCustomerAccount")
+	@Operation(
+			summary=" List accountOperations matching customer account  ",
+			description=" List accountOperations matching customer account  ",
+			operationId="    GET_AccountOperation_findByCustomerAccount",
+			responses= {
+				@ApiResponse(description=" List of accountOperations ",
+						content=@Content(
+									schema=@Schema(
+											implementation= AccountOperationsResponseDto.class
+											)
+								)
+				)}
+	)
     public AccountOperationsResponseDto findByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit);
 }
