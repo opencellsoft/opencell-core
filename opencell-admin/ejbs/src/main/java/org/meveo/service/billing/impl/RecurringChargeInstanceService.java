@@ -293,7 +293,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         List<WalletOperation> walletOperations = new ArrayList<WalletOperation>();
         boolean chargeWasUpdated = false;
-        boolean isApplyInAdvance = walletOperationService.isApplyInAdvance(recurringChargeInstance);
+        boolean isApplyInAdvance = walletOperationService.isApplyInAdvance(recurringChargeInstance) || isVirtual;
 
         // MIGRATE for pre-v.10.0.0 cases when chargedToDate is not set yet
         // Determine a date until which a charge was rated.
