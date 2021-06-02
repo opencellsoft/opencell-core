@@ -401,6 +401,24 @@ public class ServiceSingleton {
     public Invoice assignInvoiceNumber(Invoice invoice) throws BusinessException {
         return assignInvoiceNumber(invoice, true);
     }
+    
+    
+    /**
+     * Validate and assign invoice number to an invoice.
+     * @param invoice invoice
+     * @throws BusinessException business exception
+     */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Invoice validateAndAssignInvoiceNumber(Long invoiceId) throws BusinessException {
+    	Invoice invoice = invoiceService.findById(invoiceId);
+    	if (invoice == null) {
+    		throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
+    	}
+    	invoice.setStatus(InvoiceStatusEnum.VALIDATED);
+    	return assignInvoiceNumber(invoice, true);
+    }
 
 
     public CpqQuote assignCpqQuoteNumber(CpqQuote cpqQuote) {
@@ -495,10 +513,10 @@ public class ServiceSingleton {
      * Assign invoice number to an invoice
      *
      * @param invoice invoice
-     * @param isVirtual Is its a virtual invoice - should invoice be persisted
+     * @param saveInvoice Should invoice be persisted
      * @throws BusinessException General business exception
      */
-    private Invoice assignInvoiceNumber(Invoice invoice, boolean isVirtual) throws BusinessException {
+    private Invoice assignInvoiceNumber(Invoice invoice, boolean saveInvoice) throws BusinessException {
 		if(invoice.getStatus()!=InvoiceStatusEnum.VALIDATED) {
 			throw new BusinessException("cannot assign invoice number to invoice with status: "+invoice.getStatus());
 		}
@@ -541,15 +559,13 @@ public class ServiceSingleton {
         // request to store invoiceNo in alias field
         invoice.setAlias(invoiceNumber);
         invoice.setInvoiceNumber((prefix == null ? "" : prefix) + invoiceNumber);
-        if (isVirtual) {
-
-            invoiceNumberAssignedEventProducer.fire(invoice);
-
-            if (invoice.getId() == null) {
-                invoiceService.create(invoice);
-            } else {
-                invoice = invoiceService.update(invoice);
-            }
+        if (saveInvoice) {
+        	invoiceNumberAssignedEventProducer.fire(invoice);
+        	if (invoice.getId() == null) {
+        		invoiceService.create(invoice);
+        	} else {
+        		invoice = invoiceService.update(invoice);
+        	}
         }
         return invoice;
     }
