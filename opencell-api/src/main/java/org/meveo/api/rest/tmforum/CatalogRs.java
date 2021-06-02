@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.tmforum;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.catalog.*;
 import org.meveo.api.dto.response.ProductChargeTemplatesResponseDto;
 import org.meveo.api.dto.response.catalog.GetListProductTemplateResponseDto;
@@ -37,6 +46,7 @@ import java.util.Date;
  * @author Andrius Karpavicius
  */
 @Path("/catalogManagement")
+@Tag(name = "Catalog", description = "@%Catalog")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -50,6 +60,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @GET
     @Path("/category")
+	@Operation(
+			summary=" Get a list of categories  ",
+			description=" Get a list of categories  ",
+			operationId="    GET_Catalog_category",
+			responses= {
+				@ApiResponse(description=" A list of categories ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response findCategories(@Context UriInfo info);
 
     /**
@@ -61,6 +84,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @GET
     @Path("/category/{code}")
+	@Operation(
+			summary=" Get a single category by its code  ",
+			description=" Get a single category by its code  ",
+			operationId="    GET_Catalog_category_{code}",
+			responses= {
+				@ApiResponse(description=" Single category information ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response getCategory(@PathParam("code") String code, @Context UriInfo info);
 
     /**
@@ -73,6 +109,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @GET
     @Path("/productOffering")
+	@Operation(
+			summary=" Get a list of product offerings optionally filtering by some criteria  ",
+			description=" Get a list of product offerings optionally filtering by some criteria  ",
+			operationId="    GET_Catalog_productOffering",
+			responses= {
+				@ApiResponse(description=" A list of product offerings matching search criteria ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response findProductOfferings(@QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo, @Context UriInfo info);
 
     /**
@@ -86,6 +135,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @GET
     @Path("/productOffering/{id}")
+	@Operation(
+			summary=" Get details of a single Product template and validity dates",
+			description=" Get details of a single Product template and validity dates. If no validity dates are provided, an Product template valid on a current date will be returned.  ",
+			operationId="    GET_Catalog_productOffering_{id}",
+			responses= {
+				@ApiResponse(description=" Single product offering ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response getProductOffering(@PathParam("id") String id, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo,
             @Context UriInfo info);
 
@@ -97,6 +159,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @GET
     @Path("/productSpecification")
+	@Operation(
+			summary=" Get a list of product specifications optionally filtering by some criteria  ",
+			description=" Get a list of product specifications optionally filtering by some criteria  ",
+			operationId="    GET_Catalog_productSpecification",
+			responses= {
+				@ApiResponse(description=" A list of product specifications matching search criteria ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response findProductSpecifications(@Context UriInfo info);
 
     /**
@@ -110,6 +185,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @GET
     @Path("/productSpecification/{id}")
+	@Operation(
+			summary=" Get details of a single product  ",
+			description=" Get details of a single product  ",
+			operationId="    GET_Catalog_productSpecification_{id}",
+			responses= {
+				@ApiResponse(description=" A single product specification ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response getProductSpecification(@PathParam("id") String id, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo,
             @Context UriInfo info);
 
@@ -121,6 +209,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @POST
     @Path("/createOfferFromBOM")
+	@Operation(
+			summary=" Create offer from BOM definition  ",
+			description=" Create offer from BOM definition  ",
+			operationId="    POST_Catalog_createOfferFromBOM",
+			responses= {
+				@ApiResponse(description=" Response of the create offer BOM ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response createOfferFromBOM(BomOfferDto postData);
 
     /**
@@ -131,6 +232,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @POST
     @Path("/createServiceFromBSM")
+	@Operation(
+			summary=" Create service from BSM definition  ",
+			description=" Create service from BSM definition  ",
+			operationId="    POST_Catalog_createServiceFromBSM",
+			responses= {
+				@ApiResponse(description=" Response of the create Service BSM ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response createServiceFromBSM(BsmServiceDto postData);
   
     /**
@@ -141,6 +255,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @POST
     @Path("/createProductFromBPM")
+	@Operation(
+			summary=" Create product from BPM definition  ",
+			description=" Create product from BPM definition  ",
+			operationId="    POST_Catalog_createProductFromBPM",
+			responses= {
+				@ApiResponse(description=" Response of the create Service BPM ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response createProductFromBPM(BpmProductDto postData);
 
     /**
@@ -153,6 +280,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @GET
     @Path("/productTemplate/{code}")
+	@Operation(
+			summary=" Get a single productTemplate by its code and validity dates",
+			description=" Get a single productTemplate by its code and validity dates. If no validity dates are provided, a product template valid on a current date will be deleted.  ",
+			operationId="    GET_Catalog_productTemplate_{code}",
+			responses= {
+				@ApiResponse(description=" Single productTemplate information ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response getProductTemplate(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
 
     /**
@@ -163,6 +303,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @POST
     @Path("/productTemplate")
+	@Operation(
+			summary=" Create product template  ",
+			description=" Create product template  ",
+			operationId="    POST_Catalog_productTemplate",
+			responses= {
+				@ApiResponse(description=" Response of the create Product Template ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response createProductTemplate(ProductTemplateDto postData);
 
     /**
@@ -173,6 +326,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @POST
     @Path("/productTemplate/createOrUpdate")
+	@Operation(
+			summary=" Create or update product template  ",
+			description=" Create or update product template  ",
+			operationId="    POST_Catalog_productTemplate_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Response of the create Product Template ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response createOrUpdateProductTemplate(ProductTemplateDto postData);
 
     /**
@@ -183,6 +349,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @PUT
     @Path("/productTemplate")
+	@Operation(
+			summary=" Update product template  ",
+			description=" Update product template  ",
+			operationId="    PUT_Catalog_productTemplate",
+			responses= {
+				@ApiResponse(description=" Response of the update Product Template ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response updateProductTemplate(ProductTemplateDto postData);
 
     /**
@@ -195,6 +374,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @DELETE
     @Path("/productTemplate/{code}")
+	@Operation(
+			summary=" Delete a single productTemplate by its code and validity dates",
+			description=" Delete a single productTemplate by its code and validity dates. If no validity dates are provided, a product template valid on a current date will be deleted.  ",
+			operationId="    DELETE_Catalog_productTemplate_{code}",
+			responses= {
+				@ApiResponse(description=" Response of the remove action ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response removeProductTemplate(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom,
             @QueryParam("validTo") @RestDateParam Date validTo);
 
@@ -209,6 +401,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @GET
     @Path("/productTemplate/list")
+	@Operation(
+			summary=" List all product templates optionally filtering by code and validity dates",
+			description=" List all product templates optionally filtering by code and validity dates. If neither date is provided, validity dates will not be considered. If only validFrom is provided, a search will return products valid on a given date. If only validTo date is provided, a search will return products valid from today to a given date.  ",
+			operationId="    GET_Catalog_productTemplate_list",
+			responses= {
+				@ApiResponse(description=" A list of product templates ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response listProductTemplate(@QueryParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom,
             @QueryParam("validTo") @RestDateParam Date validTo);
 
@@ -219,6 +424,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @GET
     @Path("/productTemplate/listGetAll")
+	@Operation(
+			summary=" Gets a productTemplates list. ",
+			description=" Gets a productTemplates list. ",
+			operationId="    GET_Catalog_productTemplate_listGetAll",
+			responses= {
+				@ApiResponse(description=" Return productTemplates list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetListProductTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     GetListProductTemplateResponseDto listGetAllProductTemplates();
 
     /**
@@ -231,6 +449,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @POST
     @Path("/productTemplate/{code}/enable")
+	@Operation(
+			summary=" Enable a Product template with a given code  ",
+			description=" Enable a Product template with a given code  ",
+			operationId="    POST_Catalog_productTemplate_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     Response enableProductTemplate(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
 
     /**
@@ -243,6 +474,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @POST
     @Path("/productTemplate/{code}/disable")
+	@Operation(
+			summary=" Disable a Product template with a given code  ",
+			description=" Disable a Product template with a given code  ",
+			operationId="    POST_Catalog_productTemplate_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     Response disableProductTemplate(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
 
     /**
@@ -253,6 +497,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @GET
     @Path("/productChargeTemplate/{code}")
+	@Operation(
+			summary=" Get a single productChargeTemplate by its code  ",
+			description=" Get a single productChargeTemplate by its code  ",
+			operationId="    GET_Catalog_productChargeTemplate_{code}",
+			responses= {
+				@ApiResponse(description=" Single productChargeTemplate information ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response getProductChargeTemplate(@PathParam("code") String code);
 
     /**
@@ -263,6 +520,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @POST
     @Path("/productChargeTemplate")
+	@Operation(
+			summary=" Create product charge template  ",
+			description=" Create product charge template  ",
+			operationId="    POST_Catalog_productChargeTemplate",
+			responses= {
+				@ApiResponse(description=" Response of the create Product Charge Template ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response createProductChargeTemplate(ProductChargeTemplateDto postData);
 
     /**
@@ -273,6 +543,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @POST
     @Path("/productChargeTemplate/createOrUpdate")
+	@Operation(
+			summary=" Create or update product charge template  ",
+			description=" Create or update product charge template  ",
+			operationId="    POST_Catalog_productChargeTemplate_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Response of the create or update Product Charge Template ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response createOrUpdateProductChargeTemplate(ProductChargeTemplateDto postData);
 
     /**
@@ -283,6 +566,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @PUT
     @Path("/productChargeTemplate")
+	@Operation(
+			summary=" Update product charge template  ",
+			description=" Update product charge template  ",
+			operationId="    PUT_Catalog_productChargeTemplate",
+			responses= {
+				@ApiResponse(description=" Response of the update Product Charge Template ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response updateProductChargeTemplate(ProductChargeTemplateDto postData);
 
     /**
@@ -293,6 +589,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @DELETE
     @Path("/productChargeTemplate/{code}")
+	@Operation(
+			summary=" Delete a single productChargeTemplate by its code  ",
+			description=" Delete a single productChargeTemplate by its code  ",
+			operationId="    DELETE_Catalog_productChargeTemplate_{code}",
+			responses= {
+				@ApiResponse(description=" Response of the delete action ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response removeProductChargeTemplate(@PathParam("code") String code);
 
     /**
@@ -302,6 +611,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @GET
     @Path("/productChargeTemplate/list")
+	@Operation(
+			summary=" List all productChargeTemplates  ",
+			description=" List all productChargeTemplates  ",
+			operationId="    GET_Catalog_productChargeTemplate_list",
+			responses= {
+				@ApiResponse(description=" List of charge template ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response listProductChargeTemplate();
 
     /**
@@ -311,6 +633,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @GET
     @Path("/productChargeTemplate/listGetAll")
+	@Operation(
+			summary=" Gets a productChargeTemplate list. ",
+			description=" Gets a productChargeTemplate list. ",
+			operationId="    GET_Catalog_productChargeTemplate_listGetAll",
+			responses= {
+				@ApiResponse(description=" Return productChargeTemplate list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ProductChargeTemplatesResponseDto.class
+											)
+								)
+				)}
+	)
     ProductChargeTemplatesResponseDto listGetAllPCTemplates();
 
     /**
@@ -321,6 +656,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @POST
     @Path("/productChargeTemplate/{code}/enable")
+	@Operation(
+			summary=" Enable a Product charge template with a given code  ",
+			description=" Enable a Product charge template with a given code  ",
+			operationId="    POST_Catalog_productChargeTemplate_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     Response enableProductChargeTemplate(@PathParam("code") String code);
 
     /**
@@ -331,6 +679,19 @@ public interface CatalogRs extends IBaseRs {
      */
     @POST
     @Path("/productChargeTemplate/{code}/disable")
+	@Operation(
+			summary=" Disable a Product charge template with a given code  ",
+			description=" Disable a Product charge template with a given code  ",
+			operationId="    POST_Catalog_productChargeTemplate_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     Response disableProductChargeTemplate(@PathParam("code") String code);
     
 }

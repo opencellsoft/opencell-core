@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.account;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -42,6 +51,7 @@ import java.util.Date;
  * @author Edward P. Legaspi
  **/
 @Path("/account/access")
+@Tag(name = "Access", description = "@%Access")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -55,6 +65,19 @@ public interface AccessRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new access  ",
+			description=" Create a new access  ",
+			operationId="    POST_Access_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(AccessDto postData);
 
     /**
@@ -65,6 +88,19 @@ public interface AccessRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing access ",
+			description=" Update an existing access ",
+			operationId="    PUT_Access_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(AccessDto postData);
 
     /**
@@ -79,6 +115,19 @@ public interface AccessRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for an access with a given access code and subscription code.  ",
+			description=" Search for an access with a given access code and subscription code.  ",
+			operationId="    GET_Access_search",
+			responses= {
+				@ApiResponse(description=" Access ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetAccessResponseDto.class
+											)
+								)
+				)}
+	)
     GetAccessResponseDto find(@QueryParam("accessCode") String accessCode, @QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("subscriptionValidityDate") Date subscriptionValidityDate, @QueryParam("startDate") Date startDate, @QueryParam("endDate") Date endDate, @QueryParam("usageDate") Date usageDate);
 
     /**
@@ -92,6 +141,19 @@ public interface AccessRs extends IBaseRs {
      */
     @DELETE
     @Path("/{accessCode}/{subscriptionCode}/{startDate}/{endDate}")
+	@Operation(
+			summary=" Remove an access with a given access code and subscription code.  ",
+			description=" Remove an access with a given access code and subscription code.  ",
+			operationId="    DELETE_Access_{accessCode}_{subscriptionCode}_{startDate}_{endDate}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("accessCode") String accessCode, @PathParam("subscriptionCode") String subscriptionCode, @PathParam("startDate") @RestDateParam Date startDate, @PathParam("endDate") @RestDateParam Date endDate);
 
     /**
@@ -102,6 +164,19 @@ public interface AccessRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List Access filtered by subscriptionCode.  ",
+			description=" List Access filtered by subscriptionCode.  ",
+			operationId="    GET_Access_list",
+			responses= {
+				@ApiResponse(description=" A list of accesses ",
+						content=@Content(
+									schema=@Schema(
+											implementation= AccessesResponseDto.class
+											)
+								)
+				)}
+	)
     AccessesResponseDto listBySubscription(@QueryParam("subscriptionCode") String subscriptionCode);
 
     /**
@@ -112,6 +187,19 @@ public interface AccessRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing access  ",
+			description=" Create new or update an existing access  ",
+			operationId="    POST_Access_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(AccessDto postData);
 
     /**
@@ -125,6 +213,19 @@ public interface AccessRs extends IBaseRs {
      */
     @POST
     @Path("/{accessCode}/{subscriptionCode}/{startDate}/{endDate}/enable")
+	@Operation(
+			summary=" Enable an Access point with a given access code and subscription code.  ",
+			description=" Enable an Access point with a given access code and subscription code.  ",
+			operationId="    POST_Access_{accessCode}_{subscriptionCode}_{startDate}_{endDate}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("accessCode") String accessCode, @PathParam("subscriptionCode") String subscriptionCode, @PathParam("startDate") Date startDate, @PathParam("endDate") Date endDate);
 
     /**
@@ -138,5 +239,18 @@ public interface AccessRs extends IBaseRs {
      */
     @POST
     @Path("/{accessCode}/{subscriptionCode}/{startDate}/{endDate}/disable")
+	@Operation(
+			summary=" Disable an Access point with a given access code and subscription code.  ",
+			description=" Disable an Access point with a given access code and subscription code.  ",
+			operationId="    POST_Access_{accessCode}_{subscriptionCode}_{startDate}_{endDate}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("accessCode") String accessCode, @PathParam("subscriptionCode") String subscriptionCode, @PathParam("startDate") Date startDate, @PathParam("endDate") Date endDate);
 }

@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.module;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -36,6 +45,7 @@ import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.rest.IBaseRs;
 
 @Path("/module")
+@Tag(name = "Module", description = "@%Module")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -49,6 +59,19 @@ public interface ModuleRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new meveo module  ",
+			description=" Create a new meveo module  ",
+			operationId="    POST_Module_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus create(MeveoModuleDto moduleDto);
 
     /**
@@ -59,6 +82,19 @@ public interface ModuleRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing Meveo module  ",
+			description=" Update an existing Meveo module  ",
+			operationId="    PUT_Module_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus update(MeveoModuleDto moduleDto);
 
     /**
@@ -69,6 +105,19 @@ public interface ModuleRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing Meveo module  ",
+			description=" Create new or update an existing Meveo module  ",
+			operationId="    POST_Module_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus createOrUpdate(MeveoModuleDto moduleDto);
 
     /**
@@ -79,6 +128,19 @@ public interface ModuleRs extends IBaseRs {
      */
     @DELETE
     @Path("/{code}")
+	@Operation(
+			summary=" Remove an existing module with a given code   ",
+			description=" Remove an existing module with a given code   ",
+			operationId="    DELETE_Module_{code}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus delete(@PathParam("code") String code);
 
     /**
@@ -88,6 +150,19 @@ public interface ModuleRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List all Meveo's modules  ",
+			description=" List all Meveo's modules  ",
+			operationId="    GET_Module_list",
+			responses= {
+				@ApiResponse(description=" A list of Meveo's modules ",
+						content=@Content(
+									schema=@Schema(
+											implementation= MeveoModuleDtosResponse.class
+											)
+								)
+				)}
+	)
     public MeveoModuleDtosResponse list();
 
     /**
@@ -98,6 +173,19 @@ public interface ModuleRs extends IBaseRs {
      */
     @PUT
     @Path("/install")
+	@Operation(
+			summary=" Install Meveo module  ",
+			description=" Install Meveo module  ",
+			operationId="    PUT_Module_install",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus install(MeveoModuleDto moduleDto);
 
     /**
@@ -108,6 +196,19 @@ public interface ModuleRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Find a Meveo's module with a given code   ",
+			description=" Find a Meveo's module with a given code   ",
+			operationId="    GET_Module_search",
+			responses= {
+				@ApiResponse(description=" Meveo module DTO Response. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= MeveoModuleDtoResponse.class
+											)
+								)
+				)}
+	)
     public MeveoModuleDtoResponse get(@QueryParam("code") String code);
 
     /**
@@ -118,6 +219,19 @@ public interface ModuleRs extends IBaseRs {
      */
     @GET
     @Path("/uninstall")
+	@Operation(
+			summary=" uninstall a Meveo's module with a given code  ",
+			description=" uninstall a Meveo's module with a given code  ",
+			operationId="    GET_Module_uninstall",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus uninstall(@QueryParam("code") String code);
 
     /**
@@ -128,6 +242,19 @@ public interface ModuleRs extends IBaseRs {
      */
     @GET
     @Path("/enable")
+	@Operation(
+			summary=" Enable a Meveo's module with a given code  ",
+			description=" Enable a Meveo's module with a given code  ",
+			operationId="    GET_Module_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus enableGet(@QueryParam("code") String code);
 
     /**
@@ -138,6 +265,19 @@ public interface ModuleRs extends IBaseRs {
      */
     @GET
     @Path("/disable")
+	@Operation(
+			summary=" Disable a Meveo's module with a given code  ",
+			description=" Disable a Meveo's module with a given code  ",
+			operationId="    GET_Module_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus disableGet(@QueryParam("code") String code);
 
     /**
@@ -148,6 +288,19 @@ public interface ModuleRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Opencell module with a given code  ",
+			description=" Enable a Opencell module with a given code  ",
+			operationId="    POST_Module_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -158,6 +311,19 @@ public interface ModuleRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Opencell module with a given code  ",
+			description=" Disable a Opencell module with a given code  ",
+			operationId="    POST_Module_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 
 }

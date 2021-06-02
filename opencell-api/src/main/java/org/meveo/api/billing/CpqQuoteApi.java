@@ -1519,7 +1519,7 @@ public class CpqQuoteApi extends BaseApi {
                 billingAccount = quoteOffer.getBillableAccount();
             }
         }
-        BigDecimal amountWithoutTax = quotePrice.getAmountWithoutTax();
+        BigDecimal amountWithoutTax = quotePrice.getUnitPriceWithoutTax();
         BigDecimal discountAmount = BigDecimal.ZERO;
         boolean isEnterprise = appProvider.isEntreprise();
         QuoteArticleLine quoteArticleLine = null;

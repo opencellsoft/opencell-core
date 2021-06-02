@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.crm;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.crm.ContactDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -31,6 +40,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("/contact")
+@Tag(name = "Contact", description = "@%Contact")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface ContactRs extends IBaseRs {
@@ -43,6 +53,19 @@ public interface ContactRs extends IBaseRs {
      */
 	@POST
     @Path("/")
+	@Operation(
+			summary=" Create a new CRM Contact  ",
+			description=" Create a new CRM Contact  ",
+			operationId="POST_Contact_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(ContactDto postData);
 	
     /**
@@ -53,6 +76,19 @@ public interface ContactRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update a contact CRM informatopn ",
+			description=" Update a contact CRM informatopn ",
+			operationId="    PUT_Contact_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(ContactDto postData);
     
     /**
@@ -63,6 +99,19 @@ public interface ContactRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Find a contact with a given code ",
+			description=" Find a contact with a given code ",
+			operationId="    GET_Contact_search",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetContactResponseDto.class
+											)
+								)
+				)}
+	)
     GetContactResponseDto find(@QueryParam("code") String code);
     
     /**
@@ -73,6 +122,19 @@ public interface ContactRs extends IBaseRs {
      */
     @DELETE
     @Path("/{code}")
+	@Operation(
+			summary=" Delete a contact with a given code ",
+			description=" Delete a contact with a given code ",
+			operationId="    DELETE_Contact_{code}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("code") String code);
 
     /**
@@ -83,6 +145,19 @@ public interface ContactRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update a CRM contact  ",
+			description=" Create or update a CRM contact  ",
+			operationId="    POST_Contact_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(ContactDto postData);
 
     /**
@@ -94,6 +169,19 @@ public interface ContactRs extends IBaseRs {
      */
     @PUT
     @Path("/{code}/{tag}")
+	@Operation(
+			summary=" Add a tag to a contact with his code ",
+			description=" Add a tag to a contact with his code ",
+			operationId="    PUT_Contact_{code}_{tag}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus addTag(@PathParam("code") String code, @PathParam("tag") String tag);
     
     /**
@@ -105,6 +193,19 @@ public interface ContactRs extends IBaseRs {
      */
     @DELETE
     @Path("/{code}/{tag}")
+	@Operation(
+			summary=" Delete a tag to a contact with his code ",
+			description=" Delete a tag to a contact with his code ",
+			operationId="    DELETE_Contact_{code}_{tag}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus removeTag(@PathParam("code") String code, @PathParam("tag") String tag);
     
     /**
@@ -121,6 +222,19 @@ public interface ContactRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List contacts matching a given criteria ",
+			description=" List contacts matching a given criteria ",
+			operationId="    GET_Contact_list",
+			responses= {
+				@ApiResponse(description=" List of contacts ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ContactsResponseDto.class
+											)
+								)
+				)}
+	)
     ContactsResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
             @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
@@ -132,6 +246,19 @@ public interface ContactRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List Contacts matching a given criteria ",
+			description=" List Contacts matching a given criteria ",
+			operationId="    GET_Contact_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of Contacts ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ContactsResponseDto.class
+											)
+								)
+				)}
+	)
     ContactsResponseDto listGetAll();
     
     /**
@@ -141,6 +268,19 @@ public interface ContactRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" Retrieve a list by using paging and filter option ",
+			description=" Retrieve a list by using paging and filter option ",
+			operationId="    POST_Contact_list",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ContactsResponseDto.class
+											)
+								)
+				)}
+	)
     ContactsResponseDto listPost(PagingAndFiltering pagingAndFiltering);
     
     /**
@@ -151,6 +291,19 @@ public interface ContactRs extends IBaseRs {
      */
     @POST
     @Path("/importCSVText")
+	@Operation(
+			summary=" Import the contact list to a CSV file text ",
+			description=" Import the contact list to a CSV file text ",
+			operationId="    POST_Contact_importCSVText",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ContactsResponseDto.class
+											)
+								)
+				)}
+	)
     ContactsResponseDto importCSVText(String context);
     
     /**
@@ -160,6 +313,19 @@ public interface ContactRs extends IBaseRs {
      */
     @POST
     @Path("/importCSVFile")
+	@Operation(
+			summary=" Import the contact list from a file ",
+			description=" Import the contact list from a file ",
+			operationId="    POST_Contact_importCSVFile",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus importCSVFile();
        
  }

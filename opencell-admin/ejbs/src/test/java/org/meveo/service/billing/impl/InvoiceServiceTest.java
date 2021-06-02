@@ -943,7 +943,7 @@ public class InvoiceServiceTest {
     	Mockito.doReturn(accountingArticle).when(invoiceService).tryToFindByEntityClassAndCode(AccountingArticle.class, inputInvoice.getArticleCode());
     	Mockito.doReturn(advType).when(invoiceService).tryToFindByEntityClassAndCode(InvoiceType.class, inputInvoice.getInvoiceTypeCode());
     	Mockito.doNothing().when(invoiceService).postCreate(any());
-    	final Invoice advancePaymentInvoice = invoiceService.createBasicInvoiceInvoice(inputInvoice);
+    	final Invoice advancePaymentInvoice = invoiceService.createBasicInvoice(inputInvoice);
     	
     	BigDecimal amountWithTax = inputInvoice.getAmountWithTax();
     	Date invoiceDate = inputInvoice.getInvoiceDate();
