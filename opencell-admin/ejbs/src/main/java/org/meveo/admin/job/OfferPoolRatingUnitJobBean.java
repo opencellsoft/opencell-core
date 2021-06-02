@@ -12,6 +12,8 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.jpa.JpaAmpNewTx;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -19,6 +21,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -53,6 +56,9 @@ public class OfferPoolRatingUnitJobBean {
     private WalletOperationService walletOperationService;
 
     @Inject
+    private RatedTransactionService ratedTransactionService;
+
+    @Inject
     private CustomFieldInstanceService cfiService;
 
     @Inject
@@ -84,22 +90,38 @@ public class OfferPoolRatingUnitJobBean {
             Double agencyCounter = offerAgenciesCountersMap.get(agencyCounterKey);
 
             // Counter consumed
-            BigDecimal woQuantity = walletOperation.getQuantity();
-            BigDecimal newAgencyCounter = BigDecimal.valueOf(agencyCounter).subtract(woQuantity);
+            BigDecimal initialQuantity = walletOperation.getQuantity();
+            BigDecimal newAgencyCounter = BigDecimal.valueOf(agencyCounter).subtract(initialQuantity);
 
             if (newAgencyCounter.compareTo(BigDecimal.ZERO) < 0) {
                 BigDecimal overageQuantity = newAgencyCounter.negate();
-                createOverageWalletOperation(walletOperation, overageQuantity, overageUnit, overagePrice, multiplier);
+                BigDecimal restQuantity = initialQuantity.subtract(overageQuantity);
+                if (restQuantity.compareTo(BigDecimal.ZERO) > 0) {
+                    createOverageWO(true, walletOperation, overageQuantity, overageUnit, overagePrice, multiplier);
+                    walletOperation.setQuantity(restQuantity);
+                    walletOperation.setParameter2("DEDUCTED_FROM_POOL");
+                    walletOperationService.update(walletOperation);
+                } else {
+                    createOverageWO(false, walletOperation, overageQuantity, overageUnit, overagePrice, multiplier);
+                }
+                // Cancel RT if already exists
+                RatedTransaction ratedTransaction = walletOperation.getRatedTransaction();
+                if (ratedTransaction != null) {
+                    if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN) {
+                        ratedTransaction.setStatus(RatedTransactionStatusEnum.CANCELED);
+                        ratedTransaction.setParameterExtra("CANCELED by adding WO:" + walletOperation.getId());
+                        ratedTransactionService.update(ratedTransaction);
+                    }
+                }
                 offerAgenciesCountersMap.put(agencyCounterKey, 0D);
             } else {
                 offerAgenciesCountersMap.put(agencyCounterKey, newAgencyCounter.doubleValue());
             }
 
-            walletOperation.setParameter2("DEDUCTED_FROM_POOL");
-            walletOperationService.update(walletOperation);
-
-            cfiService.setCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, offerAgenciesCountersMap, walletOperation.getOperationDate());
-            serviceTemplateService.update(serviceTemplate);
+            if (agencyCounter > 0) {
+                cfiService.setCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, offerAgenciesCountersMap, walletOperation.getOperationDate());
+                serviceTemplateService.update(serviceTemplate);
+            }
 
             result.registerSucces();
 
@@ -109,18 +131,23 @@ public class OfferPoolRatingUnitJobBean {
         }
     }
 
-    private void createOverageWalletOperation(WalletOperation wo, BigDecimal overageQuantity, String overageUnit, Double overagePrice, Double multiplier) {
-        WalletOperation overageWO = new WalletOperation();
+    private void createOverageWO(boolean isNew, WalletOperation includedWO, BigDecimal overageQuantity, String overageUnit, Double overagePrice, Double multiplier) {
+
+        WalletOperation overageWO = includedWO;
+        if (isNew) {
+            overageWO = new WalletOperation();
+        }
 
         // check and find over usage charge instance
-        String overChargeCode = "CH_M2M_USG_" + wo.getParameter1() + "_OVER";
-        UsageChargeInstance overCharge = walletOperationService.getEntityManager().createQuery(OVER_CHARGE_INSTANCE_QUERY, UsageChargeInstance.class)
-            .setParameter("serviceInstance", wo.getServiceInstance()).setParameter("code", overChargeCode).getSingleResult();
-        if (overCharge == null) {
-            throw new IllegalStateException(String.format("No over chargeCodeInstance with code=%s " + "is defined on ServiceInstance[id=%s, code=%s]", overChargeCode, wo.getServiceInstance().getId(),
-                wo.getServiceInstance().getCode()));
+        String chargeType = includedWO.getParameter1();
+        String overChargeCode = "CH_M2M_USG_" + chargeType + "_OVER";
+        UsageChargeInstance overChargeInstance = walletOperationService.getEntityManager().createQuery(OVER_CHARGE_INSTANCE_QUERY, UsageChargeInstance.class)
+            .setParameter("serviceInstance", includedWO.getServiceInstance()).setParameter("code", overChargeCode).getSingleResult();
+        if (overChargeInstance == null) {
+            throw new IllegalStateException(String.format("No over chargeCodeInstance with code=%s " + "is defined on ServiceInstance[id=%s, code=%s]", overChargeCode,
+                includedWO.getServiceInstance().getId(), includedWO.getServiceInstance().getCode()));
         }
-        overageWO.setChargeInstance(overCharge);
+        overageWO.setChargeInstance(overChargeInstance);
 
         // check and find over usage plan price
         List<PricePlanMatrix> overPricePlanList = pricePlanMatrixService.getActivePricePlansByChargeCode(overChargeCode);
@@ -131,7 +158,7 @@ public class OfferPoolRatingUnitJobBean {
 
         // WO's amounts
         BigDecimal quantity = overageQuantity.divide(BigDecimal.valueOf(multiplier), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-        BigDecimal taxPercent = wo.getTaxPercent();
+        BigDecimal taxPercent = includedWO.getTaxPercent();
 
         BigDecimal unitAmountWithoutTax = BigDecimal.valueOf(overagePrice);
         BigDecimal unitAmountTax = unitAmountWithoutTax.multiply(taxPercent).divide(BigDecimal.valueOf(100), appProvider.getRounding(),
@@ -150,43 +177,47 @@ public class OfferPoolRatingUnitJobBean {
         overageWO.setAmountWithoutTax(amountWithoutTax);
         overageWO.setAmountTax(amountTax);
         overageWO.setAmountWithTax(amountWithTax);
+        overageWO.setInputUnitDescription(overChargeInstance.getChargeTemplate().getInputUnitDescription());
         overageWO.setRatingUnitDescription(overageUnit);
 
         // WO's code and description
-        String agencyCode = wo.getSubscription().getUserAccount().getCode();
-        String serviceCode = wo.getServiceInstance().getCode();
-        overageWO.setCode("POOL#" + agencyCode + "#" + serviceCode + "#_USG_OVER");
+        String agencyCode = includedWO.getSubscription().getUserAccount().getCode();
+        overageWO.setCode("POOL#" + includedWO.getOfferCode() + "#" + agencyCode + "#CH_M2M_USG_" + chargeType + "_OVER");
 
-        String descriptionI18n = overCharge.getDescription();
-        if (!wo.getParameter1().contains("SMS") && !wo.getParameter1().contains("MMS")) {
+        String descriptionI18n = overChargeInstance.getDescription();
+        if (!chargeType.contains("SMS") && !chargeType.contains("MMS")) {
             descriptionI18n = descriptionI18n.concat(" ").concat("(").concat(overageUnit).concat(")");
         }
         overageWO.setDescription(descriptionI18n);
 
         // other fields
-        overageWO.setInputUnitDescription(wo.getInputUnitDescription());
-        overageWO.setSubscriptionDate(wo.getSubscriptionDate());
-        overageWO.setType(wo.getType());
-        overageWO.setSubscription(wo.getSubscription());
-        overageWO.setServiceInstance(wo.getServiceInstance());
-        overageWO.setSeller(wo.getSeller());
-        overageWO.setOperationDate(wo.getOperationDate());
-        overageWO.setInvoicingDate(wo.getInvoicingDate());
-        overageWO.setInvoiceSubCategory(wo.getInvoiceSubCategory());
-        overageWO.setTax(wo.getTax());
-        overageWO.setWallet(wo.getWallet());
-        overageWO.setOrderNumber(wo.getOrderNumber());
-        overageWO.setCurrency(wo.getCurrency());
-        overageWO.setOfferTemplate(wo.getOfferTemplate());
-        overageWO.setOfferCode(wo.getOfferCode());
-        overageWO.setParameter1(wo.getParameter1());
-        overageWO.setParameter2(wo.getParameter2());
-        overageWO.setParameter3(wo.getParameter3());
+        overageWO.setInputUnitDescription(includedWO.getInputUnitDescription());
+        overageWO.setSubscriptionDate(includedWO.getSubscriptionDate());
+        overageWO.setType(includedWO.getType());
+        overageWO.setSubscription(includedWO.getSubscription());
+        overageWO.setServiceInstance(includedWO.getServiceInstance());
+        overageWO.setSeller(includedWO.getSeller());
+        overageWO.setOperationDate(includedWO.getOperationDate());
+        overageWO.setInvoicingDate(includedWO.getInvoicingDate());
+        overageWO.setInvoiceSubCategory(includedWO.getInvoiceSubCategory());
+        overageWO.setTax(includedWO.getTax());
+        overageWO.setWallet(includedWO.getWallet());
+        overageWO.setOrderNumber(includedWO.getOrderNumber());
+        overageWO.setCurrency(includedWO.getCurrency());
+        overageWO.setOfferTemplate(includedWO.getOfferTemplate());
+        overageWO.setOfferCode(includedWO.getOfferCode());
+        overageWO.setParameter1(chargeType);
+        overageWO.setParameter2(includedWO.getParameter2());
+        overageWO.setParameter3(includedWO.getParameter3());
         overageWO.setStatus(WalletOperationStatusEnum.OPEN);
-        overageWO.setBillingAccount(wo.getBillingAccount());
+        overageWO.setBillingAccount(includedWO.getBillingAccount());
         overageWO.setUpdated(new Date());
 
-        walletOperationService.create(overageWO);
+        if (overageWO.getId() == null) {
+            walletOperationService.create(overageWO);
+        } else {
+            walletOperationService.update(overageWO);
+        }
         log.debug("Pool shared over usage WO created={}", overageWO);
     }
 }

@@ -35,16 +35,16 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
 /**
- * The Class OfferPoolRatingJob create RatedTransaction for all OPEN WalletOperations.
+ * The Class OfferPoolRatingJob create overage RatedTransaction for all opened WalletOperation
  * 
- * @author Edward P. Legaspi
- * @author Abdellatif BARI
+ * @author Mounir BOUKAYOUA
+ * @author BEN AICHA AMINE
  * @lastModifiedVersion 7.0
  */
 @Stateless
 public class OfferPoolRatingJob extends Job {
 
-    /** The rated transactions job bean. */
+    /** The offer pool rating job bean. */
     @Inject
     private OfferPoolRatingJobBean offerPoolRatingJobBean;
 

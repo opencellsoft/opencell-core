@@ -27,6 +27,7 @@ import org.slf4j.Logger;;
 
 /**
  * @author Mounir BOUKAYOUA
+ * @author BEN AICHA AMINE
  */
 @Stateless
 public class OfferPoolRatingAsync {
