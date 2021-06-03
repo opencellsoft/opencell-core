@@ -18,6 +18,8 @@
 
 package org.meveo.apiv2.ordering.services;
 
+import static java.util.Optional.ofNullable;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.StringUtils;
@@ -65,7 +67,7 @@ public class OrderApiService implements ApiService<Order> {
 
     @Override
     public Optional<Order> findById(Long id) {
-        return Optional.ofNullable(orderService.findById(id, fetchFields));
+        return ofNullable(orderService.findById(id, fetchFields));
     }
 
     @Override
@@ -214,5 +216,10 @@ public class OrderApiService implements ApiService<Order> {
             }
         }
         return order;
+    }
+
+    @Override
+    public Optional<Order> findByCode(String code) {
+        return ofNullable(orderService.findByCode(code, fetchFields));
     }
 }

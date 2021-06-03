@@ -5709,4 +5709,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
         getEntityManager().createNamedQuery("Invoice.detachAOFromInvoice").setParameter("ri", ao).executeUpdate();
     }
 
+    /**
+     * Find invoice by invoice number.
+     *
+     * @param invoiceNumber
+     * @return Invoice
+     */
+    public Invoice findByInvoiceNumber(String invoiceNumber) {
+        QueryBuilder qb = new QueryBuilder(Invoice.class, "inv", Arrays.asList("linkedInvoices"));
+        qb.addCriterion("inv.invoiceNumber", "=", invoiceNumber, true);
+        try {
+            return (Invoice) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException exception) {
+            return null;
+        }
+    }
 }

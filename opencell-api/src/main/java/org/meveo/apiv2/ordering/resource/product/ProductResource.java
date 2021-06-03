@@ -163,4 +163,26 @@ public interface ProductResource {
             })
     Response deleteProducts(
             @Parameter(description = "ids of products to delete", required = true) @QueryParam("id") List<Long> ids);
+
+    @GET
+    @Path("/find/{code}")
+    @Operation(summary = "Return a product",
+            tags = { "Products" },
+            description = "Returns a single product",
+            responses = {
+                    @ApiResponse(
+                            headers = {
+                                    @Header (name = "ETag",
+                                            description = "a pseudo-unique identifier that represents the version of the data sent back",
+                                            schema = @Schema(type = "integer", format = "int64")
+                                    )
+                            },
+                            description = "the searched product", content = @Content(schema = @Schema(implementation = Product.class))
+                    ),
+                    @ApiResponse(responseCode = "304",
+                            description = "Not Modified, Returned to the client when the cached copy of a particular product is up to date with the server"),
+                    @ApiResponse(responseCode = "404", description = "product not found", content = @Content(schema = @Schema(implementation = ApiException.class)))
+            })
+    Response getProduct(@Parameter(description = "code of the product", required = true) @PathParam("code") String code,
+                        @Context Request request);
 }

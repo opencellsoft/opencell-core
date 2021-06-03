@@ -120,6 +120,24 @@ public class ProductResourceImpl implements ProductResource {
         return Response.ok().entity("Successfully deleted all products").build();
     }
 
+    @Override
+    public Response getProduct(String code, Request request) {
+        return productService.findByCode(code)
+                .map(productTemplate ->  {
+                    EntityTag etag = new EntityTag(Integer.toString(productTemplate.hashCode()));
+                    CacheControl cc = new CacheControl();
+                    cc.setMaxAge(1000);
+                    Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
+                    if (builder != null) {
+                        builder.cacheControl(cc);
+                        return builder.build();
+                    }
+                    return Response.ok().cacheControl(cc).tag(etag)
+                            .entity(toResourceProductWithLink(productMapper.toResource(productTemplate))).build();
+                })
+                .orElseThrow(NotFoundException::new);
+    }
+
     // TODO : move to mapper
     private Product toResourceProductWithLink(Product product) {
         return ImmutableProduct.copyOf(product).withLinks(new LinkGenerator.SelfLinkGenerator(ProductResource.class)

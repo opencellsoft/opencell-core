@@ -19,6 +19,8 @@ public class RatedTransactionResourceImpl implements RatedTransactionResource {
 
 	@Inject
 	private RatedTransactionApiService ratedTransactionApiService;
+
+	private final RatedTransactionMapper mapper = new RatedTransactionMapper();
 	
 	@Override
 	public Response createRatedTransaction(RatedTransactionInput input) {
@@ -53,5 +55,12 @@ public class RatedTransactionResourceImpl implements RatedTransactionResource {
 		ratedTransactionApiService.cancelRatedTransaction(id);
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(RatedTransactionResource.class, id).build())
 				.build();
+	}
+
+	@Override
+	public Response find(String code, Request request) {
+		RatedTransaction ratedTransaction = ratedTransactionApiService.findByCode(code)
+				.orElseThrow(NotFoundException::new);
+		return Response.ok().entity(mapper.toResource(ratedTransaction)).build();
 	}
 }

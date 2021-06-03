@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.meveo.admin.exception.ValidationException;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.service.billing.impl.RatedTransactionService;
@@ -43,6 +42,11 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 	@Override
 	public Optional<RatedTransaction> delete(Long id) {
 		return null;
+	}
+
+	@Override
+	public Optional<RatedTransaction> findByCode(String code) {
+		return Optional.ofNullable(ratedTransactionService.findByCode(code));
 	}
 
 	/**
