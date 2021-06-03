@@ -134,11 +134,19 @@ public class ProviderService extends PersistenceService<Provider> {
     @Override
     public Provider update(Provider provider) throws BusinessException {
 
+        log.error("AKK provider update test 1");
         provider = super.update(provider);
-
+        log.error("AKK provider update test 2");
+        
+        log.error("AKK provider update test 3 appProvider id is {}", appProvider.getId());
+        
         // Refresh appProvider request scope variable if applicable
         if (appProvider.getId().equals(provider.getId())) {
+            log.error("AKK provider update test 4");
+            
             refreshAppProvider(provider);
+            log.error("AKK provider update test 5");
+            
         }
 
         return provider;
@@ -166,8 +174,11 @@ public class ProviderService extends PersistenceService<Provider> {
     private void refreshAppProvider(Provider provider) {
 
         try {
+            log.error("AKK provider update test 6");
+            
             BeanUtils.copyProperties(appProvider, provider);
-
+            log.error("AKK provider update test 7");
+            
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("Failed to update appProvider fields");
         }
@@ -177,9 +188,15 @@ public class ProviderService extends PersistenceService<Provider> {
         appProvider.setLanguage(provider.getLanguage() != null ? provider.getLanguage() : null);
         appProvider.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         appProvider.setPaymentMethods(provider.getPaymentMethods());
+        
+        log.error("AKK provider update test 8");
+        
         appProvider.setCfValues(provider.getCFValuesCopy());
-
+        log.error("AKK provider update test 9");
+        
         tenantCacheContainerProvider.addUpdateTenant(provider);
+        log.error("AKK provider update test 10");
+        
     }
 
     /**
