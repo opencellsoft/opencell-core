@@ -168,6 +168,10 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
 
     /** The billing account name. */
     private String billingAccountName;
+    
+    @XmlElementWrapper(name = "paymentHistories")
+    @XmlElement(name = "paymentHistory")
+    private List<PaymentHistoryDto> paymentHistories = new ArrayList<PaymentHistoryDto>();
 
     /**
      * Instantiates a new account operation dto.
@@ -924,5 +928,13 @@ public class AccountOperationDto extends AuditableEntityDto implements IEntityDt
     public void setBillingAccountName(String billingAccountName) {
         this.billingAccountName = billingAccountName;
     }
+    
+	public List<PaymentHistoryDto> getPaymentHistories() {
+		return paymentHistories;
+	}
+
+	public void setPaymentHistories(List<PaymentHistoryDto> paymentHistories) {
+		this.paymentHistories = paymentHistories;
+	}
 
 }

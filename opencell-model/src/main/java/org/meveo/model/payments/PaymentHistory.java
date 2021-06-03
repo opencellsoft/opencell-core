@@ -21,7 +21,9 @@
  */
 package org.meveo.model.payments;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,6 +31,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -143,6 +146,10 @@ public class PaymentHistory extends AuditableEntity {
     @JoinColumn(name = "refund_id")
     private Refund refund;
 
+    @ManyToMany(mappedBy = "paymentHistories")
+    /** The list ao paid. */
+    List<AccountOperation> listAoPaid;
+    
     /**
      * @return the sellerCode
      */
@@ -424,4 +431,16 @@ public class PaymentHistory extends AuditableEntity {
     public void setCustomerCode(String customerCode) {
         this.customerCode = customerCode;
     }
+
+	public List<AccountOperation> getListAoPaid() {
+		if (listAoPaid == null) {
+			return new ArrayList<AccountOperation>();
+		}
+		return listAoPaid;
+	}
+
+	public void setListAoPaid(List<AccountOperation> listAoPaid) {
+		this.listAoPaid = listAoPaid;
+	}
+    
 }

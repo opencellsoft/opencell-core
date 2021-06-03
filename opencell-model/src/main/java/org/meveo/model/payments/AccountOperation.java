@@ -33,6 +33,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -66,10 +67,11 @@ import org.meveo.model.finance.AccountingWriting;
 /**
  * Account operation
  *
+ * @author anasseh
  * @author Edward P. Legaspi
  * @author Said Ramli
  * @author Abdellatif BARI
- * @lastModifiedVersion 7.0
+ * @lastModifiedVersion 9.5
  */
 @Entity
 @WorkflowedEntity
@@ -358,6 +360,13 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
+    
+    @ManyToMany
+    @JoinTable(
+      name = "ar_ao_payment_histories", 
+      joinColumns = @JoinColumn(name = "ao_id"), 
+      inverseJoinColumns = @JoinColumn(name = "history_id"))
+    private List<PaymentHistory> paymentHistories = new ArrayList<PaymentHistory>();
 
 
     public Date getDueDate() {
@@ -826,4 +835,14 @@ public class AccountOperation extends BusinessEntity implements ICustomFieldEnti
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
     }
+
+	public List<PaymentHistory> getPaymentHistories() {
+		return paymentHistories;
+	}
+
+	public void setPaymentHistories(List<PaymentHistory> paymentHistories) {
+		this.paymentHistories = paymentHistories;
+	}
+    
+    
 }
