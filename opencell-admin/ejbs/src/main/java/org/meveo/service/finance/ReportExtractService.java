@@ -186,7 +186,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         try {
             // load the html template
             String template = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("reportExtract/default_html_report.html"));
-
+            Object value = null;
             // get the header
             Map<String, Object> firstRow = (Map<String, Object>) results.get()[0];
             Iterator ite = firstRow.keySet().iterator();
@@ -204,7 +204,9 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 ite = firstRow.keySet().iterator();
                 tableBody.append("<tr class='" + (ctr++ % 2 == 0 ? "odd" : "even") + "'>");
                 while (ite.hasNext()) {
-                    tableBody.append("<td>" + row.get(ite.next()) + "</td>");
+                    value = row.get(ite.next());
+                    value = value == null ? "" : value;
+                    tableBody.append("<td>" + value + "</td>");
                 }
                 tableBody.append("</tr>");
                 rowNumber++;
@@ -260,6 +262,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     private int writeAsFile(String filename, String fileSeparator, StringBuilder sbDir, ScrollableResults results) throws BusinessException {
         FileWriter fileWriter = null;
         StringBuilder line = new StringBuilder("");
+        Object value = null;
         int rowNumber = 0;
         Map<String, Object> row = null;
         try {
@@ -286,7 +289,9 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                 row = (Map<String, Object>) results.get()[0];
                 ite = firstRow.keySet().iterator();
                 while (ite.hasNext()) {
-                    line.append(row.get(ite.next()) + fileSeparator);
+                    value = row.get(ite.next());
+                    value = value == null ? "" : value;
+                    line.append(value + fileSeparator);
                 }
                 line.deleteCharAt(line.length() - 1);
                 fileWriter.write(line.toString());
