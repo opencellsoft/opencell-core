@@ -497,10 +497,10 @@ public class ProductApi extends BaseApi {
      
     
     public Product duplicateProduct(String codeProduct, boolean duplicateHierarchy, boolean preserveCode) throws MeveoApiException, BusinessException {
-    	
+
     	Product product = null; 
     	try {
-    		product = productService.findByCode(codeProduct);
+    		product = productService.findByCode(codeProduct, Arrays.asList("productLine"));
     		if(product == null) {
     			throw new EntityDoesNotExistsException(Product.class, codeProduct);
     		}
