@@ -25,6 +25,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -93,7 +94,8 @@ public class CustomerCategory extends BusinessCFEntity implements ISearchable {
      * Account tax category
      **/
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tax_category_id")
+    @JoinColumn(name = "tax_category_id", nullable = false)
+    @NotNull
     private TaxCategory taxCategory;
 
     /**

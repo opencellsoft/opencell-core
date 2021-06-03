@@ -4750,7 +4750,9 @@
                 <constraints nullable="false" />
             </column>
             <column name="accounting_code_id" type="bigint" />
-            <column name="tax_category_id" type="bigint" />
+            <column name="tax_category_id" type="bigint" >
+            	<constraints nullable="false"/>
+            </column>
             <column name="tax_category_el" type="varchar(2000)" />
             <column name="tax_category_el_sp" type="varchar(2000)" />
             <column name="description_i18n" type="text">
@@ -15726,6 +15728,7 @@ $$ LANGUAGE plpgsql;
     
     <changeSet id="#5599_20210526" author="AbdelmounaimAkadid" />
     <changeSet id="#5416_20210526" author="AbdelmounaimAkadid" />
+    <changeSet id="#559_20210603" author="TarikFA." />
     
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
