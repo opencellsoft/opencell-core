@@ -1,15 +1,17 @@
 package org.meveo.apiv2.billing.service;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 import javax.inject.Inject;
 
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.service.billing.impl.RatedTransactionService;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 public class RatedTransactionApiService implements ApiService<RatedTransaction> {
 
@@ -18,7 +20,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 
 	@Override
 	public Optional<RatedTransaction> findById(Long id) {
-		return Optional.ofNullable(ratedTransactionService.findById(id));
+		return ofNullable(ratedTransactionService.findById(id));
 	}
 
 	@Override
@@ -46,7 +48,7 @@ public class RatedTransactionApiService implements ApiService<RatedTransaction> 
 
 	@Override
 	public Optional<RatedTransaction> findByCode(String code) {
-		return Optional.ofNullable(ratedTransactionService.findByCode(code));
+		return ofNullable(ratedTransactionService.findByCode(code));
 	}
 
 	/**

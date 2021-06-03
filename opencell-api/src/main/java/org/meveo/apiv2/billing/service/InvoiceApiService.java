@@ -3,6 +3,7 @@
  */
 package org.meveo.apiv2.billing.service;
 
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 import java.util.List;
@@ -80,7 +81,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 
 	@Override
 	public Optional<Invoice> findByCode(String code) {
-		return ofNullable(invoiceService.findByInvoiceNumber(code));
+		return empty();
 	}
 
 	/**
