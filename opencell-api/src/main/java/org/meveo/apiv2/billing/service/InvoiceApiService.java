@@ -3,13 +3,13 @@
  */
 package org.meveo.apiv2.billing.service;
 
-import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.billing.BasicInvoice;
@@ -81,7 +81,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 
 	@Override
 	public Optional<Invoice> findByCode(String code) {
-		return empty();
+		throw new BadRequestException("Use invoice number and type");
 	}
 
 	/**
