@@ -19,7 +19,7 @@ package org.meveo.admin.job;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -194,7 +194,7 @@ public class SepaDirectDebitJobBean extends BaseJobBean {
 						log.info("end createDDRquestLot");
 						if (ddRequestLOT != null && "true".equals(paramBeanFactory.getInstance().getProperty("bayad.ddrequest.split", "true"))) {
 							dDRequestLOTService.addItems(ddrequestLotOp, ddRequestLOT, listAoToPay, ddRequestBuilder, result);
-							dDRequestLOTService.generateDDRquestLotFile(ddRequestLOT, ddRequestBuilderInterface, appProvider);
+							dDRequestLOTService.generateDDRquestLotFile(dDRequestLOTService.findById(ddRequestLOT.getId(), Arrays.asList("ddrequestItems") ), ddRequestBuilderInterface, appProvider);
 							log.info("end generateDDRquestLotFile");
 							result.addReport(ddRequestLOT.getRejectedCause());
 							dDRequestLOTService.createPaymentsOrRefundsForDDRequestLot(ddRequestLOT, nbRuns, waitingMillis, result);
