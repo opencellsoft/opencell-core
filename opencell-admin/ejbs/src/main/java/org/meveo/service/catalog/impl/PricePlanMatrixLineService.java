@@ -21,6 +21,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -184,9 +185,10 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     }
     
     @SuppressWarnings("unchecked")
-	public List<PricePlanMatrixLine> findByPriority(Integer priority) {
-    	QueryBuilder builder = new QueryBuilder(PricePlanMatrixLine.class, "ppml");
+	public List<PricePlanMatrixLine> findByPriority(Integer priority, Integer currentVersion) {
+    	QueryBuilder builder = new QueryBuilder(PricePlanMatrixLine.class, "ppml", Arrays.asList("pricePlanMatrixVersion"));
     	builder.addCriterion("ppml.priority", "=", priority, false);
+    	builder.addCriterion("ppml.pricePlanMatrixVersion.currentVersion", "=", currentVersion, false);
     	return builder.getQuery(this.getEntityManager()).getResultList();
     }
 }

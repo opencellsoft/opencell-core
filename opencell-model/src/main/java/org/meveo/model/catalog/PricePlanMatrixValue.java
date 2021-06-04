@@ -31,7 +31,7 @@ import java.util.Set;
 @NamedQuery(name="PricePlanMatrixValue.findByPricePlanMatrixLine", query = "select p from PricePlanMatrixValue p where p.pricePlanMatrixLine=:pricePlanMatrixLine")
 public class PricePlanMatrixValue extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH })
     @JoinColumn(name = "ppm_column_id")
     @NotNull
     private PricePlanMatrixColumn pricePlanMatrixColumn;
