@@ -124,11 +124,11 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         Provider provider = getEntity();
-        if (provider.getId() != null) {
-            provider = providerService.findById(provider.getId());
-        }
-        provider.getPaymentMethods().clear();
-        getEntity().setPaymentMethods(paymentMethodsModel.getTarget());
+//        if (provider.getId() != null) {
+//            provider = providerService.findById(provider.getId());
+//        }
+//        provider.getPaymentMethods().clear();
+        provider.setPaymentMethods(paymentMethodsModel.getTarget());
         String returnTo = super.saveOrUpdate(killConversation);
 
         if ("appConfiguration".equals(mode)) {
