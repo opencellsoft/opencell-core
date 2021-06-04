@@ -127,6 +127,9 @@ public class ProductService extends BusinessService<Product> {
 		product.getCommercialRuleHeader().size();
 		product.getCommercialRuleHeader().forEach(crh -> {
 			crh.getCommercialRuleItems().size();
+			crh.getCommercialRuleItems().forEach(cri -> {
+				cri.getCommercialRuleLines().size();
+			});
 		});
 		product.getCommercialRuleLines().size();
 		
