@@ -662,7 +662,7 @@ public class ProductApi extends BaseApi {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
 				throw new DeleteReferencedEntityException(Product.class, codeProduct);
 			}
-			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+			throw new MeveoApiException(e.getMessage());
 		}
 	}
 	 
