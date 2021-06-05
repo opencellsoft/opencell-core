@@ -49,6 +49,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.metamodel.Attribute;
 
+import org.hibernate.LockMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -1105,7 +1106,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         SQLQuery q = session.createSQLQuery(query);
 
         q.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
-
+        q.setFetchSize(10000);
+        q.setReadOnly(true);
+        q.setLockMode("a", LockMode.NONE);
         if (params != null) {
             for (Map.Entry<String, Object> entry : params.entrySet()) {
                 q.setParameter(entry.getKey(), entry.getValue());
