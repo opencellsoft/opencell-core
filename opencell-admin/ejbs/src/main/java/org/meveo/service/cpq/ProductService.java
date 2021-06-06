@@ -320,6 +320,9 @@ public class ProductService extends BusinessService<Product> {
 		if(!product.getCommercialRuleHeader().isEmpty() || !product.getCommercialRuleLines().isEmpty()) {
 			throw new MeveoApiException("Product ("+codeProduct+") can not be deleted. There are rules applied to this product");
 		}
+		if(!product.getOfferComponents().isEmpty()) {
+			throw new MeveoApiException("Can not delete the product ("+codeProduct+") because is referenced to an offer");
+		}
 
 		pricePlanMatrixColumnService.findByProduct(product).stream().map(PricePlanMatrixColumn::getCode).forEach(code -> pricePlanMatrixColumnService.removePricePlanColumn(code));
 		
