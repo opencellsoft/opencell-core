@@ -46,7 +46,7 @@ public class Apiv1PutService {
     public Response updateService(UriInfo uriInfo, String putPath, String jsonDto) throws URISyntaxException, JsonProcessingException {
         URI redirectURI;
         segmentsOfPathAPIv1 = uriInfo.getPathSegments();
-        pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_REGEX_PATH_AND_IBASE_RS_PATH.get( putPath );
+        pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_RESTFUL_REGEX_PATH_AND_IBASE_RS_PATH.get( putPath );
 
         Class entityDtoClass = GenericOpencellRestfulAPIv1.MAP_SPECIAL_IBASE_RS_PATH_AND_DTO_CLASS.get( pathIBaseRS );
         Object aDto = null;
@@ -92,7 +92,7 @@ public class Apiv1PutService {
         URI redirectURI;
         segmentsOfPathAPIv1 = uriInfo.getPathSegments();
 
-        pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_NEW_PATH_AND_IBASE_RS_PATH.get( pathUpdate );
+        pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.get( pathUpdate );
         entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
         if ( entityClassName.equals( "job" ) )
