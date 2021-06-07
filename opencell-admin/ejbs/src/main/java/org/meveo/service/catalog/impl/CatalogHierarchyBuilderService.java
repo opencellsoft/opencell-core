@@ -78,6 +78,7 @@ import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.cpq.tags.Tag;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
+import org.meveo.model.cpq.trade.CommercialRuleItem;
 import org.meveo.model.cpq.trade.CommercialRuleLine;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
@@ -90,6 +91,8 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.cpq.CommercialRuleHeaderService;
+import org.meveo.service.cpq.CommercialRuleItemService;
+import org.meveo.service.cpq.CommercialRuleLineService;
 import org.meveo.service.cpq.GroupedAttributeService;
 import org.meveo.service.cpq.MediaService;
 import org.meveo.service.cpq.OfferComponentService;
@@ -181,6 +184,10 @@ public class CatalogHierarchyBuilderService {
     @Inject ProductChargeTemplateMappingService productChargeTemplateMappingService;
     
     @Inject private CommercialRuleHeaderService commercialRuleHeaderService;
+    
+    @Inject private CommercialRuleItemService commercialRuleItemService;
+    
+    @Inject private CommercialRuleLineService commercialRuleLineService;
 
     @Inject
     @CurrentUser
@@ -329,17 +336,32 @@ public class CatalogHierarchyBuilderService {
     		});
     	}
     	
-    	if(commercialRuleHeader != null) {
-    		commercialRuleHeader.forEach(crh -> {
-    			crh.getCommercialRuleItems().size();
-        		commercialRuleHeaderService.detach(crh);
-        		CommercialRuleHeader duplicate = new CommercialRuleHeader(crh);
-        		duplicate.setTargetProduct(entity);
-        		commercialRuleHeaderService.create(duplicate);
-        		entity.getCommercialRuleHeader().add(duplicate);
-    		});
-    	}
     }
+	
+	public void duplicateCommercialRuleHeader(CommercialRuleHeader entity, List<CommercialRuleItem> commercialRuleItems) {
+		if(!commercialRuleItems.isEmpty()) {
+			commercialRuleItems.forEach(commercialRuleItem -> {
+				commercialRuleItem.getCommercialRuleLines().size();
+				commercialRuleItemService.detach(commercialRuleItem);
+				CommercialRuleItem duplicate = new CommercialRuleItem(commercialRuleItem);
+				duplicate.setCommercialRuleHeader(entity);
+				commercialRuleItemService.create(duplicate);
+				duplicationCommercialRuleLine(duplicate, duplicate.getCommercialRuleLines());
+				entity.getCommercialRuleItems().add(duplicate);
+			});
+		}
+	}
+	
+	private void duplicationCommercialRuleLine(CommercialRuleItem entity, List<CommercialRuleLine> commercialRuleLines) {
+		if(!commercialRuleLines.isEmpty()) {
+			commercialRuleLines.forEach(commercialRuleLine -> {
+				commercialRuleLineService.detach(commercialRuleLine);
+				CommercialRuleLine duplicate = new CommercialRuleLine(commercialRuleLine);
+				commercialRuleLineService.create(duplicate);
+				entity.getCommercialRuleLines().add(duplicate);
+			});
+		}
+	}
 	
 	/*@SuppressWarnings("unchecked")
 	private void duplicateCounterTemplate(Product entity, ProductChargeTemplateMapping productChargetTemplate, List<CounterTemplate> coutnerTemplates) {

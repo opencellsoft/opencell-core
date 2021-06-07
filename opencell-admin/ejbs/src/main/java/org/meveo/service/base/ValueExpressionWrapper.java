@@ -658,6 +658,10 @@ public class ValueExpressionWrapper {
             serviceInstance = chargeInstance.getServiceInstance();
             contextMap.put(VAR_SERVICE_INSTANCE, serviceInstance);
         }
+        if (el.contains(VAR_CPQ_QUOTE) && !contextMap.containsKey(VAR_CPQ_QUOTE) && chargeInstance != null) {
+            quote =chargeInstance!=null && chargeInstance.getServiceInstance().getQuoteProduct()!=null?chargeInstance.getServiceInstance().getQuoteProduct().getQuote():null;
+            contextMap.put(VAR_SERVICE_INSTANCE, serviceInstance);
+        }
         if (el.contains(VAR_SERVICE_TEMPLATE) && !contextMap.containsKey(VAR_SERVICE_TEMPLATE)) {
             if (serviceInstance != null) {
                 contextMap.put(VAR_SERVICE_TEMPLATE, serviceInstance.getServiceTemplate());
