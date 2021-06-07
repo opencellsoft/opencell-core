@@ -12480,6 +12480,56 @@ public class DeleteCustomersScript extends Script {
            ]]>
         </sql>
     </changeSet>
+    <changeSet id="#540_563_20210607" author="TarikFA.">
+     	<insert tableName="billing_accounting_article">
+            <column name="id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="updated" valueDate="now()" />
+            <column name="code" value="PROD-STD" />
+            <column name="description" value="PROD-STD" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="uuid" value="PROD-STD" />
+            <column name="tax_class_id" value="-1" />
+            <column name="invoice_sub_category_id" value="-2" />
+       	</insert>
+     	<insert tableName="billing_accounting_article">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="updated" valueDate="now()" />
+            <column name="code" value="ADV-STD" />
+            <column name="description" value="ADV-STD" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="uuid" value="ADV-STD" />
+            <column name="tax_class_id" value="-1" />
+            <column name="invoice_sub_category_id" value="-2" />
+       	</insert>
+       	<insert tableName="cat_discount_plan">
+            <column name="id" valueNumeric="-99" />
+       		<column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="now()" />
+            <column name="updated" valueDate="now()" />
+            <column name="code" value="DISC-STD" />
+            <column name="description" value="DISC-STD" />
+            <column name="creator" value="opencell.admin" />
+            <column name="updater" value="opencell.admin" />
+            <column name="uuid" value="DISC-STD" />
+       		<column name="max_duration"  value="9999"/>
+       		<column name="min_duration"  value="0"/>
+       		<column name="start_date"  value="2021-01-01"/>
+       		<column name="end_date"  value="2022-12-31"/>
+       		<column name="duration_unit"  value="DAY"/>
+       		<column name="discount_plan_type"  value="PRODUCT"/>
+       		<column name="status"  value="ACTIVE"/>
+       		<column name="status_date"  value="now()"/>
+       	</insert> 
+	</changeSet>
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

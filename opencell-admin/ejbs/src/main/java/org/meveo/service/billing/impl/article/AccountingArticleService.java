@@ -9,7 +9,9 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
@@ -24,6 +26,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	
 	@Inject private ArticleMappingLineService articleMappingLineService;
 	@Inject private AttributeService attributeService;
+	@Inject ParamBean paramBean;
 	
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) throws BusinessException {
 		List<ChargeTemplate> productCharges = product.getProductCharges().stream()
@@ -85,8 +88,9 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			result = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
 		} else {
 			ArticleMappingLine bestMatch = attributeMappingLineMatch.getBestMatch();
-			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode("ART-STD");
+			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode(paramBean.getProperty("accountingArticle.product.default.code", "PROD-STD"));
 		}
+		Hibernate.initialize(result);
 		if(result != null)
 			detach(result);
 		return  result != null ? Optional.of(result) : Optional.empty();

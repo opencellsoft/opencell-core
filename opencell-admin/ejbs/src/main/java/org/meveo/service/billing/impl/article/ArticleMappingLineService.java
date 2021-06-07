@@ -24,7 +24,7 @@ public class ArticleMappingLineService extends BusinessService<ArticleMappingLin
 
 	@SuppressWarnings("unchecked")
 	public List<ArticleMappingLine> findByProductCode(Product product) {
-		QueryBuilder queryBuilder = new QueryBuilder(ArticleMappingLine.class, "am", Arrays.asList("product"));
+		QueryBuilder queryBuilder = new QueryBuilder(ArticleMappingLine.class, "am", Arrays.asList("product", "chargeTemplate"));
 		queryBuilder.addCriterionEntity("am.product.code", product.getCode());
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
