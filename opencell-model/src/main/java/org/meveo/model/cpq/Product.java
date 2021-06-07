@@ -1,6 +1,8 @@
 package org.meveo.model.cpq;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -77,6 +79,35 @@ public class Product extends ServiceCharge {
 
 	public Product() {
 	}
+
+	
+	@SuppressWarnings("rawtypes")
+	public Product(Product copy) {
+		this.code = copy.code;
+		this.description = copy.description;
+		this.productLine = copy.productLine;
+		this.reference = copy.reference;
+		this.model = copy.model;
+		this.discountFlag = copy.discountFlag;
+		this.packageFlag = copy.packageFlag;
+		this.status = ProductStatusEnum.DRAFT;
+		this.statusDate = Calendar.getInstance().getTime();
+		this.brand = null;
+		this.currentVersion = null;
+		this.pricePlanMatrixColumns = new ArrayList<PricePlanMatrixColumn>();
+		this.offerComponents = new ArrayList<OfferComponent>();
+		this.articleMappingLines = new ArrayList<ArticleMappingLine>();
+		this.commercialRuleLines = new ArrayList<CommercialRuleLine>();
+		this.commercialRuleHeader = new ArrayList<CommercialRuleHeader>();
+		this.productCharges = new ArrayList<ProductChargeTemplateMapping>();
+		this.medias = new ArrayList<Media>();
+		this.discountList = new HashSet<DiscountPlan>();
+		this.modelChildren = new HashSet<String>();
+		this.productVersions = new ArrayList<ProductVersion>();
+		this.getUuid();
+		this.setProductModel(copy.isModel != null && copy.isModel == Boolean.TRUE ? copy : null);
+	}
+
 
 	/**
 	 * 

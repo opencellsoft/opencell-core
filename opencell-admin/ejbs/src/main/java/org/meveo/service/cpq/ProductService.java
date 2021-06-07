@@ -1,6 +1,5 @@
 package org.meveo.service.cpq;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -9,13 +8,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -27,7 +24,6 @@ import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.BusinessService;
-import org.meveo.service.billing.impl.article.ArticleMappingLineService;
 import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
 import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
 import org.slf4j.Logger;
@@ -64,9 +60,10 @@ public class ProductService extends BusinessService<Product> {
 	@Inject
 	private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
 	@Inject private PricePlanMatrixColumnService pricePlanMatrixColumnService;
-	@Inject private ArticleMappingLineService articleMappingLineService;
 	@Inject 
 	private ProductVersionService productVersionService;
+	@Inject
+	private ProductLineService productLineService;
     /**
      * check if the product has any product line 
      * @param idProductLine
@@ -130,6 +127,9 @@ public class ProductService extends BusinessService<Product> {
 		product.getCommercialRuleHeader().size();
 		product.getCommercialRuleHeader().forEach(crh -> {
 			crh.getCommercialRuleItems().size();
+			crh.getCommercialRuleItems().forEach(cri -> {
+				cri.getCommercialRuleLines().size();
+			});
 		});
 		product.getCommercialRuleLines().size();
 		
@@ -183,35 +183,7 @@ public class ProductService extends BusinessService<Product> {
     		}
     	}
 		
-		
-		Product duplicate = new Product();
-   	 	try{
-            BeanUtils.copyProperties(duplicate, product);
-	       } catch (IllegalAccessException | InvocationTargetException e) {
-	           throw new BusinessException("Failed to clone Product", e);
-	       }
-   	 	
-	   	 duplicate.setId(null);
-	   	 duplicate.setBrand(null);
-	   	 duplicate.setCurrentVersion(null);
-	   	 duplicate.setModelChildren(new HashSet<>());
-	   	 duplicate.setProductVersions(new ArrayList<>());
-	   	 duplicate.setStatus(ProductStatusEnum.DRAFT);
-	   	 duplicate.setStatusDate(Calendar.getInstance().getTime());
-	   	 duplicate.setProductLine(product.getProductLine());
-	   	 duplicate.setModel(product.getModel());
-	   	 duplicate.setReference(product.getReference());
-	   	 duplicate.setDiscountFlag(product.isDiscountFlag());
-   		 duplicate.setPackageFlag(product.isPackageFlag());
-   		 duplicate.setDiscountList(new HashSet<>());
-   		 duplicate.setOfferComponents(new ArrayList<>());
-   		 duplicate.setMedias(new ArrayList<>());
-   		 duplicate.setUuid(UUID.randomUUID().toString());
-   		 duplicate.setProductCharges(new ArrayList<>());
-   		 duplicate.setCommercialRuleHeader(new ArrayList<>());
-   		 duplicate.setCommercialRuleLines(new ArrayList<>());
-   		 
-   		 duplicate.setProductModel(product.getIsModel() != null && product.getIsModel() == Boolean.TRUE ? product : null);
+		Product duplicate = new Product(product);
 	   	 
 	   	 if(!preserveCode) {
 	         String code = findDuplicateCode(duplicate);

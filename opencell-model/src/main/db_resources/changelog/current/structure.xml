@@ -8992,4 +8992,8 @@ public class OrderAdvancement extends ModuleScript {
     <changeSet id="#6147_20210530" author="anasseh">
 	    <sql>CREATE INDEX idx_ar_payment_history_external_payment_id   ON ${db.schema.adapted}ar_payment_history (external_payment_id );</sql>
     </changeSet>
+    <changeSet id="#559_20210603" author="TarikFA.">
+    	<sql>update crm_customer_category set tax_category_id = -1 where tax_category_id is null</sql>
+    	<addNotNullConstraint tableName="crm_customer_category" columnName="tax_category_id"/>
+    </changeSet>
 </databaseChangeLog>

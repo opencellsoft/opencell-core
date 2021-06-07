@@ -63,7 +63,7 @@ public class CommercialRuleHeader extends BusinessEntity {
 		this.targetAttributeValue = copy.targetAttributeValue;
 		this.targetTag = copy.targetTag;
 		this.ruleEl = copy.ruleEl;
-		this.commercialRuleItems = copy.commercialRuleItems;
+		this.commercialRuleItems = new ArrayList<CommercialRuleItem>();
 		this.disabled = copy.disabled;
 		this.code = copy.code;
 		this.description = copy.description;
