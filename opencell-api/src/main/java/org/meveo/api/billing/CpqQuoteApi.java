@@ -88,7 +88,6 @@ import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.RecurringChargeTemplate;
-import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.CpqQuote;
@@ -1055,11 +1054,6 @@ public class CpqQuoteApi extends BaseApi {
         try {
             cpqQuoteService.update(cpqQuote);
             cpqQuoteStatusUpdatedEvent.fire(cpqQuote);
-
-            EmailTemplate emailTemplate = new EmailTemplate();
-            emailTemplate.setTextContent("Hello this is the quote email");
-            cpqQuoteService.sendByEmail(cpqQuote, "nabil.ouachi@gmail.com", emailTemplate);
-
         } catch (BusinessApiException e) {
             throw new MeveoApiException(e);
         }
