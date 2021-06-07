@@ -172,11 +172,11 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
             qb.startOrClause();
             qb.addCriterion("be.code", "=", code, true);
             qb.addCriterion("be.id", "=", Long.parseLong(code), false);
-            qb.endOrClause();
         } catch (NumberFormatException e) {
             qb.addCriterion("be.code", "=", code, true);
         }
-        
+        qb.endOrClause();
+
         try {
             return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
