@@ -28,7 +28,7 @@ public interface GenericResourceAPIv1 {
 
     @DELETE
     @Path("/{segments:.*}")
-    Response deleteRequest() throws URISyntaxException;
+    Response deleteRequest() throws URISyntaxException, IOException;
 
     @POST
     @Path("/{segments:.*}/creationOrUpdate")
