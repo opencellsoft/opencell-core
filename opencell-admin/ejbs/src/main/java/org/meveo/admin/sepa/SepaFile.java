@@ -72,13 +72,10 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
-import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.CalendarBankingService;
@@ -86,8 +83,6 @@ import org.meveo.service.payments.impl.*;
 import org.meveo.util.DDRequestBuilderClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.Query;
 
 /**
  * The Class SepaFile.
@@ -156,13 +151,9 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	private static final String CATEGORY_PURPOSE_CODE = "SUPP";
 
 	private CalendarBankingService calendarBankingService = (CalendarBankingService) EjbUtils.getServiceInterface(CalendarBankingService.class.getSimpleName());
-	private DDRequestItemService ddRequestItemService = (DDRequestItemService) EjbUtils.getServiceInterface(DDRequestItemService.class.getSimpleName());
-	private CustomerAccountService customerAccountService = (CustomerAccountService) EjbUtils.getServiceInterface(CustomerAccountService.class.getSimpleName());
 	private PaymentMethodService paymentMethodService = (PaymentMethodService) EjbUtils.getServiceInterface(PaymentMethodService.class.getSimpleName());
 
-	
-	
-	
+	private Pattern pattern = Pattern.compile(IBAN_PATTERN);
 
 	@Override
 	public String getDDFileName(DDRequestLOT ddRequestLot, Provider appProvider) throws BusinessException {
@@ -266,7 +257,6 @@ public class SepaFile extends AbstractDDRequestBuilder {
 			outputDir = outputDir + File.separator + additionalOutputDir;
 			outputDir = outputDir.replaceAll(DOUBLE_POINT, EMPTY_STRING);
 
-			log.info("DDRequest output directory={}", outputDir);
 			File dir = new File(outputDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
@@ -297,8 +287,8 @@ public class SepaFile extends AbstractDDRequestBuilder {
 					addPaymentInformation(message, ddrequestItem, appProvider);
 				}
 			}
-			String schemaLocation = paramBean.getProperty("sepa.schemaLocation.pain008", SDD_SCHEMA_LOCATION);
-			JAXBUtils.marshaller(document, new File(ddRequestLot.getFileName()), schemaLocation);
+			JAXBUtils.marshaller(document, new File(ddRequestLot.getFileName()),
+					paramBean.getProperty("sepa.schemaLocation.pain008", SDD_SCHEMA_LOCATION));
 		} catch (Exception e) {
 			log.error("Error on generateDDRequestLotFileForSSD {}", e);
 			throw new BusinessException(e.getMessage());
@@ -360,9 +350,8 @@ public class SepaFile extends AbstractDDRequestBuilder {
 					message.getGrpHdr().setNbOfTxs(String.valueOf(opToGenerateByFile));
 					// the Pain001 jaxb classes are generated from the xsd located at:
 					// https://www.iso20022.org/documents/messages/1_0_version/pain/schemas/pain.001.001.03.zip
-					String schemaLocation = paramBean.getProperty("sepa.schemaLocation.pain001", SCT_SCHEMA_LOCATION);
-
-					JAXBUtils.marshaller(document, new File(fileName), schemaLocation);
+					JAXBUtils.marshaller(document, new File(fileName),
+							paramBean.getProperty("sepa.schemaLocation.pain001", SCT_SCHEMA_LOCATION));
 					generatedFilesNames.add(fileName);
 				}
 			} catch (Exception e) {
@@ -372,7 +361,6 @@ public class SepaFile extends AbstractDDRequestBuilder {
 
 		}
 		ddRequestLot.setFileName(String.join(COMMA_STRING, generatedFilesNames));
-
 	}
 
 	/**
@@ -390,10 +378,8 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		try {
 			groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
 		}
-		catch (Exception e)
-		{
-			log.error("Error on dateToXMLGregorianCalendar {}", e);
-			throw new BusinessException(e.getMessage());
+		catch (Exception e) {
+			throw new BusinessException(e);
 		}
 		groupHeader.setNbOfTxs(String.valueOf(ddRequestLOT.getNbItemsOk()));
 		groupHeader.setCtrlSum(ddRequestLOT.getTotalAmount().setScale(2, RoundingMode.HALF_UP));
@@ -403,9 +389,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		} else {
 			initgPty.setNm(appProvider.getDescription());
 		}
-
 		groupHeader.setInitgPty(initgPty);
-
 	}
 
 	/**
@@ -515,8 +499,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 			mandateRelatedInformation.setDtOfSgntr(DateUtils.dateToXMLGregorianCalendarFieldUndefined((Date) paymentInformations[8]));
 		}
 		catch (Exception e) {
-			log.error("Error on dateToXMLGregorianCalendarFieldUndefined {}", e);
-			throw new BusinessException(e.getMessage());
+			throw new BusinessException(e);
 		}
 		BranchAndFinancialInstitutionIdentification4 debtorAgent = new BranchAndFinancialInstitutionIdentification4();
 		directDebitTransactionInformation.setDbtrAgt(debtorAgent);
@@ -533,15 +516,12 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		AccountIdentification4Choice identification = new AccountIdentification4Choice();
 		identification.setIBAN((String) paymentInformations[5]);
 		debtorAccount.setId(identification);
-
 	}
 
 	private Object[] getPreferredPaymentMethod(Long customerAccountID) {
-		String queryString = "SELECT ca.id, ace.code, ace.description, pm.token_type, pm.bic, pm.iban," +
-				" pm.alias, pm.mandate_identification, pm.mandate_date FROM ar_customer_account ca \n" +
-				" JOIN account_entity ace ON ace.id = ca.id " +
-				" JOIN ar_payment_token pm on ca.id = pm.customer_account_id " +
-				"WHERE ca.id IN ( SELECT ao.customer_account_id FROM ar_account_operation ao WHERE ao.ddrequest_item_id = :id) AND is_default = 1";
+		String queryString = "SELECT ca.id, ace.code, ace.description, pm.token_type, pm.bic, pm.iban, pm.alias, pm.mandate_identification, pm.mandate_date " +
+				"FROM ar_customer_account ca JOIN account_entity ace ON ace.id = ca.id JOIN ar_payment_token pm on ca.id = pm.customer_account_id " +
+				"WHERE ca.id IN ( SELECT ao.customer_account_id FROM ar_account_operation ao WHERE ao.ddrequest_item_id = :id) AND pm.is_default = 1";
 		return (Object[]) paymentMethodService.getEntityManager()
 					.createNativeQuery(queryString)
 					.setParameter("id", customerAccountID)
@@ -579,10 +559,8 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		try{
 			paymentInformation.setReqdExctnDt(DateUtils.dateToXMLGregorianCalendarFieldUndefined(calendarBankingService.getNextBankWorkingDate(new Date())));
 		}
-		catch (Exception e)
-		{
-			log.error("Error on dateToXMLGregorianCalendarFieldUndefined {}", e);
-			throw new BusinessException(e.getMessage());
+		catch (Exception e) {
+			throw new BusinessException(e);
 		}
 
 		org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32 dbtr = new org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32();
@@ -644,8 +622,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 			groupHeader.setCreDtTm(DateUtils.dateToXMLGregorianCalendar(new Date()));
 		}
 		catch(Exception e){
-			log.error("Error on dateToXMLGregorianCalendar {}", e);
-			throw new BusinessException(e.getMessage());
+			throw new BusinessException(e);
 		}
 		org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32 initgPty = new org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32();
 		initgPty.setNm(appProvider.getDescription());
@@ -659,14 +636,13 @@ public class SepaFile extends AbstractDDRequestBuilder {
 	 * @param paymentInformation the payment information of SCT file
 	 */
 	private void addSctTransaction(DDRequestItem dDRequestItem, PaymentInstructionInformation3 paymentInformation) {
-		CustomerAccount ca = dDRequestItem.getAccountOperations().get(0).getCustomerAccount();
-		PaymentMethod preferedPaymentMethod = ca.getPreferredPaymentMethod();
-		if (!(preferedPaymentMethod instanceof DDPaymentMethod)) {
+		Object[] paymentInformations = getPreferredPaymentMethod(dDRequestItem.getId());
+		if (!paymentInformations[3].equals("DIRECTDEBIT")) {
 			throw new BusinessException("Payment method not valid!");
 		}
-		BankCoordinates bankCoordinates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
-		if (bankCoordinates == null) {
-			throw new BusinessException("Bank Coordinate is absent for Payment method " + preferedPaymentMethod.getAlias());
+
+		if (paymentInformations[4] == null && paymentInformations[5] == null) {
+			throw new BusinessException("Bank Coordinate is absent for Payment method " + paymentInformations[6]);
 		}
 
 		CreditTransferTransactionInformation10 cdtTrfTxInf = new CreditTransferTransactionInformation10();
@@ -674,7 +650,7 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		org.meveo.admin.sepa.jaxb.pain001.PaymentIdentification1 paymentIdentification = new org.meveo.admin.sepa.jaxb.pain001.PaymentIdentification1();
 		cdtTrfTxInf.setPmtId(paymentIdentification);
 		paymentIdentification.setInstrId(String.valueOf(dDRequestItem.getDdRequestLOT().getId()));
-		paymentIdentification.setEndToEndId("" + dDRequestItem.getId());
+		paymentIdentification.setEndToEndId(String.valueOf(dDRequestItem.getId()));
 
 		AmountType3Choice amt = new AmountType3Choice();
 		cdtTrfTxInf.setAmt(amt);
@@ -687,19 +663,20 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		org.meveo.admin.sepa.jaxb.pain001.BranchAndFinancialInstitutionIdentification4 cdtrAgent = new org.meveo.admin.sepa.jaxb.pain001.BranchAndFinancialInstitutionIdentification4();
 		cdtTrfTxInf.setCdtrAgt(cdtrAgent);
 		org.meveo.admin.sepa.jaxb.pain001.FinancialInstitutionIdentification7 finInstnId = new org.meveo.admin.sepa.jaxb.pain001.FinancialInstitutionIdentification7();
-		finInstnId.setBIC(bankCoordinates.getBic());
+		finInstnId.setBIC((String) paymentInformations[4]);
 		cdtrAgent.setFinInstnId(finInstnId);
 		org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32 cdtr = new org.meveo.admin.sepa.jaxb.pain001.PartyIdentification32();
 		cdtTrfTxInf.setCdtr(cdtr);
-		cdtr.setNm(ca.getDescription());
+		cdtr.setNm((String) paymentInformations[2]);
 		cdtr.setCtryOfRes(FR_COUNTRY);
 		org.meveo.admin.sepa.jaxb.pain001.CashAccount16 cdtrAccount = new org.meveo.admin.sepa.jaxb.pain001.CashAccount16();
 		cdtTrfTxInf.setCdtrAcct(cdtrAccount);
 		org.meveo.admin.sepa.jaxb.pain001.AccountIdentification4Choice identification = new org.meveo.admin.sepa.jaxb.pain001.AccountIdentification4Choice();
-		if (!isMatched(bankCoordinates.getIban(), IBAN_PATTERN)) {
+		String iban = (String) paymentInformations[5];
+		if (!isMatched(iban, IBAN_PATTERN)) {
 			throw new BusinessException("IBAN of the creditor account is not valid!");
 		}
-		identification.setIBAN(bankCoordinates.getIban());
+		identification.setIBAN(iban);
 		cdtrAccount.setId(identification);
 
 		RemittanceInformation5 rmtInf = new RemittanceInformation5();
@@ -718,7 +695,6 @@ public class SepaFile extends AbstractDDRequestBuilder {
 		if (field == null || sPattern == null) {
 			return false;
 		}
-		Pattern pattern = Pattern.compile(sPattern);
 		Matcher matcher = pattern.matcher(field);
 		return matcher.matches();
 	}

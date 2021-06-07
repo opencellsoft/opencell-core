@@ -38,7 +38,7 @@ public class DDRequestLotOpService extends PersistenceService<DDRequestLotOp> {
 
     @SuppressWarnings("unchecked")
     public List<DDRequestLotOp> getDDRequestOps(DDRequestBuilder ddRequestBuilder, Seller seller,PaymentOrRefundEnum paymentOrRefundEnum) {
-        List<DDRequestLotOp> ddrequestOps = new ArrayList<DDRequestLotOp>();
+        List<DDRequestLotOp> ddrequestOps = new ArrayList<>();
 
         StringBuilder selectQuery = new StringBuilder("from ")
                 .append(DDRequestLotOp.class.getSimpleName())
