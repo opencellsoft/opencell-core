@@ -216,12 +216,21 @@ public interface InvoiceResource {
 	
 	@PUT
 	@Path("/invoices/{id}")
-	@Operation(summary = "Create a new invoice", tags = {
-			"Invoices" }, description = "Create a new invoice", 
+	@Operation(summary = "Update an invoice", tags = {
+			"Invoices" }, description = "Update an invoice", 
 					responses = {
 					@ApiResponse(responseCode = "200", description = "the Invoice is successfully created"),
 					@ApiResponse(responseCode = "400", description = "bad request when Invoice information contains an error") })
 	Response update(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id, @Parameter(description = "the Invoice object", required = true) Invoice input);
+	
+
+	@PUT
+	@Path("/invoices/{id}/calculation")
+	@Operation(summary = "calculate invoice",  description = "calculate invoice", 
+	responses = {
+	@ApiResponse(responseCode = "200", description = "invoice successfully calculated"),
+	@ApiResponse(responseCode = "403", description = "error when calculating invoice") })
+	Response calculateInvoice(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id);
 
 
 	@GET

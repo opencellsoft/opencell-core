@@ -220,4 +220,12 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		Invoice invoice = invoiceApiService.findByCode(invoiceNumber).orElseThrow(NotFoundException::new);
 		return buildInvoiceResponse(request, invoice);
 	}
+	
+	@Override
+	public Response calculateInvoice(Long id) {
+		Invoice invoice = findInvoiceEligibleToUpdate(id);
+		invoiceApiService.calculateInvoice(invoice);
+		return Response.accepted(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
+                .build();
+	}
 }
