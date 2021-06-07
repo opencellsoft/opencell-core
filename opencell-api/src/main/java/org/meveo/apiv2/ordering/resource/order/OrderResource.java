@@ -165,4 +165,25 @@ public interface OrderResource {
     Response deleteOrder(
             @Parameter(description = "ids of orders to delete", required = true) @QueryParam("id") List<Long> ids);
 
+    @GET
+    @Path("/find/{id}")
+    @Operation(summary = "Return an order",
+            tags = { "Orders" },
+            description = "Returns a single order",
+            responses = {
+                    @ApiResponse(
+                            headers = {
+                                    @Header (name = "ETag",
+                                            description = "a pseudo-unique identifier that represents the version of the data sent back",
+                                            schema = @Schema(type = "integer", format = "int64")
+                                    )
+                            },
+                            description = "the searched order", content = @Content(schema = @Schema(implementation = Order.class))
+                    ),
+                    @ApiResponse(responseCode = "304",
+                            description = "Not Modified, Returned to the client when the cached copy of a particular resource is up to date with the server"),
+                    @ApiResponse(responseCode = "404", description = "order not found", content = @Content(schema = @Schema(implementation = ApiException.class)))
+            })
+    Response getOrder(@Parameter(description = "code of the order", required = true) @PathParam("code") String code,
+                      @Context Request request);
 }

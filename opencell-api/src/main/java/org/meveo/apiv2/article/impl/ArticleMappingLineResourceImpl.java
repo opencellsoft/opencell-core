@@ -63,6 +63,24 @@ public class ArticleMappingLineResourceImpl implements ArticleMappingLineResourc
 				.map(aml -> Response.ok().entity(toResourceOrderWithLink(mapper.toResource(aml))).build())
                 .orElseThrow(NotFoundException::new);
 	}
+
+	@Override
+	public Response find(String code, Request request) {
+		return articleMappingLineApiService.findByCode(code)
+				.map(aml -> {
+					EntityTag etag = new EntityTag(Integer.toString(aml.hashCode()));
+					CacheControl cc = new CacheControl();
+					cc.setMaxAge(1000);
+					Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
+					if (builder != null) {
+						builder.cacheControl(cc);
+						return builder.build();
+					}
+					return Response.ok().cacheControl(cc).tag(etag)
+							.entity(toResourceOrderWithLink(mapper.toResource(aml))).build();
+				})
+				.orElseThrow(NotFoundException::new);
+	}
 	
     private org.meveo.apiv2.article.ArticleMappingLine toResourceOrderWithLink(org.meveo.apiv2.article.ArticleMappingLine articleMappingLineResource) {
         return ImmutableArticleMappingLine.copyOf(articleMappingLineResource)

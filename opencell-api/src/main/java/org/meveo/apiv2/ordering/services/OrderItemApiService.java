@@ -18,6 +18,8 @@
 
 package org.meveo.apiv2.ordering.services;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -136,7 +138,7 @@ public class OrderItemApiService implements ApiService<OrderItem> {
 
     @Override
     public Optional<OrderItem> findById(Long id) {
-        return Optional.ofNullable(refreshOrRetrieveOrderItemProductInstanceProduct(orderItemService.findById(id, fetchFields)));
+        return ofNullable(refreshOrRetrieveOrderItemProductInstanceProduct(orderItemService.findById(id, fetchFields)));
     }
 
     @Override
@@ -345,5 +347,10 @@ public class OrderItemApiService implements ApiService<OrderItem> {
             }
         }
         return OrderItemOptional;
+    }
+
+    @Override
+    public Optional<OrderItem> findByCode(String code) {
+        return ofNullable(orderItemService.findByCode(code, fetchFields));
     }
 }

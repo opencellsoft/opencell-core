@@ -1635,4 +1635,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         update(ratedTransaction);
 		
 	}
+
+    /**
+     * Find Rated transaction by code
+     *
+     * @param code ratedTransaction's code
+     * @return RatedTransaction
+     */
+    public RatedTransaction findByCode(String code) {
+        QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "rt", null);
+        qb.addCriterion("code", "=", code, true);
+        try {
+            return (RatedTransaction) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException exception) {
+            return null;
+        }
+    }
 }

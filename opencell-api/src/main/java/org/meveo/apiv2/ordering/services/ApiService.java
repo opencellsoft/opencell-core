@@ -31,6 +31,6 @@ public interface ApiService<T extends BaseEntity> {
     Optional<T> update(Long id, T baseEntity);
     Optional<T> patch(Long id, T baseEntity);
     Optional<T> delete(Long id);
-    
+    Optional<T> findByCode(String code);
   
 }
