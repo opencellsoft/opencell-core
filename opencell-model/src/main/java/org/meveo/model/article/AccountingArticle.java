@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
@@ -29,7 +30,7 @@ import static javax.persistence.FetchType.LAZY;
 @Table(name = "billing_accounting_article", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_accounting_article_seq"), })
-@NamedQuery(name = "AccountingArticle.findByAccountingCode", query = "select a from AccountingArticle a where a.accountingCode.code = :accountingCode")
+@NamedQuery(name = "AccountingArticle.findByAccountingCode", query = "select a from AccountingArticle a inner join fetch a.accountingCode aa where aa.code = :accountingCode")
 public class AccountingArticle extends EnableBusinessCFEntity {
 
     /**
@@ -156,7 +157,8 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + Objects.hash(getAccountingCode(), getAnalyticCode1(), getAnalyticCode2(), getAnalyticCode3(),
+				getArticleFamily(), getDescriptionI18n(), getInvoiceSubCategory(), getTaxClass());
 		return result;
 	}
 
@@ -176,6 +178,8 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 			return false;
 		return true;
 	}
+	
+	
     
     
 }

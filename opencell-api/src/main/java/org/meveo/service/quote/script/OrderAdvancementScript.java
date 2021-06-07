@@ -161,7 +161,7 @@ public class OrderAdvancementScript extends ModuleScript {
     }
 
     private AccountingArticle getDefaultAccountingArticle() {
-        String articleCode = ParamBean.getInstance().getProperty("advancePayment.accountingArticleCode", "ACT-STD");
+        String articleCode = ParamBean.getInstance().getProperty("accountingArticle.advancePayment.defautl.code", "ADV-STD");
 
         AccountingArticle accountingArticle = accountingArticleService.findByCode(articleCode);
         if (accountingArticle == null)

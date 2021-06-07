@@ -7,11 +7,15 @@ import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.FlushModeType;
 import javax.ws.rs.BadRequestException;
 
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleFamily;
 import org.meveo.model.billing.AccountingCode;
@@ -209,9 +213,17 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
     }
 
 
+	@Inject
+	@MeveoJpa
+	private EntityManagerWrapper entityManagerWrapper;
+	
 	@Override
 	public Optional<AccountingArticle> getAccountingArticles(String productCode, Map<String, Object> attributes) {
-		Product product = productService.findByCode(productCode);
+		var sqlProduct = "select distinct  p from Product p join fetch p.productCharges pp inner join fetch pp.chargeTemplate where p.code=:code";
+		Product product = (Product) entityManagerWrapper.getEntityManager()
+									.createQuery(sqlProduct)
+									.setParameter("code", productCode)
+									.setFlushMode(FlushModeType.COMMIT).getSingleResult();
 		if(product == null)
             throw new BadRequestException("No Product found with code: " + productCode);
 		Optional<AccountingArticle> article = accountingArticleService.getAccountingArticle(product, attributes);
