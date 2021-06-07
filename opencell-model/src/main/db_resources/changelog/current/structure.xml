@@ -8993,6 +8993,11 @@ public class OrderAdvancement extends ModuleScript {
 	    <sql>CREATE INDEX idx_ar_payment_history_external_payment_id   ON ${db.schema.adapted}ar_payment_history (external_payment_id );</sql>
     </changeSet>
     
+    <changeSet id="#559_20210603" author="TarikFA.">
+    	<sql>update crm_customer_category set tax_category_id = -1 where tax_category_id is null</sql>
+    	<addNotNullConstraint tableName="crm_customer_category" columnName="tax_category_id"/>
+    </changeSet>
+    
     <changeSet id="#20210607_540_563" author="TarikFA.">
     	<sql>INSERT INTO ${db.schema.adapted}billing_accounting_article (id,"version",created,creator,code,description,tax_class_id,invoice_sub_category_id,description_i18n,disabled,uuid)
 				VALUES (nextval('billing_accounting_article_seq'),1,'2021-06-03 16:23:10.262','opencell.admin','PROD-STD','PROD-STD',-1,-2,'{}',0,'63ef9cee-f498-4908-PROD-STD');</sql>

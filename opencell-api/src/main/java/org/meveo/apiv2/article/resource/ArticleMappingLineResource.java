@@ -69,4 +69,17 @@ public interface ArticleMappingLineResource {
                     @ApiResponse(responseCode = "400", description = "bad request when article mapping line information doesn't exist")
             })
     Response deleteById(@Parameter(description = "id of the article mapping line", required = true) @PathParam("id") Long id);
+
+    @GET
+    @Path("/find/{code}")
+    @Operation(summary = "This endpoint allows to find an existing article mapping line resource",
+            tags = { "articleMappingLine" },
+            description ="find an existing article mapping line resource",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the article mapping line resource retrieved, and the object is returned in the response"),
+                    @ApiResponse(responseCode = "400", description = "bad request when article mapping line information doesn't exist")
+            })
+    Response find(@Parameter(description = "code of the article mapping line", required = true)
+                      @PathParam("code") String code, @Context Request request);
+
 }

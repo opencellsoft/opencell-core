@@ -120,6 +120,24 @@ public class OrderItemResourceImpl implements OrderItemResource {
         return Response.ok().entity("Successfully deleted all order-Item").build();
     }
 
+    @Override
+    public Response getOrderItem(String code, Request request) {
+        return orderItemService.findByCode(code)
+                .map(orderItem ->  {
+                    EntityTag etag = new EntityTag(Integer.toString(orderItem.hashCode()));
+                    CacheControl cc = new CacheControl();
+                    cc.setMaxAge(1000);
+                    Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
+                    if (builder != null) {
+                        builder.cacheControl(cc);
+                        return builder.build();
+                    }
+                    return Response.ok().cacheControl(cc).tag(etag)
+                            .entity(toResourceOrderItemWithLink(orderItemMapper.toResource(orderItem))).build();
+                })
+                .orElseThrow(NotFoundException::new);
+    }
+
     // TODO : move to mapper
     private org.meveo.apiv2.ordering.resource.orderItem.OrderItem toResourceOrderItemWithLink(org.meveo.apiv2.ordering.resource.orderItem.OrderItem orderItem) {
         return ImmutableOrderItem.copyOf(orderItem).withLinks(new LinkGenerator.SelfLinkGenerator(OrderItemResource.class)

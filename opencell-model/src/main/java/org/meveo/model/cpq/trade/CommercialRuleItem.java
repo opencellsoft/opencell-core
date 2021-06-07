@@ -36,6 +36,21 @@ import org.meveo.model.cpq.enums.OperatorEnum;
         @Parameter(name = "sequence_name", value = "cpq_commercial_rule_item_seq"), })
 public class CommercialRuleItem extends BaseEntity {
 
+	
+	public CommercialRuleItem() {
+	}
+	
+	
+
+	public CommercialRuleItem(CommercialRuleItem copy) {
+		this.commercialRuleHeader = copy.commercialRuleHeader;
+		this.operator = copy.operator;
+		this.ruleItemEl = copy.ruleItemEl;
+		this.commercialRuleLines = new ArrayList<CommercialRuleLine>();
+	}
+
+
+
 	/**
 	 * 
 	 */

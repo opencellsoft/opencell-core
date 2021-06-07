@@ -166,4 +166,26 @@ public interface OrderItemResource {
             })
     Response deleteOrderItem(
             @Parameter(description = "ids of order-items to delete", required = true) @QueryParam("id") List<Long> ids);
+
+    @GET
+    @Path("/find/{code}")
+    @Operation(summary = "Return an order-Item",
+            tags = { "Order-items" },
+            description = "Returns a single order-Item",
+            responses = {
+                    @ApiResponse(
+                            headers = {
+                                    @Header (name = "ETag",
+                                            description = "a pseudo-unique identifier that represents the version of the data sent back",
+                                            schema = @Schema(type = "integer", format = "int64")
+                                    )
+                            },
+                            description = "the searched order-Item", content = @Content(schema = @Schema(implementation = OrderItem.class))
+                    ),
+                    @ApiResponse(responseCode = "304",
+                            description = "Not Modified, Returned to the client when the cached copy of a particular resource is up to date with the server"),
+                    @ApiResponse(responseCode = "404", description = "order-Item not found", content = @Content(schema = @Schema(implementation = ApiException.class)))
+            })
+    Response getOrderItem(@Parameter(description = "code of the order-Item", required = true) @PathParam("code") String code,
+                          @Context Request request);
 }

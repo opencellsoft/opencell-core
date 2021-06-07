@@ -111,6 +111,24 @@ public class OrderResourceImpl implements OrderResource {
         return Response.ok().entity("Successfully deleted all order").build();
     }
 
+    @Override
+    public Response getOrder(String code, Request request) {
+        return orderService.findByCode(code)
+                .map(order ->  {
+                    EntityTag etag = new EntityTag(Integer.toString(order.hashCode()));
+                    CacheControl cc = new CacheControl();
+                    cc.setMaxAge(1000);
+                    Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
+                    if (builder != null) {
+                        builder.cacheControl(cc);
+                        return builder.build();
+                    }
+                    return Response.ok().cacheControl(cc).tag(etag)
+                            .entity(toResourceOrderWithLink(orderMapper.toResource(order))).build();
+                })
+                .orElseThrow(NotFoundException::new);
+    }
+
     private org.meveo.apiv2.ordering.resource.order.Order toResourceOrderWithLink(org.meveo.apiv2.ordering.resource.order.Order order) {
         return ImmutableOrder.copyOf(order).withLinks(new LinkGenerator.SelfLinkGenerator(OrderResource.class)
                 .withId(order.getId()).withGetAction().withPostAction().withPutAction().withPatchAction()

@@ -1,19 +1,21 @@
 package org.meveo.apiv2.billing.resource;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.meveo.apiv2.billing.Invoice;
 import org.meveo.apiv2.billing.RatedTransactionInput;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.apiv2.models.ApiException;
 
 @Path("/billing/ratedTransaction")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -50,4 +52,15 @@ public interface RatedTransactionResource {
 	Response cancel(
 			@Parameter(description = " ratedTransaction id", required = true) @PathParam("id") Long id);
 
+	@GET
+	@Path("/{code}")
+	@Operation(summary = "Return a rated transaction", tags = {
+			"RatedTransaction" }, description = "Returns rated transaction data", responses = { @ApiResponse(headers = {
+			@Header(name = "ETag", description = "code that represents the version of the data sent back",
+					schema = @Schema(type = "integer", format = "int64")) }, description = "the searched RatedTransaction",
+			content = @Content(schema = @Schema(implementation = Invoice.class))),
+			@ApiResponse(responseCode = "404", description = "RatedTransaction not found",
+					content = @Content(schema = @Schema(implementation = ApiException.class))) })
+	Response find(@Parameter(description = "code of the Rated transaction", required = true) @PathParam("code") String code,
+						@Context Request request);
 }

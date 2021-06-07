@@ -46,6 +46,23 @@ import org.meveo.model.cpq.tags.Tag;
 })
 public class CommercialRuleLine extends BaseEntity {
 
+	
+	public CommercialRuleLine(CommercialRuleLine copy) {
+		this.commercialRuleItem = copy.commercialRuleItem;
+		this.sourceOfferTemplate = copy.sourceOfferTemplate;
+		this.sourceProduct = copy.sourceProduct;
+		this.sourceProductVersion = copy.sourceProductVersion;
+		this.sourceAttribute = copy.sourceAttribute;
+		this.sourceGroupedAttributes = copy.sourceGroupedAttributes;
+		this.sourceTag = copy.sourceTag;
+		this.sourceAttributeValue = copy.sourceAttributeValue;
+		this.sourceGroupedAttributeValue = copy.sourceGroupedAttributeValue;
+		this.operator = copy.operator;
+	}
+
+	public CommercialRuleLine() {
+	}
+
 	/**
 	 * 
 	 */

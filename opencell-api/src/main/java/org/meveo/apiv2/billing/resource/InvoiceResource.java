@@ -112,8 +112,8 @@ public interface InvoiceResource {
 
 	/**
 	 * @param id
-	 * @param invoiceLinesInput
 	 * @param lineId
+	 * @param invoiceLineInput
 	 * @return
 	 */
 	@PUT
@@ -143,7 +143,7 @@ public interface InvoiceResource {
 	
 	/**
 	 * @param id
-	 * @param invoiceLinesInput
+	 * @param invoiceLineToRemove
 	 * @return
 	 */
 	@DELETE
@@ -153,7 +153,7 @@ public interface InvoiceResource {
 	@ApiResponse(responseCode = "200", description = "invoice lines successfully removed"),
 	@ApiResponse(responseCode = "403", description = "error when removing invoice lines")})
 	Response removeInvoiceLines(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id,
-			@Parameter(description = "invoice lines to remove", required = false)  InvoiceLinesToRemove invoiceLineToRemove);
+			@Parameter(description = "invoice lines to remove")  InvoiceLinesToRemove invoiceLineToRemove);
 	
 	/**
 	 * @param id
@@ -222,5 +222,19 @@ public interface InvoiceResource {
 					@ApiResponse(responseCode = "200", description = "the Invoice is successfully created"),
 					@ApiResponse(responseCode = "400", description = "bad request when Invoice information contains an error") })
 	Response update(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id, @Parameter(description = "the Invoice object", required = true) Invoice input);
+
+
+	@GET
+	@Path("/find/{invoiceNumber}")
+	@Operation(summary = "Return an invoice", tags = {"Invoices" },
+			description = "Returns the invoice data", responses = { @ApiResponse(headers = {
+			@Header(name = "ETag", description = "a pseudo-unique identifier that represents the version of the data sent back",
+					schema = @Schema(type = "integer", format = "int64")) }, description = "the searched invoice",
+			content = @Content(schema = @Schema(implementation = Invoice.class))),
+			@ApiResponse(responseCode = "404", description = "invoice not found",
+					content = @Content(schema = @Schema(implementation = ApiException.class))) })
+	Response find(@Parameter(description = "invoice Number of the Invoice", required = true)
+						@PathParam("invoiceNumber") String invoiceNumber,
+						@Context Request request);
 
 }

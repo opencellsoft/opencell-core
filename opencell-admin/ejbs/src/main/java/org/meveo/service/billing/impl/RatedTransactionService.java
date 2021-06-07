@@ -56,6 +56,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
@@ -1048,6 +1049,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if (expression.indexOf(ValueExpressionWrapper.VAR_SERVICE_INSTANCE) >= 0) {
                 contextMap.put(ValueExpressionWrapper.VAR_SERVICE_INSTANCE, serviceInstance);
             }
+            if (expression.indexOf(ValueExpressionWrapper.VAR_CPQ_QUOTE) >= 0) {
+                if (serviceInstance != null) {
+                	CpqQuote quote=serviceInstance.getQuoteProduct()!=null?serviceInstance.getQuoteProduct().getQuote():null;
+                	if(quote!=null) {
+                		contextMap.put(ValueExpressionWrapper.VAR_CPQ_QUOTE, quote);
+                	}
+                    
+                }
+            }
 
             if (expression.indexOf(ValueExpressionWrapper.VAR_SUBSCRIPTION) >= 0) {
                 if (subscription == null) {
@@ -1625,4 +1635,20 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         update(ratedTransaction);
 		
 	}
+
+    /**
+     * Find Rated transaction by code
+     *
+     * @param code ratedTransaction's code
+     * @return RatedTransaction
+     */
+    public RatedTransaction findByCode(String code) {
+        QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "rt", null);
+        qb.addCriterion("code", "=", code, true);
+        try {
+            return (RatedTransaction) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException exception) {
+            return null;
+        }
+    }
 }

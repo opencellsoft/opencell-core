@@ -3011,8 +3011,8 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-185">
         <createTable tableName="billing_rated_transaction">
-            <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rated_transaction_pkey" />
+             <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" />
             </column>
             <column name="version" type="int4" />
             <column name="amount_tax" type="numeric(23, 12)" />
@@ -3086,6 +3086,12 @@
             <column name="product_version_id" type="bigint" />
             <column name="invoice_line_id" type="bigint"/>
         </createTable>
+        <modifySql dbms="postgresql">
+        	<append value=" PARTITION BY LIST(status)"/>
+    	</modifySql>    	
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-185-pk">
+        	<addPrimaryKey columnNames="id,status" constraintName="billing_rated_transaction_pkey" tableName="billing_rated_transaction" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-187">
         <createTable tableName="billing_rejected_billing_accounts">
@@ -3496,7 +3502,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wallet_operation_pkey" />
+                <constraints nullable="false" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime">
@@ -3579,6 +3585,12 @@
             <column name="product_version_id" type="bigint" />
             <column name="refunds_wo_id" type="bigint"/>
         </createTable>
+        <modifySql dbms="postgresql">
+        	<append value=" PARTITION BY LIST(status)"/>
+    	</modifySql>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-202-pk">
+    	<addPrimaryKey columnNames="id, status" constraintName="billing_wallet_operation_pkey" tableName="billing_wallet_operation" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-203">
         <createTable tableName="cat_calendar">
@@ -4750,7 +4762,9 @@
                 <constraints nullable="false" />
             </column>
             <column name="accounting_code_id" type="bigint" />
-            <column name="tax_category_id" type="bigint" />
+            <column name="tax_category_id" type="bigint" >
+            	<constraints nullable="false"/>
+            </column>
             <column name="tax_category_el" type="varchar(2000)" />
             <column name="tax_category_el_sp" type="varchar(2000)" />
             <column name="description_i18n" type="text">
@@ -5265,7 +5279,7 @@
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-271">
         <createTable tableName="rating_edr">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="rating_edr_pkey" />
+                <constraints nullable="false" />
             </column>
             <column name="version" type="int4" />
             <column name="created" type="datetime" />
@@ -5305,6 +5319,12 @@
             <column name="extra_parameter" type="text" />
             <column name="times_tried" type="int4"/>
         </createTable>
+        <modifySql dbms="postgresql">
+        	<append value=" PARTITION BY LIST(status)"/>
+    	</modifySql>
+    </changeSet>
+    <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-271-pk">
+    	<addPrimaryKey columnNames="id, status" constraintName="rating_edr_pkey" tableName="rating_edr" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-272">
         <createTable tableName="report_emails">
@@ -11248,10 +11268,12 @@
         <addForeignKeyConstraint baseColumnNames="billing_run" baseTableName="billing_rejected_billing_accounts" constraintName="fk_iyfs5u3t9m0hc9rkeadr6atq9" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_billing_run" />
     </changeSet>
+    <!-- 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-801">
         <addForeignKeyConstraint baseColumnNames="reratedwalletoperation_id" baseTableName="billing_wallet_operation" constraintName="fk_j3ntuqkj79m0fgdwa3anib1nk" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_wallet_operation" />
     </changeSet>
+    -->
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-802">
         <addForeignKeyConstraint baseColumnNames="valid_cal_id" baseTableName="cat_price_plan_matrix" constraintName="fk_j45dy6ja0ulbs15erjw2abtin" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
@@ -11591,18 +11613,23 @@
         <addForeignKeyConstraint baseColumnNames="job_instance_id" baseTableName="adm_notif_job" constraintName="fk_job_trigger_notif" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_job_instance" />
     </changeSet>
+    <!-- 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1020">
         <addForeignKeyConstraint baseColumnNames="header_edr_id" baseTableName="rating_edr" constraintName="fk_headeredrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="rating_edr" />
     </changeSet>
+     -->
+    <!-- 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1021">
         <addForeignKeyConstraint baseColumnNames="edr_id" baseTableName="billing_wallet_operation" constraintName="fk_wopedrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="rating_edr" />
     </changeSet>
+    
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1022">
         <addForeignKeyConstraint baseColumnNames="edr_id" baseTableName="billing_rated_transaction" constraintName="fk_ropedrid" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="rating_edr" />
     </changeSet>
+    -->
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1027">
         <addForeignKeyConstraint constraintName="fk_billing_invoice_adjusted_invoice" referencedTableName="billing_invoice" baseColumnNames="invoice_id" baseTableName="billing_invoice" referencedColumnNames="id" />
     </changeSet>
@@ -11833,8 +11860,10 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="wf_history" />
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1145">
+    	<!-- 
         <addForeignKeyConstraint baseColumnNames="origin_edr_id" baseTableName="billing_reservation" constraintName="fk_reservation_edr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="rating_edr" />
+         -->
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-fk-1149">
         <addForeignKeyConstraint baseColumnNames="routed_to_user_group_id" baseTableName="ord_quote" constraintName="fk_ord_quote_rt_usergrp" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
@@ -14731,8 +14760,16 @@ $$ LANGUAGE plpgsql;
         <delete tableName="DATABASECHANGELOG" />
     </changeSet>
 
+    <changeSet id="#4511_20190919-P" author="AndriusKarpavicius" dbms="postgresql"> 
+    	<sql>create table ${db.schema.adapted}rating_edr_open partition of ${db.schema.adapted}rating_edr for values in('OPEN')</sql>
+        <sql>create table ${db.schema.adapted}rating_edr_other partition of ${db.schema.adapted}rating_edr default</sql>
 
+        <sql>create table ${db.schema.adapted}billing_wallet_operation_open partition of ${db.schema.adapted}billing_wallet_operation for values in('OPEN')</sql>
+        <sql>create table ${db.schema.adapted}billing_wallet_operation_other partition of ${db.schema.adapted}billing_wallet_operation default</sql>
 
+        <sql>create table ${db.schema.adapted}billing_rated_transaction_open  partition of ${db.schema.adapted}billing_rated_transaction for values in('OPEN')</sql>
+        <sql>create table ${db.schema.adapted}billing_rated_transaction_other partition of ${db.schema.adapted}billing_rated_transaction default</sql>
+   	</changeSet>
 
     <changeSet id="#4140_08042019" author="hznibar">
 	</changeSet>
@@ -14953,9 +14990,6 @@ $$ LANGUAGE plpgsql;
     </changeSet>
 
     <changeSet id="#4511_20190919-M" author="AndriusKarpavicius" dbms="mysql">
-    </changeSet>
-
-    <changeSet id="#4511_20190919-P" author="AndriusKarpavicius" dbms="postgresql">
     </changeSet>
 
     <changeSet id="#4511_20190919-P-end" author="AndriusKarpavicius" dbms="postgresql">
@@ -15726,6 +15760,7 @@ $$ LANGUAGE plpgsql;
     
     <changeSet id="#5599_20210526" author="AbdelmounaimAkadid" />
     <changeSet id="#5416_20210526" author="AbdelmounaimAkadid" />
+    <changeSet id="#559_20210603" author="TarikFA." />
     
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

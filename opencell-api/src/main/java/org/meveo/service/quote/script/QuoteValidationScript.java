@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.cpq.CpqQuote;
@@ -26,15 +24,13 @@ import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.OrderType;
 import org.meveo.model.cpq.offer.QuoteOffer;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.quote.QuoteArticleLine;
 import org.meveo.model.quote.QuoteLot;
 import org.meveo.model.quote.QuoteProduct;
 import org.meveo.model.quote.QuoteVersion;
-import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.billing.impl.InvoiceTypeService;
+import org.meveo.service.cpq.CpqQuoteService;
 import org.meveo.service.cpq.QuoteVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderArticleLineService;
@@ -71,12 +67,14 @@ public class QuoteValidationScript extends ModuleScript {
     private MeveoUser currentUser = ((CurrentUserProducer) getServiceInterface(CurrentUserProducer.class.getSimpleName())).getCurrentUser();
     private CustomFieldInstanceService customFieldInstanceService = (CustomFieldInstanceService) getServiceInterface(CustomFieldInstanceService.class.getSimpleName());
     private CustomFieldTemplateService customFieldTemplateService = (CustomFieldTemplateService) getServiceInterface(CustomFieldTemplateService.class.getSimpleName());
+	private CpqQuoteService cpqQuoteService = (CpqQuoteService) getServiceInterface(CpqQuoteService.class.getSimpleName());
 	
 	@Override
 	public void execute(Map<String, Object> methodContext) throws BusinessException {
-		final CpqQuote cpqQuote = (CpqQuote) methodContext.get("cpqQuote");
-		if(cpqQuote == null)
+		CpqQuote cpqQuoteTmp = (CpqQuote) methodContext.get("cpqQuote");
+		if(cpqQuoteTmp == null)
 			throw new BusinessException("No Quote found");
+		final CpqQuote cpqQuote = cpqQuoteService.findByCode(cpqQuoteTmp.getCode());
 		LOGGER.info("start creation order from quote code {}", cpqQuote.getCode());
 		var quotesVersions = quoteVersionService.findByQuoteIdAndStatusActive(cpqQuote.getId());
 		if(quotesVersions.size() > 1)

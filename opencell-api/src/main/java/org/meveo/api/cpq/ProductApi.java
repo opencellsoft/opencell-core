@@ -497,10 +497,10 @@ public class ProductApi extends BaseApi {
      
     
     public Product duplicateProduct(String codeProduct, boolean duplicateHierarchy, boolean preserveCode) throws MeveoApiException, BusinessException {
-    	
+
     	Product product = null; 
     	try {
-    		product = productService.findByCode(codeProduct);
+    		product = productService.findByCode(codeProduct, Arrays.asList("productLine"));
     		if(product == null) {
     			throw new EntityDoesNotExistsException(Product.class, codeProduct);
     		}
@@ -662,7 +662,7 @@ public class ProductApi extends BaseApi {
 			if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
 				throw new DeleteReferencedEntityException(Product.class, codeProduct);
 			}
-			throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+			throw new MeveoApiException(e.getMessage());
 		}
 	}
 	 

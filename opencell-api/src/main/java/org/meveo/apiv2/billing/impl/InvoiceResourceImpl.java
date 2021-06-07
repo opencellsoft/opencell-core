@@ -214,4 +214,10 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
                 .build();
 	}
+
+	@Override
+	public Response find(String invoiceNumber, Request request) {
+		Invoice invoice = invoiceApiService.findByCode(invoiceNumber).orElseThrow(NotFoundException::new);
+		return buildInvoiceResponse(request, invoice);
+	}
 }

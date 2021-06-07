@@ -8258,6 +8258,7 @@
             <column name="code" value="PROSPECT" />
             <column name="description" value="Prospect" />
             <column name="exonerated_from_taxes" valueNumeric="0" />
+            <column name="tax_category_id" valueNumeric="-1" />
 
         </insert>
         <insert tableName="crm_customer_category">
@@ -8268,6 +8269,7 @@
             <column name="code" value="CLIENT" />
             <column name="description" value="Client" />
             <column name="exonerated_from_taxes" valueNumeric="0" />
+            <column name="tax_category_id" valueNumeric="-1" />
 
         </insert>
     </changeSet>

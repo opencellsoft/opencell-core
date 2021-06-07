@@ -54,11 +54,13 @@ import org.meveo.model.DeducedCounter;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRRejectReasonEnum;
@@ -713,6 +715,16 @@ public class UsageRatingService implements Serializable {
         }
         if (expression.indexOf("serviceInstance") >= 0) {
             userMap.put(ValueExpressionWrapper.VAR_SERVICE_INSTANCE, walletOperation.getServiceInstance());
+        }
+        if (expression.indexOf(ValueExpressionWrapper.VAR_CPQ_QUOTE) >= 0) {
+            ServiceInstance service = walletOperation.getServiceInstance();
+            if (service != null) {
+            	CpqQuote quote=service.getQuoteProduct()!=null?service.getQuoteProduct().getQuote():null;
+            	if(quote!=null) {
+            		userMap.put(ValueExpressionWrapper.VAR_CPQ_QUOTE, quote);
+            	}
+                
+            }
         }
 
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
