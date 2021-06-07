@@ -162,25 +162,6 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 		return result;
 	}
 
-	/*@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AccountingArticle other = (AccountingArticle) obj;
-		return Objects.equals(getAccountingCode(), other.getAccountingCode())
-				&& Objects.equals(getAnalyticCode1(), other.getAnalyticCode1())
-				&& Objects.equals(getAnalyticCode2(), other.getAnalyticCode2())
-				&& Objects.equals(getAnalyticCode3(), other.getAnalyticCode3())
-				&& Objects.equals(getArticleFamily(), other.getArticleFamily())
-				&& Objects.equals(getDescriptionI18n(), other.getDescriptionI18n())
-				&& Objects.equals(getInvoiceSubCategory(), other.getInvoiceSubCategory())
-				&& Objects.equals(getTaxClass(), other.getTaxClass());
-	}*/
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
