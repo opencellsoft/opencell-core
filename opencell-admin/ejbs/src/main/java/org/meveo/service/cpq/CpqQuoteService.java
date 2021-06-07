@@ -10,9 +10,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
@@ -43,15 +46,21 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
+import org.meveo.service.communication.impl.EmailSender;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -66,6 +75,8 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 
+import static java.util.Arrays.asList;
+
 @Stateless
 public class CpqQuoteService extends BusinessService<CpqQuote> {
 
@@ -73,6 +84,9 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	
 	@Inject
 	private InvoiceTypeService invoiceTypeService;
+
+	@Inject
+	private EmailSender emailSender;
 	
 	  /** map used to store temporary jasper report. */
     private Map<String, JasperReport> jasperReportMap = new HashMap<>();
@@ -410,4 +424,75 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	            return null;
 	        }
 	    }*/
+
+	    public boolean sendByEmail(CpqQuote quote, String overrideEmail, EmailTemplate overrideEmailTemplate) throws BusinessException {
+			if (quote == null) {
+				log.error("The quote to be sent by Email is null!!");
+				return false;
+			}
+			if (quote.getPdfFilename() == null) {
+				log.warn("The Pdf for the quote is not generated!!");
+				return false;
+			}
+			List<String> to = new ArrayList<>();
+			List<String> cc = new ArrayList<>();
+			List<File> files = new ArrayList<>();
+
+			String fullPdfFilePath = getFullPdfFilePath(quote, false);
+			File file = new File(fullPdfFilePath);
+
+			if (!file.exists()) {
+				log.warn("No Pdf file exists for the quote {}", quote.getQuoteNumber());
+				return false;
+			}
+			files.add(file);
+
+			BillingAccount billableAccount = quote.getBillableAccount();
+			Seller seller = quote.getSeller();
+			EmailTemplate emailTemplate = billableAccount.getEmailTemplate();
+
+			if (billableAccount.getContactInformation() != null) {
+				to.add(billableAccount.getContactInformation().getEmail());
+			}
+			if (!StringUtils.isBlank(billableAccount.getCcedEmails())) {
+				cc.addAll(Arrays.asList(billableAccount.getCcedEmails().split(",")));
+			}
+			if (overrideEmail != null) {
+				to.clear();
+				to.add(overrideEmail);
+				cc.clear();
+			}
+			if(overrideEmailTemplate != null){
+				emailTemplate = overrideEmailTemplate;
+			}
+			if (to.isEmpty() || emailTemplate == null) {
+				log.warn("No Email or  EmailTemplate is configured to receive the quote!!");
+				return false;
+			}
+			if (seller == null || seller.getContactInformation() == null) {
+				log.warn("The Seller or it's contact information is null!!");
+				return false;
+			}
+
+			Map<Object, Object> params = new HashMap<>();
+			params.put("cpqQuote", quote);
+			String subject = ValueExpressionWrapper.evaluateExpression(emailTemplate.getSubject(), params, String.class);
+			String content = ValueExpressionWrapper.evaluateExpression(emailTemplate.getTextContent(), params, String.class);
+			String contentHtml = ValueExpressionWrapper.evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+			String from = seller.getContactInformation().getEmail();
+
+			emailSender.send(from, Arrays.asList(from), to, cc, null, subject, content, contentHtml, files, null, false);
+
+			return true;
+		}
+
+	/**
+	 * Get a full path to an invoice's PDF file.
+	 *
+	 *
+	 * @param invoice Invoice
+	 * @param createDirs Should missing directories be created
+	 * @return Absolute path to a PDF file
+	 */
+
 }
