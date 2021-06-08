@@ -193,5 +193,12 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 		return invoiceService.update(invoice, input, invoiceRessource);
 	}
 
+	/**
+	 * @param invoice
+	 */
+	public void calculateInvoice(Invoice invoice) {
+		invoiceService.calculateInvoice(invoice);
+	}
+
 
 }
