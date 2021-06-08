@@ -101,8 +101,7 @@ public class EjbUtils {
             InitialContext ic = new InitialContext();
             return ic.lookup("java:global/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + "/" + serviceInterfaceName);
         } catch (Exception e) {
-            Logger log = LoggerFactory.getLogger(EjbUtils.class);
-            log.error("Failed to obtain service interface for {} {}", serviceInterfaceName, e.getMessage());
+            logger.debug("Java InitialContext lookup doesn't find instance for interface {}: {}", serviceInterfaceName, e.getMessage());
         }
         return null;
     }
