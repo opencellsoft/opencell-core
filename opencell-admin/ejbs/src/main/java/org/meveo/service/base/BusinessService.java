@@ -168,14 +168,14 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
     public BusinessEntity findByEntityClassAndCode(Class clazz, String code) {
         QueryBuilder qb = new QueryBuilder(clazz, "be", null);
         
+        qb.startOrClause();
         try {
-            qb.startOrClause();
-            qb.addCriterion("be.code", "=", code, true);
             qb.addCriterion("be.id", "=", Long.parseLong(code), false);
-            qb.endOrClause();
+            qb.addCriterion("be.code", "=", code, true);
         } catch (NumberFormatException e) {
             qb.addCriterion("be.code", "=", code, true);
         }
+        qb.endOrClause();
         
         try {
             return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
