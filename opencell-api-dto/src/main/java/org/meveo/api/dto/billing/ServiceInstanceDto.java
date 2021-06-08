@@ -93,6 +93,10 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     @XmlElement(name = "usageChargeInstance")
     private List<ChargeInstanceDto> usageChargeInstances;
 
+    @XmlElementWrapper(name = "attributeInstances")
+    @XmlElement(name = "attributeInstances")
+    private List<AttributeInstanceDto> attributeInstances = new ArrayList<AttributeInstanceDto>();
+
     /** The order number. */
     private String orderNumber;
 
@@ -632,4 +636,18 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     public void setMinimumChargeTemplate(String minimumChargeTemplate) {
         this.minimumChargeTemplate = minimumChargeTemplate;
     }
+
+	/**
+	 * @return the attributeInstances
+	 */
+	public List<AttributeInstanceDto> getAttributeInstances() {
+		return attributeInstances;
+	}
+
+	/**
+	 * @param attributeInstances the attributeInstances to set
+	 */
+	public void setAttributeInstances(List<AttributeInstanceDto> attributeInstances) {
+		this.attributeInstances = attributeInstances;
+	}
 }

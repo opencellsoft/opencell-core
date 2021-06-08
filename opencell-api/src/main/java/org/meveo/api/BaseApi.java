@@ -1790,6 +1790,14 @@ public abstract class BaseApi {
             throw new EntityDoesNotExistsException(typeParameterClass, code);
         return baseEntity;
     }
+
+
+    protected  <T extends BaseEntity> T loadEntityById(PersistenceService<T> service, Long id, Class<T> typeParameterClass){
+        T baseEntity = service.findById(id);
+        if(baseEntity == null)
+            throw new EntityDoesNotExistsException(typeParameterClass, id);
+        return baseEntity;
+    }
     
     protected <T extends Enum<T>> List<String> allStatus(Class<T> enums, String paramBeanName, String defaultValueForParamBean){
     	
