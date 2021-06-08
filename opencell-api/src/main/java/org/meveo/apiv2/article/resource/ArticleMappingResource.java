@@ -5,11 +5,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.apiv2.article.ArticleMapping;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 @Path("/articleMapping")
@@ -27,4 +26,17 @@ public interface ArticleMappingResource {
                     @ApiResponse(responseCode = "400", description = "bad request when article mapping information contains an error")
             })
     Response createArticleMappingLine(@Parameter(description = "the article mapping object", required = true) ArticleMapping articleMapping);
+
+    @GET
+    @Path("/{code}")
+    @Operation(summary = "This endpoint allows to find an existing article mapping resource",
+            tags = { "articleMapping" },
+            description ="find an existing article mapping resource",
+            responses = {
+                    @ApiResponse(responseCode="200", description = "the article mapping resource retrieved, and the object is returned in the response"),
+                    @ApiResponse(responseCode = "400", description = "bad request when article mapping information doesn't exist")
+            })
+    Response find(@Parameter(description = "code of the article mapping", required = true)
+                  @PathParam("code") String code, @Context Request request);
+
 }

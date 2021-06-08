@@ -3,10 +3,13 @@
  */
 package org.meveo.apiv2.billing.service;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.billing.BasicInvoice;
@@ -19,8 +22,6 @@ import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.Invoice;
 import org.meveo.service.billing.impl.InvoiceLinesService;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.InvoiceTypeService;
-import org.meveo.service.order.OrderService;
 
 public class InvoiceApiService  implements ApiService<Invoice> {
 	
@@ -28,11 +29,6 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	
     @Inject
     private InvoiceService invoiceService;
-    
-	@Inject
-	OrderService orderService;
-	
-	@Inject InvoiceTypeService invoiceTypeService;
 
 	@Inject
 	private InvoiceLinesService invoiceLinesService;
@@ -52,7 +48,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 
 	@Override
 	public Optional<Invoice> findById(Long id) {
-		return Optional.ofNullable(invoiceService.findById(id));
+		return ofNullable(invoiceService.findById(id));
 	}
 
 	@Override
@@ -83,22 +79,27 @@ public class InvoiceApiService  implements ApiService<Invoice> {
         return Optional.empty();
 	}
 
+	@Override
+	public Optional<Invoice> findByCode(String code) {
+		throw new BadRequestException("Use invoice number and type");
+	}
+
 	/**
 	 * @param invoiceTypeId
 	 * @param invoiceNumber
 	 * @return
 	 */
 	public Optional<Invoice> findByInvoiceNumberAndTypeId(Long invoiceTypeId, String invoiceNumber) {
-		return Optional.ofNullable(invoiceService.findByInvoiceTypeAndInvoiceNumber(invoiceNumber, invoiceTypeId));
+		return ofNullable(invoiceService.findByInvoiceTypeAndInvoiceNumber(invoiceNumber, invoiceTypeId));
 	}
 
 	/**
-	 * @param id
+	 * @param invoice
 	 * @param generateIfMissing
 	 * @return
 	 */
 	public Optional<byte[]> fetchPdfInvoice(Invoice invoice, boolean generateIfMissing) {
-		return Optional.ofNullable(invoiceService.getInvoicePdf(invoice, generateIfMissing));
+		return ofNullable(invoiceService.getInvoicePdf(invoice, generateIfMissing));
 		
 	}
 	
@@ -116,12 +117,12 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	 * @return
 	 */
 	public Optional<Invoice> findByInvoiceNumberAndTypeCode(String typeCode, String invoiceNumber) {
-		return Optional.ofNullable(invoiceService.findByInvoiceNumberAndTypeCode(invoiceNumber, typeCode));
+		return ofNullable(invoiceService.findByInvoiceNumberAndTypeCode(invoiceNumber, typeCode));
 	}
 
 	/**
 	 * @param invoice
-	 * @param invoiceLines
+	 * @param invoiceLinesInput InvoiceLinesInput
 	 */
 	public InvoiceLinesInput createLines(Invoice invoice, InvoiceLinesInput invoiceLinesInput) {
 		ImmutableInvoiceLinesInput.Builder result = ImmutableInvoiceLinesInput.builder();
@@ -181,7 +182,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	}
 
 	/**
-	 * @param invoice
+	 * @param input InvoiceInput
 	 * @return
 	 */
 	public Invoice create(org.meveo.apiv2.billing.InvoiceInput input) {
@@ -190,6 +191,13 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	
 	public Invoice update(Invoice invoice, Invoice input, org.meveo.apiv2.billing.Invoice invoiceRessource) {
 		return invoiceService.update(invoice, input, invoiceRessource);
+	}
+
+	/**
+	 * @param invoice
+	 */
+	public void calculateInvoice(Invoice invoice) {
+		invoiceService.calculateInvoice(invoice);
 	}
 
 

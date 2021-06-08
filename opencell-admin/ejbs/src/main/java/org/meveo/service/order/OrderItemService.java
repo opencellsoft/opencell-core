@@ -18,10 +18,13 @@
 
 package org.meveo.service.order;
 
-import javax.ejb.Stateless;
-
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.order.OrderItem;
 import org.meveo.service.base.PersistenceService;
+
+import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
+import java.util.List;
 
 /**
  * @author phung 
@@ -30,4 +33,19 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class OrderItemService extends PersistenceService<OrderItem> {
 
+    /**
+     * Find order Item  by code.
+     *
+     * @param code orderItem code
+     * @return OrderItem
+     */
+    public OrderItem findByCode(String code, List<String> fetchFields) {
+        QueryBuilder qb = new QueryBuilder(OrderItem.class, "oi", fetchFields);
+        qb.addCriterion("oi.code", "=", code, true);
+        try {
+            return (OrderItem) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException exception) {
+            return null;
+        }
+    }
 }

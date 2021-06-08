@@ -1,13 +1,7 @@
 package org.meveo.apiv2.article.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
+import static java.util.Arrays.asList;
+import static java.util.Optional.ofNullable;
 
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.article.AccountingArticle;
@@ -26,6 +20,12 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductService;
 
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 public class ArticleMappingLineApiService implements ApiService<ArticleMappingLine> {
 
     @Inject
@@ -43,6 +43,9 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
     @Inject
     private ProductService productService;
 
+    private List<String> fields =
+            asList("accountingArticle", "articleMapping", "offerTemplate", "product", "chargeTemplate");
+
     @Override
     public List<ArticleMappingLine> list(Long offset, Long limit, String sort, String orderBy, String filter) {
         return null;
@@ -55,8 +58,7 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
 
     @Override
     public Optional<ArticleMappingLine> findById(Long id) {
-    	List<String> fields = Arrays.asList("accountingArticle", "articleMapping", "offerTemplate", "product", "chargeTemplate");
-        return Optional.ofNullable(articleMappingLineService.findById(id, fields, true));
+        return ofNullable(articleMappingLineService.findById(id, fields, true));
     }
 
     @Override
@@ -187,5 +189,10 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
     		return Optional.of(current);
     	}
          return Optional.empty();
+    }
+
+    @Override
+    public Optional<ArticleMappingLine> findByCode(String code) {
+        return ofNullable(articleMappingLineService.findByCode(code, fields));
     }
 }

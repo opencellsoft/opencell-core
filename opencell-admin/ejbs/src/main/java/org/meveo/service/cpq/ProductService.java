@@ -82,27 +82,27 @@ public class ProductService extends BusinessService<Product> {
 	}
     
 
-	/**
+    /**
 	 * check the status of the product before it update, only product with the status DRAFT can be updated
 	 * @param product
 	 * @return product updated
 	 * @throws ProductException <br/> when: <ul><li>the status is ACTIVE</li><li>the status is CLOSED</li>
 	 */
 	public Product updateProduct(Product product) throws BusinessException{
-		LOGGER.info("updating product {}", product.getCode());
-		
+		product.getProductVersions().size();
+		log.info("updating product {}", product.getCode());
 //		if(product.getStatus().equals(ProductStatusEnum.ACTIVE)) {
 //			LOGGER.warn("the product {} can not be updated, because of its status => {}", product.getCode(), product.getStatus().toString());
 //			throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, product.getCode(), product.getStatus().toString()));
 //		}
 		if(product.getStatus().equals(ProductStatusEnum.CLOSED)) {
-			LOGGER.warn("the product {} can not be updated, because of its status => {}", product.getCode(), product.getStatus().toString());
+			log.warn("the product {} can not be updated, because of its status => {}", product.getCode(), product.getStatus().toString());
 			throw new BusinessException(String.format(PRODUCT_ACTIVE_CAN_NOT_REMOVED_OR_UPDATE, product.getCode(), product.getStatus().toString()));
 		}
 		
 		update(product);
 		
-		LOGGER.info("the product ({}) updated successfully", product.getCode());
+		log.info("the product ({}) updated successfully", product.getCode());
 		return product;
 	}
 	
@@ -313,7 +313,7 @@ public class ProductService extends BusinessService<Product> {
 		return product.getProductVersions()
 				.stream()
 				.filter(pv -> VersionStatusEnum.PUBLISHED.equals(pv.getStatus()))
-				.filter(pv -> pv.getValidity().isCorrespondsToPeriod(date))
+				.filter(pv -> { if (pv.getValidity()!=null && pv.getValidity().getFrom()!=null && pv.getValidity().getFrom()!=null) { return pv.getValidity().isCorrespondsToPeriod(date);}return false;})
 				.findFirst();
 	}
 }

@@ -18,6 +18,8 @@
 
 package org.meveo.apiv2.ordering.services;
 
+import static java.util.Optional.ofNullable;
+
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -64,7 +66,7 @@ public class ProductApiService implements ApiService<ProductTemplate> {
 
     @Override
     public Optional<ProductTemplate> findById(Long id) {
-        return Optional.ofNullable(productTemplateService.findById(id, fetchFields));
+        return ofNullable(productTemplateService.findById(id, fetchFields));
     }
 
     @Override
@@ -167,6 +169,11 @@ public class ProductApiService implements ApiService<ProductTemplate> {
             }
         }
         return productTemplateOptional;
+    }
+
+    @Override
+    public Optional<ProductTemplate> findByCode(String code) {
+        return ofNullable(productTemplateService.findByCode(code, fetchFields));
     }
 
     private void populateProductTemplateFields(ProductTemplate productTemplate) {

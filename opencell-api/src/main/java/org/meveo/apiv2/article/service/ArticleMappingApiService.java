@@ -6,7 +6,6 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.billing.impl.article.ArticleMappingService;
 import org.meveo.service.script.ScriptInstanceService;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import java.util.List;
@@ -60,5 +59,10 @@ public class ArticleMappingApiService implements ApiService<ArticleMapping> {
     @Override
     public Optional<ArticleMapping> delete(Long id) {
         return Optional.empty();
+    }
+
+    @Override
+    public Optional<ArticleMapping> findByCode(String code) {
+        return Optional.ofNullable(articleMappingService.findByCode(code));
     }
 }
