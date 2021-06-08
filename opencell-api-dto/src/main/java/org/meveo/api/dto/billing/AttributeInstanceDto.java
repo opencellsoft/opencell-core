@@ -20,15 +20,17 @@ package org.meveo.api.dto.billing;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseEntityDto;
-import org.meveo.api.dto.CustomFieldDto;
-import org.meveo.model.DatePeriod;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.model.billing.AttributeInstance;
 
 /**
  * The Class attributeInstanceDto.
@@ -46,53 +48,30 @@ public class AttributeInstanceDto extends BaseEntityDto {
 	 */
 	private static final long serialVersionUID = 3522824146767134576L;
 	
-	private String serviceInstanceCode;
-	private String subscriptionCode;
-	private DatePeriod subsScriptionValidity;
 	private String attributeCode;
 	private Long parentAttributeValueId;
 	private Set<Long> assignedAttributeValueIds = new HashSet<Long>();
 	private String stringValue;
 	private Date dateValue;
 	private Double doubleValue;
-    private CustomFieldDto customFieldDto;
+    private CustomFieldsDto customFieldDto;
     
-	/**
-	 * @return the serviceInstanceCode
-	 */
-	public String getServiceInstanceCode() {
-		return serviceInstanceCode;
-	}
-	/**
-	 * @param serviceInstanceCode the serviceInstanceCode to set
-	 */
-	public void setServiceInstanceCode(String serviceInstanceCode) {
-		this.serviceInstanceCode = serviceInstanceCode;
-	}
-	/**
-	 * @return the subscriptionCode
-	 */
-	public String getSubscriptionCode() {
-		return subscriptionCode;
-	}
-	/**
-	 * @param subscriptionCode the subscriptionCode to set
-	 */
-	public void setSubscriptionCode(String subscriptionCode) {
-		this.subscriptionCode = subscriptionCode;
-	}
-	/**
-	 * @return the subsScriptionValidity
-	 */
-	public DatePeriod getSubsScriptionValidity() {
-		return subsScriptionValidity;
-	}
-	/**
-	 * @param subsScriptionValidity the subsScriptionValidity to set
-	 */
-	public void setSubsScriptionValidity(DatePeriod subsScriptionValidity) {
-		this.subsScriptionValidity = subsScriptionValidity;
-	}
+    public AttributeInstanceDto() {
+    	
+    }
+    
+    public AttributeInstanceDto(AttributeInstance attribute, CustomFieldsDto customFieldDto) {
+    	if(attribute.getAttribute() != null)
+    		this.attributeCode = attribute.getAttribute().getCode();
+    	if(attribute.getParentAttributeValue() != null)
+    		this.parentAttributeValueId = attribute.getParentAttributeValue().getId();
+    	if(attribute.getAssignedAttributeValue() != null && !attribute.getAssignedAttributeValue().isEmpty()) {
+    		this.assignedAttributeValueIds = attribute.getAssignedAttributeValue().stream().map(attr -> attr.getId()).collect(Collectors.toSet());
+    	}
+    	this.stringValue = attribute.getStringValue();
+    	this.dateValue = attribute.getDateValue();
+    	this.doubleValue = attribute.getDoubleValue();
+    }
 	/**
 	 * @return the attributeCode
 	 */
@@ -168,13 +147,35 @@ public class AttributeInstanceDto extends BaseEntityDto {
 	/**
 	 * @return the customFieldDto
 	 */
-	public CustomFieldDto getCustomFieldDto() {
+	public CustomFieldsDto getCustomFieldDto() {
 		return customFieldDto;
 	}
 	/**
 	 * @param customFieldDto the customFieldDto to set
 	 */
-	public void setCustomFieldDto(CustomFieldDto customFieldDto) {
+	public void setCustomFieldDto(CustomFieldsDto customFieldDto) {
 		this.customFieldDto = customFieldDto;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(assignedAttributeValueIds, attributeCode, dateValue, doubleValue, parentAttributeValueId,
+				stringValue);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AttributeInstanceDto other = (AttributeInstanceDto) obj;
+		return Objects.equals(assignedAttributeValueIds, other.assignedAttributeValueIds)
+				&& Objects.equals(attributeCode, other.attributeCode) && Objects.equals(dateValue, other.dateValue)
+				&& Objects.equals(doubleValue, other.doubleValue)
+				&& Objects.equals(parentAttributeValueId, other.parentAttributeValueId)
+				&& Objects.equals(stringValue, other.stringValue);
 	}
 }

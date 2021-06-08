@@ -202,15 +202,18 @@ public class ServiceInstanceDto extends BusinessEntityDto {
      * @param customFieldInstances the custom field instances
      */
     public ServiceInstanceDto(ServiceInstance serviceInstance, List<ChargeInstanceDto> recurringChargeInstances, List<ChargeInstanceDto> subscriptionChargeInstances,
-            List<ChargeInstanceDto> terminationChargeInstances, List<ChargeInstanceDto> usageChargeInstances, CustomFieldsDto customFieldInstances) {
+            List<ChargeInstanceDto> terminationChargeInstances, List<ChargeInstanceDto> usageChargeInstances, List<AttributeInstanceDto> attributeInstances, CustomFieldsDto customFieldInstances) {
 
         this(serviceInstance);
         this.recurringChargeInstances = recurringChargeInstances;
         this.subscriptionChargeInstances = subscriptionChargeInstances;
         this.terminationChargeInstances = terminationChargeInstances;
         this.usageChargeInstances = usageChargeInstances;
+        this.attributeInstances = attributeInstances;
         customFields = customFieldInstances;
     }
+    
+   
 
     /**
      * Instantiates a new service instance dto.

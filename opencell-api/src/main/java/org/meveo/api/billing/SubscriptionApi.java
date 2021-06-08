@@ -51,6 +51,7 @@ import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
+import org.meveo.api.dto.billing.AttributeInstanceDto;
 import org.meveo.api.dto.billing.ChargeInstanceDto;
 import org.meveo.api.dto.billing.ChargeInstanceOverrideDto;
 import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
@@ -1586,8 +1587,16 @@ public class SubscriptionApi extends BaseApi {
                 usageChargeInstances.add(new ChargeInstanceDto(ci, cFsDTO));
             }
         }
+        List<AttributeInstanceDto> attributeInstances = null;
+        if(serviceInstance.getAttributeInstances() != null) {
+        	attributeInstances = new ArrayList<AttributeInstanceDto>();
+        	for(AttributeInstance ai : serviceInstance.getAttributeInstances()) {
+                cFsDTO = entityToDtoConverter.getCustomFieldsDTO(ai, inheritCF);
+                attributeInstances.add( new AttributeInstanceDto(ai, cFsDTO));
+        	}
+        }
 
-        ServiceInstanceDto serviceInstanceDto = new ServiceInstanceDto(serviceInstance, recurringChargeInstances, subscriptionChargeInstances, terminationChargeInstances, usageChargeInstances, customFieldsDTO);
+        ServiceInstanceDto serviceInstanceDto = new ServiceInstanceDto(serviceInstance, recurringChargeInstances, subscriptionChargeInstances, terminationChargeInstances, usageChargeInstances, attributeInstances, customFieldsDTO);
 
         setAuditableFieldsDto(serviceInstance, serviceInstanceDto);
         return serviceInstanceDto;
