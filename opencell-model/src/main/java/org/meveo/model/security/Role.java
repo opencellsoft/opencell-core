@@ -107,6 +107,7 @@ public class Role extends BaseEntity {
     /**
      * Accessible entities
      */
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "adm_role_secured_entity", joinColumns = { @JoinColumn(name = "role_id") })
     @AttributeOverrides(value = { @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 255)),
