@@ -32,83 +32,132 @@ import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * The Class PaymentDto.
- * 
+ *
  * @author anasseh
  */
 @XmlRootElement(name = "Payment")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentDto extends BaseEntityDto {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
     private static final long serialVersionUID = 1L;
 
-    /** The type. */
+    /**
+     * The type.
+     */
     private String type;
-    
-    /** The description. */
+
+    /**
+     * The description.
+     */
     private String description;
-    
-    /** The payment method. */
+
+    /**
+     * The payment method.
+     */
     private PaymentMethodEnum paymentMethod;
-    
-    /** The occ template code. */
+
+    /**
+     * The occ template code.
+     */
     private String occTemplateCode;
-    
-    /** The amount. */
+
+    /**
+     * The amount.
+     */
     private BigDecimal amount;
-    
-    /** The customer account code. */
+
+    /**
+     * The customer account code.
+     */
     private String customerAccountCode;
-    
-    /** The reference. */
+
+    /**
+     * The reference.
+     */
     private String reference;
-    
-    /** The bank lot. */
+
+    /**
+     * The bank lot.
+     */
     private String bankLot;
-    
-    /** The deposit date. */
+
+    /**
+     * The deposit date.
+     */
     private Date depositDate;
-    
-    /** The bank collection date. */
+    /**
+     * The paymentinfo1.
+     */
+    private String payment_info1;
+    private String payment_info;
+    private String payment_info2;
+    private String payment_info3;
+    private String payment_info4;
+    private String payment_info5;
+
+    /**
+     * The bank collection date.
+     */
     private Date bankCollectionDate;
-    
-    /** The due date. */
+
+    /**
+     * The due date.
+     */
     private Date dueDate;
-    
-    /** The transaction date. */
+
+    /**
+     * The transaction date.
+     */
     private Date transactionDate;
-    
-    /** The list OCC reference for matching. */
+
+    /**
+     * The list OCC reference for matching.
+     */
     @Deprecated
     private List<String> listOCCReferenceforMatching;
-    
-    /** The list AO ids for matching. */
+
+    /**
+     * The list AO ids for matching.
+     */
     private List<Long> listAoIdsForMatching;
-    
-    /** The is to matching. */
+
+    /**
+     * The is to matching.
+     */
     private boolean isToMatching;
-    
-    /** The payment order. */
+
+    /**
+     * The payment order.
+     */
     private String paymentOrder;
-    
-    /** The fees. */
+
+    /**
+     * The fees.
+     */
     private BigDecimal fees = BigDecimal.ZERO;
-    
-    /** The comment. */
+
+    /**
+     * The comment.
+     */
     private String comment;
 
-    /** The custom fields. */
+    /**
+     * The custom fields.
+     */
     private CustomFieldsDto customFields;
-    
+
     /**
      * Instantiates a new payment dto.
      */
     public PaymentDto() {
     }
-    
+
     /**
      * Instantiates a new payment dto.
-     * 
+     *
      * @param payment Payment
      */
     public PaymentDto(Payment payment) {
@@ -119,6 +168,12 @@ public class PaymentDto extends BaseEntityDto {
         this.setDescription(payment.getDescription());
         this.setPaymentMethod(payment.getPaymentMethod());
         this.setType(payment.getType());
+        this.setPaymentinfo(payment.getPaymentInfo());
+        this.setPaymentinfo1(payment.getPaymentInfo1());
+        this.setPaymentinfo2(payment.getPaymentInfo2());
+        this.setPaymentinfo3(payment.getPaymentInfo3());
+        this.setPaymentinfo4(payment.getPaymentInfo4());
+        this.setPaymentinfo5(payment.getPaymentInfo5());
     }
 
 
@@ -139,6 +194,125 @@ public class PaymentDto extends BaseEntityDto {
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
+
+    /**
+     * Sets the payment_info1 used as extra payment information .
+     * not a mandatory field
+     *
+     * @param payment_info1 the new payment_info1
+     */
+    public void setPaymentinfo1(String payment_info1) {
+        this.payment_info1 = payment_info1;
+    }
+
+    /**
+     * Gets the Paymentinfo1.
+     *
+     * @return the payment_info1
+     */
+    public String getPaymentinfo1() {
+        return payment_info1;
+    }
+
+    /**
+     * Sets the payment_info used as extra payment information.
+     * not a mandatory field
+     *
+     * @param payment_info the new payment_info
+     */
+    public void setPaymentinfo(String payment_info) {
+        this.payment_info = payment_info;
+    }
+
+    /**
+     * Gets the Paymentinfo.
+     *
+     * @return the payment_info
+     */
+    public String getPaymentinfo() {
+        return payment_info;
+    }
+
+    /**
+     * Sets the payment_info2 used as extra payment information .
+     * not a mandatory field
+     *
+     * @param payment_info2 the new payment_info2
+     */
+    public void setPaymentinfo2(String payment_info2) {
+        this.payment_info2 = payment_info2;
+    }
+
+    /**
+     * Gets the Paymentinfo2.
+     *
+     * @return the payment_info2
+     */
+    public String getPaymentinfo2() {
+        return payment_info2;
+    }
+
+    /**
+     * Sets the payment_info3 used as extra payment information.
+     * not a mandatory field
+     *
+     * @param payment_info3 the new payment_info3
+     */
+    public void setPaymentinfo3(String payment_info3) {
+        this.payment_info3 = payment_info3;
+    }
+
+    /**
+     * Gets the Paymentinfo3.
+     *
+     * @return the payment_info3
+     */
+
+    public String getPaymentinfo3() {
+        return payment_info3;
+    }
+
+    /**
+     * Sets the payment_info4 used as extra payment information.
+     * not a mandatory field
+     *
+     * @param payment_info4 the new payment_info4
+     */
+    public void setPaymentinfo4(String payment_info4) {
+        this.payment_info4 = payment_info4;
+    }
+
+    /**
+     * Gets the Paymentinfo4.
+     *
+     * @return the payment_info4
+     */
+
+
+    public String getPaymentinfo4() {
+        return payment_info4;
+    }
+
+    /**
+     * Sets the payment_info5 used as extra payment information.
+     * not a mandatory field
+     *
+     * @param payment_info5 the new payment_info5
+     */
+    public void setPaymentinfo5(String payment_info5) {
+        this.payment_info5 = payment_info5;
+    }
+
+    /**
+     * Gets the Paymentinfo5.
+     *
+     * @return the payment_info5
+     */
+
+    public String getPaymentinfo5() {
+        return payment_info5;
+    }
+
 
     /**
      * Gets the type.
@@ -445,30 +619,30 @@ public class PaymentDto extends BaseEntityDto {
     public void setComment(String comment) {
         this.comment = comment;
     }
-    
+
     /**
      * Gets the list of AO ids for matching.
      *
      * @return listOCCReferenceforMatching the list of AO ids for matching.
      */
-	public List<Long> getListAoIdsForMatching() {
-		return listAoIdsForMatching;
-	}
+    public List<Long> getListAoIdsForMatching() {
+        return listAoIdsForMatching;
+    }
 
     /**
      * Sets the list of AO ids for matching.
      *
      * @param listOCCReferenceforMatching the new list of AO ids for matching.
      */
-	public void setListAoIdsForMatching(List<Long> listAoIdsForMatching) {
-		this.listAoIdsForMatching = listAoIdsForMatching;
-	}
+    public void setListAoIdsForMatching(List<Long> listAoIdsForMatching) {
+        this.listAoIdsForMatching = listAoIdsForMatching;
+    }
 
     @Override
     public String toString() {
         return "PaymentDto [type=" + type + ", description=" + description + ", paymentMethod=" + paymentMethod + ", occTemplateCode=" + occTemplateCode + ", amount=" + amount
                 + ", customerAccountCode=" + customerAccountCode + ", reference=" + reference + ", bankLot=" + bankLot + ", depositDate=" + depositDate + ", bankCollectionDate="
                 + bankCollectionDate + ", dueDate=" + dueDate + ", transactionDate=" + transactionDate + ", listOCCReferenceforMatching=" + listOCCReferenceforMatching
-                + ", isToMatching=" + isToMatching + ", paymentOrder=" + paymentOrder + ", fees=" + fees + ", comment=" + comment + ", customFields=" + customFields + "]";
+                + ", isToMatching=" + isToMatching + ", paymentOrder=" + paymentOrder + ", payment_info1=" + payment_info1 + ", fees=" + fees + ", comment=" + comment + ", customFields=" + customFields + "]";
     }
 }
