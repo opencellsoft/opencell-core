@@ -4255,4 +4255,15 @@ END $$;]]>
         <sql>update ${db.schema.adapted}billing_rated_transaction set invoicing_date = wo.invoicing_date from ${db.schema.adapted}billing_wallet_operation wo where wo.rated_transaction_id=billing_rated_transaction.id and wo.invoicing_date is not null </sql>
     </changeSet>
     
+    
+    <changeSet id="#6117_20210608" author="AndriusKarpavicius">
+        <createTable tableName="billing_rated_transaction_pending" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rt_pending_pk"/>
+            </column>
+            <column name="aggregate_id_f" type="bigint" />
+            <column name="invoice_id" type="bigint" />
+            <column name="billing_run_id" type="bigint" />
+        </createTable>
+    </changeSet>
 </databaseChangeLog>

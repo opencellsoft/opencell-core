@@ -30,6 +30,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.PrePersist;
@@ -164,6 +166,11 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.detachRTsFromInvoice", query = "UPDATE RatedTransaction set invoice = null, invoiceAgregateF = null where invoiceAgregateF.id IN (SELECT id from SubCategoryInvoiceAgregate where invoice=:invoice)"),
         @NamedQuery(name = "RatedTransaction.invalidateRTByInvoice", query = "UPDATE RatedTransaction r set r.invoice=null, r.status='OPEN' WHERE r.invoice=:invoice")
         })
+
+@NamedNativeQueries({
+        @NamedNativeQuery(name = "massUpdateWithInvoiceInfoFromPendingTable", query = "update billing_rated_transaction rt set status='BILLED', updated=now(), aggregate_id_f=pending.aggregate_id_f, billing_run_id=pending.billing_run_id, invoice_id=pending.invoice_id from billing_rated_transaction_pending pending where status='OPEN' and rt.id=pending.id"),
+        @NamedNativeQuery(name = "deletePendingTable", query = "delete from billing_rated_transaction_pending") })
+
 public class RatedTransaction extends BaseEntity implements ISearchable, ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;

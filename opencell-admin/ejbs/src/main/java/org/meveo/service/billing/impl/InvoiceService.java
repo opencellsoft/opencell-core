@@ -31,6 +31,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,6 +75,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.util.IOUtils;
+import org.hibernate.Session;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VFSUtils;
 import org.jboss.vfs.VirtualFile;
@@ -910,6 +913,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         boolean allRTsInOneRun = true;
 
+        EntityManager em = getEntityManager();
+        
         while (moreRatedTransactionsExpected) {
             
             if (entityToInvoice instanceof Order) {
@@ -977,7 +982,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     // Collect information needed to update RTs with invoice information
 
-//          Start of alternative 1 for 4326 // TODO 4326 alternative
                     List<Object[]> rtMassUpdates = new ArrayList<>();
                     List<Object[]> rtUpdates = new ArrayList<>();
 
@@ -1009,18 +1013,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     setInvoiceDueDate(invoice, rtGroup.getBillingCycle());
                     setInitialCollectionDate(invoice, rtGroup.getBillingCycle(), billingRun);
 
-// End of alternative 1 for 4326   
-// Start of alternative 2 for 4326       
-//            List<RatedTransaction> rtsToUpdate = new ArrayList<>();            
-//                for (SubCategoryInvoiceAgregate subAggregate : invoiceAggregateProcessingInfo.subCategoryAggregates.values()) {
-//                    if (subAggregate.getRatedtransactionsToAssociate() == null) {
-//                        continue;
-//                    }
-//                    rtsToUpdate.addAll(subAggregate.getRatedtransactionsToAssociate());
-//                }
-// End of alternative 2 for 4326             
-
-                    EntityManager em = getEntityManager();
 
                     // Save invoice and its aggregates during the first pagination run, or save only newly created aggregates during later pagination runs
                     if (invoice.getId() == null) {
@@ -1036,18 +1028,42 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     // Update RTs with invoice information
 
-                    // AKK alternative 1 for 4326
-
-                    em.flush(); // Need to flush, so RTs can be updated in mass
-
                     Date now = new Date();
-                    for (Object[] aggregateAndRtIds : rtMassUpdates) {
-                        SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRtIds[0];
-                        List<Long> rtIds = (List<Long>) aggregateAndRtIds[1];
-                        em.createNamedQuery("RatedTransaction.massUpdateWithInvoiceInfo").setParameter("billingRun", billingRun).setParameter("invoice", invoice).setParameter("invoiceAgregateF", subCategoryAggregate)
-                            .setParameter("now", now).setParameter("ids", rtIds).executeUpdate();
-                    }
 
+                    // Mass update RT status
+
+                    Session hibernateSession = em.unwrap(Session.class);
+                    hibernateSession.doWork(connection -> {
+                        try (PreparedStatement preparedStatement = connection.prepareStatement("insert into  billing_rated_transaction_pending (id, aggregate_id_f, invoice_id, billing_run_id) values (?,?,?,?)")) {
+
+                            int i = 0;
+                            for (Object[] aggregateAndRtIds : rtMassUpdates) {
+                                SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRtIds[0];
+                                List<Long> rtIds = (List<Long>) aggregateAndRtIds[1];
+                                for (Long rtId : rtIds) {
+                                    preparedStatement.setLong(1, rtId);
+                                    preparedStatement.setLong(2, subCategoryAggregate.getId());
+                                    preparedStatement.setLong(3, invoice.getId());
+                                    preparedStatement.setLong(4, billingRun.getId());
+
+                                    preparedStatement.addBatch();
+
+                                    if (i > 0 && i % 500 == 0) {
+                                        preparedStatement.executeBatch();
+                                    }
+                                    i++;
+                                }
+                            }
+
+                            preparedStatement.executeBatch();
+
+                        } catch (SQLException e) {
+                            log.error("Failed to insert into billing_rated_transaction_pending", e);
+                            throw e;
+                        }
+                    });
+                    
+                    
                     for (Object[] aggregateAndRts : rtUpdates) {
                         SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRts[0];
                         List<RatedTransaction> rts = (List<RatedTransaction>) aggregateAndRts[1];
@@ -1058,15 +1074,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                 .setParameter("amountTax", rt.getAmountTax()).setParameter("tax", rt.getTax()).setParameter("taxPercent", rt.getTaxPercent()).executeUpdate();
                         }
                     }
-                    // End of alternative 1 for 4326
-                    // Start of alternative 2 for 4326
-                    // ratedTransactionService.updateViaDeleteAndInsert(rtsToUpdate);
-                    // End of alternative 2 for 4326
                 }
             }
+            
+
+            em.flush(); // Need to flush, so RTs can be updated in mass
+            
+            // Mass update RTs with status and invoice info
+            em.createNamedQuery("massUpdateWithInvoiceInfoFromPendingTable").executeUpdate();
+            em.createNamedQuery("deletePendingTable").executeUpdate();
         }
 
-        // Finalize invoices
+
+            // Finalize invoices
 
         for (InvoiceAggregateProcessingInfo invoiceAggregateProcessingInfo : rtGroupToInvoiceMap.values()) {
 
