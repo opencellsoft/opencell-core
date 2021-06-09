@@ -41,6 +41,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.RatedTransactionDto;
 import org.meveo.commons.utils.NumberUtils;
@@ -340,14 +341,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     public void updateAggregatedWalletOperations(List<Long> woIds, RatedTransaction ratedTransaction) {
         // batch update
-        String strQuery =
-                new StringBuilder().append("UPDATE WalletOperation o SET o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED,").append(" o.ratedTransaction=:ratedTransaction , o.updated=:updated").append(" WHERE o.id in (:woIds) ").toString();
-        Query query = getEntityManager().createQuery(strQuery);
-        query.setParameter("woIds", woIds);
-        query.setParameter("ratedTransaction", ratedTransaction);
-        query.setParameter("updated", new Date());
-        int affectedRecords = query.executeUpdate();
-        log.debug("updated record wo count={}", affectedRecords);
+        SubListCreator subList = new SubListCreator(30000, woIds);
+        while(subList.isHasNext()) {
+            String strQuery = "UPDATE WalletOperation o SET o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED," + " o.ratedTransaction=:ratedTransaction , o.updated=:updated" + " WHERE o.id in (:woIds) ";
+            Query query = getEntityManager().createQuery(strQuery);
+            query.setParameter("woIds", subList.getNextWorkSet());
+            query.setParameter("ratedTransaction", ratedTransaction);
+            query.setParameter("updated", new Date());
+            int affectedRecords = query.executeUpdate();
+            log.debug("updated record wo count={}", affectedRecords);
+        }
     }
 
     /**
