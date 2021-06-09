@@ -93,6 +93,10 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     @XmlElement(name = "usageChargeInstance")
     private List<ChargeInstanceDto> usageChargeInstances;
 
+    @XmlElementWrapper(name = "attributeInstances")
+    @XmlElement(name = "attributeInstances")
+    private List<AttributeInstanceDto> attributeInstances = new ArrayList<AttributeInstanceDto>();
+
     /** The order number. */
     private String orderNumber;
 
@@ -198,15 +202,18 @@ public class ServiceInstanceDto extends BusinessEntityDto {
      * @param customFieldInstances the custom field instances
      */
     public ServiceInstanceDto(ServiceInstance serviceInstance, List<ChargeInstanceDto> recurringChargeInstances, List<ChargeInstanceDto> subscriptionChargeInstances,
-            List<ChargeInstanceDto> terminationChargeInstances, List<ChargeInstanceDto> usageChargeInstances, CustomFieldsDto customFieldInstances) {
+            List<ChargeInstanceDto> terminationChargeInstances, List<ChargeInstanceDto> usageChargeInstances, List<AttributeInstanceDto> attributeInstances, CustomFieldsDto customFieldInstances) {
 
         this(serviceInstance);
         this.recurringChargeInstances = recurringChargeInstances;
         this.subscriptionChargeInstances = subscriptionChargeInstances;
         this.terminationChargeInstances = terminationChargeInstances;
         this.usageChargeInstances = usageChargeInstances;
+        this.attributeInstances = attributeInstances;
         customFields = customFieldInstances;
     }
+    
+   
 
     /**
      * Instantiates a new service instance dto.
@@ -632,4 +639,18 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     public void setMinimumChargeTemplate(String minimumChargeTemplate) {
         this.minimumChargeTemplate = minimumChargeTemplate;
     }
+
+	/**
+	 * @return the attributeInstances
+	 */
+	public List<AttributeInstanceDto> getAttributeInstances() {
+		return attributeInstances;
+	}
+
+	/**
+	 * @param attributeInstances the attributeInstances to set
+	 */
+	public void setAttributeInstances(List<AttributeInstanceDto> attributeInstances) {
+		this.attributeInstances = attributeInstances;
+	}
 }
