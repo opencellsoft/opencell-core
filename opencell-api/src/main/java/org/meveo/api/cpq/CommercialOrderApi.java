@@ -138,7 +138,9 @@ public class CommercialOrderApi extends BaseApi {
 			throw new EntityDoesNotExistsException(Seller.class, orderDto.getSellerCode());
 		order.setSeller(seller);
 		order.setOrderType(loadEntityByCode(orderTypeService,orderDto.getOrderTypeCode(), OrderType.class));
-		
+		if(!Strings.isEmpty(orderDto.getDiscountPlanCode())) {
+			order.setDiscountPlan(loadEntityByCode(discountPlanService, orderDto.getDiscountPlanCode(), DiscountPlan.class));
+        }
 		order.setLabel(orderDto.getLabel());
 		if(!Strings.isEmpty(orderDto.getCode())){
 			order.setCode(orderDto.getCode());
@@ -246,6 +248,9 @@ public class CommercialOrderApi extends BaseApi {
 		if(order.getOrderProgress() != null)
 			order.setOrderProgressTmp(Integer.valueOf(order.getOrderProgress().intValue()));
 		
+		if(!Strings.isEmpty(orderDto.getDiscountPlanCode())) {
+			order.setDiscountPlan(loadEntityByCode(discountPlanService, orderDto.getDiscountPlanCode(), DiscountPlan.class));
+        }
 		if(!Strings.isEmpty(orderDto.getSellerCode())) {
 			final Seller seller = sellerService.findByCode(orderDto.getSellerCode());
 			if(seller == null)

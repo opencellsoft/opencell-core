@@ -644,9 +644,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
 
     public Subscription instantiateDiscountPlan(Subscription entity, DiscountPlan dp) throws BusinessException {
-        if (dp.getDiscountPlanType() != null && !dp.getDiscountPlanType().equals(DiscountPlanTypeEnum.OFFER) && !entity.getOffer().getAllowedDiscountPlans().contains(dp)) {
-            throw new BusinessException("DiscountPlan " + dp.getCode() + " is not allowed in this subscription.");
-        }
+       
         BillingAccount billingAccount = entity.getUserAccount().getBillingAccount();
         for (DiscountPlanInstance discountPlanInstance : billingAccount.getDiscountPlanInstances()) {
             if (dp.getCode().equals(discountPlanInstance.getDiscountPlan().getCode())) {

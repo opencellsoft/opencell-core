@@ -1508,7 +1508,11 @@ public class CpqQuoteApi extends BaseApi {
         OfferTemplate offerTemplate = null;
         List<AttributeValue> attributesValues = null;
         Product product = null;
+        BigDecimal quantity=BigDecimal.ONE;
+        BigDecimal serviceQuantity=BigDecimal.ONE;
         if(quotePrice.getQuoteArticleLine() != null) {
+        	quantity=quotePrice.getQuoteArticleLine().getQuantity();
+        	serviceQuantity=quotePrice.getQuoteArticleLine().getServiceQuantity();
             accountintArticle = quotePrice.getQuoteArticleLine().getAccountingArticle();
             quoteproduct = quotePrice.getQuoteArticleLine().getQuoteProduct();
             quoteOffer = quoteproduct.getQuoteOffre();
@@ -1542,8 +1546,8 @@ public class CpqQuoteApi extends BaseApi {
                     if (!quoteArticleLines.containsKey(accountingArticleCode)) {
                         quoteArticleLine = new QuoteArticleLine();
                         quoteArticleLine.setAccountingArticle(discountAccountingArticle);
-                        quoteArticleLine.setQuantity(BigDecimal.ONE);
-                        quoteArticleLine.setServiceQuantity(BigDecimal.ONE);
+                        quoteArticleLine.setQuantity(quantity);
+                        quoteArticleLine.setServiceQuantity(serviceQuantity);
                         quoteArticleLine.setBillableAccount(billingAccount);
                         quoteArticleLine.setQuoteProduct(quoteproduct);
                         if(quoteOffer != null) {
