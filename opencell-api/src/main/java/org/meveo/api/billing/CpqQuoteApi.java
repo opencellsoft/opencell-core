@@ -361,8 +361,10 @@ public class CpqQuoteApi extends BaseApi {
 					quoteProduct = new QuoteProduct();
 				quoteProduct.setProductVersion(productVersion);
 				quoteProduct.setQuantity(quoteProductDTO.getQuantity());
-				quoteProduct.setQuoteOffre(quoteOffer);
+				quoteProduct.setQuoteOffer(quoteOffer);
 				quoteProduct.setDiscountPlan(discountPlan);
+				quoteProduct.setQuote(quoteOffer.getQuoteVersion()!=null?quoteOffer.getQuoteVersion().getQuote():null);
+				quoteProduct.setQuoteVersion(quoteOffer.getQuoteVersion());
 				populateCustomFields(quoteProductDTO.getCustomFields(), quoteProduct, true);
 				quoteProductService.create(quoteProduct);
 				newPopulateQuoteAttribute(quoteProductDTO.getProductAttributes(), quoteProduct);
@@ -881,7 +883,8 @@ public class CpqQuoteApi extends BaseApi {
 
         q.setProductVersion(productVersion);
         q.setQuantity(quoteProductDTO.getQuantity());
-        q.setQuoteOffre(quoteOffer);
+        q.setQuoteOffer(quoteOffer);
+        q.setQuoteVersion(quoteOffer.getQuoteVersion());
         q.setDiscountPlan(discountPlan);
         if(isNew) {
         	populateCustomFields(quoteProductDTO.getCustomFields(), q, true);
@@ -1479,7 +1482,7 @@ public class CpqQuoteApi extends BaseApi {
     	List<QuotePrice> discountPrices=new ArrayList<QuotePrice>();
     	for(QuotePrice quotePrice : quotePrices) {
     		 quoteproduct=quotePrice.getQuoteArticleLine().getQuoteProduct();
-        	 quoteOffer=quoteproduct.getQuoteOffre();
+        	 quoteOffer=quoteproduct.getQuoteOffer();
         	 quoteVersion=quotePrice.getQuoteVersion();
         	if(PriceLevelEnum.PRODUCT.equals(quotePrice.getPriceLevelEnum())) {
         		if(quoteOffer.getDiscountPlan()!=null) {
@@ -1511,7 +1514,7 @@ public class CpqQuoteApi extends BaseApi {
         if(quotePrice.getQuoteArticleLine() != null) {
             accountintArticle = quotePrice.getQuoteArticleLine().getAccountingArticle();
             quoteproduct = quotePrice.getQuoteArticleLine().getQuoteProduct();
-            quoteOffer = quoteproduct.getQuoteOffre();
+            quoteOffer = quoteproduct.getQuoteOffer();
             offerTemplate = quoteOffer.getOfferTemplate();
             product = quoteproduct.getProductVersion().getProduct();
             attributesValues = new ArrayList(quoteproduct.getQuoteAttributes());

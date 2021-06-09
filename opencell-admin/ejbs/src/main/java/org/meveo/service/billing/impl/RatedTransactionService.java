@@ -54,7 +54,32 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.Amounts;
+import org.meveo.model.billing.ApplyMinimumModeEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.ExtraMinAmount;
+import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.MinAmountData;
+import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.MinAmountsResult;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionMinAmountTypeEnum;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.RatedTransactionTypeEnum;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.cpq.CpqQuote;
@@ -63,6 +88,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
@@ -1058,6 +1084,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 	CpqQuote quote=serviceInstance.getQuoteProduct()!=null?serviceInstance.getQuoteProduct().getQuote():null;
                 	if(quote!=null) {
                 		contextMap.put(ValueExpressionWrapper.VAR_CPQ_QUOTE, quote);
+                	}
+                    
+                }
+            }
+            
+            if (expression.indexOf(ValueExpressionWrapper.VAR_QUOTE_VERSION) >= 0) {
+                if (serviceInstance != null) {
+                	QuoteVersion quoteVerion=serviceInstance.getQuoteProduct()!=null?serviceInstance.getQuoteProduct().getQuoteVersion():null;
+                	if(quoteVerion!=null) {
+                		contextMap.put(ValueExpressionWrapper.VAR_QUOTE_VERSION, quoteVerion);
                 	}
                     
                 }

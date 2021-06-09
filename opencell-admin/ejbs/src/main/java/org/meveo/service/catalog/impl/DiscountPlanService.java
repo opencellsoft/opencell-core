@@ -131,7 +131,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
             userMap.put(ValueExpressionWrapper.VAR_OFFER, offer);
         }
         if (expression.indexOf(ValueExpressionWrapper.VAR_PRODUCT) >= 0) {
-            userMap.put(ValueExpressionWrapper.VAR_OFFER, product);
+            userMap.put(ValueExpressionWrapper.VAR_PRODUCT, product);
         }
         if (expression.indexOf("su") >= 0) {
             userMap.put("su", invoice.getSubscription());
