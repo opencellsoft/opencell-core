@@ -341,7 +341,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     public void updateAggregatedWalletOperations(List<Long> woIds, RatedTransaction ratedTransaction) {
         // batch update
-        SubListCreator subList = new SubListCreator(10000, woIds);
+        SubListCreator subList = new SubListCreator(30000, woIds);
         while(subList.isHasNext()) {
             String strQuery = "UPDATE WalletOperation o SET o.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED," + " o.ratedTransaction=:ratedTransaction , o.updated=:updated" + " WHERE o.id in (:woIds) ";
             Query query = getEntityManager().createQuery(strQuery);
