@@ -527,10 +527,24 @@ public class ProductApi extends BaseApi {
 	        if(productVersion==null) {
 	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
 	        }
+	        if(VersionStatusEnum.PUBLISHED == status) {
+	        	var productVersions = productVersionService.findByProduct(productCode);
+	        	var overloppingExist = productVersions
+	        									.stream()
+	        									.filter(pv -> {
+	        										return pv.getId() != productVersion.getId();
+	        									})
+	        									.filter(pv -> {
+	        										return productVersion.getValidity().isCorrespondsToPeriod(pv.getValidity().getFrom(), pv.getValidity().getTo(), false);
+	        									})
+	        									.collect(Collectors.toList()).size() > 0;
+	        	if(overloppingExist)
+	        		throw new MeveoApiException("Produt version date start is overlopping");
+	        }
 	        productVersionService.updateProductVersionStatus(productVersion,status);
 	        return new GetProductVersionResponse(productVersion,true,true);
 		} catch (BusinessException e) {
-			throw new MeveoApiException(e);
+			throw new MeveoApiException(e.getMessage());
 		}
     }
     

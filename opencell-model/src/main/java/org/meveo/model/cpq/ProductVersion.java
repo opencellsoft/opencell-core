@@ -118,7 +118,7 @@ public class ProductVersion extends AuditableEntity{
      * validity dates
      */
     @Embedded
-    @AttributeOverrides(value = { @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
+    @AttributeOverrides(value = { @AttributeOverride(name = "from", column = @Column(name = "valid_from", nullable = false)), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
     private DatePeriod validity = new DatePeriod();
      
     
