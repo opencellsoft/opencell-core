@@ -346,6 +346,10 @@ public class ProductApi extends BaseApi {
 
 	public ProductVersion createProductVersion(ProductVersionDto postData) throws MeveoApiException, BusinessException {
 		checkMandatoryFields(postData);
+		if(postData.getValidity() == null || postData.getValidity().getFrom() == null) {
+			missingParameters.add("validity.from");
+		}
+		handleMissingParameters();
 		Product product = checkProductExiste(postData);
 		ProductVersion  productVersion= new ProductVersion();
 		populateProduct(postData, product, productVersion);
