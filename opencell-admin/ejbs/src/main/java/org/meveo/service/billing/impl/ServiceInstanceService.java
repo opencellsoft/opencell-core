@@ -348,7 +348,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     /**
-     * Activate a service, the subscription charges are applied.
+     * Activate a service, the subscription and recurring charges are applied.
      *
      * @param serviceInstance service instance
      * @throws IncorrectSusbcriptionException incorrect subscription exception
@@ -356,15 +356,16 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws BusinessException business exception
      */
     public void serviceActivation(ServiceInstance serviceInstance) throws BusinessException {
-        serviceActivation(serviceInstance, true);
+        serviceActivation(serviceInstance, true, true);
     }
 
     /**
-     * Activate a service, the subscription charges can be applied or not. v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service v5.0 add control
-     * over WO creation if service suspended and reactivated
+     * Activate a service with an option of applying/rating subscription charges and/or recurring charges. v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service v5.0 add control over WO creation if service suspended and
+     * reactivated
      * 
      * @param serviceInstance service instance
-     * @param applySubscriptionCharges true/false
+     * @param applySubscriptionCharges Shall subscription charges be applied/rated
+     * @param applyRecurringCharges Shall recurring charges be applied/rated
      * @throws IncorrectSusbcriptionException incorrect subscription exception
      * @throws IncorrectServiceInstanceException incorrect service instance exception
      * @throws BusinessException business exception
@@ -372,7 +373,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
-    public void serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+    public void serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges, boolean applyRecurringCharges) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         Subscription subscription = serviceInstance.getSubscription();
 
         log.debug("Will activate service {} for subscription {} quantity {}", serviceInstance.getCode(), serviceInstance.getSubscription().getCode(), serviceInstance.getQuantity());
@@ -410,26 +411,31 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
 
         // apply subscription charges
-        if (applySubscriptionCharges && !serviceInstance.getStatus().equals(InstanceStatusEnum.SUSPENDED)) {
+        if (!serviceInstance.getStatus().equals(InstanceStatusEnum.SUSPENDED)) {
             for (SubscriptionChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
                 oneShotChargeInstance.setQuantity(serviceInstance.getQuantity());
                 oneShotChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
-                try {
-                    oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, serviceInstance.getSubscriptionDate(), oneShotChargeInstance.getQuantity(), serviceInstance.getOrderNumber());
+                
+                if (applySubscriptionCharges) {
 
-                    oneShotChargeInstanceService.update(oneShotChargeInstance);
+                    try {
+                        oneShotChargeInstanceService.oneShotChargeApplication(oneShotChargeInstance, serviceInstance.getSubscriptionDate(), oneShotChargeInstance.getQuantity(), serviceInstance.getOrderNumber());
 
-                } catch (RatingException e) {
-                    log.trace("Failed to apply subscription charge {}: {}", oneShotChargeInstance, e.getRejectionReason());
-                    throw e; // e.getBusinessException();
+                    } catch (RatingException e) {
+                        log.trace("Failed to apply subscription charge {}: {}", oneShotChargeInstance, e.getRejectionReason());
+                        throw e; // e.getBusinessException();
 
-                } catch (BusinessException e) {
-                    log.error("Failed to apply subscription charge {}: {}", oneShotChargeInstance, e.getMessage(), e);
-                    throw e;
+                    } catch (BusinessException e) {
+                        log.error("Failed to apply subscription charge {}: {}", oneShotChargeInstance, e.getMessage(), e);
+                        throw e;
+                    }
+
+                } else {
+                    log.debug("ServiceActivation: subscription charges were not applied/rated.");
                 }
+
+                oneShotChargeInstanceService.update(oneShotChargeInstance);
             }
-        } else {
-            log.debug("ServiceActivation: subscription charges are not applied.");
         }
 
         // activate recurring charges
@@ -442,9 +448,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             recurringChargeInstance = recurringChargeInstanceService.update(recurringChargeInstance);
 
             try {
-                recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance, serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(),
-                    serviceInstance.getRateUntilDate() == null, false, null);
-
+                if (applyRecurringCharges) {
+                    recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance, serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(),
+                        serviceInstance.getRateUntilDate() == null, false, null);
+                }
             } catch (RatingException e) {
                 log.trace("Failed to apply recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
                 throw e; // e.getBusinessException();
