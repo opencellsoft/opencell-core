@@ -543,7 +543,7 @@ public class ProductApi extends BaseApi {
 	        									})
 	        									.collect(Collectors.toList()).size() > 0;
 	        	if(overloppingExist)
-	        		throw new MeveoApiException("Produt version date start is overlopping");
+	        		throw new MeveoApiException("An overlap of validity dates has been detected");
 	        }
 	        productVersionService.updateProductVersionStatus(productVersion,status);
 	        return new GetProductVersionResponse(productVersion,true,true);
