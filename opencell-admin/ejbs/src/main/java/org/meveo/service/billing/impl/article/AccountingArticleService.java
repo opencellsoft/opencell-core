@@ -26,7 +26,6 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	
 	@Inject private ArticleMappingLineService articleMappingLineService;
 	@Inject private AttributeService attributeService;
-	@Inject ParamBean paramBean;
 	
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) throws BusinessException {
 		List<ChargeTemplate> productCharges = product.getProductCharges().stream()
@@ -88,7 +87,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			result = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
 		} else {
 			ArticleMappingLine bestMatch = attributeMappingLineMatch.getBestMatch();
-			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode(paramBean.getProperty("accountingArticle.product.default.code", "PROD-STD"));
+			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode(ParamBean.getInstance().getProperty("accountingArticle.product.default.code", "PROD-STD"));
 		}
 		Hibernate.initialize(result);
 		if(result != null)
