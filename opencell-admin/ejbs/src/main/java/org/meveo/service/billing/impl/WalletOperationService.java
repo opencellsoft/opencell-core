@@ -1050,13 +1050,16 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      *
      * <b>When rerateInvoiced = false:</b><br/>
      *
-     * Update Wallet operations to status TO_RERATE and cancel related RTs. Only unbilled wallet operations will be considered. In case of Wallet operation aggregation to a single Rated transaction, all related wallet
-     * operations through the same Rated transaction, will be marked for re-rating as well. Note, that a number of Wallet operation ids passed and a number of Wallet operations marked for re-rating might not match if
-     * aggregation was used, or Wallet operation status were invalid.
+     * Only unbilled wallet operations will be considered. <br/>
+     * Update Wallet operations to status TO_RERATE and cancel related RTs. In case of Wallet operation aggregation to a single Rated transaction, all related wallet operations through the same Rated transaction, will be
+     * marked for re-rating as well. <br/>
+     * Note, that a number of Wallet operation ids passed and a number of Wallet operations marked for re-rating might not match if aggregation was used, or Wallet operation status were
+     * invalid.
      * <p/>
      * <b>When includeInvoiced = true:</b> <br/>
      *
-     * Billed wallet operations will be refunded and wallet operation will be changed to status TO_RERATE. For the un-billed wallet operations the logic of rerateInvoiced=false applies.
+     * Billed wallet operations will be refunded and wallet operation will be changed to status TO_RERATE. <br/>
+     * For the un-billed wallet operations the logic of rerateInvoiced=false applies.
      *
      * @param walletOperationIds A list of Wallet operation ids to mark for re-rating
      * @param rerateInvoiced Re-rate already invoiced wallet operations if true. In such case invoiced wallet operations will be refunded
@@ -1085,7 +1088,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
                 // A refund WO
                 WalletOperation refundWo = refundWalletOperation(invoicedWo);
-                walletOperationIds.add(refundWo.getId());
+                walletOperationIds.add(invoicedWo.getId());
                 invoicedWo.setStatus(WalletOperationStatusEnum.TO_RERATE);
                 update(invoicedWo);
                 nrOfWosToRerate++;
