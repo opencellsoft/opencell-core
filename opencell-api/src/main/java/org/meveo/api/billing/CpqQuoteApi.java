@@ -1524,7 +1524,7 @@ public class CpqQuoteApi extends BaseApi {
             }
         }
         BigDecimal amountWithoutTax = quotePrice.getUnitPriceWithoutTax();
-        BigDecimal discountAmount = BigDecimal.ZERO;
+        BigDecimal unitDiscountAmount = BigDecimal.ZERO;
         boolean isEnterprise = appProvider.isEntreprise();
         QuoteArticleLine quoteArticleLine = null;
         TaxInfo taxInfo = null;
@@ -1540,8 +1540,8 @@ public class CpqQuoteApi extends BaseApi {
                 if(quoteproduct == null)
                 	throw new MeveoApiException("No product found for this discount : " + discountPlanItem.getCode());
 
-                discountAmount = discountAmount.add(discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues));
-                if (discountAmount != null && discountAmount.abs().compareTo(BigDecimal.ZERO) > 0) {
+                unitDiscountAmount = unitDiscountAmount.add(discountPlanItemService.getDiscountAmount(amountWithoutTax, discountPlanItem,quoteproduct.getProductVersion().getProduct(), attributesValues == null ? Collections.emptyList() : attributesValues));
+                if (unitDiscountAmount != null && unitDiscountAmount.abs().compareTo(BigDecimal.ZERO) > 0) {
                     String accountingArticleCode = discountAccountingArticle.getCode();
                     if (!quoteArticleLines.containsKey(accountingArticleCode)) {
                         quoteArticleLine = new QuoteArticleLine();
@@ -1569,10 +1569,11 @@ public class CpqQuoteApi extends BaseApi {
                         taxInfo = taxMappingService.determineTax(discountAccountingArticle.getTaxClass(), seller, billingAccount, null, quoteVersion.getQuote().getQuoteDate(), false, false);
                         taxPercent = taxInfo.tax.getPercent();
                     }
-                    BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(discountAmount, discountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-                    discountQuotePrice.setAmountWithoutTax(amounts[0]);
-                    discountQuotePrice.setAmountWithTax(amounts[1]);
-                    discountQuotePrice.setTaxAmount(amounts[2]);
+                    BigDecimal[] amounts = NumberUtils.computeDerivedAmounts(unitDiscountAmount, unitDiscountAmount, taxPercent, appProvider.isEntreprise(), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                    discountQuotePrice.setUnitPriceWithoutTax(amounts[0]);
+                    discountQuotePrice.setAmountWithoutTax(quantity.multiply(amounts[0]));
+                    discountQuotePrice.setAmountWithTax(quantity.multiply(amounts[1]));
+                    discountQuotePrice.setTaxAmount(quantity.multiply(amounts[2]));
                     discountQuotePrice.setCurrencyCode(quotePrice.getCurrencyCode());
                     discountQuotePrice.setQuoteArticleLine(quoteArticleLine);
                     discountQuotePrice.setQuoteVersion(quoteVersion);
@@ -1592,7 +1593,6 @@ public class CpqQuoteApi extends BaseApi {
                             quotePrice.setAmountWithoutTaxWithDiscount(quotePrice.getAmountWithoutTax().add(discountQuotePrice.getAmountWithoutTax()));
                         }
                     }
-                    discountQuotePrice.setUnitPriceWithoutTax(discountAmount);
                     discountQuotePrice.setTaxRate(taxPercent);
                     quotePriceService.create(discountQuotePrice);
                     quoteArticleLine.getQuotePrices().add(quotePrice);
