@@ -27,6 +27,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.util.ResourceBundle;
@@ -34,6 +35,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Tax;
@@ -44,10 +46,10 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.model.tax.TaxMapping;
-import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.script.billing.TaxScriptService;
 
@@ -69,8 +71,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
     @Inject
     private TaxScriptService taxScriptService;
 
-    @Inject
-    private SellerService sellerService;
+    @Inject AccountingArticleService accountingArticleService;
 
     @Override
     public void create(TaxMapping entity) throws BusinessException {
@@ -208,6 +209,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return Tax to apply
      * @throws BusinessException General business exception
      */
+    
     public TaxInfo determineTax(ChargeInstance chargeInstance, Date date) throws BusinessException {
 
         TaxClass taxClass = chargeInstance.getTaxClassResolved();
@@ -217,6 +219,14 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
             }
             if (taxClass == null) {
                 taxClass = chargeInstance.getChargeTemplate().getTaxClass();
+            }
+            if(taxClass==null) {
+            	AccountingArticle accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
+            	if(accountingArticle!=null) {
+            		taxClass=accountingArticle.getTaxClass();
+            	}else {
+            		log.warn("No article found for chargeInstance code={},id{}",chargeInstance.getCode(),chargeInstance.getId());
+            	}
             }
             chargeInstance.setTaxClassResolved(taxClass);
         }
@@ -339,7 +349,8 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return A best matched Tax mapping
      */
     public TaxMapping findBestTaxMappingMatch(TaxCategory taxCategory, TaxClass taxClass, Seller seller, BillingAccount billingAccount, Date applicationDate) {
-    	seller = sellerService.refreshOrRetrieve(seller);
+    	//seller = sellerService.refreshOrRetrieve(seller);
+    	Hibernate.initialize(seller);
         TradingCountry sellersCountry = seller.getTradingCountry();
         TradingCountry buyersCountry = billingAccount.getTradingCountry();
 
