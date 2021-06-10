@@ -45,22 +45,22 @@
     <repositories>
         <repository>
             <id>jboss-repo</id>
-            <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
         </repository>
         <repository>
             <id>opencell-repo</id>
-            <url>http://libs.opencellsoft.com/</url>
+            <url>https://libs.opencellsoft.com/</url>
         </repository>
     </repositories>
     
     <pluginRepositories>
         <pluginRepository>
             <id>opencast-public</id>
-            <url>http://nexus.opencast.org/nexus/content/repositories/public/</url>
+            <url>https://nexus.opencast.org/nexus/content/repositories/public/</url>
         </pluginRepository>
         <pluginRepository>
             <id>central-maven</id>
-            <url>http://central.maven.org/maven2/</url>
+            <url>https://central.maven.org/maven2/</url>
         </pluginRepository>
     </pluginRepositories>
     
