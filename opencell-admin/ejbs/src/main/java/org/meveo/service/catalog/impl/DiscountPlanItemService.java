@@ -243,14 +243,26 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
     public List<DiscountPlanItem> getApplicableDiscountPlanItems(BillingAccount billingAccount, DiscountPlan discountPlan, OfferTemplate offer, Product product, AccountingArticle accountingArticle)
             throws BusinessException {
         List<DiscountPlanItem> applicableDiscountPlanItems = new ArrayList<>(); 
-         /****TODO : get the discountItems having the low priorities ****/
-                List<DiscountPlanItem> discountPlanItems = discountPlan.getDiscountPlanItems();
+                List<DiscountPlanItem> discountPlanItems = getActiveDiscountPlanItem(discountPlan.getId());
+                Long lowPriority=null;
                 for (DiscountPlanItem discountPlanItem : discountPlanItems) {
-                    if (discountPlanItem.isActive() && (discountPlanItem.getTargetAccountingArticle().isEmpty()  || accountingArticle == null || (discountPlanItem.getTargetAccountingArticle().contains(accountingArticle)) && discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount,null,offer, product, null))) {
-                        applicableDiscountPlanItems.add(discountPlanItem);
+                	
+                    if ((lowPriority==null ||lowPriority.equals(discountPlanItem.getPriority())) && discountPlanItem.isActive() && (discountPlanItem.getTargetAccountingArticle().isEmpty()  || accountingArticle == null || (discountPlanItem.getTargetAccountingArticle().contains(accountingArticle)) && discountPlanService.matchDiscountPlanExpression(discountPlanItem.getExpressionEl(), billingAccount,null,offer, product, null))) {
+                    	lowPriority=lowPriority!=null?lowPriority:discountPlanItem.getPriority();
+                    	applicableDiscountPlanItems.add(discountPlanItem);
                     }
                 } 
         return applicableDiscountPlanItems;
+    }
+    
+    /**
+     * Get active price plans for a given charge code. Only these are applicable for rating.
+     * 
+     * @param chargeCode Charge code
+     * @return A list of applicable price plans matching a charge code and ordered by priority
+     */
+    public List<DiscountPlanItem> getActiveDiscountPlanItem(Long discountPlanId) {
+        return getEntityManager().createNamedQuery("DiscountPlanItem.getActiveDiscountPlanItem", DiscountPlanItem.class).setParameter("discountPlanId", discountPlanId).getResultList();
     }
 
     public List<InvoiceLine> applyDiscounts(InvoiceLine invoiceLine, DiscountPlanTypeEnum... discountPlanTypeEnums) {

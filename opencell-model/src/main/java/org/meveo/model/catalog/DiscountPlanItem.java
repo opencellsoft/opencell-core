@@ -33,7 +33,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.PrePersist;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
@@ -67,6 +70,9 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 		@UniqueConstraint(columnNames = { "discount_plan_id", "code" }) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 		@Parameter(name = "sequence_name", value = "cat_discount_plan_item_seq"), })
+@NamedQueries({
+    @NamedQuery(name = "DiscountPlanItem.getActiveDiscountPlanItem", query = "SELECT dpi from DiscountPlanItem dpi where dpi.disabled is false and dpi.discountPlan.id=:discountPlanId order by dpi.priority ASC, id", hints = {
+            @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity {
 
 	private static final long serialVersionUID = 4543503736567841084L;
@@ -169,7 +175,7 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
     protected CustomFieldValues cfAccumulatedValues;
     
     @Column(name = "priorty")
-    private Long priority;
+    private long priority=0;
     
     
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -397,14 +403,14 @@ public class DiscountPlanItem extends EnableEntity implements ICustomFieldEntity
 	/**
 	 * @return the priority
 	 */
-	public Long getPriority() {
+	public long getPriority() {
 		return priority;
 	}
 
 	/**
 	 * @param priority the priority to set
 	 */
-	public void setPriority(Long priority) {
+	public void setPriority(long priority) {
 		this.priority = priority;
 	}
 
