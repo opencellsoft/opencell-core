@@ -34,7 +34,6 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.SequenceDto;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
-import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * The Class InvoiceTypeDto.

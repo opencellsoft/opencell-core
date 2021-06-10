@@ -13,9 +13,11 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.cpq.AttributeService;
 
@@ -95,6 +97,13 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 	public List<AccountingArticle> findByAccountingCode(String accountingCode) {
 		return getEntityManager().createNamedQuery("AccountingArticle.findByAccountingCode", AccountingArticle.class)
 				.setParameter("accountingCode", accountingCode)
+				.getResultList();
+	}
+
+	public List<AccountingArticle> findByTaxClassAndSubCategory(TaxClass taxClass, InvoiceSubCategory invoiceSubCategory) {
+		return getEntityManager().createNamedQuery("AccountingArticle.findByTaxClassAndSubCategory", AccountingArticle.class)
+				.setParameter("taxClass", taxClass)
+				.setParameter("invoiceSubCategory", invoiceSubCategory)
 				.getResultList();
 	}
 }
