@@ -371,6 +371,19 @@ public class PricePlanRsImpl extends BaseRs implements PricePlanRs {
             return errorResponse(e, result.getActionStatus());
         }
 	}
+	
+	@Override
+	public Response duplicatePricePlan(String pricePlanMatrixCode, String pricePlanMatrixNewCode, int version) {
+		  GetPricePlanResponseDto result = new GetPricePlanResponseDto();
+
+	        try {
+	            result.setPricePlan(pricePlanApi.duplicatePricePlan(pricePlanMatrixCode, pricePlanMatrixNewCode, version));
+	        } catch (Exception e) {
+	            processException(e, result.getActionStatus());
+	        }
+
+	        return Response.ok(result).build();
+	}
 
 
 }

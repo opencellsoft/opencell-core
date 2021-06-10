@@ -18,6 +18,7 @@
 
 package org.meveo.api.catalog;
 
+import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.LoadPricesRequest;
@@ -590,5 +591,19 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
 
         return result;
+    }
+
+    public PricePlanMatrixDto duplicatePricePlan(String pricePlanMatrixCode, String pricePlanMatrixNewCode, int version) {
+    	PricePlanMatrix ppm = loadEntityByCode(pricePlanMatrixService, pricePlanMatrixCode, PricePlanMatrix.class);
+    	if(!Strings.isEmpty(pricePlanMatrixNewCode) && pricePlanMatrixService.findByCode(pricePlanMatrixNewCode) != null)
+    		throw new EntityAlreadyExistsException(PricePlanMatrix.class, pricePlanMatrixNewCode);
+    	PricePlanMatrixVersion ppmv = pricePlanMatrixVersionService.findByPricePlanAndVersion(pricePlanMatrixCode, version);
+    	if(ppmv == null) {
+    		ppmv = pricePlanMatrixVersionService.getLasPricePlanMatrixtVersion(pricePlanMatrixCode);
+    		if(ppmv == null)
+    			throw new MeveoApiException("No version exist for price plan matrix code : " + pricePlanMatrixCode);
+    	}
+    	PricePlanMatrix duplicate = pricePlanMatrixService.duplicatePricePlanMatrix(ppm, ppmv, pricePlanMatrixNewCode);
+    	return new PricePlanMatrixDto(duplicate, entityToDtoConverter.getCustomFieldsDTO(duplicate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
     }
 }
