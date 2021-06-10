@@ -33,7 +33,7 @@ import static javax.persistence.FetchType.LAZY;
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_accounting_article_seq"), })
 @NamedQueries({
         @NamedQuery(name = "AccountingArticle.findByAccountingCode", query = "select a from AccountingArticle a where a.accountingCode.code = :accountingCode"),
-        @NamedQuery(name = "AccountingArticle.findByTaxClassAndSubCategory", query = "select a from AccountingArticle a where a.taxClass = :taxClass, a.invoiceSubCategory = :invoiceSubCategory"),
+        @NamedQuery(name = "AccountingArticle.findByTaxClassAndSubCategory", query = "select a from AccountingArticle a where a.taxClass = :taxClass and a.invoiceSubCategory = :invoiceSubCategory"),
 })
 public class AccountingArticle extends EnableBusinessCFEntity {
 
