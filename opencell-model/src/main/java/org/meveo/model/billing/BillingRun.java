@@ -318,7 +318,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     private BillingRun nextBillingRun;
 
     /**
-     * Filtering option of the RT.
+     * Filtering option used in exceptional billing run.
      */
     @Type(type = "json")
     @Column(name = "filters", columnDefinition = "text")

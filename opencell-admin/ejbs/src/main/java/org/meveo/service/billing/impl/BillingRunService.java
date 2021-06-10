@@ -17,18 +17,11 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.util.Collections.EMPTY_LIST;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -54,24 +47,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.IBillableEntity;
-import org.meveo.model.billing.Amounts;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.BillingEntityTypeEnum;
-import org.meveo.model.billing.BillingProcessTypesEnum;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunAutomaticActionEnum;
-import org.meveo.model.billing.BillingRunList;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceSequence;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.InvoiceValidationStatusEnum;
-import org.meveo.model.billing.MinAmountForAccounts;
-import org.meveo.model.billing.PostInvoicingReportsDTO;
-import org.meveo.model.billing.PreInvoicingReportsDTO;
-import org.meveo.model.billing.RejectedBillingAccount;
-import org.meveo.model.billing.ThresholdOptionsEnum;
+import org.meveo.model.billing.*;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.CustomerAccount;
@@ -996,9 +972,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             type = billingCycle.getType();
         }
         if(billingRun.isExceptionalBR()) {
-            PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(billingRun.getFilters()));
-            QueryBuilder queryBuilder = ratedTransactionService.getQuery(configuration);
+            QueryBuilder queryBuilder = fromFilters(billingRun.getFilters());
             billingRun.setExceptionalRTIds(queryBuilder.getIdQuery(ratedTransactionService.getEntityManager()).getResultList());
+            if(billingRun.getExceptionalRTIds().size() == 0) {
+                result.setReport("Exceptional Billing filters returning no rated transaction to process");
+            }
         }
 
         MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts();
@@ -1128,7 +1106,18 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
 
-	public BillingRunStatusEnum validateBillingRun(BillingRun billingRun) {
+    private QueryBuilder fromFilters(Map<String, String> filters) {
+        QueryBuilder queryBuilder;
+        if(filters.containsKey("SQL")) {
+            queryBuilder = new QueryBuilder(filters.get("SQL"));
+        } else {
+            PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
+            queryBuilder = ratedTransactionService.getQuery(configuration);
+        }
+        return queryBuilder;
+    }
+
+    public BillingRunStatusEnum validateBillingRun(BillingRun billingRun) {
 		if(BillingRunStatusEnum.INVOICES_GENERATED.equals(billingRun.getStatus()) || BillingRunStatusEnum.POSTINVOICED.equals(billingRun.getStatus())) {
 			BillingRunStatusEnum status = BillingRunStatusEnum.POSTINVOICED;
 			if(!isBillingRunValid(billingRun)) {
@@ -1144,8 +1133,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	 */
 	private void applyAutomaticValidationActions(BillingRun billingRun) {
 		if(BillingRunStatusEnum.REJECTED.equals(billingRun.getStatus())) {
-			List<InvoiceStatusEnum> toMove = new ArrayList<InvoiceStatusEnum>();
-			List<InvoiceStatusEnum> toCancel = new ArrayList<InvoiceStatusEnum>();
+			List<InvoiceStatusEnum> toMove = new ArrayList<>();
+			List<InvoiceStatusEnum> toCancel = new ArrayList<>();
 			if(billingRun.getRejectAutoAction()!=null && billingRun.getRejectAutoAction().equals(BillingRunAutomaticActionEnum.CANCEL)) {
 				toCancel.add(InvoiceStatusEnum.REJECTED);
 			} else {
@@ -1270,7 +1259,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     
 	private void addInvoiceAmounts(Map<Long, Map<Long, Amounts>> entityAmounts, Amounts amounts, Long invoiceId, Long entityId) {
 		if (entityAmounts.get(entityId) == null) {
-		    Map<Long, Amounts> thresholdAmounts = new TreeMap<Long, Amounts>();
+		    Map<Long, Amounts> thresholdAmounts = new TreeMap<>();
 		    thresholdAmounts.put(invoiceId, amounts.clone());
 		    entityAmounts.put(entityId, thresholdAmounts);
 		} else {
@@ -1412,15 +1401,16 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @return A list of Object array consisting billable entity id and amounts
      */
     private List<AmountsToInvoice> getAmountsToInvoice(BillingRun billingRun) {
-
         if(billingRun.isExceptionalBR()) {
+            if(billingRun.getExceptionalRTIds().isEmpty()) {
+                return EMPTY_LIST;
+            }
             return getEntityManager()
                     .createNamedQuery("RatedTransaction.sumTotalInvoiceableByRtIdInBatch", AmountsToInvoice.class)
                     .setParameter("ids", billingRun.getExceptionalRTIds())
                     .getResultList();
         } else {
             BillingCycle billingCycle = billingRun.getBillingCycle();
-
             Date startDate = billingRun.getStartDate();
             Date endDate = billingRun.getEndDate();
 
@@ -1635,16 +1625,16 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 			BillingRun nextBillingRun = new BillingRun();
 			try {
 				BeanUtils.copyProperties(nextBillingRun, billingRun);
-				final ArrayList<BillingAccount> selectedBillingAccounts = new ArrayList<BillingAccount>();
+				final ArrayList<BillingAccount> selectedBillingAccounts = new ArrayList<>();
 				selectedBillingAccounts.addAll(billingRun.getBillableBillingAccounts());
-				Set<BillingRunList> billingRunLists = new HashSet<BillingRunList>();
+				Set<BillingRunList> billingRunLists = new HashSet<>();
 				billingRunLists.addAll(billingRun.getBillingRunLists());
-				List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
+				List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<>();
 				rejectedBillingAccounts.addAll(billingRun.getRejectedBillingAccounts());
 				nextBillingRun.setRejectedBillingAccounts(rejectedBillingAccounts );
 				nextBillingRun.setBillingRunLists(billingRunLists );
 				nextBillingRun.setBillableBillingAccounts(selectedBillingAccounts);
-				nextBillingRun.setInvoices(new ArrayList<Invoice>());
+				nextBillingRun.setInvoices(new ArrayList<>());
 				nextBillingRun.setId(null);
 				create(nextBillingRun);
 				billingRun.setNextBillingRun(nextBillingRun);

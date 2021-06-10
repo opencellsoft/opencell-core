@@ -21,6 +21,9 @@ public class InvoicingResourceImpl implements InvoicingResource {
         if(billingRun.getFilters() == null || billingRun.getFilters().isEmpty()) {
             throw new BadRequestException("Filters are required");
         }
+        if(billingRun.getBillingRunTypeEnum() == null) {
+            throw new BadRequestException("Billing run type is missing");
+        }
         org.meveo.model.billing.BillingRun billingRunEntity = invoicingApiService.create(mapper.toEntity(billingRun));
         return Response
                 .created(LinkGenerator.getUriBuilderFromResource(InvoicingResource.class, billingRunEntity.getId()).build())

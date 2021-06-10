@@ -192,16 +192,24 @@ public class InvoicingAsync {
     }
 
     private Filter createRatedTransactionFilter(Map<String, String> filters) {
+        QueryBuilder queryBuilder;
+        if(filters.containsKey("SQL")) {
+            queryBuilder = new QueryBuilder(filters.get("SQL"));
+        } else {
+            PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
+            queryBuilder = ratedTransactionService.getQuery(configuration);
+        }
         Filter rtFilter = new Filter();
-        PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
-        rtFilter.setPollingQuery(buildPollingQuery(ratedTransactionService.getQuery(configuration)));
+        rtFilter.setPollingQuery(buildPollingQuery(queryBuilder));
         return rtFilter;
     }
 
     private String buildPollingQuery(QueryBuilder queryBuilder) {
         String pollingQuery = queryBuilder.getSqlString();
-        for(Map.Entry<String, Object> param : queryBuilder.getParams().entrySet()) {
-            pollingQuery = pollingQuery.replace(":" + param.getKey(), "\'"+ param.getValue() + "\'");
+        if(queryBuilder.getParams() != null) {
+            for(Map.Entry<String, Object> param : queryBuilder.getParams().entrySet()) {
+                pollingQuery = pollingQuery.replace(":" + param.getKey(), "\'"+ param.getValue() + "\'");
+            }
         }
         return pollingQuery;
     }
