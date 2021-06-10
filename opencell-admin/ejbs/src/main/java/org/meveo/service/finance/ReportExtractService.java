@@ -326,19 +326,11 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         
     }
 
-    public String getReporFile(ReportExtract entity) throws BusinessException {
-        entity = refreshOrRetrieve(entity);
-        StringBuilder reportDir = new StringBuilder(ParamBean.getInstance().getChrootDir(appProvider.getCode()));
-        reportDir.append(File.separator + ReportExtractScript.REPORTS_DIR);
+    public String getReporFilePath(ReportExtractExecutionResult reportResult) throws BusinessException {
 
-        if (!StringUtils.isBlank(entity.getCategory())) {
-            reportDir.append(File.separator + entity.getCategory());
-        }
+        StringBuilder reportFile = new StringBuilder(ParamBean.getInstance().getChrootDir(appProvider.getCode()));
+        reportFile.append(reportResult.getReportExtract().getOutputDir()).append(File.separator).append(reportResult.getFilePath());
 
-        String filename = DateUtils.evaluteDateFormat(entity.getFilenameFormat());
-        filename = evaluateStringExpression(filename, entity);
-
-        return reportDir + File.separator + filename;
+        return reportFile.toString();
     }
-
 }

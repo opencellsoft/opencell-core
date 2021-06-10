@@ -95,7 +95,7 @@
 					<hftl:column label="#{messages['reportExtract.errorMessage']}" field="errorMessage" />
 					<p:column>
 						<p:commandButton rendered="#{entity.lineCount>0}" value="#{messages['commons.download']}" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s">
-					        <p:fileDownload value="#{reportExtractBean.getReportFile(entity.reportExtract)}" />
+					        <p:fileDownload value="#{reportExtractBean.getReportFile(entity)}" />
 					    </p:commandButton>
 					</p:column>
 				</p:dataTable>
