@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.model.article.AccountingArticle;
@@ -103,8 +104,10 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 			ArticleMappingLine bestMatch = attributeMappingLineMatch.getBestMatch();
 			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode("ART-STD");
 		}
-		if(result != null)
+		if(result != null) {
+			Hibernate.initialize(result);
 			detach(result);
+		}
 		return  result != null ? Optional.of(result) : Optional.empty();
 	}
 
