@@ -7,7 +7,7 @@ import org.meveo.model.billing.UsageChargeInstance;
 
 public enum PriceTypeEnum {
 
-	 RECURRING("recurring"), ONE_SHOT("oneShot"), USAGE("usage");
+	 RECURRING("recurring"), ONE_SHOT("oneShot"), USAGE("usage"), FIXED_DISCOUNT("fixed discount");
 	
 	private String value;
 	
