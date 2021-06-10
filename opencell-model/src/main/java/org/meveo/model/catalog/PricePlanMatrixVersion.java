@@ -70,7 +70,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 		this.pricePlanMatrix = copy.pricePlanMatrix;
 		this.currentVersion = 1;
 		this.label = copy.label;
-		this.statusDate = Calendar.getInstance().getTime();
+		this.statusDate = new Date();
 		this.validity = copy.validity;
 		this.isMatrix = copy.isMatrix;
 		this.amountWithoutTax = copy.amountWithoutTax;
