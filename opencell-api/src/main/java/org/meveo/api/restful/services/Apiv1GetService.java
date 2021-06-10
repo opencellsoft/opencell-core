@@ -37,8 +37,6 @@ public class Apiv1GetService {
 
     public static final Set<String> SET_GET_ALL = new HashSet<>();
 
-    private static final String API_REST = "api/rest";
-
     private List<PathSegment> segmentsOfPathAPIv1;
     private String entityCode;
     private String pathIBaseRS;
@@ -86,25 +84,25 @@ public class Apiv1GetService {
             }
 
             if ( SET_GET_ALL.contains(pathIBaseRS) )
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                        + pathIBaseRS + METHOD_GET_ALL_BIS
                         + queryParams.substring( 0, queryParams.length() - 1 )
                         .replace( GenericPagingAndFilteringUtils.BLANK_SPACE, GenericPagingAndFilteringUtils.BLANK_SPACE_ENCODED )
                         .replace( GenericPagingAndFilteringUtils.QUOTE, GenericPagingAndFilteringUtils.QUOTE_ENCODED ) );
             else
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS + METHOD_GET_ALL
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                        + pathIBaseRS + METHOD_GET_ALL
                         + queryParams.substring( 0, queryParams.length() - 1 )
                         .replace( GenericPagingAndFilteringUtils.BLANK_SPACE, GenericPagingAndFilteringUtils.BLANK_SPACE_ENCODED )
                         .replace( GenericPagingAndFilteringUtils.QUOTE, GenericPagingAndFilteringUtils.QUOTE_ENCODED ) );
         }
         else {
             if ( SET_GET_ALL.contains(pathIBaseRS) )
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS + METHOD_GET_ALL_BIS );
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                        + pathIBaseRS + METHOD_GET_ALL_BIS );
             else
-                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                        + API_REST + pathIBaseRS + METHOD_GET_ALL );
+                redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                        + pathIBaseRS + METHOD_GET_ALL );
         }
 
         Response getResponse = AuthenticationFilter.httpClient.target( redirectURI ).request().get();
@@ -123,62 +121,62 @@ public class Apiv1GetService {
         entityCode = segmentsOfPathAPIv1.get( segmentsOfPathAPIv1.size() - 1 ).getPath();
 
         if ( pathIBaseRS.equals(Apiv1ConstantDictionary.USER) ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "username=" + entityCode);
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + QUERY_PARAM_SEPARATOR + "username=" + entityCode);
         }
         // special handle for job
         else if ( pathIBaseRS.equals("/job") ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "jobInstanceCode=" + entityCode);
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + QUERY_PARAM_SEPARATOR + "jobInstanceCode=" + entityCode);
         }
         // special handle for jobReport, contact, taxCategory, taxClass
         else if ( pathIBaseRS.equals("/job/jobReport") || pathIBaseRS.equals(Apiv1ConstantDictionary.CONTACT)
                 || pathIBaseRS.equals(Apiv1ConstantDictionary.TAX_CATEGORY) || pathIBaseRS.equals(Apiv1ConstantDictionary.TAX_CLASS)
                 || pathIBaseRS.equals(Apiv1ConstantDictionary.FILE_FORMAT) || pathIBaseRS.equals(Apiv1ConstantDictionary.EMAIL_TEMPLATE)
                 || pathIBaseRS.equals(Apiv1ConstantDictionary.MEVEO_INSTANCE) ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "code=" + entityCode);
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + QUERY_PARAM_SEPARATOR + "code=" + entityCode);
         }
         // special handle for invoice
         else if ( pathIBaseRS.equals(Apiv1ConstantDictionary.INVOICE) ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode);
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode);
         }
         // special handle for accountingCode
         else if ( pathIBaseRS.equals(Apiv1ConstantDictionary.ACCOUNTING_CODE) ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "accountingCode=" + entityCode);
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + QUERY_PARAM_SEPARATOR + "accountingCode=" + entityCode);
         }
         // special handle for countryIso
         else if ( pathIBaseRS.equals(Apiv1ConstantDictionary.COUNTRY_ISO) ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "countryCode=" + entityCode);
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + QUERY_PARAM_SEPARATOR + "countryCode=" + entityCode);
         }
         // special handle for currencyIso
         else if ( pathIBaseRS.equals(Apiv1ConstantDictionary.CURRENCY_ISO) ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "currencyCode=" + entityCode);
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + QUERY_PARAM_SEPARATOR + "currencyCode=" + entityCode);
         }
         // special handle for languageIso
         else if ( pathIBaseRS.equals(Apiv1ConstantDictionary.LANGUAGE_ISO) ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "languageCode=" + entityCode);
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + QUERY_PARAM_SEPARATOR + "languageCode=" + entityCode);
         }
         // special handle for taxMapping, paymentMethod
         else if ( pathIBaseRS.equals(Apiv1ConstantDictionary.TAX_MAPPING) || pathIBaseRS.equals(Apiv1ConstantDictionary.PAYMENT_METHOD) ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + "id=" + entityCode);
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + QUERY_PARAM_SEPARATOR + "id=" + entityCode);
         }
         // special handle for productChargeTemplate
         else if ( pathIBaseRS.equals(Apiv1ConstantDictionary.PRODUCT_CHARGE_TEMPLATE) || pathIBaseRS.equals(Apiv1ConstantDictionary.PRODUCT_TEMPLATE)
                 || pathIBaseRS.equals(Apiv1ConstantDictionary.CUSTOM_ENTITY_TEMPLATE ) || pathIBaseRS.equals(Apiv1ConstantDictionary.CUSTOMER_CATEGORY ) ) {
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + FORWARD_SLASH + entityCode);
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + FORWARD_SLASH + entityCode);
         }
         else {
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + QUERY_PARAM_SEPARATOR + entityClassName + "Code=" + entityCode);
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + QUERY_PARAM_SEPARATOR + entityClassName + "Code=" + entityCode);
         }
 
         return Response.temporaryRedirect( redirectURI ).build();
@@ -239,14 +237,14 @@ public class Apiv1GetService {
                 GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
             }
 
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + queryParams.substring( 0, queryParams.length() - 1 ) );
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + queryParams.substring( 0, queryParams.length() - 1 ) );
         }
         else {
             queryParams.append( uriInfo.getRequestUri().getQuery() );
 
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + pathIBaseRS + queryParams );
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + pathIBaseRS + queryParams );
         }
 
         Response getResponse = AuthenticationFilter.httpClient.target( redirectURI ).request().get();
@@ -261,16 +259,16 @@ public class Apiv1GetService {
         URI redirectURI;
         segmentsOfPathAPIv1 = uriInfo.getPathSegments();
 
-        if ( aGetPath.matches( "/v1/invoices/pdfInvoices/" + GenericOpencellRestfulAPIv1.CODE_REGEX ) ) {
+        if ( aGetPath.matches( "/api/rest/v1/invoices/pdfInvoices/" + GenericOpencellRestfulAPIv1.CODE_REGEX ) ) {
             entityCode = segmentsOfPathAPIv1.get( segmentsOfPathAPIv1.size() - 1 ).getPath();
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + "/invoice/getPdfInvoice" + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode );
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + "/invoice/getPdfInvoice" + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode );
             return Response.temporaryRedirect( redirectURI ).build();
         }
-        else if ( aGetPath.matches( "/v1/invoices/xmlInvoices/" + GenericOpencellRestfulAPIv1.CODE_REGEX ) ) {
+        else if ( aGetPath.matches( "/api/rest/v1/invoices/xmlInvoices/" + GenericOpencellRestfulAPIv1.CODE_REGEX ) ) {
             entityCode = segmentsOfPathAPIv1.get( segmentsOfPathAPIv1.size() - 1 ).getPath();
-            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 3 )
-                    + API_REST + "/invoice/getXMLInvoice" + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode );
+            redirectURI = new URI( uriInfo.getBaseUri().toString().substring(0, uriInfo.getBaseUri().toString().length() - 4 )
+                    + "/invoice/getXMLInvoice" + QUERY_PARAM_SEPARATOR + "invoiceNumber=" + entityCode );
             return Response.temporaryRedirect( redirectURI ).build();
         }
 

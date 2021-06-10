@@ -131,7 +131,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
     }
 
     @Override
-    public Response deleteRequest() throws URISyntaxException {
+    public Response deleteRequest() throws URISyntaxException, IOException {
         return deleteService.deleteEntity(uriInfo);
     }
 
