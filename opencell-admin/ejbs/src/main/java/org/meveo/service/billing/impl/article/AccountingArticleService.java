@@ -19,10 +19,12 @@ import org.meveo.model.article.ArticleMappingLine;
 import org.meveo.model.article.AttributeMapping;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
+import org.meveo.model.tax.TaxClass;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.cpq.AttributeService;
 
@@ -139,5 +141,12 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
            	throw new MeveoApiException(e.getMessage());
            }
            return accountingArticle.isPresent() ? accountingArticle.get() : null;
+	}
+	
+	public List<AccountingArticle> findByTaxClassAndSubCategory(TaxClass taxClass, InvoiceSubCategory invoiceSubCategory) {
+		return getEntityManager().createNamedQuery("AccountingArticle.findByTaxClassAndSubCategory", AccountingArticle.class)
+				.setParameter("taxClass", taxClass)
+				.setParameter("invoiceSubCategory", invoiceSubCategory)
+				.getResultList();
 	}
 }

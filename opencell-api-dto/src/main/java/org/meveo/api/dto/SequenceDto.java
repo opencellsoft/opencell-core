@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.billing.InvoiceSequence;
+import org.meveo.model.sequence.SequenceTypeEnum;
 
 /**
  * The Class SequenceDto.
@@ -50,6 +51,12 @@ public class SequenceDto extends BaseEntityDto {
     /** The current invoice nb. */
     @Deprecated
     private Long currentInvoiceNb;
+    
+    /** The sequence pattern. */
+    private String sequencePattern;
+
+    /** The sequence type. */
+    private SequenceTypeEnum sequenceType;
 
     /**
      * Instantiates a new sequence dto.
@@ -81,6 +88,8 @@ public class SequenceDto extends BaseEntityDto {
     	InvoiceSequence sequence = new InvoiceSequence();
         sequence.setSequenceSize(getSequenceSize());
         sequence.setCurrentNumber(getCurrentInvoiceNb());
+        sequence.setSequenceType(getSequenceType());
+        sequence.setSequencePattern(getSequencePattern());
         return sequence;
     }
 
@@ -181,5 +190,33 @@ public class SequenceDto extends BaseEntityDto {
     public String toString() {
         return "SequenceDto [prefixEL=" + prefixEL + ", invoiceSequenceCode=" + invoiceSequenceCode + ", sequenceSize=" + sequenceSize + ", currentInvoiceNb=" + currentInvoiceNb + "]";
     }
+
+	/**
+	 * @return the sequencePattern
+	 */
+	public String getSequencePattern() {
+		return sequencePattern;
+	}
+
+	/**
+	 * @param sequencePattern the sequencePattern to set
+	 */
+	public void setSequencePattern(String sequencePattern) {
+		this.sequencePattern = sequencePattern;
+	}
+
+	/**
+	 * @return the sequenceType
+	 */
+	public SequenceTypeEnum getSequenceType() {
+		return sequenceType;
+	}
+
+	/**
+	 * @param sequenceType the sequenceType to set
+	 */
+	public void setSequenceType(SequenceTypeEnum sequenceType) {
+		this.sequenceType = sequenceType;
+	}
 
 }
