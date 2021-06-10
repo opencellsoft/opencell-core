@@ -18,12 +18,7 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -175,19 +170,19 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      * Invoices produced by a Billing run
      */
     @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Invoice> invoices = new ArrayList<Invoice>();
+    private List<Invoice> invoices = new ArrayList<>();
 
     /**
      * Billing run lists
      */
     @OneToMany(mappedBy = "billingRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<BillingRunList> billingRunLists = new HashSet<BillingRunList>();
+    private Set<BillingRunList> billingRunLists = new HashSet<>();
 
     /**
      * Billed billing accounts
      */
     @OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
-    private List<BillingAccount> billableBillingAccounts = new ArrayList<BillingAccount>();
+    private List<BillingAccount> billableBillingAccounts = new ArrayList<>();
 
     /**
      * Billing run processing type
@@ -222,13 +217,12 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      */
     @Column(name = "last_transaction_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @NotNull
     private Date lastTransactionDate;
 
     /**
      * Rejection reason
      */
-    @Column(name = "rejection_reason", length = 255)
+    @Column(name = "rejection_reason")
     @Size(max = 255)
     private String rejectionReason;
 
@@ -275,7 +269,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
      * Rejected billing accounts
      */
     @OneToMany(mappedBy = "billingRun", fetch = FetchType.LAZY)
-    private List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
+    private List<RejectedBillingAccount> rejectedBillingAccounts = new ArrayList<>();
 
     /**
      * Custom field values in JSON format
@@ -322,6 +316,16 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @OneToOne
     @JoinColumn(name = "next_billing_run_id")
     private BillingRun nextBillingRun;
+
+    /**
+     * Filtering option of the RT.
+     */
+    @Type(type = "json")
+    @Column(name = "filters", columnDefinition = "text")
+    private Map<String, String> filters;
+
+    @Transient
+    private List<Long> exceptionalRTIds;
 
     public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -579,7 +583,7 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     public void addRejectedBillingAccounts(RejectedBillingAccount rejectedBillingAccount) {
         if (rejectedBillingAccounts == null) {
-            rejectedBillingAccounts = new ArrayList<RejectedBillingAccount>();
+            rejectedBillingAccounts = new ArrayList<>();
         }
         rejectedBillingAccounts.add(rejectedBillingAccount);
     }
@@ -760,4 +764,24 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 	public void setSkipValidationScript(boolean skipValidationScript) {
 		this.skipValidationScript = skipValidationScript;
 	}
+
+    public Map<String, String> getFilters() {
+        return filters;
+    }
+
+    public void setFilters(Map<String, String> filters) {
+        this.filters = filters;
+    }
+
+    public List<Long> getExceptionalRTIds() {
+        return exceptionalRTIds;
+    }
+
+    public void setExceptionalRTIds(List<Long> exceptionalRTIds) {
+        this.exceptionalRTIds = exceptionalRTIds;
+    }
+
+    public boolean isExceptionalBR() {
+        return (this.filters !=null && !this.filters.isEmpty());
+    }
 }

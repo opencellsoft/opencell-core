@@ -3912,4 +3912,13 @@ END $$;]]>
 	    <sql>CREATE INDEX idx_ar_payment_history_external_payment_id   ON ${db.schema.adapted}ar_payment_history (external_payment_id );</sql>
     </changeSet>    
 
+    <changeSet id="#6190_20210608" author="Zbariki">
+        <addColumn tableName="billing_billing_run">
+            <column name="filters" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <dropNotNullConstraint columnDataType="datetime" columnName="last_transaction_date" tableName="billing_billing_run"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -22,22 +22,26 @@
 package org.meveo.admin.async;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
@@ -77,9 +81,6 @@ public class InvoicingAsync {
     @Inject
     private CurrentUserProvider currentUserProvider;
 
-    @EJB
-    private InvoicingAsync invoicingNewTransaction;
-
     @Inject
     private RejectedBillingAccountService rejectedBillingAccountService;
 
@@ -93,9 +94,7 @@ public class InvoicingAsync {
      * @param entities Entities to invoice
      * @param billingRun The billing run
      * @param jobInstanceId Job instance id
-     * @param instantiateMinRtsForService Should rated transactions to reach minimum invoicing amount be checked and instantiated on service level.
-     * @param instantiateMinRtsForSubscription Should rated transactions to reach minimum invoicing amount be checked and instantiated on subscription level.
-     * @param instantiateMinRtsForBA Should rated transactions to reach minimum invoicing amount be checked and instantiated on Billing account level.
+     * @param minAmountForAccounts minimum amount to be calculated
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
      * @return The future with a list of entities to invoice and amount to invoice.
@@ -103,12 +102,13 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<List<IBillableEntity>> calculateBillableAmountsAsync(List<IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser)
+    public Future<List<IBillableEntity>> calculateBillableAmountsAsync(List<IBillableEntity> entities, BillingRun billingRun,
+                                                                       Long jobInstanceId, MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser)
             throws BusinessException {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        List<IBillableEntity> billableEntities = new ArrayList<IBillableEntity>();
+        List<IBillableEntity> billableEntities = new ArrayList<>();
         int i = 0;
         for (IBillableEntity entity : entities) {
             i++;
@@ -120,7 +120,7 @@ public class InvoicingAsync {
                 billableEntities.add(billableEntity);
             }
         }
-        return new AsyncResult<List<IBillableEntity>>(billableEntities);
+        return new AsyncResult<>(billableEntities);
     }
 
     /**
@@ -141,7 +141,7 @@ public class InvoicingAsync {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
-        List<IBillableEntity> billableEntities = new ArrayList<IBillableEntity>();
+        List<IBillableEntity> billableEntities = new ArrayList<>();
         int i = 0;
         for (AmountsToInvoice amountsToInvoice : entitiesAndAmounts) {
             i++;
@@ -153,7 +153,7 @@ public class InvoicingAsync {
                 billableEntities.add(billableEntity);
             }
         }
-        return new AsyncResult<List<IBillableEntity>>(billableEntities);
+        return new AsyncResult<>(billableEntities);
     }
 
     /**
@@ -169,7 +169,9 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> createAgregatesAndInvoiceAsync(List<? extends IBillableEntity> entities, BillingRun billingRun, Long jobInstanceId, MinAmountForAccounts minAmountForAccounts, MeveoUser lastCurrentUser, boolean automaticInvoiceCheck) {
+    public Future<String> createAgregatesAndInvoiceAsync(List<? extends IBillableEntity> entities, BillingRun billingRun,
+                                                         Long jobInstanceId, MinAmountForAccounts minAmountForAccounts,
+                                                         MeveoUser lastCurrentUser, boolean automaticInvoiceCheck) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -178,13 +180,30 @@ public class InvoicingAsync {
                 break;
             }
             try {
-                invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun, null, null, null, null, minAmountForAccounts, false, automaticInvoiceCheck);
-            } catch (Exception e1) {
-                log.error("Failed to create invoices for entity {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), e1);
+                invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun,
+                        billingRun.isExceptionalBR() ? createRatedTransactionFilter(billingRun.getFilters()) : null, null,
+                        null, null, minAmountForAccounts, false, automaticInvoiceCheck);
+            } catch (Exception exception) {
+                log.error("Failed to create invoices for entity {}/{}", entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), exception);
             }
         }
 
-        return new AsyncResult<String>("OK");
+        return new AsyncResult<>("OK");
+    }
+
+    private Filter createRatedTransactionFilter(Map<String, String> filters) {
+        Filter rtFilter = new Filter();
+        PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
+        rtFilter.setPollingQuery(buildPollingQuery(ratedTransactionService.getQuery(configuration)));
+        return rtFilter;
+    }
+
+    private String buildPollingQuery(QueryBuilder queryBuilder) {
+        String pollingQuery = queryBuilder.getSqlString();
+        for(Map.Entry<String, Object> param : queryBuilder.getParams().entrySet()) {
+            pollingQuery = pollingQuery.replace(":" + param.getKey(), "\'"+ param.getValue() + "\'");
+        }
+        return pollingQuery;
     }
 
     /**
@@ -221,15 +240,14 @@ public class InvoicingAsync {
                 }
             }
         }
-        return new AsyncResult<String>("OK");
+        return new AsyncResult<>("OK");
     }
     
     /**
      * Increment BA invoice dates async. One BA at a time in a separate transaction.
      *
      * @param billingRun the billing run to process
-     * @param invoiceIds the invoice ids
-     * @param invoicesToNumberInfo the invoices to number info
+     * @param baIds BA ids
      * @param jobInstanceId the job instance id
      * @param result the Job execution result
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
@@ -238,8 +256,8 @@ public class InvoicingAsync {
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> incrementBAInvoiceDatesAsync(BillingRun billingRun, List<Long> baIds, 
-            Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
+    public Future<String> incrementBAInvoiceDatesAsync(BillingRun billingRun, List<Long> baIds,
+                                                       Long jobInstanceId, JobExecutionResultImpl result, MeveoUser lastCurrentUser) {
 
         currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
@@ -256,7 +274,7 @@ public class InvoicingAsync {
                 log.error("Failed to increment invoice date for invoice {}", ibaId, e);
             }
         }
-        return new AsyncResult<String>("OK");
+        return new AsyncResult<>("OK");
     }
     
     
@@ -295,7 +313,7 @@ public class InvoicingAsync {
                 log.error("Failed to increment next invoicing date for billingAccount {}", baId, e);
             }
         }
-        return new AsyncResult<String>("OK");
+        return new AsyncResult<>("OK");
     }
 
     /**
@@ -328,7 +346,7 @@ public class InvoicingAsync {
             }
         }
 
-        return new AsyncResult<String>("OK");
+        return new AsyncResult<>("OK");
     }
 
     /**
@@ -364,6 +382,6 @@ public class InvoicingAsync {
             }
         }
 
-        return new AsyncResult<Boolean>(allOk);
+        return new AsyncResult<>(allOk);
     }
 }
