@@ -36,6 +36,8 @@ import org.meveo.model.quote.QuoteVersion;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "quote_offer_seq"), })
 @NamedQuery(name = "QuoteOffer.findByTemplateAndQuoteVersion", query = "select q from QuoteOffer q left join q.offerTemplate qo left join q.quoteVersion qq where qo.code=:offerTemplateCode and qq.quote.code=:cpqQuoteCode and qq.quoteVersion=:quoteVersion")
+@NamedQuery(name = "QuoteOffer.findQuoteAttribute", query = "select qf from QuoteOffer qf left join qf.quoteVersion qv  "
+		+ " where qv.id=:quoteVersionId and qf.offerTemplate.code=:offerCode")
 public class QuoteOffer extends AuditableCFEntity {
 
 
@@ -82,7 +84,7 @@ public class QuoteOffer extends AuditableCFEntity {
 	private QuoteLot quoteLot;
 	
 
-    @OneToMany(mappedBy = "quoteOffre", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "quoteOffer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
 	private List<QuoteProduct> quoteProduct;
     

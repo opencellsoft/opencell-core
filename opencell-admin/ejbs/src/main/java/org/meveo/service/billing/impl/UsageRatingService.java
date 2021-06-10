@@ -61,7 +61,9 @@ import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRRejectReasonEnum;
 import org.meveo.model.rating.EDRStatusEnum;
@@ -726,7 +728,16 @@ public class UsageRatingService implements Serializable {
                 
             }
         }
-
+        if (expression.indexOf(ValueExpressionWrapper.VAR_QUOTE_VERSION) >= 0) {
+            ServiceInstance service = walletOperation.getServiceInstance();
+            if (service != null) {
+            	QuoteVersion quoteVersion=service.getQuoteProduct()!=null?service.getQuoteProduct().getQuoteVersion():null;
+            	if(quoteVersion!=null) {
+            		userMap.put(ValueExpressionWrapper.VAR_QUOTE_VERSION, quoteVersion);
+            	}
+                
+            }
+        }
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {
             result = (Boolean) res;

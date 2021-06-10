@@ -114,6 +114,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.getResultList();
 	}
 
+	@SuppressWarnings("rawtypes")
 	public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance) {
 		if(chargeInstance==null) {
 			return null;
