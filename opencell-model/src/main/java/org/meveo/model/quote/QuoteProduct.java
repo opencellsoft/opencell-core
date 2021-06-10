@@ -38,7 +38,10 @@ import org.meveo.model.cpq.offer.QuoteOffer;
         @Parameter(name = "sequence_name", value = "cpq_quote_product_seq"), })
 @NamedQueries({
 		@NamedQuery(name = "QuoteProduct.findByQuoteId", query = "select q from QuoteProduct q where q.quote.id=:id"),
-		@NamedQuery(name = "QuoteProduct.findByQuoteVersionAndQuoteOffer", query = "select q from QuoteProduct q left join q.quoteVersion qq left join q.quoteOffre qqo where qq.id=:quoteVersionId and qqo.id=:quoteOfferId")
+		@NamedQuery(name = "QuoteProduct.findByQuoteVersionAndQuoteOffer", query = "select q from QuoteProduct q left join q.quoteVersion qq left join q.quoteOffer qqo where qq.id=:quoteVersionId and qqo.id=:quoteOfferId"),
+		@NamedQuery(name = "QuoteProduct.findQuoteAttribute", query = "select qp from QuoteProduct qp left join qp.quoteVersion qv left join qp.quoteOffer qf left join qp.productVersion pv "
+				+ " where qv.id=:quoteVersionId and qf.offerTemplate.code=:offerCode and pv.product.code=:productCode ")
+
 })
 public class QuoteProduct extends AuditableCFEntity {
 
@@ -71,7 +74,7 @@ public class QuoteProduct extends AuditableCFEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "offer_quote_id", referencedColumnName = "id")
-    private QuoteOffer quoteOffre;
+    private QuoteOffer quoteOffer;
     
 
     @OneToMany(mappedBy = "quoteProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -100,18 +103,18 @@ public class QuoteProduct extends AuditableCFEntity {
 		this.productVersion = copy.productVersion;
 		this.quantity = copy.quantity;
 		this.discountPlan=copy.getDiscountPlan();
-		this.quoteOffre = copy.quoteOffre;
+		this.quoteOffer = copy.quoteOffer;
 		this.quoteAttributes = copy.quoteAttributes;
 	}
 	
 	public void update(QuoteProduct other) {
-    	this.quoteOffre = other.quoteOffre;
+    	this.quoteOffer = other.quoteOffer;
     	this.quote = other.quote;
 		this.quoteVersion = other.quoteVersion;
 		this.productVersion = other.productVersion;
 		this.quantity = other.quantity;
 		this.discountPlan=other.getDiscountPlan();
-		this.quoteOffre = other.quoteOffre;
+		this.quoteOffer = other.quoteOffer;
 		this.quoteAttributes = other.quoteAttributes;
     }
 
@@ -182,25 +185,23 @@ public class QuoteProduct extends AuditableCFEntity {
 		this.productVersion = productVersion;
 	}
 
-	/**
-	 * @return the quoteOffre
-	 */
-	public QuoteOffer getQuoteOffre() {
-		return quoteOffre;
+
+	public QuoteOffer getQuoteOffer() {
+		return quoteOffer;
 	}
 
-	/**
-	 * @param quoteOffre the quoteOffre to set
-	 */
-	public void setQuoteOffre(QuoteOffer quoteOffre) {
-		this.quoteOffre = quoteOffre;
+
+	public void setQuoteOffer(QuoteOffer quoteOffer) {
+		this.quoteOffer = quoteOffer;
 	}
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
-				+ Objects.hash(productVersion, quantity, quote, quoteOffre, quoteVersion);
+				+ Objects.hash(productVersion, quantity, quote, quoteOffer, quoteVersion);
 		return result;
 	}
 	@Override
@@ -212,7 +213,7 @@ public class QuoteProduct extends AuditableCFEntity {
 		QuoteProduct other = (QuoteProduct) obj;
 		return  Objects.equals(productVersion, other.productVersion) && Objects.equals(quantity, other.quantity)
 				&& Objects.equals(quote, other.quote)
-				&& Objects.equals(quoteOffre, other.quoteOffre) && Objects.equals(quoteVersion, other.quoteVersion) && Objects.equals(discountPlan, other.discountPlan);
+				&& Objects.equals(quoteOffer, other.quoteOffer) && Objects.equals(quoteVersion, other.quoteVersion) && Objects.equals(discountPlan, other.discountPlan);
 	}
 	/**
 	 * @return the quoteAttributes

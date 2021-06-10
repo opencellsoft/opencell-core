@@ -18,41 +18,49 @@
 
 package org.meveo.service.base;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementNotFoundException;
-import org.meveo.commons.utils.EjbUtils;
-import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.ICounterEntity;
-import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.IEntity;
-import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.shared.DateUtils;
-import org.meveo.service.billing.impl.CounterPeriodService;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.service.custom.CustomTableService;
-import org.meveo.service.script.Script;
-import org.meveo.service.script.ScriptInstanceService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.el.FunctionMapper;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ElementNotFoundException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.model.ICounterEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IEntity;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.QuoteAttribute;
+import org.meveo.model.cpq.offer.QuoteOffer;
+import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.quote.QuoteProduct;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.CounterPeriodService;
+import org.meveo.service.cpq.AttributeService;
+import org.meveo.service.cpq.QuoteProductService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CustomTableService;
+import org.meveo.service.quote.QuoteOfferService;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.ScriptInstanceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides custom functions for Meveo application. The following functions are provided:
@@ -77,8 +85,16 @@ public class MeveoFunctionMapper extends FunctionMapper {
     private static CounterPeriodService counterPeriodService;
 
     private static CustomFieldTemplateService customFieldTemplateService;
+    
+    private static QuoteProductService quoteProductService;
+    
+    private static QuoteOfferService quoteOfferService;
+    
+    private static AttributeService attributeService;
 
     private static Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+    
+    
 
     public MeveoFunctionMapper() {
 
@@ -274,6 +290,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getCounterValue", MeveoFunctionMapper.class.getMethod("getCounterValue", ICounterEntity.class, String.class));
             addFunction("mv", "getCounterValueByDate", MeveoFunctionMapper.class.getMethod("getCounterValueByDate", ICounterEntity.class, String.class, Date.class));
             addFunction("mv", "getLocalizedDescription", MeveoFunctionMapper.class.getMethod("getLocalizedDescription", IEntity.class, String.class));
+            addFunction("mv", "getAttributeValue", MeveoFunctionMapper.class.getMethod("getAttributeValue", Long.class, String.class,String.class,String.class));
 
             //adding all Math methods with 'math' as prefix
             for (Method method : Math.class.getMethods()) {
@@ -1853,4 +1870,104 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
         return result;
     }
+    
+    
+    private static AttributeService getAttributeService() {
+    	if (attributeService == null) {
+    		try {
+    			InitialContext initialContext = new InitialContext();
+    			BeanManager beanManager = (BeanManager) initialContext.lookup("java:comp/BeanManager");
+    			Bean<AttributeService> bean = (Bean<AttributeService>) beanManager.resolve(beanManager.getBeans(AttributeService.class));
+    			attributeService = (AttributeService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
+    		} catch (NamingException e) {
+    			Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+    			log.error("Unable to access AttributeService", e);
+    			throw new RuntimeException(e);
+    		}
+    	}
+    	return attributeService;
+    }
+    
+    private static QuoteProductService QuoteProductService() {
+    	if (quoteProductService == null) {
+    		try {
+    			InitialContext initialContext = new InitialContext();
+    			BeanManager beanManager = (BeanManager) initialContext.lookup("java:comp/BeanManager");
+    			Bean<QuoteProductService> bean = (Bean<QuoteProductService>) beanManager.resolve(beanManager.getBeans(QuoteProductService.class));
+    			quoteProductService = (QuoteProductService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
+    		} catch (NamingException e) {
+    			Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+    			log.error("Unable to access QuoteProductService", e);
+    			throw new RuntimeException(e);
+    		}
+    	}
+    	return quoteProductService;
+    }
+
+    private static QuoteOfferService QuoteOffertService() {
+    	if (quoteOfferService == null) {
+    		try {
+    			InitialContext initialContext = new InitialContext();
+    			BeanManager beanManager = (BeanManager) initialContext.lookup("java:comp/BeanManager");
+    			Bean<QuoteOfferService> bean = (Bean<QuoteOfferService>) beanManager.resolve(beanManager.getBeans(QuoteOfferService.class));
+    			quoteOfferService = (QuoteOfferService) beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean));
+    		} catch (NamingException e) {
+    			Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
+    			log.error("Unable to access QuoteOffertService", e);
+    			throw new RuntimeException(e);
+    		}
+    	}
+    	return quoteOfferService;
+    }
+    
+    
+    public static Object getAttributeValue(Long quoteVersionId,String offerCode,String productCode, String attributeCode) { 
+    	Optional<QuoteAttribute> quoteAttribute=null;
+    	Attribute  attribute =getAttributeService().findByCode(attributeCode);
+    	if(attribute == null)
+    		throw new EntityDoesNotExistsException(Attribute.class, attributeCode);
+
+    	if(productCode!=null) {
+    		QuoteProduct quoteProduct =QuoteProductService().findByQuoteAndOfferAndProduct(quoteVersionId, offerCode,productCode);
+    		if(!quoteProduct.getQuoteAttributes().isEmpty())
+    			quoteAttribute=quoteProduct.getQuoteAttributes().stream().filter(qt -> qt.getAttribute().getCode().equals(attributeCode)).findFirst();
+    	}else {
+    		QuoteOffer quoteOffer =QuoteOffertService().findByQuoteVersionAndOffer(quoteVersionId, offerCode);
+    		if(!quoteOffer.getQuoteAttributes().isEmpty())
+    			quoteAttribute= quoteOffer.getQuoteAttributes().stream().filter(qt -> qt.getAttribute().getCode().equals(attributeCode)).findFirst();
+    	}
+    	if(attribute.getAttributeType()!=null) {
+    		switch (attribute.getAttributeType()) {
+			case TOTAL :
+			case COUNT :
+			case NUMERIC :
+			case INTEGER:
+				return quoteAttribute.get().getDoubleValue(); 
+			case LIST_MULTIPLE_TEXT:
+			case LIST_TEXT:
+			case EXPRESSION_LANGUAGE :
+			case TEXT:	
+				return quoteAttribute.get().getStringValue(); 							
+			case DATE:
+				return quoteAttribute.get().getDateValue();
+			default:
+				break;  
+			}
+    	}
+    	return null;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

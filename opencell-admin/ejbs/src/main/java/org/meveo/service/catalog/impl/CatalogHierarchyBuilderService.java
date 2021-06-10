@@ -1298,7 +1298,7 @@ public class CatalogHierarchyBuilderService {
 			quoteProductService.detach(quoteProduct);
 			var quoteAttributes = quoteProduct.getQuoteAttributes();
 			var quoteArticleLines = quoteProduct.getQuoteArticleLines(); 
-			duplicate.setQuoteOffre(offer);
+			duplicate.setQuoteOffer(offer);
 			duplicate.setQuote(offer.getQuoteVersion().getQuote());
 			duplicate.setQuoteVersion(offer.getQuoteVersion());
 			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());

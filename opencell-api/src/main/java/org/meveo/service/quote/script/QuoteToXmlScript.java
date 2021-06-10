@@ -206,7 +206,7 @@ public class QuoteToXmlScript extends ModuleScript {
     	org.meveo.api.dto.cpq.xml.AccountingArticle accountingArticleDto = new  org.meveo.api.dto.cpq.xml.AccountingArticle(accountingArticle, quoteArticleLines, getTradingLanguage(ba));
 
     	accountingArticleDto.setQuoteLines(quoteArticleLines.stream()
-    			.map(line -> new QuoteLine(line,mapToOffer(line.getQuoteProduct().getQuoteOffre())))
+    			.map(line -> new QuoteLine(line,mapToOffer(line.getQuoteProduct().getQuoteOffer())))
     			.collect(Collectors.toList()));
     	return accountingArticleDto; 
     }
