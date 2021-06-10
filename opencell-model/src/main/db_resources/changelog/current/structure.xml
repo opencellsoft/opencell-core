@@ -7475,6 +7475,7 @@ public class QuoteValidation extends ModuleScript {
 		order.setOrderInvoiceType(invoiceTypeService.getDefaultCommercialOrder());
 		order.setProgressDate(Calendar.getInstance().getTime());
 		order.setUserAccount(account.getUsersAccounts().size() > 0 ? account.getUsersAccounts().get(0) : null);
+		order.setDiscountPlan(cpqQuote.getDiscountPlan());
 		commercialOrderService.create(order);
 		return order;
 	}
@@ -9006,4 +9007,14 @@ public class OrderAdvancement extends ModuleScript {
 		<sql>INSERT INTO ${db.schema.adapted}cat_discount_plan (id,"version",disabled,created,updated,code,description,max_duration,min_duration,creator,updater,uuid,start_date,end_date,duration_unit,discount_plan_type,status,status_date,initial_quantity,used_quantity,application_limit)
 				VALUES (nextval('cat_discount_plan_seq'),0,0,'2021-06-07 15:52:06.068','2021-06-07 15:52:06.643','DISC-STD','DISC-STD',99999,0,'opencell.admin','opencell.admin','bb686d5b-4c81-432c-bfd9','2021-01-01','2022-12-31','DAY','PRODUCT','ACTIVE','2021-06-07 15:51:06.643',0,0,0);</sql>
     </changeSet>
+    
+    <changeSet id="#20210608-540-527" author="Rachid.Aityaazza">
+        <addColumn tableName="cpq_commercial_order">
+            <column name="discount_plan_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_discount_plan_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan"/>
+    </changeSet>
+    
 </databaseChangeLog>

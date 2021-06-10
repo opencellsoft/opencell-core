@@ -9650,6 +9650,7 @@
             <column name="cf_values" type="${type.json}" />
             <column name="cf_values_accum" type="${type.json}" />
             <column name="oneshot_total_amount" type="numeric(23, 12)" />
+            <column name="discount_plan_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-475" author="NabilOUACHI">
@@ -14018,6 +14019,11 @@
 			 baseColumnNames="order_offer_id" baseTableName="order_price" constraintName="fk_order_price_order_offer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
 			 referencedColumnNames="id" referencedTableName="cpq_order_offer" /> 
     </changeSet>
+    <changeSet id="rebuild-str-fk-1631" author="Rachid.Aityaazza">
+        <addForeignKeyConstraint baseColumnNames="discount_plan_id" baseTableName="cpq_commercial_order" constraintName="fk_cpq_commercial_order_discount_plan_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan"/>
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15761,6 +15767,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#5599_20210526" author="AbdelmounaimAkadid" />
     <changeSet id="#5416_20210526" author="AbdelmounaimAkadid" />
     <changeSet id="#559_20210603" author="TarikFA." />
+    <changeSet id="#20210608-540-527" author="Rachid.Aityaazza"/>
     
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

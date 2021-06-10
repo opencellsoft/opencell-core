@@ -192,9 +192,10 @@ public class DiscountPlanInstanceService extends PersistenceService<DiscountPlan
 		if (!(dp.getStatus().equals(DiscountPlanStatusEnum.IN_USE) || dp.getStatus().equals(DiscountPlanStatusEnum.ACTIVE))) {
 			throw new BusinessException("only ACTIVE and IN_USE discount plans can be instantiated");
 		}
-		if (entity instanceof Subscription && dp.getDiscountPlanType() != null && !dp.getDiscountPlanType().equals(DiscountPlanTypeEnum.OFFER) && !((Subscription) entity)
-				.getOffer().getAllowedDiscountPlans().contains(dp)) {
-			throw new BusinessException("could not instantiate a discount plan : " + dp.getCode() + " in a subscription entity:" + ((Subscription) entity).getCode());
+		if (entity instanceof Subscription && dp.getDiscountPlanType() != null && dp.getDiscountPlanType().equals(DiscountPlanTypeEnum.OFFER))  {
+			if(!((Subscription) entity)
+					.getOffer().getAllowedDiscountPlans().contains(dp))
+				throw new BusinessException("could not instantiate a discount plan : " + dp.getCode() + " in a subscription entity:" + ((Subscription) entity).getCode());
 		}
 		if (dp.getApplicationFilterEL() != null) {
 			Map<Object, Object> context = new HashMap<>();

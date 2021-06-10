@@ -102,7 +102,7 @@ public interface InvoiceResource {
 			@Parameter(description = "the advanced Payment Invoice object", required = true) BasicInvoice basicInvoice);
 	
 	@POST
-	@Path("/invoices/{id}/invoiceLines")
+	@Path("/{id}/invoiceLines")
 	@Operation(summary = "Create invoice lines",  description = "Create invoice lines", 
 					responses = {
 					@ApiResponse(responseCode = "200", description = "invoice lines successfully created"),
@@ -117,7 +117,7 @@ public interface InvoiceResource {
 	 * @return
 	 */
 	@PUT
-	@Path("/invoices/{id}/invoiceLines/{lineId}")
+	@Path("/{id}/invoiceLines/{lineId}")
 	@Operation(summary = "Update invoice line",  description = "Update invoice line", 
 	responses = {
 	@ApiResponse(responseCode = "200", description = "invoice lines successfully updated"),
@@ -132,7 +132,7 @@ public interface InvoiceResource {
 	 * @return
 	 */
 	@DELETE
-	@Path("/invoices/{id}/invoiceLines/{lineId}")
+	@Path("/{id}/invoiceLines/{lineId}")
 	@Operation(summary = "Remove invoice line",  description = "Remove invoice line", 
 	responses = {
 	@ApiResponse(responseCode = "200", description = "invoice line successfully removed"),
@@ -147,7 +147,7 @@ public interface InvoiceResource {
 	 * @return
 	 */
 	@DELETE
-	@Path("/invoices/{id}/invoiceLines")
+	@Path("/{id}/invoiceLines")
 	@Operation(summary = "Remove invoice lines",  description = "Remove invoice line", 
 	responses = {
 	@ApiResponse(responseCode = "200", description = "invoice lines successfully removed"),
@@ -160,7 +160,7 @@ public interface InvoiceResource {
 	 * @return
 	 */
 	@PUT
-	@Path("/invoices/{id}/rebuild")
+	@Path("/{id}/rebuild")
 	@Operation(summary = "Rebuild invoice",  description = "Rebuild invoice", 
 	responses = {
 	@ApiResponse(responseCode = "200", description = "invoice successfully rebuilded"),
@@ -172,7 +172,7 @@ public interface InvoiceResource {
 	 * @return
 	 */
 	@PUT
-	@Path("/invoices/{id}/rejection")
+	@Path("/{id}/rejection")
 	@Operation(summary = "Reject invoice",  description = "Reject invoice", 
 	responses = {
 	@ApiResponse(responseCode = "200", description = "invoice successfully rejected"),
@@ -185,7 +185,7 @@ public interface InvoiceResource {
 	 * @return
 	 */
 	@PUT
-	@Path("/invoices/{id}/validation")
+	@Path("/{id}/validation")
 	@Operation(summary = "Validate invoice",  description = "Validate invoice", 
 	responses = {
 	@ApiResponse(responseCode = "200", description = "invoice successfully validated"),
@@ -198,7 +198,7 @@ public interface InvoiceResource {
 	 * @return
 	 */
 	@PUT
-	@Path("/invoices/{id}/cancellation")
+	@Path("/{id}/cancellation")
 	@Operation(summary = "Cancel invoice",  description = "Cancel invoice", 
 	responses = {
 	@ApiResponse(responseCode = "200", description = "invoice successfully canceled"),
@@ -206,7 +206,6 @@ public interface InvoiceResource {
 	Response cancelInvoiceLine(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id);
 	
 	@POST
-	@Path("/invoices")
 	@Operation(summary = "Create a new invoice", tags = {
 			"Invoices" }, description = "Create a new invoice", 
 					responses = {
@@ -215,13 +214,22 @@ public interface InvoiceResource {
 	Response create( @Parameter(description = "the Invoice input object", required = true) InvoiceInput input);
 	
 	@PUT
-	@Path("/invoices/{id}")
-	@Operation(summary = "Create a new invoice", tags = {
-			"Invoices" }, description = "Create a new invoice", 
+	@Path("/{id}")
+	@Operation(summary = "Update an invoice", tags = {
+			"Invoices" }, description = "Update an invoice", 
 					responses = {
 					@ApiResponse(responseCode = "200", description = "the Invoice is successfully created"),
 					@ApiResponse(responseCode = "400", description = "bad request when Invoice information contains an error") })
 	Response update(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id, @Parameter(description = "the Invoice object", required = true) Invoice input);
+	
+
+	@PUT
+	@Path("/{id}/calculation")
+	@Operation(summary = "calculate invoice",  description = "calculate invoice", 
+	responses = {
+	@ApiResponse(responseCode = "200", description = "invoice successfully calculated"),
+	@ApiResponse(responseCode = "403", description = "error when calculating invoice") })
+	Response calculateInvoice(@Parameter(description = "id of the Invoice", required = true) @PathParam("id") Long id);
 
 
 	@GET

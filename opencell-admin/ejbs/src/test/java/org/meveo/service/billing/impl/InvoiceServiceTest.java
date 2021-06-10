@@ -1016,7 +1016,7 @@ public class InvoiceServiceTest {
         BillingCycle bc = mock(BillingCycle.class);
         InvoiceType invoiceType = mock(InvoiceType.class);
         PaymentMethod paymentMethod = mock(PaymentMethod.class);
-        InvoiceService.InvoiceLinesToInvoice invoiceLinesGroups = invoiceService.getInvoiceLinesGroups(ba, ba, null, bc, invoiceType, null, null, null, false, paymentMethod);
+        InvoiceService.InvoiceLinesToInvoice invoiceLinesGroups = invoiceService.getInvoiceLinesGroups(ba, ba, null, bc, invoiceType, null, null, null, false, paymentMethod,null);
         assertThat(invoiceLinesGroups).isNotNull();
         Assert.assertEquals(invoiceLinesGroups.invoiceLinesGroups.size(), 1);
         InvoiceLinesGroup invoiceLinesGroup = invoiceLinesGroups.invoiceLinesGroups.get(0);
@@ -1032,7 +1032,7 @@ public class InvoiceServiceTest {
         InvoiceType invoiceType = mock(InvoiceType.class);
         PaymentMethod paymentMethod = mock(PaymentMethod.class);
         InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba,
-                null, bc, invoiceType, null, null, null, false, paymentMethod);
+                null, bc, invoiceType, null, null, null, false, paymentMethod,null);
         assertThat(invoiceLinesToInvoice).isNotNull();
         Assert.assertEquals(invoiceLinesToInvoice.invoiceLinesGroups.size(), 1);
         InvoiceLinesGroup invoiceLinesGroup = invoiceLinesToInvoice.invoiceLinesGroups.get(0);
@@ -1050,7 +1050,7 @@ public class InvoiceServiceTest {
         PaymentMethod paymentMethod = new CardPaymentMethod();
         InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice =
                 invoiceService.getInvoiceLinesGroups(order, ba, new BillingRun(), bc, invoiceType,
-                        mock(Filter.class), mock(Date.class), mock(Date.class), false, paymentMethod);
+                        mock(Filter.class), mock(Date.class), mock(Date.class), false, paymentMethod,null);
         assertThat(invoiceLinesToInvoice).isNotNull();
         Assert.assertEquals(invoiceLinesToInvoice.invoiceLinesGroups.size(), 1);
         InvoiceLinesGroup invoiceLinesGroup = invoiceLinesToInvoice.invoiceLinesGroups.get(0);

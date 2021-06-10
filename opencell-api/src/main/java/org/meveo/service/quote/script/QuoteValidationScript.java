@@ -138,6 +138,7 @@ public class QuoteValidationScript extends ModuleScript {
 		order.setProgressDate(Calendar.getInstance().getTime());
 		order.setUserAccount(account.getUsersAccounts().size() > 0 ? account.getUsersAccounts().get(0) : null);
 		order.setQuoteVersion(quoteVersion);
+		order.setDiscountPlan(cpqQuote.getDiscountPlan());
 		//order.setCfValues(quoteVersion.getCfValues());
 		var customFieldsFromQuoteVersion = quoteVersion.getCfValues();
 		var customFieldOrder = customFieldTemplateService.findByAppliesTo(order);

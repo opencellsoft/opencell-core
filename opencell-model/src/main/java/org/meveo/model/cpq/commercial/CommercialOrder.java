@@ -1,6 +1,7 @@
 package org.meveo.model.cpq.commercial;
 
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
@@ -217,6 +219,14 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
     
     @Transient
     private QuoteVersion quoteVersion;
+    
+	
+	/**
+	 * discountPlan attached to this orderOffer
+	 */
+    @ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "discount_plan_id", referencedColumnName = "id")
+	private DiscountPlan discountPlan;
 	
     
     @Override
@@ -738,6 +748,14 @@ public class CommercialOrder extends BusinessCFEntity implements IBillableEntity
 	 */
 	public void setQuoteVersion(QuoteVersion quoteVersion) {
 		this.quoteVersion = quoteVersion;
+	}
+
+	public DiscountPlan getDiscountPlan() {
+		return discountPlan;
+	}
+
+	public void setDiscountPlan(DiscountPlan discountPlan) {
+		this.discountPlan = discountPlan;
 	}
 
 

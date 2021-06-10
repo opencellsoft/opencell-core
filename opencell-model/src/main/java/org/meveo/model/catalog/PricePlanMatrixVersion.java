@@ -60,7 +60,31 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @NotNull
     private PricePlanMatrix pricePlanMatrix;
 
-    @Column(name = "current_version", nullable = false)
+    public PricePlanMatrixVersion() {
+	}
+    
+    
+    
+	public PricePlanMatrixVersion(PricePlanMatrixVersion copy) {
+		this.status = VersionStatusEnum.DRAFT;
+		this.pricePlanMatrix = copy.pricePlanMatrix;
+		this.currentVersion = 1;
+		this.label = copy.label;
+		this.statusDate = Calendar.getInstance().getTime();
+		this.validity = copy.validity;
+		this.isMatrix = copy.isMatrix;
+		this.amountWithoutTax = copy.amountWithoutTax;
+		this.amountWithTax = copy.amountWithTax;
+		this.amountWithoutTaxEL = copy.amountWithoutTaxEL;
+		this.amountWithTaxEL = copy.amountWithTaxEL;
+		this.lines = new HashSet<>();
+		this.columns = new HashSet<>();
+		this.priority = copy.priority;
+	}
+
+
+
+	@Column(name = "current_version", nullable = false)
     private int currentVersion;
 
     @Column(name = "label")

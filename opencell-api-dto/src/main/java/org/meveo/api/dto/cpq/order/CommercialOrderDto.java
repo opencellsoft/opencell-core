@@ -79,6 +79,9 @@ public class CommercialOrderDto extends BaseEntityDto {
 	private Set<String> orderLotCodes;
 	@Schema(description = "custom field, if any")
     private CustomFieldsDto customFields;
+	/** Discount plan code */
+    @Schema(description = "The code of the discount plan")
+	private String discountPlanCode;
 	
 	public CommercialOrderDto() {
 	}
@@ -408,4 +411,14 @@ public class CommercialOrderDto extends BaseEntityDto {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public String getDiscountPlanCode() {
+		return discountPlanCode;
+	}
+
+	public void setDiscountPlanCode(String discountPlanCode) {
+		this.discountPlanCode = discountPlanCode;
+	}
+	
+	
 }
