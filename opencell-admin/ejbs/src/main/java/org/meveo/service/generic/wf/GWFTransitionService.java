@@ -188,6 +188,7 @@ public class GWFTransitionService extends PersistenceService<GWFTransition> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public WorkflowInstance executeTransition(GWFTransition transition, BusinessEntity entity,
             WorkflowInstance workflowInstance, GenericWorkflow genericWorkflow) {
+        workflowInstance = workflowInstanceService.refreshOrRetrieve(workflowInstance);
 
         if (genericWorkflow.isEnableHistory()) {
             WorkflowInstanceHistory workflowInstanceHistory = processTransition(workflowInstance, transition);
