@@ -17,8 +17,35 @@
  */
 package org.meveo.service.base;
 
+import static java.util.stream.Collectors.joining;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
+import javax.persistence.Query;
+
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.FlushMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -50,21 +77,6 @@ import org.meveo.service.base.expressions.NativeExpressionFactory;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.MeveoParamBean;
-
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.*;
-import java.util.Date;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.joining;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods working directly with native DB tables
@@ -134,6 +146,7 @@ public class NativePersistenceService extends BaseService {
             SQLQuery query = session.createSQLQuery(selectQuery.toString());
             query.setParameter("id", id);
             query.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
+            query.setFlushMode(FlushMode.COMMIT);
 
             Map<String, Object> values = (Map<String, Object>) query.uniqueResult();
             if (values != null) {
@@ -817,7 +830,7 @@ public class NativePersistenceService extends BaseService {
         tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config);
         SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), true);
-        return query.list();
+        return query.setFlushMode(FlushMode.COMMIT).list();
     }
 
     /**
@@ -833,7 +846,7 @@ public class NativePersistenceService extends BaseService {
         tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config);
         SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), false);
-        return query.list();
+        return query.setFlushMode(FlushMode.COMMIT).list();
     }
 
     /**
@@ -847,7 +860,7 @@ public class NativePersistenceService extends BaseService {
         tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config);
         Query query = queryBuilder.getNativeCountQuery(getEntityManager());
-        Object count = query.getSingleResult();
+        Object count = query.setFlushMode(FlushModeType.COMMIT).getSingleResult();
         if (count instanceof Long) {
             return (Long) count;
         } else if (count instanceof BigDecimal) {
@@ -1149,7 +1162,7 @@ public class NativePersistenceService extends BaseService {
         StringBuilder selectQuery = new StringBuilder("select ").append(FIELD_ID).append(" from ").append(tableName).append(" e where ").append(FIELD_ID).append("=:id");
         SQLQuery query = session.createSQLQuery(selectQuery.toString());
         query.setParameter("id", id);
-        return query.uniqueResult() != null;
+        return query.setFlushMode(FlushMode.COMMIT).uniqueResult() != null;
     }
 
     @SuppressWarnings("unchecked")
@@ -1159,7 +1172,7 @@ public class NativePersistenceService extends BaseService {
         StringBuilder selectQuery = new StringBuilder("select ").append(FIELD_ID).append(" from ").append(tableName).append(" e where ").append(FIELD_ID).append(" in (:ids)");
         SQLQuery query = session.createSQLQuery(selectQuery.toString());
         query.setParameterList("ids", ids);
-        return (List<BigInteger>) query.list();
+        return (List<BigInteger>) query.setFlushMode(FlushMode.COMMIT).list();
     }
 
     public String addCurrentSchema(String tableName) {

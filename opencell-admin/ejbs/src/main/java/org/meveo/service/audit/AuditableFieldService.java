@@ -302,7 +302,7 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
         auditableField.setPreviousState(previousState);
         auditableField.setCurrentState(currentState);
         create(auditableField);
-        getEntityManager().flush();
+//        getEntityManager().flush();
     }
 
 }
