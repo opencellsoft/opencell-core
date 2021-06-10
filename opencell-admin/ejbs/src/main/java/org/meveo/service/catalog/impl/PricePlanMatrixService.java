@@ -19,9 +19,11 @@ package org.meveo.service.catalog.impl;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
@@ -82,6 +84,9 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
     @Inject
     private PricePlanMatrixLineService pricePlanMatrixLineService;
+    
+
+    @Inject private PricePlanMatrixVersionService pricePlanMatrixVersionService;
 
     // private ParamBean param = ParamBean.getInstance();
 
@@ -758,6 +763,25 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     public PricePlanMatrixLine loadPrices(PricePlanMatrixVersion pricePlanMatrixVersion, String productCode,Set<AttributeValue> attributeValues) {
         
         return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, productCode);
+    }
+    
+    public PricePlanMatrix duplicatePricePlanMatrix(PricePlanMatrix pricePlanMatrix, PricePlanMatrixVersion pricePlanMatrixVersion, String pricePlanMatrixNewCode) {
+    	//Hibernate.initialize(pricePlanMatrix);
+    	detach(pricePlanMatrix);
+    	
+    	var duplicate = new PricePlanMatrix(pricePlanMatrix);
+    	if(!Strings.isEmpty(pricePlanMatrixNewCode))
+    		duplicate.setCode(pricePlanMatrixNewCode);
+    	else
+    		duplicate.setCode(findDuplicateCode(pricePlanMatrix));
+    	duplicate.setVersion(0);
+    	duplicate.setVersions(new ArrayList<>());
+    	create(duplicate);
+    	var duplicateVersion = new PricePlanMatrixVersion(pricePlanMatrixVersion);
+    	duplicateVersion.setPricePlanMatrix(duplicate);
+    	pricePlanMatrixVersionService.create(duplicateVersion);
+    	duplicate.getVersions().add(duplicateVersion);
+    	return duplicate;
     }
 
 }

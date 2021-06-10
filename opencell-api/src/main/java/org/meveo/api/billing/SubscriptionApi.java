@@ -51,6 +51,7 @@ import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
 import org.meveo.api.dto.billing.ActivateServicesRequestDto;
+import org.meveo.api.dto.billing.AttributeInstanceDto;
 import org.meveo.api.dto.billing.ChargeInstanceDto;
 import org.meveo.api.dto.billing.ChargeInstanceOverrideDto;
 import org.meveo.api.dto.billing.DiscountPlanInstanceDto;
@@ -106,6 +107,7 @@ import org.meveo.event.qualifier.VersionCreated;
 import org.meveo.event.qualifier.VersionRemoved;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
@@ -273,6 +275,10 @@ public class SubscriptionApi extends BaseApi {
     @Inject
     @VersionRemoved
     private Event<Subscription> versionRemovedEvent;
+    
+
+	@Inject 
+	private AttributeInstanceService attributeInstanceService;
 
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
@@ -529,22 +535,14 @@ public class SubscriptionApi extends BaseApi {
             throw e;
         }
 
-//        checkOverLapPeriod(subscription.getValidity(), postData.getCode());
+        if(postData.getServices() != null && postData.getServices().getServiceInstance() != null) {
+        	updateAttributeInstances(subscription, postData.getServices().getServiceInstance());
+        }
         
         subscription = subscriptionService.update(subscription);
         // ignoring postData.getEndAgreementDate() if subscription.getAutoEndOfEngagement is true
         if (subscription.getAutoEndOfEngagement() == null || !subscription.getAutoEndOfEngagement()) {
             subscription.setEndAgreementDate(postData.getEndAgreementDate());
-        }
-        if (postData.getProducts() != null) {
-            for (ProductDto productDto : postData.getProducts().getProducts()) {
-                if (StringUtils.isBlank(productDto.getCode())) {
-                    log.warn("code is null={}", productDto);
-                    continue;
-                }
-                ApplyProductRequestDto dto = new ApplyProductRequestDto(productDto);
-                applyProduct(dto);
-            }
         }
         if (postData.getProducts() != null) {
             for (ProductDto productDto : postData.getProducts().getProducts()) {
@@ -596,6 +594,7 @@ public class SubscriptionApi extends BaseApi {
 
         return subscription;
     }
+    
 
     /**
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
@@ -1525,8 +1524,9 @@ public class SubscriptionApi extends BaseApi {
             for (ProductInstance productInstance : subscription.getProductInstances()) {
                 CustomFieldsDto customFieldsDTO = null;
                 customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(productInstance, inheritCF);
-
-                dto.getProductInstances().add(new ProductInstanceDto(productInstance, customFieldsDTO));
+                var productInstanceDto = new ProductInstanceDto(productInstance, customFieldsDTO);
+                
+                dto.getProductInstances().add(productInstanceDto);
             }
         }
         if (subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
@@ -1587,8 +1587,16 @@ public class SubscriptionApi extends BaseApi {
                 usageChargeInstances.add(new ChargeInstanceDto(ci, cFsDTO));
             }
         }
+        List<AttributeInstanceDto> attributeInstances = null;
+        if(serviceInstance.getAttributeInstances() != null) {
+        	attributeInstances = new ArrayList<AttributeInstanceDto>();
+        	for(AttributeInstance ai : serviceInstance.getAttributeInstances()) {
+                cFsDTO = entityToDtoConverter.getCustomFieldsDTO(ai, inheritCF);
+                attributeInstances.add( new AttributeInstanceDto(ai, cFsDTO));
+        	}
+        }
 
-        ServiceInstanceDto serviceInstanceDto = new ServiceInstanceDto(serviceInstance, recurringChargeInstances, subscriptionChargeInstances, terminationChargeInstances, usageChargeInstances, customFieldsDTO);
+        ServiceInstanceDto serviceInstanceDto = new ServiceInstanceDto(serviceInstance, recurringChargeInstances, subscriptionChargeInstances, terminationChargeInstances, usageChargeInstances, attributeInstances, customFieldsDTO);
 
         setAuditableFieldsDto(serviceInstance, serviceInstanceDto);
         return serviceInstanceDto;
@@ -2462,6 +2470,40 @@ public class SubscriptionApi extends BaseApi {
     		}
     	}
     	return subscription;
+    }
+    
+    private void updateAttributeInstances(Subscription subscription, List<ServiceInstanceDto> serviceInstanceDtos) {
+    	if(serviceInstanceDtos != null) {
+    		serviceInstanceDtos.forEach(serviceInstanceDto -> {
+    			var serviceInstance = loadEntityByCode(serviceInstanceService, serviceInstanceDto.getCode(), ServiceInstance.class);
+    			serviceInstance.getAttributeInstances().clear();
+    			if(serviceInstanceDto.getAttributeInstances() != null) {
+    				serviceInstanceDto.getAttributeInstances().forEach(attributeInstanceDto -> {
+    					var attributeInstance = new AttributeInstance();
+    					attributeInstance.setSubscription(subscription);
+						attributeInstance.setServiceInstance(serviceInstance);
+    					if(!StringUtils.isBlank(attributeInstanceDto.getAttributeCode())) {
+    						attributeInstance.setAttribute(loadEntityByCode(attributeService, attributeInstanceDto.getAttributeCode(), Attribute.class));
+    					}
+    					if(attributeInstanceDto.getParentAttributeValueId() != null) {
+    						attributeInstance.setParentAttributeValue(loadEntityById(attributeInstanceService, attributeInstanceDto.getParentAttributeValueId(), AttributeInstance.class));
+    					}
+    					if(attributeInstanceDto.getAssignedAttributeValueIds() != null) {
+    						var listAssignedAttribute = attributeInstanceService.findByIds( new ArrayList<Long>(attributeInstanceDto.getAssignedAttributeValueIds()));
+    						attributeInstance.setAssignedAttributeValue(listAssignedAttribute);
+    					}
+    					if(!StringUtils.isBlank(attributeInstanceDto.getStringValue()))
+    						attributeInstance.setStringValue(attributeInstanceDto.getStringValue());
+    					if(attributeInstanceDto.getDateValue() != null)
+    						attributeInstance.setDateValue(attributeInstanceDto.getDateValue());
+    					if(attributeInstanceDto.getDoubleValue() != null)
+    						attributeInstance.setDoubleValue(attributeInstanceDto.getDoubleValue());
+    					attributeInstanceService.create(attributeInstance);
+    					serviceInstance.getAttributeInstances().add(attributeInstance);
+    				});
+    			}
+    		});
+    	}
     }
     
     

@@ -346,6 +346,10 @@ public class ProductApi extends BaseApi {
 
 	public ProductVersion createProductVersion(ProductVersionDto postData) throws MeveoApiException, BusinessException {
 		checkMandatoryFields(postData);
+		if(postData.getValidity() == null || postData.getValidity().getFrom() == null) {
+			missingParameters.add("validity.from");
+		}
+		handleMissingParameters();
 		Product product = checkProductExiste(postData);
 		ProductVersion  productVersion= new ProductVersion();
 		populateProduct(postData, product, productVersion);
@@ -527,10 +531,24 @@ public class ProductApi extends BaseApi {
 	        if(productVersion==null) {
 	            throw new EntityDoesNotExistsException(ProductVersion.class,productCode,"productCode",""+currentVersion,"currentVersion");
 	        }
+	        if(VersionStatusEnum.PUBLISHED == status) {
+	        	var productVersions = productVersionService.findByProduct(productCode);
+	        	var overloppingExist = productVersions
+	        									.stream()
+	        									.filter(pv -> {
+	        										return pv.getId() != productVersion.getId();
+	        									})
+	        									.filter(pv -> {
+	        										return productVersion.getValidity().isCorrespondsToPeriod(pv.getValidity().getFrom(), pv.getValidity().getTo(), false);
+	        									})
+	        									.collect(Collectors.toList()).size() > 0;
+	        	if(overloppingExist)
+	        		throw new MeveoApiException("An overlap of validity dates has been detected");
+	        }
 	        productVersionService.updateProductVersionStatus(productVersion,status);
 	        return new GetProductVersionResponse(productVersion,true,true);
 		} catch (BusinessException e) {
-			throw new MeveoApiException(e);
+			throw new MeveoApiException(e.getMessage());
 		}
     }
     
