@@ -67,6 +67,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
@@ -78,6 +79,7 @@ import org.meveo.service.base.*;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.custom.CustomTableService;
 import org.meveo.util.ApplicationProvider;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
@@ -99,6 +101,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Edward P. Legaspi
@@ -151,6 +155,9 @@ public abstract class BaseApi {
 
     @Inject
     private RoleService roleService;
+
+    @Inject
+    private CustomTableService customTableService;
 
     protected List<String> missingParameters = new ArrayList<>();
 
@@ -312,14 +319,20 @@ public abstract class BaseApi {
                     if (valueConverted instanceof EntityReferenceWrapper) {
                         // check the if the referenced entity exists
                         EntityReferenceWrapper entityRefWrapper = (EntityReferenceWrapper) valueConverted;
-                        BusinessEntity referencedEntity;
+                        BusinessEntity referencedEntity =  null;
+                        boolean recordExist = false;
                         try {
-                            Class entityRefClass = Class.forName(entityRefWrapper.getClassname());
-                            referencedEntity = businessEntityService.findByEntityClassAndCode(entityRefClass, entityRefWrapper.getCode());
+                            if(cft.getEntityClazz().startsWith("org.meveo.model.customEntities.CustomEntityTemplate -")){
+                                CustomEntityTemplate cet = customTableService.getCET(cft.getEntityClazzCetCode());
+                                recordExist = !customTableService.findById(cet.getDbTablename(), Long.parseLong(entityRefWrapper.getCode())).isEmpty();
+                            }else{
+                                Class entityRefClass = Class.forName(entityRefWrapper.getClassname());
+                                referencedEntity = businessEntityService.findByEntityClassAndCode(entityRefClass, entityRefWrapper.getCode());
+                            }
                         } catch (ClassNotFoundException e) {
                             throw new InvalidParameterException("Class " + entityRefWrapper.getClassname() + " not found" );
                         }
-                        if (referencedEntity == null) {
+                        if (referencedEntity == null && !recordExist) {
                             throw new InvalidReferenceException(entityRefWrapper.getClassname(), entityRefWrapper.getCode());
                         }
                     }
