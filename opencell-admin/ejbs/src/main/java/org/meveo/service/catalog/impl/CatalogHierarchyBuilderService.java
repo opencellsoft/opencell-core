@@ -35,6 +35,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
@@ -227,6 +228,7 @@ public class CatalogHierarchyBuilderService {
         if(groupedAttributes != null) {
         	entity.setGroupedAttributes(new ArrayList<GroupedAttributes>());
         	for (GroupedAttributes groupedAttribute : groupedAttributes) {
+        		groupedAttribute = (GroupedAttributes) Hibernate.unproxy(groupedAttribute);
         		GroupedAttributes duplicateGroupedAttribute = new GroupedAttributes(groupedAttribute);
         		duplicateGroupedAttribute.setCode(groupedAttribute.getCode() + "_" + entity.getId());
         		var groupAttr = new ArrayList<>(groupedAttribute.getAttributes());
@@ -1269,6 +1271,7 @@ public class CatalogHierarchyBuilderService {
     	
     	duplicate.setId(null);
     	duplicate.setQuoteOffers(new ArrayList<QuoteOffer>());
+    	duplicate.setQuoteArticleLines(new ArrayList<QuoteArticleLine>());
     	duplicate.setQuote(entity);
     	duplicate.setStatus(VersionStatusEnum.DRAFT);
     	duplicate.setStatusDate(Calendar.getInstance().getTime());
@@ -1298,7 +1301,7 @@ public class CatalogHierarchyBuilderService {
 			quoteProductService.detach(quoteProduct);
 			var quoteAttributes = quoteProduct.getQuoteAttributes();
 			var quoteArticleLines = quoteProduct.getQuoteArticleLines(); 
-			duplicate.setQuoteOffre(offer);
+			duplicate.setQuoteOffer(offer);
 			duplicate.setQuote(offer.getQuoteVersion().getQuote());
 			duplicate.setQuoteVersion(offer.getQuoteVersion());
 			duplicate.setQuoteAttributes(new ArrayList<QuoteAttribute>());

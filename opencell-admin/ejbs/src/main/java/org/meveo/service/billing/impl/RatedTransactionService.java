@@ -54,7 +54,32 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.Amounts;
+import org.meveo.model.billing.ApplyMinimumModeEnum;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.ExtraMinAmount;
+import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.MinAmountData;
+import org.meveo.model.billing.MinAmountForAccounts;
+import org.meveo.model.billing.MinAmountsResult;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionMinAmountTypeEnum;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.RatedTransactionTypeEnum;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionStatusEnum;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.cpq.CpqQuote;
@@ -63,6 +88,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.service.admin.impl.SellerService;
@@ -1062,6 +1088,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     
                 }
             }
+            
+            if (expression.indexOf(ValueExpressionWrapper.VAR_QUOTE_VERSION) >= 0) {
+                if (serviceInstance != null) {
+                	QuoteVersion quoteVerion=serviceInstance.getQuoteProduct()!=null?serviceInstance.getQuoteProduct().getQuoteVersion():null;
+                	if(quoteVerion!=null) {
+                		contextMap.put(ValueExpressionWrapper.VAR_QUOTE_VERSION, quoteVerion);
+                	}
+                    
+                }
+            }
 
             if (expression.indexOf(ValueExpressionWrapper.VAR_SUBSCRIPTION) >= 0) {
                 if (subscription == null) {
@@ -1159,16 +1195,31 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter, null);
 
         } else if (entityToInvoice instanceof Subscription) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class).setParameter("subscriptionId", entityToInvoice.getId())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class)
+                    .setParameter("subscriptionId", entityToInvoice.getId())
+                    .setParameter("firstTransactionDate", firstTransactionDate)
+                    .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setHint("org.hibernate.readOnly", true)
+                    .setMaxResults(rtPageSize)
+                    .getResultList();
 
         } else if (entityToInvoice instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class).setParameter("billingAccountId", entityToInvoice.getId())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class)
+                    .setParameter("billingAccountId", entityToInvoice.getId())
+                    .setParameter("firstTransactionDate", firstTransactionDate)
+                    .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setHint("org.hibernate.readOnly", true)
+                    .setMaxResults(rtPageSize)
+                    .getResultList();
 
         } else if (entityToInvoice instanceof Order) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class).setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class)
+                    .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
+                    .setParameter("firstTransactionDate", firstTransactionDate)
+                    .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setHint("org.hibernate.readOnly", true)
+                    .setMaxResults(rtPageSize)
+                    .getResultList();
         }
 
         return new ArrayList<>();

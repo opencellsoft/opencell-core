@@ -41,6 +41,7 @@ public class QuoteArticleLine extends AuditableEntity {
 		this.accountingArticle = copy.accountingArticle;
 		this.quantity = copy.quantity;
 		this.serviceQuantity = copy.serviceQuantity;
+		this.quoteVersion=copy.getQuoteVersion();
 	}
     
     public QuoteArticleLine() {
@@ -79,6 +80,10 @@ public class QuoteArticleLine extends AuditableEntity {
     @OneToMany(mappedBy = "quoteArticleLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
 	private List<QuotePrice> quotePrices = new ArrayList<>();
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "quote_version_id")
+    private QuoteVersion quoteVersion;
 
 	public QuoteProduct getQuoteProduct() {
 		return quoteProduct;
@@ -159,4 +164,14 @@ public class QuoteArticleLine extends AuditableEntity {
 	public void setQuoteLot(QuoteLot quoteLot) {
 		this.quoteLot = quoteLot;
 	}
+
+	public QuoteVersion getQuoteVersion() {
+		return quoteVersion;
+	}
+
+	public void setQuoteVersion(QuoteVersion quoteVersion) {
+		this.quoteVersion = quoteVersion;
+	}
+	
+	
 }

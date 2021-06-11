@@ -26,8 +26,9 @@ public class TagRsImpl extends BaseRs implements TagRs {
       
         GetTagDtoResponse result = new GetTagDtoResponse();
         try {
-        	tagApi.create(tagDto);
+        	Long id=tagApi.create(tagDto);
         	result.getActionStatus().setMessage(TAG_CREATED);
+        	result.setId(id);
         	return Response.ok(result).build();
         } catch(MeveoApiException e) {
 		       return errorResponse(e, result.getActionStatus());
@@ -78,8 +79,9 @@ public class TagRsImpl extends BaseRs implements TagRs {
 	public Response createTagType(TagTypeDto tagTypeDto) {
 		 GetTagTypeDtoResponse result = new GetTagTypeDtoResponse();
 	        try {
-	        	tagApi.create(tagTypeDto);
+	        	Long id=tagApi.create(tagTypeDto);
 	        	result.getActionStatus().setMessage(TAG_TYPE_CREATED);
+	        	result.setId(id);
 	        	return Response.ok(result).build();
 	        } catch(MeveoApiException e) {
 			       return errorResponse(e, result.getActionStatus());
@@ -90,7 +92,9 @@ public class TagRsImpl extends BaseRs implements TagRs {
 	public Response updateTagType(TagTypeDto tagTypeDto) {
 		 GetTagTypeDtoResponse result = new GetTagTypeDtoResponse();
 	        try {
-	        	tagApi.update(tagTypeDto);
+	        	var tagType=tagApi.update(tagTypeDto);
+	        	result.getActionStatus().setEntityId(tagType.getId());
+	        	result.getActionStatus().setEntityCode(tagType.getCode());
 	        	return Response.ok(result).build();
 	        } catch(MeveoApiException e) {
 			       return errorResponse(e, result.getActionStatus());

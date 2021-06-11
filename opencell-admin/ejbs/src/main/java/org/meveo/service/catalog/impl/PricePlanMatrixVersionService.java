@@ -130,6 +130,13 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     	return pricePlanMatrixService.loadPrices(pricePlanMatrixVersion, chargeInstance);
     }
     
+
+    @SuppressWarnings("unchecked")
+	public PricePlanMatrixVersion getLasPricePlanMatrixtVersion(String ppmCode) {
+    	List<PricePlanMatrixVersion> pricesVersions = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion")
+                												.setParameter("pricePlanMatrixCode", ppmCode).getResultList();
+        return pricesVersions.isEmpty() ? null : pricesVersions.get(0);
+    }
     
     
     

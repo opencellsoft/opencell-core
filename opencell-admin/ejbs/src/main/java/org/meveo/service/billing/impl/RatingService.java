@@ -39,7 +39,6 @@ import org.hibernate.proxy.HibernateProxy;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ChargingEdrOnRemoteInstanceErrorException;
 import org.meveo.admin.exception.NoPricePlanException;
-import org.meveo.admin.exception.NoTaxException;
 import org.meveo.admin.exception.PriceELErrorException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.RatingScriptExecutionErrorException;
@@ -81,12 +80,14 @@ import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.contract.ContractItem;
 import org.meveo.model.cpq.contract.ContractRateTypeEnum;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.RatingResult;
@@ -1274,6 +1275,16 @@ public class RatingService extends PersistenceService<WalletOperation> {
             	CpqQuote quote=service.getQuoteProduct()!=null?service.getQuoteProduct().getQuote():null;
             	if(quote!=null) {
             		userMap.put(ValueExpressionWrapper.VAR_CPQ_QUOTE, quote);
+            	}
+                
+            }
+        }
+        if (expression.indexOf(ValueExpressionWrapper.VAR_QUOTE_VERSION) >= 0) {
+            ServiceInstance service = chargeInstance.getServiceInstance();
+            if (service != null) {
+            	QuoteVersion quoteVersion=service.getQuoteProduct()!=null?service.getQuoteProduct().getQuoteVersion():null;
+            	if(quoteVersion!=null) {
+            		userMap.put(ValueExpressionWrapper.VAR_QUOTE_VERSION, quoteVersion);
             	}
                 
             }

@@ -32,6 +32,8 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.CpqQuote;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.ValueExpressionWrapper;
 
 /**
@@ -121,6 +123,17 @@ public class RecurringChargeTemplateService extends ChargeTemplateService<Recurr
             	CpqQuote quote=service.getQuoteProduct()!=null?service.getQuoteProduct().getQuote():null;
             	if(quote!=null) {
             		userMap.put(ValueExpressionWrapper.VAR_CPQ_QUOTE, quote);
+            	}
+                
+            }
+        }
+        
+        if (expression.indexOf(ValueExpressionWrapper.VAR_QUOTE_VERSION) >= 0) {
+            ServiceInstance service = recurringChargeInstance.getServiceInstance();
+            if (service != null) {
+            	QuoteVersion quoteVersion=service.getQuoteProduct()!=null?service.getQuoteProduct().getQuoteVersion():null;
+            	if(quoteVersion!=null) {
+            		userMap.put(ValueExpressionWrapper.VAR_QUOTE_VERSION, quoteVersion);
             	}
                 
             }

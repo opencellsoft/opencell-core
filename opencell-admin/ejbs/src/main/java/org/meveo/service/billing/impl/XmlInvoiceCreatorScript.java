@@ -499,15 +499,14 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
     protected Element createServiceSection(Document doc, Invoice invoice, ServiceInstance serviceInstance, String offerCode, boolean isShort) {
 
         Element serviceTag = doc.createElement("service");
-        ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
         serviceTag.setAttribute("id", serviceInstance.getId().toString());
-        serviceTag.setAttribute("code", serviceTemplate.getCode());
+        serviceTag.setAttribute("code", serviceInstance.getCode());
         serviceTag.setAttribute("offerCode", getDefaultIfNull(offerCode, ""));
-        serviceTag.setAttribute("description", getDefaultIfNull(serviceTemplate.getDescription(), ""));
+        serviceTag.setAttribute("description", getDefaultIfNull(serviceInstance.getDescription(), ""));
         Element calendarTag = doc.createElement("calendar");
         Text calendarText = null;
-        if (serviceTemplate.getInvoicingCalendar() != null) {
-            calendarText = doc.createTextNode(serviceTemplate.getInvoicingCalendar().getCode());
+        if (serviceInstance.getInvoicingCalendar() != null) {
+            calendarText = doc.createTextNode(serviceInstance.getInvoicingCalendar().getCode());
         } else {
             calendarText = doc.createTextNode("");
         }

@@ -1,11 +1,9 @@
 package org.meveo.model.catalog;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.model.AuditableEntity;
-import org.meveo.model.DatePeriod;
-import org.meveo.model.cpq.enums.VersionStatusEnum;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -21,19 +19,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.AuditableEntity;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
 
 /**
  * @author Tarik FA.
@@ -62,7 +60,31 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @NotNull
     private PricePlanMatrix pricePlanMatrix;
 
-    @Column(name = "current_version", nullable = false)
+    public PricePlanMatrixVersion() {
+	}
+    
+    
+    
+	public PricePlanMatrixVersion(PricePlanMatrixVersion copy) {
+		this.status = VersionStatusEnum.DRAFT;
+		this.pricePlanMatrix = copy.pricePlanMatrix;
+		this.currentVersion = 1;
+		this.label = copy.label;
+		this.statusDate = new Date();
+		this.validity = copy.validity;
+		this.isMatrix = copy.isMatrix;
+		this.amountWithoutTax = copy.amountWithoutTax;
+		this.amountWithTax = copy.amountWithTax;
+		this.amountWithoutTaxEL = copy.amountWithoutTaxEL;
+		this.amountWithTaxEL = copy.amountWithTaxEL;
+		this.lines = new HashSet<>();
+		this.columns = new HashSet<>();
+		this.priority = copy.priority;
+	}
+
+
+
+	@Column(name = "current_version", nullable = false)
     private int currentVersion;
 
     @Column(name = "label")
@@ -89,12 +111,10 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal amountWithTax;
 
-    @Column(name = "amount_without_tax_el", precision = NB_PRECISION, scale = NB_DECIMALS)
-    @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
+    @Column(name = "amount_without_tax_el") 
     private String amountWithoutTaxEL;
 
-    @Column(name = "amount_with_tax_el", precision = NB_PRECISION, scale = NB_DECIMALS)
-    @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
+    @Column(name = "amount_with_tax_el")
     private String amountWithTaxEL;
 
     @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)

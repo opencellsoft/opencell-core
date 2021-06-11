@@ -141,12 +141,15 @@ public class QuoteToXmlScript extends ModuleScript {
     }
 
     private Stream<QuoteArticleLine> getAllOffersQuoteLineStream(QuoteVersion quoteVersion) {
-        return quoteVersion.getQuoteOffers()
-                    .stream()
-                    .map(offer -> offer.getQuoteProduct().stream())
-                    .flatMap(identity())
-                    .map(quoteProduct -> quoteProduct.getQuoteArticleLines().stream())
-                    .flatMap(identity());
+    	List<QuoteArticleLine> QuoteArticleLines=quoteVersion.getQuoteArticleLines();
+    	log.info("-----------------getAllOffersQuoteLineStream---------- size={}",QuoteArticleLines.size());
+    	return QuoteArticleLines.stream();
+//        return quoteVersion.getQuoteOffers()
+//                    .stream()
+//                    .map(offer -> offer.getQuoteProduct().stream())
+//                    .flatMap(identity())
+//                    .map(quoteProduct -> quoteProduct.getQuoteArticleLines().stream())
+//                    .flatMap(identity());
     }
 
     private org.meveo.api.dto.cpq.xml.BillableAccount mapToBillableAccount(org.meveo.model.billing.BillingAccount ba, List<QuoteArticleLine> lines){
@@ -205,13 +208,16 @@ public class QuoteToXmlScript extends ModuleScript {
     private org.meveo.api.dto.cpq.xml.AccountingArticle mapToArticleLine(AccountingArticle accountingArticle, List<QuoteArticleLine> quoteArticleLines, org.meveo.model.billing.BillingAccount ba) {
     	org.meveo.api.dto.cpq.xml.AccountingArticle accountingArticleDto = new  org.meveo.api.dto.cpq.xml.AccountingArticle(accountingArticle, quoteArticleLines, getTradingLanguage(ba));
 
-    	accountingArticleDto.setQuoteLines(quoteArticleLines.stream()
-    			.map(line -> new QuoteLine(line,mapToOffer(line.getQuoteProduct().getQuoteOffre())))
+    	accountingArticleDto.setQuoteLines(quoteArticleLines.stream().filter(line -> line.getQuoteProduct() != null)
+    			.map(line -> new QuoteLine(line,mapToOffer(line.getQuoteProduct().getQuoteOffer())))
     			.collect(Collectors.toList()));
     	return accountingArticleDto; 
     }
     
     private org.meveo.api.dto.cpq.xml.Offer mapToOffer(QuoteOffer quoteOffer) {
+    	if(quoteOffer==null) {
+    		return null;
+    	}
     	org.meveo.api.dto.cpq.xml.Offer quoteOfferDto = new  org.meveo.api.dto.cpq.xml.Offer(quoteOffer,entityToDtoConverter.getCustomFieldsDTO(quoteOffer));
 
     	quoteOfferDto.setProducts(quoteOffer.getQuoteProduct().stream()
@@ -271,5 +277,4 @@ public class QuoteToXmlScript extends ModuleScript {
             return quotePrice;
         });
     }
-
 }

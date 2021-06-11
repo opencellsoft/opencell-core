@@ -68,6 +68,7 @@ import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxCategory;
@@ -257,9 +258,14 @@ public class ValueExpressionWrapper {
      */
     public static final String VAR_PRODUCT = "product";
     /**
-     * EL expression variable - cpq product - 'product'
+     * EL expression variable - cpq quote - 'quote'
      */
     public static final String VAR_CPQ_QUOTE = "quote";
+    
+    /**
+     * EL expression variable - quote version - 'quoteVersion'
+     */
+    public static final String VAR_QUOTE_VERSION = "quoteVersion";
 
     /**
      * Variables in EL expression
@@ -599,6 +605,7 @@ public class ValueExpressionWrapper {
         Customer customer = null;
         Invoice invoice = null;
         CpqQuote quote = null;
+        QuoteVersion quoteVersion = null;
         List<Access> accessPoints = null;
 
         // Recognize passed parameters
@@ -643,6 +650,11 @@ public class ValueExpressionWrapper {
             if (parameter instanceof CpqQuote) {
                 quote = (CpqQuote) parameter;
             }
+            
+            if (parameter instanceof QuoteVersion) {
+                quoteVersion = (QuoteVersion) parameter;
+            }
+            
             if (parameter instanceof List) {
                 List list = (List) parameter;
                 if (list != null && !list.isEmpty()) {
@@ -660,8 +672,14 @@ public class ValueExpressionWrapper {
         }
         if (el.contains(VAR_CPQ_QUOTE) && !contextMap.containsKey(VAR_CPQ_QUOTE) && chargeInstance != null) {
             quote =chargeInstance!=null && chargeInstance.getServiceInstance().getQuoteProduct()!=null?chargeInstance.getServiceInstance().getQuoteProduct().getQuote():null;
-            contextMap.put(VAR_SERVICE_INSTANCE, serviceInstance);
+            contextMap.put(VAR_CPQ_QUOTE, quote);
         }
+        
+        if (el.contains(VAR_QUOTE_VERSION) && !contextMap.containsKey(VAR_QUOTE_VERSION) && chargeInstance != null) {
+            quoteVersion =chargeInstance!=null && chargeInstance.getServiceInstance().getQuoteProduct()!=null?chargeInstance.getServiceInstance().getQuoteProduct().getQuoteVersion():null;
+            contextMap.put(VAR_QUOTE_VERSION, quoteVersion);
+        }
+        
         if (el.contains(VAR_SERVICE_TEMPLATE) && !contextMap.containsKey(VAR_SERVICE_TEMPLATE)) {
             if (serviceInstance != null) {
                 contextMap.put(VAR_SERVICE_TEMPLATE, serviceInstance.getServiceTemplate());
@@ -724,6 +742,9 @@ public class ValueExpressionWrapper {
                 billingAccount = invoice.getBillingAccount();
             } else if (quote != null) {
                 billingAccount = quote.getBillableAccount();
+            }
+            else if (quoteVersion != null) {
+                billingAccount = quoteVersion.getQuote().getBillableAccount();
             }
             contextMap.put(VAR_BILLING_ACCOUNT, billingAccount);
         }

@@ -49,9 +49,10 @@ public class QuoteMapper {
     public EntityToDtoConverter entityToDtoConverter;
    	
    	
+    
     public QuoteXmlDto map(QuoteVersion quoteVersion) {
     	
- 
+    	 
 
         CpqQuote quote = quoteVersion.getQuote();
         org.meveo.model.billing.BillingAccount bac=quote.getBillableAccount() == null ? quote.getApplicantAccount() : quote.getBillableAccount();
@@ -74,7 +75,7 @@ public class QuoteMapper {
         Header header = new Header(billingAccount,ctr,quoteVersion.getQuoteVersion(),quote.getCode(),startDate,duration,
         		quote.getQuoteLotDuration(),quote.getCustomerRef(),quote.getRegisterNumber(),startDate,endDate);
 
-        Map<org.meveo.model.billing.BillingAccount, List<QuoteArticleLine>> linesByBillingAccount = getAllOffersQuoteLineStream(quoteVersion)
+        Map<org.meveo.model.billing.BillingAccount, List<QuoteArticleLine>> linesByBillingAccount = quoteVersion.getQuoteArticleLines().stream()
                 .collect(groupingBy(QuoteArticleLine::getBillableAccount));
 
 
@@ -83,7 +84,7 @@ public class QuoteMapper {
                 .map(ba -> mapToBillableAccount(ba, linesByBillingAccount.get(ba)))
                 .collect(Collectors.toList());
 
-        List<QuotePrice> allQuotesPrice = getAllOffersQuoteLineStream(quoteVersion).map(p -> p.getQuotePrices().stream()).flatMap(identity()).collect(toList());
+        List<QuotePrice> allQuotesPrice = quoteVersion.getQuoteArticleLines().stream().map(p -> p.getQuotePrices().stream()).flatMap(identity()).collect(toList());
         Details details = new Details(new Quote(billableAccounts, quote.getQuoteNumber(), quote.getQuoteDate(),entityToDtoConverter.getCustomFieldsDTO(quoteVersion)), aggregatePricesPerType(allQuotesPrice));
 
         return new QuoteXmlDto(header, details);
@@ -97,7 +98,6 @@ public class QuoteMapper {
                     .map(quoteProduct -> quoteProduct.getQuoteArticleLines().stream())
                     .flatMap(identity());
     }
-
     private org.meveo.api.dto.cpq.xml.BillableAccount mapToBillableAccount(org.meveo.model.billing.BillingAccount ba, List<QuoteArticleLine> lines){
 
         Map<QuoteLot, List<QuoteArticleLine>> linesByLot = lines.stream()
@@ -155,12 +155,15 @@ public class QuoteMapper {
     	org.meveo.api.dto.cpq.xml.AccountingArticle accountingArticleDto = new  org.meveo.api.dto.cpq.xml.AccountingArticle(accountingArticle, quoteArticleLines, getTradingLanguage(ba));
 
     	accountingArticleDto.setQuoteLines(quoteArticleLines.stream()
-    			.map(line -> new QuoteLine(line,mapToOffer(line.getQuoteProduct().getQuoteOffre())))
+    			.map(line -> new QuoteLine(line,mapToOffer( line.getQuoteProduct() != null?line.getQuoteProduct().getQuoteOffer():null)))
     			.collect(Collectors.toList()));
     	return accountingArticleDto; 
     }
     
     private org.meveo.api.dto.cpq.xml.Offer mapToOffer(QuoteOffer quoteOffer) {
+    	if(quoteOffer==null) {
+    		return null;
+    	}
     	org.meveo.api.dto.cpq.xml.Offer quoteOfferDto = new  org.meveo.api.dto.cpq.xml.Offer(quoteOffer,entityToDtoConverter.getCustomFieldsDTO(quoteOffer));
 
     	quoteOfferDto.setProducts(quoteOffer.getQuoteProduct().stream()
@@ -220,5 +223,4 @@ public class QuoteMapper {
             return quotePrice;
         });
     }
-
 }

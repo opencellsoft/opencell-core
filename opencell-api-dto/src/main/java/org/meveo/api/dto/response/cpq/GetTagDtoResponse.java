@@ -21,6 +21,8 @@ public class GetTagDtoResponse extends BaseResponse{
 
 	private TagDto tagDto;
 	
+	private Long id;
+	
 	public GetTagDtoResponse() {
 		this.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 	}
@@ -35,6 +37,12 @@ public class GetTagDtoResponse extends BaseResponse{
 	 */
 	public void setTagDto(TagDto tagDto) {
 		this.tagDto = tagDto;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	

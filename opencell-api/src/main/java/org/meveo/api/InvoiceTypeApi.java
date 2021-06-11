@@ -261,6 +261,12 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
                     if (invoiceSequenceFromDto.getSequenceSize() != null) {
                         invoiceSequence.setSequenceSize(invoiceSequenceFromDto.getSequenceSize());
                     }
+                    if (invoiceSequenceFromDto.getSequenceType() != null) {
+                        invoiceSequence.setSequenceType(invoiceSequenceFromDto.getSequenceType());
+                    }
+                    if (invoiceSequenceFromDto.getSequencePattern() != null) {
+                        invoiceSequence.setSequencePattern(invoiceSequenceFromDto.getSequencePattern());
+                    }
                     invoiceSequence.setCode(entity.getCode());
                     invoiceSequenceService.update(invoiceSequence);
                 } else {
