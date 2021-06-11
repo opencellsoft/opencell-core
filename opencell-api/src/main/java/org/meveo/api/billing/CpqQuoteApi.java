@@ -1197,6 +1197,7 @@ public class CpqQuoteApi extends BaseApi {
                 quoteArticleLine.setQuoteProduct(wo.getServiceInstance().getQuoteProduct());
                 wo.getServiceInstance().getQuoteProduct().getQuoteArticleLines().add(quoteArticleLine);
                 quoteArticleLine.setQuoteLot(quoteOffer.getQuoteLot());
+                quoteArticleLine.setQuoteVersion(quoteOffer.getQuoteVersion());
                 quoteArticleLineService.create(quoteArticleLine);
                 quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
             }else {
@@ -1272,11 +1273,11 @@ public class CpqQuoteApi extends BaseApi {
             if (wo.getAccountingArticle() == null) {
                 throw new BusinessException("the walletOperation id=" + wo.getId() + " has is not linked to an accounting article");
             }
-            QuoteProduct quoteProduct = wo.getServiceInstance().getQuoteProduct();
-            Set<Long> quoteArticleLines = quoteProduct.getQuoteArticleLines().stream().map(l -> l.getId()).collect(Collectors.toSet());
+            QuoteVersion quoteVersion = wo.getServiceInstance().getQuoteProduct().getQuoteVersion();
+            Set<Long> quoteArticleLines = quoteVersion.getQuoteArticleLines().stream().map(l -> l.getId()).collect(Collectors.toSet());
             if (!quoteArticleLines.isEmpty()) {
-                quoteProduct.getQuoteArticleLines().clear();
-                quoteProductService.update(quoteProduct);
+            	quoteVersion.getQuoteArticleLines().clear();
+                quoteVersionService.update(quoteVersion);
                 quoteArticleLineService.remove(quoteArticleLines);
             }
 
@@ -1560,6 +1561,7 @@ public class CpqQuoteApi extends BaseApi {
                           quoteArticleLine.setServiceQuantity(BigDecimal.ONE);
                           quoteArticleLine.setBillableAccount(billingAccount);
                           quoteArticleLine.setQuoteProduct(quoteproduct);
+                          quoteArticleLine.setQuoteVersion(quoteVersion);
                           if(quoteOffer != null) {
                               quoteArticleLine.setQuoteLot(quoteOffer.getQuoteLot());
                           }
@@ -1653,6 +1655,7 @@ public class CpqQuoteApi extends BaseApi {
                               quoteArticleLine.setServiceQuantity(serviceQuantity);
                               quoteArticleLine.setBillableAccount(billingAccount);
                               quoteArticleLine.setQuoteProduct(quoteproduct);
+                              quoteArticleLine.setQuoteVersion(quoteVersion);
                               if(quoteOffer != null) {
                                   quoteArticleLine.setQuoteLot(quoteOffer.getQuoteLot());
                                   quoteproduct.getQuoteArticleLines().add(quoteArticleLine);
