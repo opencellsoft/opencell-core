@@ -1036,7 +1036,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     hibernateSession.doWork(connection -> {
                         try (PreparedStatement preparedStatement = connection.prepareStatement("insert into  billing_rated_transaction_pending (id, aggregate_id_f, invoice_id, billing_run_id) values (?,?,?,?)")) {
 
-                            int i = 0;
+//                            int i = 0;
                             for (Object[] aggregateAndRtIds : rtMassUpdates) {
                                 SubCategoryInvoiceAgregate subCategoryAggregate = (SubCategoryInvoiceAgregate) aggregateAndRtIds[0];
                                 List<Long> rtIds = (List<Long>) aggregateAndRtIds[1];
@@ -1048,10 +1048,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                                     preparedStatement.addBatch();
 
-                                    if (i > 0 && i % 500 == 0) {
-                                        preparedStatement.executeBatch();
-                                    }
-                                    i++;
+//                                    if (i > 0 && i % 500 == 0) {
+//                                        preparedStatement.executeBatch();
+//                                    }
+//                                    i++;
                                 }
                             }
 
