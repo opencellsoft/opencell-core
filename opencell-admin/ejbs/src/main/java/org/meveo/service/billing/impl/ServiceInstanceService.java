@@ -589,7 +589,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             Date chargeToDateOnTermination = getChargeToDateOnTermination(recurringChargeInstance);
             recurringChargeInstance.setChargeToDateOnTermination(chargeToDateOnTermination);
 
-            Date chargedToDate = recurringChargeInstance.getChargedToDate();
+			Date chargedToDate = recurringChargeInstance.calculateChargedToDate();
 
             log.info("Terminating recurring charge {}/{} with chargedToDate {},  terminationDate {}, endAggrementDate {}, efectiveTerminationDate {}, terminationReason {}", recurringChargeInstance.getId(),
                 recurringChargeInstance.getCode(), recurringChargeInstance.getChargedToDate(), terminationDate, serviceInstance.getEndAgreementDate(), chargeToDateOnTermination, terminationReason.getCode());
