@@ -418,6 +418,10 @@
                     <artifactId>bcprov-jdk15on</artifactId>
                     <groupId>org.bouncycastle</groupId>
                 </exclusion>
+                <exclusion>
+                	<groupId>com.lowagie</groupId>
+                	<artifactId>itext</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
