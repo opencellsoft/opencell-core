@@ -94,6 +94,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                             groupedRTs = getGroupedRTsWithAggregation(params);
                         }
                         createInvoiceLines(groupedRTs, aggregationConfiguration);
+                        makeAsProcessed(ratedTransactionIds);
                         result.setNbItemsCorrectlyProcessed(groupedRTs.size());
                     }
                 }
@@ -160,5 +161,12 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                 log.error(exception.getMessage());
             }
         }
+    }
+
+    private int makeAsProcessed(List<Long> ratedTransactionIds) {
+        return ratedTransactionService.getEntityManager()
+                    .createNamedQuery("RatedTransaction.markAsProcessed")
+                    .setParameter("listOfIds", ratedTransactionIds)
+                    .executeUpdate();
     }
 }
