@@ -1093,7 +1093,6 @@ public class CpqQuoteApi extends BaseApi {
 
     public GetQuoteVersionDtoResponse quoteQuotation(String quoteCode, int currentVersion) {
         List<QuotePrice> accountingArticlePrices = new ArrayList<>();
-        BigDecimal quoteTotalAmount=BigDecimal.ZERO;
         List<PriceDTO> pricesDTO =new ArrayList<>();
          QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
         if (quoteVersion == null)
@@ -1118,10 +1117,9 @@ public class CpqQuoteApi extends BaseApi {
         .map(price -> {
             QuotePrice quotePrice = price.get();
             pricesDTO.add(new PriceDTO(quotePrice));
-            quoteTotalAmount.add(quotePrice.getAmountWithoutTax());
             return pricesDTO;
         }).collect(Collectors.toList());
-        
+        BigDecimal quoteTotalAmount = pricesDTO.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add);
         CpqQuote quote=quoteVersion.getQuote();
         applyFixedDiscount(quote.getDiscountPlan(), quoteTotalAmount, quote.getSeller(), 
         		quote.getBillableAccount(), null, null,null, quoteVersion);
@@ -1173,7 +1171,6 @@ public class CpqQuoteApi extends BaseApi {
     public List<QuotePrice> offerQuotation(QuoteOffer quoteOffer) {
         Subscription subscription = instantiateVirtualSubscription(quoteOffer);
         List<PriceDTO> pricesDTO =new ArrayList<>();
-        BigDecimal offerTotalAmount=BigDecimal.ZERO;
         List<WalletOperation> walletOperations = quoteRating(subscription, true);
         QuoteArticleLine quoteArticleLine = null;
         Map<String, QuoteArticleLine> quoteArticleLines = new HashMap<String, QuoteArticleLine>();
@@ -1252,7 +1249,6 @@ public class CpqQuoteApi extends BaseApi {
         .map(price -> {
             QuotePrice quotePrice = price.get();
             pricesDTO.add(new PriceDTO(quotePrice));
-            offerTotalAmount.add(quotePrice.getAmountWithoutTax());
             return pricesDTO;
         }).collect(Collectors.toList());
         
@@ -1263,7 +1259,8 @@ public class CpqQuoteApi extends BaseApi {
              		(quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount()), quoteOffer, quoteProduct, null,quoteOffer.getQuoteVersion());
              
 		});
-        
+
+        BigDecimal offerTotalAmount = pricesDTO.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add);
         applyFixedDiscount(quoteOffer.getDiscountPlan(), offerTotalAmount, quoteOffer.getQuoteVersion().getQuote().getSeller(), 
         		quoteOffer.getBillableAccount()!=null?quoteOffer.getBillableAccount():quoteOffer.getQuoteVersion().getQuote().getBillableAccount(), quoteOffer, null, null,quoteOffer.getQuoteVersion());
         
