@@ -489,9 +489,8 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     public BillingAccount instantiateDiscountPlan(BillingAccount entity, DiscountPlan dp) throws BusinessException {
-        if (dp.getDiscountPlanType() != null && dp.getDiscountPlanType().equals(DiscountPlanTypeEnum.OFFER)) {
-            throw new BusinessException("DiscountPlan " + dp.getCode() + " of type OFFER is not allowed to be applied to BillingAccount.");
-        }
+        if (dp.getDiscountPlanType() != null && (dp.getDiscountPlanType().equals(DiscountPlanTypeEnum.OFFER) || dp.getDiscountPlanType().equals(DiscountPlanTypeEnum.PROMO_CODE)
+        		|| dp.getDiscountPlanType().equals(DiscountPlanTypeEnum.PRODUCT))) {
         for (UserAccount userAccount : entity.getUsersAccounts()) {
             UserAccount userAccountById = userAccountService.findById(userAccount.getId());
             for (Subscription subscription : userAccountById.getSubscriptions()) {
@@ -503,6 +502,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             }
         }
         return (BillingAccount) discountPlanInstanceService.instantiateDiscountPlan(entity, dp, null);
+        }else {
+        	 throw new BusinessException("DiscountPlan " + dp.getCode() + " of type " + dp.getDiscountPlanType() +" is not allowed to be applied to BillingAccount.");
+        }
     }
 
     public void terminateDiscountPlan(BillingAccount entity, DiscountPlanInstance dpi) throws BusinessException {
