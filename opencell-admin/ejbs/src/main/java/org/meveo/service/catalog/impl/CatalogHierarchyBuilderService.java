@@ -35,6 +35,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
@@ -227,6 +228,7 @@ public class CatalogHierarchyBuilderService {
         if(groupedAttributes != null) {
         	entity.setGroupedAttributes(new ArrayList<GroupedAttributes>());
         	for (GroupedAttributes groupedAttribute : groupedAttributes) {
+        		groupedAttribute = (GroupedAttributes) Hibernate.unproxy(groupedAttribute);
         		GroupedAttributes duplicateGroupedAttribute = new GroupedAttributes(groupedAttribute);
         		duplicateGroupedAttribute.setCode(groupedAttribute.getCode() + "_" + entity.getId());
         		var groupAttr = new ArrayList<>(groupedAttribute.getAttributes());
