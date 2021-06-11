@@ -9133,6 +9133,7 @@
             </column>
             <column name="quote_product_id" type="bigint" />
             <column name="quote_lot_id" type="bigint" />
+            <column name="quote_version_id" type="bigint"/>
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-456" author="NabilOUACHI">
@@ -14024,6 +14025,11 @@
                                  initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan"/>
     </changeSet>
+     <changeSet id="rebuild-str-fk-1632" author="Rachid.Aityaazza">
+       <addForeignKeyConstraint baseColumnNames="quote_version_id" baseTableName="cpq_quote_article_line" constraintName="fk_quote_article_line_quote_version_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version"/>
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -15768,6 +15774,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#5416_20210526" author="AbdelmounaimAkadid" />
     <changeSet id="#559_20210603" author="TarikFA." />
     <changeSet id="#20210608-540-527" author="Rachid.Aityaazza"/>
+    <changeSet id="#20210611-540-637" author="Rachid.Aityaazza"/>
     
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

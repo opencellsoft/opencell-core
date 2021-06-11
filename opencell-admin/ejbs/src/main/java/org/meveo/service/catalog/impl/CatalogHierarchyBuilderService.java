@@ -1269,6 +1269,7 @@ public class CatalogHierarchyBuilderService {
     	
     	duplicate.setId(null);
     	duplicate.setQuoteOffers(new ArrayList<QuoteOffer>());
+    	duplicate.setQuoteArticleLines(new ArrayList<QuoteArticleLine>());
     	duplicate.setQuote(entity);
     	duplicate.setStatus(VersionStatusEnum.DRAFT);
     	duplicate.setStatusDate(Calendar.getInstance().getTime());
