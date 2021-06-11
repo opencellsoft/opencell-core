@@ -9016,5 +9016,13 @@ public class OrderAdvancement extends ModuleScript {
                                  initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_discount_plan"/>
     </changeSet>
+        <changeSet id="#20210611-540-637" author="Rachid.Aityaazza">
+        <addColumn tableName="cpq_quote_article_line">
+            <column name="quote_version_id" type="bigint"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="quote_version_id" baseTableName="cpq_quote_article_line" constraintName="fk_quote_article_line_quote_version_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version"/>
+    </changeSet>
     
 </databaseChangeLog>
