@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -130,6 +131,16 @@ public class OfferTemplateDto extends ProductOfferingDto {
         if (!asLink) {
             setRenewalRule(new SubscriptionRenewalDto(offerTemplate.getSubscriptionRenewal()));
         }
+        // offer change properties
+        isOfferChangeRestricted = offerTemplate.getOfferChangeRestricted() == null ? isOfferChangeRestricted : offerTemplate.getOfferChangeRestricted();
+        if (offerTemplate.getAllowedOffersChange() != null
+                && offerTemplate.getAllowedOffersChange().size() > 0) {
+            allowedOfferChange = new ArrayList<>();
+            offerTemplate.getAllowedOffersChange().forEach(allowedOffer ->{
+                allowedOfferChange.add(allowedOffer.getCode());
+            });
+        }
+
     }
 
     @Override
