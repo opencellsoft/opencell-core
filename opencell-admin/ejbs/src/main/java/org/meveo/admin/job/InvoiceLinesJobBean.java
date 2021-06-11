@@ -15,7 +15,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -71,10 +70,9 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                 List<Long> billingRunIds = billingRunWrappers.stream()
                         .map(br -> valueOf(br.getCode().split("/")[0]))
                         .collect(toList());
-                List<BillingRun> billingRuns;
                 Map<String, Object> filters = new HashedMap();
                 filters.put("inList id", billingRunIds);
-                billingRuns = billingRunService.list(new PaginationConfiguration(filters));
+                List<BillingRun> billingRuns = billingRunService.list(new PaginationConfiguration(filters));
                 long excludedBRCount = validateBRList(billingRuns, result);
                 result.setNbItemsProcessedWithError(excludedBRCount);
                 if (excludedBRCount == billingRuns.size()) {
