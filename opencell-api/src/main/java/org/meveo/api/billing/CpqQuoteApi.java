@@ -1562,7 +1562,6 @@ public class CpqQuoteApi extends BaseApi {
                           quoteArticleLine.setQuoteProduct(quoteproduct);
                           if(quoteOffer != null) {
                               quoteArticleLine.setQuoteLot(quoteOffer.getQuoteLot());
-                              quoteproduct.getQuoteArticleLines().add(quoteArticleLine);
                           }
                           quoteArticleLineService.create(quoteArticleLine);
                           quoteArticleLines.put(accountingArticleCode, quoteArticleLine);
