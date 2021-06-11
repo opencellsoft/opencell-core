@@ -200,6 +200,14 @@ public class RecurringChargeInstance extends ChargeInstance {
     public Date getChargedToDate() {
         return chargedToDate;
     }
+    
+    /**
+     * @return calculate the date to which charge was applied to.
+     */
+	public Date calculateChargedToDate() {
+		return getChargedToDate() != null ? getChargedToDate()
+				: getApplyInAdvance() == true ? getNextChargeDate() : getChargeDate();
+	}
 
     /**
      * @param chargedToDate The date to which charge was applied to.
