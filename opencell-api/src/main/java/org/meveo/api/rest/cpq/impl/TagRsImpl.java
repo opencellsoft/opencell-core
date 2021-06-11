@@ -92,7 +92,9 @@ public class TagRsImpl extends BaseRs implements TagRs {
 	public Response updateTagType(TagTypeDto tagTypeDto) {
 		 GetTagTypeDtoResponse result = new GetTagTypeDtoResponse();
 	        try {
-	        	tagApi.update(tagTypeDto);
+	        	var tagType=tagApi.update(tagTypeDto);
+	        	result.getActionStatus().setEntityId(tagType.getId());
+	        	result.getActionStatus().setEntityCode(tagType.getCode());
 	        	return Response.ok(result).build();
 	        } catch(MeveoApiException e) {
 			       return errorResponse(e, result.getActionStatus());
