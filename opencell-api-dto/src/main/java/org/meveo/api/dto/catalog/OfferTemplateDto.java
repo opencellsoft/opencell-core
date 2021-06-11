@@ -132,7 +132,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
             setRenewalRule(new SubscriptionRenewalDto(offerTemplate.getSubscriptionRenewal()));
         }
         // offer change properties
-        isOfferChangeRestricted = offerTemplate.getOfferChangeRestricted();
+        isOfferChangeRestricted = offerTemplate.getOfferChangeRestricted() == null ? isOfferChangeRestricted : offerTemplate.getOfferChangeRestricted();
         if (offerTemplate.getAllowedOffersChange() != null
                 && offerTemplate.getAllowedOffersChange().size() > 0) {
             allowedOfferChange = new ArrayList<>();
