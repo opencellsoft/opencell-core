@@ -166,6 +166,21 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 		if (!(discountPlan.getStatus().equals(DiscountPlanStatusEnum.IN_USE) || discountPlan.getStatus().equals(DiscountPlanStatusEnum.ACTIVE))) {
 			return false;
 		}
+		switch (discountPlan.getDiscountPlanType()) {
+		case OFFER:
+			if(offer!=null && !offer.getAllowedDiscountPlans().contains(discountPlan)) {
+				return false;
+			}
+			break;
+		case PRODUCT:
+			if(product!=null && !product.getDiscountList().contains(discountPlan)) {
+				return false;
+			}
+			break;
+		default:
+			break;
+		}	
+		
 		if (discountPlan.isActive() && discountPlan.isEffective(quoteDate)) {
 			if (matchDiscountPlanExpression(discountPlan.getExpressionEl(),entity,null, offer, product, discountPlan)) {
 				return true;

@@ -295,23 +295,6 @@ public class CatalogHierarchyBuilderService {
     		});
     	}
     	
-    	if(offerComponents != null) {
-    		entity.getOfferComponents().clear();;
-    		offerComponents.forEach(oc -> {
-    	    	offerComponentService.detach(oc);
-    			OfferComponent newOffer = new OfferComponent(oc);
-    			newOffer.setProduct(entity);
-    			var tags = newOffer.getTagsList();
-    	        if(tags != null) {
-    	        	newOffer.setTagsList(new HashSet<>());
-    	        	for (Tag tag : tags) {
-    	        		newOffer.getTagsList().add(tag);
-    				}
-    	        }
-    			offerComponentService.create(newOffer);
-    			entity.getOfferComponents().add(newOffer);
-    		});
-    	}
     	
     	if(medias != null) {
     		medias.forEach(media -> {

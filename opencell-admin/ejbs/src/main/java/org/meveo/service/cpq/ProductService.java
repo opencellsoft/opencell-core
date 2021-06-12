@@ -23,6 +23,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.CatalogHierarchyBuilderService;
 import org.meveo.service.catalog.impl.PricePlanMatrixColumnService;
@@ -136,7 +137,7 @@ public class ProductService extends BusinessService<Product> {
 		var productVersions = product.getProductVersions();
 		var discountPlans = new HashSet<>(product.getDiscountList());
 		var modelChildren = new HashSet<>(product.getModelChildren());
-		var offerComponents = new ArrayList<>(product.getOfferComponents());
+		var offerComponents = new ArrayList<OfferComponent>();
 		var medias = new ArrayList<>(product.getMedias());
 		var productCharge = new ArrayList<>(product.getProductCharges());
 		var commercialRuleHeader = new ArrayList<>(product.getCommercialRuleHeader());
