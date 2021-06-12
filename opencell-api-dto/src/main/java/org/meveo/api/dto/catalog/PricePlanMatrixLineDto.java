@@ -130,4 +130,6 @@ public class PricePlanMatrixLineDto extends BaseEntityDto {
 	public void setPriority(Integer priority) {
 		this.priority = priority;
 	}
+	
+	
 }
