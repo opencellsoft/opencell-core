@@ -159,7 +159,6 @@ public class PricePlanMatrixValue extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PricePlanMatrixValue)) return false;
-        if (!super.equals(o)) return false;
         PricePlanMatrixValue that = (PricePlanMatrixValue) o;
         return Objects.equals(getPricePlanMatrixLine(), that.getPricePlanMatrixLine()) &&
                 Objects.equals(getLongValue(), that.getLongValue()) &&
