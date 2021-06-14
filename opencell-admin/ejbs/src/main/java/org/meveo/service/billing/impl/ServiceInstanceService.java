@@ -521,6 +521,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             recurringChargeInstance.setChargeToDateOnTermination(chargeToDateOnTermination);
 
             Date chargedToDate = recurringChargeInstance.getChargedToDate();
+            // if the charge was not rated yet ==> we use subscription date instead of the date to which charge was applied to
+            if (chargedToDate == null) {
+                chargedToDate = recurringChargeInstance.getSubscriptionDate();
+            }
 
             log.info("Terminating recurring charge {}/{} with chargedToDate {},  terminationDate {}, endAggrementDate {}, efectiveTerminationDate {}, terminationReason {}", recurringChargeInstance.getId(),
                 recurringChargeInstance.getCode(), recurringChargeInstance.getChargedToDate(), terminationDate, serviceInstance.getEndAgreementDate(), chargeToDateOnTermination, terminationReason.getCode());
