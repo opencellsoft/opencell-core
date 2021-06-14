@@ -46,6 +46,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.model.tax.TaxClass;
 import org.meveo.model.tax.TaxMapping;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -72,6 +73,9 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
     private TaxScriptService taxScriptService;
 
     @Inject AccountingArticleService accountingArticleService;
+    
+    @Inject
+    private SellerService sellerService;
 
     @Override
     public void create(TaxMapping entity) throws BusinessException {
@@ -350,7 +354,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return A best matched Tax mapping
      */
     public TaxMapping findBestTaxMappingMatch(TaxCategory taxCategory, TaxClass taxClass, Seller seller, BillingAccount billingAccount, Date applicationDate) {
-    	//seller = sellerService.refreshOrRetrieve(seller);
+    	seller = sellerService.refreshOrRetrieve(seller);
     	Hibernate.initialize(seller);
         TradingCountry sellersCountry = seller.getTradingCountry();
         TradingCountry buyersCountry = billingAccount.getTradingCountry();
