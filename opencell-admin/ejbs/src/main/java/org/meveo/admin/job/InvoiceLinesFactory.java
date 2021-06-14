@@ -109,9 +109,12 @@ public class InvoiceLinesFactory {
 
         List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
         Map<String, Object> attributes = fromAttributeValue(attributeValues);
-        AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes)
-                .orElseThrow(() -> new BusinessException("No accountingArticle found"));
-        invoiceLine.setAccountingArticle(accountingArticle);
+        if(invoiceLine.getAccountingArticle()==null) {
+        	  AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes)
+                      .orElseThrow(() -> new BusinessException("No accountingArticle found"));
+              invoiceLine.setAccountingArticle(accountingArticle);
+        }
+      
         return invoiceLine;
     }
 

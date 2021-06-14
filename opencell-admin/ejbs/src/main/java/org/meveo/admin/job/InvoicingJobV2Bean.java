@@ -45,7 +45,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             List<Long> billingRunIds = billingRunWrappers != null ? extractBRIds(billingRunWrappers) : emptyList();
             Map<String, Object> filters = new HashedMap();
             if (billingRunIds.isEmpty()) {
-                filters.put("status", PREVALIDATED);
+                filters.put("status", BillingRunStatusEnum.INVOICE_LINES_CREATED);
             } else {
                 filters.put("inList id", billingRunIds);
             }

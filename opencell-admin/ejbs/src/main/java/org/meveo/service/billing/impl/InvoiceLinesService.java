@@ -94,7 +94,12 @@ public class InvoiceLinesService extends PersistenceService<InvoiceLine> {
     public void create(InvoiceLine entity) throws BusinessException {
     	AccountingArticle accountingArticle=entity.getAccountingArticle();
     	Invoice invoice=entity.getInvoice();
-    	Seller seller=invoice.getSeller()!=null?invoice.getSeller():invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+    	Seller seller=null;
+    	if(invoice!=null)
+    	 seller=invoice.getSeller()!=null?invoice.getSeller():invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+    	 else if (entity.getBillingAccount()!=null) {
+    		 seller=entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+    	 }
     	 if(accountingArticle!=null) {
              TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), seller, invoice.getBillingAccount(),null, invoice.getInvoiceDate(), false, false);
              if(taxInfo!=null)
