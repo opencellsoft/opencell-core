@@ -107,7 +107,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
      */
     private void convertWoToRT(Long woId, JobExecutionResultImpl jobExecutionResult) {
 
-        WalletOperation walletOperation = walletOperationService.findById(woId, Arrays.asList("wallet", "chargeInstance"));
+        WalletOperation walletOperation = walletOperationService.findById(woId);
         ratedTransactionService.createRatedTransaction(walletOperation, false);
     }
 
@@ -119,7 +119,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
      */
     private void convertWoToRTBatch(List<Long> woIds, JobExecutionResultImpl jobExecutionResult) {
 
-        List<WalletOperation> walletOperations = walletOperationService.findByIds(woIds, Arrays.asList("wallet", "chargeInstance"));
+        List<WalletOperation> walletOperations = walletOperationService.findByIds(woIds);
         for (WalletOperation walletOperation : walletOperations) {
             ratedTransactionService.createRatedTransaction(walletOperation, false);
         }
