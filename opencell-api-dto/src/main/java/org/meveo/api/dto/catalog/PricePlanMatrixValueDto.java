@@ -1,6 +1,7 @@
 package org.meveo.api.dto.catalog;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -199,4 +200,54 @@ public class PricePlanMatrixValueDto extends BaseEntityDto {
 	public void setPpmValueId(Long ppmValueId) {
 		this.ppmValueId = ppmValueId;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(dateValue, doubleValue, fromDateValue, fromDoubleValue, longValue, ppmColumnCode,
+				ppmValueId, stringValue, toDateValue, toDoubleValue);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PricePlanMatrixValueDto other = (PricePlanMatrixValueDto) obj;
+		return Objects.equals(dateValue, other.dateValue)
+				&& Objects.equals(fromDateValue, other.fromDateValue)
+				&& Objects.equals(ppmColumnCode, other.ppmColumnCode) 
+				&& Objects.equals(ppmValueId, other.ppmValueId)
+				&& Objects.equals(stringValue, other.stringValue) 
+				&& Objects.equals(toDateValue, other.toDateValue)
+				&& checkToDoubleValue(fromDoubleValue, other.fromDoubleValue)
+				&& checkToDoubleValue(toDoubleValue, other.toDoubleValue)
+				&& checkToDoubleValue(doubleValue, other.doubleValue)
+				&& checkoutToLongValue(longValue, other.longValue);
+	}
+	
+	public boolean checkToDoubleValue(Double numeric, Double toCompare) {
+		if(numeric == null && toCompare == null)
+			return true;
+		if(numeric != null && toCompare == null)
+			return false;
+		if(numeric == null && toCompare != null)
+			return false;
+		double epsilon = 0.000001d;
+		return Math.abs(numeric - toCompare) < epsilon;
+	}
+	
+	public boolean checkoutToLongValue(Long numeric, Long toCompare) {
+		if(numeric == null && toCompare == null)
+			return true;
+		if(numeric != null && toCompare == null)
+			return false;
+		if(numeric == null && toCompare != null)
+			return false;
+		return numeric.equals(toCompare);
+	}
+	
+	
 }

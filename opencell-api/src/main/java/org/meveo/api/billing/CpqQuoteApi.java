@@ -1274,7 +1274,7 @@ public class CpqQuoteApi extends BaseApi {
                 throw new BusinessException("the walletOperation id=" + wo.getId() + " has is not linked to an accounting article");
             }
             QuoteVersion quoteVersion = wo.getServiceInstance().getQuoteProduct().getQuoteVersion();
-            if(quoteVersion.getQuoteArticleLines()!=null) {
+            if(quoteVersion!= null && quoteVersion.getQuoteArticleLines()!=null) {
             	 Set<Long> quoteArticleLines = quoteVersion.getQuoteArticleLines().stream().map(l -> l.getId()).collect(Collectors.toSet());
                  if (!quoteArticleLines.isEmpty()) {
                  	quoteVersion.getQuoteArticleLines().clear();

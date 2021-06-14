@@ -128,15 +128,16 @@ public enum ColumnTypeEnum {
     Range_Numeric {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
-            if (attributeValue.getDoubleValue() == null || (pricePlanMatrixValue.getFromDoubleValue() == null && pricePlanMatrixValue.getToDoubleValue() == null)) {
+            if (attributeValue.getDoubleValue() == null && (pricePlanMatrixValue.getFromDoubleValue() == null && pricePlanMatrixValue.getToDoubleValue() == null)) {
                 return true;
             }
-            if (pricePlanMatrixValue.getFromDoubleValue() != null || pricePlanMatrixValue.getToDoubleValue() == null) {
+            if (pricePlanMatrixValue.getFromDoubleValue() != null && pricePlanMatrixValue.getToDoubleValue() == null &&  attributeValue.getDoubleValue() > pricePlanMatrixValue.getFromDoubleValue()) {
                 return true;
             }
-            if (attributeValue.getDoubleValue() == null || pricePlanMatrixValue.getFromDoubleValue() == null || pricePlanMatrixValue.getToDoubleValue() == null) {
+            if (pricePlanMatrixValue.getFromDoubleValue() == null && pricePlanMatrixValue.getToDoubleValue() != null &&  attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
                 return true;
-            } else {
+            }
+            else {
                 return attributeValue.getDoubleValue() > pricePlanMatrixValue.getFromDoubleValue()
                         && attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue();
             }

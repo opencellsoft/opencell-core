@@ -2,6 +2,7 @@ package org.meveo.service.catalog.impl;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
+import org.meveo.api.dto.catalog.PricePlanMatrixValueDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -23,6 +24,7 @@ import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -109,7 +111,9 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     }
 
     public Set<PricePlanMatrixValue> getPricePlanMatrixValues(PricePlanMatrixLineDto dtoData, PricePlanMatrixLine pricePlanMatrixLine) {
-        return dtoData.getPricePlanMatrixValues()
+    	Set<PricePlanMatrixValueDto> eliminateDuplicate = new HashSet<PricePlanMatrixValueDto>(dtoData.getPricePlanMatrixValues());
+    	
+        return eliminateDuplicate
                 .stream()
                 .map(value -> {
                     PricePlanMatrixValue pricePlanMatrixValue;
