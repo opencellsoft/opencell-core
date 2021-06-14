@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -40,6 +49,7 @@ import org.meveo.api.dto.response.GetInvoiceTypesResponse;
  * @author Edward P. Legaspi
  **/
 @Path("/invoiceType")
+@Tag(name = "InvoiceType", description = "@%InvoiceType")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -53,6 +63,19 @@ public interface InvoiceTypeRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create invoiceType. Description per language can be defined  ",
+			description=" Create invoiceType. Description per language can be defined  ",
+			operationId="    POST_InvoiceType_create",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(InvoiceTypeDto invoiceTypeDto);
 
     /**
@@ -63,6 +86,19 @@ public interface InvoiceTypeRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update invoiceType. Description per language can be defined  ",
+			description=" Update invoiceType. Description per language can be defined  ",
+			operationId="    PUT_InvoiceType_update",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(InvoiceTypeDto invoiceTypeDto);
 
     /**
@@ -73,6 +109,19 @@ public interface InvoiceTypeRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search invoiceType with a given code.  ",
+			description=" Search invoiceType with a given code.  ",
+			operationId="    GET_InvoiceType_search",
+			responses= {
+				@ApiResponse(description=" invoice type ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetInvoiceTypeResponse.class
+											)
+								)
+				)}
+	)
     GetInvoiceTypeResponse find(@QueryParam("invoiceTypeCode") String invoiceTypeCode);
 
     /**
@@ -83,6 +132,19 @@ public interface InvoiceTypeRs extends IBaseRs {
      */
     @DELETE
     @Path("/{invoiceTypeCode}")
+	@Operation(
+			summary=" Remove invoiceType with a given code.  ",
+			description=" Remove invoiceType with a given code.  ",
+			operationId="    DELETE_InvoiceType_{invoiceTypeCode}",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("invoiceTypeCode") String invoiceTypeCode);
 
     /**
@@ -93,6 +155,19 @@ public interface InvoiceTypeRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing invoiceType with a given code.  ",
+			description=" Create new or update an existing invoiceType with a given code.  ",
+			operationId="    POST_InvoiceType_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(InvoiceTypeDto invoiceTypeDto);
 
     /**
@@ -102,5 +177,18 @@ public interface InvoiceTypeRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List of invoiceType.  ",
+			description=" List of invoiceType.  ",
+			operationId="    GET_InvoiceType_list",
+			responses= {
+				@ApiResponse(description=" A list of invoiceType ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetInvoiceTypesResponse.class
+											)
+								)
+				)}
+	)
     GetInvoiceTypesResponse list();
 }

@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.job;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.response.job.JobInstanceListResponseDto;
@@ -33,6 +42,7 @@ import javax.ws.rs.core.MediaType;
  * 
  */
 @Path("/jobInstance")
+@Tag(name = "JobInstance", description = "@%JobInstance")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -45,6 +55,19 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" Search for list of jobInstances. ",
+			description=" Search for list of jobInstances. ",
+			operationId="    GET_JobInstance_list",
+			responses= {
+				@ApiResponse(description=" list of jobInstances ",
+						content=@Content(
+									schema=@Schema(
+											implementation= JobInstanceListResponseDto.class
+											)
+								)
+				)}
+	)
     JobInstanceListResponseDto list();
 
     /**
@@ -55,6 +78,19 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @POST
     @Path("/create")
+	@Operation(
+			summary=" Create a new job instance  ",
+			description=" Create a new job instance  ",
+			operationId="    POST_JobInstance_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(JobInstanceDto postData);
 
     /**
@@ -65,6 +101,19 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @POST
     @Path("/update")
+	@Operation(
+			summary=" Update an existing job instance  ",
+			description=" Update an existing job instance  ",
+			operationId="    POST_JobInstance_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(JobInstanceDto postData);
 
     /**
@@ -75,6 +124,19 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing job instance ",
+			description=" Update an existing job instance ",
+			operationId="    PUT_JobInstance_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus updatePut(JobInstanceDto putData);
 
     /**
@@ -85,6 +147,19 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing job instance with a given code  ",
+			description=" Create new or update an existing job instance with a given code  ",
+			operationId="    POST_JobInstance_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(JobInstanceDto postData);
 
     /**
@@ -95,6 +170,19 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Find a job instance with a given code  ",
+			description=" Find a job instance with a given code  ",
+			operationId="    GET_JobInstance_search",
+			responses= {
+				@ApiResponse(description=" Job Instance Response data ",
+						content=@Content(
+									schema=@Schema(
+											implementation= JobInstanceResponseDto.class
+											)
+								)
+				)}
+	)
     JobInstanceResponseDto find(@QueryParam("jobInstanceCode") String jobInstanceCode);
 
     /**
@@ -105,6 +193,19 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @DELETE
     @Path("/{jobInstanceCode}")
+	@Operation(
+			summary=" Remove an existing job instance with a given code  ",
+			description=" Remove an existing job instance with a given code  ",
+			operationId="    DELETE_JobInstance_{jobInstanceCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("jobInstanceCode") String jobInstanceCode);
 
     /**
@@ -115,6 +216,19 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Job instance with a given code  ",
+			description=" Enable a Job instance with a given code  ",
+			operationId="    POST_JobInstance_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -125,6 +239,19 @@ public interface JobInstanceRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Job instance with a given code  ",
+			description=" Disable a Job instance with a given code  ",
+			operationId="    POST_JobInstance_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 
 }

@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -38,6 +47,7 @@ import java.util.Date;
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/offerTemplate")
+@Tag(name = "OfferTemplate", description = "@%OfferTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -51,6 +61,19 @@ public interface OfferTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create offer template.  ",
+			description=" Create offer template.  ",
+			operationId="    POST_OfferTemplate_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(OfferTemplateDto postData);
 
     /**
@@ -61,6 +84,19 @@ public interface OfferTemplateRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update offer template.  ",
+			description=" Update offer template.  ",
+			operationId="    PUT_OfferTemplate_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(OfferTemplateDto postData);
 
     /**
@@ -79,6 +115,19 @@ public interface OfferTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search offer template with a given code and validity dates",
+			description=" Search offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be returned.  ",
+			operationId="    GET_OfferTemplate_search",
+			responses= {
+				@ApiResponse(description=" Return offerTemplateDto containing offerTemplate ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetOfferTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     GetOfferTemplateResponseDto find(@QueryParam("offerTemplateCode") String offerTemplateCode, @QueryParam("validFrom") @RestDateParam Date validFrom,
             @QueryParam("validTo") @RestDateParam Date validTo, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
             @QueryParam("loadOfferServiceTemplate") @DefaultValue("false") boolean loadOfferServiceTemplate, @QueryParam("loadOfferProductTemplate") @DefaultValue("false") boolean loadOfferProductTemplate,
@@ -105,6 +154,19 @@ public interface OfferTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List Offer templates matching filtering and query criteria or code and validity dates",
+			description=" List Offer templates matching filtering and query criteria or code and validity dates.  If neither date is provided, validity dates will not be considered. If only validFrom is provided, a search will return offers valid on a given date. If only validTo date is provided, a search will return offers valid from today to a given date. ",
+			operationId="    GET_OfferTemplate_list",
+			responses= {
+				@ApiResponse(description=" A list of offer templates ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetListOfferTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     public GetListOfferTemplateResponseDto listGet(@Deprecated @QueryParam("offerTemplateCode") String code, @Deprecated @QueryParam("validFrom") @RestDateParam Date validFrom,
             @Deprecated @QueryParam("validTo") @RestDateParam Date validTo, @QueryParam("query") String query, @QueryParam("fields") String fields,
             @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy,
@@ -118,6 +180,19 @@ public interface OfferTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List Offer templates matching a given criteria ",
+			description=" List Offer templates matching a given criteria ",
+			operationId="    GET_OfferTemplate_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of Offer templates ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetListOfferTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     GetListOfferTemplateResponseDto list(@Deprecated @QueryParam("offerTemplateCode") String code, @Deprecated @QueryParam("validFrom") @RestDateParam Date validFrom,
                                          @Deprecated @QueryParam("validTo") @RestDateParam Date validTo,
                                          @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
@@ -130,6 +205,19 @@ public interface OfferTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" List offerTemplates matching a given criteria  ",
+			description=" List offerTemplates matching a given criteria  ",
+			operationId="    POST_OfferTemplate_list",
+			responses= {
+				@ApiResponse(description=" List of offer templates ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetListOfferTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     public GetListOfferTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -142,6 +230,19 @@ public interface OfferTemplateRs extends IBaseRs {
      */
     @DELETE
     @Path("/{offerTemplateCode}")
+	@Operation(
+			summary=" Remove offer template with a given code and validity dates",
+			description=" Remove offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be deleted.  ",
+			operationId="    DELETE_OfferTemplate_{offerTemplateCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("offerTemplateCode") String offerTemplateCode, @QueryParam("validFrom") @RestDateParam Date validFrom,
             @QueryParam("validTo") @RestDateParam Date validTo);
 
@@ -153,6 +254,19 @@ public interface OfferTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update offer template based on a given code.  ",
+			description=" Create or update offer template based on a given code.  ",
+			operationId="    POST_OfferTemplate_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(OfferTemplateDto postData);
 
     /**
@@ -165,6 +279,19 @@ public interface OfferTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Offer template with a given code  ",
+			description=" Enable a Offer template with a given code  ",
+			operationId="    POST_OfferTemplate_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
 
     /**
@@ -177,6 +304,19 @@ public interface OfferTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Offer template with a given code  ",
+			description=" Disable a Offer template with a given code  ",
+			operationId="    POST_OfferTemplate_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
 
 }

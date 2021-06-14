@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.account;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.account.TitleResponseDto;
@@ -28,6 +37,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("/account/title")
+@Tag(name = "Title", description = "@%Title")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -41,6 +51,19 @@ public interface TitleRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new title  ",
+			description=" Create a new title  ",
+			operationId="    POST_Title_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(TitleDto postData);
 
     /**
@@ -51,6 +74,19 @@ public interface TitleRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for a title with a given code   ",
+			description=" Search for a title with a given code   ",
+			operationId="    GET_Title_search",
+			responses= {
+				@ApiResponse(description=" A title's data ",
+						content=@Content(
+									schema=@Schema(
+											implementation= TitleResponseDto.class
+											)
+								)
+				)}
+	)
     TitleResponseDto find(@QueryParam("titleCode") String titleCode);
 
     /**
@@ -60,6 +96,19 @@ public interface TitleRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List titles   ",
+			description=" List titles   ",
+			operationId="    GET_Title_list",
+			responses= {
+				@ApiResponse(description=" A list of titles ",
+						content=@Content(
+									schema=@Schema(
+											implementation= TitlesResponseDto.class
+											)
+								)
+				)}
+	)
     TitlesResponseDto list();
 
     /**
@@ -69,6 +118,19 @@ public interface TitleRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List titles matching a given criteria ",
+			description=" List titles matching a given criteria ",
+			operationId="    GET_Title_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of titles ",
+						content=@Content(
+									schema=@Schema(
+											implementation= TitlesResponseDto.class
+											)
+								)
+				)}
+	)
     TitlesResponseDto listGetAll();
 
     /**
@@ -79,6 +141,19 @@ public interface TitleRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing title  ",
+			description=" Update an existing title  ",
+			operationId="    PUT_Title_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(TitleDto postData);
 
     /**
@@ -89,6 +164,19 @@ public interface TitleRs extends IBaseRs {
      */
     @DELETE
     @Path("/{titleCode}")
+	@Operation(
+			summary=" Remove an existing title with a given code   ",
+			description=" Remove an existing title with a given code   ",
+			operationId="    DELETE_Title_{titleCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus remove(@PathParam("titleCode") String titleCode);
 
     /**
@@ -99,5 +187,18 @@ public interface TitleRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing title  ",
+			description=" Create new or update an existing title  ",
+			operationId="    POST_Title_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(TitleDto postData);
 }

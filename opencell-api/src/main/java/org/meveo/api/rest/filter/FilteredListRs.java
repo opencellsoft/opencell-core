@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.filter;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -42,6 +51,7 @@ import org.meveo.api.rest.IBaseRs;
  * @lastModifiedVersion 5.0
  **/
 @Path("/filteredList")
+@Tag(name = "FilteredList", description = "@%FilteredList")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -57,6 +67,19 @@ public interface FilteredListRs extends IBaseRs {
      */
     @POST
     @Path("/listByFilter")
+	@Operation(
+			summary=" Execute a filter to retrieve a list of entities ",
+			description=" Execute a filter to retrieve a list of entities ",
+			operationId="    POST_FilteredList_listByFilter",
+			responses= {
+				@ApiResponse(description=" Response ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response listByFilter(FilterDto filter, @QueryParam("from") Integer from, @QueryParam("size") Integer size);
 
     /**
@@ -72,6 +95,19 @@ public interface FilteredListRs extends IBaseRs {
      */
     @GET
     @Path("/search")
+	@Operation(
+			summary=" Execute a search in Elastic Search on all fields (_all field) ",
+			description=" Execute a search in Elastic Search on all fields (_all field) ",
+			operationId="    GET_FilteredList_search",
+			responses= {
+				@ApiResponse(description=" Response object that contains JSON results in String format ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response search(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("query") String query, @QueryParam("from") Integer from,
             @QueryParam("size") Integer size, @QueryParam("sortField") String sortField, @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -88,6 +124,19 @@ public interface FilteredListRs extends IBaseRs {
      */
     @GET
     @Path("/searchByField")
+	@Operation(
+			summary=" Execute a search in Elastic Search on given fields for given values",
+			description=" Execute a search in Elastic Search on given fields for given values. Query values by field are passed in extra query parameters in a form of fieldName=valueToMatch ",
+			operationId="    GET_FilteredList_searchByField",
+			responses= {
+				@ApiResponse(description=" Response object that contains JSON results in String format ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response searchByField(@QueryParam("classnamesOrCetCodes") String[] classnamesOrCetCodes, @QueryParam("from") Integer from, @QueryParam("size") Integer size,
             @QueryParam("sortField") String sortField, @QueryParam("sortOrder") SortOrder sortOrder, @Context UriInfo info);
 
@@ -98,6 +147,19 @@ public interface FilteredListRs extends IBaseRs {
      */
     @GET
     @Path("/reindex")
+	@Operation(
+			summary=" Clean and reindex Elastic Search repository ",
+			description=" Clean and reindex Elastic Search repository ",
+			operationId="    GET_FilteredList_reindex",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response reindex();
 
     /**
@@ -117,6 +179,20 @@ public interface FilteredListRs extends IBaseRs {
     @GET
     @Deprecated
     @Path("/fullSearch")
+	@Operation(
+			summary=" Execute a search in Elastic Search on all fields (_all field) and all entity types Deprecated in v. 6.2. Use /search instead ",
+			description=" Execute a search in Elastic Search on all fields (_all field) and all entity types Deprecated in v. 6.2. Use /search instead ",
+			deprecated=true,
+			operationId="    GET_FilteredList_fullSearch",
+			responses= {
+				@ApiResponse(description=" Response object that contains JSON results in String format ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     public Response fullSearch(@QueryParam("query") String query, @QueryParam("category") String category, @QueryParam("from") Integer from, @QueryParam("size") Integer size,
             @QueryParam("sortField") String sortField, @QueryParam("sortOrder") SortOrder sortOrder);
 }

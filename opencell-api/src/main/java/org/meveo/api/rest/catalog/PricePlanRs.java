@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.response.catalog.GetPricePlanResponseDto;
@@ -33,6 +42,7 @@ import javax.ws.rs.core.MediaType;
  * @author Edward P. Legaspi
  **/
 @Path("/catalog/pricePlan")
+@Tag(name = "PricePlan", description = "@%PricePlan")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -46,6 +56,19 @@ public interface PricePlanRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new price plan matrix  ",
+			description=" Create a new price plan matrix  ",
+			operationId="    POST_PricePlan_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(PricePlanMatrixDto postData);
 
     /**
@@ -56,6 +79,19 @@ public interface PricePlanRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing price plan matrix  ",
+			description=" Update an existing price plan matrix  ",
+			operationId="    PUT_PricePlan_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(PricePlanMatrixDto postData);
 
     /**
@@ -65,7 +101,20 @@ public interface PricePlanRs extends IBaseRs {
      * @return pricePlanMatrixDto Returns pricePlanMatrixDto containing pricePlan
      */
     @GET
-    @Path("/")    
+    @Path("/")
+	@Operation(
+			summary=" Find a price plan matrix with a given code  ",
+			description=" Find a price plan matrix with a given code  ",
+			operationId="    GET_PricePlan_search",
+			responses= {
+				@ApiResponse(description=" pricePlanMatrixDto Returns pricePlanMatrixDto containing pricePlan ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetPricePlanResponseDto.class
+											)
+								)
+				)}
+	)
     GetPricePlanResponseDto find(@QueryParam("pricePlanCode") String pricePlanCode);
 
     /**
@@ -75,7 +124,20 @@ public interface PricePlanRs extends IBaseRs {
      * @return Request processing status
      */
     @DELETE
-    @Path("/{pricePlanCode}")    
+    @Path("/{pricePlanCode}")
+	@Operation(
+			summary=" Remove an existing price plan matrix with a given code  ",
+			description=" Remove an existing price plan matrix with a given code  ",
+			operationId="    DELETE_PricePlan_{pricePlanCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("pricePlanCode") String pricePlanCode);
 
     /**
@@ -86,6 +148,19 @@ public interface PricePlanRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List price plan matrix.  ",
+			description=" List price plan matrix.  ",
+			operationId="    GET_PricePlan_list",
+			responses= {
+				@ApiResponse(description=" Return pricePlanMatrixes ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PricePlanMatrixesResponseDto.class
+											)
+								)
+				)}
+	)
     PricePlanMatrixesResponseDto listPricePlanByEventCode(@QueryParam("eventCode") String eventCode);
 
     /**
@@ -95,6 +170,19 @@ public interface PricePlanRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List PricePlanMatrixes ",
+			description=" List PricePlanMatrixes ",
+			operationId="    GET_PricePlan_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of PricePlanMatrixes ",
+						content=@Content(
+									schema=@Schema(
+											implementation= PricePlanMatrixesResponseDto.class
+											)
+								)
+				)}
+	)
     PricePlanMatrixesResponseDto listGetAll();
 
     /**
@@ -105,6 +193,19 @@ public interface PricePlanRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing price plan matrix  ",
+			description=" Create new or update an existing price plan matrix  ",
+			operationId="    POST_PricePlan_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(PricePlanMatrixDto postData);
 
     /**
@@ -115,6 +216,19 @@ public interface PricePlanRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Price plan with a given code  ",
+			description=" Enable a Price plan with a given code  ",
+			operationId="    POST_PricePlan_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -125,6 +239,19 @@ public interface PricePlanRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Price plan with a given code  ",
+			description=" Disable a Price plan with a given code  ",
+			operationId="    POST_PricePlan_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 
 }

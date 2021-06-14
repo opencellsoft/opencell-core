@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.response.catalog.GetDiscountPlanResponseDto;
@@ -28,6 +37,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("/catalog/discountPlan")
+@Tag(name = "DiscountPlan", description = "@%DiscountPlan")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -41,6 +51,19 @@ public interface DiscountPlanRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new discount plan  ",
+			description=" Create a new discount plan  ",
+			operationId="    POST_DiscountPlan_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(DiscountPlanDto postData);
 
     /**
@@ -51,6 +74,19 @@ public interface DiscountPlanRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing discount plan  ",
+			description=" Update an existing discount plan  ",
+			operationId="    PUT_DiscountPlan_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(DiscountPlanDto postData);
 
     /**
@@ -61,6 +97,19 @@ public interface DiscountPlanRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Find a discount plan with a given code   ",
+			description=" Find a discount plan with a given code   ",
+			operationId="    GET_DiscountPlan_search",
+			responses= {
+				@ApiResponse(description=" Return discount plan ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetDiscountPlanResponseDto.class
+											)
+								)
+				)}
+	)
     GetDiscountPlanResponseDto find(@QueryParam("discountPlanCode") String discountPlanCode);
 
     /**
@@ -71,6 +120,19 @@ public interface DiscountPlanRs extends IBaseRs {
      */
     @DELETE
     @Path("/")
+	@Operation(
+			summary=" Remove an existing discount plan with a given code   ",
+			description=" Remove an existing discount plan with a given code   ",
+			operationId="    DELETE_DiscountPlan_delete",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@QueryParam("discountPlanCode") String discountPlanCode);
 
     /**
@@ -81,6 +143,19 @@ public interface DiscountPlanRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing discount plan  ",
+			description=" Create new or update an existing discount plan  ",
+			operationId="    POST_DiscountPlan_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(DiscountPlanDto postData);
 
     /**
@@ -90,6 +165,19 @@ public interface DiscountPlanRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List discount plan  ",
+			description=" List discount plan  ",
+			operationId="    GET_DiscountPlan_list",
+			responses= {
+				@ApiResponse(description=" A list of discount plans ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetDiscountPlansResponseDto.class
+											)
+								)
+				)}
+	)
     GetDiscountPlansResponseDto list();
 
     /**
@@ -99,6 +187,19 @@ public interface DiscountPlanRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List DiscountPlans matching a given criteria ",
+			description=" List DiscountPlans matching a given criteria ",
+			operationId="    GET_DiscountPlan_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of DiscountPlans ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetDiscountPlansResponseDto.class
+											)
+								)
+				)}
+	)
     GetDiscountPlansResponseDto listGetAll();
 
     /**
@@ -109,6 +210,19 @@ public interface DiscountPlanRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Discount plan with a given code  ",
+			description=" Enable a Discount plan with a given code  ",
+			operationId="    POST_DiscountPlan_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -119,6 +233,19 @@ public interface DiscountPlanRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Discount plan with a given code  ",
+			description=" Disable a Discount plan with a given code  ",
+			operationId="    POST_DiscountPlan_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 
 }

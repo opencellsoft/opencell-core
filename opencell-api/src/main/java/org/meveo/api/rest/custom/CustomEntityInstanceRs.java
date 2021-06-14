@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.custom;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -40,6 +49,7 @@ import org.meveo.api.rest.IBaseRs;
  * @author Andrius Karpavicius
  **/
 @Path("/customEntityInstance")
+@Tag(name = "CustomEntityInstance", description = "@%CustomEntityInstance")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -54,6 +64,19 @@ public interface CustomEntityInstanceRs extends IBaseRs {
      */
     @POST
     @Path("/{customEntityTemplateCode}")
+	@Operation(
+			summary=" Create a new custom entity instance using a custom entity template. ",
+			description=" Create a new custom entity instance using a custom entity template. ",
+			operationId="    POST_CustomEntityInstance_{customEntityTemplateCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, CustomEntityInstanceDto dto);
 
     /**
@@ -65,6 +88,19 @@ public interface CustomEntityInstanceRs extends IBaseRs {
      */
     @PUT
     @Path("/{customEntityTemplateCode}")
+	@Operation(
+			summary=" Update an existing custom entity instance using a custom entity template  ",
+			description=" Update an existing custom entity instance using a custom entity template  ",
+			operationId="    PUT_CustomEntityInstance_{customEntityTemplateCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, CustomEntityInstanceDto dto);
 
     /**
@@ -76,6 +112,19 @@ public interface CustomEntityInstanceRs extends IBaseRs {
      */
     @DELETE
     @Path("/{customEntityTemplateCode}/{code}")
+	@Operation(
+			summary=" Remove an existing custom entity instance with a given code from a custom entity template given by code  ",
+			description=" Remove an existing custom entity instance with a given code from a custom entity template given by code  ",
+			operationId="    DELETE_CustomEntityInstance_{customEntityTemplateCode}_{code}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, @PathParam("code") String code);
 
     /**
@@ -87,6 +136,19 @@ public interface CustomEntityInstanceRs extends IBaseRs {
      */
     @GET
     @Path("/{customEntityTemplateCode}/{code}")
+	@Operation(
+			summary=" Find a #### with a given (exemple) code .  ",
+			description=" Find a #### with a given (exemple) code .  ",
+			operationId="    GET_CustomEntityInstance_{customEntityTemplateCode}_{code}",
+			responses= {
+				@ApiResponse(description=" Return a customEntityInstance ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CustomEntityInstanceResponseDto.class
+											)
+								)
+				)}
+	)
     CustomEntityInstanceResponseDto find(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, @PathParam("code") String code);
 
     /**
@@ -97,6 +159,19 @@ public interface CustomEntityInstanceRs extends IBaseRs {
      */
     @GET
     @Path("/list/{customEntityTemplateCode}")
+	@Operation(
+			summary=" List custom entity instances.  ",
+			description=" List custom entity instances.  ",
+			operationId="    GET_CustomEntityInstance_list_{customEntityTemplateCode}",
+			responses= {
+				@ApiResponse(description=" A list of custom entity instances ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CustomEntityInstancesResponseDto.class
+											)
+								)
+				)}
+	)
     CustomEntityInstancesResponseDto list(@PathParam("customEntityTemplateCode") String customEntityTemplateCode);
 
     /**
@@ -108,6 +183,19 @@ public interface CustomEntityInstanceRs extends IBaseRs {
      */
     @POST
     @Path("/{customEntityTemplateCode}/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing custom entity instance with a given code.  ",
+			description=" Create new or update an existing custom entity instance with a given code.  ",
+			operationId="    POST_CustomEntityInstance_{customEntityTemplateCode}_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, CustomEntityInstanceDto dto);
 
     /**
@@ -119,6 +207,19 @@ public interface CustomEntityInstanceRs extends IBaseRs {
      */
     @POST
     @Path("/{customEntityTemplateCode}/{code}/enable")
+	@Operation(
+			summary=" Enable a Custom entity instance with a given code  ",
+			description=" Enable a Custom entity instance with a given code  ",
+			operationId="    POST_CustomEntityInstance_{customEntityTemplateCode}_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, @PathParam("code") String code);
 
     /**
@@ -130,5 +231,18 @@ public interface CustomEntityInstanceRs extends IBaseRs {
      */
     @POST
     @Path("/{customEntityTemplateCode}/{code}/disable")
+	@Operation(
+			summary=" Disable a Custom entity instance with a given code  ",
+			description=" Disable a Custom entity instance with a given code  ",
+			operationId="    POST_CustomEntityInstance_{customEntityTemplateCode}_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, @PathParam("code") String code);
 }

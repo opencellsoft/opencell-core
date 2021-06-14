@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.tax;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
@@ -30,9 +39,12 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 /**
+ * @author Mohammed
+ * 
  * REST interface definition of Tax mapping API
  **/
 @Path("/taxMapping")
+@Tag(name = "TaxMapping", description = "@%TaxMapping")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface TaxMappingRs extends IBaseRs {
@@ -45,6 +57,19 @@ public interface TaxMappingRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new Tax mapping  ",
+			description=" Create a new Tax mapping  ",
+			operationId="    POST_TaxMapping_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(TaxMappingDto dto);
 
     /**
@@ -55,6 +80,19 @@ public interface TaxMappingRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for a Tax mapping with a given id  ",
+			description=" Search for a Tax mapping with a given id  ",
+			operationId="    GET_TaxMapping_search",
+			responses= {
+				@ApiResponse(description=" A Tax mapping's data ",
+						content=@Content(
+									schema=@Schema(
+											implementation= TaxMappingResponseDto.class
+											)
+								)
+				)}
+	)
     TaxMappingResponseDto find(@QueryParam("id") String id);
 
     /**
@@ -70,6 +108,19 @@ public interface TaxMappingRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" Search Tax mapping by matching a given criteria  ",
+			description=" Search Tax mapping by matching a given criteria  ",
+			operationId="    GET_TaxMapping_list",
+			responses= {
+				@ApiResponse(description=" List of Tax mappings ",
+						content=@Content(
+									schema=@Schema(
+											implementation= TaxMappingListResponseDto.class
+											)
+								)
+				)}
+	)
     public TaxMappingListResponseDto searchGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -80,6 +131,19 @@ public interface TaxMappingRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List taxMappings matching a given criteria ",
+			description=" List taxMappings matching a given criteria ",
+			operationId="    GET_TaxMapping_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of taxMappings ",
+						content=@Content(
+									schema=@Schema(
+											implementation= TaxMappingListResponseDto.class
+											)
+								)
+				)}
+	)
     TaxMappingListResponseDto listGetAll();
 
     /**
@@ -90,6 +154,19 @@ public interface TaxMappingRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" Search for Tax mapping by matching a given criteria  ",
+			description=" Search for Tax mapping by matching a given criteria  ",
+			operationId="    POST_TaxMapping_list",
+			responses= {
+				@ApiResponse(description=" List of Tax mappings ",
+						content=@Content(
+									schema=@Schema(
+											implementation= TaxMappingListResponseDto.class
+											)
+								)
+				)}
+	)
     public TaxMappingListResponseDto searchPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -100,6 +177,19 @@ public interface TaxMappingRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing Tax mapping  ",
+			description=" Update an existing Tax mapping  ",
+			operationId="    PUT_TaxMapping_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(TaxMappingDto dto);
 
     /**
@@ -110,6 +200,19 @@ public interface TaxMappingRs extends IBaseRs {
      */
     @DELETE
     @Path("/{id}")
+	@Operation(
+			summary=" Remove an existing Tax mapping with a given id  ",
+			description=" Remove an existing Tax mapping with a given id  ",
+			operationId="    DELETE_TaxMapping_{id}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     public ActionStatus remove(@PathParam("id") String id);
 
     /**
@@ -120,5 +223,18 @@ public interface TaxMappingRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing Tax mapping  ",
+			description=" Create new or update an existing Tax mapping  ",
+			operationId="    POST_TaxMapping_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(TaxMappingDto dto);
 }

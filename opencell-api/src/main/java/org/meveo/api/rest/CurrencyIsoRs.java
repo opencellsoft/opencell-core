@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.CurrencyIsoDto;
 import org.meveo.api.dto.response.GetCurrenciesIsoResponse;
@@ -32,6 +41,7 @@ import javax.ws.rs.core.MediaType;
  * @author Edward P. Legaspi
  **/
 @Path("/currencyIso")
+@Tag(name = "CurrencyIso", description = "@%CurrencyIso")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -44,7 +54,20 @@ public interface CurrencyIsoRs extends IBaseRs {
      * @return action status.
      */
     @POST
-    @Path("/") 
+    @Path("/")
+	@Operation(
+			summary=" Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created  ",
+			description=" Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created  ",
+			operationId="    POST_CurrencyIso_create",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(CurrencyIsoDto currencyIsoDto);
 
     /**
@@ -54,7 +77,20 @@ public interface CurrencyIsoRs extends IBaseRs {
      * @return currency iso if found.
      */
     @GET
-    @Path("/") 
+    @Path("/")
+	@Operation(
+			summary=" Search currency with a given currency code.  ",
+			description=" Search currency with a given currency code.  ",
+			operationId="    GET_CurrencyIso_search",
+			responses= {
+				@ApiResponse(description=" currency iso if found. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetCurrencyIsoResponse.class
+											)
+								)
+				)}
+	)
     GetCurrencyIsoResponse find(@QueryParam("currencyCode") String currencyCode);
 
     /**
@@ -64,7 +100,20 @@ public interface CurrencyIsoRs extends IBaseRs {
      * @return action status.
      */
     @DELETE
-    @Path("/{currencyCode}") 
+    @Path("/{currencyCode}")
+	@Operation(
+			summary=" Remove currency with a given currency code.  ",
+			description=" Remove currency with a given currency code.  ",
+			operationId="    DELETE_CurrencyIso_{currencyCode}",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("currencyCode") String currencyCode);
 
     /**
@@ -76,6 +125,19 @@ public interface CurrencyIsoRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Modify a tradingCurrency",
+			description=" Modify a tradingCurrency. Same input parameter as create. The currency and tradingCurrency are created if they don't exists. The operation fails if the tradingCurrency is null  ",
+			operationId="    PUT_CurrencyIso_update",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(CurrencyIsoDto currencyIsoDto);
 
     /**
@@ -84,7 +146,20 @@ public interface CurrencyIsoRs extends IBaseRs {
      * @return action status.
      */
     @POST
-    @Path("/createOrUpdate") 
+    @Path("/createOrUpdate")
+	@Operation(
+			summary=" Creates or modify a tradingCurrency base on currency code.  ",
+			description=" Creates or modify a tradingCurrency base on currency code.  ",
+			operationId="    POST_CurrencyIso_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(CurrencyIsoDto currencyIsoDto);
 
     /**
@@ -93,6 +168,19 @@ public interface CurrencyIsoRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List all currencies. ",
+			description=" List all currencies. ",
+			operationId="    GET_CurrencyIso_list",
+			responses= {
+				@ApiResponse(description=" list of all currency iso/ ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetCurrenciesIsoResponse.class
+											)
+								)
+				)}
+	)
     GetCurrenciesIsoResponse list();
 
     /**
@@ -102,6 +190,19 @@ public interface CurrencyIsoRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List currencies ISO matching a given criteria ",
+			description=" List currencies ISO matching a given criteria ",
+			operationId="    GET_CurrencyIso_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of currencies ISO ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetCurrenciesIsoResponse.class
+											)
+								)
+				)}
+	)
     GetCurrenciesIsoResponse listGetAll();
     
 }

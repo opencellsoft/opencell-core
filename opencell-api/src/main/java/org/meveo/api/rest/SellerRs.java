@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -43,6 +52,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
  * @author Edward P. Legaspi
  **/
 @Path("/seller")
+@Tag(name = "Seller", description = "@%Seller")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -56,6 +66,19 @@ public interface SellerRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create seller.  ",
+			description=" Create seller.  ",
+			operationId="    POST_Seller_create",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(SellerDto postData);
 
     /**
@@ -66,6 +89,19 @@ public interface SellerRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update seller.  ",
+			description=" Update seller.  ",
+			operationId="    PUT_Seller_update",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(SellerDto postData);
 
     /**
@@ -77,6 +113,19 @@ public interface SellerRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for seller with a given code.  ",
+			description=" Search for seller with a given code.  ",
+			operationId="    GET_Seller_search",
+			responses= {
+				@ApiResponse(description=" found seller. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetSellerResponse.class
+											)
+								)
+				)}
+	)
     GetSellerResponse find(@QueryParam("sellerCode") String sellerCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
@@ -87,6 +136,19 @@ public interface SellerRs extends IBaseRs {
      */
     @DELETE
     @Path("/{sellerCode}")
+	@Operation(
+			summary=" Remove seller with a given code.  ",
+			description=" Remove seller with a given code.  ",
+			operationId="    DELETE_Seller_{sellerCode}",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("sellerCode") String sellerCode);
 
     /**
@@ -96,6 +158,19 @@ public interface SellerRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" Search for seller with a given code.  ",
+			description=" Search for seller with a given code.  ",
+			operationId="    GET_Seller_list",
+			responses= {
+				@ApiResponse(description=" list of seller ",
+						content=@Content(
+									schema=@Schema(
+											implementation= SellerResponseDto.class
+											)
+								)
+				)}
+	)
     SellerResponseDto list();
 
     /**
@@ -105,6 +180,19 @@ public interface SellerRs extends IBaseRs {
      */
     @GET
     @Path("/listSellerCodes")
+	@Operation(
+			summary=" Search for all seller's code. ",
+			description=" Search for all seller's code. ",
+			operationId="    GET_Seller_listSellerCodes",
+			responses= {
+				@ApiResponse(description=" list of seller's code. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= SellerCodesResponseDto.class
+											)
+								)
+				)}
+	)
     SellerCodesResponseDto listSellerCodes();
 
     /**
@@ -115,6 +203,19 @@ public interface SellerRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update a seller. ",
+			description=" Create or update a seller. ",
+			operationId="    POST_Seller_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" created or updated seller. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(SellerDto postData);
 
 }

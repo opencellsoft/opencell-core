@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.dto.response.GetInvoiceCategoryResponse;
@@ -33,6 +42,7 @@ import javax.ws.rs.core.MediaType;
  * @author Edward P. Legaspi
  **/
 @Path("/invoiceCategory")
+@Tag(name = "InvoiceCategory", description = "@%InvoiceCategory")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -45,6 +55,19 @@ public interface InvoiceCategoryRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" Search for list of invoice categories. ",
+			description=" Search for list of invoice categories. ",
+			operationId="    GET_InvoiceCategory_list",
+			responses= {
+				@ApiResponse(description=" list of invoice categories ",
+						content=@Content(
+									schema=@Schema(
+											implementation= InvoiceCategoryResponseDto.class
+											)
+								)
+				)}
+	)
     InvoiceCategoryResponseDto list();
 
     /**
@@ -55,6 +78,19 @@ public interface InvoiceCategoryRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create invoice category. Description per language can be defined  ",
+			description=" Create invoice category. Description per language can be defined  ",
+			operationId="    POST_InvoiceCategory_create",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(InvoiceCategoryDto postData);
 
     /**
@@ -65,6 +101,19 @@ public interface InvoiceCategoryRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update invoice category.  ",
+			description=" Update invoice category.  ",
+			operationId="    PUT_InvoiceCategory_update",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(InvoiceCategoryDto postData);
 
     /**
@@ -75,6 +124,19 @@ public interface InvoiceCategoryRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search invoice with a given code.  ",
+			description=" Search invoice with a given code.  ",
+			operationId="    GET_InvoiceCategory_search",
+			responses= {
+				@ApiResponse(description=" invoice category ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetInvoiceCategoryResponse.class
+											)
+								)
+				)}
+	)
     GetInvoiceCategoryResponse find(@QueryParam("invoiceCategoryCode") String invoiceCategoryCode);
 
     /**
@@ -85,6 +147,19 @@ public interface InvoiceCategoryRs extends IBaseRs {
      */
     @DELETE
     @Path("/{invoiceCategoryCode}")
+	@Operation(
+			summary=" Remove invoice with a given code.  ",
+			description=" Remove invoice with a given code.  ",
+			operationId="    DELETE_InvoiceCategory_{invoiceCategoryCode}",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("invoiceCategoryCode") String invoiceCategoryCode);
 
     /**
@@ -95,6 +170,19 @@ public interface InvoiceCategoryRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update invoice with a given code.  ",
+			description=" Create or update invoice with a given code.  ",
+			operationId="    POST_InvoiceCategory_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(InvoiceCategoryDto postData);
     
     /**
@@ -105,6 +193,19 @@ public interface InvoiceCategoryRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" List InvoiceCategory matching a given criteria ",
+			description=" List InvoiceCategory matching a given criteria ",
+			operationId="    POST_InvoiceCategory_list",
+			responses= {
+				@ApiResponse(description=" List of InvoiceCategory ",
+						content=@Content(
+									schema=@Schema(
+											implementation= InvoiceCategoryResponseDto.class
+											)
+								)
+				)}
+	)
     public InvoiceCategoryResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

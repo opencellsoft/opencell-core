@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.importExport;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -36,6 +45,7 @@ import org.meveo.api.rest.IBaseRs;
  * @author Andrius Karpavicius
  **/
 @Path("/importExport")
+@Tag(name = "ImportExport", description = "@%ImportExport")
 @Consumes({ MediaType.MULTIPART_FORM_DATA })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -50,6 +60,19 @@ public interface ImportExportRs extends IBaseRs {
      */
     @POST
     @Path("/importData")
+	@Operation(
+			summary=" Send a file to be imported. ImportExportResponseDto.executionId contains  ",
+			description=" Send a file to be imported. ImportExportResponseDto.executionId contains  ",
+			operationId="    POST_ImportExport_importData",
+			responses= {
+				@ApiResponse(description=" As import is async process, ImportExportResponseDto.executionId contains and ID to be used to query for execution results via a call to/importExport/checkImportDataResult?id=.. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ImportExportResponseDto.class
+											)
+								)
+				)}
+	)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public ImportExportResponseDto importData(MultipartFormDataInput input);
 
@@ -61,5 +84,18 @@ public interface ImportExportRs extends IBaseRs {
      */
     @GET
     @Path("/checkImportDataResult")
+	@Operation(
+			summary=" Check for execution results for a given execution identifier  ",
+			description=" Check for execution results for a given execution identifier  ",
+			operationId="    GET_ImportExport_checkImportDataResult",
+			responses= {
+				@ApiResponse(description=" the execution result ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ImportExportResponseDto.class
+											)
+								)
+				)}
+	)
     public ImportExportResponseDto checkImportDataResult(@QueryParam("executionId") String executionId);
 }
