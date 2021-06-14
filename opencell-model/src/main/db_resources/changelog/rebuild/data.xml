@@ -12533,6 +12533,213 @@ public class DeleteCustomersScript extends Script {
        	</insert> 
 	</changeSet>
 
+	<changeSet author="AmineBENAICHA" id="#6048_20210611">
+		<sql>
+<![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-30, 0, 0, now(), 'org.meveo.service.script.ServiceTemplateToProductScript', 'Migration ServiceTemplate To Product', 'JAVA', 'package org.meveo.service.script;
+	
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.article.ArticleMapping;
+import org.meveo.model.article.ArticleMappingLine;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductChargeTemplateMapping;
+import org.meveo.model.catalog.ServiceChargeTemplate;
+import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Product;
+import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.enums.VersionStatusEnum;
+import org.meveo.model.cpq.offer.OfferComponent;
+import org.meveo.model.tax.TaxClass;
+import org.meveo.service.billing.impl.ServiceInstanceService;
+import org.meveo.service.billing.impl.article.AccountingArticleService;
+import org.meveo.service.billing.impl.article.ArticleMappingLineService;
+import org.meveo.service.billing.impl.article.ArticleMappingService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.cpq.ProductService;
+import org.meveo.service.cpq.ProductVersionService;
+import org.meveo.service.tax.TaxClassService;
+import org.primefaces.model.SortOrder;
+
+public class ServiceTemplateToProductScript extends Script {
+
+    public static final String DEFAULT_TAX_CLASS_CODE = "CMP_DATA";
+    public static final long ARTICLE_MAPPING_ID = 1L;
+    private static final Integer PAGE_COUNT = 100;
+    private ServiceInstanceService serviceInstanceService = (ServiceInstanceService) getServiceInterface(ServiceInstanceService.class.getSimpleName());
+    private ProductService productService = (ProductService) getServiceInterface(ProductService.class.getSimpleName());
+    private ProductVersionService productVersionService = (ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName());
+    private OfferTemplateService offerTemplateService= (OfferTemplateService) getServiceInterface(OfferTemplateService.class.getSimpleName());
+    private AccountingArticleService accountingArticleService = (AccountingArticleService) getServiceInterface(AccountingArticleService.class.getSimpleName());
+    private ArticleMappingService articleMappingService = (ArticleMappingService) getServiceInterface(ArticleMappingService.class.getSimpleName());
+    private ArticleMappingLineService articleMappingLineService = (ArticleMappingLineService) getServiceInterface(ArticleMappingLineService.class.getSimpleName());
+    private ServiceTemplateService serviceTemplateService = (ServiceTemplateService) getServiceInterface(ServiceTemplateService.class.getSimpleName());
+    private TaxClassService taxClassService = (TaxClassService) getServiceInterface(TaxClassService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+        List<ServiceTemplate> serviceTemplates = (List<ServiceTemplate>) methodContext.get("SERVICE_TEMPLATE");
+
+        if(serviceTemplates != null && !serviceTemplates.isEmpty()){
+            serviceTemplates.forEach(this::map);
+        } else {
+
+            long count = serviceTemplateService.count(new PaginationConfiguration("id", SortOrder.ASCENDING));
+
+            if (PAGE_COUNT < count) {
+                serviceTemplateService.list(new PaginationConfiguration(null, null))
+                        .forEach(this::map);
+            } else {
+                for (int index = 0; index < count; index = index + PAGE_COUNT) {
+                    serviceTemplateService.list(new PaginationConfiguration(index, PAGE_COUNT, null, null, null, "id", SortOrder.ASCENDING))
+                            .forEach(this::map);
+                }
+            }
+        }
+
+    }
+
+    public Product map(ServiceTemplate serviceTemplate) {
+        Product product = createProduct(serviceTemplate);
+        createArticle(product);
+
+        ProductVersion productVersion = createProductVersion(product);
+
+        List<ServiceInstance> serviceInstances = serviceInstanceService.findByServiceTemplate(serviceTemplate);
+
+        serviceInstances.forEach(serviceInstance -> {
+
+            serviceInstance.setProductVersion(productVersion);
+            serviceInstance.setServiceTemplate(null);
+            serviceInstanceService.update(serviceInstance);
+
+            OfferTemplate offer = serviceInstance.getSubscription().getOffer();
+            OfferComponent offerComponent = new OfferComponent();
+            offerComponent.setProduct(product);
+            offerComponent.setOfferTemplate(offer);
+            offer.getOfferComponents().add(offerComponent);
+            offer.getOfferServiceTemplates().removeIf(o -> o.getServiceTemplate().getId().equals(serviceTemplate.getId()));
+            offerTemplateService.update(offer);
+        });
+
+        return product;
+    }
+
+    private void createArticle(Product product) {
+        product.getProductCharges().stream()
+                .map(pc -> pc.getChargeTemplate())
+                .forEach(chargeTemplate -> {
+                    AccountingArticle accountingArticle;
+                    List<AccountingArticle> accountingArticles = accountingArticleService.findByTaxClassAndSubCategory(chargeTemplate.getTaxClass(), chargeTemplate.getInvoiceSubCategory());
+                    if(accountingArticles.isEmpty()){
+                        TaxClass taxClass = taxClassService.findByCode(DEFAULT_TAX_CLASS_CODE);
+                        accountingArticle = new AccountingArticle(UUID.randomUUID().toString(), "Migration Accounting article", taxClass, chargeTemplate.getInvoiceSubCategory());
+                        accountingArticleService.create(accountingArticle);
+                    }else {
+                        accountingArticle = accountingArticles.get(0);
+                    }
+                    ArticleMapping defaultArticleMapping = articleMappingService.findById(ARTICLE_MAPPING_ID);
+                    ArticleMappingLine articleMappingLine = new ArticleMappingLine();
+                    articleMappingLine.setChargeTemplate(chargeTemplate);
+                    articleMappingLine.setArticleMapping(defaultArticleMapping);
+                    articleMappingLine.setProduct(product);
+                    articleMappingLine.setAccountingArticle(accountingArticle);
+                    articleMappingLineService.create(articleMappingLine);
+                });
+
+    }
+
+    private Product createProduct(ServiceTemplate serviceTemplate) {
+        Product product = new Product();
+        product.setCode(serviceTemplate.getCode());
+        product.setDescription(serviceTemplate.getDescription());
+        List<ProductChargeTemplateMapping> productCharges = getProductCharges(serviceTemplate);
+        product.setProductCharges(productCharges);
+        product.setCfValues(serviceTemplate.getCfValues());
+        product.setCfAccumulatedValues(serviceTemplate.getCfAccumulatedValues());
+        product.setDisabled(serviceTemplate.isDisabled());
+        productService.create(product);
+        return product;
+    }
+
+    private ProductVersion createProductVersion(Product product) {
+        ProductVersion productVersion= new ProductVersion();
+        productVersion.setProduct(product);
+        productVersion.setShortDescription(product.getDescription());
+        productVersion.setStatus(VersionStatusEnum.PUBLISHED);
+        productVersion.setStatusDate(Calendar.getInstance().getTime());
+        productVersionService.create(productVersion);
+        return productVersion;
+    }
+
+    private ProductChargeTemplateMapping mapToProductChargeTemplate(ServiceChargeTemplate serviceCharge) {
+        ProductChargeTemplateMapping productChargeTemplateMapping = new ProductChargeTemplateMapping();
+        productChargeTemplateMapping.setChargeTemplate(serviceCharge.getChargeTemplate());
+        return productChargeTemplateMapping;
+    }
+
+    private List<ProductChargeTemplateMapping> getProductCharges(ServiceTemplate serviceTemplate) {
+        List<ProductChargeTemplateMapping> productCharges = serviceTemplate.getServiceSubscriptionCharges()
+                .stream()
+                .map(this::mapToProductChargeTemplate)
+                .collect(Collectors.toList());
+
+        productCharges.addAll(
+                serviceTemplate.getServiceRecurringCharges()
+                        .stream()
+                        .map(this::mapToProductChargeTemplate)
+                        .collect(Collectors.toList())
+        );
+
+        productCharges.addAll(
+                serviceTemplate.getServiceTerminationCharges()
+                        .stream()
+                        .map(this::mapToProductChargeTemplate)
+                        .collect(Collectors.toList())
+        );
+
+        productCharges.addAll(
+                serviceTemplate.getServiceUsageCharges()
+                        .stream()
+                        .map(this::mapToProductChargeTemplate)
+                        .collect(Collectors.toList())
+        );
+        return productCharges;
+    }
+}');]]>
+			</sql>
+
+			<insert tableName="meveo_job_instance">
+	            <column name="id" valueNumeric="-40" />
+	            <column name="version" valueNumeric="0" />
+	            <column name="disabled" valueNumeric="0" />
+	            <column name="created" valueDate="now()" />
+	            <column name="updated" valueDate="null" />
+	            <column name="uuid" value="ServiceTemplateToProductJob" />
+	            <column name="code" value="ServiceTemplateToProductJob" />
+	            <column name="description" value="ServiceTemplateToProductJob" />
+	            <column name="job_category" value="MEDIATION" />
+	            <column name="job_template" value="ScriptingJob" />
+	            <column name="parametres" valueNumeric="null" />
+	            <column name="creator" value="opencell.admin" />
+	            <column name="updater" value="null" />
+	            <column name="timerentity_id" value="null" />
+	            <column name="cf_values">
+	            	<![CDATA[
+	            		{"ScriptingJob_script":[{"entity":{"classname":"org.meveo.model.scripts.ScriptInstance","code":"org.meveo.service.script.ServiceTemplateToProductScript","id":-30}}],"ScriptingJob_TransactionType":[{"string":"REQUIRES_NEW"}]}
+	            	]]>
+				</column>
+	       	</insert>
+	</changeSet>
+
     <changeSet id="#5890-2021-02-02_42" author="ZBariki">
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq" />
