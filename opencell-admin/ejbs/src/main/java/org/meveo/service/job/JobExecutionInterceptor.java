@@ -41,15 +41,20 @@ public class JobExecutionInterceptor {
         Object[] params = context.getParameters();
 
         long numberOfThreads = 0;
+        long isRunning = 0;
+        long isStopped = 1;
 
         if (params.length == 4) {
             List<Future> futures = (List<Future>) params[3];
             if (futures != null && !futures.isEmpty()) {
                 numberOfThreads = futures.size();
+                isRunning = 1;
+                isStopped = 0;
             }
         }
         counterInc((JobInstance) params[0], "number_of_Threads", numberOfThreads);
-
+        counterInc((JobInstance) params[0], "is_running",isRunning);
+        counterInc((JobInstance) params[0], "is_stopped",isStopped);
         try {
             return context.proceed();
         } catch (Exception e) {
