@@ -1,22 +1,30 @@
 package org.meveo.util;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.cpq.PriceDTO;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Country;
+import org.meveo.model.cpq.commercial.PriceLevelEnum;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.MandatStateEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.model.quote.QuotePrice;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
@@ -97,35 +105,37 @@ createMandate body={
  }
 }
 		 * ***/
-		CustomerAccount customerAccount=new CustomerAccount();
-		
-		ContactInformation ci=new ContactInformation();
-		ci.setEmail("rachid.aityaazza@opencellsoft.com");
-		Address address=new Address();
-		address.setAddress1("56 rue Kleber");
-		address.setCity("Paris");
-		Country country=new Country();
-		country.setDescription("France");
-		country.setCountryCode("FR");
-		address.setCountry(country);
-		address.setZipCode("92300");
-		
-		Name name=new Name();
-		name.setFirstName("-");
-		name.setLastName("ISSUE-SEPA-REJ-AC01");
-		Title title=new Title();
-		title.setDescription("Mr");
-		name.setTitle(title);
-		
-		customerAccount.setContactInformation(ci);
-		customerAccount.setAddress(address);
-		customerAccount.setName(name);
-		customerAccount.setExternalRef1("cust2");
-		customerAccount.setCode("4003868175");
-		String rum="BPIAB0000000002312FD673";
-		createMandate(customerAccount, "FR7630001007941234567890185",rum);
-		checkMandat(rum, null);
-		doPayment(null, rum, 3000L, customerAccount, null, null, null,null,null, "FR", null);
+//		CustomerAccount customerAccount=new CustomerAccount();
+//		
+//		ContactInformation ci=new ContactInformation();
+//		ci.setEmail("rachid.aityaazza@opencellsoft.com");
+//		Address address=new Address();
+//		address.setAddress1("56 rue Kleber");
+//		address.setCity("Paris");
+//		Country country=new Country();
+//		country.setDescription("France");
+//		country.setCountryCode("FR");
+//		address.setCountry(country);
+//		address.setZipCode("92300");
+//		
+//		Name name=new Name();
+//		name.setFirstName("-");
+//		name.setLastName("ISSUE-SEPA-REJ-AC01");
+//		Title title=new Title();
+//		title.setDescription("Mr");
+//		name.setTitle(title);
+//		
+//		customerAccount.setContactInformation(ci);
+//		customerAccount.setAddress(address);
+//		customerAccount.setName(name);
+//		customerAccount.setExternalRef1("cust2");
+//		customerAccount.setCode("4003868175");
+//		String rum="BPIAB0000000002312FD673";
+//		createMandate(customerAccount, "FR7630001007941234567890185",rum);
+//		checkMandat("BPIAB0000002479FD02", null);
+//		doPayment(null, rum, 3000L, customerAccount, null, null, null,null,null, "FR", null);
+		MyTest test=new MyTest();
+		test.calculatePrices();
 	}
 	
     public static void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException {
@@ -166,7 +176,7 @@ createMandate body={
     		body.setCustomerReference(customerAccount.getExternalRef1()); 
     		body.setRecurrenceType("RECURRING");
     		body.setSignatureType("UNSIGNED");
-    		getClient();
+    		getClient(false);
     	      
             ObjectMapper mapper = new ObjectMapper(); 
             String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
@@ -186,24 +196,24 @@ createMandate body={
     private  static Client client = null;
     
     private static Marshaller marshaller = null;
-    private static void getClient() {
+    private static void getClient(boolean prod) {
     	Properties pros=new Properties();
     	pros.setProperty("connect.api.authorizationType", "V1HMAC");
     	pros.setProperty("connect.api.connectTimeout", "5000");
-    	pros.setProperty("connect.api.endpoint.host", "eu.preprod.api-ingenico.com");
+    	pros.setProperty("connect.api.endpoint.host", prod?"eu.api-ingenico.com":"eu.preprod.api-ingenico.com");
     	pros.setProperty("connect.api.endpoint.scheme", "https");
     	pros.setProperty("connect.api.integrator", "");
     	pros.setProperty("connect.api.socketTimeout", "300000"); 
         CommunicatorConfiguration communicatorConfiguration = new CommunicatorConfiguration(pros);
-        communicatorConfiguration.setApiKeyId("7a6495ada4604559");
-        communicatorConfiguration.setSecretApiKey("G5HkI4/lsx3rnMx2mMjtQMBDuxAvugUTXL2+Po6h0Xs=");
+        communicatorConfiguration.setApiKeyId(prod?"f7ef4cbafd46c392":"7a6495ada4604559");
+        communicatorConfiguration.setSecretApiKey(prod?"52prQNFnm0vz23KBfkpmcDa258jAFCyG1LiAuGAnz9E=":"G5HkI4/lsx3rnMx2mMjtQMBDuxAvugUTXL2+Po6h0Xs=");
          client = Factory.createClient(communicatorConfiguration);
          marshaller = DefaultMarshaller.INSTANCE;
     }
     
    
     public static MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
-    	getClient();
+    	getClient(true);
     	MandatInfoDto mandatInfoDto=new MandatInfoDto();
     	GetMandateResponse response = client.merchant("bpifrance").mandates().get(mandatReference); 
     	MandateResponse mandatResponse=response.getMandate();
@@ -225,7 +235,7 @@ System.out.println(mandatInfoDto.getState());
 		PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
 		doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.NOT_PROCESSED);
     	try {
-    		getClient();
+    		getClient(false);
             CreatePaymentRequest body = buildPaymentRequest( tokenId, mandateidentification,ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType);
             
             ObjectMapper mapper = new ObjectMapper(); 
@@ -350,5 +360,32 @@ System.out.println(mandatInfoDto.getState());
         }
         
         return PaymentStatusEnum.REJECTED;
+    }
+    private void calculatePrices() {
+    	BigDecimal quoteTotalAmount=BigDecimal.ZERO;
+        List<PriceDTO> pricesDTO =new ArrayList<>();
+    	Map<Long, String> pricesPerType=new HashMap<Long, String>();
+    	pricesPerType.put(100L, "L");
+    	   pricesPerType
+           .keySet()
+           .stream()
+           .map(key -> reducePrice(key))
+           .filter(Optional::isPresent)
+           .map(price -> {
+               QuotePrice quotePrice = price.get();
+               System.out.println(quotePrice.getAmountWithoutTax());
+               pricesDTO.add(new PriceDTO(quotePrice));
+               quoteTotalAmount.add(quotePrice.getAmountWithoutTax());
+               return pricesDTO;
+           }).collect(Collectors.toList());
+    	   BigDecimal sum = pricesDTO.stream().map(o->o.getAmountWithoutTax()).reduce(BigDecimal.ZERO, BigDecimal::add);
+    	   System.out.println("amount="+sum);
+    }
+    
+    private Optional<QuotePrice> reducePrice(Long key) {
+    	System.out.println("reducePrice");
+    	QuotePrice qp=new QuotePrice();
+    	qp.setAmountWithoutTax(new BigDecimal(key));
+    	return Optional.of(qp);
     }
 }
