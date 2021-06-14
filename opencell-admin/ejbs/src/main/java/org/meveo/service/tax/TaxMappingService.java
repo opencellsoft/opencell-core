@@ -355,7 +355,9 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      */
     public TaxMapping findBestTaxMappingMatch(TaxCategory taxCategory, TaxClass taxClass, Seller seller, BillingAccount billingAccount, Date applicationDate) {
     	seller = sellerService.refreshOrRetrieve(seller);
+    	billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
     	Hibernate.initialize(seller);
+    	Hibernate.initialize(billingAccount);
         TradingCountry sellersCountry = seller.getTradingCountry();
         TradingCountry buyersCountry = billingAccount.getTradingCountry();
 
