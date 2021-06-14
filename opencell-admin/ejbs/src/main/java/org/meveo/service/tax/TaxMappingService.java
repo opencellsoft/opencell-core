@@ -321,6 +321,7 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
      * @return Tax category
      */
     private TaxCategory getTaxCategory(BillingAccount billingAccount) {
+    	billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
         TaxCategory taxCategory = billingAccount.getTaxCategoryResolved();
         if (taxCategory == null) {
             taxCategory = billingAccount.getTaxCategory();
