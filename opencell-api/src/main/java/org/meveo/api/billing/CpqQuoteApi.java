@@ -1097,6 +1097,9 @@ public class CpqQuoteApi extends BaseApi {
          QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
+
+        clearExistingQuotations(quoteVersion);
+        
         for (QuoteOffer quoteOffer : quoteVersion.getQuoteOffers()) {
             accountingArticlePrices.addAll(offerQuotation(quoteOffer));
         }
@@ -1177,7 +1180,6 @@ public class CpqQuoteApi extends BaseApi {
         Map<Long, BigDecimal> quoteProductTotalAmount = new HashMap<Long, BigDecimal>();
         List<QuotePrice> accountingPrices = new ArrayList<>();
         String accountingArticleCode = null;
-        clearExistingQuotations(walletOperations);
         BigDecimal quoteProductAmount=BigDecimal.ZERO;
         for (WalletOperation wo : walletOperations) {
             accountingArticleCode = wo.getAccountingArticle().getCode();
@@ -1268,13 +1270,8 @@ public class CpqQuoteApi extends BaseApi {
         return accountingPrices;
     }
 
-    private void clearExistingQuotations(List<WalletOperation> walletOperations) {
-        for (WalletOperation wo : walletOperations) {
-            if (wo.getAccountingArticle() == null) {
-                throw new BusinessException("the walletOperation id=" + wo.getId() + " has is not linked to an accounting article");
-            }
-            QuoteVersion quoteVersion = wo.getServiceInstance().getQuoteProduct().getQuoteVersion();
-            if(quoteVersion!= null && quoteVersion.getQuoteArticleLines()!=null) {
+    private void clearExistingQuotations(QuoteVersion quoteVersion) {
+            if(quoteVersion.getQuoteArticleLines()!=null) {
             	 Set<Long> quoteArticleLines = quoteVersion.getQuoteArticleLines().stream().map(l -> l.getId()).collect(Collectors.toSet());
                  if (!quoteArticleLines.isEmpty()) {
                  	quoteVersion.getQuoteArticleLines().clear();
@@ -1284,7 +1281,7 @@ public class CpqQuoteApi extends BaseApi {
             }
            
 
-        }
+        
     }
 
     @SuppressWarnings("unused")
