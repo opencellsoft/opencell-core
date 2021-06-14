@@ -96,7 +96,7 @@ public class InvoiceLinesService extends PersistenceService<InvoiceLine> {
     	Invoice invoice=entity.getInvoice();
     	Seller seller=invoice.getSeller()!=null?invoice.getSeller():invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
     	 if(accountingArticle!=null) {
-             TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), invoice.getSeller(), invoice.getBillingAccount(),null, invoice.getInvoiceDate(), false, false);
+             TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), seller, invoice.getBillingAccount(),null, invoice.getInvoiceDate(), false, false);
              if(taxInfo!=null)
             	 entity.setTax(taxInfo.tax);
             }
