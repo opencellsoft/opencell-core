@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.billing;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -40,6 +49,7 @@ import org.meveo.api.rest.IBaseRs;
  * @author Andrius Karpavicius
  */
 @Path("/billing/mediation")
+@Tag(name = "Mediation", description = "@%Mediation")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface MediationRs extends IBaseRs {
@@ -52,6 +62,19 @@ public interface MediationRs extends IBaseRs {
      */
     @POST
     @Path("/registerCdrList")
+	@Operation(
+			summary=" Accepts a list of CDR line. This CDR is parsed and created as EDR. CDR is same format use in mediation job  ",
+			description=" Accepts a list of CDR line. This CDR is parsed and created as EDR. CDR is same format use in mediation job  ",
+			operationId="    POST_Mediation_registerCdrList",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus registerCdrList(CdrListDto postData);
 
     /**
@@ -66,6 +89,19 @@ public interface MediationRs extends IBaseRs {
      */
     @POST
     @Path("/chargeCdr")
+	@Operation(
+			summary=" Same as registerCdrList, but at the same process rate the EDR created  ",
+			description=" Same as registerCdrList, but at the same process rate the EDR created  ",
+			operationId="    POST_Mediation_chargeCdr",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ChargeCDRResponseDto.class
+											)
+								)
+				)}
+	)
     ChargeCDRResponseDto chargeCdr(String cdr, @QueryParam("isVirtual") boolean isVirtual, @QueryParam("rateTriggeredEdr") boolean rateTriggeredEdr, @QueryParam("returnWalletOperations") boolean returnWalletOperations, @QueryParam("maxDepth") Integer maxDepth);
 
     /**
@@ -77,6 +113,19 @@ public interface MediationRs extends IBaseRs {
      */
     @POST
     @Path("/reserveCdr")
+	@Operation(
+			summary=" Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation",
+			description=" Allows the user to reserve a CDR, this will create a new reservation entity attached to a wallet operation. A reservation has expiration limit save in the provider entity (PREPAID_RESRV_DELAY_MS)  ",
+			operationId="    POST_Mediation_reserveCdr",
+			responses= {
+				@ApiResponse(description=" Available quantity and reservationID is ed ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CdrReservationResponseDto.class
+											)
+								)
+				)}
+	)
     CdrReservationResponseDto reserveCdr(String cdr);
 
     /**
@@ -87,6 +136,19 @@ public interface MediationRs extends IBaseRs {
      */
     @POST
     @Path("/confirmReservation")
+	@Operation(
+			summary=" Confirms the reservation  ",
+			description=" Confirms the reservation  ",
+			operationId="    POST_Mediation_confirmReservation",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus confirmReservation(PrepaidReservationDto reservation);
 
     /**
@@ -97,6 +159,19 @@ public interface MediationRs extends IBaseRs {
      */
     @POST
     @Path("/cancelReservation")
+	@Operation(
+			summary=" Cancels the reservation  ",
+			description=" Cancels the reservation  ",
+			operationId="    POST_Mediation_cancelReservation",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus cancelReservation(PrepaidReservationDto reservation);
 
     /**
@@ -107,5 +182,18 @@ public interface MediationRs extends IBaseRs {
      */
     @POST
     @Path("/notifyOfRejectedCdrs")
+	@Operation(
+			summary=" Notify of rejected CDRs  ",
+			description=" Notify of rejected CDRs  ",
+			operationId="    POST_Mediation_notifyOfRejectedCdrs",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus notifyOfRejectedCdrs(CdrListDto cdrList);
 }

@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.account;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.BillingAccountDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
@@ -35,6 +44,7 @@ import java.util.Date;
  * @author Edward P. Legaspi
  **/
 @Path("/account/billingAccount")
+@Tag(name = "BillingAccount", description = "@%BillingAccount")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -48,6 +58,19 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new billing account.  ",
+			description=" Create a new billing account.  ",
+			operationId="    POST_BillingAccount_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(BillingAccountDto postData);
 
     /**
@@ -58,6 +81,19 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update existing billing account.  ",
+			description=" Update existing billing account.  ",
+			operationId="    PUT_BillingAccount_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(BillingAccountDto postData);
 
     /**
@@ -69,6 +105,19 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for a billing account with a given code.  ",
+			description=" Search for a billing account with a given code.  ",
+			operationId="    GET_BillingAccount_search",
+			responses= {
+				@ApiResponse(description=" Billing account ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetBillingAccountResponseDto.class
+											)
+								)
+				)}
+	)
     GetBillingAccountResponseDto find(@QueryParam("billingAccountCode") String billingAccountCode,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
@@ -80,6 +129,19 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @DELETE
     @Path("/{billingAccountCode}")
+	@Operation(
+			summary=" Remove a billing account with a Billing Account Code. ",
+			description=" Remove a billing account with a Billing Account Code. ",
+			operationId="    DELETE_BillingAccount_{billingAccountCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("billingAccountCode") String billingAccountCode);
 
     /**
@@ -90,6 +152,19 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List BillingAccount filter by customerAccountCode.  ",
+			description=" List BillingAccount filter by customerAccountCode.  ",
+			operationId="    GET_BillingAccount_list",
+			responses= {
+				@ApiResponse(description="  list of billing account ",
+						content=@Content(
+									schema=@Schema(
+											implementation= BillingAccountsResponseDto.class
+											)
+								)
+				)}
+	)
     BillingAccountsResponseDto listByCustomerAccount(@QueryParam("customerAccountCode") String customerAccountCode);
 
     /**
@@ -99,6 +174,19 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List BillingAccounts matching a given criteria ",
+			description=" List BillingAccounts matching a given criteria ",
+			operationId="    GET_BillingAccount_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of BillingAccounts ",
+						content=@Content(
+									schema=@Schema(
+											implementation= BillingAccountsResponseDto.class
+											)
+								)
+				)}
+	)
     BillingAccountsResponseDto listGetAll();
 
     /**
@@ -109,6 +197,19 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update Billing Account based on code.  ",
+			description=" Create or update Billing Account based on code.  ",
+			operationId="    POST_BillingAccount_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(BillingAccountDto postData);
     
     /**
@@ -120,5 +221,18 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @GET
     @Path("/filterCountersByPeriod")
+	@Operation(
+			summary=" filter counters by period date. ",
+			description=" filter counters by period date. ",
+			operationId="    GET_BillingAccount_filterCountersByPeriod",
+			responses= {
+				@ApiResponse(description=" list of counter instances. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetCountersInstancesResponseDto.class
+											)
+								)
+				)}
+	)
     GetCountersInstancesResponseDto filterBillingAccountCountersByPeriod(@QueryParam("billingAccountCode") String billingAccountCode, @QueryParam("date") @RestDateParam Date date);
 }

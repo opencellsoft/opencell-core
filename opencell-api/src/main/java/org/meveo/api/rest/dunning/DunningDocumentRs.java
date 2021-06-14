@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.dunning;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -38,6 +47,7 @@ import org.meveo.api.rest.IBaseRs;
  * @author abdelmounaim akadid
  **/
 @Path("/dunning/dunningDocument")
+@Tag(name = "DunningDocument", description = "@%DunningDocument")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -51,6 +61,19 @@ public interface DunningDocumentRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a dunningDocument.  ",
+			description=" Create a dunningDocument.  ",
+			operationId="    POST_DunningDocument_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(DunningDocumentDto postData);
 
     /**
@@ -61,6 +84,19 @@ public interface DunningDocumentRs extends IBaseRs {
      */
     @PUT
     @Path("/addPayments")
+	@Operation(
+			summary=" Add Payments to dunningDocument.  ",
+			description=" Add Payments to dunningDocument.  ",
+			operationId="    PUT_DunningDocument_addPayments",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus addPayments(DunningDocumentDto postData);
     
     /**
@@ -71,6 +107,19 @@ public interface DunningDocumentRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search for a dunningDocument with a given code.  ",
+			description=" Search for a dunningDocument with a given code.  ",
+			operationId="    GET_DunningDocument_search",
+			responses= {
+				@ApiResponse(description=" customer account ",
+						content=@Content(
+									schema=@Schema(
+											implementation= DunningDocumentResponseDto.class
+											)
+								)
+				)}
+	)
     DunningDocumentResponseDto find(@QueryParam("dunningDocumentCode") String dunningDocumentCode);
 
     /**
@@ -81,6 +130,19 @@ public interface DunningDocumentRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" List dunningDocuments matching a given criteria  ",
+			description=" List dunningDocuments matching a given criteria  ",
+			operationId="    POST_DunningDocument_list",
+			responses= {
+				@ApiResponse(description=" List of dunningDocuments ",
+						content=@Content(
+									schema=@Schema(
+											implementation= DunningDocumentsListResponseDto.class
+											)
+								)
+				)}
+	)
     public DunningDocumentsListResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

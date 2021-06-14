@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.account;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
@@ -35,6 +44,7 @@ import org.meveo.api.rest.IBaseRs;
  * {@link org.meveo.model.billing.BillingAccount}-&gt; {@link org.meveo.model.billing.UserAccount}.
  */
 @Path("/account/accountHierarchy")
+@Tag(name = "AccountHierarchy", description = "@%AccountHierarchy")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -48,6 +58,19 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/find")
+	@Operation(
+			summary=" Search for a list of customer accounts given a set of filter. ",
+			description=" Search for a list of customer accounts given a set of filter. ",
+			operationId="    POST_AccountHierarchy_find",
+			responses= {
+				@ApiResponse(description=" customer list. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= CustomerListResponse.class
+											)
+								)
+				)}
+	)
     CustomerListResponse find(AccountHierarchyDto customerDto,  @QueryParam("calculateBalances") Boolean calculateBalances);
 
     /**
@@ -58,6 +81,19 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create account hierarchy.  ",
+			description=" Create account hierarchy.  ",
+			operationId="    POST_AccountHierarchy_create",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(AccountHierarchyDto accountHierarchyDto);
 
     /**
@@ -68,6 +104,19 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update account hierarchy.  ",
+			description=" Update account hierarchy.  ",
+			operationId="    PUT_AccountHierarchy_update",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(AccountHierarchyDto accountHierarchyDto);
 
     /**
@@ -80,6 +129,19 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/customerHierarchyUpdate")
+	@Operation(
+			summary=" This service allows to create / update (if exist already) and close / terminate (if termination date is set) a list of customer, customer accounts, billing accounts, user accounts, subscriptions, services, and access in one transaction",
+			description=" This service allows to create / update (if exist already) and close / terminate (if termination date is set) a list of customer, customer accounts, billing accounts, user accounts, subscriptions, services, and access in one transaction. It can activate and terminate subscription and service instance. Close customer account. Terminate billing and user account.  ",
+			operationId="    POST_AccountHierarchy_customerHierarchyUpdate",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus customerHierarchyUpdate(CustomerHierarchyDto postData);
 
     /**
@@ -92,6 +154,19 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/findAccountHierarchy")
+	@Operation(
+			summary=" Is an update of findAccountHierarchy wherein the user can search on 1 or multiple levels of the hierarchy in 1 search",
+			description=" Is an update of findAccountHierarchy wherein the user can search on 1 or multiple levels of the hierarchy in 1 search. These are the modes that can be combined by using bitwise - or |. Example: If we search on level=BA for lastName=legaspi and found a match, the search will return the hierarchy from BA to CUST. If we search on level=UA for address1=my_address and found a match, the search will return the hierarchy from UA to CUST., notes = CUST = 1, CA = 2, BA = 4, UA = 8. ",
+			operationId="    POST_AccountHierarchy_findAccountHierarchy",
+			responses= {
+				@ApiResponse(description=" account hieracy response. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetAccountHierarchyResponseDto.class
+											)
+								)
+				)}
+	)
     GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData);
 
     /**
@@ -101,6 +176,19 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/createCRMAccountHierarchy")
+	@Operation(
+			summary=" Create a CRMAccountHerarchy. ",
+			description=" Create a CRMAccountHerarchy. ",
+			operationId="    POST_AccountHierarchy_createCRMAccountHierarchy",
+			responses= {
+				@ApiResponse(description=" acion status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createCRMAccountHierarchy(CRMAccountHierarchyDto postData);
 
     /**
@@ -110,6 +198,19 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/updateCRMAccountHierarchy")
+	@Operation(
+			summary=" Update a CRM Account HerarHierarchychy. ",
+			description=" Update a CRM Account HerarHierarchychy. ",
+			operationId="    POST_AccountHierarchy_updateCRMAccountHierarchy",
+			responses= {
+				@ApiResponse(description=" acion status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus updateCRMAccountHierarchy(CRMAccountHierarchyDto postData);
 
     /**
@@ -119,6 +220,19 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdateCRMAccountHierarchy")
+	@Operation(
+			summary=" Create or update a CRM Account Hierarchy. ",
+			description=" Create or update a CRM Account Hierarchy. ",
+			operationId="    POST_AccountHierarchy_createOrUpdateCRMAccountHierarchy",
+			responses= {
+				@ApiResponse(description=" acion status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData);
 
     /**
@@ -129,6 +243,19 @@ public interface AccountHierarchyRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update Account Hierarchy based on code.  ",
+			description=" Create or update Account Hierarchy based on code.  ",
+			operationId="    POST_AccountHierarchy_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(AccountHierarchyDto accountHierarchyDto);
 
 }

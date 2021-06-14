@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.dwh;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import java.util.Date;
 
 import javax.ws.rs.Consumes;
@@ -41,6 +50,7 @@ import org.meveo.api.serialize.RestDateParam;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
 
 @Path("/measurableQuantity")
+@Tag(name = "MeasurableQuantity", description = "@%MeasurableQuantity")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -54,6 +64,19 @@ public interface MeasurableQuantityRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a Measurable quantity. ",
+			description=" Create a Measurable quantity. ",
+			operationId="    POST_MeasurableQuantity_create",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(MeasurableQuantityDto postData);
 
     /**
@@ -64,6 +87,19 @@ public interface MeasurableQuantityRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update Measurable quantity from mesearable quantities.  ",
+			description=" Update Measurable quantity from mesearable quantities.  ",
+			operationId="    PUT_MeasurableQuantity_update",
+			responses= {
+				@ApiResponse(description=" actions status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(MeasurableQuantityDto postData);
 
     /**
@@ -74,6 +110,19 @@ public interface MeasurableQuantityRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Get Measurable quantity from a given code.  ",
+			description=" Get Measurable quantity from a given code.  ",
+			operationId="    GET_MeasurableQuantity_search",
+			responses= {
+				@ApiResponse(description=" Measurable Quantity Response data ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetMeasurableQuantityResponse.class
+											)
+								)
+				)}
+	)
     GetMeasurableQuantityResponse find(@QueryParam("code") String code);
 
     /**
@@ -88,6 +137,19 @@ public interface MeasurableQuantityRs extends IBaseRs {
      */
     @GET
     @Path("/findMVByDateAndPeriod")
+	@Operation(
+			summary=" Find a Measurable value during a period of date and period ",
+			description=" Find a Measurable value during a period of date and period ",
+			operationId="    GET_MeasurableQuantity_findMVByDateAndPeriod",
+			responses= {
+				@ApiResponse(description=" mesurable value by date and period. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= Response.class
+											)
+								)
+				)}
+	)
     Response findMVByDateAndPeriod(@QueryParam("code") String code, @QueryParam("fromDate") @RestDateParam Date fromDate, @QueryParam("toDate") @RestDateParam Date toDate,
             @QueryParam("period") MeasurementPeriodEnum period, @QueryParam("mqCode") String mqCode);
 
@@ -99,6 +161,19 @@ public interface MeasurableQuantityRs extends IBaseRs {
      */
     @DELETE
     @Path("/{code}")
+	@Operation(
+			summary=" Remove Measurable quantity with a given code.  ",
+			description=" Remove Measurable quantity with a given code.  ",
+			operationId="    DELETE_MeasurableQuantity_{code}",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("code") String code);
 
     /**
@@ -108,6 +183,19 @@ public interface MeasurableQuantityRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List Measurable quantity with a given code.  ",
+			description=" List Measurable quantity with a given code.  ",
+			operationId="    GET_MeasurableQuantity_list",
+			responses= {
+				@ApiResponse(description=" A list of measurable quantities ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetListMeasurableQuantityResponse.class
+											)
+								)
+				)}
+	)
     GetListMeasurableQuantityResponse list();
 
     /**
@@ -118,6 +206,19 @@ public interface MeasurableQuantityRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Measurable quantity with a given code  ",
+			description=" Enable a Measurable quantity with a given code  ",
+			operationId="    POST_MeasurableQuantity_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -128,6 +229,19 @@ public interface MeasurableQuantityRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Measurable quantity with a given code  ",
+			description=" Disable a Measurable quantity with a given code  ",
+			operationId="    POST_MeasurableQuantity_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 
 }

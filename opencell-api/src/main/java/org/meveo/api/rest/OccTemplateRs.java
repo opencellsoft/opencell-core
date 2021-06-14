@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -42,6 +51,7 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
  * @lastModifiedVersion 5.0
  */
 @Path("/occTemplate")
+@Tag(name = "OccTemplate", description = "@%OccTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -55,6 +65,19 @@ public interface OccTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create OccTemplate.  ",
+			description=" Create OccTemplate.  ",
+			operationId="    POST_OccTemplate_create",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(OccTemplateDto postData);
 
     /**
@@ -65,6 +88,19 @@ public interface OccTemplateRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update OccTemplate.  ",
+			description=" Update OccTemplate.  ",
+			operationId="    PUT_OccTemplate_update",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(OccTemplateDto postData);
 
     /**
@@ -75,6 +111,19 @@ public interface OccTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search OccTemplate with a given code.  ",
+			description=" Search OccTemplate with a given code.  ",
+			operationId="    GET_OccTemplate_search",
+			responses= {
+				@ApiResponse(description=" account operation template ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetOccTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     GetOccTemplateResponseDto find(@QueryParam("occTemplateCode") String occtemplateCode);
 
     /**
@@ -85,6 +134,19 @@ public interface OccTemplateRs extends IBaseRs {
      */
     @DELETE
     @Path("/{occTemplateCode}")
+	@Operation(
+			summary=" Remove OccTemplate with a given code.  ",
+			description=" Remove OccTemplate with a given code.  ",
+			operationId="    DELETE_OccTemplate_{occTemplateCode}",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("occTemplateCode") String occTemplateCode);
 
     /**
@@ -95,6 +157,19 @@ public interface OccTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update OccTemplate.  ",
+			description=" Create or update OccTemplate.  ",
+			operationId="    POST_OccTemplate_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" action status. ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(OccTemplateDto postData);
   
     /**
@@ -110,6 +185,19 @@ public interface OccTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" Get List of OccTemplates matching a given criteria  ",
+			description=" Get List of OccTemplates matching a given criteria  ",
+			operationId="    GET_OccTemplate_list",
+			responses= {
+				@ApiResponse(description=" A list of account operations ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetOccTemplatesResponseDto.class
+											)
+								)
+				)}
+	)
     public GetOccTemplatesResponseDto listGet(@QueryParam("query") String query,
             @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("accountCode") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
@@ -122,6 +210,19 @@ public interface OccTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" Get List of OccTemplates matching a given criteria  ",
+			description=" Get List of OccTemplates matching a given criteria  ",
+			operationId="    POST_OccTemplate_list",
+			responses= {
+				@ApiResponse(description=" List of account operations ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetOccTemplatesResponseDto.class
+											)
+								)
+				)}
+	)
     public GetOccTemplatesResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

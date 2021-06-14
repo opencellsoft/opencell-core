@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.billing;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.billing.AccountingCodeDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -37,6 +46,7 @@ import javax.ws.rs.core.MediaType;
  * @lastModifiedVersion 5.0
  **/
 @Path("/billing/accountingCode")
+@Tag(name = "AccountingCode", description = "@%AccountingCode")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public interface AccountingCodeRs extends IBaseRs {
@@ -49,6 +59,19 @@ public interface AccountingCodeRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Creates a new AccountingCode.  ",
+			description=" Creates a new AccountingCode.  ",
+			operationId="    POST_AccountingCode_create",
+			responses= {
+				@ApiResponse(description=" request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(AccountingCodeDto postData);
 
     /**
@@ -59,6 +82,19 @@ public interface AccountingCodeRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Updates AccountingCode. An existing AccountingCode is search using the code field.  ",
+			description=" Updates AccountingCode. An existing AccountingCode is search using the code field.  ",
+			operationId="    PUT_AccountingCode_update",
+			responses= {
+				@ApiResponse(description=" request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(AccountingCodeDto postData);
 
     /**
@@ -69,6 +105,19 @@ public interface AccountingCodeRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create or update an AccountingCode. Checks if the code already exists.  ",
+			description=" Create or update an AccountingCode. Checks if the code already exists.  ",
+			operationId="    POST_AccountingCode_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(AccountingCodeDto postData);
 
     /**
@@ -79,6 +128,19 @@ public interface AccountingCodeRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Finds an AccountingCode.  ",
+			description=" Finds an AccountingCode.  ",
+			operationId="    GET_AccountingCode_search",
+			responses= {
+				@ApiResponse(description=" request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= AccountingCodeGetResponseDto.class
+											)
+								)
+				)}
+	)
     AccountingCodeGetResponseDto find(@QueryParam("accountingCode") String accountingCode);
 
     /**
@@ -92,6 +154,19 @@ public interface AccountingCodeRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List AccountingCode matching the given criteria.  ",
+			description=" List AccountingCode matching the given criteria.  ",
+			operationId="    GET_AccountingCode_list",
+			responses= {
+				@ApiResponse(description=" list of AccountingCode ",
+						content=@Content(
+									schema=@Schema(
+											implementation= AccountingCodeListResponseDto.class
+											)
+								)
+				)}
+	)
     AccountingCodeListResponseDto listGet(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy,
             @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
@@ -102,6 +177,19 @@ public interface AccountingCodeRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" List AccountingCodes matching a given criteria ",
+			description=" List AccountingCodes matching a given criteria ",
+			operationId="    GET_AccountingCode_listGetAll",
+			responses= {
+				@ApiResponse(description=" List of AccountingCodes ",
+						content=@Content(
+									schema=@Schema(
+											implementation= AccountingCodeListResponseDto.class
+											)
+								)
+				)}
+	)
     AccountingCodeListResponseDto list();
 
     /**
@@ -112,6 +200,19 @@ public interface AccountingCodeRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" List AccountingCode matching the given criteria.  ",
+			description=" List AccountingCode matching the given criteria.  ",
+			operationId="    POST_AccountingCode_list",
+			responses= {
+				@ApiResponse(description=" list of AccountingCode ",
+						content=@Content(
+									schema=@Schema(
+											implementation= AccountingCodeListResponseDto.class
+											)
+								)
+				)}
+	)
     AccountingCodeListResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -122,6 +223,19 @@ public interface AccountingCodeRs extends IBaseRs {
      */
     @DELETE
     @Path("/{accountingCode}")
+	@Operation(
+			summary=" Removes an AccountingCode entity.  ",
+			description=" Removes an AccountingCode entity.  ",
+			operationId="    DELETE_AccountingCode_{accountingCode}",
+			responses= {
+				@ApiResponse(description=" request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("accountingCode") String accountingCode);
 
     /**
@@ -132,6 +246,19 @@ public interface AccountingCodeRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Accounting code with a given code  ",
+			description=" Enable a Accounting code with a given code  ",
+			operationId="    POST_AccountingCode_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -142,5 +269,18 @@ public interface AccountingCodeRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Accounting code with a given code  ",
+			description=" Disable a Accounting code with a given code  ",
+			operationId="    POST_AccountingCode_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
 }

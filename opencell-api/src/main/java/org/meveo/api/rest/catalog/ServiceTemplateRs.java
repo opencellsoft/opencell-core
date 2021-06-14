@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest.catalog;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -37,6 +46,7 @@ import javax.ws.rs.core.MediaType;
  * @lastModifiedVersion 5.4
  **/
 @Path("/catalog/serviceTemplate")
+@Tag(name = "ServiceTemplate", description = "@%ServiceTemplate")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -50,6 +60,19 @@ public interface ServiceTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create a new service template.  ",
+			description=" Create a new service template.  ",
+			operationId="    POST_ServiceTemplate_create",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(ServiceTemplateDto postData);
 
     /**
@@ -60,6 +83,19 @@ public interface ServiceTemplateRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update an existing service template.  ",
+			description=" Update an existing service template.  ",
+			operationId="    PUT_ServiceTemplate_update",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(ServiceTemplateDto postData);
 
     /**
@@ -71,6 +107,19 @@ public interface ServiceTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Find a service template with a given code.  ",
+			description=" Find a service template with a given code.  ",
+			operationId="    GET_ServiceTemplate_search",
+			responses= {
+				@ApiResponse(description=" Return serviceTemplate ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetServiceTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     GetServiceTemplateResponseDto find(@QueryParam("serviceTemplateCode") String serviceTemplateCode,
             @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
@@ -82,6 +131,19 @@ public interface ServiceTemplateRs extends IBaseRs {
      */
     @DELETE
     @Path("/{serviceTemplateCode}")
+	@Operation(
+			summary=" Remove service template with a given code.  ",
+			description=" Remove service template with a given code.  ",
+			operationId="    DELETE_ServiceTemplate_{serviceTemplateCode}",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus remove(@PathParam("serviceTemplateCode") String serviceTemplateCode);
 
     /**
@@ -92,6 +154,19 @@ public interface ServiceTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing service template  ",
+			description=" Create new or update an existing service template  ",
+			operationId="    POST_ServiceTemplate_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(ServiceTemplateDto postData);
 
     /**
@@ -102,6 +177,19 @@ public interface ServiceTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/enable")
+	@Operation(
+			summary=" Enable a Service template with a given code  ",
+			description=" Enable a Service template with a given code  ",
+			operationId="    POST_ServiceTemplate_{code}_enable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus enable(@PathParam("code") String code);
 
     /**
@@ -112,6 +200,19 @@ public interface ServiceTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/{code}/disable")
+	@Operation(
+			summary=" Disable a Service template with a given code  ",
+			description=" Disable a Service template with a given code  ",
+			operationId="    POST_ServiceTemplate_{code}_disable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus disable(@PathParam("code") String code);
     
     /**
@@ -122,6 +223,19 @@ public interface ServiceTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/list")
+	@Operation(
+			summary=" Gets a service template list widh .  ",
+			description=" Gets a service template list widh .  ",
+			operationId="    POST_ServiceTemplate_list",
+			responses= {
+				@ApiResponse(description=" Return serviceTemplate list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetListServiceTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     GetListServiceTemplateResponseDto list(PagingAndFiltering pagingAndFiltering);
 
     /**
@@ -131,5 +245,18 @@ public interface ServiceTemplateRs extends IBaseRs {
      */
     @GET
     @Path("/listGetAll")
+	@Operation(
+			summary=" Gets a service template list. ",
+			description=" Gets a service template list. ",
+			operationId="    GET_ServiceTemplate_listGetAll",
+			responses= {
+				@ApiResponse(description=" Return serviceTemplate list ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetListServiceTemplateResponseDto.class
+											)
+								)
+				)}
+	)
     GetListServiceTemplateResponseDto listGetAll();
 }

@@ -18,6 +18,15 @@
 
 package org.meveo.api.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -38,6 +47,7 @@ import org.meveo.api.dto.response.GetInvoiceSequencesResponse;
  * @author akadid abdelmounaim
  **/
 @Path("/invoiceSequence")
+@Tag(name = "InvoiceSequence", description = "@%InvoiceSequence")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
@@ -51,6 +61,19 @@ public interface InvoiceSequenceRs extends IBaseRs {
      */
     @POST
     @Path("/")
+	@Operation(
+			summary=" Create invoiceSequence.  ",
+			description=" Create invoiceSequence.  ",
+			operationId="    POST_InvoiceSequence_create",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus create(InvoiceSequenceDto invoiceSequenceDto);
 
     /**
@@ -61,6 +84,19 @@ public interface InvoiceSequenceRs extends IBaseRs {
      */
     @PUT
     @Path("/")
+	@Operation(
+			summary=" Update invoiceSequence.  ",
+			description=" Update invoiceSequence.  ",
+			operationId="    PUT_InvoiceSequence_update",
+			responses= {
+				@ApiResponse(description=" action status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus update(InvoiceSequenceDto invoiceSequenceDto);
 
     /**
@@ -71,6 +107,19 @@ public interface InvoiceSequenceRs extends IBaseRs {
      */
     @GET
     @Path("/")
+	@Operation(
+			summary=" Search invoiceSequence with a given code.  ",
+			description=" Search invoiceSequence with a given code.  ",
+			operationId="    GET_InvoiceSequence_search",
+			responses= {
+				@ApiResponse(description=" invoice sequence ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetInvoiceSequenceResponse.class
+											)
+								)
+				)}
+	)
     GetInvoiceSequenceResponse find(@QueryParam("invoiceSequenceCode") String invoiceSequenceCode);
 
     /**
@@ -81,6 +130,19 @@ public interface InvoiceSequenceRs extends IBaseRs {
      */
     @POST
     @Path("/createOrUpdate")
+	@Operation(
+			summary=" Create new or update an existing invoiceSequence with a given code.  ",
+			description=" Create new or update an existing invoiceSequence with a given code.  ",
+			operationId="    POST_InvoiceSequence_createOrUpdate",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				)}
+	)
     ActionStatus createOrUpdate(InvoiceSequenceDto invoiceSequenceDto);
 
     /**
@@ -90,5 +152,18 @@ public interface InvoiceSequenceRs extends IBaseRs {
      */
     @GET
     @Path("/list")
+	@Operation(
+			summary=" List of invoiceSequence.  ",
+			description=" List of invoiceSequence.  ",
+			operationId="    GET_InvoiceSequence_list",
+			responses= {
+				@ApiResponse(description=" A list of invoiceSequence ",
+						content=@Content(
+									schema=@Schema(
+											implementation= GetInvoiceSequencesResponse.class
+											)
+								)
+				)}
+	)
     GetInvoiceSequencesResponse list();
 }
