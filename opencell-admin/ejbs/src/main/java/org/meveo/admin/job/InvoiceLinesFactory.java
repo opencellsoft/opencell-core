@@ -87,7 +87,10 @@ public class InvoiceLinesFactory {
         ofNullable(record.get("order_lot_id"))
         .ifPresent(id -> invoiceLine.setOrderLot(orderLotService.findById(((BigInteger) id).longValue())));
 
-        invoiceLine.setValueDate((Date) record.get("valueDate"));
+        invoiceLine.setValueDate((Date) record.get("usage_date"));
+        if(invoiceLine.getValueDate()==null) {
+        	invoiceLine.setValueDate(new Date());
+        }
         invoiceLine.setOrderNumber((String) record.get("order_number"));
         invoiceLine.setQuantity((BigDecimal) record.get("quantity"));
         invoiceLine.setDiscountAmount(ZERO);
@@ -97,9 +100,14 @@ public class InvoiceLinesFactory {
         BigDecimal amountWithTax = ofNullable((BigDecimal) record.get("sum_with_tax"))
                 .orElse(ZERO);
         invoiceLine.setAmountWithTax(amountWithTax);
-        invoiceLine.setAmountWithoutTax(ofNullable((BigDecimal) record.get("sum_without_Tax"))
-                .orElse(ZERO));
         invoiceLine.setAmountTax(taxPercent.divide(new BigDecimal(100)).multiply(amountWithTax));
+        BigDecimal amountWithoutTax = ofNullable((BigDecimal) record.get("sum_without_Tax"))
+                .orElse(ZERO);
+        if(BigDecimal.ZERO.compareTo(amountWithoutTax)==0) {
+        	amountWithoutTax=amountWithTax.subtract(invoiceLine.getAmountTax());
+        }
+        invoiceLine.setAmountWithoutTax(amountWithoutTax);
+        
         ChargeInstance chargeInstance = (ChargeInstance) ofNullable(record.get("charge_instance_id"))
                 .map(id -> chargeInstanceService.findById(((BigInteger) id).longValue()))
                 .orElse(null);
