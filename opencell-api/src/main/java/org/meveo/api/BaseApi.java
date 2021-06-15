@@ -322,8 +322,8 @@ public abstract class BaseApi {
                         BusinessEntity referencedEntity =  null;
                         boolean recordExist = false;
                         try {
-                            if(cft.getEntityClazz().startsWith("org.meveo.model.customEntities.CustomEntityTemplate -")){
-                                CustomEntityTemplate cet = customTableService.getCET(cft.getEntityClazzCetCode());
+                            CustomEntityTemplate cet = customTableService.getCET(cft.getEntityClazzCetCode());
+                            if(cet.isStoreAsTable()){
                                 recordExist = !customTableService.findById(cet.getDbTablename(), Long.parseLong(entityRefWrapper.getCode())).isEmpty();
                             }else{
                                 Class entityRefClass = Class.forName(entityRefWrapper.getClassname());
