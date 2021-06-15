@@ -22,14 +22,11 @@ import java.util.Date;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.ICounterEntity;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
@@ -62,8 +59,6 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
      * @throws BusinessException Business exception
      */
     @Lock(LockType.WRITE)
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date) throws BusinessException {
         Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
         query.setParameter("counterInstance", counterInstance);
@@ -83,8 +78,6 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
      * @return the counter value.
      */
     @Lock(LockType.WRITE)
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Object getCounterValue(ICounterEntity entity, String counterCode) {
         return getSingleCounterValue(entity, counterCode, null);
     }
@@ -98,8 +91,6 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
      * @return the counter value.
      */
     @Lock(LockType.WRITE)
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Object getCounterValueByDate(ICounterEntity entity, String counterCode, Date date) {
         return getSingleCounterValue(entity, counterCode, date);
     }
@@ -113,8 +104,6 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
      * @return the counter period value or Map of values for multi values accumulator.
      */
     @Lock(LockType.WRITE)
-    @JpaAmpNewTx
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private Object getSingleCounterValue(ICounterEntity entity, String counterCode, Date date) {
         Query query;
         query = getEntityManager().createNamedQuery("CounterPeriod.findByCounterEntityAndPeriodDate");
