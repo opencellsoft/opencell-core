@@ -770,8 +770,10 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     	detach(pricePlanMatrix);
     	
     	var duplicate = new PricePlanMatrix(pricePlanMatrix);
-    	if(!Strings.isEmpty(pricePlanMatrixNewCode))
+    	if(!Strings.isEmpty(pricePlanMatrixNewCode)) {
     		duplicate.setCode(pricePlanMatrixNewCode);
+    	    duplicate.setEventCode(pricePlanMatrixNewCode);
+    	}
     	else
     		duplicate.setCode(findDuplicateCode(pricePlanMatrix));
     	duplicate.setVersion(0);
