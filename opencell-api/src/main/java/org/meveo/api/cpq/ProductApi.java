@@ -289,8 +289,12 @@ public class ProductApi extends BaseApi {
 			if(!StringUtils.isBlank(productDto.getProductModelCode())) {
 	    		product.setProductModel(loadEntityByCode(productService, productDto.getProductModelCode(), Product.class));
 	    	}
-			if(productDto.getCommercialRuleCodes().isEmpty())
-				product.getCommercialRuleHeader().clear();
+			var commercialRuleheaderAdded = new ArrayList<CommercialRuleHeader>();
+			for (String commercialRuleCode : productDto.getCommercialRuleCodes()) {
+				commercialRuleheaderAdded.add(loadEntityByCode(commercialRuleHeaderService, commercialRuleCode, CommercialRuleHeader.class));
+			}
+			product.getCommercialRuleHeader().clear();
+			product.getCommercialRuleHeader().addAll(commercialRuleheaderAdded);
 			processMedias(productDto, product);
 			productService.updateProduct(product);
 		} catch (BusinessException e) {
