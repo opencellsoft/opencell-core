@@ -20,7 +20,7 @@ import org.meveo.apiv2.billing.InvoiceLineInput;
 import org.meveo.apiv2.billing.InvoiceLinesInput;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.billing.Invoice;
-import org.meveo.service.billing.impl.InvoiceLinesService;
+import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.InvoiceService;
 
 public class InvoiceApiService  implements ApiService<Invoice> {
@@ -31,7 +31,7 @@ public class InvoiceApiService  implements ApiService<Invoice> {
     private InvoiceService invoiceService;
 
 	@Inject
-	private InvoiceLinesService invoiceLinesService;
+	private InvoiceLineService invoiceLinesService;
 	
 	
 	@Override

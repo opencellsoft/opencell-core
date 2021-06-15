@@ -68,7 +68,7 @@ import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
 @Stateless
-public class InvoiceLinesService extends PersistenceService<InvoiceLine> {
+public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     private static final String INVOICING_PROCESS_TYPE = "InvoiceLine";
     private static final String INVOICE_MINIMUM_COMPLEMENT_CODE = "MIN-STD";

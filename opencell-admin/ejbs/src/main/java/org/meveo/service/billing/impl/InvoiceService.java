@@ -333,7 +333,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     protected ParamBeanFactory paramBeanFactory;
 
     @Inject
-    private InvoiceLinesService invoiceLinesService;
+    private InvoiceLineService invoiceLinesService;
 
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;

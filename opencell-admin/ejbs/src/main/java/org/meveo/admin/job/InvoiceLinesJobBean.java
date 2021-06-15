@@ -27,7 +27,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.InvoiceLinesService;
+import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.util.ApplicationProvider;
@@ -52,7 +52,7 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     private RatedTransactionService ratedTransactionService;
 
     @Inject
-    private InvoiceLinesService invoiceLinesService;
+    private InvoiceLineService invoiceLinesService;
 
     @Inject
     @ApplicationProvider

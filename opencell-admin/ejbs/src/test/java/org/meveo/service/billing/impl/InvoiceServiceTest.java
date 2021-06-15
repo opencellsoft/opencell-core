@@ -136,7 +136,7 @@ public class InvoiceServiceTest {
     private ParamBeanFactory paramBeanFactory;
 
     @Mock
-    private InvoiceLinesService invoiceLinesService;
+    private InvoiceLineService invoiceLinesService;
 
     @Mock
     private ServiceSingleton serviceSingleton;
