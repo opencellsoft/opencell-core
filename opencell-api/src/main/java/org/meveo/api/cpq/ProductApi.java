@@ -289,6 +289,8 @@ public class ProductApi extends BaseApi {
 			if(!StringUtils.isBlank(productDto.getProductModelCode())) {
 	    		product.setProductModel(loadEntityByCode(productService, productDto.getProductModelCode(), Product.class));
 	    	}
+			if(productDto.getCommercialRuleCodes().isEmpty())
+				product.getCommercialRuleHeader().clear();
 			processMedias(productDto, product);
 			productService.updateProduct(product);
 		} catch (BusinessException e) {
