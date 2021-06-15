@@ -9025,4 +9025,21 @@ public class OrderAdvancement extends ModuleScript {
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version"/>
     </changeSet>
     
+ <changeSet id="#20210614_540_update_script_quotation_and_order" author="TarikFA.">
+   
+     <sql><![CDATA[update ${db.schema.adapted}meveo_script_instance 
+     			set script = 'package org.meveo.service.quote.script;
+
+	public class QuoteValidation extends QuoteValidationScript {}'
+	where code = 'org.meveo.api.billing.QuoteValidation'
+        ]]></sql>
+
+     <sql><![CDATA[update ${db.schema.adapted}meveo_script_instance 
+     			set script = 'package org.meveo.service.quote.script;
+
+	public class OrderAdvancement extends OrderAdvancementScript {}'
+	where code = 'org.meveo.api.billing.OrderAdvancement'
+        ]]></sql>
+    </changeSet>
+    
 </databaseChangeLog>

@@ -52,8 +52,6 @@ public class JobExecutionResultInterceptor {
         counterInc(result, "number_of_OKs", numberOfOKs);
         counterInc(result, "number_of_KOs",numberOfKOs);
         counterInc(result, "number_of_Remaining_Items",numberOfRemainingValues);
-        counterInc(result, "is_running",1L);
-        counterInc(result, "is_stopped",-1L);
         counterInc(result, "number_of_Warnings",numberOfWarnings);
 
         try{
