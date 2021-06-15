@@ -18,23 +18,36 @@
 
 package org.meveo.api.catalog;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
 import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
-import org.meveo.api.dto.catalog.LoadPricesRequest;
-import org.meveo.api.dto.catalog.MatrixRatingRequest;
 import org.meveo.api.dto.catalog.PricePlanMatrixDto;
 import org.meveo.api.dto.catalog.PricePlanMatrixLineDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.PricePlanMatrixesResponseDto;
-import org.meveo.api.exception.*;
+import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.quote.QuoteProduct;
@@ -44,15 +57,17 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.TradingCountryService;
-import org.meveo.service.catalog.impl.*;
+import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
+import org.meveo.service.catalog.impl.DiscountPlanItemService;
+import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.PricePlanMatrixService;
+import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
+import org.meveo.service.cpq.ContractItemService;
 import org.meveo.service.cpq.ProductService;
 import org.meveo.service.cpq.QuoteProductService;
 import org.meveo.service.script.ScriptInstanceService;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Edward P. Legaspi
@@ -98,6 +113,12 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
     @Inject
     private ChargeInstanceService<ChargeInstance> serviceInstanceService;
+    
+    @Inject
+    private DiscountPlanItemService discountPlanItemService;
+    
+    @Inject
+    private ContractItemService contractItemService;
 
     @Override
     public PricePlanMatrix create(PricePlanMatrixDto postData) throws MeveoApiException, BusinessException {
@@ -112,8 +133,10 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         handleMissingParametersAndValidate(postData);
 
         // search for eventCode
-        if (chargeTemplateServiceAll.findByCode(postData.getEventCode()) == null) {
-            throw new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode());
+        if (chargeTemplateServiceAll.findByCode(postData.getEventCode()) == null && 
+        		discountPlanItemService.findByCode(postData.getEventCode()) == null && 
+        				contractItemService.findByCode(postData.getEventCode()) == null) {
+            throw new EntityDoesNotExistsException("No event code exist");
         }
 
         if (pricePlanMatrixService.findByCode(postData.getCode()) != null) {
@@ -273,8 +296,10 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         handleMissingParametersAndValidate(postData);
 
         // search for eventCode
-        if (chargeTemplateServiceAll.findByCode(postData.getEventCode()) == null) {
-            throw new EntityDoesNotExistsException(ChargeTemplate.class, postData.getEventCode());
+        if (chargeTemplateServiceAll.findByCode(postData.getEventCode()) == null && 
+        		discountPlanItemService.findByCode(postData.getEventCode()) == null && 
+				contractItemService.findByCode(postData.getEventCode()) == null) {
+            throw new EntityDoesNotExistsException("No event code exist");
         }
 
         // search for price plan
