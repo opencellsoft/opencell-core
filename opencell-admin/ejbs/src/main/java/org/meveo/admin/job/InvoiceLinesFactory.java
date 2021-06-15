@@ -2,27 +2,33 @@ package org.meveo.admin.job;
 
 import static java.math.BigDecimal.ZERO;
 import static java.util.Optional.ofNullable;
-import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.meveo.admin.job.AggregationConfiguration.AggregationOption.NO_AGGREGATION;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Date;
-import java.util.Map;
-
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.cpq.AttributeValue;
+import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.commercial.InvoiceLine;
-import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.ServiceInstanceService;
-import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.*;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.ProductVersionService;
 import org.meveo.service.cpq.order.CommercialOrderService;
 import org.meveo.service.cpq.order.OrderLotService;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class InvoiceLinesFactory {
 
@@ -44,6 +50,8 @@ public class InvoiceLinesFactory {
     		(ProductVersionService) getServiceInterface(ProductVersionService.class.getSimpleName());
     private OrderLotService orderLotService = 
     		(OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
+    private ChargeInstanceService chargeInstanceService =
+            (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
 
     /**
      *
@@ -51,7 +59,7 @@ public class InvoiceLinesFactory {
      * @param configuration aggregation configuration
      * @return new InvoiceLine
      */
-    public InvoiceLine create(Map<String, Object> record, AggregationConfiguration configuration) {
+    public InvoiceLine create(Map<String, Object> record, AggregationConfiguration configuration) throws BusinessException{
         InvoiceLine invoiceLine = initInvoiceLine(record);
         if(configuration.getAggregationOption() == NO_AGGREGATION) {
             withNoAggregationOption(invoiceLine, record, configuration.isEnterprise());
@@ -67,8 +75,6 @@ public class InvoiceLinesFactory {
                 .ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.findById(((BigInteger) id).longValue())));
         ofNullable(record.get("billing_run_id"))
                 .ifPresent(id -> invoiceLine.setBillingRun(billingRunService.findById(((BigInteger) id).longValue())));
-         ofNullable(record.get("article_id"))
-                .ifPresent(id -> invoiceLine.setAccountingArticle(accountingArticleService.findById(((BigInteger) id).longValue())));
         ofNullable(record.get("service_instance_id"))
                 .ifPresent(id -> invoiceLine.setServiceInstance(instanceService.findById(((BigInteger) id).longValue())));
         ofNullable(record.get("service_instance_id"))
@@ -82,7 +88,10 @@ public class InvoiceLinesFactory {
         ofNullable(record.get("order_lot_id"))
         .ifPresent(id -> invoiceLine.setOrderLot(orderLotService.findById(((BigInteger) id).longValue())));
 
-        invoiceLine.setValueDate((Date) record.get("valueDate"));
+        invoiceLine.setValueDate((Date) record.get("usage_date"));
+        if(invoiceLine.getValueDate()==null) {
+        	invoiceLine.setValueDate(new Date());
+        }
         invoiceLine.setOrderNumber((String) record.get("order_number"));
         invoiceLine.setQuantity((BigDecimal) record.get("quantity"));
         invoiceLine.setDiscountAmount(ZERO);
@@ -92,9 +101,32 @@ public class InvoiceLinesFactory {
         BigDecimal amountWithTax = ofNullable((BigDecimal) record.get("sum_with_tax"))
                 .orElse(ZERO);
         invoiceLine.setAmountWithTax(amountWithTax);
-        invoiceLine.setAmountWithoutTax(ofNullable((BigDecimal) record.get("sum_without_Tax"))
-                .orElse(ZERO));
-        invoiceLine.setAmountTax(taxPercent.divide(new BigDecimal(100)).multiply(amountWithTax));
+        BigDecimal amountWithoutTax = ofNullable((BigDecimal) record.get("sum_without_Tax"))
+                .orElse(ZERO);
+        if(BigDecimal.ZERO.compareTo(amountWithoutTax)==0) {
+        	BigDecimal coef=(new BigDecimal(100).add((taxPercent))).divide(new BigDecimal(100));
+        	amountWithoutTax=amountWithTax.divide(coef, 2, RoundingMode.HALF_UP);
+        }
+        invoiceLine.setAmountWithoutTax(amountWithoutTax);
+        
+        invoiceLine.setAmountTax(taxPercent.divide(new BigDecimal(100)).multiply(amountWithoutTax));
+    	
+       
+        ChargeInstance chargeInstance = (ChargeInstance) ofNullable(record.get("charge_instance_id"))
+                .map(id -> chargeInstanceService.findById(((BigInteger) id).longValue()))
+                .orElse(null);
+        ServiceInstance serviceInstance = invoiceLine.getServiceInstance();
+        Product product = serviceInstance.getProductVersion() != null ?
+                invoiceLine.getServiceInstance().getProductVersion().getProduct() : null;
+
+        List<AttributeValue> attributeValues = fromAttributeInstances(serviceInstance);
+        Map<String, Object> attributes = fromAttributeValue(attributeValues);
+        if(invoiceLine.getAccountingArticle()==null) {
+        	  AccountingArticle accountingArticle = accountingArticleService.getAccountingArticle(product, chargeInstance.getChargeTemplate(), attributes)
+                      .orElseThrow(() -> new BusinessException("No accountingArticle found"));
+              invoiceLine.setAccountingArticle(accountingArticle);
+        }
+      
         return invoiceLine;
     }
 
@@ -126,4 +158,20 @@ public class InvoiceLinesFactory {
         validity.setTo((Date) record.get("end_date"));
         invoiceLine.setValidity(validity);
     }
+
+    private List<AttributeValue> fromAttributeInstances(ServiceInstance serviceInstance) {
+        return serviceInstance.getAttributeInstances()
+                    .stream()
+                    .map(attributeInstance -> (AttributeValue) attributeInstance)
+                    .collect(toList());
+    }
+
+    private Map<String, Object> fromAttributeValue(List<AttributeValue> attributeValues) {
+        return attributeValues
+                .stream()
+                .filter(attributeValue -> attributeValue.getAttribute().getAttributeType().getValue(attributeValue) != null)
+                .collect(toMap(key -> key.getAttribute().getCode(),
+                        value -> value.getAttribute().getAttributeType().getValue(value)));
+    }
+
 }

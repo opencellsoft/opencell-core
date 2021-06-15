@@ -10,6 +10,7 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.slf4j.Logger;
 
@@ -17,6 +18,8 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +36,8 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     private Logger log;
     @Inject
     private BillingRunService billingRunService;
+    @Inject
+    private BillingRunExtensionService billingRunExtensionService;
 
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -45,7 +50,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             List<Long> billingRunIds = billingRunWrappers != null ? extractBRIds(billingRunWrappers) : emptyList();
             Map<String, Object> filters = new HashedMap();
             if (billingRunIds.isEmpty()) {
-                filters.put("status", PREVALIDATED);
+                filters.put("status", BillingRunStatusEnum.INVOICE_LINES_CREATED);
             } else {
                 filters.put("inList id", billingRunIds);
             }
@@ -58,7 +63,9 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 validateBRList(billingRuns, result);
                 for (BillingRun billingRun : billingRuns) {
                     billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
-                    billingRunService.validateBillingRun(billingRun, BillingRunStatusEnum.INVOICES_GENERATED);
+                    BillingRunStatusEnum status=billingRunService.validateBillingRun(billingRun, BillingRunStatusEnum.INVOICES_GENERATED);
+                    billingRun = billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
+                    		status, new Date());
                 }
                 result.setNbItemsCorrectlyProcessed(billingRuns.size());
             }
@@ -76,7 +83,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 
     private void validateBRList(List<BillingRun> billingRuns, JobExecutionResultImpl result) {
         List<BillingRun> excludedBRs = billingRuns.stream()
-                                            .filter(br -> br.getStatus() != PREVALIDATED)
+                                            .filter(br -> br.getStatus() != BillingRunStatusEnum.INVOICE_LINES_CREATED)
                                             .collect(toList());
         excludedBRs.forEach(br -> result.registerWarning(format("BillingRun[id={%d}] has been ignored. " +
                                         "Only Billing runs with status=PREVALIDATED can be processed", br.getId())));

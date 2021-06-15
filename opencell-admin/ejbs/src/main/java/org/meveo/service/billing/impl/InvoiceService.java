@@ -49,6 +49,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -3405,7 +3406,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Create category aggregates
         for (SubCategoryInvoiceAgregate scAggregate : subCategoryAggregates) {
-
+        	List<InvoiceLine> erronedLines = scAggregate.getInvoiceLinesToAssociate().stream().filter(x->x.getTax() == null ).collect(Collectors.toList());
+        	if(!erronedLines.isEmpty()) {
+        		String message = erronedLines.stream()
+                .map(x->x.getAccountingArticle().getCode())
+                .collect(Collectors.joining(", "));
+        		throw new BusinessException("the articles "+message+" has no corresponding tax ");
+        	}
             // Calculate derived amounts
             scAggregate.computeDerivedAmounts(isEnterprise, rounding, roundingMode.getRoundingMode(), invoiceRounding, invoiceRoundingMode.getRoundingMode());
 

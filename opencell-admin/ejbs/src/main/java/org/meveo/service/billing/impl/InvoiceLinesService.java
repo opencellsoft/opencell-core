@@ -90,6 +90,34 @@ public class InvoiceLinesService extends PersistenceService<InvoiceLine> {
                 .setParameter("commercialOrder", commercialOrder)
                 .getResultList();
     }
+    @Override
+    public void create(InvoiceLine entity) throws BusinessException {
+    	AccountingArticle accountingArticle=entity.getAccountingArticle();
+    	Invoice invoice=entity.getInvoice();
+    	Date date=new Date();
+    	if(entity.getValueDate()!=null) {
+    		date=entity.getValueDate();
+    	}
+    	Seller seller=null;
+    	BillingAccount billingAccount=null;
+    	if(invoice!=null) {
+    	   if(invoice.getInvoiceDate()!=null) {
+        		date=invoice.getInvoiceDate();
+        	}
+    	 seller=invoice.getSeller()!=null?invoice.getSeller():invoice.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+    	 billingAccount=invoice.getBillingAccount();
+    	}
+    	 else if (entity.getBillingAccount()!=null) {
+    		 seller=entity.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+    		 billingAccount=entity.getBillingAccount();
+    	 }
+    	 if(accountingArticle!=null) {
+             TaxInfo taxInfo = taxMappingService.determineTax(accountingArticle.getTaxClass(), seller, billingAccount,null, date, false, false);
+             if(taxInfo!=null)
+            	 entity.setTax(taxInfo.tax);
+            }
+    	super.create(entity);
+    }
 
     public List<InvoiceLine> listInvoiceLinesToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate,
                                                        Date lastTransactionDate, Filter filter, int pageSize) throws BusinessException {
