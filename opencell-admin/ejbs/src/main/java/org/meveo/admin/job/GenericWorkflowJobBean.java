@@ -133,11 +133,14 @@ public class GenericWorkflowJobBean extends BaseJobBean {
             
             Map<Long, BusinessEntity> mapFilteredEntities = entities.stream().collect(Collectors.toMap(x->x.getId(), x->x));
             
+            log.info("wfInstances size : {}", wfInstances.size());
+            
             SubListCreator subListCreator = new SubListCreator(wfInstances, nbRuns.intValue());
             List<Map<Long, List<Object>>> subMaps = new ArrayList();
             while (subListCreator.isHasNext()) {
             	Map<Long, List<Object>> wfInstancesFiltered = new TreeMap();
             	List<WorkflowInstance> nextWorkSet = (List<WorkflowInstance>) subListCreator.getNextWorkSet();
+            	log.info("nextWorkSet size : {}", nextWorkSet.size());
 				for (WorkflowInstance workflowInstance : nextWorkSet ){
                     Long entityInstanceId = workflowInstance.getEntityInstanceId();
 					if (entityInstanceId != null) {
@@ -147,9 +150,11 @@ public class GenericWorkflowJobBean extends BaseJobBean {
                         }
                     }
                 }
+				log.info("wfInstancesFiltered size : {}", wfInstancesFiltered.size());
             	subMaps.add(wfInstancesFiltered);
             }
             
+            log.info("subMaps size : {}", subMaps.size());
             log.debug("wfInstances:" + wfInstances.size());
             result.setNbItemsToProcess(wfInstances.size());
 
