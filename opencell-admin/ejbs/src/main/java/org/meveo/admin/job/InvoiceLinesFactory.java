@@ -25,6 +25,7 @@ import org.meveo.service.cpq.order.OrderLotService;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -100,14 +101,17 @@ public class InvoiceLinesFactory {
         BigDecimal amountWithTax = ofNullable((BigDecimal) record.get("sum_with_tax"))
                 .orElse(ZERO);
         invoiceLine.setAmountWithTax(amountWithTax);
-        invoiceLine.setAmountTax(taxPercent.divide(new BigDecimal(100)).multiply(amountWithTax));
         BigDecimal amountWithoutTax = ofNullable((BigDecimal) record.get("sum_without_Tax"))
                 .orElse(ZERO);
         if(BigDecimal.ZERO.compareTo(amountWithoutTax)==0) {
-        	amountWithoutTax=amountWithTax.subtract(invoiceLine.getAmountTax());
+        	BigDecimal coef=(new BigDecimal(100).add((taxPercent))).divide(new BigDecimal(100));
+        	amountWithoutTax=amountWithTax.divide(coef, 2, RoundingMode.HALF_UP);
         }
         invoiceLine.setAmountWithoutTax(amountWithoutTax);
         
+        invoiceLine.setAmountTax(taxPercent.divide(new BigDecimal(100)).multiply(amountWithoutTax));
+    	
+       
         ChargeInstance chargeInstance = (ChargeInstance) ofNullable(record.get("charge_instance_id"))
                 .map(id -> chargeInstanceService.findById(((BigInteger) id).longValue()))
                 .orElse(null);
