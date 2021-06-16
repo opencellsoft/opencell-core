@@ -322,11 +322,12 @@ public abstract class BaseApi {
                         BusinessEntity referencedEntity =  null;
                         boolean recordExist = false;
                         try {
-                            if(cft.getEntityClazzCetCode()!=null){
-                                CustomEntityTemplate cet = customTableService.getCET(cft.getEntityClazzCetCode());
-                                if(cet.isStoreAsTable()){
-                                    recordExist = !customTableService.findById(cet.getDbTablename(), Long.parseLong(entityRefWrapper.getCode())).isEmpty();
-                                }
+                            CustomEntityTemplate cet = null;
+                            if(cft.getEntityClazzCetCode()!=null) {
+                                cet = customTableService.getCET(cft.getEntityClazzCetCode());
+                            }
+                            if(cet != null && cet.isStoreAsTable()){
+                                recordExist = !customTableService.findById(cet.getDbTablename(), Long.parseLong(entityRefWrapper.getCode())).isEmpty();
                             }else{
                                     Class entityRefClass = Class.forName(entityRefWrapper.getClassname());
                                     referencedEntity = businessEntityService.findByEntityClassAndCode(entityRefClass, entityRefWrapper.getCode());
