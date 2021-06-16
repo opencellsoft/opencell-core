@@ -45,6 +45,7 @@ import org.meveo.service.base.PersistenceService;
  */
 
 @Stateless
+
 public class CounterPeriodService extends PersistenceService<CounterPeriod> {
 
     /**
@@ -55,6 +56,7 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
      * @return Counter period
      * @throws BusinessException Business exception
      */
+    
     public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date) throws BusinessException {
         Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
         query.setParameter("counterInstance", counterInstance);
@@ -73,6 +75,7 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
      * @param counterCode the counter code
      * @return the counter value.
      */
+    
     public Object getCounterValue(ICounterEntity entity, String counterCode) {
         return getSingleCounterValue(entity, counterCode, null);
     }
@@ -85,6 +88,7 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
      * @param date        the date to be compared to start and end date of a CounterPeriod
      * @return the counter value.
      */
+    
     public Object getCounterValueByDate(ICounterEntity entity, String counterCode, Date date) {
         return getSingleCounterValue(entity, counterCode, date);
     }
@@ -97,6 +101,7 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
      * @param date        a date that can be inculuded iin the counter period
      * @return the counter period value or Map of values for multi values accumulator.
      */
+    
     private Object getSingleCounterValue(ICounterEntity entity, String counterCode, Date date) {
         Query query;
         query = getEntityManager().createNamedQuery("CounterPeriod.findByCounterEntityAndPeriodDate");
