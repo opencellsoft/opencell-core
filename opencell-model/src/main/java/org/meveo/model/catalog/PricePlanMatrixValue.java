@@ -168,7 +168,9 @@ public class PricePlanMatrixValue extends BaseEntity {
                 Objects.equals(getFromDateValue(), that.getFromDateValue()) &&
                 Objects.equals(getToDateValue(), that.getToDateValue()) &&
                 Objects.equals(getFromDoubleValue(), that.getFromDoubleValue()) &&
-                Objects.equals(getToDoubleValue(), that.getToDoubleValue());
+                Objects.equals(getToDoubleValue(), that.getToDoubleValue()) &&
+                Objects.equals(getPricePlanMatrixColumn(), that.getPricePlanMatrixColumn())
+                ;
     }
 
     @Override

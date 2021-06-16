@@ -1661,7 +1661,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 				amounts[0], amounts[1], amounts[2], RatedTransactionStatusEnum.OPEN, null, billingAccount, userAccount,
 				null, null, null, null, null, null, subscription, null, null, null, subscription.getOffer(), null,
 				serviceInstance.getCode(), serviceInstance.getCode(), null, null, subscription.getSeller(), taxInfo.tax,
-				taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL);
+				taxPercent, serviceInstance, taxClass, null, RatedTransactionTypeEnum.MANUAL,chargeInstance);
 		create(rt);
 		return rt;
 	}

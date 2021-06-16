@@ -592,6 +592,55 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
             String parameter2, String parameter3, String parameterExtra, String orderNumber, Subscription subscription, String inputUnitDescription, String ratingUnitDescription, PricePlanMatrix priceplan,
             OfferTemplate offerTemplate, EDR edr, String code, String description, Date startDate, Date endDate, Seller seller, Tax tax, BigDecimal taxPercent, ServiceInstance serviceInstance, TaxClass taxClass,
             AccountingCode accountingCode, RatedTransactionTypeEnum type) {
+    	 new RatedTransaction(usageDate, unitAmountWithoutTax, unitAmountWithTax, unitAmountTax, quantity, amountWithoutTax, amountWithTax, 
+    			amountTax, status, wallet, billingAccount, userAccount, invoiceSubCategory, parameter1, parameter2, parameter3, parameterExtra, orderNumber, subscription, inputUnitDescription, ratingUnitDescription, priceplan, offerTemplate, 
+    			edr, code, description, startDate, endDate, seller, tax, taxPercent, serviceInstance, taxClass, accountingCode, type, null);
+    	
+    }
+
+    /**
+     * Constructor
+     *
+     * @param usageDate Operation date
+     * @param unitAmountWithoutTax Unit amount without tax
+     * @param unitAmountWithTax Unit amount with tax
+     * @param unitAmountTax Unit amount tax
+     * @param quantity Rating quantity
+     * @param amountWithoutTax Amount without tax
+     * @param amountWithTax Amount with tax
+     * @param amountTax Amount tax
+     * @param status Status
+     * @param wallet Wallet on which operation is performed
+     * @param billingAccount Billing account
+     * @param userAccount User account
+     * @param invoiceSubCategory Invoice subcategory
+     * @param parameter1 Parameter 1
+     * @param parameter2 Parameter 2
+     * @param parameter3 Parameter 3
+     * @param parameterExtra Extra parameter
+     * @param orderNumber Order number
+     * @param subscription Subscription
+     * @param inputUnitDescription Input unit description
+     * @param ratingUnitDescription Rating unit description
+     * @param priceplan Price plan applied
+     * @param offerTemplate Offer template
+     * @param edr Related EDR
+     * @param code Charge/Operation code
+     * @param description Charge/Operation description
+     * @param startDate Date period that transaction covers - start date
+     * @param endDate Date period that transaction covers - end date
+     * @param seller Seller
+     * @param tax Tax
+     * @param taxPercent Tax percent
+     * @param serviceInstance Service instance associated
+     * @param taxClass Tax class
+     * @param accountingCode Accounting code
+     */
+    public RatedTransaction(Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax, BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax,
+            BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet, BillingAccount billingAccount, UserAccount userAccount, InvoiceSubCategory invoiceSubCategory, String parameter1,
+            String parameter2, String parameter3, String parameterExtra, String orderNumber, Subscription subscription, String inputUnitDescription, String ratingUnitDescription, PricePlanMatrix priceplan,
+            OfferTemplate offerTemplate, EDR edr, String code, String description, Date startDate, Date endDate, Seller seller, Tax tax, BigDecimal taxPercent, ServiceInstance serviceInstance, TaxClass taxClass,
+            AccountingCode accountingCode, RatedTransactionTypeEnum type, ChargeInstance chargeInstance) {
 
         super();
 
@@ -630,6 +679,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.serviceInstance = serviceInstance;
         this.updated = new Date();
         this.taxClass = taxClass;
+        this.chargeInstance = chargeInstance;
         if (accountingCode == null && this.invoiceSubCategory != null) {
             this.accountingCode = invoiceSubCategory.getAccountingCode();
         } else {

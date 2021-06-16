@@ -32,7 +32,12 @@ import java.util.stream.Collectors;
 
 public class OrderValidationScript extends Script {
 
-    private static final Logger log = LoggerFactory.getLogger(OrderValidationScript.class);
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8104026721836872604L;
+
+	private static final Logger log = LoggerFactory.getLogger(OrderValidationScript.class);
 
     private CommercialOrderService commercialOrderService = (CommercialOrderService) getServiceInterface("CommercialOrderService");
     private SubscriptionService subscriptionService = (SubscriptionService) getServiceInterface("SubscriptionService");
@@ -69,7 +74,7 @@ public class OrderValidationScript extends Script {
             subscription.setUserAccount(order.getUserAccount());
             subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
             subscription.setCode(subscription.getSeller().getCode() + "_" + subscription.getUserAccount().getCode() + "_" + offer.getId());
-
+            subscription.setOrder(order);
             subscriptionService.create(subscription);
 
             for (OrderProduct product : offer.getProducts()){

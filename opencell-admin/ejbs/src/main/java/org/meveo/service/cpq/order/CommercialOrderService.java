@@ -150,6 +150,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			subscription.setEndAgreementDate(null);
 			subscription.setRenewed(true);
 			subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
+			subscription.setOrder(order);
 			subscriptionService.create(subscription);
 			if(offer.getDiscountPlan()!=null) {
 				discountPlans.add(offer.getDiscountPlan());
