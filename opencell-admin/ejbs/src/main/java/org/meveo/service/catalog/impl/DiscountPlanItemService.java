@@ -59,7 +59,7 @@ import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.ChargeInstanceService;
-import org.meveo.service.billing.impl.InvoiceLinesService;
+import org.meveo.service.billing.impl.InvoiceLineService;
 
 /**
  * @author Edward P. Legaspi
@@ -82,7 +82,7 @@ public class DiscountPlanItemService extends PersistenceService<DiscountPlanItem
 	PricePlanMatrixService pricePlanMatrixService;
 	
 	@Inject
-	InvoiceLinesService invoiceLinesService;
+	InvoiceLineService invoiceLinesService;
 	
 	private final static BigDecimal HUNDRED = new BigDecimal("100");
 

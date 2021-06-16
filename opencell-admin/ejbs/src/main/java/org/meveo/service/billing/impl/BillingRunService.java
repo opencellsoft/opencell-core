@@ -162,7 +162,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     private ScriptInstanceService scriptInstanceService;
 
     @Inject
-    private InvoiceLinesService invoiceLinesService;
+    private InvoiceLineService invoiceLinesService;
 
     @Inject
     private CurrentUserProvider currentUserProvider;

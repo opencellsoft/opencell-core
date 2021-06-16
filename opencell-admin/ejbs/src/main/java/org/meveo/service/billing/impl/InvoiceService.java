@@ -333,7 +333,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     protected ParamBeanFactory paramBeanFactory;
 
     @Inject
-    private InvoiceLinesService invoiceLinesService;
+    private InvoiceLineService invoiceLinesService;
 
     @Inject
     private DiscountPlanInstanceService discountPlanInstanceService;
@@ -5069,6 +5069,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     if (invoiceAggregateProcessingInfo.invoice == null) {
                     	if(existingInvoice!=null) {
+                    		cleanInvoiceAggregates(existingInvoice.getId());
                     		invoiceAggregateProcessingInfo.invoice = existingInvoice;
                         } else {
 	                        invoiceAggregateProcessingInfo.invoice = instantiateInvoice(entityToInvoice, invoiceLinesGroup.getBillingAccount(),
@@ -5183,7 +5184,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * delete invoice aggregates
+     * 
+	 * @param existingInvoice
+	 */
+	public void cleanInvoiceAggregates(Long invoiceId) {
+		getEntityManager().createNamedQuery("RatedTransaction.deleteInvoiceSubCategoryAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();
+		getEntityManager().createNamedQuery("InvoiceAgregate.deleteByInvoiceIds").setParameter("invoicesIds", Arrays.asList(invoiceId)).executeUpdate();
+	}
+
+	@SuppressWarnings("unchecked")
     private List<InvoiceLinesGroup> executeBCScriptWithInvoiceLines(BillingRun billingRun, InvoiceType invoiceType, List<InvoiceLine> invoiceLines,
                                                                     IBillableEntity entity, String scriptInstanceCode,
                                                                     PaymentMethod paymentMethod) throws BusinessException {

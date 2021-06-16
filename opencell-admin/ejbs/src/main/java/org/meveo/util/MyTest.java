@@ -1,6 +1,7 @@
 package org.meveo.util;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,7 +65,13 @@ public class MyTest {
 
 	public static void main(String[] args) throws BusinessException, JsonProcessingException {
 		//IngenicoGatewayPayment ingenico=new IngenicoGatewayPayment();
-		
+		BigDecimal taxPercent=new BigDecimal(20);
+		BigDecimal amountWithTax=new BigDecimal(12000);
+		BigDecimal cof=new BigDecimal(1.2);
+		System.out.println(taxPercent.divide(new BigDecimal(100)).multiply(amountWithTax));
+		BigDecimal coef=(new BigDecimal(100).add((taxPercent))).divide(new BigDecimal(100));
+		System.out.println(coef);
+		System.out.println(amountWithTax.divide(coef, 2, RoundingMode.HALF_UP));
 		
 		/*********
 		 * 
@@ -135,7 +142,7 @@ createMandate body={
 //		checkMandat("BPIAB0000002479FD02", null);
 //		doPayment(null, rum, 3000L, customerAccount, null, null, null,null,null, "FR", null);
 		MyTest test=new MyTest();
-		test.calculatePrices();
+		//test.calculatePrices();
 	}
 	
     public static void createMandate(CustomerAccount customerAccount,String iban,String mandateReference) throws BusinessException {
