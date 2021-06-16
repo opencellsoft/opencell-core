@@ -115,13 +115,17 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
     @Inject
     private CounterPeriodService counterPeriodService;
+    
+    @Inject
+    private CounterInstanceService counterInstanceService;
 
     @EJB
     private UsageChargeInstanceService usageChargeInstanceService;
 
     @Inject
     private Event<CounterPeriodEvent> counterPeriodEvent;
-
+    
+   
     public CounterInstance counterInstanciation(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
         CounterInstance result = null;
 
@@ -160,6 +164,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
+   
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.CUST)
     public CounterInstance instantiateCustomerCounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -190,6 +195,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
+   
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.CA)
     public CounterInstance instantiateCACounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -218,6 +224,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
+   
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.UA)
     public CounterInstance instantiateUACounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -240,6 +247,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
+   
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.BA)
     public CounterInstance instantiateBACounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -264,6 +272,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
+   
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.SU)
     public CounterInstance instantiateSubscriptionCounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -280,6 +289,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
+   
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.SI)
     public CounterInstance instantiateServiceCounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -320,6 +330,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return result;
     }
 
+   
     public CounterInstance counterInstanciation(Notification notification, CounterTemplate counterTemplate) throws BusinessException {
         CounterInstance counterInstance = null;
 
@@ -365,6 +376,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return CounterPeriod instance
      * @throws BusinessException Business exception
      */
+   
     // we must make sure the counter period is persisted in db before storing it in cache
     // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) - problem with MariaDB. See #2393 - Issue with counter period creation in MariaDB
     public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, ChargeInstance chargeInstance, ServiceInstance serviceInstance) throws BusinessException {
@@ -493,6 +505,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return Found counter period
      * @throws BusinessException business exception
      */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date) throws BusinessException {
         try {
             CounterPeriod counterPeriod = null;
@@ -569,6 +584,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws CounterValueInsufficientException counter value insufficient exception.
      * @throws BusinessException business exception
      */
+    @Lock(LockType.WRITE)
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public BigDecimal deduceCounterValue(CounterInstance counterInstance, Date date, Date initDate, BigDecimal value) throws CounterValueInsufficientException, BusinessException {
 
         counterInstance = retrieveIfNotManaged(counterInstance);
@@ -808,7 +826,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     public void accumulatorCounterPeriodValue(CounterPeriod counterPeriod, WalletOperation walletOperation, Reservation reservation, boolean isVirtual) {
         BigDecimal value = BigDecimal.ZERO;
         BigDecimal previousValue = counterPeriod.getValue();
-        CounterInstance counterInstance = counterPeriod.getCounterInstance();
+        CounterInstance counterInstance = counterInstanceService.retrieveIfNotManaged(counterPeriod.getCounterInstance());
         CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
         boolean isMultiValuesAccumulator = counterPeriod.getAccumulatorType() != null && counterPeriod.getAccumulatorType().equals(AccumulatorCounterTypeEnum.MULTI_VALUE);
         boolean isMultiValuesApplied = isMultiValuesAccumulator && evaluateFilterElExpression(counterTemplate.getFilterEl(),walletOperation);
@@ -851,7 +869,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return
      */
     private BigDecimal applyMultiAccumulatedValues(CounterPeriod counterPeriod, WalletOperation walletOperation) {
-        CounterInstance counterInstance = counterPeriod.getCounterInstance();
+        CounterInstance counterInstance = counterInstanceService.retrieveIfNotManaged(counterPeriod.getCounterInstance());
         CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
         BigDecimal value = evaluateValueElExpression(counterTemplate.getValueEl(), walletOperation);
         log.debug("Extract the multi accumulator counter period value {}", value);
