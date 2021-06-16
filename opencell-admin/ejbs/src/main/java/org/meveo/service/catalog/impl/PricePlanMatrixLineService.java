@@ -111,9 +111,8 @@ public class PricePlanMatrixLineService extends PersistenceService<PricePlanMatr
     }
 
     public Set<PricePlanMatrixValue> getPricePlanMatrixValues(PricePlanMatrixLineDto dtoData, PricePlanMatrixLine pricePlanMatrixLine) {
-    	Set<PricePlanMatrixValueDto> eliminateDuplicate = new HashSet<PricePlanMatrixValueDto>(dtoData.getPricePlanMatrixValues());
     	
-        return eliminateDuplicate
+        return dtoData.getPricePlanMatrixValues()
                 .stream()
                 .map(value -> {
                     PricePlanMatrixValue pricePlanMatrixValue;
