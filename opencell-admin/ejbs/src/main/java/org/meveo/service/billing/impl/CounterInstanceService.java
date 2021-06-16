@@ -125,7 +125,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     @Inject
     private Event<CounterPeriodEvent> counterPeriodEvent;
     
-    @Lock(LockType.WRITE)
+   
     public CounterInstance counterInstanciation(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
         CounterInstance result = null;
 
@@ -164,7 +164,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    @Lock(LockType.WRITE)
+   
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.CUST)
     public CounterInstance instantiateCustomerCounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -195,7 +195,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    @Lock(LockType.WRITE)
+   
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.CA)
     public CounterInstance instantiateCACounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -224,7 +224,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    @Lock(LockType.WRITE)
+   
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.UA)
     public CounterInstance instantiateUACounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -247,7 +247,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    @Lock(LockType.WRITE)
+   
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.BA)
     public CounterInstance instantiateBACounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -272,7 +272,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    @Lock(LockType.WRITE)
+   
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.SU)
     public CounterInstance instantiateSubscriptionCounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -289,7 +289,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    @Lock(LockType.WRITE)
+   
     @CounterTemplateLevelAnnotation(CounterTemplateLevel.SI)
     public CounterInstance instantiateServiceCounter(ServiceInstance serviceInstance, CounterTemplate counterTemplate, boolean isVirtual)
             throws BusinessException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -330,7 +330,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return result;
     }
 
-    @Lock(LockType.WRITE)
+   
     public CounterInstance counterInstanciation(Notification notification, CounterTemplate counterTemplate) throws BusinessException {
         CounterInstance counterInstance = null;
 
@@ -376,7 +376,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return CounterPeriod instance
      * @throws BusinessException Business exception
      */
-    @Lock(LockType.WRITE)
+   
     // we must make sure the counter period is persisted in db before storing it in cache
     // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) - problem with MariaDB. See #2393 - Issue with counter period creation in MariaDB
     public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, ChargeInstance chargeInstance, ServiceInstance serviceInstance) throws BusinessException {

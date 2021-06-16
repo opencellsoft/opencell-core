@@ -19,9 +19,7 @@ package org.meveo.service.billing.impl;
 
 import java.util.Date;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
@@ -46,8 +44,8 @@ import org.meveo.service.base.PersistenceService;
  * @lastModifiedVersion 9.0
  */
 
-@Singleton
-@Lock(LockType.WRITE)
+@Stateless
+
 public class CounterPeriodService extends PersistenceService<CounterPeriod> {
 
     /**
@@ -58,7 +56,7 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
      * @return Counter period
      * @throws BusinessException Business exception
      */
-    @Lock(LockType.WRITE)
+    
     public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date) throws BusinessException {
         Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
         query.setParameter("counterInstance", counterInstance);
@@ -77,7 +75,7 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
      * @param counterCode the counter code
      * @return the counter value.
      */
-    @Lock(LockType.WRITE)
+    
     public Object getCounterValue(ICounterEntity entity, String counterCode) {
         return getSingleCounterValue(entity, counterCode, null);
     }
@@ -90,7 +88,7 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
      * @param date        the date to be compared to start and end date of a CounterPeriod
      * @return the counter value.
      */
-    @Lock(LockType.WRITE)
+    
     public Object getCounterValueByDate(ICounterEntity entity, String counterCode, Date date) {
         return getSingleCounterValue(entity, counterCode, date);
     }
@@ -103,7 +101,7 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
      * @param date        a date that can be inculuded iin the counter period
      * @return the counter period value or Map of values for multi values accumulator.
      */
-    @Lock(LockType.WRITE)
+    
     private Object getSingleCounterValue(ICounterEntity entity, String counterCode, Date date) {
         Query query;
         query = getEntityManager().createNamedQuery("CounterPeriod.findByCounterEntityAndPeriodDate");
