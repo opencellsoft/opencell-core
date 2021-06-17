@@ -15,12 +15,14 @@ public enum ColumnTypeEnum {
                 return true;
             }
             switch (attributeValue.getAttribute().getAttributeType()) {
+                case LIST_MULTIPLE_TEXT:
                 case LIST_TEXT: {
                     return Stream.of(attributeValue.getStringValue().split(" ; "))
                             .anyMatch(value -> value.equals(pricePlanMatrixValue.getStringValue()));
                 }
                 case TEXT:
                 case EMAIL:
+                case INFO:
                 case PHONE: {
                     return attributeValue.getStringValue().equals(pricePlanMatrixValue.getStringValue());
                 }
@@ -152,12 +154,15 @@ public enum ColumnTypeEnum {
     Boolean {
         @Override
         public boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue) {
-            return true;
+            if (attributeValue.getStringValue() == null || pricePlanMatrixValue.getStringValue() == null) {
+                return true;
+            }
+            return attributeValue.getStringValue().equalsIgnoreCase(pricePlanMatrixValue.getStringValue());
         }
 
         @Override
         public boolean matchWithAllValues(PricePlanMatrixValue pricePlanMatrixValue) {
-            return true;
+            return pricePlanMatrixValue.getStringValue() == null;
         }
     };
 

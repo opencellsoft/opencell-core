@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -35,9 +36,10 @@ import org.meveo.model.quote.QuoteVersion;
 @Table(name="quote_offer")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "quote_offer_seq"), })
-@NamedQuery(name = "QuoteOffer.findByTemplateAndQuoteVersion", query = "select q from QuoteOffer q left join q.offerTemplate qo left join q.quoteVersion qq where qo.code=:offerTemplateCode and qq.quote.code=:cpqQuoteCode and qq.quoteVersion=:quoteVersion")
-@NamedQuery(name = "QuoteOffer.findQuoteAttribute", query = "select qf from QuoteOffer qf left join qf.quoteVersion qv  "
-		+ " where qv.id=:quoteVersionId and qf.offerTemplate.code=:offerCode")
+@NamedQueries({
+		@NamedQuery(name = "QuoteOffer.findByTemplateAndQuoteVersion", query = "select q from QuoteOffer q left join q.offerTemplate qo left join q.quoteVersion qq where qo.code=:offerTemplateCode and qq.quote.code=:cpqQuoteCode and qq.quoteVersion=:quoteVersion"),
+		@NamedQuery(name = "QuoteOffer.findQuoteAttribute", query = "select qf from QuoteOffer qf left join qf.quoteVersion qv  " + " where qv.id=:quoteVersionId and qf.offerTemplate.code=:offerCode")
+})
 public class QuoteOffer extends AuditableCFEntity {
 
 

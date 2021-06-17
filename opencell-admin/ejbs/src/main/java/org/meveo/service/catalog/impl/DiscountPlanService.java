@@ -166,6 +166,8 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 		if (!(discountPlan.getStatus().equals(DiscountPlanStatusEnum.IN_USE) || discountPlan.getStatus().equals(DiscountPlanStatusEnum.ACTIVE))) {
 			return false;
 		}
+		if(discountPlan.getDiscountPlanType() == null)
+			return false;
 		switch (discountPlan.getDiscountPlanType()) {
 		case OFFER:
 			if(offer!=null && !offer.getAllowedDiscountPlans().contains(discountPlan)) {
