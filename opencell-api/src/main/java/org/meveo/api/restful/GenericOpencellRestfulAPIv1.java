@@ -90,7 +90,7 @@ public class GenericOpencellRestfulAPIv1 extends Application {
         loadVersionInformation();
         loadMapPathAndInterfaceIBaseRs();
         loadSetGetAll();
-        loadSwaggerJson();
+        //loadSwaggerJson();
     }
 
     private void loadSetGetAll() {
