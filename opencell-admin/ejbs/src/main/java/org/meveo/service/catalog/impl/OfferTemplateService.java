@@ -211,6 +211,8 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offerToDuplicate.getCustomerCategories().size();
         offerToDuplicate.getMedias().size();
         offerToDuplicate.getCommercialRules().size();
+        offerToDuplicate.getOfferComponents().size();
+        offerToDuplicate.getOfferComponents().forEach(oc -> oc.getTagsList().size());
 
         if (offerToDuplicate.getOfferServiceTemplates() != null) {
             for (OfferServiceTemplate offerServiceTemplate : offerToDuplicate.getOfferServiceTemplates()) {
@@ -268,9 +270,6 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         List<Media> medias = offer.getMedias();
         offer.setMedias(new ArrayList<Media>());
         
-        List<CommercialRuleHeader> commercialRulesHeader = offer.getCommercialRules();
-        offer.setCommercialRules(new ArrayList<CommercialRuleHeader>());
-        
         List<OfferComponent> offerComponents = offer.getOfferComponents();
         offer.setOfferComponents(new ArrayList<OfferComponent>());
 
@@ -309,7 +308,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
                 offer.getCustomerCategories().add(customerCategory);
             }
         }
-
+        offer.setCommercialRules(new ArrayList<CommercialRuleHeader>());
         if (persist) {
             create(offer);
         }
@@ -335,8 +334,16 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     				offer.getMedias().add(newMedia);
     			}
             }
+            if(offerComponents != null) {
+            	for (OfferComponent offerComponent : offerComponents) {
+            			offerComponent.setId(null);
+            			offerComponent.setOfferTemplate(offer);
+            			offer.getOfferComponents().add(offerComponent);
+            			
+				}
+            }
             
-            if(commercialRulesHeader != null) {
+            /*if(commercialRulesHeader != null) {
             	for (CommercialRuleHeader commercialRuleHeader : commercialRulesHeader) {
             		commercialRuleHeader.getCommercialRuleItems().size();
             		commercialRuleHeaderService.detach(commercialRuleHeader);
@@ -345,7 +352,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
             		commercialRuleHeaderService.create(duplicate);
             		offer.getCommercialRules().add(duplicate);
     			}
-            }
+            }*/
 
         } else {
             if (offerServiceTemplates != null) {
