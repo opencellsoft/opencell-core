@@ -139,7 +139,7 @@ public enum ColumnTypeEnum {
             if (attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() == null && pricePlanMatrixValue.getToDoubleValue() != null &&  attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()) {
                 return true;
             }
-            if(attributeValue.getDoubleValue() != null && attributeValue.getDoubleValue() > pricePlanMatrixValue.getFromDoubleValue()
+            if(attributeValue.getDoubleValue() != null && pricePlanMatrixValue.getFromDoubleValue() != null && pricePlanMatrixValue.getToDoubleValue() != null  && attributeValue.getDoubleValue() > pricePlanMatrixValue.getFromDoubleValue()
                     && attributeValue.getDoubleValue() <= pricePlanMatrixValue.getToDoubleValue()){
                 return true;
             }
