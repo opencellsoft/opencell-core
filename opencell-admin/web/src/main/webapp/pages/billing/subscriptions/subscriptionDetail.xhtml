@@ -250,7 +250,7 @@
 						<hftl:formField label="#{messages['businessEntity.code']}"
 							field="code" size="50" edit="false" /> 
                         <hftl:decorateFormField fieldId="subTerminationDate" label="#{messages['serviceInstance.terminationDate']}" componentWidth="25">
-                            <p:calendar id="subTerminationDate" value="#{subscriptionBean.terminationDate}" pattern="#{paramBean.dateFormat}" required="true" />
+                            <p:calendar id="subTerminationDate" value="#{subscriptionBean.terminationDate}" pattern="#{paramBean.dateTimeFormat}" />
                         </hftl:decorateFormField>
                         
                         <hftl:decorateFormField fieldId="subTerminationReason" label="#{messages['menu.terminationReason']}" componentWidth="25">
