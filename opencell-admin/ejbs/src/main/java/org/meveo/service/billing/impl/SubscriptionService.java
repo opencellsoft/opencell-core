@@ -278,19 +278,22 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if (terminationDate == null) {
             terminationDate = new Date();
         }
-        // point termination date to the end of the day
-        Date terminationDateTime = DateUtils.setDateToEndOfDay(terminationDate);
 
         if (terminationReason == null) {
             throw new ValidationException("Termination reason not provided", "subscription.error.noTerminationReason");
 
-        } else if (subscription.getSubscriptionDate().after(terminationDateTime)) {
-            throw new ValidationException("Termination date can not be before the subscription date", "subscription.error.terminationDateBeforeSubscriptionDate");
+        } else if (subscription.getSubscriptionDate().after(terminationDate)) {
+            String subscriptionDateFormatted = DateUtils.formatDateWithPattern(subscription.getSubscriptionDate(), "dd-MM-yyyy HH:mm:ss");
+            String terminationDateFormatted = DateUtils.formatDateWithPattern(terminationDate, "dd-MM-yyyy HH:mm:ss");
+
+            throw new ValidationException(String.format("Termination date %s can not be before the subscription date %s",
+                            terminationDateFormatted, subscriptionDateFormatted),
+                    "subscription.error.terminationDateBeforeSubscriptionDate");
         }
 
         // checks if termination date is > now (do not ignore time, as subscription time is time sensitive)
         Date now = new Date();
-        if (terminationDateTime.compareTo(now) <= 0) {
+        if (terminationDate.compareTo(now) <= 0) {
             return terminateSubscriptionWithPastDate(subscription, terminationDate, terminationReason, orderNumber, orderItemId, orderItemAction);
         } else {
             // if future date/time set subscription termination
