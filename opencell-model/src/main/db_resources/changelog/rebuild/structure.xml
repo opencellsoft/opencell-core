@@ -8200,6 +8200,17 @@
             <column name="updater" type="varchar(100)" />
         </createTable>
     </changeSet>
+    
+    <changeSet id="rebuild-str-tbl-429" author="AndriusKarpavicius">
+        <createTable tableName="billing_rated_transaction_pending" >
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rt_pending_pk"/>
+            </column>
+            <column name="aggregate_id_f" type="bigint" />
+            <column name="invoice_id" type="bigint" />
+            <column name="billing_run_id" type="bigint" />
+        </createTable>
+    </changeSet>    
     <!-- end tables -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-def-val-1" dbms="postgresql">
