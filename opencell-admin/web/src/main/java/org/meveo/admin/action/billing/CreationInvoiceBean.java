@@ -699,7 +699,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 ratedTransactionService.remove(rt);
             }
         }
-        return getListViewName();
+        return "";
     }
 
 	private List<RatedTransaction> saveRTs() {
