@@ -18,6 +18,8 @@
 
 package org.meveo.admin.jsf.validator;
 
+import org.meveo.commons.utils.StringUtils;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -46,8 +48,8 @@ public class DateRangeValidator implements Serializable {
         if (values.size() != 2) {
             throw new RuntimeException("Please bind validator to two components in the following order: dateFrom, dateTo");
         }
-        Date from = (Date) values.get(0);
-        Date to = (Date) values.get(1);
+        Date from = !StringUtils.isBlank(values.get(0)) ? (Date) values.get(0) : null;
+        Date to = !StringUtils.isBlank(values.get(1)) ? (Date) values.get(1) : null;
 
         // if (values.get(0) != null) {
         // if (values.get(0) instanceof String) {
