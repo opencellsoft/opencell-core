@@ -54,17 +54,22 @@ public class GenericPagingAndFilteringUtils {
     /**
      * Function used to create an instance of PagingAndFiltering from the generic pagingAndFilteringRest
      *
-     * @param pagingAndFilteringRest PagingAndFilteringRest containing all query params (limit, offset, etc.)
+     * @param pagingAndFilteringRest PagingAndFilteringRest containing all query params (limit, offset, sort, filters etc.)
      * @return an instance of PagingAndFiltering
      */
-    public void constructPagingAndFiltering(PagingAndFilteringRest pagingAndFilteringRest) {
+    public void constructPagingAndFiltering(PagingAndFilteringRest pagingAndFilteringRest) throws JsonProcessingException {
         if ( pagingAndFilteringRest == null )
             pagingAndFilteringRest = ImmutablePagingAndFilteringRest.builder().build();
 
         pagingAndFiltering = new PagingAndFiltering();
+
+        // set limit and offset as following format :
+        // "offset": 0, "limit": 4
         pagingAndFiltering.setLimit( pagingAndFilteringRest.getLimit() );
         pagingAndFiltering.setOffset( pagingAndFilteringRest.getOffset() );
 
+        // set multisort as following format :
+        // "sort": "-description,-id"
         String allSortFieldsAndOrders = pagingAndFilteringRest.getSort();
         String[] allSortFieldsSplit = allSortFieldsAndOrders.split(MULTI_SORTING_DELIMITER);
         StringBuilder sortFields = new StringBuilder();
@@ -89,6 +94,21 @@ public class GenericPagingAndFilteringUtils {
                     + ASCENDING_ORDER );
         }
         pagingAndFiltering.setSortBy( sortFields.toString() );
+
+        // set filters as following format :
+        // filters : {
+        //      "likeCriteria description": "*Description*"
+        //      "code": "*FR",
+        //      "SQL": "code='SELLER_FR'",
+        //      "inList id": [-3,1],
+        //      "ne id": -3,
+        //      "fromRange id": -6,
+        //      "toRange id": 0
+        // }
+        if ( ! MapUtils.isEmpty(pagingAndFilteringRest.getFilters()) ) {
+            Map<String, Object> genericFilters = new HashMap<>(pagingAndFilteringRest.getFilters());
+            pagingAndFiltering.setFilters( genericFilters );
+        }
     }
 
     /**
