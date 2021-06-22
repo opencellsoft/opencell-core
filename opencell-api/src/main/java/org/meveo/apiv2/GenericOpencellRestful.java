@@ -5,6 +5,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.meveo.apiv2.billing.impl.InvoicingResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
@@ -55,7 +56,7 @@ public class GenericOpencellRestful extends Application {
                 MeveoExceptionMapper.class, IllegalArgumentExceptionMapper.class,
                 EJBTransactionRolledbackExceptionMapper.class, OpenApiResource.class,
                 DocumentResourceImpl.class, GenericJacksonProvider.class, ProductResourceImpl.class,
-                OrderItemResourceImpl.class, OrderResourceImpl.class)
+                OrderItemResourceImpl.class, OrderResourceImpl.class, InvoicingResourceImpl.class)
                 .collect(Collectors.toSet());
         if(GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")){
             resources.add(GenericApiLoggingFilter.class);

@@ -505,27 +505,30 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public IBillableEntity updateEntityTotalAmountsAndLinkToBR(Long entityId, BillingRun billingRun, Amounts totalAmounts) throws BusinessException {
-
         IBillableEntity entity = null;
         //BillingAccount billingAccount = null;
 
-        switch (billingRun.getBillingCycle().getType()) {
-        case BILLINGACCOUNT:
+        if(billingRun.isExceptionalBR()) {
             entity = billingAccountService.findById(entityId);
-            //billingAccount = (BillingAccount) entity;
-            break;
+        } else {
+            switch (billingRun.getBillingCycle().getType()) {
+                case BILLINGACCOUNT:
+                    entity = billingAccountService.findById(entityId);
+                    //billingAccount = (BillingAccount) entity;
+                    break;
 
-        case SUBSCRIPTION:
-            entity = subscriptionService.findById(entityId);
-            //billingAccount = ((Subscription) entity).getUserAccount() != null ? ((Subscription) entity).getUserAccount().getBillingAccount() : null;
-            break;
+                case SUBSCRIPTION:
+                    entity = subscriptionService.findById(entityId);
+                    //billingAccount = ((Subscription) entity).getUserAccount() != null ? ((Subscription) entity).getUserAccount().getBillingAccount() : null;
+                    break;
 
-        case ORDER:
-            entity = orderService.findById(entityId);
+                case ORDER:
+                    entity = orderService.findById(entityId);
             /*if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
                 billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ? (((Order) entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() : null;
             }*/
-            break;
+                    break;
+            }
         }
         entity.setTotalInvoicingAmountWithoutTax(totalAmounts.getAmountWithoutTax());
         entity.setTotalInvoicingAmountWithTax(totalAmounts.getAmountWithTax());
@@ -536,8 +539,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         entity.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
 
         if (entity instanceof BillingAccount) {
-            ((BillingAccount) entity).setBrAmountWithoutTax(invoiceAmount);
-            billingAccountService.updateNoCheck((BillingAccount) entity);
+            if(!billingRun.isExceptionalBR()) {
+                ((BillingAccount) entity).setBrAmountWithoutTax(invoiceAmount);
+                billingAccountService.updateNoCheck((BillingAccount) entity);
+            }
         } else if (entity instanceof Order) {
             orderService.updateNoCheck((Order) entity);
         } else if (entity instanceof Subscription) {
@@ -1529,18 +1534,32 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);
 
         } else if (entityToInvoice instanceof Subscription) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class).setParameter("subscriptionId", entityToInvoice.getId())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class)
+                    .setParameter("subscriptionId", entityToInvoice.getId())
+                    .setParameter("firstTransactionDate", firstTransactionDate)
+                    .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setHint("org.hibernate.readOnly", true)
+                    .setMaxResults(rtPageSize)
+                    .getResultList();
 
         } else if (entityToInvoice instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class).setParameter("billingAccountId", entityToInvoice.getId())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class)
+                    .setParameter("billingAccountId", entityToInvoice.getId())
+                    .setParameter("firstTransactionDate", firstTransactionDate)
+                    .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setHint("org.hibernate.readOnly", true)
+                    .setMaxResults(rtPageSize)
+                    .getResultList();
 
         } else if (entityToInvoice instanceof Order) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class).setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
+            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class)
+                    .setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
+                    .setParameter("firstTransactionDate", firstTransactionDate)
+                    .setParameter("lastTransactionDate", lastTransactionDate)
+                    .setHint("org.hibernate.readOnly", true)
+                    .setMaxResults(rtPageSize)
+                    .getResultList();
         }
-
         return new ArrayList<>();
     }
 
