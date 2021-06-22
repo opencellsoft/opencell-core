@@ -20,31 +20,31 @@ package org.meveo.apiv2.ordering.services;
 
 import static java.util.Optional.ofNullable;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.order.Order;
-import org.meveo.model.order.OrderItem;
-import org.meveo.service.billing.impl.BillingCycleService;
-import org.meveo.service.payments.impl.PaymentMethodService;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.order.Order;
+import org.meveo.model.order.OrderItem;
+import org.meveo.service.order.OrderService;
+import org.meveo.service.payments.impl.PaymentMethodService;
+
 public class OrderApiService implements ApiService<Order> {
 
     private List<String> fetchFields;
     @Inject
-    private org.meveo.service.order.OrderService orderService;
-    @Inject
-    private BillingCycleService billingCycleService;
-    @Inject
     private PaymentMethodService paymentMethodService;
+    @Inject
+    private OrderService orderService;
     @Inject
     private OrderItemApiService orderItemService;
 
@@ -86,7 +86,7 @@ public class OrderApiService implements ApiService<Order> {
 
     private void populateOrderFields(Order order){
         if(order.getBillingCycle() != null){
-            order.setBillingCycle(billingCycleService.findById(order.getBillingCycle().getId()));
+			order.setBillingCycle((BillingCycle) orderService.tryToFindByCodeOrId(order.getBillingCycle()));
         }
 
         if(order.getPaymentMethod() != null){
@@ -103,7 +103,7 @@ public class OrderApiService implements ApiService<Order> {
                         }
                         orderItem.setOrder(order);
                         try {
-                            orderItemService.populateOrderItemFields(orderItem);
+                            orderItemService.populateOrderItemFields(orderItem, order);
                         } catch (BusinessException e) {
                             throw new BadRequestException(e);
                         }

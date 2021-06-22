@@ -37,7 +37,7 @@ public class ProductMapper extends ResourceMapper<Product, ProductTemplate> {
     @Override
     public Product toResource(ProductTemplate productTemplate) {
         return ImmutableProduct.builder().id(productTemplate.getId()).description(productTemplate.getDescription())
-                .longDescription(productTemplate.getLongDescription())
+                .longDescription(productTemplate.getLongDescription()).code(productTemplate.getCode())
                 .addOfferTemplateCategories(getImmutableResources(productTemplate.getOfferTemplateCategories(), NotYetImplementedResource.class))
                 .addChannels(getImmutableResources(productTemplate.getChannels(), NotYetImplementedResource.class))
                 .addWalletTemplates(getImmutableResources(productTemplate.getWalletTemplates(), NotYetImplementedResource.class))
@@ -63,6 +63,9 @@ public class ProductMapper extends ResourceMapper<Product, ProductTemplate> {
         if(product.getId() != null){
             productTemplate.setId(product.getId());
         }
+        if(product.getCode() != null){
+            productTemplate.setCode(product.getCode());
+        }
         productTemplate.setCode(product.getCode());
         productTemplate.setDescription(product.getDescription());
         productTemplate.setLongDescription(product.getLongDescription());
@@ -80,6 +83,7 @@ public class ProductMapper extends ResourceMapper<Product, ProductTemplate> {
             productTemplate.setChannels(product.getChannels().stream().map(resource -> {
                 Channel channel = new Channel();
                 channel.setId(resource.getId());
+                channel.setCode(resource.getCode());
                 return channel;
             }).collect(Collectors.toList()));
         }
@@ -88,6 +92,7 @@ public class ProductMapper extends ResourceMapper<Product, ProductTemplate> {
             productTemplate.setOfferTemplateCategories(product.getOfferTemplateCategories().stream().map(resource -> {
                 OfferTemplateCategory offerTemplateCategory = new OfferTemplateCategory();
                 offerTemplateCategory.setId(resource.getId());
+                offerTemplateCategory.setCode(resource.getCode());
                 return offerTemplateCategory;
             }).collect(Collectors.toList()));
         }

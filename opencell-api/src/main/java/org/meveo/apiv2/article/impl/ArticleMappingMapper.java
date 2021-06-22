@@ -27,6 +27,7 @@ public class ArticleMappingMapper extends ResourceMapper<org.meveo.apiv2.article
         if(resource.getMappingScript() != null){
             ScriptInstance scriptInstance = new ScriptInstance();
             scriptInstance.setId(resource.getMappingScript().getId());
+            scriptInstance.setCode(resource.getMappingScript().getCode());
             articleMapping.setMappingScript(scriptInstance);
         }
         return articleMapping;
