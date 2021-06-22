@@ -9044,6 +9044,10 @@ public class OrderAdvancement extends ModuleScript {
     
     <changeSet id="#20210622-INTRD-272" author="TarikFA.">
     	<sql>update ${db.schema.adapted}billing_tax_category set version = 0 where version is null</sql>
+    	<sql>update ${db.schema.adapted}billing_invoice_cat set version = 0 where version is null</sql>
+    	<sql>update ${db.schema.adapted}billing_tax_mapping set version = 0 where version is null</sql>
+    	<sql>update ${db.schema.adapted}billing_tax set version = 0 where version is null</sql>
+    	<sql>update ${db.schema.adapted}billing_tax_class set version = 0 where version is null</sql>
     </changeSet>
     
 </databaseChangeLog>

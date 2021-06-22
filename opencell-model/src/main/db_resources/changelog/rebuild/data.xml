@@ -13356,6 +13356,7 @@ public class ValidateBRScript extends Script {
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_class_no_tax" />
+           <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_class">
         	<column name="id" value="-4"/>
@@ -13364,6 +13365,7 @@ public class ValidateBRScript extends Script {
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_class_reduced" />
+           <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_class">
         	<column name="id" value="-5"/>
@@ -13372,6 +13374,7 @@ public class ValidateBRScript extends Script {
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_class_normal" />
+           <column name="version" valueNumeric="0" />
         </insert>
 
         <insert tableName="billing_tax_category">
@@ -13381,6 +13384,7 @@ public class ValidateBRScript extends Script {
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_category_exempted" />
+           <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_category">
         	<column name="id" value="-3"/>
@@ -13389,6 +13393,7 @@ public class ValidateBRScript extends Script {
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_category_regular" />
+           <column name="version" valueNumeric="0" />
         </insert>
 
         <update tableName="billing_tax">
@@ -13406,6 +13411,7 @@ public class ValidateBRScript extends Script {
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_tax_10" />
+           <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax">
         	<column name="id" value="-5"/>
@@ -13416,6 +13422,7 @@ public class ValidateBRScript extends Script {
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_tax_tax_20" />
+           <column name="version" valueNumeric="0" />
         </insert>
 
         <insert tableName="billing_tax_mapping">
@@ -13424,6 +13431,7 @@ public class ValidateBRScript extends Script {
             <column name="tax_id" value='-1'/>
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
+           <column name="version" valueNumeric="0" />
         </insert>
 		<insert tableName="billing_tax_mapping">
 		    <column name="id" value='-12'/>
@@ -13431,6 +13439,7 @@ public class ValidateBRScript extends Script {
             <column name="tax_id" value='-1'/>
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
+           <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_mapping">
         	<column name="id" value='-13'/>
@@ -13439,6 +13448,7 @@ public class ValidateBRScript extends Script {
             <column name="tax_id" value='-4'/>
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
+           <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_tax_mapping">
         	<column name="id" value='-14'/>
@@ -13447,6 +13457,7 @@ public class ValidateBRScript extends Script {
             <column name="tax_id" value='-5'/>
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
+           <column name="version" valueNumeric="0" />
         </insert>
 
         <insert tableName="billing_invoice_cat">
@@ -13456,6 +13467,7 @@ public class ValidateBRScript extends Script {
             <column name="created" valueDate="now()" />
             <column name="creator" value="applicationInitializer" />
             <column name="uuid" value="billing_invoice_cat_icat_default" />
+           <column name="version" valueNumeric="0" />
         </insert>
         <insert tableName="billing_invoice_sub_cat">
         	<column name="id" value='-3'/>
