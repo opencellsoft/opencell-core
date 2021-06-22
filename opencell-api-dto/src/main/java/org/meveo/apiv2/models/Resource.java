@@ -36,6 +36,8 @@ public interface Resource extends Serializable {
     @Nullable
     Long getId();
     @Nullable
+    String getCode();
+    @Nullable
     @XmlJavaTypeAdapter(Link.JaxbAdapter.class)
     List<Link> getLinks();
 }
