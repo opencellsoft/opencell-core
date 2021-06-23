@@ -13562,6 +13562,73 @@ public class ValidateBRScript extends Script {
     
     <changeSet id="#4924_20200219" author="anasseh" />
     <changeSet id="#4924_20200219_2" author="anasseh" />  
+    
+    <changeSet id="#277_20210622" author="TarikFA.">
+    		<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-31, 0, 0, now(), 'org.meveo.service.quote.script.QuoteValidation', 'quote validation', 'JAVA', '
+            package org.meveo.service.quote.script;
+            public class QuoteValidation extends QuoteValidationScript {}
+            ');]]></sql>
+            
+    		<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-32, 0, 0, now(), 'org.meveo.service.quote.script.OrderAdvancement', 'order advancemnt script', 'JAVA', '
+            package org.meveo.service.quote.script;
+            public class OrderAdvancement extends OrderAdvancementScript {}
+            ');]]></sql>
+            
+            <insert tableName="adm_notification">
+            	<column name="id" value="-11" />
+            	<column name="version" value="0"/>
+            	<column name="disabled" value="0"/>
+            	<column name="created" value="now()"/>
+            	<column name="code" value="NOTIF_QUOTEVALD"/>
+            	<column name="class_name_filter" value="org.meveo.model.cpq.CpqQuote"/>
+            	<column name="event_expression_filter" value="#{event.status == 'ACCEPTED' }"/>
+            	<column name="event_type_filter" value="UPDATED"/>
+            	<column name="creator" value="opencell.admin"/>
+            	<column name="script_instance_id" value="-31"/>
+            	<column name="uuid" value="GENERIC_UUID_CPQUOTE"/>
+            	<column name="priority" value="0"/>
+            	<column name="run_async" value="0"/>
+            	<column name="save_successful_notif" value="1"/>
+            </insert>
+            
+            <insert tableName="adm_notification_params">
+            	<column name="notification_id" value="-11" />
+            	<column name="params" value="#{event}" />
+            	<column name="params_key" value="cpqQuote" />
+            </insert>
+            
+            <insert tableName="adm_script_notification">
+            	<column name="id" value="-11"/>
+            </insert>
+            
+            
+            <insert tableName="adm_notification">
+            	<column name="id" value="-12" />
+            	<column name="version" value="0"/>
+            	<column name="disabled" value="0"/>
+            	<column name="created" value="now()"/>
+            	<column name="code" value="NOTIF_ORDER_ADV"/>
+            	<column name="class_name_filter" value="org.meveo.model.cpq.commercial.CommercialOrder"/>
+            	<column name="event_type_filter" value="ADVT_RATE_INCREASED"/>
+            	<column name="creator" value="opencell.admin"/>
+            	<column name="script_instance_id" value="-32"/>
+            	<column name="uuid" value="GENERIC_UUID_ORDER"/>
+            	<column name="priority" value="0"/>
+            	<column name="run_async" value="0"/>
+            	<column name="save_successful_notif" value="1"/>
+            </insert>
+            
+            <insert tableName="adm_notification_params">
+            	<column name="notification_id" value="-12" />
+            	<column name="params" value="#{event}" />
+            	<column name="params_key" value="commercialOrder" />
+            </insert>
+            
+            <insert tableName="adm_script_notification">
+            	<column name="id" value="-12"/>
+            </insert>
+    </changeSet>
+    
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
