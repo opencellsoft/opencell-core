@@ -2826,15 +2826,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Increment BA invoice date by ID.
      *
      * @param billingRun
-     * @param billingAccount
+     * @param billingAccountId
      *
      * @throws BusinessException business exception
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void incrementBAInvoiceDate(BillingRun billingRun, Long billingAccountId) throws BusinessException {
-        BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
-        incrementBAInvoiceDate(billingRun, billingAccount);
+        if (!billingRun.isExceptionalBR()) {
+            BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+            incrementBAInvoiceDate(billingRun, billingAccount);
+        }
     }
 
     /**

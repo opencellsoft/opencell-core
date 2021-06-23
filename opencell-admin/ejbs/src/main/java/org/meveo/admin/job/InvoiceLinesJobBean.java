@@ -7,19 +7,18 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
-import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.AggregationConfiguration.AggregationOption;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.RatedTransaction;
-import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
@@ -29,7 +28,6 @@ import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceLineService;
 import org.meveo.service.billing.impl.RatedTransactionService;
-import org.meveo.service.catalog.impl.DiscountPlanItemService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -60,9 +58,6 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     
     @Inject
     BillingRunExtensionService billingRunExtensionService;
-    
-    @Inject
-    DiscountPlanItemService discountPlanItemService;
 
     @JpaAmpNewTx
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -70,23 +65,24 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running for with parameter={}", jobInstance.getParametres());
         try {
-        	 List<BillingRun> billingRuns=new ArrayList<BillingRun>();
             List<EntityReferenceWrapper> billingRunWrappers =
                     (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, "InvoiceLinesJob_billingRun");
             String aggregationOption = ofNullable((String) this.getParamOrCFValue(jobInstance, "InvoiceLinesJob_aggregationOption"))
                     .orElse("NO_AGGREGATION");
-            List<Long> billingRunIds = billingRunWrappers != null ?billingRunWrappers.stream()
+            List<Long> billingRunIds = billingRunWrappers != null ? billingRunWrappers.stream()
                     .map(br -> valueOf(br.getCode().split("/")[0]))
-                    .collect(toList()): emptyList();
+                    .collect(toList()) : emptyList();
             Map<String, Object> filters = new HashedMap();
             if (billingRunIds.isEmpty()) {
                 filters.put("status", NEW);
             } else {
                 filters.put("inList id", billingRunIds);
             }
-            billingRuns = billingRunService.list(new PaginationConfiguration(filters));
+            List<BillingRun> billingRuns = billingRunService.list(new PaginationConfiguration(filters));
             if(billingRuns != null && !billingRuns.isEmpty()) {
-             
+                billingRuns.stream()
+                        .filter(billingRun -> billingRun.isExceptionalBR())
+                        .forEach(this::addExceptionalBillingRunData);
                 long excludedBRCount = validateBRList(billingRuns, result);
                 result.setNbItemsProcessedWithError(excludedBRCount);
                 if (excludedBRCount == billingRuns.size()) {
@@ -112,16 +108,31 @@ public class InvoiceLinesJobBean extends BaseJobBean {
                         result.setNbItemsCorrectlyProcessed(groupedRTs.size());
                     }
                 }
-                for(BillingRun billingRun:billingRuns) {
+                for(BillingRun billingRun : billingRuns) {
                 	  billingRun = billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null,
                               BillingRunStatusEnum.INVOICE_LINES_CREATED, new Date());
                 }
-              
             }
         } catch(BusinessException exception) {
             result.registerError(exception.getMessage());
             log.error(format("Failed to run invoice lines job: %s", exception));
         }
+    }
+
+    private void addExceptionalBillingRunData(BillingRun billingRun) {
+        QueryBuilder queryBuilder = fromFilters(billingRun.getFilters());
+        billingRun.setExceptionalRTIds(queryBuilder.getIdQuery(ratedTransactionService.getEntityManager()).getResultList());
+    }
+
+    private QueryBuilder fromFilters(Map<String, String> filters) {
+        QueryBuilder queryBuilder;
+        if(filters.containsKey("SQL")) {
+            queryBuilder = new QueryBuilder(filters.get("SQL"));
+        } else {
+            PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
+            queryBuilder = ratedTransactionService.getQuery(configuration);
+        }
+        return queryBuilder;
     }
 
     private long validateBRList(List<BillingRun> billingRuns, JobExecutionResultImpl result) {
