@@ -174,8 +174,10 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.invalidateRTByInvoice", query = "UPDATE RatedTransaction r set r.invoice=null, r.status='OPEN' WHERE r.invoice=:invoice"),
         @NamedQuery(name = "RatedTransaction.markAsProcessed", query = "UPDATE RatedTransaction rt set rt.status='PROCESSED' WHERE rt.id in (:listOfIds)"),
         @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByRtIdInBatch", query = "SELECT new org.meveo.admin.async.AmountsToInvoice(r.billingAccount.id, sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND r.id in (:ids) group by r.billingAccount.id"),
-        @NamedQuery(name = "RatedTransaction.BillingAccountByRTIds", query = "SELECT rt.billingAccount FROM RatedTransaction rt WHERE rt.id in (:ids)")
-})
+        @NamedQuery(name = "RatedTransaction.BillingAccountByRTIds", query = "SELECT rt.billingAccount FROM RatedTransaction rt WHERE rt.id in (:ids)"),
+        @NamedQuery(name = "RatedTransaction.linkRTWithInvoiceLine", query = "UPDATE RatedTransaction rt set rt.invoiceLine = :il WHERE rt.id = :id"),
+        @NamedQuery(name = "RatedTransaction.linkRTWithInvoice", query = "UPDATE RatedTransaction rt set rt.invoice = :invoice, rt.status='BILLED' WHERE rt.invoiceLine.id in :ids")
+        })
 public class RatedTransaction extends BaseEntity implements ISearchable, ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;

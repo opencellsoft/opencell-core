@@ -1,6 +1,7 @@
 package org.meveo.admin.job;
 
 import static java.math.BigDecimal.ZERO;
+import static java.util.List.of;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -52,6 +53,8 @@ public class InvoiceLinesFactory {
     		(OrderLotService) getServiceInterface(OrderLotService.class.getSimpleName());
     private ChargeInstanceService chargeInstanceService =
             (ChargeInstanceService) getServiceInterface(ChargeInstanceService.class.getSimpleName());
+    private RatedTransactionService ratedTransactionService =
+            (RatedTransactionService) getServiceInterface(RatedTransactionService.class.getSimpleName());
 
     /**
      *
@@ -73,6 +76,9 @@ public class InvoiceLinesFactory {
         InvoiceLine invoiceLine = new InvoiceLine();
         ofNullable(record.get("billing_account__id"))
                 .ifPresent(id -> invoiceLine.setBillingAccount(billingAccountService.findById(((BigInteger) id).longValue())));
+        ofNullable(record.get("id"))
+                .ifPresent(id ->
+                        invoiceLine.setRatedTransactions(of(ratedTransactionService.findById(((BigInteger) id).longValue()))));
         ofNullable(record.get("billing_run_id"))
                 .ifPresent(id -> invoiceLine.setBillingRun(billingRunService.findById(((BigInteger) id).longValue())));
         ofNullable(record.get("service_instance_id"))
