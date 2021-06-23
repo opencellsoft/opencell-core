@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+@SuppressWarnings("serial")
 @Entity
 @ExportIdentifier({ "code" })
 @Table(name = "cpq_price_plan_matrix_value")
@@ -31,7 +32,24 @@ import java.util.Set;
 @NamedQuery(name="PricePlanMatrixValue.findByPricePlanMatrixLine", query = "select p from PricePlanMatrixValue p where p.pricePlanMatrixLine=:pricePlanMatrixLine")
 public class PricePlanMatrixValue extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH })
+
+	public PricePlanMatrixValue(PricePlanMatrixValue copy) {
+		this.pricePlanMatrixColumn = copy.pricePlanMatrixColumn;
+		this.pricePlanMatrixLine = copy.pricePlanMatrixLine;
+		this.longValue = copy.longValue;
+		this.doubleValue = copy.doubleValue;
+		this.stringValue = copy.stringValue;
+		this.dateValue = copy.dateValue;
+		this.fromDateValue = copy.fromDateValue;
+		this.toDateValue = copy.toDateValue;
+		this.fromDoubleValue = copy.fromDoubleValue;
+		this.toDoubleValue = copy.toDoubleValue;
+	}
+
+	public PricePlanMatrixValue() {
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH })
     @JoinColumn(name = "ppm_column_id")
     @NotNull
     private PricePlanMatrixColumn pricePlanMatrixColumn;

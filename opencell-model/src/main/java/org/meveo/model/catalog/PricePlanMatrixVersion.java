@@ -80,6 +80,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 		this.lines = new HashSet<>();
 		this.columns = new HashSet<>();
 		this.priority = copy.priority;
+		this.version = 1;
 	}
 
 

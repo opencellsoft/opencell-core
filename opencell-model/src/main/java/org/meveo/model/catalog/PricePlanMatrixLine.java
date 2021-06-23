@@ -3,6 +3,7 @@ package org.meveo.model.catalog;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.Auditable;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.cpq.AttributeValue;
@@ -23,6 +24,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@SuppressWarnings("serial")
 @Entity
 @ExportIdentifier({"code"})
 @Table(name = "cpq_price_plan_matrix_line")
@@ -38,7 +40,23 @@ public class PricePlanMatrixLine extends AuditableEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "price_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    public PricePlanMatrixLine(PricePlanMatrixLine copy) {
+		this.pricePlanMatrixVersion = copy.pricePlanMatrixVersion;
+		this.description = copy.description;
+		this.pricetWithoutTax = copy.pricetWithoutTax;
+		this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
+		this.priority = copy.priority;
+	}
+
+    public PricePlanMatrixLine() {
+	}
+
+	protected PricePlanMatrixLine(Auditable auditable) {
+		super(auditable);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Column(name = "price_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
     @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
     private BigDecimal pricetWithoutTax;
 

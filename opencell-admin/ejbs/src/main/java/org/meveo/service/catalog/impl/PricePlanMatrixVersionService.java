@@ -1,20 +1,18 @@
 package org.meveo.service.catalog.impl;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.PricePlanMatrixColumn;
 import org.meveo.model.catalog.PricePlanMatrixLine;
+import org.meveo.model.catalog.PricePlanMatrixValue;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.service.base.PersistenceService;
@@ -81,27 +79,16 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     }
 
     public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion) {
-        PricePlanMatrixVersion duplicate = new PricePlanMatrixVersion();
-        try {
-            BeanUtils.copyProperties(duplicate, pricePlanMatrixVersion);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new BusinessException("Failed to clone price plan matrix version", e);
-        }
+        PricePlanMatrixVersion duplicate = new PricePlanMatrixVersion(pricePlanMatrixVersion);
         String ppmCode = pricePlanMatrixVersion.getPricePlanMatrix().getCode();
         Integer lastVersion = getLastVersion(ppmCode);
-        duplicate.setId(null);
-        duplicate.setColumns(new HashSet<>());
-        duplicate.setLines(new HashSet<>());
-        duplicate.setVersion(0);
         duplicate.setCurrentVersion(lastVersion + 1);
-        duplicate.setStatus(VersionStatusEnum.DRAFT);
-        duplicate.setStatusDate(new Date());
         try {
             this.create(duplicate);
         }catch(BusinessException e) {
             throw new BusinessException(String.format("Can not duplicate the version of product from version product (%d)", duplicate.getId()), e);
         }
-
+        pricePlanMatrixVersion = (PricePlanMatrixVersion) Hibernate.unproxy(pricePlanMatrixVersion);
         return duplicate;
     }
 
@@ -136,6 +123,45 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     	List<PricePlanMatrixVersion> pricesVersions = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.lastVersion")
                 												.setParameter("pricePlanMatrixCode", ppmCode).getResultList();
         return pricesVersions.isEmpty() ? null : pricesVersions.get(0);
+    }
+    
+    @Inject 
+	private PricePlanMatrixColumnService pricePlanMatrixColumnService;
+    @Inject
+    private PricePlanMatrixValueService pricePlanMatrixValueService;
+    @Inject
+    private PricePlanMatrixLineService pricePlanMatrixLineService;
+    
+    public PricePlanMatrixVersion duplicateColumns(PricePlanMatrixVersion entity, Set<PricePlanMatrixColumn> columns ) {
+    	if(columns != null && !columns.isEmpty()) {
+        	columns.forEach(ppmc -> {
+        		ppmc.getPricePlanMatrixValues().size();
+        		//var pricePlanMatrixValue = ppmc.getPricePlanMatrixValues();
+        		pricePlanMatrixColumnService.detach(ppmc);
+        		var duplicatePricePlanMatrixColumn = new PricePlanMatrixColumn(ppmc);
+        		duplicatePricePlanMatrixColumn.setPricePlanMatrixVersion(entity);
+        		pricePlanMatrixColumnService.create(duplicatePricePlanMatrixColumn);
+        	});
+    	}
+    	return entity;
+    }
+    
+    public PricePlanMatrixVersion duplicateLines(PricePlanMatrixVersion entity, Set<PricePlanMatrixLine> lines) {
+    	if(lines != null && !lines.isEmpty()) {
+    		lines.forEach(ppml -> {
+    			ppml.getPricePlanMatrixValues().size();
+    			//var pricePlanMatrixValue = ppml.getPricePlanMatrixValues();
+    			pricePlanMatrixLineService.detach(ppml);
+    			var duplicateLine = new PricePlanMatrixLine(ppml);
+    			pricePlanMatrixLineService.create(duplicateLine);
+    		});
+    	}
+    	return entity;
+    }
+    
+    public void duplicatePricePlanValue( PricePlanMatrixColumn column, PricePlanMatrixLine line, Set<PricePlanMatrixValue> pricePlanMatrixValues) {
+    	
+    	return;
     }
     
     

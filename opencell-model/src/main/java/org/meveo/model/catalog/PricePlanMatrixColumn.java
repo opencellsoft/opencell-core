@@ -40,7 +40,22 @@ import org.meveo.model.cpq.Product;
 })
 public class PricePlanMatrixColumn extends BusinessEntity {
 
-    @ManyToOne
+	public PricePlanMatrixColumn() {
+	}
+
+	public PricePlanMatrixColumn(PricePlanMatrixColumn copy) {
+		this.pricePlanMatrixVersion = copy.pricePlanMatrixVersion;
+		this.position = copy.position;
+		this.type = copy.type;
+		this.elValue = copy.elValue;
+		this.offerTemplate = copy.offerTemplate;
+		this.product = copy.product;
+		this.attribute = copy.attribute;
+		this.isRange = copy.isRange;
+		this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
+	}
+
+	@ManyToOne
     @JoinColumn(name = "ppm_version_id")
     @NotNull
     private PricePlanMatrixVersion pricePlanMatrixVersion;
