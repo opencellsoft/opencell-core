@@ -10,6 +10,7 @@ import org.meveo.apiv2.article.impl.ArticleMappingLineResourceImpl;
 import org.meveo.apiv2.article.impl.ArticleMappingResourceImpl;
 import org.meveo.apiv2.billing.impl.DiscountPlanInstanceResourceImpl;
 import org.meveo.apiv2.billing.impl.InvoiceResourceImpl;
+import org.meveo.apiv2.billing.impl.InvoicingResourceImpl;
 import org.meveo.apiv2.billing.impl.RatedTransactionResourceImpl;
 import org.meveo.apiv2.catalog.resource.DiscountPlanResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
@@ -42,7 +43,7 @@ public class GenericOpencellRestful extends Application {
     private static final String API_LIST_DEFAULT_LIMIT_KEY = "api.list.defaultLimit";
     private static String GENERIC_API_REQUEST_LOGGING_CONFIG;
     private static boolean GENERIC_API_REQUEST_EXTRACT_LIST;
-    public static List<Map<String,String>> VERSION_INFO = new ArrayList<Map<String, String>>();
+    public static List<Map<String,String>> VERSION_INFO = new ArrayList<>();
     public static Map<String,List<String>> ENTITIES_MAP = new HashMap();
     public static long API_LIST_DEFAULT_LIMIT;
 
@@ -71,7 +72,7 @@ public class GenericOpencellRestful extends Application {
 				OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class,
 				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class,
 				DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class,
-				BusinessExceptionMapper.class).collect(Collectors.toSet());
+				BusinessExceptionMapper.class, InvoicingResourceImpl.class).collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
 			resources.add(GenericApiLoggingFilter.class);
 			log.info(

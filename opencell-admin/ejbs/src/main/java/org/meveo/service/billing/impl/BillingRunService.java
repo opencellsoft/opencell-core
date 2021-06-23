@@ -19,16 +19,7 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -49,6 +40,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.job.InvoicingJob;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
@@ -57,6 +49,7 @@ import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.*;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -198,10 +191,17 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         if (billingCycle != null) {
             billingAccounts = billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
         } else {
-            String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
-            for (String id : baIds) {
-                Long baId = Long.valueOf(id);
-                billingAccounts.add(billingAccountService.findById(baId));
+            if(billingRun.isExceptionalBR()) {
+                billingAccounts = (List<BillingAccount>) ratedTransactionService.getEntityManager()
+                                            .createNamedQuery("RatedTransaction.BillingAccountByRTIds")
+                                            .setParameter("ids", billingRun.getExceptionalRTIds())
+                                            .getResultList();
+            } else {
+                String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
+                for (String id : baIds) {
+                    Long baId = Long.valueOf(id);
+                    billingAccounts.add(billingAccountService.findById(baId));
+                }
             }
         }
 
@@ -633,6 +633,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
 
         } else {
+            if (billingRun.getExceptionalRTIds() != null && !billingRun.getExceptionalRTIds().isEmpty()) {
+                return (List<BillingAccount>) ratedTransactionService.getEntityManager()
+                        .createNamedQuery("RatedTransaction.BillingAccountByRTIds")
+                        .setParameter("ids", billingRun.getExceptionalRTIds())
+                        .getResultList();
+            }
             List<BillingAccount> result = new ArrayList<>();
             String[] baIds = billingRun.getSelectedBillingAccounts().split(",");
 
@@ -731,11 +737,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     public List<RatedTransaction> loadRTsByBillingRuns(List<BillingRun> billingRuns){
         List<RatedTransaction> ratedTransactions = new ArrayList<>();
-        for(BillingRun billingRun : billingRuns){
+        for(BillingRun billingRun : billingRuns) {
             List<? extends IBillableEntity> billableEntities = getEntitiesToInvoice(billingRun);
             for (IBillableEntity be :  billableEntities){
-                ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0),
-                        billingRun.getLastTransactionDate(), null, rtPaginationSize));
+                ratedTransactions.addAll(ratedTransactionService.listRTsToInvoice(be, new Date(0), billingRun.getLastTransactionDate(),
+                        billingRun.isExceptionalBR() ? createRatedTransactionFilter(billingRun.getFilters()) : null, rtPaginationSize));
             }
         }
         return ratedTransactions;
@@ -1032,42 +1038,53 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     public List<AmountsToInvoice> getAmountsToInvoice(BillingRun billingRun) {
 
-        BillingCycle billingCycle = billingRun.getBillingCycle();
+        if(billingRun.isExceptionalBR()) {
+            if(billingRun.getExceptionalRTIds().isEmpty()) {
+                return Collections.EMPTY_LIST;
+            }
+            return getEntityManager()
+                    .createNamedQuery("RatedTransaction.sumTotalInvoiceableByRtIdInBatch", AmountsToInvoice.class)
+                    .setParameter("ids", billingRun.getExceptionalRTIds())
+                    .getResultList();
 
-        Date startDate = billingRun.getStartDate();
-        Date endDate = billingRun.getEndDate();
-
-        if ((startDate != null) && (endDate == null)) {
-            endDate = new Date();
-        }
-        if (endDate != null && startDate == null) {
-            startDate = new Date(0);
-        }
-
-        String sqlName;
-        if (billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION) {
-            sqlName = "RatedTransaction.sumTotalInvoiceableBySubscriptionInBatch";
         } else {
-            if (startDate == null) sqlName = "RatedTransaction.sumTotalInvoiceableByBAInBatch";
-            else sqlName = "RatedTransaction.sumTotalInvoiceableByBAInBatchLimitByNextInvoiceDate";
-        }
+            BillingCycle billingCycle = billingRun.getBillingCycle();
 
-        TypedQuery<AmountsToInvoice> query = getEntityManager().createNamedQuery(sqlName, AmountsToInvoice.class).setParameter("firstTransactionDate", new Date(0))
-            .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).setParameter("billingCycle", billingCycle);
+            Date startDate = billingRun.getStartDate();
+            Date endDate = billingRun.getEndDate();
 
-        if (billingCycle.getType() == BillingEntityTypeEnum.BILLINGACCOUNT && startDate != null) {
-            startDate = DateUtils.setDateToEndOfDay(startDate);
-            if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
-                endDate = DateUtils.setDateToEndOfDay(endDate);
-            } else {
-                endDate = DateUtils.setDateToStartOfDay(endDate);
+            if ((startDate != null) && (endDate == null)) {
+                endDate = new Date();
+            }
+            if (endDate != null && startDate == null) {
+                startDate = new Date(0);
             }
 
-            query.setParameter("startDate", startDate);
-            query.setParameter("endDate", endDate);
-        }
+            String sqlName;
+            if (billingCycle.getType() == BillingEntityTypeEnum.SUBSCRIPTION) {
+                sqlName = "RatedTransaction.sumTotalInvoiceableBySubscriptionInBatch";
+            } else {
+                if (startDate == null) sqlName = "RatedTransaction.sumTotalInvoiceableByBAInBatch";
+                else sqlName = "RatedTransaction.sumTotalInvoiceableByBAInBatchLimitByNextInvoiceDate";
+            }
 
-        return query.getResultList();
+            TypedQuery<AmountsToInvoice> query = getEntityManager().createNamedQuery(sqlName, AmountsToInvoice.class).setParameter("firstTransactionDate", new Date(0))
+                    .setParameter("lastTransactionDate", billingRun.getLastTransactionDate()).setParameter("billingCycle", billingCycle);
+
+            if (billingCycle.getType() == BillingEntityTypeEnum.BILLINGACCOUNT && startDate != null) {
+                startDate = DateUtils.setDateToEndOfDay(startDate);
+                if (Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("invoicing.includeEndDate", "false"))) {
+                    endDate = DateUtils.setDateToEndOfDay(endDate);
+                } else {
+                    endDate = DateUtils.setDateToStartOfDay(endDate);
+                }
+
+                query.setParameter("startDate", startDate);
+                query.setParameter("endDate", endDate);
+            }
+
+            return query.getResultList();
+        }
     }
 
     /**
@@ -1350,5 +1367,28 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
 
         return new AsyncResult<>("OK");
+    }
+
+    public Filter createRatedTransactionFilter(Map<String, String> filters) {
+        QueryBuilder queryBuilder;
+        if(filters.containsKey("SQL")) {
+            queryBuilder = new QueryBuilder(filters.get("SQL"));
+        } else {
+            PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
+            queryBuilder = ratedTransactionService.getQuery(configuration);
+        }
+        Filter rtFilter = new Filter();
+        rtFilter.setPollingQuery(buildPollingQuery(queryBuilder));
+        return rtFilter;
+    }
+
+    private String buildPollingQuery(QueryBuilder queryBuilder) {
+        String pollingQuery = queryBuilder.getSqlString();
+        if(queryBuilder.getParams() != null) {
+            for(Map.Entry<String, Object> param : queryBuilder.getParams().entrySet()) {
+                pollingQuery = pollingQuery.replace(":" + param.getKey(), "\'"+ param.getValue() + "\'");
+            }
+        }
+        return pollingQuery;
     }
 }
