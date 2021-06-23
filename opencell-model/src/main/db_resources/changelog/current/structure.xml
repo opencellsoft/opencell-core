@@ -9024,5 +9024,30 @@ public class OrderAdvancement extends ModuleScript {
                                  initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version"/>
     </changeSet>
-        
+    
+ <changeSet id="#20210614_540_update_script_quotation_and_order" author="TarikFA.">
+   
+     <sql><![CDATA[update ${db.schema.adapted}meveo_script_instance 
+     			set script = 'package org.meveo.service.quote.script;
+
+	public class QuoteValidation extends QuoteValidationScript {}'
+	where code = 'org.meveo.api.billing.QuoteValidation'
+        ]]></sql>
+
+     <sql><![CDATA[update ${db.schema.adapted}meveo_script_instance 
+     			set script = 'package org.meveo.service.quote.script;
+
+	public class OrderAdvancement extends OrderAdvancementScript {}'
+	where code = 'org.meveo.api.billing.OrderAdvancement'
+        ]]></sql>
+    </changeSet>
+    
+    <changeSet id="#20210622-INTRD-272" author="TarikFA.">
+    	<sql>update ${db.schema.adapted}billing_tax_category set version = 0 where version is null</sql>
+    	<sql>update ${db.schema.adapted}billing_invoice_cat set version = 0 where version is null</sql>
+    	<sql>update ${db.schema.adapted}billing_tax_mapping set version = 0 where version is null</sql>
+    	<sql>update ${db.schema.adapted}billing_tax set version = 0 where version is null</sql>
+    	<sql>update ${db.schema.adapted}billing_tax_class set version = 0 where version is null</sql>
+    </changeSet>
+    
 </databaseChangeLog>
