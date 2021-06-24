@@ -2448,9 +2448,7 @@
             <column name="pr_currency_id" type="bigint" />
             <column name="pr_language_id" type="bigint" />
             <column name="invoice_date" type="datetime" />
-            <column name="last_transaction_date" type="datetime">
-                <constraints nullable="false" />
-            </column>
+            <column name="last_transaction_date" type="datetime"/>
             <column name="uuid" type="varchar(60)">
                 <constraints nullable="false" />
             </column>
@@ -2466,6 +2464,7 @@
             <column name="minimum_applied" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="threshold_checked" type="${type.boolean}" defaultValueNumeric="0"/>
             <column name="discount_applied" type="${type.boolean}" defaultValueNumeric="0"/>
+            <column name="filters" type="text" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-166">
