@@ -18,10 +18,7 @@
 
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -36,10 +33,13 @@ import org.meveo.admin.async.AmountsToInvoice;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.*;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
@@ -158,6 +158,14 @@ public class InvoicingJobBean extends BaseJobBean {
             type = billingCycle.getType();
         }
 
+        if(billingRun.isExceptionalBR()) {
+            QueryBuilder queryBuilder = fromFilters(billingRun.getFilters());
+            billingRun.setExceptionalRTIds(queryBuilder.getIdQuery(ratedTransactionService.getEntityManager()).getResultList());
+            if(billingRun.getExceptionalRTIds().size() == 0) {
+                jobExecutionResult.setReport("Exceptional Billing filters returning no rated transaction to process");
+            }
+        }
+
         MinAmountForAccounts minAmountForAccounts = new MinAmountForAccounts();
         if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus()) || BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
             minAmountForAccounts = ratedTransactionService.isMinAmountForAccountsActivated();
@@ -250,6 +258,17 @@ public class InvoicingJobBean extends BaseJobBean {
         return jobExecutionResult;
     }
 
+    private QueryBuilder fromFilters(Map<String, String> filters) {
+        QueryBuilder queryBuilder;
+        if(filters.containsKey("SQL")) {
+            queryBuilder = new QueryBuilder(filters.get("SQL"));
+        } else {
+            PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
+            queryBuilder = ratedTransactionService.getQuery(configuration);
+        }
+        return queryBuilder;
+    }
+
     /**
      * Calculate amounts to invoice, link with Billing run and update Billing account with amount to invoice (if it is a billable entity). One billable entity at a time in a separate transaction.
      * 
@@ -279,7 +298,8 @@ public class InvoicingJobBean extends BaseJobBean {
         // Use billable amount calculation one billable entity at a time when minimum billable amount rule is used or billable entities are provided as parameter of billing run
         // (billingCycle=null)
         // NOTE: invoice by order is also included here as there is no FK between Order and RT
-        if (billingCycle == null || billingCycle.getType() == BillingEntityTypeEnum.ORDER || minAmountForAccounts.isMinAmountCalculationActivated()) {
+        if ((billingCycle == null || billingCycle.getType() == BillingEntityTypeEnum.ORDER
+                || minAmountForAccounts.isMinAmountCalculationActivated()) && !billingRun.isExceptionalBR()) {
             List<IBillableEntity> entities = (List<IBillableEntity>) billingRunService.getEntitiesToInvoice(billingRun);
 
             totalEntityCount = entities != null ? entities.size() : 0;
@@ -292,7 +312,7 @@ public class InvoicingJobBean extends BaseJobBean {
 
                 Function<IBillableEntity, IBillableEntity> task = (billableEntity) -> ratedTransactionService.updateEntityTotalAmountsAndLinkToBR(billableEntity, billingRun, minAmountForAccounts);
 
-                entitiesToBill = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult, new SynchronizedIterator<IBillableEntity>(entities), task, nbRuns, waitingMillis, false, JobSpeedEnum.NORMAL,
+                entitiesToBill = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult, new SynchronizedIterator<>(entities), task, nbRuns, waitingMillis, false, JobSpeedEnum.NORMAL,
                     true);
             }
 
@@ -315,7 +335,9 @@ public class InvoicingJobBean extends BaseJobBean {
 
                 log.info("Will update BR amount totals for Billing run {}. Will invoice {} out of {} entities of type {}", billingRun.getId(), (entitiesToBill != null ? entitiesToBill.size() : 0), totalEntityCount,
                     type);
-                billingRunExtensionService.updateBRAmounts(billingRun.getId(), entitiesToBill);
+                if(!billingRun.isExceptionalBR()) {
+                    billingRunExtensionService.updateBRAmounts(billingRun.getId(), entitiesToBill);
+                }
 
             }
         }
@@ -335,8 +357,9 @@ public class InvoicingJobBean extends BaseJobBean {
      * @throws BusinessException business exception.
      */
     @SuppressWarnings({ "unchecked" })
-    private void createAgregatesAndInvoice(BillingRun billingRun, BillingEntityTypeEnum type, JobExecutionResultImpl jobExecutionResult, List<? extends IBillableEntity> billableEntities,
-            boolean alreadyInstantiatedMinRTs, MinAmountForAccounts minAmountForAccounts) {
+    private void createAgregatesAndInvoice(BillingRun billingRun, BillingEntityTypeEnum type, JobExecutionResultImpl jobExecutionResult,
+                                           List<? extends IBillableEntity> billableEntities, boolean alreadyInstantiatedMinRTs,
+                                           MinAmountForAccounts minAmountForAccounts) {
 
         if (billableEntities == null || billableEntities.isEmpty()) {
             return;
@@ -351,19 +374,20 @@ public class InvoicingJobBean extends BaseJobBean {
 
         boolean instantiateMinRts = !alreadyInstantiatedMinRTs && minAmountForAccounts.isMinAmountCalculationActivated();
 
-        log.info("Will create invoices for Billing run {} for {} entities of type {}. Min RTs were {} instantiated before. {}", billingRun.getId(), (billableEntities != null ? billableEntities.size() : 0), type,
-            alreadyInstantiatedMinRTs ? "" : "NOT",
-            !instantiateMinRts ? ""
-                    : "Minimum invoicing amount is used for serviceInstance " + minAmountForAccounts.isServiceHasMinAmount() + ", subscription " + minAmountForAccounts.isSubscriptionHasMinAmount() + ", billingAccount "
-                            + minAmountForAccounts.isBaHasMinAmount());
+        log.info("Will create invoices for Billing run {} for {} entities of type {}. Min RTs were {} instantiated before. {}",
+                billingRun.getId(), (billableEntities != null ? billableEntities.size() : 0), type, alreadyInstantiatedMinRTs ? "" : "NOT",
+                !instantiateMinRts ? "" : "Minimum invoicing amount is used for serviceInstance " + minAmountForAccounts.isServiceHasMinAmount() +
+                    ", subscription " + minAmountForAccounts.isSubscriptionHasMinAmount() + ", billingAccount " + minAmountForAccounts.isBaHasMinAmount());
 
         MinAmountForAccounts minAmountForAccountsIncludesFirstRun = minAmountForAccounts.includesFirstRun(!alreadyInstantiatedMinRTs);
 
-        Function<IBillableEntity, List<Invoice>> task = (entityToInvoice) -> invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice, billingRun, null, null, null, null, minAmountForAccounts, false,
-            !billingRun.isSkipValidationScript());
+        Function<IBillableEntity, List<Invoice>> task = (entityToInvoice) -> invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice,
+                billingRun, billingRun.isExceptionalBR() ? billingRunService.createRatedTransactionFilter(billingRun.getFilters()) : null,
+                null, null, null, minAmountForAccounts, false, !billingRun.isSkipValidationScript());
 
-        List<List<Invoice>> invoices = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult, new SynchronizedIterator<IBillableEntity>((Collection<IBillableEntity>) billableEntities), task,
-            nbRuns, waitingMillis, false, jobInstance.getJobSpeed(), true);
+        List<List<Invoice>> invoices = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult,
+                new SynchronizedIterator<>((Collection<IBillableEntity>) billableEntities), task, nbRuns,
+                waitingMillis, false, jobInstance.getJobSpeed(), true);
     }
 
     /**
@@ -408,9 +432,6 @@ public class InvoicingJobBean extends BaseJobBean {
      * Assign invoice number and increment BA invoice dates.
      *
      * @param billingRun The billing run
-     * @param nbRuns the nb runs
-     * @param waitingMillis The waiting millis
-     * @param jobInstanceId The job instance id
      * @param jobExecutionResult the Job execution result
      * @throws BusinessException the business exception
      */
@@ -460,7 +481,7 @@ public class InvoicingJobBean extends BaseJobBean {
                 invoiceService.updateStatus(invoiceId, InvoiceStatusEnum.VALIDATED);
 
             };
-            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<Long>((Collection<Long>) invoiceIds), task, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);
+            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);
 
             List<Long> baIds = invoiceService.getBillingAccountIds(billingRun.getId(), invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(), invoicesToNumberInfo.getInvoiceDate());
 
@@ -469,7 +490,7 @@ public class InvoicingJobBean extends BaseJobBean {
                 invoiceService.incrementBAInvoiceDate(billingRun, baId);
             };
 
-            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<Long>((Collection<Long>) baIds), task, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(baIds), task, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
         }
     }
 

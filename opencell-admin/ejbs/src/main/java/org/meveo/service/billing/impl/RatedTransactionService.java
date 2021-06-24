@@ -531,24 +531,28 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         IBillableEntity entity = null;
 
-        switch (billingRun.getBillingCycle().getType()) {
-        case BILLINGACCOUNT:
+        if(billingRun.isExceptionalBR()) {
             entity = billingAccountService.findById(entityId);
-            // billingAccount = (BillingAccount) entity;
-            break;
+        } else {
+            switch (billingRun.getBillingCycle().getType()) {
+                case BILLINGACCOUNT:
+                    entity = billingAccountService.findById(entityId);
+                    // billingAccount = (BillingAccount) entity;
+                    break;
 
-        case SUBSCRIPTION:
-            entity = subscriptionService.findById(entityId);
-            // billingAccount = ((Subscription) entity).getUserAccount() != null ? ((Subscription) entity).getUserAccount().getBillingAccount() : null;
-            break;
+                case SUBSCRIPTION:
+                    entity = subscriptionService.findById(entityId);
+                    // billingAccount = ((Subscription) entity).getUserAccount() != null ? ((Subscription) entity).getUserAccount().getBillingAccount() : null;
+                    break;
 
-        case ORDER:
-            entity = orderService.findById(entityId);
-            // if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
-            // billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ? (((Order)
-            // entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() : null;
-            // }
-            break;
+                case ORDER:
+                    entity = orderService.findById(entityId);
+                    // if ((((Order) entity).getUserAccounts() != null) && !((Order) entity).getUserAccounts().isEmpty()) {
+                    // billingAccount = ((Order) entity).getUserAccounts().stream().findFirst().get() != null ? (((Order)
+                    // entity).getUserAccounts().stream().findFirst().get()).getBillingAccount() : null;
+                    // }
+                    break;
+            }
         }
         entity.setTotalInvoicingAmountWithoutTax(totalAmounts.getAmountWithoutTax());
         entity.setTotalInvoicingAmountWithTax(totalAmounts.getAmountWithTax());

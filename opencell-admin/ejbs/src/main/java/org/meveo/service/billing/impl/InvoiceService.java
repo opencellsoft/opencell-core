@@ -2826,15 +2826,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Increment BA invoice date by ID.
      *
      * @param billingRun
-     * @param billingAccount
+     * @param billingAccountId
      *
      * @throws BusinessException business exception
      */
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void incrementBAInvoiceDate(BillingRun billingRun, Long billingAccountId) throws BusinessException {
-        BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
-        incrementBAInvoiceDate(billingRun, billingAccount);
+        if (!billingRun.isExceptionalBR()) {
+            BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+            incrementBAInvoiceDate(billingRun, billingAccount);
+        }
     }
 
     /**
@@ -4996,8 +4998,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 commit();
             }
 
-            return createAggregatesAndInvoiceFromIls(entityToInvoice, billingRun, filter, invoiceDate, firstTransactionDate, lastTransactionDate, isDraft, billingCycle, ba,
-                    paymentMethod, invoiceType, balance, automaticInvoiceCheck, hasMin, null);
+            return createAggregatesAndInvoiceFromIls(entityToInvoice, billingRun, filter, invoiceDate, firstTransactionDate,
+                    lastTransactionDate, isDraft, billingCycle, ba, paymentMethod, invoiceType, balance, automaticInvoiceCheck, hasMin, null);
         } catch (Exception e) {
             log.error("Error for entity {}", entityToInvoice.getCode(), e);
             if (entityToInvoice instanceof BillingAccount) {
@@ -5015,9 +5017,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Invoice> createAggregatesAndInvoiceFromIls(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter, Date invoiceDate, Date firstTransactionDate,
-            Date lastTransactionDate, boolean isDraft, BillingCycle defaultBillingCycle, BillingAccount billingAccount, PaymentMethod defaultPaymentMethod,
-            InvoiceType defaultInvoiceType, BigDecimal balance, boolean automaticInvoiceCheck, boolean hasMin, Invoice existingInvoice) throws BusinessException {
+    private List<Invoice> createAggregatesAndInvoiceFromIls(IBillableEntity entityToInvoice, BillingRun billingRun, Filter filter,
+                                                            Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate,
+                                                            boolean isDraft, BillingCycle defaultBillingCycle,
+                                                            BillingAccount billingAccount, PaymentMethod defaultPaymentMethod,
+                                                            InvoiceType defaultInvoiceType, BigDecimal balance, boolean automaticInvoiceCheck,
+                                                            boolean hasMin, Invoice existingInvoice) throws BusinessException {
         List<Invoice> invoiceList = new ArrayList<>();
         boolean moreInvoiceLinesExpected = true;
         Map<String, InvoiceAggregateProcessingInfo> invoiceLineGroupToInvoiceMap = new HashMap<>();
@@ -5032,7 +5037,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             InvoiceLinesToInvoice iLsToInvoice = getInvoiceLinesGroups(entityToInvoice, billingAccount, billingRun,
-                    defaultBillingCycle, defaultInvoiceType, filter, firstTransactionDate, lastTransactionDate, isDraft, defaultPaymentMethod, existingInvoice);
+                    defaultBillingCycle, defaultInvoiceType, filter, firstTransactionDate, lastTransactionDate,
+                    isDraft, defaultPaymentMethod, existingInvoice);
             List<InvoiceLinesGroup> invoiceLinesGroupsPaged = iLsToInvoice.invoiceLinesGroups;
             moreInvoiceLinesExpected = iLsToInvoice.moreInvoiceLines;
             if (moreInvoiceLinesExpected) {
@@ -5068,7 +5074,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     }
 
                     if (invoiceAggregateProcessingInfo.invoice == null) {
-                    	if(existingInvoice!=null) {
+                    	if(existingInvoice != null) {
                     		cleanInvoiceAggregates(existingInvoice.getId());
                     		invoiceAggregateProcessingInfo.invoice = existingInvoice;
                         } else {
@@ -5096,11 +5102,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         List<InvoiceLine> invoiceLines = new ArrayList<>();
 
                         for (InvoiceLine invoiceLine : subAggregate.getInvoiceLinesToAssociate()) {
-
                             if (invoiceLine.isTaxRecalculated()) {
                                 invoiceLines.add(invoiceLine);
                             } else {
-                                invoiceLineIds.add(invoice.getId());
+                                invoiceLineIds.add(invoiceLine.getId());
                             }
                         }
 
@@ -5137,6 +5142,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                 .setParameter("billingRun", billingRun)
                                 .setParameter("invoice", invoice)
                                 .setParameter("now", now)
+                                .setParameter("ids", ilIds)
+                                .executeUpdate();
+                        em.createNamedQuery("RatedTransaction.linkRTWithInvoice")
+                                .setParameter("invoice", invoice)
                                 .setParameter("ids", ilIds)
                                 .executeUpdate();
                     }
@@ -5187,7 +5196,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * delete invoice aggregates
      * 
-	 * @param existingInvoice
+	 * @param invoiceId
 	 */
 	public void cleanInvoiceAggregates(Long invoiceId) {
 		getEntityManager().createNamedQuery("RatedTransaction.deleteInvoiceSubCategoryAggrByInvoice").setParameter("invoiceId", invoiceId).executeUpdate();

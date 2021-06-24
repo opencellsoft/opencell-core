@@ -9041,6 +9041,15 @@ public class OrderAdvancement extends ModuleScript {
 	where code = 'org.meveo.api.billing.OrderAdvancement'
         ]]></sql>
     </changeSet>
+
+    <changeSet id="#INTRD-242_20210623" author="Zbariki">
+        <addColumn tableName="billing_billing_run">
+            <column name="filters" type="text">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <dropNotNullConstraint columnDataType="datetime" columnName="last_transaction_date" tableName="billing_billing_run"/>
+    </changeSet>
     
     <changeSet id="#20210622-INTRD-272" author="TarikFA.">
     	<sql>update ${db.schema.adapted}billing_tax_category set version = 0 where version is null</sql>
