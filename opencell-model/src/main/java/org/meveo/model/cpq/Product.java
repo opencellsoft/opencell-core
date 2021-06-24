@@ -232,7 +232,7 @@ public class Product extends ServiceCharge {
 	
 
 
-	@OneToMany(mappedBy = "product",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "product",fetch = FetchType.LAZY, orphanRemoval = true, cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE})
     private List<PricePlanMatrixColumn> pricePlanMatrixColumns = new ArrayList<PricePlanMatrixColumn>();
 	 /**
      * list of Media

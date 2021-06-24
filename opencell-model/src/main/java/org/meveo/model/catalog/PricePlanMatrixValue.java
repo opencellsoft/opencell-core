@@ -1,11 +1,8 @@
 package org.meveo.model.catalog;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.BaseEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.cpq.AttributeValue;
-import org.meveo.model.cpq.QuoteAttribute;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,16 +11,15 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
-@SuppressWarnings("serial")
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.cpq.AttributeValue;
+
 @Entity
 @ExportIdentifier({ "code" })
 @Table(name = "cpq_price_plan_matrix_value")
@@ -33,21 +29,12 @@ import java.util.Set;
 public class PricePlanMatrixValue extends BaseEntity {
 
 
-	public PricePlanMatrixValue(PricePlanMatrixValue copy) {
-		this.pricePlanMatrixColumn = copy.pricePlanMatrixColumn;
-		this.pricePlanMatrixLine = copy.pricePlanMatrixLine;
-		this.longValue = copy.longValue;
-		this.doubleValue = copy.doubleValue;
-		this.stringValue = copy.stringValue;
-		this.dateValue = copy.dateValue;
-		this.fromDateValue = copy.fromDateValue;
-		this.toDateValue = copy.toDateValue;
-		this.fromDoubleValue = copy.fromDoubleValue;
-		this.toDoubleValue = copy.toDoubleValue;
-	}
+	
 
-	public PricePlanMatrixValue() {
-	}
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2339904876547686701L;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH })
     @JoinColumn(name = "ppm_column_id")
@@ -82,8 +69,26 @@ public class PricePlanMatrixValue extends BaseEntity {
 
     @Column (name = "to_double_value")
     private Double toDoubleValue;
+    
+    
 
-    public PricePlanMatrixColumn getPricePlanMatrixColumn() {
+    public PricePlanMatrixValue() {
+	}
+
+	public PricePlanMatrixValue(PricePlanMatrixValue copy) {
+		this.pricePlanMatrixColumn = copy.pricePlanMatrixColumn;
+		this.pricePlanMatrixLine = copy.pricePlanMatrixLine;
+		this.longValue = copy.longValue;
+		this.doubleValue = copy.doubleValue;
+		this.stringValue = copy.stringValue;
+		this.dateValue = copy.dateValue;
+		this.fromDateValue = copy.fromDateValue;
+		this.toDateValue = copy.toDateValue;
+		this.fromDoubleValue = copy.fromDoubleValue;
+		this.toDoubleValue = copy.toDoubleValue;
+	}
+
+	public PricePlanMatrixColumn getPricePlanMatrixColumn() {
         return pricePlanMatrixColumn;
     }
 

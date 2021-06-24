@@ -1,12 +1,17 @@
 package org.meveo.service.catalog.impl;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 
-import org.hibernate.Hibernate;
+import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.PricePlanMatrixVersionDto;
 import org.meveo.model.billing.ChargeInstance;
@@ -78,17 +83,39 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
         return  update(pricePlanMatrixVersion);
     }
 
-    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion) {
+    @Transactional(value = TxType.REQUIRED)
+    public PricePlanMatrixVersion duplicate(PricePlanMatrixVersion pricePlanMatrixVersion, boolean setNewVersion) {
+    	var columns = new HashSet<>(pricePlanMatrixVersion.getColumns());
+    	var lines = new HashSet<>(pricePlanMatrixVersion.getLines());
         PricePlanMatrixVersion duplicate = new PricePlanMatrixVersion(pricePlanMatrixVersion);
-        String ppmCode = pricePlanMatrixVersion.getPricePlanMatrix().getCode();
-        Integer lastVersion = getLastVersion(ppmCode);
-        duplicate.setCurrentVersion(lastVersion + 1);
+        if(!setNewVersion) {
+            String ppmCode = pricePlanMatrixVersion.getPricePlanMatrix().getCode();
+            Integer lastVersion = getLastVersion(ppmCode);
+            duplicate.setCurrentVersion(lastVersion + 1);
+        }else {
+        	 duplicate.setCurrentVersion(1);
+        }
         try {
             this.create(duplicate);
         }catch(BusinessException e) {
             throw new BusinessException(String.format("Can not duplicate the version of product from version product (%d)", duplicate.getId()), e);
         }
-        pricePlanMatrixVersion = (PricePlanMatrixVersion) Hibernate.unproxy(pricePlanMatrixVersion);
+        
+       /* var allValues = columns
+							.stream()
+							.map(PricePlanMatrixColumn::getPricePlanMatrixValues)
+							.flatMap(ppmv -> ppmv.stream())
+							.map(ppmv -> {
+								pricePlanMatrixValueService.detach(ppmv);
+								return new PricePlanMatrixValue(ppmv);
+							})
+							.collect(Collectors.toSet());*/
+        
+       // duplicateColumns(duplicate, columns, null);
+        duplicateLines(duplicate, lines, null);
+        /*allValues.forEach(ppmv -> {
+        	pricePlanMatrixValueService.create(ppmv);
+        });*/
         return duplicate;
     }
 
@@ -132,38 +159,50 @@ public class PricePlanMatrixVersionService extends PersistenceService<PricePlanM
     @Inject
     private PricePlanMatrixLineService pricePlanMatrixLineService;
     
-    public PricePlanMatrixVersion duplicateColumns(PricePlanMatrixVersion entity, Set<PricePlanMatrixColumn> columns ) {
+    private void duplicateColumns(PricePlanMatrixVersion entity, Set<PricePlanMatrixColumn> columns, Set<PricePlanMatrixValue> pricePlanValues ) {
     	if(columns != null && !columns.isEmpty()) {
+    		var columnList = new HashSet<PricePlanMatrixColumn>();
         	columns.forEach(ppmc -> {
         		ppmc.getPricePlanMatrixValues().size();
-        		//var pricePlanMatrixValue = ppmc.getPricePlanMatrixValues();
+        		
         		pricePlanMatrixColumnService.detach(ppmc);
         		var duplicatePricePlanMatrixColumn = new PricePlanMatrixColumn(ppmc);
         		duplicatePricePlanMatrixColumn.setPricePlanMatrixVersion(entity);
+        		
         		pricePlanMatrixColumnService.create(duplicatePricePlanMatrixColumn);
+
+        		columnList.add(duplicatePricePlanMatrixColumn);
+//        		pricePlanValues.forEach(ppmv -> {
+//        			ppmv.setPricePlanMatrixColumn(duplicatePricePlanMatrixColumn);
+//        		});
+//        		
+        		
         	});
+        	entity.setColumns(columnList);
     	}
-    	return entity;
     }
     
-    public PricePlanMatrixVersion duplicateLines(PricePlanMatrixVersion entity, Set<PricePlanMatrixLine> lines) {
+    private PricePlanMatrixVersion duplicateLines(PricePlanMatrixVersion entity, Set<PricePlanMatrixLine> lines, Set<PricePlanMatrixValue> pricePlanValues) {
     	if(lines != null && !lines.isEmpty()) {
+    		var lineList = new HashSet<PricePlanMatrixLine>();
     		lines.forEach(ppml -> {
     			ppml.getPricePlanMatrixValues().size();
-    			//var pricePlanMatrixValue = ppml.getPricePlanMatrixValues();
+
     			pricePlanMatrixLineService.detach(ppml);
+    			
     			var duplicateLine = new PricePlanMatrixLine(ppml);
+    			duplicateLine.setPricePlanMatrixVersion(entity);
+    			
     			pricePlanMatrixLineService.create(duplicateLine);
+    			
+    			lineList.add(duplicateLine);
+
+//        		pricePlanValues.forEach(ppmv -> {
+//        			ppmv.setPricePlanMatrixLine(duplicateLine);
+//        		});
     		});
+			entity.setLines(lineList);
     	}
     	return entity;
     }
-    
-    public void duplicatePricePlanValue( PricePlanMatrixColumn column, PricePlanMatrixLine line, Set<PricePlanMatrixValue> pricePlanMatrixValues) {
-    	
-    	return;
-    }
-    
-    
-    
 }

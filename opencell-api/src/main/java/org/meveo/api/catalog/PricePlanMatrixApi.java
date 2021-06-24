@@ -23,6 +23,8 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 
 import org.elasticsearch.common.Strings;
 import org.meveo.admin.exception.BusinessException;
@@ -44,7 +46,6 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.PricePlanMatrixVersion;
@@ -60,7 +61,6 @@ import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateServiceAll;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
-import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.PricePlanMatrixVersionService;
@@ -618,6 +618,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         return result;
     }
 
+    @Transactional
     public PricePlanMatrixDto duplicatePricePlan(String pricePlanMatrixCode, String pricePlanMatrixNewCode, int version) {
     	PricePlanMatrix ppm = loadEntityByCode(pricePlanMatrixService, pricePlanMatrixCode, PricePlanMatrix.class);
     	if(!Strings.isEmpty(pricePlanMatrixNewCode) && pricePlanMatrixService.findByCode(pricePlanMatrixNewCode) != null)
@@ -629,6 +630,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
     			throw new MeveoApiException("No version exist for price plan matrix code : " + pricePlanMatrixCode);
     	}
     	PricePlanMatrix duplicate = pricePlanMatrixService.duplicatePricePlanMatrix(ppm, ppmv, pricePlanMatrixNewCode);
-    	return new PricePlanMatrixDto(duplicate, entityToDtoConverter.getCustomFieldsDTO(duplicate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE));
+    	return new PricePlanMatrixDto(duplicate, null);
     }
 }
