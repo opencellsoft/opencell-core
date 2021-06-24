@@ -144,7 +144,8 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 		try {
 			ServiceInstance serviceInstance = serviceInstanceService.findById(serviceId);
 			// Handle subscription renewal or termination
-			if (serviceInstance.isSubscriptionExpired() && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
+			if (serviceInstance.isSubscriptionExpired() && (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE
+					|| serviceInstance.getStatus() == InstanceStatusEnum.SUSPENDED)) {
 
 				if (serviceInstance.getServiceRenewal().isAutoRenew()) {
 
@@ -177,10 +178,12 @@ public class SubscriptionStatusJobBean extends BaseJobBean {
 							serviceInstance.getEndAgreementDate());
 
 				} else if (serviceInstance.getServiceRenewal()
-						.getEndOfTermAction() == EndOfTermActionEnum.SUSPEND) {
+										.getEndOfTermAction() == EndOfTermActionEnum.SUSPEND
+										&& serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
 					serviceInstanceService.serviceSuspension(serviceInstance, serviceInstance.getSubscribedTillDate());
 
-				} else if (serviceInstance.getServiceRenewal().getEndOfTermAction() == EndOfTermActionEnum.TERMINATE) {
+				} else if (serviceInstance.getServiceRenewal()
+										.getEndOfTermAction() == EndOfTermActionEnum.TERMINATE) {
 					serviceInstanceService.terminateService(serviceInstance, serviceInstance.getSubscribedTillDate(),
 							serviceInstance.getServiceRenewal().getTerminationReason(), null);
 				}

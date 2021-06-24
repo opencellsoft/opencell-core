@@ -499,7 +499,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throws BusinessException {
 
         // Execute termination script
-        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null
+                && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
             serviceModelScriptService.terminateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), terminationDate, terminationReason);
         }
 
@@ -893,8 +894,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         ids.addAll(getEntityManager().createNamedQuery("ServiceInstance.getToNotifyExpiration", Long.class) //
             .setParameter("date", untillDate) //
-            .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE)) //
-            .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE)) //
+            .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED, SubscriptionStatusEnum.SUSPENDED)) //
+            .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED)) //
             .getResultList());
 
         return ids;
