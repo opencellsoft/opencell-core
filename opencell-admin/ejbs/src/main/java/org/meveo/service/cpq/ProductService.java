@@ -63,8 +63,6 @@ public class ProductService extends BusinessService<Product> {
 	@Inject private PricePlanMatrixColumnService pricePlanMatrixColumnService;
 	@Inject 
 	private ProductVersionService productVersionService;
-	@Inject
-	private ProductLineService productLineService;
     /**
      * check if the product has any product line 
      * @param idProductLine
@@ -293,8 +291,15 @@ public class ProductService extends BusinessService<Product> {
 		if(!product.getCommercialRuleHeader().isEmpty() || !product.getCommercialRuleLines().isEmpty()) {
 			throw new MeveoApiException("Product ("+codeProduct+") can not be deleted. There are rules applied to this product");
 		}
-		if(!product.getOfferComponents().isEmpty()) {
-			throw new MeveoApiException("Can not delete the product ("+codeProduct+") because is referenced to an offer");
+		StringBuilder offerCodes=new StringBuilder("");
+		String sep = "";
+		if(!product.getOfferComponents().isEmpty()) {  
+			for(OfferComponent prodOffer : product.getOfferComponents() ) { 
+				offerCodes.append(sep);
+				sep = ",";
+				offerCodes.append(prodOffer.getOfferTemplate().getCode());
+			}
+			throw new MeveoApiException("The product with code= "+codeProduct+" cannot be deleted, it is assigned to offer(s): " +offerCodes+ "");
 		}
 
 		pricePlanMatrixColumnService.findByProduct(product).stream().map(PricePlanMatrixColumn::getCode).forEach(code -> pricePlanMatrixColumnService.removePricePlanColumn(code));
