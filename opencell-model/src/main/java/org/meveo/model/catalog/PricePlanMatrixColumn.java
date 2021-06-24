@@ -49,10 +49,11 @@ public class PricePlanMatrixColumn extends BusinessEntity {
 		this.type = copy.type;
 		this.elValue = copy.elValue;
 		this.offerTemplate = copy.offerTemplate;
-		this.product = copy.product;
 		this.attribute = copy.attribute;
 		this.isRange = copy.isRange;
 		this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
+		this.description = copy.description;
+		this.code = copy.code;
 	}
 
 	@ManyToOne
@@ -76,7 +77,7 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
     private Product product;
 
