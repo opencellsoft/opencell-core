@@ -965,8 +965,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     public List<Long> getSubscriptionsToRenewOrNotify(Date untillDate) {
         List<Long> ids = getEntityManager().createNamedQuery("ServiceInstance.getExpired", Long.class) //
             .setParameter("date", untillDate) //
-            .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE)) //
-            .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE)) //
+            .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.CREATED, SubscriptionStatusEnum.SUSPENDED)) //
+            .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED)) //
             .getResultList();
 
         ids.addAll(getEntityManager().createNamedQuery("ServiceInstance.getToNotifyExpiration", Long.class) //
