@@ -9074,10 +9074,10 @@ public class OrderAdvancement extends ModuleScript {
         	<column name="version" value="0"/>
         	<column name="disabled" value="0"/>
         	<column name="created" value="now()"/>
-        	<column name="code" value="NOTIF_QUOTEVALD"/>
+        	<column name="code" value="NOTIF_QUOTE_VALIDATION"/>
         	<column name="class_name_filter" value="org.meveo.model.cpq.CpqQuote"/>
         	<column name="event_expression_filter" value="#{event.status == 'ACCEPTED' }"/>
-        	<column name="event_type_filter" value="UPDATED"/>
+        	<column name="event_type_filter" value="STATUS_UPDATED"/>
         	<column name="creator" value="opencell.admin"/>
         	<column name="script_instance_id" value="-32"/>
         	<column name="uuid" value="GENERIC_UUID_CPQUOTE"/>
@@ -9113,7 +9113,7 @@ public class OrderAdvancement extends ModuleScript {
             	<column name="version" value="0"/>
             	<column name="disabled" value="0"/>
             	<column name="created" value="now()"/>
-            	<column name="code" value="NOTIF_ORDER_ADV"/>
+            	<column name="code" value="NOTIF_ORDER_ADVANCEMENT"/>
             	<column name="class_name_filter" value="org.meveo.model.cpq.commercial.CommercialOrder"/>
             	<column name="event_type_filter" value="ADVT_RATE_INCREASED"/>
             	<column name="creator" value="opencell.admin"/>
