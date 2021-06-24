@@ -499,7 +499,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throws BusinessException {
 
         // Execute termination script
-        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null
+                && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
             serviceModelScriptService.terminateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), terminationDate, terminationReason);
         }
 
@@ -887,14 +888,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     public List<Long> getSubscriptionsToRenewOrNotify(Date untillDate) {
         List<Long> ids = getEntityManager().createNamedQuery("ServiceInstance.getExpired", Long.class) //
             .setParameter("date", untillDate) //
-            .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE)) //
-            .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE)) //
+            .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.SUSPENDED)) //
+            .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED)) //
             .getResultList();
 
         ids.addAll(getEntityManager().createNamedQuery("ServiceInstance.getToNotifyExpiration", Long.class) //
             .setParameter("date", untillDate) //
-            .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE)) //
-            .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE)) //
+            .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.SUSPENDED)) //
+            .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED)) //
             .getResultList());
 
         return ids;
