@@ -54,6 +54,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.metamodel.Attribute;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
@@ -1412,6 +1413,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	 * @return
 	 */
 	public IEntity tryToFindByEntityClassAndId(Class<? extends IEntity> entity, Long id) {
+    	return tryToFindByEntityClassAndId(entity, id, null);
+	}
+	
+	/**
+	 * @param entity
+	 * @param id
+	 * @param fetchFields
+	 * @return
+	 */
+	public IEntity tryToFindByEntityClassAndId(Class<? extends IEntity> entity, Long id, List<String> fetchFields) {
     	if(id==null) {
     		return null;
     	}
@@ -1427,6 +1438,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 	}
 
 	public BusinessEntity tryToFindByEntityClassAndCode(Class<? extends BusinessEntity> entity, String code) {
+    	return tryToFindByEntityClassAndCode(entity, code, null);
+    }
+	
+	public BusinessEntity tryToFindByEntityClassAndCode(Class<? extends BusinessEntity> entity, String code, List<String> fetchFields) {
     	if(code==null) {
     		return null;
     	}
@@ -1435,11 +1450,70 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         try {
 			return (BusinessEntity) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
-            throw new NotFoundException("No entity of type "+entity.getSimpleName()+"with code '"+code+"' found");
+            throw new NotFoundException("No entity of type "+entity.getSimpleName()+" with code '"+code+"' found");
         } catch (NonUniqueResultException e) {
-        	throw new ForbiddenException("More than one entity of type "+entity.getSimpleName()+" with code '"+code+"' found");
+        	throw new ForbiddenException("'code' for entity "+entity.getSimpleName()+" is not an unique identifier. Please use “id” instead");
         }
     }
+	
+	
+	
+	/**
+	 * Try to find IEntity by code, if code is null, try with id.
+	 * 
+	 * @param entity
+	 * @param code
+	 * @param id
+	 * @return
+	 */
+	public BusinessEntity tryToFindByEntityClassAndCodeOrId(Class<? extends BusinessEntity> entity, String code, Long id) {
+		return tryToFindByEntityClassAndCodeOrId(entity, code, id, null);
+	}
+	
+	/**
+	 * Try to find IEntity by code, if code is null, try with id.
+	 * 
+	 * @param entity
+	 * @param code
+	 * @param id
+	 * @return
+	 */
+	public BusinessEntity tryToFindByEntityClassAndCodeOrId(Class<? extends BusinessEntity> entity, String code, Long id, List<String> fetchFields) {
+		if (code != null && !code.isBlank()) {
+			return tryToFindByEntityClassAndCode(entity, code);
+		} else if (id != null) {
+			return (BusinessEntity) tryToFindByEntityClassAndId(entity, id);
+		}
+		return null;
+	}
+	
+
+	/**
+	 * try to find entity in database by code or id
+	 * @param instance
+	 * @return
+	 */
+	public BusinessEntity tryToFindByCodeOrId(BusinessEntity instance) {
+		return tryToFindByCodeOrId(instance, null);
+	}
+	
+	/**
+	 * try to find entity in database by code or id
+	 * @param instance
+	 * @return
+	 */
+	public BusinessEntity tryToFindByCodeOrId(BusinessEntity instance, List<String> fetchFields) {
+		if (instance == null) {
+			return null;
+		}
+		final String entityName = instance.getClass().getName();
+		final BusinessEntity entity = tryToFindByEntityClassAndCodeOrId(instance.getClass(), instance.getCode(),
+				instance.getId());
+		if (entity == null) {
+			throw new BadRequestException("No "+entityName+" found with Id: "+instance.getId()+" or Code :"+instance.getCode());
+		}
+		return entity;
+	}
 	
 	public BusinessEntity tryToFindByEntityClassAndMap(Class<? extends BusinessEntity> entity, Map<String, Object> criterions) {
     	if(criterions==null) {

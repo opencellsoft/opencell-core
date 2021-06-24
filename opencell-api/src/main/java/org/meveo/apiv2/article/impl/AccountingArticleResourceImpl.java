@@ -6,16 +6,12 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
-import org.meveo.api.BaseApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.apiv2.article.AccountingArticles;
@@ -27,7 +23,6 @@ import org.meveo.apiv2.article.service.AccountingArticleBaseApi;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
 //import org.meveo.apiv2.ordering.resource.order.ImmutableOrder;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.service.api.EntityToDtoConverter;
 
 public class AccountingArticleResourceImpl implements AccountingArticleResource {
 

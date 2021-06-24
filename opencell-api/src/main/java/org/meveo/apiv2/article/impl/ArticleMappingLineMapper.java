@@ -1,10 +1,13 @@
 package org.meveo.apiv2.article.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.meveo.apiv2.article.ImmutableArticleMappingLine;
 import org.meveo.apiv2.article.ImmutableAttributeMapping;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.ordering.ResourceMapper;
-import org.meveo.model.BaseEntity;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.article.ArticleMapping;
 import org.meveo.model.article.ArticleMappingLine;
@@ -15,14 +18,12 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.Product;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.article.ArticleMappingLine, ArticleMappingLine> {
     @Override
     protected org.meveo.apiv2.article.ArticleMappingLine toResource(ArticleMappingLine entity) {
         return ImmutableArticleMappingLine.builder()
                 .id(entity.getId())
+                .code(entity.getCode())
                 .parameter1(entity.getParameter1())
                 .parameter2(entity.getParameter2())
                 .parameter3(entity.getParameter3())
@@ -39,8 +40,12 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
     @Override
     protected ArticleMappingLine toEntity(org.meveo.apiv2.article.ArticleMappingLine resource) {
         ArticleMappingLine articleMappingLine = new ArticleMappingLine();
-        articleMappingLine.setArticleMapping(new ArticleMapping(resource.getArticleMapping().getId()));
-        articleMappingLine.setAccountingArticle(new AccountingArticle(resource.getAccountingArticle().getId()));
+        final ArticleMapping articleMapping = new ArticleMapping(resource.getArticleMapping().getId());
+        articleMapping.setCode(resource.getArticleMapping().getCode());
+		articleMappingLine.setArticleMapping(articleMapping);
+        final AccountingArticle accountingArticle = new AccountingArticle(resource.getAccountingArticle().getId());
+        accountingArticle.setCode(resource.getAccountingArticle().getCode());
+		articleMappingLine.setAccountingArticle(accountingArticle);
         articleMappingLine.setParameter1(resource.getParameter1());
         articleMappingLine.setParameter2(resource.getParameter2());
         articleMappingLine.setParameter3(resource.getParameter3());
@@ -49,7 +54,9 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
             List<AttributeMapping> attributesMapping = resource.getAttributesMapping()
                     .stream()
                     .map(attributeMapping -> {
-                        return new AttributeMapping(new Attribute(attributeMapping.getAttribute().getId()), attributeMapping.getAttributeValue());
+                        Attribute attribute = new Attribute(attributeMapping.getAttribute().getId());
+                        attribute.setCode(attributeMapping.getAttribute().getCode());
+						return new AttributeMapping(attribute, attributeMapping.getAttributeValue());
                     })
                     .collect(Collectors.toList());
             articleMappingLine.setAttributesMapping(attributesMapping);
@@ -57,16 +64,19 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
         if(resource.getOffer() != null){
             OfferTemplate offerTemplate = new OfferTemplate();
             offerTemplate.setId(resource.getOffer().getId());
+            offerTemplate.setCode(resource.getOffer().getCode());
             articleMappingLine.setOfferTemplate(offerTemplate);
         }
         if(resource.getCharge() != null){
             ChargeTemplate chargeTemplate = new RecurringChargeTemplate();
             chargeTemplate.setId(resource.getCharge().getId());
+            chargeTemplate.setCode(resource.getCharge().getCode());
             articleMappingLine.setChargeTemplate(chargeTemplate);
         }
         if(resource.getProduct() != null){
             Product product = new Product();
             product.setId(resource.getProduct().getId());
+            product.setCode(resource.getProduct().getCode());
             articleMappingLine.setProduct(product);
         }
         return articleMappingLine;
@@ -75,12 +85,12 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
     private Iterable<? extends org.meveo.apiv2.article.AttributeMapping> getAttributesMappingResources(List<AttributeMapping> attributesMapping) {
         return attributesMapping != null ?
                 attributesMapping.stream()
-                        .map(am -> ImmutableAttributeMapping.builder().attribute(ImmutableResource.builder().id(am.getAttribute().getId()).build()).attributeValue(am.getAttributeValue()).build())
+                        .map(am -> ImmutableAttributeMapping.builder().attribute(ImmutableResource.builder().id(am.getAttribute().getId()).code(am.getAttribute().getCode()).build()).attributeValue(am.getAttributeValue()).build())
                         .collect(Collectors.toList())
                 : null;
     }
 
-    private ImmutableResource createResource(BaseEntity baseEntity) {
-        return baseEntity != null ? ImmutableResource.builder().id(baseEntity.getId()).build() : null;
+    private ImmutableResource createResource(BusinessEntity baseEntity) {
+        return baseEntity != null ? ImmutableResource.builder().id(baseEntity.getId()).code(baseEntity.getCode()).build() : null;
     }
 }
