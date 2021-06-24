@@ -13,7 +13,7 @@ public class RatedTransactionMapper
 		try {
 			ImmutableRatedTransactionInput resource = (ImmutableRatedTransactionInput) initResource(
 					ImmutableRatedTransactionInput.class, entity);
-			return ImmutableRatedTransactionInput.builder().from(resource).id(entity.getId()).build();
+			return ImmutableRatedTransactionInput.builder().from(resource).id(entity.getId()).code(entity.getCode()).build();
 		} catch (Exception e) {
 			throw new BusinessException(e);
 		}
@@ -24,6 +24,7 @@ public class RatedTransactionMapper
 		try {
 			RatedTransaction ratedTransaction = initEntity(resource, new RatedTransaction());
 			ratedTransaction.setId(resource.getId());
+			ratedTransaction.setCode(resource.getCode());
 			return ratedTransaction;
 		} catch (Exception e) {
 			throw new BusinessException(e);
