@@ -5,24 +5,9 @@ import static org.meveo.model.billing.InvoiceLineStatusEnum.OPEN;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,13 +17,7 @@ import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -222,6 +201,9 @@ public class InvoiceLine extends AuditableEntity {
 	@Column(name = "status", nullable = false)
 	@NotNull
 	private InvoiceLineStatusEnum status = OPEN;
+
+	@OneToMany(mappedBy = "invoiceLine", fetch = FetchType.LAZY)
+	private List<RatedTransaction> ratedTransactions;
 
 	public InvoiceLine() {
 	}
@@ -514,5 +496,13 @@ public class InvoiceLine extends AuditableEntity {
 
 	public void setStatus(InvoiceLineStatusEnum status) {
 		this.status = status;
+	}
+
+	public List<RatedTransaction> getRatedTransactions() {
+		return ratedTransactions;
+	}
+
+	public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
+		this.ratedTransactions = ratedTransactions;
 	}
 }
