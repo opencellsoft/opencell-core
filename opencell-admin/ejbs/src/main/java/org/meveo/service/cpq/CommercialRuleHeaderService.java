@@ -201,7 +201,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 								return false;
 							}
 						}
-						if (line.getSourceAttribute() != null && productContext!=null) {
+						if (line.getSourceAttribute() != null && productContext.getSelectedAttributes() != null && productContext!=null) {
 
 							LinkedHashMap<String, Object> selectedAttributes = productContext.getSelectedAttributes();
 							for (Entry<String, Object> entry : selectedAttributes.entrySet()) {
@@ -246,7 +246,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 								}
 							}
 						}
-						if (line.getSourceGroupedAttributes() != null) {
+						if (line.getSourceGroupedAttributes() != null && productContext.getSelectedGroupedAttributes() != null) {
 							LinkedHashMap<String, Object> selectedGroupedAttributes = productContext.getSelectedGroupedAttributes();
 							for (Entry<String, Object> entry : selectedGroupedAttributes.entrySet()) {
 								String groupedAttributeCode = entry.getKey();
@@ -299,7 +299,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 								.filter(pdtCtx -> sourceProductCode.equals(pdtCtx.getProductCode())).findAny()
 								.orElse(null);
 
-						if (productContext!=null && line.getSourceAttribute() != null) {
+						if (productContext!=null && productContext.getSelectedAttributes() != null && line.getSourceAttribute() != null) {
 							String productCode=productContext.getProductCode();
 							LinkedHashMap<String, Object> selectedAttributes = productContext.getSelectedAttributes();
 							for (Entry<String, Object> entry : selectedAttributes.entrySet()) {

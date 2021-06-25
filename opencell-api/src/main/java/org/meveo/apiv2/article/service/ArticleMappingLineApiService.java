@@ -46,7 +46,10 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
     @Override
     public ArticleMappingLine create(ArticleMappingLine articleMappingLine) {
         AccountingArticle accountingArticle = (AccountingArticle) articleMappingLineService.tryToFindByCodeOrId(articleMappingLine.getAccountingArticle());
-		ArticleMapping articleMapping = (ArticleMapping) articleMappingLineService.tryToFindByCodeOrId(articleMappingLine.getArticleMapping());
+        if(articleMappingLine.getArticleMapping() != null) {
+    		ArticleMapping articleMapping = (ArticleMapping) articleMappingLineService.tryToFindByCodeOrId(articleMappingLine.getArticleMapping());
+            articleMappingLine.setArticleMapping(articleMapping);
+        }
         if(articleMappingLine.getAttributesMapping() != null && !articleMappingLine.getAttributesMapping().isEmpty()){
             List<AttributeMapping> attributesMapping = articleMappingLine.getAttributesMapping()
                     .stream()
@@ -61,7 +64,6 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
         }
         populateArticleMappingLine(articleMappingLine);
         articleMappingLine.setAccountingArticle(accountingArticle);
-        articleMappingLine.setArticleMapping(articleMapping);
         articleMappingLineService.create(articleMappingLine);
         return articleMappingLine;
     }
@@ -72,9 +74,12 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
         if(articleMappingLineUpdated == null) return Optional.empty();
 
         AccountingArticle accountingArticle = (AccountingArticle) articleMappingLineService.tryToFindByCodeOrId(articleMappingLine.getAccountingArticle());
-		ArticleMapping articleMapping = (ArticleMapping) articleMappingLineService.tryToFindByCodeOrId(articleMappingLine.getArticleMapping());
-        articleMappingLine.setAccountingArticle(accountingArticle);
+        ArticleMapping articleMapping = null;
+        if(articleMappingLine.getArticleMapping() != null) {
+        	articleMapping = (ArticleMapping) articleMappingLineService.tryToFindByCodeOrId(articleMappingLine.getArticleMapping());
+        }
         articleMappingLine.setArticleMapping(articleMapping);
+        articleMappingLine.setAccountingArticle(accountingArticle);
         populateArticleMappingLine(articleMappingLine);
         
         articleMappingLineUpdated.setParameter1(articleMappingLine.getParameter1());

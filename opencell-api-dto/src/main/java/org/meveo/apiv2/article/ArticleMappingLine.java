@@ -18,7 +18,7 @@ import java.util.List;
 public interface ArticleMappingLine extends Resource {
 
 	@Schema(description = "article mapping associated to this article mapping line")
-	@NotNull
+	@Nullable
     Resource getArticleMapping();
 
 	@Schema(description = "accounting article associated to this article mapping line")
