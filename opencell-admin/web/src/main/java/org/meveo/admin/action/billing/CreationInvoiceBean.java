@@ -699,6 +699,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
                 ratedTransactionService.remove(rt);
             }
         }
+        //return getListViewName();
         return "";
     }
 
@@ -1032,10 +1033,10 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
         return true;// entity.getBillingAccount() != null && entity.getInvoiceType() != null;
     }
 
-    @Override
-    public String back() {
-        return "/pages/billing/invoicing/billingRuns.xhtml&faces-redirect=true";
-    }
+//    @Override
+//    public String back() {
+//        return "/pages/billing/invoicing/billingRuns.xhtml&faces-redirect=true";
+//    }
 
     /*
      * ################################################################################################### # Setters and Getters #
