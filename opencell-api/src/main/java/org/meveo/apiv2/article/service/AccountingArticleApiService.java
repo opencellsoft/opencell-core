@@ -13,6 +13,7 @@ import javax.ws.rs.BadRequestException;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.article.AccountingArticle;
@@ -21,17 +22,28 @@ import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.tax.TaxClass;
+import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.meveo.service.billing.impl.article.ArticleFamilyService;
+import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.cpq.ProductService;
+import org.meveo.service.tax.TaxClassService;
 
 public class AccountingArticleApiService implements AccountingArticleServiceBase{
 
     private List<String> fetchFields;
     @Inject
     private AccountingArticleService accountingArticleService;
-    
-    Logger log = LoggerFactory.getLogger(getClass());
+    @Inject
+    private AccountingCodeService accountingCodeService;
+    @Inject
+    private TaxClassService taxClassService;
+    @Inject
+    private ArticleFamilyService articleFamilyService;
+    @Inject
+    private InvoiceSubCategoryService invoiceSubCategoryService;
+    @Inject
+    private ProductService productService;
 
     @PostConstruct
     public void initService(){
@@ -40,8 +52,11 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
     
     @Override
     public AccountingArticle create(AccountingArticle accountingArticle) {
-        TaxClass taxClass = (TaxClass) accountingArticleService.tryToFindByCodeOrId(accountingArticle.getTaxClass());
-        InvoiceSubCategory invoiceSubCategory = (InvoiceSubCategory) accountingArticleService.tryToFindByCodeOrId(accountingArticle.getInvoiceSubCategory());
+        TaxClass taxClass = taxClassService.findById(accountingArticle.getTaxClass().getId());
+        if(taxClass == null)
+            throw new BadRequestException("No tax class found with id: " + accountingArticle.getTaxClass().getId());
+        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(accountingArticle.getInvoiceSubCategory().getId());
+
         AccountingArticle accou = accountingArticleService.findByCode(accountingArticle.getCode());
         if(accou != null){
             throw new EntityAlreadyExistsException(AccountingArticle.class, accountingArticle.getCode());
@@ -51,11 +66,15 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         accountingArticle.setTaxClass(taxClass);
         accountingArticle.setInvoiceSubCategory(invoiceSubCategory);
         if(accountingArticle.getAccountingCode() != null){
-            AccountingCode accountingCode =  (AccountingCode) accountingArticleService.tryToFindByCodeOrId(accountingArticle.getAccountingCode());
+            AccountingCode accountingCode = accountingCodeService.findById(accountingArticle.getAccountingCode().getId());
+            if(accountingCode == null)
+                throw new BadRequestException("No accounting code found with id: " + accountingArticle.getAccountingCode().getId());
             accountingArticle.setAccountingCode(accountingCode);
         }
         if(accountingArticle.getArticleFamily() != null){
-            ArticleFamily articleFamily = (ArticleFamily) accountingArticleService.tryToFindByCodeOrId(accountingArticle.getArticleFamily());
+            ArticleFamily articleFamily = articleFamilyService.findById(accountingArticle.getArticleFamily().getId());
+            if(articleFamily == null)
+                throw new BadRequestException("No article family found with id: " + accountingArticle.getArticleFamily().getId());
         }
 
         accountingArticleService.create(accountingArticle);
@@ -93,20 +112,27 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
         }
         AccountingArticle accountingArticle = accountingArticleOtional.get();
         if(baseEntity.getTaxClass() != null && baseEntity.getTaxClass().getId() != null) {
-	        TaxClass taxClass = (TaxClass) accountingArticleService.tryToFindByCodeOrId(accountingArticle.getTaxClass());
+	        TaxClass taxClass = taxClassService.findById(baseEntity.getTaxClass().getId());
+	        if(taxClass == null)
+	            throw new BadRequestException("No tax class found with id: " + baseEntity.getTaxClass().getId());
 	        accountingArticle.setTaxClass(taxClass);
         }
         if(baseEntity.getInvoiceSubCategory() != null && baseEntity.getInvoiceSubCategory().getId() != null) {
-	        InvoiceSubCategory invoiceSubCategory = (InvoiceSubCategory) accountingArticleService.tryToFindByCodeOrId(accountingArticle.getInvoiceSubCategory());
+	        InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findById(baseEntity.getInvoiceSubCategory().getId());
+	        if(invoiceSubCategory == null)
+	            throw new BadRequestException("No invoice sub category found with id: " + baseEntity.getInvoiceSubCategory().getId());
 	        accountingArticle.setInvoiceSubCategory(invoiceSubCategory);
         }
         if(baseEntity.getAccountingCode() != null){
-            AccountingCode accountingCode = (AccountingCode) accountingArticleService.tryToFindByCodeOrId(accountingArticle.getAccountingCode());
-
+            AccountingCode accountingCode = accountingCodeService.findById(baseEntity.getAccountingCode().getId());
+            if(accountingCode == null)
+                throw new BadRequestException("No accounting code found with id: " + baseEntity.getAccountingCode().getId());
             accountingArticle.setAccountingCode(accountingCode);
         }
         if(baseEntity.getArticleFamily() != null){
-            ArticleFamily articleFamily = (ArticleFamily) accountingArticleService.tryToFindByCodeOrId(accountingArticle.getArticleFamily());
+            ArticleFamily articleFamily = articleFamilyService.findById(baseEntity.getArticleFamily().getId());
+            if(articleFamily == null)
+                throw new BadRequestException("No article family found with id: " + baseEntity.getArticleFamily().getId());
         }
         if(!Strings.isEmpty(baseEntity.getDescription())) {
         	accountingArticle.setDescription(baseEntity.getDescription());

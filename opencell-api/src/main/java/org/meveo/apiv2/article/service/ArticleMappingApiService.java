@@ -1,19 +1,22 @@
 package org.meveo.apiv2.article.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.article.ArticleMapping;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.billing.impl.article.ArticleMappingService;
+import org.meveo.service.script.ScriptInstanceService;
+
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import java.util.List;
+import java.util.Optional;
 
 public class ArticleMappingApiService implements ApiService<ArticleMapping> {
 
     @Inject
     private ArticleMappingService articleMappingService;
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
     @Override
     public List<ArticleMapping> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -33,7 +36,9 @@ public class ArticleMappingApiService implements ApiService<ArticleMapping> {
     @Override
     public ArticleMapping create(ArticleMapping articleMapping) {
         if(articleMapping.getMappingScript() != null){
-            ScriptInstance scriptInstance = (ScriptInstance)articleMappingService.tryToFindByCodeOrId(articleMapping.getMappingScript());
+            ScriptInstance scriptInstance = scriptInstanceService.findById(articleMapping.getMappingScript().getId());
+            if(scriptInstance == null)
+                throw new BadRequestException("No script instance found with id: " + articleMapping.getMappingScript().getId());
             articleMapping.setMappingScript(scriptInstance);
         }
 

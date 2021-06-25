@@ -3,26 +3,15 @@
  */
 package org.meveo.apiv2.catalog.service;
 
-import static org.meveo.apiv2.generic.ValidationUtils.checkDto;
-import static org.meveo.apiv2.generic.ValidationUtils.checkId;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.apiv2.generic.core.GenericHelper;
+import org.meveo.apiv2.generic.core.filter.FilterMapper;
 import org.meveo.apiv2.generic.core.mapper.JsonGenericMapper;
 import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.GenericApiPersistenceDelegate;
+import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.IEntity;
@@ -31,6 +20,19 @@ import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.meveo.apiv2.generic.ValidationUtils.checkDto;
+import static org.meveo.apiv2.generic.ValidationUtils.checkId;
 
 @Stateless
 public class DiscountPlanApiService {

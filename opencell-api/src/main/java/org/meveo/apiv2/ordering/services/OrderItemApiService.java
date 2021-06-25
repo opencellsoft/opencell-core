@@ -34,25 +34,26 @@ import javax.ws.rs.BadRequestException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItem;
+import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.UserAccountService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.order.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrderItem;
@@ -64,6 +65,9 @@ public class OrderItemApiService implements ApiService<OrderItem> {
     private org.meveo.service.order.OrderItemService orderItemService;
 
     @Inject
+    private UserAccountService userAccountService;
+
+    @Inject
     private ProductTemplateService productTemplateService;
 
     @Inject
@@ -71,6 +75,15 @@ public class OrderItemApiService implements ApiService<OrderItem> {
 
     @Inject
     private SubscriptionService subscriptionService;
+
+    @Inject
+    private OrderService orderService;
+
+    @Inject
+    private SellerService sellerService;
+
+    @Inject
+    private OfferTemplateService offerTemplateService;
 
     @Inject
     private ServiceTemplateService serviceTemplateService;
@@ -138,25 +151,15 @@ public class OrderItemApiService implements ApiService<OrderItem> {
         }
         return orderItem;
     }
-    
-	/**
-	 * @param order
-	 * @param orderItem
-	 */
-	public void populateOrderItemFields(OrderItem orderItem) throws BusinessException {
-		populateOrderItemFields(orderItem, null);
-	}
 
-    void populateOrderItemFields(OrderItem orderItem, Order order) throws BusinessException {
-    	if(order!=null) {
-    		orderItem.setOrder(order);
-    	} else if(orderItem.getOrder() != null && orderItem.getOrder() != null) {
-            Order orderById = (Order) orderItemService.tryToFindByCodeOrId(orderItem.getOrder());
+    void populateOrderItemFields(OrderItem orderItem) throws BusinessException {
+        if(orderItem.getOrder() != null && orderItem.getOrder().getId() != null) {
+            Order orderById = orderService.findById(orderItem.getOrder().getId());
             orderItem.setOrder(orderById);
         }
 
         if(orderItem.getUserAccount() != null) {
-            orderItem.setUserAccount((UserAccount) orderItemService.tryToFindByCodeOrId(orderItem.getUserAccount()));
+            orderItem.setUserAccount(userAccountService.findById(orderItem.getUserAccount().getId()));
         }
 
         if(orderItem.getProductInstances() != null) {
@@ -187,19 +190,19 @@ public class OrderItemApiService implements ApiService<OrderItem> {
      private Subscription fetchOrCreateSubscription(OrderItem orderItem) throws BusinessException {
         Subscription subscription = orderItem.getSubscription();
         if(subscription != null){
-            if(subscription.getId() != null || subscription.getCode()!=null){
-                subscription = (Subscription) orderItemService.tryToFindByCodeOrId(orderItem.getSubscription());
+            if(subscription.getId() != null){
+                subscription = subscriptionService.findById(subscription.getId());
             }else {
-                if(subscription.getSeller() != null){
-                    subscription.setSeller((Seller) orderItemService.tryToFindByCodeOrId(subscription.getSeller()));
+                if(subscription.getSeller() != null && subscription.getSeller().getId() != null ){
+                    subscription.setSeller(sellerService.findById(subscription.getSeller().getId()));
                 }
                 UserAccount userAccount = subscription.getUserAccount();
-                if(userAccount != null ){
-                    subscription.setUserAccount((UserAccount) orderItemService.tryToFindByCodeOrId(subscription.getUserAccount()));
+                if(userAccount != null && userAccount.getId() != null ){
+                    subscription.setUserAccount(userAccountService.findById(userAccount.getId()));
                     subscription.getUserAccount().setBillingAccount(billingAccountService.retrieveIfNotManaged(subscription.getUserAccount().getBillingAccount()));
                 }
-                if(subscription.getOffer() != null){
-                    subscription.setOffer((OfferTemplate) orderItemService.tryToFindByCodeOrId(subscription.getOffer(), Collections.singletonList("offerServiceTemplates")));
+                if(subscription.getOffer() != null && subscription.getOffer().getId() != null ){
+                    subscription.setOffer(offerTemplateService.findById(subscription.getOffer().getId(), Collections.singletonList("offerServiceTemplates")));
                 }
                 List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
 
@@ -256,11 +259,11 @@ public class OrderItemApiService implements ApiService<OrderItem> {
             return productInstanceService.findById(productInstance.getId());
         }
 
-        if(productInstance.getSeller() != null){
-        	productInstance.setSeller((Seller) orderItemService.tryToFindByCodeOrId(productInstance.getSeller()));
+        if(productInstance.getSeller() !=null){
+            productInstance.setSeller(sellerService.findById(productInstance.getSeller().getId()));
         }
-        if(productInstance.getProductTemplate() != null){
-        	productInstance.setProductTemplate((ProductTemplate) orderItemService.tryToFindByCodeOrId(productInstance.getProductTemplate()));
+        if(productInstance.getProductTemplate() !=null){
+            productInstance.setProductTemplate(productTemplateService.findById(productInstance.getProductTemplate().getId()));
         }
         try {
             productInstanceService.create(productInstance);
@@ -350,5 +353,4 @@ public class OrderItemApiService implements ApiService<OrderItem> {
     public Optional<OrderItem> findByCode(String code) {
         return ofNullable(orderItemService.findByCode(code, fetchFields));
     }
-
 }
