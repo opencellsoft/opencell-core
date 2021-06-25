@@ -27,6 +27,14 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.oltu.oauth2.client.OAuthClient;
+import org.apache.oltu.oauth2.client.URLConnectionClient;
+import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
+import org.apache.oltu.oauth2.client.response.OAuthAccessTokenResponse;
+import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
@@ -37,8 +45,12 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.event.communication.InboundCommunicationEvent;
 import org.meveo.export.RemoteAuthenticationException;
+import org.meveo.model.billing.AuthenticationTypeEnum;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.BusinessService;
+
+import com.slimpay.hapiclient.exception.HttpException;
+import com.slimpay.hapiclient.exception.RelNotFoundException;
 
 /**
  * MeveoInstance service implementation.
@@ -67,7 +79,7 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
 		event.fire(inboundCommunicationEvent);
 	}
 	
-    /**
+	/**
      * export module dto to remote meveo instance.
      * 
      * @param url url
@@ -99,6 +111,37 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
             log.error("Failed to communicate {}. Reason {}", meveoInstance.getCode(), (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
             throw new BusinessException("Failed to communicate " + meveoInstance.getCode() + ". Error " + e.getMessage());
         }
+    }
+    
+    /**
+     * export module dto to remote meveo instance.
+     * 
+     * @param url url
+     * @param meveoInstance meveo instance
+     * @param dto base data transfer object
+     * @return reponses
+     * @throws BusinessException business exception.
+     * @throws HttpException 
+     * @throws RelNotFoundException 
+     * @throws OAuthSystemException 
+     * @throws OAuthProblemException 
+     */
+    public OAuthAccessTokenResponse publishDtoOAuth2MeveoInstance(String url, MeveoInstance meveoInstance, BaseEntityDto dto) throws BusinessException, RelNotFoundException, HttpException, OAuthSystemException, OAuthProblemException {
+        
+
+    	// We are creating a request that's already formatted following the Oauth specs
+    	OAuthClientRequest lRequest = OAuthClientRequest
+    	        .tokenLocation(meveoInstance.getUrl())
+    	        .setGrantType(GrantType.CLIENT_CREDENTIALS)
+    	        .setClientId(meveoInstance.getClientId())
+    	        .setClientSecret(meveoInstance.getClientSecret())
+    	        .buildBodyMessage();
+
+    	OAuthClient oac = new OAuthClient(new URLConnectionClient());
+        OAuthAccessTokenResponse response = oac.accessToken(lRequest);
+             
+        
+        return response;
     }
 
     /**
