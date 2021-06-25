@@ -37,6 +37,8 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.User;
+import org.meveo.model.billing.AuthenticationTypeEnum;
+import org.meveo.model.billing.OverrideProrataEnum;
 import org.meveo.model.crm.Customer;
 
 /**
@@ -253,8 +255,29 @@ public class MeveoInstance extends BusinessEntity {
     @Column(name = "auth_password", length = 60)
     @Size(max = 60)
     private String authPassword;
+    
+    /**
+     * Authentication client id
+     */
+    @Column(name = "client_id", length = 60)
+    @Size(max = 60)
+    private String clientId;
 
-    public MeveoInstance() {
+    /**
+     * Authentication client secret
+     */
+    @Column(name = "client_secret", length = 60)
+    @Size(max = 60)
+    private String clientSecret;
+    
+	/**
+     * 
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "authentication_type")
+    private AuthenticationTypeEnum authenticationType = AuthenticationTypeEnum.BASIC_AUTHENTICATION;
+
+	public MeveoInstance() {
 
     }
 
@@ -631,4 +654,29 @@ public class MeveoInstance extends BusinessEntity {
     public void setAuthPassword(String authPassword) {
         this.authPassword = authPassword;
     }
+    
+    public String getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
+
+	public String getClientSecret() {
+		return clientSecret;
+	}
+
+	public void setClientSecret(String clientSecret) {
+		this.clientSecret = clientSecret;
+	}
+	
+
+    public AuthenticationTypeEnum getAuthenticationType() {
+		return authenticationType;
+	}
+
+	public void setAuthenticationType(AuthenticationTypeEnum authenticationType) {
+		this.authenticationType = authenticationType;
+	}
 }
