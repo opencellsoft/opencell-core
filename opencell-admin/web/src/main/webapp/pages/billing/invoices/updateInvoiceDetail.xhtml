@@ -40,7 +40,7 @@
             <p:tabView id="tabView" activeIndex="#{creationInvoiceBean.activeTab}">
                 <p:tab id="headerInfo" title="#{messages['invoice.detailed']}">
                     <!-- Header     -->
-                    <p:fieldset legend="Header" style="float: left; width: 95%; margin-top: 10px;">
+                    <p:fieldset legend="#{messages['invoice.header']}" style="float: left; width: 95%; margin-top: 10px;">
                         <p:panel style="width: 50%; float: left;">
                             <hftl:formField field="invoiceType" required="true" label="#{messages['invoice.invoiceType']}" valueLabelField="descriptionOrCode" disabled="true"
                                 listBean="#{invoiceTypeBean}" listenerUpdate=":formId:tabView:ImportRTs"></hftl:formField>
@@ -120,7 +120,8 @@
                                             <p:row>
                                                 <p:column headerText="#{messages['ratedTransaction.usageDate']}" width="90" />
                                                 <p:column headerText="#{messages['BusinessEntity.description']}" width="130" />
-                                                <p:column headerText="#{messages['ratedTransaction.unitAmountWithoutTax']}" width="100" />
+                                                <p:column headerText="#{messages['ratedTransaction.unitAmountWithoutTax']}" width="100" rendered="#{appProvider.isEntreprise()}" />
+                                                <p:column headerText="#{messages['ratedTransaction.unitAmountWithTax']}" width="100" rendered="#{!appProvider.isEntreprise()}" />
                                                 <p:column headerText="#{messages['invoice.quantity']}" width="60" />
                                                 <p:column headerText="#{messages['ratedTransaction.param1']}" width="100" />
                                                 <p:column headerText="#{messages['ratedTransaction.param2']}" width="100" />
@@ -132,71 +133,37 @@
                                             </p:row>
                                         </p:columnGroup>
                                         <p:column>
-                                            <hftl:decorateFormField fieldId="usageDate">
-                                                <p:calendar id="usageDate" value="#{rated.usageDate}" pattern="#{paramBean.dateFormat}" size="10">
-                                                    <p:ajax event="dateSelect" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
-                                                        update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
-                                                </p:calendar>
-                                            </hftl:decorateFormField>
+                                            <p:calendar readonly="true" showOn="none" id="usageDate" value="#{rated.usageDate}" pattern="#{paramBean.dateFormat}" size="10" />
                                         </p:column>
                                         <p:column>
-
-
-                                            <h:inputText value="#{rated.description}" size="25">
-                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
-                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
-                                            </h:inputText>
-
+                                            <h:inputText readonly="true" value="#{rated.description}" size="25" />
+                                        </p:column>
+                                        <p:column rendered="#{appProvider.isEntreprise()}">
+                                            <p:inputText readonly="true" value="#{rated.unitAmountWithoutTax}" label="#{messages['ratedTransaction.unitAmountWithoutTax']}" size="10" />
+                                        </p:column>
+                                        <p:column rendered="#{!appProvider.isEntreprise()}">
+                                            <p:inputText readonly="true" value="#{rated.unitAmountWithTax}" label="#{messages['ratedTransaction.unitAmountWithTax']}" size="10" />
                                         </p:column>
                                         <p:column>
-                                            <p:inputText value="#{rated.unitAmountWithoutTax}" label="#{messages['ratedTransaction.unitAmountWithoutTax']}" size="10">
-                                                <p:keyFilter mask="num" />
-                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
-                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
-                                            </p:inputText>
+                                            <p:inputText readonly="true" value="#{rated.quantity}" size="4" label="#{messages['ratedTransaction.quantity']}" />
                                         </p:column>
                                         <p:column>
-                                            <p:inputText value="#{rated.quantity}" size="4" label="#{messages['ratedTransaction.quantity']}">
-                                                <p:keyFilter mask="num" />
-                                                <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
-                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
-                                            </p:inputText>
+                                            <p:inputText readonly="true" value="#{rated.parameter1}" size="10" label="#{messages['ratedTransaction.param1']}" />
                                         </p:column>
                                         <p:column>
-                                            <p:inputText value="#{rated.parameter1}" size="10" label="#{messages['ratedTransaction.param1']}">
-                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
-                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
-                                            </p:inputText>
+                                            <p:inputText readonly="true" value="#{rated.parameter2}" size="10" label="#{messages['ratedTransaction.param2']}" />
                                         </p:column>
                                         <p:column>
-                                            <p:inputText value="#{rated.parameter2}" size="10" label="#{messages['ratedTransaction.param2']}">
-                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
-                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
-                                            </p:inputText>
+                                            <p:inputText readonly="true" value="#{rated.parameter3}" size="10" label="#{messages['ratedTransaction.param3']}" />
                                         </p:column>
                                         <p:column>
-                                            <p:inputText value="#{rated.parameter3}" size="10" label="#{messages['ratedTransaction.param3']}">
-                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
-                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
-                                            </p:inputText>
+                                            <p:calendar readonly="true" showOn="none" value="#{rated.startDate}" size="10" pattern="#{paramBean.dateFormat}" label="#{messages['ratedTransaction.startDate']}" />
                                         </p:column>
                                         <p:column>
-                                            <p:calendar value="#{rated.startDate}" size="10" pattern="#{paramBean.dateFormat}" label="#{messages['ratedTransaction.startDate']}">
-                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
-                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
-                                            </p:calendar>
+                                            <p:calendar readonly="true" showOn="none" value="#{rated.endDate}" size="10" pattern="#{paramBean.dateFormat}" label="#{messages['ratedTransaction.endDate']}" />
                                         </p:column>
                                         <p:column>
-                                            <p:calendar value="#{rated.endDate}" size="10" pattern="#{paramBean.dateFormat}" label="#{messages['ratedTransaction.endDate']}" >
-                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
-                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
-                                            </p:calendar>
-                                        </p:column>
-                                        <p:column>
-                                            <p:inputText value="#{rated.orderNumber}" size="10" label="#{messages['order.number']}">
-                                            <p:ajax event="change" listener="#{creationInvoiceBean.reComputeAmounts(rated)}"
-                                                    update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
-                                            </p:inputText>
+                                            <p:inputText readonly="true" value="#{rated.orderNumber}" size="10" label="#{messages['order.number']}" />
                                         </p:column>
                                         <p:column>
                                             <p:commandButton icon="ui-icon-trash" process=":formId:tabView:detailedInvoicePanel"
@@ -214,7 +181,7 @@
                     </p:fieldset>
                     <div style="clear: both"></div>
                     <!-- Add detail invoice line     -->
-                    <p:fieldset legend="Add detail invoice line" style="float: left; width: 95%; margin-top: 10px;">
+                    <p:fieldset legend="#{messages['invoice.add.detail.line']}" style="float: left; width: 95%; margin-top: 10px;">
                         <p:panel id="addDetailInvoiceLine" style="float: right; width: 100%;">
                             <h:panelGrid columns="3">
                                 <hftl:decorateFormField fieldId="selectedInvoiceCatOrSubCat" label="#{messages['invoice.catOrSubCat']} *">
@@ -288,7 +255,7 @@
                     <div style="clear: both"></div>
 
                     <!--   Summary   -->
-                    <p:fieldset legend="Summary" style="float: left; width: 95%; margin-top: 10px;">
+                    <p:fieldset legend="#{messages['invoice.summary']}" style="float: left; width: 95%; margin-top: 10px;">
                         <p:panel id="invoiceSummary">
                             <p:panelGrid>
                                 <f:facet name="header">
