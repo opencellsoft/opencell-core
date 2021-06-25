@@ -1037,7 +1037,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     public boolean willBeTerminatedInFuture(ServiceInstance serviceInstance) {
         Subscription subscription = serviceInstance != null ? serviceInstance.getSubscription() : null;
         SubscriptionRenewal serviceRenewal = serviceInstance != null ? serviceInstance.getServiceRenewal() : null;
-        return (serviceInstance != null && subscription != null && subscription.getStatus() == SubscriptionStatusEnum.ACTIVE && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE
+        return (serviceInstance != null && subscription != null && subscription.getStatus() == SubscriptionStatusEnum.ACTIVE &&
+                (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE || serviceInstance.getStatus() == InstanceStatusEnum.SUSPENDED)
                 && serviceInstance.getSubscribedTillDate() != null && serviceInstance.getSubscribedTillDate().compareTo(new Date()) > 0 && serviceRenewal != null && !serviceRenewal.isAutoRenew()
                 && serviceRenewal.getTerminationReason() != null && serviceRenewal.getEndOfTermAction() == SubscriptionRenewal.EndOfTermActionEnum.TERMINATE);
     }
