@@ -40,9 +40,11 @@ public class ArticleMappingLineMapper extends ResourceMapper<org.meveo.apiv2.art
     @Override
     protected ArticleMappingLine toEntity(org.meveo.apiv2.article.ArticleMappingLine resource) {
         ArticleMappingLine articleMappingLine = new ArticleMappingLine();
-        final ArticleMapping articleMapping = new ArticleMapping(resource.getArticleMapping().getId());
-        articleMapping.setCode(resource.getArticleMapping().getCode());
-		articleMappingLine.setArticleMapping(articleMapping);
+        if(resource.getArticleMapping() != null) {
+            final ArticleMapping articleMapping = new ArticleMapping(resource.getArticleMapping().getId());
+            articleMapping.setCode(resource.getArticleMapping().getCode());
+    		articleMappingLine.setArticleMapping(articleMapping);
+        }
         final AccountingArticle accountingArticle = new AccountingArticle(resource.getAccountingArticle().getId());
         accountingArticle.setCode(resource.getAccountingArticle().getCode());
 		articleMappingLine.setAccountingArticle(accountingArticle);
