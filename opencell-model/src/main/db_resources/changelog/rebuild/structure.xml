@@ -267,6 +267,7 @@
         <createSequence sequenceName="cpq_product_charge_template_mapping_seq" startValue="1" />
         <createSequence sequenceName="cpq_attribute_instance_seq" />
         <createSequence sequenceName="cpq_product_version_attribute_seq" startValue="1"/>
+        <createSequence sequenceName="cust_query_seq" startValue="1"/>
     </changeSet>
     
      
@@ -14767,6 +14768,47 @@ $$ LANGUAGE plpgsql;
             </column>
         </createTable>
         <addPrimaryKey columnNames="disount_plan_id, code, entity_class" constraintName="cat_discount_applicable_entity_pkey" tableName="cat_discount_applicable_entity"/>
+    </changeSet>
+
+    <changeSet id="#INTRD-257_20210625" author="ZBariki">
+        <createTable tableName="cust_query">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cust_query_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="target_entity" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="visibility" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="filters" type="text" />
+            <column name="generated_query" type="text" />
+        </createTable>
+        <addUniqueConstraint columnNames="code, creator, visibility" constraintName="uk_cust_query_composed"
+                             deferrable="false" disabled="false" initiallyDeferred="false" tableName="cust_query" />
+
+        <createTable tableName="custom_query_fields">
+            <column name="id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="field" type="varchar(255)" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="custom_query_fields"
+                                 constraintName="fk_custom_query_fields_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="cust_query"/>
+
     </changeSet>
 
     <!-- end procedure -->
