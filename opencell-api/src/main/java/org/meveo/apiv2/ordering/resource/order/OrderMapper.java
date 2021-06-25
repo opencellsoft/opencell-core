@@ -61,7 +61,6 @@ public class OrderMapper extends ResourceMapper<Order, org.meveo.model.order.Ord
                         entity.getOrderItems().stream()
                                 .map(orderItem -> ImmutableOrderItem.builder().
                                         id(orderItem.getId())
-                                        .code(orderItem.getCode())
                                         .itemId(orderItem.getItemId())
                                         .status(orderItem.getStatus())
                                         .build())
@@ -89,10 +88,9 @@ public class OrderMapper extends ResourceMapper<Order, org.meveo.model.order.Ord
         order.setStartDate(DateUtils.parseDateWithPattern(resource.getRequestedProcessingStartDate(), DateUtils.DATE_PATTERN));
         order.setDeliveryInstructions(resource.getDeliveryInstructions());
 
-        if(resource.getBillingCycle() != null && (resource.getBillingCycle().getId()!= null || resource.getBillingCycle().getCode()!= null)){
+        if(resource.getBillingCycle() != null && resource.getBillingCycle().getId()!= null){
             BillingCycle billingCycle = new BillingCycle();
             billingCycle.setId(resource.getBillingCycle().getId());
-            billingCycle.setCode(resource.getBillingCycle().getCode());
             order.setBillingCycle(billingCycle);
         }
 

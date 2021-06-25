@@ -20,19 +20,6 @@ package org.meveo.apiv2.ordering.services;
 
 import static java.util.Optional.ofNullable;
 
-import java.io.IOException;
-import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotAuthorizedException;
-
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -44,14 +31,30 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.catalog.impl.ChannelService;
+import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotAuthorizedException;
+import java.io.IOException;
+import java.nio.file.AccessDeniedException;
+import java.util.*;
 
 public class ProductApiService implements ApiService<ProductTemplate> {
 
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
-
+    @Inject
+    protected SellerService sellerService;
+    @Inject
+    protected ChannelService channelService;
+    @Inject
+    private OfferTemplateCategoryService offerTemplateCategoryService;
     @Inject
     private ProductTemplateService productTemplateService;
     private List<String> fetchFields;
@@ -176,7 +179,10 @@ public class ProductApiService implements ApiService<ProductTemplate> {
     private void populateProductTemplateFields(ProductTemplate productTemplate) {
         List<Channel> channels = new ArrayList<>(productTemplate.getChannels() != null ? productTemplate.getChannels() : Collections.emptyList());
         for(Channel channelWithId : channels) {
-            Channel channel = (Channel)productTemplateService.tryToFindByCodeOrId(channelWithId);
+            Channel channel = channelService.findById(channelWithId.getId());
+            if (channel == null) {
+                throw new BadRequestException("no channel found with id " + channelWithId.getId());
+            }
             productTemplate.getChannels().remove(channelWithId);
             productTemplate.addChannel(channel);
         }
@@ -184,7 +190,7 @@ public class ProductApiService implements ApiService<ProductTemplate> {
         List<OfferTemplateCategory> offerTemplateCategoryTemps = new ArrayList<>(
                 productTemplate.getOfferTemplateCategories() != null ? productTemplate.getOfferTemplateCategories() : Collections.emptyList());
         for(OfferTemplateCategory offerTemplateCategoryWithId :offerTemplateCategoryTemps) {
-            OfferTemplateCategory offerTemplateCategory =  (OfferTemplateCategory)productTemplateService.tryToFindByCodeOrId(offerTemplateCategoryWithId);
+            OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findById(offerTemplateCategoryWithId.getId());
             if (offerTemplateCategory == null) {
                 throw new BadRequestException("no offerTemplateCategory found with id " + offerTemplateCategoryWithId.getId());
             }

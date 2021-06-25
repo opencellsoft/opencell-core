@@ -3,23 +3,13 @@
  */
 package org.meveo.apiv2.billing.service;
 
-import static org.meveo.apiv2.generic.ValidationUtils.checkDto;
-import static org.meveo.apiv2.generic.ValidationUtils.checkId;
-
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.generic.core.mapper.JsonGenericMapper;
 import org.meveo.apiv2.generic.services.GenericApiAlteringService;
 import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.GenericApiPersistenceDelegate;
+import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.IDiscountable;
@@ -29,11 +19,25 @@ import org.meveo.model.billing.DiscountPlanInstance;
 import org.meveo.model.billing.DiscountPlanInstanceStatusEnum;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.DiscountPlan;
+import org.meveo.model.catalog.DiscountPlanItem;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.meveo.apiv2.generic.ValidationUtils.checkDto;
+import static org.meveo.apiv2.generic.ValidationUtils.checkId;
 
 @Stateless
 public class DiscountPlanInstanceApiService {
