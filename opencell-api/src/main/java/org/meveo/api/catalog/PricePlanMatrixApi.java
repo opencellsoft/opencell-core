@@ -630,6 +630,6 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
     			throw new MeveoApiException("No version exist for price plan matrix code : " + pricePlanMatrixCode);
     	}
     	PricePlanMatrix duplicate = pricePlanMatrixService.duplicatePricePlanMatrix(ppm, ppmv, pricePlanMatrixNewCode);
-    	return new PricePlanMatrixDto(duplicate, null);
+    	return new PricePlanMatrixDto(pricePlanMatrixService.findById(duplicate.getId()), null);
     }
 }

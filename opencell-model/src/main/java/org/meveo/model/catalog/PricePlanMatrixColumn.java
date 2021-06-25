@@ -89,7 +89,7 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @Column(name = "is_range")
     private Boolean isRange;
 
-    @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REFRESH}, orphanRemoval = true)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
 
     public PricePlanMatrixVersion getPricePlanMatrixVersion() {
