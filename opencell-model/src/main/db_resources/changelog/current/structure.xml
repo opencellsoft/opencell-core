@@ -3736,5 +3736,13 @@ END $$;]]>
             <column name="is_natural_person" type="${type.boolean}"/>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="#6168_20210624" author="HatimOUDAD">
+        <addColumn tableName="com_meveo_instance">
+            <column name="client_id" type="varchar(60)" />
+            <column name="client_secret" type="varchar(60)" />
+            <column name="authentication_type" type="varchar(60)" />
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
