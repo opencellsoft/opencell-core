@@ -56,6 +56,9 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -764,9 +767,8 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         
         return pricePlanMatrixLineService.loadMatchedLinesForServiceInstance(pricePlanMatrixVersion, attributeValues, productCode);
     }
-    
+
     public PricePlanMatrix duplicatePricePlanMatrix(PricePlanMatrix pricePlanMatrix, PricePlanMatrixVersion pricePlanMatrixVersion, String pricePlanMatrixNewCode) {
-    	//Hibernate.initialize(pricePlanMatrix);
     	detach(pricePlanMatrix);
     	
     	var duplicate = new PricePlanMatrix(pricePlanMatrix);
@@ -779,9 +781,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     	duplicate.setVersion(0);
     	duplicate.setVersions(new ArrayList<>());
     	create(duplicate);
-    	var duplicateVersion = new PricePlanMatrixVersion(pricePlanMatrixVersion);
-    	duplicateVersion.setPricePlanMatrix(duplicate);
-    	pricePlanMatrixVersionService.create(duplicateVersion);
+    	var duplicateVersion = pricePlanMatrixVersionService.duplicate(pricePlanMatrixVersion, !Strings.isEmpty(pricePlanMatrixNewCode) );
     	duplicate.getVersions().add(duplicateVersion);
     	return duplicate;
     }

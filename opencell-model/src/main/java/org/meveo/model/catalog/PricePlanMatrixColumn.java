@@ -40,7 +40,23 @@ import org.meveo.model.cpq.Product;
 })
 public class PricePlanMatrixColumn extends BusinessEntity {
 
-    @ManyToOne
+	public PricePlanMatrixColumn() {
+	}
+
+	public PricePlanMatrixColumn(PricePlanMatrixColumn copy) {
+		this.pricePlanMatrixVersion = copy.pricePlanMatrixVersion;
+		this.position = copy.position;
+		this.type = copy.type;
+		this.elValue = copy.elValue;
+		this.offerTemplate = copy.offerTemplate;
+		this.attribute = copy.attribute;
+		this.isRange = copy.isRange;
+		this.pricePlanMatrixValues = new HashSet<PricePlanMatrixValue>();
+		this.description = copy.description;
+		this.code = copy.code;
+	}
+
+	@ManyToOne
     @JoinColumn(name = "ppm_version_id")
     @NotNull
     private PricePlanMatrixVersion pricePlanMatrixVersion;
@@ -61,7 +77,7 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @JoinColumn(name = "offer_id")
     private OfferTemplate offerTemplate;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
     private Product product;
 
@@ -73,7 +89,7 @@ public class PricePlanMatrixColumn extends BusinessEntity {
     @Column(name = "is_range")
     private Boolean isRange;
 
-    @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pricePlanMatrixColumn", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REFRESH}, orphanRemoval = true)
     private Set<PricePlanMatrixValue> pricePlanMatrixValues = new HashSet<>();
 
     public PricePlanMatrixVersion getPricePlanMatrixVersion() {

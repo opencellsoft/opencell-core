@@ -43,7 +43,7 @@ import org.meveo.model.cpq.enums.VersionStatusEnum;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cpq_price_plan_version_seq"), })
 @NamedQueries({
-        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", query = "select p from PricePlanMatrixVersion p where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode order by p.pricePlanMatrix.priority asc"),
+        @NamedQuery(name = "PricePlanMatrixVersion.findByPricePlanAndVersionOrderByPmPriority", query = "select p from PricePlanMatrixVersion p left join fetch p.columns pc left join fetch p.lines pl  where p.currentVersion=:currentVersion and lower(p.pricePlanMatrix.code)=:pricePlanMatrixCode order by p.pricePlanMatrix.priority asc"),
         @NamedQuery(name = "PricePlanMatrixVersion.lastVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode order by p.currentVersion desc"),
         @NamedQuery(name = "PricePlanMatrixVersion.getLastPublishedVersion", query = "select p from PricePlanMatrixVersion p left join p.pricePlanMatrix pp where pp.code=:pricePlanMatrixCode and p.status=org.meveo.model.cpq.enums.VersionStatusEnum.PUBLISHED order by p.currentVersion desc ")
 })
@@ -80,6 +80,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
 		this.lines = new HashSet<>();
 		this.columns = new HashSet<>();
 		this.priority = copy.priority;
+		this.version = 1;
 	}
 
 
@@ -120,7 +121,7 @@ public class PricePlanMatrixVersion extends AuditableEntity {
     @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PricePlanMatrixLine> lines = new HashSet<>();
 
-    @OneToMany(mappedBy = "pricePlanMatrixVersion", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pricePlanMatrixVersion", fetch = FetchType.LAZY, cascade ={CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private Set<PricePlanMatrixColumn> columns = new HashSet<>();
     
     /**
