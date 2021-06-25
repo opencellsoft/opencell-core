@@ -1,17 +1,13 @@
 package org.meveo.api.rest;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Hidden;
-
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.custom.GenericCodeDto;
 import org.meveo.api.dto.custom.GenericCodeResponseDto;
@@ -20,9 +16,6 @@ import org.meveo.api.dto.custom.SequenceDto;
 
 import javax.ws.rs.*;
 
-/**
- *
- */
 @Path("/genericCode")
 @Tag(name = "GenericCode", description = "@%GenericCode")
 @Consumes({ APPLICATION_JSON, APPLICATION_XML })
@@ -30,10 +23,10 @@ import javax.ws.rs.*;
 public interface GenericCodeRs extends IBaseRs {
 
     /** 
-     * create
+     * create generic code
      * 
      * @param codeDto
-     * @return
+     * @return ActionStatus status of the API web service response
      */
     @POST
     @Path("/")
@@ -53,10 +46,10 @@ public interface GenericCodeRs extends IBaseRs {
     ActionStatus create(GenericCodeDto codeDto);
 
     /**
-     * update
+     * update generic code
      * 
      * @param codeDto
-     * @return
+     * @return ActionStatus status of the API web service response
      */
     @PUT
     @Path("/")
@@ -76,10 +69,10 @@ public interface GenericCodeRs extends IBaseRs {
     ActionStatus update(GenericCodeDto codeDto);
 
     /**
-     * find
+     * Find a specific generic code using entity class
      * 
      * @param entityClass
-     * @return
+     * @return GetGenericCodeResponseDto
      */
     @GET
     @Path("/")
@@ -99,10 +92,10 @@ public interface GenericCodeRs extends IBaseRs {
     GetGenericCodeResponseDto find(@QueryParam("entityClass") String entityClass);
 
     /**
-     * getGenericCode
+     * Generate generic code
      * 
      * @param codeDto
-     * @return
+     * @return GenericCodeResponseDto : generated code & sequence type + pattern
      */
     @POST
     @Path("/generateCode")
@@ -125,7 +118,7 @@ public interface GenericCodeRs extends IBaseRs {
      * createSequence
      * 
      * @param sequenceDto
-     * @return
+     * @return ActionStatus status of the API web service response
      */
     @POST
     @Path("/sequence/")

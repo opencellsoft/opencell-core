@@ -1016,6 +1016,13 @@ public class InvoiceServiceTest {
         BillingCycle bc = mock(BillingCycle.class);
         InvoiceType invoiceType = mock(InvoiceType.class);
         PaymentMethod paymentMethod = mock(PaymentMethod.class);
+        CustomerAccount customerAccount = mock(CustomerAccount.class);
+        Customer customer = mock(Customer.class);
+        Seller seller = new Seller();
+        seller.setCode("Seller_code");
+        when(ba.getCustomerAccount()).thenReturn(customerAccount);
+        when(customerAccount.getCustomer()).thenReturn(customer);
+        when(customer.getSeller()).thenReturn(seller);
         InvoiceService.InvoiceLinesToInvoice invoiceLinesGroups = invoiceService.getInvoiceLinesGroups(ba, ba, null, bc, invoiceType, null, null, null, false, paymentMethod,null);
         assertThat(invoiceLinesGroups).isNotNull();
         Assert.assertEquals(invoiceLinesGroups.invoiceLinesGroups.size(), 1);
@@ -1031,6 +1038,13 @@ public class InvoiceServiceTest {
         BillingCycle bc = mock(BillingCycle.class);
         InvoiceType invoiceType = mock(InvoiceType.class);
         PaymentMethod paymentMethod = mock(PaymentMethod.class);
+        CustomerAccount customerAccount = mock(CustomerAccount.class);
+        Customer customer = mock(Customer.class);
+        Seller seller = new Seller();
+        seller.setCode("Seller_code");
+        when(ba.getCustomerAccount()).thenReturn(customerAccount);
+        when(customerAccount.getCustomer()).thenReturn(customer);
+        when(customer.getSeller()).thenReturn(seller);
         InvoiceService.InvoiceLinesToInvoice invoiceLinesToInvoice = invoiceService.getInvoiceLinesGroups(subscription, ba,
                 null, bc, invoiceType, null, null, null, false, paymentMethod,null);
         assertThat(invoiceLinesToInvoice).isNotNull();
@@ -1159,6 +1173,7 @@ public class InvoiceServiceTest {
         di.setInvoiceSubCategory(subCat22);
         discountPlan.addDiscountPlanItem(di);
 
+        discountPlanInstance.setStatus(DiscountPlanInstanceStatusEnum.ACTIVE);
         discountPlanInstance.setDiscountPlan(discountPlan);
         discountPlanInstances.add(discountPlanInstance);
 

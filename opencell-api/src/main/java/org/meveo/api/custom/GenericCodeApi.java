@@ -3,10 +3,10 @@ package org.meveo.api.custom;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.meveo.api.dto.custom.SequenceType.ALPHA_UP;
 import static org.meveo.api.dto.custom.SequenceType.REGEXP;
 
-import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.custom.GenericCodeDto;
 import org.meveo.api.dto.custom.GetGenericCodeResponseDto;
@@ -94,17 +94,26 @@ public class GenericCodeApi extends BaseApi {
         sequenceService.create(sequence);
     }
 
+    public void updateSequence(SequenceDto sequenceDto) {
+        validateInputs(sequenceDto);
+        Sequence sequence = SequenceDto.from(sequenceDto);
+        sequenceService.findByCode(sequence.getCode());
+        sequenceService.update(sequence);
+    }
+
     private void validateInputs(SequenceDto sequenceDto) {
         if(sequenceDto != null) {
-            if (StringUtils.isBlank(sequenceDto.getCode())) {
+            if (isBlank(sequenceDto.getCode())) {
                 missingParameters.add("code");
             }
-            if (sequenceDto.getSequenceType() == null || StringUtils.isBlank(sequenceDto.getSequenceType().name())) {
+            if (sequenceDto.getSequenceType() == null || isBlank(sequenceDto.getSequenceType().name())) {
                 missingParameters.add("Sequence Type");
             }
             if (sequenceDto.getSequenceType() == REGEXP) {
                 ofNullable(sequenceDto.getPattern())
                         .orElseThrow(() -> new MeveoApiException("Sequence pattern is required"));
+                ofNullable(sequenceDto.getSize())
+                        .orElseThrow(() -> new MeveoApiException("Sequence size is missing"));
             }
             if (sequenceDto.getSequenceType() == ALPHA_UP) {
                 ofNullable(sequenceDto.getSize())
@@ -114,12 +123,6 @@ public class GenericCodeApi extends BaseApi {
         } else {
             throw new MeveoApiException("No data provided, dto is null");
         }
-    }
-
-    public void updateSequence(SequenceDto sequenceDto) {
-        Sequence sequence = SequenceDto.from(sequenceDto);
-        sequenceService.findByCode(sequence.getCode());
-        sequenceService.update(sequence);
     }
 
     public String getGenericCode(GenericCodeDto genericCodeDto) {

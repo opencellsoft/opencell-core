@@ -10713,6 +10713,10 @@
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-uk-546">
         <addUniqueConstraint columnNames="code,ppm_version_id" tableName="cpq_price_plan_matrix_column" constraintName="unique_code_ppm_version_id_pk"/>
     </changeSet>
+    <changeSet author="ZBariki" id="rebuild-str-uk-547">
+        <addUniqueConstraint columnNames="code" constraintName="uk_genericSeq_9fnf93rp352nkw2kpdbari17yr"
+                             deferrable="false" disabled="false" initiallyDeferred="false" tableName="generic_sequence" />
+    </changeSet>
 
     <!-- end uk -->
     <!-- start fk -->
