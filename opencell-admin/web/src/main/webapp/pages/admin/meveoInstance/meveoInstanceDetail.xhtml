@@ -8,6 +8,7 @@
     </ui:define>
 
     <ui:define name="body">
+    	<p:importEnum type="org.meveo.model.billing.AuthenticationTypeEnum" var="AuthenticationTypeEnum" />
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
@@ -29,8 +30,25 @@
             <hftl:formField label="#{messages['meveoInstance.code']}" field="code" required="true" />
             <hftl:formField label="#{messages['meveoInstance.url']}" field="url" required="true" size="255" componentWidth="125" />
             <hftl:formField label="#{messages['businessEntity.description']}" field="description" />
-            <hftl:formField label="#{messages['meveoInstance.authUsername']}" field="authUsername" size="30" />
-            <hftl:formField label="#{messages['meveoInstance.authPassword']}" field="authPassword" size="30" />
+            
+            <h:panelGroup id="authTypePanel">
+            
+	            <hftl:formField label="#{messages['meveoInstance.authenticationType']}" field="authenticationType" size="30" listenerUpdate="authTypePanel"/>
+	            
+	            <hftl:formField label="#{messages['meveoInstance.authUsername']}" field="authUsername" size="30" 
+	             	actionListenerBean="#{meveoInstanceBean.entity.authenticationType}"
+	            	rendered="#{meveoInstanceBean.entity.authenticationType eq AuthenticationTypeEnum.BASIC_AUTHENTICATION}" listenerUpdate="authTypePanel"/>
+	            <hftl:formField label="#{messages['meveoInstance.authPassword']}" field="authPassword" size="30" 
+	             	actionListenerBean="#{meveoInstanceBean.entity.authenticationType}"
+	            	rendered="#{meveoInstanceBean.entity.authenticationType eq AuthenticationTypeEnum.BASIC_AUTHENTICATION}" listenerUpdate="authTypePanel"/>
+	            
+	            <hftl:formField label="#{messages['meveoInstance.clientId']}" field="clientId" size="30" 
+	             	actionListenerBean="#{meveoInstanceBean.entity.authenticationType}"
+	            	rendered="#{meveoInstanceBean.entity.authenticationType eq AuthenticationTypeEnum.OAUTH2}" listenerUpdate="authTypePanel"/>
+	            <hftl:formField label="#{messages['meveoInstance.clientSecret']}" field="clientSecret" size="30" 
+	            	actionListenerBean="#{meveoInstanceBean.entity.authenticationType}"
+	            	rendered="#{meveoInstanceBean.entity.authenticationType eq AuthenticationTypeEnum.OAUTH2}" listenerUpdate="authTypePanel"/>
+	         </h:panelGroup>
         </hftl:formPanel>
 
     </ui:define>
