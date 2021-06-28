@@ -88,8 +88,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     private static boolean useCETCache = true;
 
     /**
-     * Groups custom field templates applicable to the same entity type. Key format: &lt;custom field template appliesTo code&gt;. Value is a map of custom field templates
-     * identified by a template code
+     * Groups custom field templates applicable to the same entity type. Key format: &lt;custom field template appliesTo code&gt;. Value is a map of custom field templates identified by a template code
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-cft-cache")
     private Cache<CacheKeyStr, Map<String, CustomFieldTemplate>> cftsByAppliesTo;
@@ -158,7 +157,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
                 } else if (cft.getCalendar() instanceof CalendarInterval) {
                     ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
                 } else if (cft.getCalendar() instanceof CalendarBanking) {
-                    ((CalendarBanking)  cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
+                    ((CalendarBanking) cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
                 }
             }
             if (cft.getListValues() != null) {
@@ -296,7 +295,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
                 ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
                 ((CalendarInterval) cft.getCalendar()).nextCalendarDate(new Date());
             } else if (cft.getCalendar() instanceof CalendarBanking) {
-                ((CalendarBanking)  cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
+                ((CalendarBanking) cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
                 ((CalendarInterval) cft.getCalendar()).nextCalendarDate(new Date());
             }
         }
@@ -308,6 +307,66 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
         cfts.put(cft.getCode(), cft);
         cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, cfts);
+    }
+
+    /**
+     * Store mapping between CF code and value storage in cache time period and cache by CFT appliesTo value.
+     * 
+     * @param cfts A list of Custom field template definitions
+     */
+    public void addUpdateCustomFieldTemplates(Collection<CustomFieldTemplate> cfts) {
+
+        if (!useCFTCache) {
+            return;
+        }
+
+        Map<CacheKeyStr, Map<String, CustomFieldTemplate>> newcftsByAppliesTo = new HashMap<CacheKeyStr, Map<String, CustomFieldTemplate>>();
+
+        for (CustomFieldTemplate cft : cfts) {
+
+            CacheKeyStr cacheKeyByAppliesTo = getCFTCacheKeyByAppliesTo(cft);
+
+            log.trace("Adding/updating custom field template {} for {} to CFT cache of Provider {}.", cft.getCode(), cacheKeyByAppliesTo, currentUser.getProviderCode());
+
+            if (!newcftsByAppliesTo.containsKey(cacheKeyByAppliesTo)) {
+
+                Map<String, CustomFieldTemplate> cftsOld = cftsByAppliesTo.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKeyByAppliesTo);
+                if (cftsOld != null) {
+                    newcftsByAppliesTo.put(cacheKeyByAppliesTo, new TreeMap<String, CustomFieldTemplate>(cftsOld));
+                } else {
+                    newcftsByAppliesTo.put(cacheKeyByAppliesTo, new TreeMap<String, CustomFieldTemplate>());
+                }
+            }
+
+            // Load calendar for lazy loading
+            if (cft.getCalendar() != null) {
+                cft.setCalendar(PersistenceUtils.initializeAndUnproxy(cft.getCalendar()));
+                if (cft.getCalendar() instanceof CalendarDaily) {
+                    ((CalendarDaily) cft.getCalendar()).setHours(PersistenceUtils.initializeAndUnproxy(((CalendarDaily) cft.getCalendar()).getHours()));
+                    ((CalendarDaily) cft.getCalendar()).nextCalendarDate(new Date());
+                } else if (cft.getCalendar() instanceof CalendarYearly) {
+                    ((CalendarYearly) cft.getCalendar()).setDays(PersistenceUtils.initializeAndUnproxy(((CalendarYearly) cft.getCalendar()).getDays()));
+                    ((CalendarYearly) cft.getCalendar()).nextCalendarDate(new Date());
+                } else if (cft.getCalendar() instanceof CalendarInterval) {
+                    ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
+                    ((CalendarInterval) cft.getCalendar()).nextCalendarDate(new Date());
+                } else if (cft.getCalendar() instanceof CalendarBanking) {
+                    ((CalendarBanking) cft.getCalendar()).setHolidays((PersistenceUtils.initializeAndUnproxy(((CalendarBanking) cft.getCalendar()).getHolidays())));
+                    ((CalendarInterval) cft.getCalendar()).nextCalendarDate(new Date());
+                }
+            }
+            if (cft.getListValues() != null) {
+                cft.getListValues().values().toArray(new String[] {});
+            }
+
+            cft = SerializationUtils.clone(cft);
+
+            newcftsByAppliesTo.get(cacheKeyByAppliesTo).put(cft.getCode(), cft);
+        }
+
+        for (Entry<CacheKeyStr, Map<String, CustomFieldTemplate>> cftsInfo : newcftsByAppliesTo.entrySet()) {
+            cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cftsInfo.getKey(), cftsInfo.getValue());
+        }
     }
 
     /**
@@ -414,11 +473,9 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * @return A list of custom entity templates
      */
     public Collection<CustomEntityTemplate> getCustomEntityTemplates() {
-    	String providerCode=currentUser.getProviderCode();
-    	return cetsByCode.entrySet().stream()
-    			.filter(x-> ((providerCode==null && x.getKey().getProvider()==null) 
-    					|| (providerCode!=null && providerCode.equals(x.getKey().getProvider()))))
-    			.map(x -> x.getValue()).collect(()-> Collectors.toList());
+        String providerCode = currentUser.getProviderCode();
+        return cetsByCode.entrySet().stream().filter(x -> ((providerCode == null && x.getKey().getProvider() == null) || (providerCode != null && providerCode.equals(x.getKey().getProvider())))).map(x -> x.getValue())
+            .collect(() -> Collectors.toList());
     }
 
     /**

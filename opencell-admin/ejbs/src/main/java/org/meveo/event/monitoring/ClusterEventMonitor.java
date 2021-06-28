@@ -26,6 +26,7 @@ import javax.jms.ObjectMessage;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.model.scripts.ScriptInstance;
@@ -33,6 +34,9 @@ import org.meveo.model.security.Role;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CfValueAccumulator;
+import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.service.index.ElasticClientConnection;
+import org.meveo.service.index.ElasticSearchIndexPopulationService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptCompilerService;
@@ -68,7 +72,16 @@ public class ClusterEventMonitor implements MessageListener {
     private CustomFieldTemplateService customFieldTemplateService;
 
     @Inject
+    private CustomEntityTemplateService customEntityTemplateService;
+
+    @Inject
     private JobExecutionService jobExecutionService;
+
+    @Inject
+    private ElasticClientConnection esConnection;
+
+    @Inject
+    private ElasticSearchIndexPopulationService esPopulationService;
 
     /**
      * @see MessageListener#onMessage(Message)
@@ -123,6 +136,17 @@ public class ClusterEventMonitor implements MessageListener {
         } else if (eventDto.getClazz().equals(CustomFieldTemplate.class.getSimpleName())) {
             CustomFieldTemplate cft = customFieldTemplateService.findById(eventDto.getId());
             cfValueAccumulator.refreshCfAccumulationRules(cft);
+
+        } else if (eventDto.getClazz().equals(CustomEntityTemplate.class.getSimpleName()) && esConnection.isEnabled()) {
+
+            if (eventDto.getAction() == CrudActionEnum.create || eventDto.getAction() == CrudActionEnum.enable) {
+                CustomEntityTemplate cet = customEntityTemplateService.findById(eventDto.getId());
+                esPopulationService.addToIndexAndTypeCache(cet);
+
+            } else if (eventDto.getAction() == CrudActionEnum.remove || eventDto.getAction() == CrudActionEnum.disable) {
+                CustomEntityTemplate cet = customEntityTemplateService.findById(eventDto.getId());
+                esPopulationService.removeFromIndexAndTypeCache(cet);
+            }
         }
     }
 }

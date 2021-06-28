@@ -36,6 +36,8 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
+import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
@@ -70,8 +72,11 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     @Inject
     private CustomTableCreatorService customTableCreatorService;
 
+    @Inject
+    private ClusterEventPublisher clusterEventPublisher;
+
     private static boolean useCETCache = true;
-    
+
     /**
      * Valid from field name
      */
@@ -81,13 +86,11 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
      * Validity priority field name
      */
     public static final String FIELD_VALID_PRIORITY = "valid_priority";
-    
-    
+
     /**
      * Valid to field name
      */
     public static final String FIELD_VALID_TO = "valid_to";
-    
 
     /**
      * Disabled field name
@@ -101,83 +104,86 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
     @Override
     public void create(CustomEntityTemplate cet) throws BusinessException {
-    	create(cet, true);
+        create(cet, true);
     }
-    
+
     public void createWithoutPermissions(CustomEntityTemplate cet) throws BusinessException {
-    	create(cet, false);
+        create(cet, false);
     }
-    
+
     public void create(CustomEntityTemplate cet, boolean createPermissions) throws BusinessException {
 
         ParamBean paramBean = paramBeanFactory.getInstance();
         super.create(cet);
-        customFieldsCache.addUpdateCustomEntityTemplate(cet); 
+        customFieldsCache.addUpdateCustomEntityTemplate(cet);
         if (cet.isStoreAsTable()) {
-        	customTableCreatorService.createTable(cet.getDbTablename());
-        	CustomFieldTemplate disabled=null;
-        	if(cet.isDisableable()) {  
-        		disabled=new CustomFieldTemplate();
-        		disabled.setCode(FIELD_DISABLED);
-        		disabled.setDefaultValue("1");
-        		disabled.setValueRequired(false);
-        		disabled.setActive(true);
-        		disabled.setDescription(FIELD_DISABLED);
-        		disabled.setAppliesTo("CE_"+cet.getDbTablename());
-        		disabled.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
-        		disabled.setFieldType(CustomFieldTypeEnum.BOOLEAN);
-        		disabled.setGuiPosition("tab:"+cet.getName()+":0;field:0");
-        		cet.setDisabled(true); 
-        		customFieldTemplateService.create(disabled); 
-        	} 
-        	if (cet.isVersioned()) {
-        		CustomFieldTemplate validFrom=new CustomFieldTemplate();
-        		validFrom.setCode(FIELD_VALID_FROM); 
-        		validFrom.setValueRequired(false);
-        		validFrom.setActive(true);
-        		validFrom.setDescription(FIELD_VALID_FROM);
-        		validFrom.setAppliesTo("CE_"+cet.getDbTablename());
-        		validFrom.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
-        		validFrom.setFieldType(CustomFieldTypeEnum.DATE);
-        		validFrom.setGuiPosition("tab:"+cet.getName()+":0;field:1");
-        		customFieldTemplateService.create(validFrom);
+            customTableCreatorService.createTable(cet.getDbTablename());
+            CustomFieldTemplate disabled = null;
+            if (cet.isDisableable()) {
+                disabled = new CustomFieldTemplate();
+                disabled.setCode(FIELD_DISABLED);
+                disabled.setDefaultValue("1");
+                disabled.setValueRequired(false);
+                disabled.setActive(true);
+                disabled.setDescription(FIELD_DISABLED);
+                disabled.setAppliesTo("CE_" + cet.getDbTablename());
+                disabled.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+                disabled.setFieldType(CustomFieldTypeEnum.BOOLEAN);
+                disabled.setGuiPosition("tab:" + cet.getName() + ":0;field:0");
+                cet.setDisabled(true);
+                customFieldTemplateService.create(disabled);
+            }
+            if (cet.isVersioned()) {
+                CustomFieldTemplate validFrom = new CustomFieldTemplate();
+                validFrom.setCode(FIELD_VALID_FROM);
+                validFrom.setValueRequired(false);
+                validFrom.setActive(true);
+                validFrom.setDescription(FIELD_VALID_FROM);
+                validFrom.setAppliesTo("CE_" + cet.getDbTablename());
+                validFrom.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+                validFrom.setFieldType(CustomFieldTypeEnum.DATE);
+                validFrom.setGuiPosition("tab:" + cet.getName() + ":0;field:1");
+                customFieldTemplateService.create(validFrom);
 
-        		CustomFieldTemplate validTo=new CustomFieldTemplate();
-        		validTo.setCode(FIELD_VALID_TO); 
-        		validTo.setValueRequired(false);
-        		validTo.setActive(true);
-        		validTo.setDescription(FIELD_VALID_TO);
-        		validTo.setAppliesTo("CE_"+cet.getDbTablename());
-        		validTo.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
-        		validTo.setFieldType(CustomFieldTypeEnum.DATE);
-        		validTo.setGuiPosition("tab:"+cet.getName()+":0;field:2");
-        		customFieldTemplateService.create(validTo);
+                CustomFieldTemplate validTo = new CustomFieldTemplate();
+                validTo.setCode(FIELD_VALID_TO);
+                validTo.setValueRequired(false);
+                validTo.setActive(true);
+                validTo.setDescription(FIELD_VALID_TO);
+                validTo.setAppliesTo("CE_" + cet.getDbTablename());
+                validTo.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+                validTo.setFieldType(CustomFieldTypeEnum.DATE);
+                validTo.setGuiPosition("tab:" + cet.getName() + ":0;field:2");
+                customFieldTemplateService.create(validTo);
 
-        		CustomFieldTemplate priority=new CustomFieldTemplate();
-        		priority.setCode(FIELD_VALID_PRIORITY); 
-        		priority.setValueRequired(false);
-        		priority.setActive(true);
-        		priority.setDescription(FIELD_VALID_PRIORITY);
-        		priority.setAppliesTo("CE_"+cet.getDbTablename());
-        		priority.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
-        		priority.setFieldType(CustomFieldTypeEnum.LONG);
-        		priority.setGuiPosition("tab:"+cet.getName()+":0;field:3");
-        		customFieldTemplateService.create(priority); 	
-        	}
+                CustomFieldTemplate priority = new CustomFieldTemplate();
+                priority.setCode(FIELD_VALID_PRIORITY);
+                priority.setValueRequired(false);
+                priority.setActive(true);
+                priority.setDescription(FIELD_VALID_PRIORITY);
+                priority.setAppliesTo("CE_" + cet.getDbTablename());
+                priority.setStorageType(CustomFieldStorageTypeEnum.SINGLE);
+                priority.setFieldType(CustomFieldTypeEnum.LONG);
+                priority.setGuiPosition("tab:" + cet.getName() + ":0;field:3");
+                customFieldTemplateService.create(priority);
+            }
         }
 
         if (cet.isStoreInES()) {
             elasticClient.createCETMapping(cet);
         }
-		if(createPermissions) {
-	        try {
-	            permissionService.createIfAbsent(cet.getModifyPermission(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
-	            permissionService.createIfAbsent(cet.getReadPermission(), paramBean.getProperty("role.readAllCE", "ReadAllCE"));
-	
-	        } catch (Exception e) {
-	            throw new RuntimeException(e);
-	        }
-		}
+
+        if (createPermissions) {
+            try {
+                permissionService.createIfAbsent(cet.getModifyPermission(), paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"));
+                permissionService.createIfAbsent(cet.getReadPermission(), paramBean.getProperty("role.readAllCE", "ReadAllCE"));
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        clusterEventPublisher.publishEvent(cet, CrudActionEnum.create);
     }
 
     @Override
@@ -197,6 +203,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
             throw new RuntimeException(e);
         }
 
+        clusterEventPublisher.publishEvent(cet, CrudActionEnum.update);
         return cetUpdated;
     }
 
@@ -218,6 +225,8 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
         // Remove from ES
         elasticClient.removeCETMapping(cet);
+
+        clusterEventPublisher.publishEvent(cet, CrudActionEnum.remove);
 
     }
 
@@ -436,6 +445,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         cet = super.disable(cet);
         customFieldsCache.removeCustomEntityTemplate(cet);
 
+        clusterEventPublisher.publishEvent(cet, CrudActionEnum.disable);
         return cet;
     }
 
@@ -444,6 +454,8 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
         cet = super.enable(cet);
         customFieldsCache.addUpdateCustomEntityTemplate(cet);
+
+        clusterEventPublisher.publishEvent(cet, CrudActionEnum.enable);
         return cet;
     }
 }

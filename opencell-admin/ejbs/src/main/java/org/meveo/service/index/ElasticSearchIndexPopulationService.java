@@ -547,7 +547,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createIndexes() throws BusinessException {
 
-    	String indexPrefix = currentUser.getProviderCode() == null ? "null" : BaseEntity.cleanUpAndLowercaseCodeOrId(currentUser.getProviderCode());
+        String indexPrefix = currentUser.getProviderCode() == null ? "null" : BaseEntity.cleanUpAndLowercaseCodeOrId(currentUser.getProviderCode());
 
         log.debug("Creating Elastic Search indexes with prefix {}", indexPrefix);
 
@@ -641,8 +641,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         if (!cet.isStoreInES()) {
             return;
         }
-        Class<? extends ISearchable> instanceClass = cet.isStoreAsTable() ? CustomTableRecord.class : CustomEntityInstance.class;
-        ESIndexNameAndType indexAndType = addToIndexAndTypeCache(instanceClass, cet.getCode());
+
+        ESIndexNameAndType indexAndType = addToIndexAndTypeCache(cet);
 
         // Not interested in storing and indexing this entity in Elastic Search
         if (indexAndType == null) {
@@ -817,13 +817,13 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @SuppressWarnings("unchecked")
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Object[] populateIndexFromNativeTable(CustomEntityTemplate cet, Object fromId, int pageSize, ReindexingStatistics statistics) throws BusinessException { 
-    	
-    	if(cet.isDisabled()) {
-    		return new Object[] { 0, null };
-    	} 
+    public Object[] populateIndexFromNativeTable(CustomEntityTemplate cet, Object fromId, int pageSize, ReindexingStatistics statistics) throws BusinessException {
+
+        if (cet.isDisabled()) {
+            return new Object[] { 0, null };
+        }
         Session session = getEntityManager().unwrap(Session.class);
-        String tableName=cet.getDbTablename();
+        String tableName = cet.getDbTablename();
         StringBuilder selectQuery = new StringBuilder("select * from ").append(tableName).append(" e where e.id >").append(" :fromId").append(" order by e.id");
         SQLQuery query = session.createSQLQuery(selectQuery.toString());
         query.setParameter("fromId", ((Number) fromId).longValue());
@@ -987,8 +987,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Get all full index names as defined in Elastic search for a <b>current provider</b>, that is those indexes which name starts with a provider code (removed spaces and ). For
-     * a mian provider a string value of 'null' is used.
+     * Get all full index names as defined in Elastic search for a <b>current provider</b>, that is those indexes which name starts with a provider code (removed spaces and ). For a mian provider a string value of 'null'
+     * is used.
      *
      * @return A list of full index names
      * @throws BusinessException Elastic search mapping can not be accessed
@@ -1057,8 +1057,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      *
      * @param clazzToConvert Entity class that extends ISearchable interface
      * @param cetCode Custom entity template/custom table code
-     * @return A full index name and type. Or null if no match was found e.g. not interested in storing in ES. Index names are prefixed by provider code (removed spaces and
-     *         lowercase).
+     * @return A full index name and type. Or null if no match was found e.g. not interested in storing in ES. Index names are prefixed by provider code (removed spaces and lowercase).
      */
     public ESIndexNameAndType getIndexAndType(Class<? extends ISearchable> clazzToConvert, String cetCode) {
 
@@ -1081,6 +1080,22 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             cetCode = ((CustomTableRecord) entity).getCetCode();
         }
         return getIndexAndType(entity.getClass(), cetCode);
+    }
+
+    /**
+     * Determine index and type value for Elastic Search for a given class and store it in indices cache
+     *
+     * @param cet Custom entity template
+     * @return A full index name and type
+     */
+    public ESIndexNameAndType addToIndexAndTypeCache(CustomEntityTemplate cet) throws BusinessException {
+
+        if (!cet.isStoreInES()) {
+            return null;
+        }
+        Class<? extends ISearchable> instanceClass = cet.isStoreAsTable() ? CustomTableRecord.class : CustomEntityInstance.class;
+        ESIndexNameAndType indexAndType = addToIndexAndTypeCache(instanceClass, cet.getCode());
+        return indexAndType;
     }
 
     /**
@@ -1129,6 +1144,32 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         indices.put(new CacheKeyESIndex(currentUser.getProviderCode(), classname, cetCode), indexAndType);
 
         return indexAndType;
+    }
+
+    /**
+     * Remove index and type value mapping for a given class from indices cache
+     *
+     * @param cet Custom entity template
+     */
+    public void removeFromIndexAndTypeCache(CustomEntityTemplate cet) {
+
+        if (!cet.isStoreInES()) {
+            return;
+        }
+
+        Class<? extends ISearchable> instanceClass = cet.isStoreAsTable() ? CustomTableRecord.class : CustomEntityInstance.class;
+        ESIndexNameAndType indexAndType = getIndexAndType(instanceClass, cet.getCode());
+
+        // Not interested in storing and indexing this entity in Elastic Search
+        if (indexAndType == null) {
+            log.warn("No matching index found for CET {}", cet.getCode());
+            return;
+
+        } else if (indexAndType.getType() != null) {
+            log.warn("CET {} shares an index with other entity types and therefore index won't be removed", cet.getCode());
+            return;
+        }
+        removeFromIndexAndTypeCache(instanceClass, cet.getCode());
     }
 
     /**

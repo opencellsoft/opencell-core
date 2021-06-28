@@ -42,7 +42,7 @@ import org.meveo.service.crm.impl.ProviderService;
 import org.slf4j.Logger;
 
 /**
- * Provides cache related services (loading, update) for custom field value related operations
+ * Provides cache related services (loading, update) for tenant(provider) related operations
  * 
  * @author Andrius Karpavicius
  * @author Wassim Drira

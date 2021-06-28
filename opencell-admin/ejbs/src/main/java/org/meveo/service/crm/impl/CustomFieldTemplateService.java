@@ -159,7 +159,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                 if (cfts.isEmpty()) {
                     customFieldsCache.markNoCustomFieldTemplates(appliesTo);
                 } else {
-                    cfts.forEach((code, cft) -> customFieldsCache.addUpdateCustomFieldTemplate(cft));
+                    customFieldsCache.addUpdateCustomFieldTemplates(cfts.values());
                 }
             }
 
@@ -290,10 +290,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
         elasticClient.updateCFMapping(cft);
 
+        clusterEventPublisher.publishEvent(cft, CrudActionEnum.create);
+        
         boolean reaccumulateCFValues = cfValueAccumulator.refreshCfAccumulationRules(cft);
         if (reaccumulateCFValues) {
 
-            clusterEventPublisher.publishEvent(cft, CrudActionEnum.create);
+            
             cfValueAccumulator.cftCreated(cft);
         }
         if (updateUniqueConstraint) {
@@ -388,6 +390,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
         elasticClient.updateCFMapping(cftUpdated);
+        clusterEventPublisher.publishEvent(cft, CrudActionEnum.update);
 
         if (updateUniqueConstraint) {
             updateConstraintByOldColumnsAndCet(oldConstraintColumns, cet, cetFields);
@@ -430,6 +433,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         }
 
         cfValueAccumulator.refreshCfAccumulationRules(cft);
+        clusterEventPublisher.publishEvent(cft, CrudActionEnum.remove);
     }
 
     @Override
@@ -437,6 +441,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         cft = refreshOrRetrieve(cft);
         cft = super.enable(cft);
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
+        clusterEventPublisher.publishEvent(cft, CrudActionEnum.enable);
         return cft;
     }
 
@@ -444,6 +449,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     public CustomFieldTemplate disable(CustomFieldTemplate cft) throws BusinessException {
         cft = super.disable(cft);
         customFieldsCache.removeCustomFieldTemplate(cft);
+        clusterEventPublisher.publishEvent(cft, CrudActionEnum.disable);
         return cft;
     }
 
