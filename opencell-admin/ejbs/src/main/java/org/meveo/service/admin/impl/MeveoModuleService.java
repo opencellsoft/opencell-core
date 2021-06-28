@@ -31,9 +31,9 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.oltu.oauth2.client.response.OAuthAccessTokenResponse;
 import org.jboss.resteasy.client.jaxrs.BasicAuthentication;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.ApiService;
@@ -47,6 +47,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.export.RemoteAuthenticationException;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.billing.AuthenticationTypeEnum;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.catalog.BusinessServiceModel;
@@ -169,13 +170,20 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
             MeveoModuleDto moduleDto = moduleApi.find(module.getCode());
 
             log.debug("Export module dto {}", moduleDto);
-            Response response = meveoInstanceService.publishDto2MeveoInstance(url, meveoInstance, moduleDto);
-            ActionStatus actionStatus = response.readEntity(ActionStatus.class);
-            log.debug("response {}", actionStatus);
-            if (actionStatus != null &&  ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
-                throw new BusinessException("Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
-            } else if (actionStatus == null) {
-                throw new BusinessException("Action status is null");
+            if (meveoInstance.getAuthenticationType().equals(AuthenticationTypeEnum.OAUTH2)) {
+            	OAuthAccessTokenResponse oAuthAccessTokenResponse = meveoInstanceService.publishDtoOAuth2MeveoInstance(url, meveoInstance, moduleDto);
+            	if(oAuthAccessTokenResponse.getResponseCode() != 200) {
+            		throw new BusinessException("Code " + oAuthAccessTokenResponse.getResponseCode() + ", info " + oAuthAccessTokenResponse.getBody());
+            } 
+            }else{
+	            Response response = meveoInstanceService.publishDto2MeveoInstance(url, meveoInstance, moduleDto);
+	            ActionStatus actionStatus = response.readEntity(ActionStatus.class);
+	            log.debug("response {}", actionStatus);
+	            if (actionStatus != null &&  ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
+	                throw new BusinessException("Code " + actionStatus.getErrorCode() + ", info " + actionStatus.getMessage());
+	            } else if (actionStatus == null) {
+	                throw new BusinessException("Action status is null");
+	            }
             }
         } catch (Exception e) {
             log.error("Error when export module {} to {}. Reason {}", module.getCode(), meveoInstance.getCode(),
