@@ -8211,6 +8211,14 @@
             <column name="aggregate_id_f" type="bigint" />
             <column name="invoice_id" type="bigint" />
             <column name="billing_run_id" type="bigint" />
+            <column name="unit_amount_without_tax" type="numeric(23, 12)" />
+            <column name="unit_amount_with_tax" type="numeric(23, 12)" />
+            <column name="unit_amount_tax" type="numeric(23, 12)" />
+            <column name="amount_without_tax" type="numeric(23, 12)" />
+            <column name="amount_with_tax" type="numeric(23, 12)" />
+            <column name="amount_tax" type="numeric(23, 12)" />            
+            <column name="tax_id" type="bigint" />
+            <column name="tax_percent" type="numeric(23, 12)" />
         </createTable>
     </changeSet>   
         

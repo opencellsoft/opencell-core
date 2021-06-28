@@ -4292,4 +4292,18 @@ END $$;]]>
         <alterSequence sequenceName="billing_rated_transaction_seq" incrementBy="500"/>
         <sql>delete from ${db.schema.adapted}crm_custom_field_tmpl where applies_to='JobInstance_RatedTransactionsJob' and code='batchSize'</sql>
     </changeSet>
+    
+    <changeSet id="#6117_20210622" author="AndriusKarpavicius">
+        <addColumn tableName="billing_rated_transaction_pending" >
+            <column name="unit_amount_without_tax" type="numeric(23, 12)" />
+            <column name="unit_amount_with_tax" type="numeric(23, 12)" />
+            <column name="unit_amount_tax" type="numeric(23, 12)" />
+            <column name="amount_without_tax" type="numeric(23, 12)" />
+            <column name="amount_with_tax" type="numeric(23, 12)" />
+            <column name="amount_tax" type="numeric(23, 12)" />            
+            <column name="tax_id" type="bigint" />
+            <column name="tax_percent" type="numeric(23, 12)" />
+        </createTable>
+    </changeSet>    
+    
 </databaseChangeLog>
