@@ -98,8 +98,12 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             jobExecutionResult.setNbItemsToProcess(((SynchronizedIterator) iterator).getSize());
         }
 
-        if (jobExecutionResult.getNbItemsToProcess() == 0 || !jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
-            log.info("{}/{} will skip as nothing to process or should not continue", jobInstance.getJobTemplate(), jobInstance.getCode());
+        if (jobExecutionResult.getNbItemsToProcess() == 0) {
+            log.info("{}/{} will skip as nothing to process", jobInstance.getJobTemplate(), jobInstance.getCode());
+            return;
+        }
+        if (!jobExecutionService.isShouldJobContinue(jobInstance.getId())) {
+            log.info("{}/{} will skip as should not continue", jobInstance.getJobTemplate(), jobInstance.getCode());
             return;
         }
 

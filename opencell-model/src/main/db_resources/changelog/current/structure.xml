@@ -4266,4 +4266,18 @@ END $$;]]>
             <column name="billing_run_id" type="bigint" />
         </createTable>
     </changeSet>
+    
+    <changeSet id="#6117_20210622" author="AndriusKarpavicius">
+        <addColumn tableName="billing_rated_transaction_pending" >
+            <column name="unit_amount_without_tax" type="numeric(23, 12)" />
+            <column name="unit_amount_with_tax" type="numeric(23, 12)" />
+            <column name="unit_amount_tax" type="numeric(23, 12)" />
+            <column name="amount_without_tax" type="numeric(23, 12)" />
+            <column name="amount_with_tax" type="numeric(23, 12)" />
+            <column name="amount_tax" type="numeric(23, 12)" />            
+            <column name="tax_id" type="bigint" />
+            <column name="tax_percent" type="numeric(23, 12)" />
+        </createTable>
+    </changeSet>    
+    
 </databaseChangeLog>
