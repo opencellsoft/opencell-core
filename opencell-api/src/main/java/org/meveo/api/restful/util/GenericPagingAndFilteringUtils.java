@@ -56,20 +56,29 @@ public class GenericPagingAndFilteringUtils {
      *
      * @param pagingAndFilteringRest PagingAndFilteringRest containing all query params (limit, offset, sort, filters etc.)
      * @return an instance of PagingAndFiltering
+     * set paging and filtering as following format :
+     *         "offset": 0,
+     *         "limit": 4,
+     *         "sort": "-description,-id",
+     *         filters : {
+     *               "likeCriteria description": "*Description*"
+     *               "code": "*FR",
+     *               "SQL": "code='SELLER_FR'",
+     *               "inList id": [-3,1],
+     *               "ne id": -3,
+     *               "fromRange id": -6,
+     *               "toRange id": 0
+     *         }
      */
-    public void constructPagingAndFiltering(PagingAndFilteringRest pagingAndFilteringRest) throws JsonProcessingException {
+    public void constructPagingAndFiltering(PagingAndFilteringRest pagingAndFilteringRest) {
         if ( pagingAndFilteringRest == null )
             pagingAndFilteringRest = ImmutablePagingAndFilteringRest.builder().build();
 
         pagingAndFiltering = new PagingAndFiltering();
 
-        // set limit and offset as following format :
-        // "offset": 0, "limit": 4
         pagingAndFiltering.setLimit( pagingAndFilteringRest.getLimit() );
         pagingAndFiltering.setOffset( pagingAndFilteringRest.getOffset() );
 
-        // set multisort as following format :
-        // "sort": "-description,-id"
         String allSortFieldsAndOrders = pagingAndFilteringRest.getSort();
         String[] allSortFieldsSplit = allSortFieldsAndOrders.split(MULTI_SORTING_DELIMITER);
         StringBuilder sortFields = new StringBuilder();
@@ -95,16 +104,6 @@ public class GenericPagingAndFilteringUtils {
         }
         pagingAndFiltering.setSortBy( sortFields.toString() );
 
-        // set filters as following format :
-        // filters : {
-        //      "likeCriteria description": "*Description*"
-        //      "code": "*FR",
-        //      "SQL": "code='SELLER_FR'",
-        //      "inList id": [-3,1],
-        //      "ne id": -3,
-        //      "fromRange id": -6,
-        //      "toRange id": 0
-        // }
         if ( ! MapUtils.isEmpty(pagingAndFilteringRest.getFilters()) ) {
             Map<String, Object> genericFilters = new HashMap<>(pagingAndFilteringRest.getFilters());
             pagingAndFiltering.setFilters( genericFilters );
