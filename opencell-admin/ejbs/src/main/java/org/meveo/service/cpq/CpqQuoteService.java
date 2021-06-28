@@ -19,9 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -44,16 +43,14 @@ import org.meveo.admin.job.PdfGeneratorConstants;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.event.qualifier.PDFGenerated;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.communication.email.EmailTemplate;
-import org.meveo.model.communication.email.MailingTypeEnum;
 import org.meveo.model.cpq.CpqQuote;
-import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.quote.QuoteStatusEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.service.base.BusinessService;
@@ -75,8 +72,6 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 
-import static java.util.Arrays.asList;
-
 @Stateless
 public class CpqQuoteService extends BusinessService<CpqQuote> {
 
@@ -87,6 +82,11 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 
 	@Inject
 	private EmailSender emailSender;
+	
+	
+	@Inject
+    @PDFGenerated
+    private Event<CpqQuote> pdfGeneratedEventProducer;
 	
 	  /** map used to store temporary jasper report. */
     private Map<String, JasperReport> jasperReportMap = new HashMap<>();
@@ -339,8 +339,10 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	    public CpqQuote produceQuotePdf(CpqQuote quote) throws BusinessException {
 	    	generateQuotePdf(quote);
 	    	quote.setStatusDate(new Date()); 
+	    	pdfGeneratedEventProducer.fire(quote);
 	    	quote = updateNoCheck(quote);
-	        return quote;
+	    	entityUpdatedEventProducer.fire(quote);
+	    	return quote;
 	    }
 	    
 	    public boolean isCpqQuotePdfExist(CpqQuote quote) {
