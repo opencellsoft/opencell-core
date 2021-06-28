@@ -174,8 +174,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 				Iterator<CommercialRuleLine> lineIterator = item.getCommercialRuleLines().iterator();
 				while (lineIterator.hasNext()) {
 					CommercialRuleLine line = lineIterator.next();
-					continueProcess = checkOperator(item.getOperator(), linesCount==1,!lineIterator.hasNext(), isPreRequisite,
-							isSelectable);
+					continueProcess = checkOperator(item.getOperator(), linesCount==1,!lineIterator.hasNext(), isPreRequisite,isSelectable,true);
 					if ((isPreRequisite && line.getSourceOfferTemplate() != null
 							&& !line.getSourceOfferTemplate().getCode().equals(offerCode))
 							|| (!isPreRequisite && line.getSourceOfferTemplate() != null 
@@ -195,7 +194,7 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
 						if ((isPreRequisite && productContext == null)
 								|| (!isPreRequisite && productContext != null && line.getSourceAttribute()==null)) {
-							if (continueProcess) {
+							if (checkOperator(item.getOperator(), linesCount==1,!lineIterator.hasNext(), isPreRequisite,isSelectable,productContext!=null)) {
 								continue;
 							} else {
 								return false;
@@ -348,11 +347,11 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 			}
 	}
 
-	private boolean checkOperator(OperatorEnum operator, boolean isOnlyOneLine, boolean isLastLine, boolean isPreRequisite,Boolean isSelectable) {
+	private boolean checkOperator(OperatorEnum operator, boolean isOnlyOneLine, boolean isLastLine, boolean isPreRequisite,Boolean isSelectable,boolean isElementExists) {
 		if(isOnlyOneLine) {
 			return false;
 		}
-			if( OperatorEnum.OR.equals(operator)) {
+			if(isElementExists && OperatorEnum.OR.equals(operator)) {
 				return false;
 			}else {
 				if(isLastLine && !isSelectable) {
