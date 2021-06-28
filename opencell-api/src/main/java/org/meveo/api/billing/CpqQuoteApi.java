@@ -1149,6 +1149,8 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setAmountWithoutTax(accountingArticlePrice.getAmountWithoutTax());
             quotePrice.setUnitPriceWithoutTax(accountingArticlePrice.getUnitPriceWithoutTax());
             quotePrice.setTaxRate(accountingArticlePrice.getTaxRate());
+            quotePrice.setRecurrenceDuration(accountingArticlePrice.getRecurrenceDuration());
+            quotePrice.setRecurrencePeriodicity(accountingArticlePrice.getRecurrencePeriodicity());
             quotePriceService.create(quotePrice);
             log.debug("reducePrices1 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
             return Optional.of(quotePrice);
@@ -1164,6 +1166,13 @@ public class CpqQuoteApi extends BaseApi {
             quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
             quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
             quotePrice.setTaxRate(a.getTaxRate().add(b.getTaxRate()));
+            if(a.getRecurrenceDuration()!=null) {
+            	quotePrice.setRecurrenceDuration(a.getRecurrenceDuration());
+            }
+            if(a.getRecurrencePeriodicity()!=null) {
+            	quotePrice.setRecurrencePeriodicity(a.getRecurrencePeriodicity());
+            }
+            
             quotePriceService.create(quotePrice);
             log.debug("reducePrices2 quotePriceId={}, level={}",quotePrice.getId(),quotePrice.getPriceLevelEnum());
             
