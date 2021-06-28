@@ -352,20 +352,6 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 		if(isOnlyOneLine) {
 			return false;
 		}
-		if(isPreRequisite){
-			if( OperatorEnum.AND.equals(operator)) {
-				return false;
-			}else {
-				if(isLastLine && !isSelectable) {
-					return false;
-				}else {
-					isSelectable=false;
-					return true;
-				}
-				
-			}
-			//incompatibility
-		}else {
 			if( OperatorEnum.OR.equals(operator)) {
 				return false;
 			}else {
@@ -374,10 +360,9 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 				}else {
 					isSelectable=false;
 					return true;
-				}
-				
-			}
-		}
+				}	
+			} 
+
 	
 	}
 	

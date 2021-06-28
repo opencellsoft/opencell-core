@@ -811,9 +811,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 			        										GetAttributeDtoResponse result =attributeApi.findByCode(d.getCode());
 			        										return result;
 			        									}).collect(Collectors.toSet()); 
-		    									productDTO.setCurrentProductVersion(getProductVersionResponse);
 		    									getProductVersionResponse.setAttributes(attributes);
         									}
+        								productDTO.setCurrentProductVersion(getProductVersionResponse);
         								}
         						}
         					}  	
