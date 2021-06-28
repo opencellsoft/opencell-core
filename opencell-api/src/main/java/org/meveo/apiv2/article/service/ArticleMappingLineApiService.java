@@ -49,6 +49,7 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
         AccountingArticle accountingArticle = (AccountingArticle) articleMappingLineService.tryToFindByCodeOrId(articleMappingLine.getAccountingArticle());
         if(articleMappingLine.getArticleMapping()!=null) {
         	ArticleMapping articleMapping = (ArticleMapping) articleMappingLineService.tryToFindByCodeOrId(articleMappingLine.getArticleMapping());
+        	articleMappingLine.setArticleMapping(articleMapping);
         }
         if(articleMappingLine.getAttributesMapping() != null && !articleMappingLine.getAttributesMapping().isEmpty()){
             List<AttributeMapping> attributesMapping = articleMappingLine.getAttributesMapping()
