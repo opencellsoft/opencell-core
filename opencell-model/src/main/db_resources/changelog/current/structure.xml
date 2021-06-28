@@ -9135,6 +9135,12 @@ public class OrderAdvancement extends ModuleScript {
             </insert>
             
     </changeSet>
+    
+    <changeSet id="#INTRD-339_20210625" author="ZBariki">
+        <addUniqueConstraint columnNames="code" constraintName="uk_genericSeq_9fnf93rp352nkw2kpdbari17yr"
+                             deferrable="false" disabled="false" initiallyDeferred="false" tableName="generic_sequence" />
+    </changeSet>
+    
     <changeSet id="#6168_20210624" author="HatimOUDAD">
         <addColumn tableName="com_meveo_instance">
             <column name="client_id" type="varchar(60)" />
