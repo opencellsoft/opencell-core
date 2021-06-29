@@ -45,11 +45,11 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
 
     @Override
     public ArticleMappingLine create(ArticleMappingLine articleMappingLine) {
-    	if(articleMappingLine.getArticleMapping() != null) {
-			ArticleMapping articleMapping = (ArticleMapping) articleMappingLineService.tryToFindByCodeOrId(articleMappingLine.getArticleMapping());
-			articleMappingLine.setArticleMapping(articleMapping);
-    	}
         AccountingArticle accountingArticle = (AccountingArticle) articleMappingLineService.tryToFindByCodeOrId(articleMappingLine.getAccountingArticle());
+        if(articleMappingLine.getArticleMapping()!=null) {
+        	ArticleMapping articleMapping = (ArticleMapping) articleMappingLineService.tryToFindByCodeOrId(articleMappingLine.getArticleMapping());
+        	articleMappingLine.setArticleMapping(articleMapping);
+        }
         if(articleMappingLine.getAttributesMapping() != null && !articleMappingLine.getAttributesMapping().isEmpty()){
             List<AttributeMapping> attributesMapping = articleMappingLine.getAttributesMapping()
                     .stream()
@@ -115,7 +115,7 @@ public class ArticleMappingLineApiService implements ApiService<ArticleMappingLi
         	articleMappingLine.setProduct(product);
         }
         if(articleMappingLine.getChargeTemplate() != null){
-            ChargeTemplate chargeTemplate = (ChargeTemplate) articleMappingLineService.tryToFindByCodeOrId(articleMappingLine.getChargeTemplate());
+            ChargeTemplate chargeTemplate = (ChargeTemplate) articleMappingLineService.tryToFindByEntityClassAndCodeOrId(ChargeTemplate.class, articleMappingLine.getChargeTemplate().getCode(), articleMappingLine.getChargeTemplate().getId());
             articleMappingLine.setChargeTemplate(chargeTemplate);
         }
     }
