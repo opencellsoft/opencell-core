@@ -13,6 +13,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableCFEntity;
 
 @MappedSuperclass
@@ -44,6 +45,10 @@ public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity 
 
     @Column(name = "double_value")
     protected Double doubleValue;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "boolean_value")
+    protected Boolean booleanValue; 
 
     public Attribute getAttribute() {
         return attribute;
@@ -111,4 +116,18 @@ public class AttributeValue<T extends AttributeValue> extends AuditableCFEntity 
     public int hashCode() {
         return Objects.hash(super.hashCode(), attribute, parentAttributeValue, assignedAttributeValue, stringValue, dateValue, doubleValue);
     }
+
+	/**
+	 * @return the booleanValue
+	 */
+	public Boolean getBooleanValue() {
+		return booleanValue;
+	}
+
+	/**
+	 * @param booleanValue the booleanValue to set
+	 */
+	public void setBooleanValue(Boolean booleanValue) {
+		this.booleanValue = booleanValue;
+	}
 }

@@ -9196,7 +9196,6 @@
                 <constraints nullable="false"/>
             </column>
             <column name="priority" type="int4" />
-            <column name="sequence" type="int4" />
             <column name="display" type="${type.boolean}" >
                 <constraints nullable="false"/>
             </column>
@@ -15781,6 +15780,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#20210614_540_update_script_quotation_and_order" author="TarikFA." />
     <changeSet id="#20210622-INTRD-272" author="TarikFA." />
     <changeSet id="#INTRD-242_20210623" author="ZBariki" />
+    <changeSet id="#5595_540582_20210528_2" author="TarikFA." />
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

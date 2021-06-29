@@ -410,7 +410,7 @@ public class CpqQuoteApi extends BaseApi {
 
     private void newPopulateQuoteAttribute(List<QuoteAttributeDTO> quoteAttributeDTOS, QuoteProduct quoteProduct) {
         if (quoteAttributeDTOS != null && !quoteAttributeDTOS.isEmpty()) {
-        	List<Attribute> productAttributes = quoteProduct.getProductVersion().getAttributes();
+        	 List<Attribute> productAttributes = quoteProduct.getProductVersion().getAttributes().stream().map(pva -> pva.getAttribute()).collect(Collectors.toList());
             quoteProduct.getQuoteAttributes().clear();
             quoteAttributeDTOS.stream()
                     .map(quoteAttributeDTO -> createQuoteAttribute(quoteAttributeDTO, quoteProduct, productAttributes))

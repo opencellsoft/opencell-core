@@ -39,6 +39,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.cpq.commercial.CommercialOrderEnum;
 import org.meveo.model.cpq.commercial.InvoicingPlan;
@@ -822,7 +823,7 @@ public class CommercialOrderApi extends BaseApi {
         }
     }
 	
-	private OrderAttribute populateOrderAttribute(OrderAttributeDto orderAttributeDTO, OrderProduct  orderProduct, List<Attribute> productAttributes,OrderOffer orderOffer) {
+	private OrderAttribute 	populateOrderAttribute(OrderAttributeDto orderAttributeDTO, OrderProduct  orderProduct, List<ProductVersionAttribute> productVersionAttributes,OrderOffer orderOffer) {
         if (Strings.isEmpty( orderAttributeDTO.getOrderAttributeCode())) {
             missingParameters.add("orderAttributeCode");
         handleMissingParameters();
@@ -834,7 +835,7 @@ public class CommercialOrderApi extends BaseApi {
 	            throw new EntityDoesNotExistsException(Attribute.class, orderAttributeDTO.getOrderAttributeCode());
 	        }
         }
-        
+        List<Attribute> productAttributes = productVersionAttributes.stream().map(pva -> pva.getAttribute()).collect(Collectors.toList());
         if(productAttributes != null && !productAttributes.contains(attribute) && orderProduct!=null){
             throw new BusinessApiException(String.format("Product version (code: %s, version: %d), doesn't contain attribute code: %s", orderProduct.getProductVersion().getProduct().getCode() , orderProduct.getProductVersion().getCurrentVersion(), attribute.getCode()));
         }
@@ -871,7 +872,7 @@ public class CommercialOrderApi extends BaseApi {
             List<OrderAttribute> linkedOrderAttributes = orderAttributeDTO.getLinkedOrderAttribute()
                     .stream()
                     .map(dto -> {
-                    	OrderAttribute linkedAttribute = populateOrderAttribute(dto, orderProduct, productAttributes,orderOffer);
+                    	OrderAttribute linkedAttribute = populateOrderAttribute(dto, orderProduct, productVersionAttributes,orderOffer);
                         linkedAttribute.setParentAttributeValue(orderAttribute);
                         return linkedAttribute;
                     })
