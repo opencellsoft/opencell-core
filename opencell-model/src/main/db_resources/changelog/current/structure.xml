@@ -4303,7 +4303,7 @@ END $$;]]>
             <column name="amount_tax" type="numeric(23, 12)" />            
             <column name="tax_id" type="bigint" />
             <column name="tax_percent" type="numeric(23, 12)" />
-        </createTable>
+        </addColumn>
     </changeSet>    
     
 </databaseChangeLog>
