@@ -87,7 +87,7 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedQuery(name = "WalletOperation.listByBRId", query = "SELECT o FROM WalletOperation o WHERE o.status='TREATED' and o.ratedTransaction.billingRun.id=:brId"),
         @NamedQuery(name = "WalletOperation.findWoWithId", query = "SELECT o FROM WalletOperation o left join fetch o.wallet left join fetch o.chargeInstance WHERE o.status='OPEN' and o.id=:id"),
-        @NamedQuery(name = "WalletOperation.findWosWithIds", query = "SELECT o FROM WalletOperation o left join fetch o.wallet left join fetch o.chargeInstance WHERE o.status='OPEN' and o.id in :ids order by e.id"),
+        @NamedQuery(name = "WalletOperation.findWosWithIds", query = "SELECT o FROM WalletOperation o left join fetch o.wallet left join fetch o.chargeInstance WHERE o.status='OPEN' and o.id in :ids order by o.id"),
 
         @NamedQuery(name = "WalletOperation.listToRateIds", query = "SELECT o.id FROM WalletOperation o WHERE o.status='OPEN'"),
         @NamedQuery(name = "WalletOperation.listToRateByBA", query = "SELECT o FROM WalletOperation o WHERE o.status='OPEN' and (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) AND o.wallet.userAccount.billingAccount=:billingAccount"),
