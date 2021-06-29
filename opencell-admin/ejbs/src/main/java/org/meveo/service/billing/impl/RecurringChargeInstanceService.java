@@ -252,7 +252,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
     }
 
-    public void recurringChargeReactivation(ServiceInstance serviceInst, Subscription subscription, Date subscriptionDate) throws BusinessException {
+    public void recurringChargeReactivation(ServiceInstance serviceInst, Subscription subscription, Date reactivationDate) throws BusinessException {
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new BusinessException("subscription is " + subscription.getStatus());
         }
@@ -260,10 +260,25 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             throw new BusinessException("service instance is " + subscription.getStatus() + ". service Code=" + serviceInst.getCode() + ",subscription Code" + subscription.getCode());
         }
         for (RecurringChargeInstance recurringChargeInstance : serviceInst.getRecurringChargeInstances()) {
+            // INTRD-279 fix: if reactivate a suspended recurring charge then update its next charge date
+            // and charged to date. Maybe to review this fix when implementing suspension prorata evol
+            if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
+                DatePeriod reactivationCurrentPeriod = walletOperationService.getRecurringPeriod(recurringChargeInstance, reactivationDate);
+                recurringChargeInstance.setNextChargeDate(reactivationCurrentPeriod.getTo());
+                if (walletOperationService.isApplyInAdvance(recurringChargeInstance)) {
+                    recurringChargeInstance.setChargedToDate(reactivationCurrentPeriod.getTo());
+                } else {
+                    recurringChargeInstance.setChargedToDate(reactivationCurrentPeriod.getFrom());
+                }
+                log.info("Recurring charge instance {} [id={}] is reactivated. So to restart rating it, " +
+                        "its chargedToDate and nextChargeDate are reajusted to {}, {}.",
+                        recurringChargeInstance.getCode(), recurringChargeInstance.getId(),
+                        recurringChargeInstance.getChargedToDate(), recurringChargeInstance.getNextChargeDate());
+            }
+            if (recurringChargeInstance.getStatus() == InstanceStatusEnum.TERMINATED) {
+                recurringChargeInstance.setTerminationDate(null);
+            }
             recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-            // recurringChargeInstance.setSubscriptionDate(subscriptionDate);
-            recurringChargeInstance.setTerminationDate(null);
-            recurringChargeInstance.setChargeDate(subscriptionDate);
             update(recurringChargeInstance);
         }
 
