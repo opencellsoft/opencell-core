@@ -44,6 +44,11 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
      */
     private static final int PROCESS_NR_IN_JOB_RUN = 2000000;
 
+    /**
+     * Boolean to see if we probably have next data to fetch
+     */
+    private boolean next = true;
+
 
     @Inject
     private EdrService edrService;
@@ -86,6 +91,8 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
 
         List<Long> ids = edrService.getEDRsToRate(rateUntilDate, ratingGroup, PROCESS_NR_IN_JOB_RUN);
 
+        if(ids.size() < PROCESS_NR_IN_JOB_RUN) next = false;
+
         return Optional.of(new SynchronizedIterator<Long>(ids));
     }
 
@@ -102,7 +109,7 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
     /**
      * Rate EDR usage
      * 
-     * @param edrId A list of EDR ids to rate
+     * @param edrIds A list of EDR ids to rate
      * @param jobExecutionResult Job execution result
      */
     private void rateEDRBatch(List<Long> edrIds, JobExecutionResultImpl jobExecutionResult) {
@@ -110,8 +117,7 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
     }
 
     private boolean hasMore(JobInstance jobInstance) {
-        List<Long> ids = edrService.getEDRsToRate(rateUntilDate, ratingGroup, 1);
-        return !ids.isEmpty();
+        return next;
     }
 
     @Override

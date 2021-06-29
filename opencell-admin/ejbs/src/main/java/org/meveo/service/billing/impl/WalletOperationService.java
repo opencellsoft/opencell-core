@@ -37,6 +37,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -813,6 +814,32 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      */
     public List<Long> listToRate(int nbToRetrieve) {
         return getEntityManager().createNamedQuery("WalletOperation.listToRateIds", Long.class).setMaxResults(nbToRetrieve).getResultList();
+    }
+
+    /**
+     * Find a single Wallet Operation with its id and fetch subscription.
+     *
+     * @author Mohamed Ali Hammal
+     * @param woId a wallet operation id
+     * @return a single WO
+     */
+    public WalletOperation findWoById(Long woId){
+        EntityManager em = getEntityManager();
+        WalletOperation wo = em.createNamedQuery("WalletOperation.findWoWithId", WalletOperation.class).setParameter("id", woId).getSingleResult();
+        return wo;
+    }
+
+    /**
+     * Find a list of Wallet Operations with their ids and fetch subscription.
+     *
+     * @author Mohamed Ali Hammal
+     * @param woIds a list of wallet operations ids
+     * @return a single WO
+     */
+    public List<WalletOperation> findWosByIds(List<Long> woIds){
+        EntityManager em = getEntityManager();
+        List<WalletOperation> wo = em.createNamedQuery("WalletOperation.findWosWithIds", WalletOperation.class).setParameter("ids", woIds).getResultList();
+        return wo;
     }
 
     public WalletOperation findByUserAccountAndCode(String code, UserAccount userAccount) {
