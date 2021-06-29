@@ -5495,6 +5495,9 @@
             </column>
             <column name="auth_username" type="varchar(60)" />
             <column name="auth_password" type="varchar(60)" />
+            <column name="client_id" type="varchar(60)" />
+            <column name="client_secret" type="varchar(60)" />
+            <column name="authentication_type" type="varchar(60)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-280">
