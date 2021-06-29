@@ -1,15 +1,19 @@
 package org.meveo.apiv2.billing.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
+import org.meveo.api.dto.invoice.GetInvoiceResponseDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.ImmutableFile;
@@ -228,4 +232,11 @@ public class InvoiceResourceImpl implements InvoiceResource {
 		return Response.accepted(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build())
                 .build();
 	}
+
+    @Override
+    public Response duplicate(Long invoiceId) {
+    	Invoice invoice = invoiceApiService.findById(invoiceId).orElseThrow(NotFoundException::new);
+    	
+        return Response.ok(toResourceInvoiceWithLink(invoiceMapper.toResource(invoiceApiService.duplicate(invoice)))).build();
+    }
 }
