@@ -3,6 +3,7 @@ package org.meveo.api.cpq;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -169,6 +170,7 @@ public class ProductApi extends BaseApi {
 				productVersion.setShortDescription(productDto.getLabel());
 				productVersion.setStatus(VersionStatusEnum.DRAFT);
 				productVersion.setStatusDate(Calendar.getInstance().getTime());
+				productVersion.getValidity().setFrom(new Date());
 				productVersionService.create(productVersion);
 				response.setCurrentProductVersion(new ProductVersionDto(productVersion));
 			}

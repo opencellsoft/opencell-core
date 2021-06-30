@@ -199,6 +199,10 @@ public class InvoiceApiService  implements ApiService<Invoice> {
 	public void calculateInvoice(Invoice invoice) {
 		invoiceService.calculateInvoice(invoice);
 	}
+	
+	public Invoice duplicate(Invoice invoice) {
+		return invoiceService.duplicate(invoice);
+	}
 
 
 }
