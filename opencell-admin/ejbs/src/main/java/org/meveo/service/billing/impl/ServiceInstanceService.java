@@ -816,7 +816,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         checkServiceAssociatedWithOffer(serviceInstance);
 
         serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
-        serviceInstance.setSubscriptionDate(reactivationDate);
+        serviceInstance.setReactivationDate(reactivationDate);
         serviceInstance.setDescription(description);
         serviceInstance.setTerminationDate(null);
 
