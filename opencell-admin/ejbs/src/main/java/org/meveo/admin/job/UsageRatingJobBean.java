@@ -47,7 +47,7 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
     /**
      * Boolean to see if we probably have next data to fetch
      */
-    private boolean next = true;
+    public static boolean next = true;
 
 
     @Inject
