@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.cpq.AttributeValue;
@@ -70,6 +71,10 @@ public class PricePlanMatrixValue extends BaseEntity {
     @Column (name = "to_double_value")
     private Double toDoubleValue;
     
+    @Type(type = "numeric_boolean")
+    @Column(name = "boolean_value")
+    protected Boolean booleanValue; 
+    
     
 
     public PricePlanMatrixValue() {
@@ -86,6 +91,7 @@ public class PricePlanMatrixValue extends BaseEntity {
 		this.toDateValue = copy.toDateValue;
 		this.fromDoubleValue = copy.fromDoubleValue;
 		this.toDoubleValue = copy.toDoubleValue;
+		this.booleanValue = copy.booleanValue;
 	}
 
 	public PricePlanMatrixColumn getPricePlanMatrixColumn() {
@@ -200,4 +206,18 @@ public class PricePlanMatrixValue extends BaseEntity {
     public int hashCode() {
         return Objects.hash(super.hashCode(), getPricePlanMatrixLine(), getLongValue(), getDoubleValue(), getStringValue(), getDateValue(), getFromDateValue(), getToDateValue(), getFromDoubleValue(), getToDoubleValue());
     }
+
+	/**
+	 * @return the booleanValue
+	 */
+	public Boolean getBooleanValue() {
+		return booleanValue;
+	}
+
+	/**
+	 * @param booleanValue the booleanValue to set
+	 */
+	public void setBooleanValue(Boolean booleanValue) {
+		this.booleanValue = booleanValue;
+	}
 }

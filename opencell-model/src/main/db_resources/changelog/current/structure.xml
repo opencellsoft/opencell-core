@@ -9170,6 +9170,10 @@ public class OrderAdvancement extends ModuleScript {
         <addColumn tableName="cpq_quote_attribute">
         	<column name="boolean_value" type="${type.boolean}" />
         </addColumn>
+        
+        <addColumn tableName="cpq_price_plan_matrix_value">
+        	<column name="boolean_value" type="${type.boolean}" />
+        </addColumn>
     </changeSet>
    <changeSet id="#5595_540582_20210528_2" author="TarikFA.">
    		<preConditions onSqlOutput="TEST" onFail="MARK_RAN">
