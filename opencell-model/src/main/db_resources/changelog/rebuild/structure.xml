@@ -5495,6 +5495,9 @@
             </column>
             <column name="auth_username" type="varchar(60)" />
             <column name="auth_password" type="varchar(60)" />
+            <column name="client_id" type="varchar(60)" />
+            <column name="client_secret" type="varchar(60)" />
+            <column name="authentication_type" type="varchar(60)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-280">
@@ -15781,6 +15784,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#20210614_540_update_script_quotation_and_order" author="TarikFA." />
     <changeSet id="#20210622-INTRD-272" author="TarikFA." />
     <changeSet id="#INTRD-242_20210623" author="ZBariki" />
+    <changeSet id="#6168_20210624" author="HatimOUDAD" />
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
