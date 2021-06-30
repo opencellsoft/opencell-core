@@ -60,9 +60,8 @@ public class InvoiceMapperTest {
 			}
 			instance =  (T)build.invoke(builder);
 		} else {
-			final Constructor<T>[] constructors = (Constructor<T>[]) clazz.getConstructors();
-			if(constructors!=null && constructors.length>0) {
-				final Constructor<T> constructor = constructors[0];
+			final Constructor<T> constructor = clazz.getConstructor();
+			if(constructor!=null) {
 				Object[] cargs = new Object[constructor.getParameterCount()];
 				instance = constructor.newInstance(cargs);
 				for (Field field : clazz.getDeclaredFields()) {
