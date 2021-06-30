@@ -4,9 +4,16 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.apiv2.models.ApiException;
+import org.meveo.model.custom.query.CustomQuery;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 @Path("/queryManagement/customQueries")
@@ -35,4 +42,22 @@ public interface CustomQueryResource {
                     description = "Query does not exist")})
     Response delete(
             @Parameter(description = "Custom query id", required = true) @PathParam("queryId") Long id);
+
+    @GET
+    @Operation(summary = "Return a list of custom queries", tags = {"CustomQuery" },
+            description = "Returns a list of  custom queries",
+            responses = {
+            @ApiResponse(headers = {
+                    @Header(name = "ETag",
+                            description = "a pseudo-unique identifier that represents the version of the data sent back.",
+                            schema = @Schema(type = "integer", format = "int64")) },
+                    description = "list of custom queries",
+                    content = @Content(schema = @Schema(implementation = CustomQuery.class))),
+            @ApiResponse(responseCode = "200", description = "Custom queries list"),
+            @ApiResponse(responseCode = "404", description = "No data found",
+                    content = @Content(schema = @Schema(implementation = ApiException.class))) })
+    Response getCustomQueries(@DefaultValue("0") @QueryParam("offset") Long offset,
+                              @DefaultValue("50") @QueryParam("limit") Long limit,
+                              @QueryParam("sort") String sort, @QueryParam("orderBy") String orderBy,
+                              @QueryParam("filter") String filter, @Context Request request);
 }

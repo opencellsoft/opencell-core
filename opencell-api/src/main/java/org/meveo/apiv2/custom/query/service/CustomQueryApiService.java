@@ -5,29 +5,39 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.custom.query.CustomQuery;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.custom.CustomQueryService;
 
 import javax.inject.Inject;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class CustomQueryApiService implements ApiService<CustomQuery> {
 
     @Inject
     private CustomQueryService customQueryService;
 
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
     private List<String> fetchFields = asList("fields");
 
     @Override
     public List<CustomQuery> list(Long offset, Long limit, String sort, String orderBy, String filter) {
-        return null;
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
+                limit.intValue(), null, filter, fetchFields, null, null);
+        return customQueryService.customQueriesAllowedForUser(paginationConfiguration, currentUser.getUserName());
     }
 
     @Override
     public Long getCount(String filter) {
-        return null;
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(null, null,
+                null, filter, null, null, null);
+        return customQueryService.count(paginationConfiguration);
     }
 
     @Override
