@@ -178,6 +178,7 @@ public class QuoteValidationScript extends ModuleScript {
 		offer.setOrder(order);
 		offer.setOfferTemplate(quoteOffer.getOfferTemplate()); 
 		offer.setDiscountPlan(quoteOffer.getDiscountPlan());
+		offer.setQuoteOffer(quoteOffer);
 		orderOfferService.create(offer);
 		return offer;
 	}
@@ -190,6 +191,7 @@ public class QuoteValidationScript extends ModuleScript {
 		orderProduct.setQuantity(product.getQuantity());
 		orderProduct.setDiscountPlan(product.getDiscountPlan());
 		orderProduct.setOrderOffer(orderOffer);  
+		orderProduct.setQuoteProduct(product); 
 		
 		orderProductService.create(orderProduct);
 		
