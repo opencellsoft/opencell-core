@@ -145,6 +145,11 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
     @Column(name = "end_agrement_date")
     private Date endAgreementDate;
 
+    /** reactivation date timestamp */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "reactivation_date")
+    private Date reactivationDate;
+
     /** If true, end of agreement date will be extended automatically till subscribedTillDate field. */
     @Type(type = "numeric_boolean")
     @Column(name = "auto_end_of_engagement")
@@ -327,6 +332,24 @@ public class ServiceInstance extends BusinessCFEntity implements IWFEntity, ICou
      */
     public void setEndAgreementDate(Date endAgreementDate) {
         this.endAgreementDate = endAgreementDate;
+    }
+
+    /**
+     * get reactivation date
+     *
+     * @return reactivation date
+     */
+    public Date getReactivationDate() {
+        return reactivationDate;
+    }
+
+    /**
+     * set reactivation date
+     *
+     * @param reactivationDate reactivation date
+     */
+    public void setReactivationDate(Date reactivationDate) {
+        this.reactivationDate = reactivationDate;
     }
 
     /**
