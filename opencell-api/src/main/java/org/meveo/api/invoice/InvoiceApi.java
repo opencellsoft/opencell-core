@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
@@ -881,6 +882,7 @@ public class InvoiceApi extends BaseApi {
         return false;
 
     }
+    
 
     /**
      * Send a list of invoices
@@ -1173,5 +1175,11 @@ public class InvoiceApi extends BaseApi {
         }
 
         return dto;
+    }
+
+    public InvoiceDto duplicate(Long invoiceId) {
+    	Invoice invoice = invoiceService.findById(invoiceId);
+    	if(invoice == null) throw new EntityDoesNotExistsException(Invoice.class, invoiceId);
+    	return invoiceToDto(invoiceService.duplicate(invoice), false, false, false);
     }
 }

@@ -5748,5 +5748,70 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		final BillingAccount billingAccount = billingAccountService.retrieveIfNotManaged(invoice.getBillingAccount());
 		return createAggregatesAndInvoiceFromIls(billingAccount, billingAccount.getBillingRun(), null, invoice.getInvoiceDate(), null, null, invoice.isDraft(), billingAccount.getBillingCycle(), billingAccount, billingAccount.getPaymentMethod(), invoice.getInvoiceType(), null, false, false, invoice);
 	}
+	
+	@Inject private InvoiceAgregateService invoiceAgregateService;
+	
+	private final String TAX_INVOICE_AGREGATE = "T";
+	private final String CATEGORY_INVOICE_AGREGATE = "R";
+	private final String SUBCATEGORY_INVOICE_AGREGATE = "F";
+	
+	public Invoice duplicate(Invoice invoice) {
+		invoice = refreshOrRetrieve(invoice);
+		
+		invoice.getInvoiceAgregates().size();
+		invoice.getOrders().size();
+		if(invoice.getInvoiceLines() != null )
+			invoice.getInvoiceLines().size();
+		
+		var invoiceAgregates = new ArrayList<>(invoice.getInvoiceAgregates());
+		var invoiceLines = new ArrayList<>(invoice.getInvoiceLines());
+		
+		
+		detach(invoice);
+		
+		var duplicateInvoice = new Invoice(invoice);
+		this.create(duplicateInvoice);
+		
+		if(!invoiceAgregates.isEmpty()) {
+			for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
+				
+				invoiceAgregateService.detach(invoiceAgregate);
+				
+				switch(invoiceAgregate.getDescriminatorValue()) {
+					case TAX_INVOICE_AGREGATE : 
+					{
+						var taxInvoiceAgregate = new TaxInvoiceAgregate((TaxInvoiceAgregate)invoiceAgregate);
+						taxInvoiceAgregate.setInvoice(duplicateInvoice);
+						invoiceAgregateService.create(taxInvoiceAgregate);
+						break;
+					}
+					case CATEGORY_INVOICE_AGREGATE : 
+					{
+						var categoryInvoiceAgregate = new CategoryInvoiceAgregate((CategoryInvoiceAgregate)invoiceAgregate);
+						categoryInvoiceAgregate.setInvoice(duplicateInvoice);
+						invoiceAgregateService.create(categoryInvoiceAgregate);
+						break;
+					}
+					case SUBCATEGORY_INVOICE_AGREGATE : 
+					{
+						var subCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate((SubCategoryInvoiceAgregate)invoiceAgregate);
+						subCategoryInvoiceAgregate.setInvoice(duplicateInvoice);
+						invoiceAgregateService.create(subCategoryInvoiceAgregate);
+						break;
+					}
+				}
+			};
+		}
+		
+		if(invoiceLines != null) {
+			for (InvoiceLine invoiceLine : invoiceLines) {
+				invoiceLinesService.detach(invoiceLine);
+				var duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
+				invoiceLinesService.create(duplicateInvoiceLine);
+			}
+		}
+		
+		return duplicateInvoice;
+	}
 
 }

@@ -222,6 +222,44 @@ public class InvoiceLine extends AuditableEntity {
 		this.taxRate = taxRate;
 		this.accountingArticle = accountingArticle;
 	}
+	
+	
+
+	public InvoiceLine(InvoiceLine copy, Invoice invoice) {
+		this.invoice = invoice;
+		this.prestation = copy.prestation;
+		this.accountingArticle = copy.accountingArticle;
+		this.offerServiceTemplate = copy.offerServiceTemplate;
+		this.product = copy.product;
+		this.serviceTemplate = copy.serviceTemplate;
+		this.validity = copy.validity;
+		this.quantity = copy.quantity;
+		this.unitPrice = copy.unitPrice;
+		this.discountRate = copy.discountRate;
+		this.amountWithoutTax = copy.amountWithoutTax;
+		this.taxRate = copy.taxRate;
+		this.amountWithTax = copy.amountWithTax;
+		this.amountTax = copy.amountTax;
+		this.discountPlan = copy.discountPlan;
+		this.tax = copy.tax;
+		this.orderRef = copy.orderRef;
+		this.accessPoint = copy.accessPoint;
+		this.commercialOrder = copy.commercialOrder;
+		this.billingRun = copy.billingRun;
+		this.billingAccount = copy.billingAccount;
+		this.valueDate = copy.valueDate;
+		this.orderNumber = copy.orderNumber;
+		this.discountAmount = copy.discountAmount;
+		this.label = copy.label;
+		this.rawAmount = copy.rawAmount;
+		this.serviceInstance = copy.serviceInstance;
+		this.subscription = copy.subscription;
+		this.offerTemplate = copy.offerTemplate;
+		this.productVersion = copy.productVersion;
+		this.orderLot = copy.orderLot;
+		this.taxRecalculated = copy.taxRecalculated;
+		this.status = InvoiceLineStatusEnum.OPEN;
+	}
 
 	public Invoice getInvoice() {
 		return invoice;
