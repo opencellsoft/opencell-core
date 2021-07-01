@@ -750,6 +750,7 @@
                     <hftl:formField id="USchargeTemplateSelectId" label="#{messages['businessEntity.code']}" field="code" edit="false" />
                     <hftl:formField label="#{messages['commons.status']}" field="status" edit="false" />
                     <hftl:formField label="#{messages['businessEntity.description']}" field="description" edit="false" />
+                    <hftl:formField label="#{messages['chargeInstance.reactivationDate']}" field="reactivationDate" edit="false" rendered="#{not empty subscriptionBean.usageChargeInstance.reactivationDate}" />
                     <hftl:formField label="#{messages['chargeInstance.prepaidWallets']}" field="prepaidWalletInstances" listType="pickUpList" valueLabelField="descriptionAndCode"
                         edit="false" rendered="#{subscriptionBean.usageChargeInstance.prepaid}" componentWidth="50" />
 
@@ -785,6 +786,7 @@
                     <hftl:formField label="#{messages['businessEntity.description']}" field="description" size="50" disabled="true" componentWidth="40" />
                     <hftl:formField label="#{messages['chargeInstance.chargeTemplate']}" field="chargeTemplate" valueLabelField="code" edit="false" />
                     <hftl:formField label="#{messages['recurringChargeInstance.subscriptionDate']}" field="subscriptionDate" edit="false" componentWidth="15" />
+                    <hftl:formField label="#{messages['chargeInstance.reactivationDate']}" field="reactivationDate" edit="false" componentWidth="15" rendered="#{not empty subscriptionBean.recurringChargeInstance.reactivationDate}" />
                     <hftl:formField label="#{messages['chargeInstance.prepaidWallets']}" field="prepaidWalletInstances" listType="pickUpList" valueLabelField="descriptionAndCode"
                         edit="false" rendered="#{subscriptionBean.recurringChargeInstance.prepaid}" componentWidth="50" />
                     <hftl:formField label="#{messages['serviceInstance.quantity']}" field="quantity" edit="false" />

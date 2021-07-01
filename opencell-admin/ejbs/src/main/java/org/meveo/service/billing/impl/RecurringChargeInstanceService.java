@@ -281,6 +281,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 recurringChargeInstance.setTerminationDate(null);
             }
             recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
+            recurringChargeInstance.setReactivationDate(reactivationDate);
             update(recurringChargeInstance);
         }
 

@@ -120,6 +120,11 @@ public abstract class ChargeInstance extends BusinessCFEntity {
     @Column(name = "termination_date")
     protected Date terminationDate;
 
+    /** reactivation date timestamp */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "reactivation_date")
+    private Date reactivationDate;
+
     /**
      * Charge template/definition that charge was instantiated from
      */
@@ -371,6 +376,24 @@ public abstract class ChargeInstance extends BusinessCFEntity {
 
     public void setTerminationDate(Date terminationDate) {
         this.terminationDate = terminationDate;
+    }
+
+    /**
+     * get reactivation date
+     *
+     * @return reactivation date
+     */
+    public Date getReactivationDate() {
+        return reactivationDate;
+    }
+
+    /**
+     * set reactivation date
+     *
+     * @param reactivationDate reactivation date
+     */
+    public void setReactivationDate(Date reactivationDate) {
+        this.reactivationDate = reactivationDate;
     }
 
     public ChargeTemplate getChargeTemplate() {
