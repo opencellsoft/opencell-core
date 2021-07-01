@@ -1,6 +1,7 @@
 package org.meveo.apiv2.custom.query.impl;
 
 import org.meveo.apiv2.custom.CustomQueries;
+import org.meveo.apiv2.custom.CustomQueryInput;
 import org.meveo.apiv2.custom.ImmutableCustomQueries;
 import org.meveo.apiv2.custom.ImmutableCustomQuery;
 import org.meveo.apiv2.custom.query.resource.CustomQueryResource;
@@ -64,5 +65,14 @@ public class CustomQueryResourceImpl implements CustomQueryResource {
                 .withLinks(new LinkGenerator.PaginationLinkGenerator(CustomQueryResource.class)
                         .offset(offset).limit(limit).total(count).build());
         return Response.ok().cacheControl(cc).tag(etag).entity(customQueries).build();
+    }
+
+    @Override
+    public Response createCustomQuery(CustomQueryInput resource) {
+        CustomQuery entity = customQueryApiService.create(mapper.toEntity(resource));
+        return Response
+                .created(LinkGenerator.getUriBuilderFromResource(CustomQueryResource.class, entity.getId()).build())
+                .entity(mapper.toResource(entity))
+                .build();
     }
 }

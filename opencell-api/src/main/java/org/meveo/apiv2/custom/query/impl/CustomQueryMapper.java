@@ -3,6 +3,7 @@ package org.meveo.apiv2.custom.query.impl;
 import static org.meveo.apiv2.custom.ImmutableCustomQuery.builder;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.apiv2.custom.CustomQueryInput;
 import org.meveo.apiv2.custom.ImmutableCustomQuery;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.custom.query.CustomQuery;
@@ -33,5 +34,16 @@ public class CustomQueryMapper extends ResourceMapper<org.meveo.apiv2.custom.Cus
     @Override
     protected CustomQuery toEntity(org.meveo.apiv2.custom.CustomQuery resource) {
         return null;
+    }
+
+    public CustomQuery toEntity(CustomQueryInput resource) {
+        CustomQuery customQuery = new CustomQuery();
+        customQuery.setCode(resource.getQueryName());
+        customQuery.setDescription(resource.getQueryDescription());
+        customQuery.setVisibility(resource.getVisibility());
+        customQuery.setTargetEntity(resource.getTargetEntity());
+        customQuery.setFields(resource.getFields());
+        customQuery.setFilters(resource.getFilters());
+        return customQuery;
     }
 }

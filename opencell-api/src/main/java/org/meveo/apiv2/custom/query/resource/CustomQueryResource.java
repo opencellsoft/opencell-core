@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.meveo.apiv2.custom.CustomQueryInput;
 import org.meveo.apiv2.models.ApiException;
 import org.meveo.model.custom.query.CustomQuery;
 
@@ -60,4 +61,17 @@ public interface CustomQueryResource {
                               @DefaultValue("50") @QueryParam("limit") Long limit,
                               @QueryParam("sort") String sort, @QueryParam("orderBy") String orderBy,
                               @QueryParam("filter") String filter, @Context Request request);
+
+    @POST
+    @Operation(summary = "Create a new custom query", tags = {"CustomQuery" }, description = "Create a new custom query",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Custom query successfully created, and the id is returned in the response"),
+                    @ApiResponse(responseCode = "204",
+                            description = "Custom query successfully created"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Target entity does not exist") })
+    Response createCustomQuery(
+            @Parameter(description = "Custom query object", required = true) CustomQueryInput customQuery);
+
 }
