@@ -284,7 +284,7 @@ public class QuoteService extends BusinessService<Quote> {
                     // ((SubCategoryInvoiceAgregate)invoiceAgregate).setSubCategoryTaxes(null);
                     // ((SubCategoryInvoiceAgregate)invoiceAgregate).setCategoryInvoiceAgregate(null);
                     ((SubCategoryInvoiceAgregate) invoiceAgregate).setWallet(null);
-                    ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactionsToAssociate(null);
+                    ((SubCategoryInvoiceAgregate) invoiceAgregate).setInvoiceablesToAssociate(null);
                 }
             }
             if (!isVirtual) {

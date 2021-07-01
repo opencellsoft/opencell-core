@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -841,12 +842,38 @@ public class NativePersistenceService extends BaseService {
      * @param config    Data filtering, sorting and pagination criteria
      * @return A list of Object[] values for each record. A full list of fields or only the ones specified in a list of fields in search and paging configuration
      */
-    @SuppressWarnings({"unchecked", "deprecation"})
+    @SuppressWarnings({"deprecation", "rawtypes"})
     public List listAsObjects(String tableName, PaginationConfiguration config) {
         tableName = addCurrentSchema(tableName);
         QueryBuilder queryBuilder = getQuery(tableName, config);
         SQLQuery query = queryBuilder.getNativeQuery(getEntityManager(), false);
         return query.setFlushMode(FlushMode.COMMIT).list();
+    }
+
+    /**
+     * Execute a search query with optional parameters
+     *
+     * @param sql A query to execute
+     * @param maxResults Number of records to retrieve. Optional.
+     * @param parameters Query parameters
+     * @return A list of Object[] values for each record
+     */
+    @SuppressWarnings({ "rawtypes" })
+    public List listAsObjects(String sql, Integer maxResults, Map<String, Object> parameters) {
+
+        Query query = getEntityManager().createNativeQuery(sql);
+        if (parameters != null) {
+            for (Entry<String, Object> param : parameters.entrySet()) {
+                query.setParameter(param.getKey(), param.getValue());
+            }
+        }
+
+        query.setFlushMode(FlushModeType.COMMIT);
+        if (maxResults != null) {
+            query.setMaxResults(maxResults);
+        }
+
+        return query.getResultList();
     }
 
     /**
@@ -1175,12 +1202,29 @@ public class NativePersistenceService extends BaseService {
         return (List<BigInteger>) query.setFlushMode(FlushMode.COMMIT).list();
     }
 
+    /**
+     * Add a DB schema name to the table if not using a main provider
+     * 
+     * @param tableName DB table name
+     * @return DB Table name prefixed with a schema name
+     */
     public String addCurrentSchema(String tableName) {
         CurrentUserProvider currentUserProvider = (CurrentUserProvider) EjbUtils.getServiceInterface("CurrentUserProvider");
         String currentproviderCode = currentUserProvider.getCurrentUserProviderCode();
-        if (currentproviderCode != null && tableName != null) {
-            EntityManagerProvider entityManagerProvider = (EntityManagerProvider) EjbUtils.getServiceInterface("EntityManagerProvider");
-            String schema = entityManagerProvider.convertToSchemaName(currentproviderCode) + ".";
+        return addCurrentSchema(tableName, currentproviderCode);
+    }
+
+    /**
+     * Add a DB schema name to the table if not using a main provider
+     * 
+     * @param tableName DB table name
+     * @param providerCode Provider code
+     * @return DB Table name prefixed with a schema name
+     */
+    public static String addCurrentSchema(String tableName, String providerCode) {
+
+        if (providerCode != null && tableName != null) {
+            String schema = EntityManagerProvider.convertToSchemaName(providerCode) + ".";
             if (!tableName.contains(schema)) {
                 return schema + tableName;
             }

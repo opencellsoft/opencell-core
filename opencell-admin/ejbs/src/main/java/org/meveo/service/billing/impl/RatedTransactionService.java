@@ -83,7 +83,6 @@ import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.filter.Filter;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
@@ -95,7 +94,6 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.TaxService;
-import org.meveo.service.filter.FilterService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.tax.TaxClassService;
 import org.meveo.service.tax.TaxMappingService;
@@ -146,9 +144,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private SellerService sellerService;
-
-    @Inject
-    private FilterService filterService;
 
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
@@ -1654,43 +1649,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 //      }        
 
         return (Amounts) q.getSingleResult();
-    }
-
-    /**
-     * Get a list of invoiceable Rated transactions for a given billable entity and date range or from a filter
-     * 
-     * @param entityToInvoice Entity to invoice (subscription, billing account or order)
-     * @param firstTransactionDate Usage date range - start date
-     * @param lastTransactionDate Usage date range - end date
-     * @param invoiceUpToDate Date up to which a transaction will be included in the invoice based on its invoicing date value
-     * @param ratedTransactionFilter Filter returning a list of rated transactions
-     * @param rtPageSize Number of records to return
-     * @return A list of RT entities
-     * @throws BusinessException General exception
-     */
-    @SuppressWarnings("unchecked")
-    public List<RatedTransaction> listRTsToInvoice(IBillableEntity entityToInvoice, Date firstTransactionDate, Date lastTransactionDate, Date invoiceUpToDate, Filter ratedTransactionFilter, int rtPageSize) throws BusinessException {
-
-        if (ratedTransactionFilter != null) {
-            return (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter, null);
-
-        } else if (entityToInvoice instanceof Subscription) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceBySubscription", RatedTransaction.class).setParameter("subscriptionId", entityToInvoice.getId())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoiceUpToDate", invoiceUpToDate)
-                .setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
-
-        } else if (entityToInvoice instanceof BillingAccount) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByBillingAccount", RatedTransaction.class).setParameter("billingAccountId", entityToInvoice.getId())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoiceUpToDate", invoiceUpToDate)
-                .setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
-
-        } else if (entityToInvoice instanceof Order) {
-            return getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class).setParameter("orderNumber", ((Order) entityToInvoice).getOrderNumber())
-                .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).setParameter("invoiceUpToDate", invoiceUpToDate)
-                .setHint("org.hibernate.readOnly", true).setMaxResults(rtPageSize).getResultList();
-        }
-
-        return new ArrayList<>();
     }
 
     /**

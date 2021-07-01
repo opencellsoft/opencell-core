@@ -2172,7 +2172,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         Long walletId = wallet != null ? wallet.getId() : null;
 
         if (isVirtual) {
-            ratedTransactions = subCatInvoiceAgregate.getRatedtransactionsToAssociate();
+            ratedTransactions = (List<RatedTransaction>)subCatInvoiceAgregate.getInvoiceablesToAssociate();
         }
 
         String invoiceSubCategoryLabel = subCatInvoiceAgregate.getDescription();
