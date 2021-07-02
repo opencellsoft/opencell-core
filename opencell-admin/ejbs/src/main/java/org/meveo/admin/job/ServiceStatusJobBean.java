@@ -76,7 +76,8 @@ public class ServiceStatusJobBean extends IteratorBasedJobBean<Long> {
 
         ServiceInstance serviceInstance = serviceInstanceService.findById(serviceId);
         // Handle subscription renewal or termination
-        if (serviceInstance.isSubscriptionExpired() && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
+        if (serviceInstance.isSubscriptionExpired() && (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE
+                                                        || serviceInstance.getStatus() == InstanceStatusEnum.SUSPENDED)) {
 
             if (serviceInstance.getServiceRenewal().isAutoRenew()) {
 
@@ -105,7 +106,8 @@ public class ServiceStatusJobBean extends IteratorBasedJobBean<Long> {
 
                 log.debug("ServiceInstance {} has beed renewed to date {} with end agreement date of {}", serviceInstance.getCode(), serviceInstance.getSubscribedTillDate(), serviceInstance.getEndAgreementDate());
 
-            } else if (serviceInstance.getServiceRenewal().getEndOfTermAction() == EndOfTermActionEnum.SUSPEND) {
+            } else if (serviceInstance.getServiceRenewal().getEndOfTermAction() == EndOfTermActionEnum.SUSPEND
+                            && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
                 serviceInstanceService.serviceSuspension(serviceInstance, serviceInstance.getSubscribedTillDate());
 
             } else if (serviceInstance.getServiceRenewal().getEndOfTermAction() == EndOfTermActionEnum.TERMINATE) {
