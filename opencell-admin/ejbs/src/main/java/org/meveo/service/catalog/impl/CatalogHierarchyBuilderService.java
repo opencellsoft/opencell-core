@@ -1303,18 +1303,9 @@ public class CatalogHierarchyBuilderService {
 			final var duplicate = new QuoteArticleLine(quoteArticleLine);
 			duplicate.setQuoteProduct(quoteProduct);
 			articleLineService.create(duplicate);
-			duplicateQuotePrice(quotePrices, duplicate);
 		}
     }
     
-    private void duplicateQuotePrice(List<QuotePrice> quotePrices, QuoteArticleLine articleLine) {
-    	for (QuotePrice quotePrice : quotePrices) {
-			final var duplicate = new QuotePrice(quotePrice);
-			duplicate.setQuoteArticleLine(articleLine);
-			duplicate.setQuoteVersion(articleLine.getQuoteProduct().getQuoteVersion());
-			quotePriceService.create(duplicate);
-		}
-    }
     
     private void duplicateQuoteAttribute(List<QuoteAttribute> attributes, QuoteProduct quoteProduct) {
     	for (QuoteAttribute quoteAttribute : attributes) {
