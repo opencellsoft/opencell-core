@@ -18,6 +18,15 @@
 
 package org.meveo.api.account;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.GDPRInfoDto;
@@ -29,12 +38,18 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
-import org.meveo.api.exception.*;
+import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.DeleteReferencedEntityException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.payment.PaymentMethodApi;
+import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
-import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
@@ -44,25 +59,19 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.intcrm.AddressBook;
-import org.meveo.model.payments.*;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.CreditCategory;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.crm.impl.CustomerService;
-import org.meveo.service.document.DocumentService;
 import org.meveo.service.intcrm.impl.AddressBookService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * CRUD API for {@link CustomerAccount}.
@@ -70,7 +79,7 @@ import java.util.List;
  * @author Edward P. Legaspi
  * @author anasseh
  * @author Abdellatif BARI
- * @lastModifiedVersion 8.0.0
+ * @lastModifiedVersion 10.X
  */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -105,9 +114,6 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @Inject
     private CustomGenericEntityCodeService customGenericEntityCodeService;
-
-    @Inject
-    private DocumentService documentService;
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
@@ -353,33 +359,41 @@ public class CustomerAccountApi extends AccountEntityApi {
     }
 
     private void updatePaymentMethods(CustomerAccount customerAccount, CustomerAccountDto postData) {
-        if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
-            if (customerAccount.getPaymentMethods() == null) {
-                customerAccount.setPaymentMethods(new ArrayList<PaymentMethod>());
-            }
+		if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
+			if (customerAccount.getPaymentMethods() == null) {
+				customerAccount.setPaymentMethods(new ArrayList<PaymentMethod>());
+			}else {
+				for (PaymentMethod paymentMethod : customerAccount.getPaymentMethods()) {
+					paymentMethod.setPreferred(false);
+				}
+			}
 
-            List<PaymentMethod> paymentMethodsFromDto = new ArrayList<PaymentMethod>();
+			List<PaymentMethod> paymentMethodsFromDto = new ArrayList<PaymentMethod>();
+            //workaround 550 case
+			boolean isFirst = true;
 
-            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-                PaymentMethod paymentMethodFromDto = paymentMethodDto.fromDto(customerAccount, null, currentUser);
+			for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
+				if (isFirst) {
+					paymentMethodDto.setPreferred(true);
+					isFirst = false;
+				}
+				PaymentMethod paymentMethodFromDto = paymentMethodDto.fromDto(customerAccount, null, currentUser);
 
-                int index = customerAccount.getPaymentMethods().indexOf(paymentMethodFromDto);
-                if (index < 0) {
-                    customerAccount.addPaymentMethod(paymentMethodFromDto);
-                    paymentMethodsFromDto.add(paymentMethodFromDto);
-                } else {
-                    PaymentMethod paymentMethod = customerAccount.getPaymentMethods().get(index);
-                    paymentMethod.updateWith(paymentMethodFromDto);
-                    paymentMethodsFromDto.add(paymentMethod);
-                    customerAccount.addPaymentMethodToAudit(new Object() {
-                    }.getClass().getEnclosingMethod().getName(), paymentMethod);
-                }
+				int index = customerAccount.getPaymentMethods().indexOf(paymentMethodFromDto);
+				if (index < 0) {
+					customerAccount.addPaymentMethod(paymentMethodFromDto);
+					paymentMethodsFromDto.add(paymentMethodFromDto);
+				} else {
+					PaymentMethod paymentMethod = customerAccount.getPaymentMethods().get(index);
+					paymentMethod.updateWith(paymentMethodFromDto);
+					paymentMethodsFromDto.add(paymentMethod);
+					customerAccount.addPaymentMethodToAudit(new Object() {
+					}.getClass().getEnclosingMethod().getName(), paymentMethod);
+				}
 
-            }
-            customerAccount.getPaymentMethods().retainAll(paymentMethodsFromDto);
-        }
-    }
-
+			}
+		}
+	}
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
     public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances) throws Exception {
         return find(customerAccountCode, calculateBalances, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, false);
