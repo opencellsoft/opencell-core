@@ -217,20 +217,20 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
     public TaxInfo determineTax(ChargeInstance chargeInstance, Date date) throws BusinessException {
 
         TaxClass taxClass = chargeInstance.getTaxClassResolved();
+        if(taxClass==null) {
+        	AccountingArticle accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
+        	if(accountingArticle!=null) {
+        		taxClass=accountingArticle.getTaxClass();
+        	}else {
+        		log.warn("No article found for chargeInstance code={},id{}",chargeInstance.getCode(),chargeInstance.getId());
+        	}
+        }
         if (taxClass == null) {
             if (chargeInstance.getChargeTemplate().getTaxClassEl() != null) {
                 taxClass = evaluateTaxClassExpression(chargeInstance.getChargeTemplate().getTaxClassEl(), chargeInstance);
             }
             if (taxClass == null) {
                 taxClass = chargeInstance.getChargeTemplate().getTaxClass();
-            }
-            if(taxClass==null) {
-            	AccountingArticle accountingArticle=accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance);
-            	if(accountingArticle!=null) {
-            		taxClass=accountingArticle.getTaxClass();
-            	}else {
-            		log.warn("No article found for chargeInstance code={},id{}",chargeInstance.getCode(),chargeInstance.getId());
-            	}
             }
             chargeInstance.setTaxClassResolved(taxClass);
         }
