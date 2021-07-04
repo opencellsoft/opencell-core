@@ -54,6 +54,10 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
      * Number of Wallet operations to process in a single job run
      */
     private static int PROCESS_NR_IN_JOB_RUN = 2000000;
+    /**
+     * A flag to track if there is more data to fetch. It will be processed by the next job iteration
+     */
+    private boolean next = true;
 
     @Inject
     private WalletOperationService walletOperationService;
@@ -96,6 +100,8 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
 
         List<Long> ids = walletOperationService.listToRate(PROCESS_NR_IN_JOB_RUN);
 
+        next = ids.size() == PROCESS_NR_IN_JOB_RUN;
+  
         return Optional.of(new SynchronizedIterator<Long>(ids));
     }
 
@@ -106,8 +112,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
      * @param jobExecutionResult Job execution result
      */
     private void convertWoToRT(Long woId, JobExecutionResultImpl jobExecutionResult) {
-
-        WalletOperation walletOperation = walletOperationService.findById(woId);
+        WalletOperation walletOperation = walletOperationService.findWOByIdWithWalletAndCharge(woId);
         ratedTransactionService.createRatedTransaction(walletOperation, false);
     }
 
@@ -119,14 +124,13 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<Long> {
      */
     private void convertWoToRTBatch(List<Long> woIds, JobExecutionResultImpl jobExecutionResult) {
 
-        List<WalletOperation> walletOperations = walletOperationService.findByIds(woIds);
+        List<WalletOperation> walletOperations = walletOperationService.findWOListByIdsWithWalletAndCharge(woIds);
         for (WalletOperation walletOperation : walletOperations) {
             ratedTransactionService.createRatedTransaction(walletOperation, false);
         }
     }
 
     private boolean hasMore(JobInstance jobInstance) {
-        List<Long> ids = walletOperationService.listToRate(1);
-        return !ids.isEmpty();
+        return next;
     }
 }

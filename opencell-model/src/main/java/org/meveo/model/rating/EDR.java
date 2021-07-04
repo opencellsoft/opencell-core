@@ -54,6 +54,8 @@ import org.meveo.model.billing.Subscription;
         @NamedQuery(name = "EDR.getEdrsForCache", query = "select CONCAT(case when e.originBatch is null then '' else e.originBatch end ,'_',case when e.originRecord is null then '' else e.originRecord end) as cacheKey from EDR e where e.status='OPEN' ORDER BY e.eventDate DESC"),
 
         @NamedQuery(name = "EDR.listToRateIds", query = "SELECT e.id from EDR e where e.status='OPEN' order by e.id"),
+        @NamedQuery(name = "EDR.findByIdWithSubscription", query = "SELECT e from EDR e left join fetch e.subscription where e.status='OPEN' and e.id=:id "),
+        @NamedQuery(name = "EDR.findByIdsWithSubscription", query = "SELECT e from EDR e left join fetch e.subscription where e.status='OPEN' and e.id in :ids order by e.id"),
         @NamedQuery(name = "EDR.listToRateIdsLimitByDate", query = "SELECT e.id from EDR e where e.status='OPEN' and e.eventDate<:rateUntilDate order by e.id"),
         @NamedQuery(name = "EDR.listToRateIdsLimitByRG", query = "SELECT e.id from EDR e where e.status='OPEN' and e.subscription.ratingGroup=:ratingGroup order by e.id"),
         @NamedQuery(name = "EDR.listToRateIdsLimitByDateAndRG", query = "SELECT e.id from EDR e where e.status='OPEN' and e.eventDate<:rateUntilDate and e.subscription.ratingGroup=:ratingGroup order by e.id"),

@@ -23,7 +23,6 @@ import static java.util.stream.Collectors.toList;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -411,7 +410,7 @@ public class UsageRatingService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void ratePostpaidUsage(List<Long> edrIds) throws BusinessException, RatingException {
         try {
-            List<EDR> edrs = edrService.findByIds(edrIds, Arrays.asList("subscription"));
+            List<EDR> edrs = findEdrListWithSubscriptionByIds(edrIds);
 
             for (EDR edr : edrs) {
                 rateUsageWithinTransaction(edr, false, false, 0, 0);
@@ -425,6 +424,32 @@ public class UsageRatingService implements Serializable {
             log.error("Failed to rate EDRs {}: {}", edrIds, e.getMessage(), e);
             throw e;
         }
+    }
+
+    /**
+     * Find an EDR with its id and fetch subscription.
+     *
+     * @author Mohamed Ali Hammal
+     * @param edrid an EDR id
+     * @return A single EDR
+     */
+    public EDR findEdrWithSubscriptionById(Long edrid){
+        EntityManager em = getEntityManager();
+        EDR edr = em.createNamedQuery("EDR.findByIdWithSubscription", EDR.class).setParameter("id", edrid).getSingleResult();
+        return edr;
+    }
+
+    /**
+     * Find a list of EDRs with a list of corresponding ids and fetch subscriptions.
+     *
+     * @author Mohamed Ali Hammal
+     * @param edrIds EDR list of ids
+     * @return A list of EDRs
+     */
+    public List<EDR> findEdrListWithSubscriptionByIds(List<Long> edrIds){
+        EntityManager em = getEntityManager();
+        List<EDR> edrsList = em.createNamedQuery("EDR.findByIdsWithSubscription", EDR.class).setParameter("ids", edrIds).getResultList();
+        return edrsList;
     }
 
     /**
@@ -454,7 +479,7 @@ public class UsageRatingService implements Serializable {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<WalletOperation> rateUsageInNewTransaction(Long edrId, boolean rateTriggeredEdr, int maxDeep, int currentRatingDepth) throws BusinessException, RatingException {
 
-        EDR edr = edrService.findById(edrId, Arrays.asList("subscription"));
+        EDR edr = findEdrWithSubscriptionById(edrId);
         return rateUsageWithinTransaction(edr, false, rateTriggeredEdr, maxDeep, currentRatingDepth);
     }
 
