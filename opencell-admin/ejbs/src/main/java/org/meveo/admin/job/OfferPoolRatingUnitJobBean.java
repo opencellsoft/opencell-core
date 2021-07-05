@@ -164,7 +164,7 @@ public class OfferPoolRatingUnitJobBean {
         BigDecimal unitAmountTax = unitAmountWithoutTax.multiply(taxPercent).divide(BigDecimal.valueOf(100), appProvider.getRounding(),
             appProvider.getRoundingMode().getRoundingMode());
         BigDecimal unitAmountWithTax = unitAmountWithoutTax.add(unitAmountTax);
-        BigDecimal amountWithoutTax = unitAmountWithoutTax.multiply(quantity);
+        BigDecimal amountWithoutTax = unitAmountWithoutTax.multiply(quantity).setScale(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
         BigDecimal amountTax = unitAmountTax.multiply(quantity);
         BigDecimal amountWithTax = amountWithoutTax.add(amountTax);
 

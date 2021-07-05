@@ -1,10 +1,24 @@
 package org.meveo.admin.job;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.jpa.EntityManagerWrapper;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.jpa.MeveoJpa;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -15,15 +29,6 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Calculate the overrun by Agency-Offer-ChargeType and create WalletOperation
@@ -64,8 +69,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
 
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, Long canceledWOId, List<Long> overageWOList,
-                        boolean statsActivated) throws BusinessException {
+    public void execute(JobExecutionResultImpl result, Long canceledWOId, List<Long> overageWOList, boolean statsActivated) throws BusinessException {
 
         log.info("Cancel consumption of a duplicated WOId={}", canceledWOId);
         AuditWOCancelation audit = null;
@@ -73,10 +77,10 @@ public class AmendDuplicateConsumptionUnitJobBean {
         try {
 
             WalletOperation canceledWO = walletOperationService.findById(canceledWOId);
-            log.info("> ADCUnitJob > " + canceledWOId + " >1> canceledWO >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > " + canceledWOId + " >1> canceledWO >" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
 
-            //trace
+            // trace
             if (statsActivated) {
                 audit = new AuditWOCancelation();
                 audit.woId = canceledWO.getId();
@@ -90,7 +94,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
             BigDecimal quantityToRestore;
             if (overageWOList.isEmpty()) {
                 quantityToRestore = canceledWO.getQuantity();
-                //trace
+                // trace
                 if (statsActivated) {
                     audit.nbrOfOvers = 0;
                     audit.oversIds = "no_adjustement";
@@ -100,17 +104,17 @@ public class AmendDuplicateConsumptionUnitJobBean {
             } else {
                 quantityToRestore = adjustOverageWOQuantities(canceledWO, overageWOList, audit, statsActivated);
             }
-            //trace
+            // trace
             if (statsActivated) {
                 audit.restoredQT = quantityToRestore;
             }
-            log.info("> ADCUnitJob > " + canceledWOId + " >3> quantityToRestore >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > " + canceledWOId + " >3> quantityToRestore >" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
 
             // restore the canceled QT which rest after adjusting Overage WO to counter or pool
             restoreQuantityToCounterOrPool(canceledWO, quantityToRestore, audit, statsActivated);
 
-            log.info("> ADCUnitJob > " + canceledWOId + " >4> restoreQuantityToCounterOrPool >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > " + canceledWOId + " >4> restoreQuantityToCounterOrPool >" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
 
             // in case of WO deducted from counter
@@ -123,100 +127,96 @@ public class AmendDuplicateConsumptionUnitJobBean {
                 canceledWO.setParameter3("AMENDED_FROM_POOL");
             }
 
-            log.info("> ADCUnitJob > " + canceledWOId + " >5> getCounter() >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > " + canceledWOId + " >5> getCounter() >" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
 
             walletOperationService.update(canceledWO);
 
-            log.info("> ADCUnitJob > " + canceledWOId + " >6> wo.update >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > " + canceledWOId + " >6> wo.update >" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
 
-            //trace
+            // trace
             if (statsActivated) {
                 audit.newQT = canceledWO.getQuantity();
                 audit.trace();
             }
-            log.info("> ADCUnitJob > " + canceledWOId + " >7>  audit.trace();() >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > " + canceledWOId + " >7>  audit.trace();() >" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
 
             result.registerSucces();
 
-            log.info("> ADCUnitJob > " + canceledWOId + " >8> registerSucces() >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > " + canceledWOId + " >8> registerSucces() >" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
 
         } catch (Exception e) {
             log.error("Failed to cancel the deduction from pool of a duplicated WalletOperationId={}: {}", canceledWOId, e);
-            result.registerError("Error on duplicated processing WOId="+ canceledWOId + ": " +e.getMessage());
+            result.registerError("Error on duplicated processing WOId=" + canceledWOId + ": " + e.getMessage());
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void restoreQuantityToCounterOrPool(WalletOperation canceledWO, BigDecimal quantityToRestore,
-                                                AuditWOCancelation audit, boolean statsActivated) {
+    private void restoreQuantityToCounterOrPool(WalletOperation canceledWO, BigDecimal quantityToRestore, AuditWOCancelation audit, boolean statsActivated) {
         long start = System.currentTimeMillis();
         if (quantityToRestore.compareTo(BigDecimal.ZERO) == 0) {
             // no quantity to restore to counter or pool
             return;
         }
         if (canceledWO.getCounter() != null) {
-            CounterPeriod counterPeriod = counterPeriodService
-                    .getCounterPeriod(canceledWO.getCounter(), canceledWO.getOperationDate());
-            //trace
+            CounterPeriod counterPeriod = counterPeriodService.getCounterPeriod(canceledWO.getCounter(), canceledWO.getOperationDate());
+            // trace
             if (statsActivated) {
                 audit.originCounterQT = counterPeriod.getValue();
             }
             counterPeriod.setValue(counterPeriod.getValue().add(quantityToRestore));
-            //trace
+            // trace
             if (statsActivated) {
                 audit.newCounterQT = counterPeriod.getValue();
             }
             counterPeriodService.update(counterPeriod);
-            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >1> getCounter() >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >1> getCounter() >" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
 
         } else {
             ServiceTemplate serviceTemplate = canceledWO.getServiceInstance().getServiceTemplate();
-            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >1> serviceTemplate >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >1> serviceTemplate >" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
 
             String agencyCode = canceledWO.getSubscription().getUserAccount().getCode();
-            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >2> agencyCode >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >2> agencyCode >" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
 
             String agencyCounterKey = agencyCode + "_value";
-            Map<String, Double> offerAgenciesCountersMap = (Map<String, Double>) cfiService
-                    .getCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, canceledWO.getOperationDate());
+            Map<String, Double> offerAgenciesCountersMap = (Map<String, Double>) cfiService.getCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, canceledWO.getOperationDate());
 
-            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >3> offerAgenciesCountersMap >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >3> offerAgenciesCountersMap >" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
 
             if (offerAgenciesCountersMap == null || offerAgenciesCountersMap.get(agencyCounterKey) == null) {
-                throw new IllegalStateException(String.format("Pool counter not yet initialized for operation date %tF " +
-                        "ServiceTemplate=%s Agency=%s", canceledWO.getOperationDate(),serviceTemplate.getCode(),  agencyCode));
+                throw new IllegalStateException(String.format("Pool counter not yet initialized for operation date %tF " + "ServiceTemplate=%s Agency=%s",
+                    canceledWO.getOperationDate(), serviceTemplate.getCode(), agencyCode));
             }
             Double agencyCounter = offerAgenciesCountersMap.get(agencyCounterKey);
-            //trace
+            // trace
             if (statsActivated) {
                 audit.originCounterQT = BigDecimal.valueOf(agencyCounter);
             }
             offerAgenciesCountersMap.put(agencyCounterKey, agencyCounter + quantityToRestore.doubleValue());
 
-            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >4> offerAgenciesCountersMap.put >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >4> offerAgenciesCountersMap.put >" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
 
             cfiService.setCFValue(serviceTemplate, CF_POOL_PER_OFFER_MAP, offerAgenciesCountersMap, canceledWO.getOperationDate());
-            //trace
+            // trace
             if (statsActivated) {
                 audit.newCounterQT = BigDecimal.valueOf(offerAgenciesCountersMap.get(agencyCounterKey));
             }
             serviceTemplateService.update(serviceTemplate);
-            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >5> update >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > restoreQty > " + canceledWO.getId() + " >5> update >" + (System.currentTimeMillis() - start));
         }
     }
 
     @SuppressWarnings("unchecked")
-    private BigDecimal adjustOverageWOQuantities(WalletOperation canceledWO, List<Long> overageWOs,
-                                                 AuditWOCancelation audit, boolean statsActivated) {
+    private BigDecimal adjustOverageWOQuantities(WalletOperation canceledWO, List<Long> overageWOs, AuditWOCancelation audit, boolean statsActivated) {
         long start = System.currentTimeMillis();
         BigDecimal canceledQuantity = canceledWO.getQuantity();
         int nbrOfOvers = 0;
@@ -224,13 +224,13 @@ public class AmendDuplicateConsumptionUnitJobBean {
         BigDecimal originOversQT = BigDecimal.ZERO;
         BigDecimal newOversQT = BigDecimal.ZERO;
 
-        //if we are here, so overageWOs wouldn't be empty
+        // if we are here, so overageWOs wouldn't be empty
         for (Long overageWOId : overageWOs) {
             WalletOperation overageWO = walletOperationService.findById(overageWOId);
             if (overageWO.getStatus() == WalletOperationStatusEnum.CANCELED) {
                 continue;
             }
-            //trace
+            // trace
             BigDecimal originQT = overageWO.getInputQuantity();
             originOversQT = originOversQT.add(overageWO.getInputQuantity());
             nbrOfOvers++;
@@ -238,22 +238,22 @@ public class AmendDuplicateConsumptionUnitJobBean {
 
             canceledQuantity = canceledQuantity.subtract(overageWO.getInputQuantity());
 
-            log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >1> *** >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >1> *** >" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
             // Cancel RT if already exists
             RatedTransaction ratedTransaction = overageWO.getRatedTransaction();
-            log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >2> getRatedTransaction >"+ (System.currentTimeMillis()-start));
+            log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >2> getRatedTransaction >" + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
             if (ratedTransaction != null) {
                 ratedTransaction = ratedTransactionService.refreshOrRetrieve(ratedTransaction);
-                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >3> refreshOrRetrieve >"+ (System.currentTimeMillis()-start));
+                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >3> refreshOrRetrieve >" + (System.currentTimeMillis() - start));
                 start = System.currentTimeMillis();
                 if (ratedTransaction.getStatus() == RatedTransactionStatusEnum.OPEN) {
                     ratedTransaction.setStatus(RatedTransactionStatusEnum.CANCELED);
                     ratedTransaction.setParameterExtra("canceled by AmendDuplicateConsumption");
                     ratedTransactionService.update(ratedTransaction);
                 }
-                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >4> RT uodate >"+ (System.currentTimeMillis()-start));
+                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >4> RT uodate >" + (System.currentTimeMillis() - start));
                 start = System.currentTimeMillis();
             }
             if (canceledQuantity.compareTo(BigDecimal.ZERO) >= 0) {
@@ -262,8 +262,8 @@ public class AmendDuplicateConsumptionUnitJobBean {
                 overageWO.setParameterExtra("AmendDuplicateConsumption_Canceled_" + bgToStr(originQT));
                 overageWO.setStatus(WalletOperationStatusEnum.CANCELED);
                 walletOperationService.update(overageWO);
-                
-                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >5> wo update >"+ (System.currentTimeMillis()-start));
+
+                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >5> wo update >" + (System.currentTimeMillis() - start));
                 start = System.currentTimeMillis();
 
                 if (canceledQuantity.compareTo(BigDecimal.ZERO) == 0) {
@@ -273,19 +273,16 @@ public class AmendDuplicateConsumptionUnitJobBean {
             } else {
                 // the canceled quantiy cover partially the overageWO quantity
                 BigDecimal rest = canceledQuantity.negate();
-                //trace
+                // trace
                 newOversQT = newOversQT.add(rest);
                 oversIds = oversIds.concat("_adj");
 
                 ServiceTemplate serviceTemplate = canceledWO.getServiceInstance().getServiceTemplate();
                 String overageUnit = (String) cfiService.getCFValue(serviceTemplate, "overageUnit");
-                Double multiplier = ((Map<String, Double>) cfiService
-                        .getInheritedCFValueByKey(appProvider, "CF_P_USAGE_UNITS", overageUnit))
-                        .get("multiplier");
-                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >6> wo multiplier >"+ (System.currentTimeMillis()-start));
+                Double multiplier = ((Map<String, Double>) cfiService.getInheritedCFValueByKey(appProvider, "CF_P_USAGE_UNITS", overageUnit)).get("multiplier");
+                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >6> wo multiplier >" + (System.currentTimeMillis() - start));
                 start = System.currentTimeMillis();
-                BigDecimal newOverageQuantity = rest.divide(BigDecimal.valueOf(multiplier),
-                        appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+                BigDecimal newOverageQuantity = rest.divide(BigDecimal.valueOf(multiplier), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
 
                 overageWO.setQuantity(newOverageQuantity);
                 overageWO.setInputQuantity(rest);
@@ -295,7 +292,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
                 overageWO.setRatedTransaction(null);
                 walletOperationService.update(overageWO);
 
-                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >7> wo update >"+ (System.currentTimeMillis()-start));
+                log.info("> ADCUnitJob > adjustOverWOQty > " + canceledWO.getId() + " >7> wo update >" + (System.currentTimeMillis() - start));
                 start = System.currentTimeMillis();
 
                 // the whole canceled quantity is deducted from Overage WO
@@ -323,7 +320,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
 
     private void recomputeWOAmounts(WalletOperation wo) {
         BigDecimal quantity = wo.getQuantity();
-        wo.setAmountWithoutTax(wo.getUnitAmountWithoutTax().multiply(quantity));
+        wo.setAmountWithoutTax(wo.getUnitAmountWithoutTax().multiply(quantity).setScale(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode()));
         wo.setAmountTax(wo.getUnitAmountTax().multiply(quantity));
         wo.setAmountWithTax(wo.getAmountWithoutTax().add(wo.getAmountTax()));
     }
@@ -332,7 +329,7 @@ public class AmendDuplicateConsumptionUnitJobBean {
         return bg.setScale(0, BigDecimal.ROUND_UP).toString();
     }
 
-    //trace
+    // trace
     private class AuditWOCancelation {
 
         Long woId;
@@ -351,28 +348,16 @@ public class AmendDuplicateConsumptionUnitJobBean {
         Integer allOvers;
 
         void trace() {
-            String sqlString = "INSERT INTO amend_stat(wo_id, sub_id, canceled_qt, new_qt, restored_qt, " +
-                    "nbr_overs, overs_ids, overs_qt, overs_new_qt, time_op, cn_qt, cn_new_qt, offer_id," +
-                    "date_conso, all_overs, instant)\n" +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            walletOperationService.getEntityManager().createNativeQuery(sqlString)
-                    .setParameter(1, woId)
-                    .setParameter(2, subId)
-                    .setParameter(3, originCanceledQT != null ? originCanceledQT : BigDecimal.ZERO)
-                    .setParameter(4, newQT != null ? newQT : BigDecimal.ZERO)
-                    .setParameter(5, restoredQT != null ? restoredQT : BigDecimal.ZERO)
-                    .setParameter(6, nbrOfOvers)
-                    .setParameter(7, oversIds)
-                    .setParameter(8, originOversQT != null ? originOversQT : BigDecimal.ZERO)
-                    .setParameter(9, newOversQT != null ? newOversQT : BigDecimal.ZERO)
-                    .setParameter(10, new Date())
-                    .setParameter(11, originCounterQT != null ? originCounterQT : BigDecimal.ZERO)
-                    .setParameter(12, newCounterQT != null ? newCounterQT : BigDecimal.ZERO)
-                    .setParameter(13, offerId)
-                    .setParameter(14, dateConso)
-                    .setParameter(15, allOvers)
-                    .setParameter(16, String.valueOf(System.currentTimeMillis()))
-                    .executeUpdate();
+            String sqlString = "INSERT INTO amend_stat(wo_id, sub_id, canceled_qt, new_qt, restored_qt, "
+                    + "nbr_overs, overs_ids, overs_qt, overs_new_qt, time_op, cn_qt, cn_new_qt, offer_id," + "date_conso, all_overs, instant)\n"
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            walletOperationService.getEntityManager().createNativeQuery(sqlString).setParameter(1, woId).setParameter(2, subId)
+                .setParameter(3, originCanceledQT != null ? originCanceledQT : BigDecimal.ZERO).setParameter(4, newQT != null ? newQT : BigDecimal.ZERO)
+                .setParameter(5, restoredQT != null ? restoredQT : BigDecimal.ZERO).setParameter(6, nbrOfOvers).setParameter(7, oversIds)
+                .setParameter(8, originOversQT != null ? originOversQT : BigDecimal.ZERO).setParameter(9, newOversQT != null ? newOversQT : BigDecimal.ZERO)
+                .setParameter(10, new Date()).setParameter(11, originCounterQT != null ? originCounterQT : BigDecimal.ZERO)
+                .setParameter(12, newCounterQT != null ? newCounterQT : BigDecimal.ZERO).setParameter(13, offerId).setParameter(14, dateConso).setParameter(15, allOvers)
+                .setParameter(16, String.valueOf(System.currentTimeMillis())).executeUpdate();
         }
     }
 }
