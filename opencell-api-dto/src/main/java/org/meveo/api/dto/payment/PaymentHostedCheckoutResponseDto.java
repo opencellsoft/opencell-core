@@ -34,17 +34,21 @@ import org.meveo.api.dto.ActionStatus;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentHostedCheckoutResponseDto extends ActionStatus {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
     private static final long serialVersionUID = -2805352475577374314L;
 
-    /** The urlPaymentHostedCheckout. */
+    /**
+     * The urlPaymentHostedCheckout.
+     */
     private Result result;
 
     /**
      * Instantiates a new payment gateway response dto.
      */
     public PaymentHostedCheckoutResponseDto() {
-
+        this.result = new Result();
     }
 
     public PaymentHostedCheckoutResponseDto(String hostedCheckoutUrl, String ca, String returnUrl) {
@@ -71,6 +75,9 @@ public class PaymentHostedCheckoutResponseDto extends ActionStatus {
         String returnUrl;
         String data;
         String seal;
+
+        public Result() {
+        }
 
         public Result(String hostedCheckoutUrl, String ca, String returnUrl) {
             this.hostedCheckoutUrl = hostedCheckoutUrl;
