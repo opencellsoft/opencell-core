@@ -108,7 +108,7 @@
             <hftl:searchField label="#{messages['ratedTransaction.startDate']}" field="startDate" />
             <hftl:searchField label="#{messages['ratedTransaction.endDate']}" field="endDate" />
             <hftl:searchField label="#{messages['ratedTransaction.status']}" field="status" />
-
+            <hftl:searchField label="#{messages['ratedTransaction.orderId']}" field="orderNumber" />
         </hftl:searchPanel>
         <hftl:dataList backingBean="#{ratedTransactionListBean}" deleteManyButton="false" exportButton="true" exportXlsxButton="false">
             <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
@@ -124,6 +124,7 @@
             <hftl:column label="#{messages['ratedTransaction.usageDate']}" field="usageDate" isDate="true" />
             <hftl:column label="#{messages['ratedTransaction.startDate']}" field="startDate" isDate="true" />
             <hftl:column label="#{messages['ratedTransaction.endDate']}" field="endDate" isDate="true" />
+            <hftl:column label="#{messages['ratedTransaction.orderId']}" field="orderNumber"/>
             <p:column>
                 <f:facet name="header">
                     <h:outputText value="#{messages['invoice.invoiceNumber']}" />
