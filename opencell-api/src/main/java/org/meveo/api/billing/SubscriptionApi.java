@@ -1251,7 +1251,7 @@ public class SubscriptionApi extends BaseApi {
 
         if (terminateSubscriptionDto.getServices() != null) {
             for (String serviceInstanceCode : terminateSubscriptionDto.getServices()) {
-                ServiceInstance serviceInstance = getSingleServiceInstance(null, serviceInstanceCode, subscription, InstanceStatusEnum.ACTIVE);
+                ServiceInstance serviceInstance = getSingleServiceInstance(null, serviceInstanceCode, subscription, InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
                 serviceInstance.setOrderItemId(terminateSubscriptionDto.getOrderItemId());
                 serviceInstance.setOrderItemAction(terminateSubscriptionDto.getOrderItemAction());
                 try {
@@ -1266,7 +1266,7 @@ public class SubscriptionApi extends BaseApi {
 
         if (terminateSubscriptionDto.getServiceIds() != null) {
             for (Long serviceInstanceId : terminateSubscriptionDto.getServiceIds()) {
-                ServiceInstance serviceInstance = getSingleServiceInstance(serviceInstanceId, null, subscription, InstanceStatusEnum.ACTIVE);
+                ServiceInstance serviceInstance = getSingleServiceInstance(serviceInstanceId, null, subscription, InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED);
                 serviceInstance.setOrderItemId(terminateSubscriptionDto.getOrderItemId());
                 serviceInstance.setOrderItemAction(terminateSubscriptionDto.getOrderItemAction());
                 try {
