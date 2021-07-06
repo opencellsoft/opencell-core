@@ -1,17 +1,17 @@
-package org.meveo.apiv2.custom.query.impl;
+package org.meveo.apiv2.report.query.impl;
 
-import static org.meveo.apiv2.custom.ImmutableReportQuery.builder;
+import static org.meveo.apiv2.report.ImmutableReportQuery.builder;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.apiv2.custom.ReportQueryInput;
-import org.meveo.apiv2.custom.ImmutableReportQuery;
+import org.meveo.apiv2.report.ReportQueryInput;
+import org.meveo.apiv2.report.ImmutableReportQuery;
 import org.meveo.apiv2.ordering.ResourceMapper;
-import org.meveo.model.custom.query.ReportQuery;
+import org.meveo.model.report.query.ReportQuery;
 
-public class ReportQueryMapper extends ResourceMapper<org.meveo.apiv2.custom.ReportQuery, ReportQuery> {
+public class ReportQueryMapper extends ResourceMapper<org.meveo.apiv2.report.ReportQuery, ReportQuery> {
 
     @Override
-    protected org.meveo.apiv2.custom.ReportQuery toResource(ReportQuery entity) {
+    protected org.meveo.apiv2.report.ReportQuery toResource(ReportQuery entity) {
         try {
             ImmutableReportQuery resource = builder()
                     .code(entity.getCode())
@@ -32,7 +32,7 @@ public class ReportQueryMapper extends ResourceMapper<org.meveo.apiv2.custom.Rep
     }
 
     @Override
-    protected ReportQuery toEntity(org.meveo.apiv2.custom.ReportQuery resource) {
+    protected ReportQuery toEntity(org.meveo.apiv2.report.ReportQuery resource) {
         return null;
     }
 

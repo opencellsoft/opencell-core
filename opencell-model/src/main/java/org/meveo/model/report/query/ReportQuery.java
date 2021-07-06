@@ -1,4 +1,4 @@
-package org.meveo.model.custom.query;
+package org.meveo.model.report.query;
 
 import static javax.persistence.EnumType.STRING;
 

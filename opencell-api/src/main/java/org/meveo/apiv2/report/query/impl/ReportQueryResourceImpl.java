@@ -1,14 +1,14 @@
-package org.meveo.apiv2.custom.query.impl;
+package org.meveo.apiv2.report.query.impl;
 
-import org.meveo.apiv2.custom.ImmutableReportQueries;
-import org.meveo.apiv2.custom.ImmutableReportQuery;
-import org.meveo.apiv2.custom.ReportQueries;
-import org.meveo.apiv2.custom.ReportQueryInput;
+import org.meveo.apiv2.report.ImmutableReportQueries;
+import org.meveo.apiv2.report.ImmutableReportQuery;
+import org.meveo.apiv2.report.ReportQueries;
+import org.meveo.apiv2.report.ReportQueryInput;
 
-import org.meveo.apiv2.custom.query.resource.ReportQueryResource;
-import org.meveo.apiv2.custom.query.service.ReportQueryApiService;
+import org.meveo.apiv2.report.query.resource.ReportQueryResource;
+import org.meveo.apiv2.report.query.service.ReportQueryApiService;
 import org.meveo.apiv2.ordering.common.LinkGenerator;
-import org.meveo.model.custom.query.ReportQuery;
+import org.meveo.model.report.query.ReportQuery;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
