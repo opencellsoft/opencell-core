@@ -9181,7 +9181,7 @@ public class OrderAdvancement extends ModuleScript {
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="cust_query"/>
     </changeSet>
-    
+
     <changeSet id="#INTRD-339_20210625" author="ZBariki">
         <addUniqueConstraint columnNames="code" constraintName="uk_genericSeq_9fnf93rp352nkw2kpdbari17yr"
                              deferrable="false" disabled="false" initiallyDeferred="false" tableName="generic_sequence" />
@@ -9209,5 +9209,13 @@ public class OrderAdvancement extends ModuleScript {
         <addUniqueConstraint columnNames="code, creator, visibility" constraintName="uk_report_query_composed"
                              deferrable="false" disabled="false" initiallyDeferred="false" tableName="report_query" />
     </changeSet>
-    
+
+    <changeSet id="#INTRD-248_30062021" author="Mounir_BOUKAYOUA">
+        <addColumn tableName="billing_charge_instance">
+            <column name="reactivation_date" type="datetime" />
+        </addColumn>
+        <addColumn tableName="billing_service_instance">
+            <column name="reactivation_date" type="datetime" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
