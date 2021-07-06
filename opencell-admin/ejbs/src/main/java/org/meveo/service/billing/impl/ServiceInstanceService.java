@@ -965,14 +965,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     public List<Long> getSubscriptionsToRenewOrNotify(Date untillDate) {
         List<Long> ids = getEntityManager().createNamedQuery("ServiceInstance.getExpired", Long.class) //
             .setParameter("date", untillDate) //
-            .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE)) //
-            .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE)) //
+            .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.SUSPENDED)) //
+            .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED)) //
             .getResultList();
 
         ids.addAll(getEntityManager().createNamedQuery("ServiceInstance.getToNotifyExpiration", Long.class) //
             .setParameter("date", untillDate) //
-            .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE)) //
-            .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE)) //
+            .setParameter("subscriptionStatuses", Arrays.asList(SubscriptionStatusEnum.ACTIVE, SubscriptionStatusEnum.SUSPENDED)) //
+            .setParameter("statuses", Arrays.asList(InstanceStatusEnum.ACTIVE, InstanceStatusEnum.SUSPENDED)) //
             .getResultList());
 
         return ids;
@@ -1037,7 +1037,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     public boolean willBeTerminatedInFuture(ServiceInstance serviceInstance) {
         Subscription subscription = serviceInstance != null ? serviceInstance.getSubscription() : null;
         SubscriptionRenewal serviceRenewal = serviceInstance != null ? serviceInstance.getServiceRenewal() : null;
-        return (serviceInstance != null && subscription != null && subscription.getStatus() == SubscriptionStatusEnum.ACTIVE && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE
+        return (serviceInstance != null && subscription != null && subscription.getStatus() == SubscriptionStatusEnum.ACTIVE &&
+                (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE || serviceInstance.getStatus() == InstanceStatusEnum.SUSPENDED)
                 && serviceInstance.getSubscribedTillDate() != null && serviceInstance.getSubscribedTillDate().compareTo(new Date()) > 0 && serviceRenewal != null && !serviceRenewal.isAutoRenew()
                 && serviceRenewal.getTerminationReason() != null && serviceRenewal.getEndOfTermAction() == SubscriptionRenewal.EndOfTermActionEnum.TERMINATE);
     }

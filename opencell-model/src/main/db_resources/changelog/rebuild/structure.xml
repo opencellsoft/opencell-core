@@ -267,6 +267,7 @@
         <createSequence sequenceName="cpq_product_charge_template_mapping_seq" startValue="1" />
         <createSequence sequenceName="cpq_attribute_instance_seq" />
         <createSequence sequenceName="cpq_product_version_attribute_seq" startValue="1"/>
+        <createSequence sequenceName="report_query_seq" startValue="1"/>
     </changeSet>
     
      
@@ -14772,6 +14773,47 @@ $$ LANGUAGE plpgsql;
         <addPrimaryKey columnNames="disount_plan_id, code, entity_class" constraintName="cat_discount_applicable_entity_pkey" tableName="cat_discount_applicable_entity"/>
     </changeSet>
 
+    <changeSet id="#INTRD-257_20210625" author="ZBariki">
+        <createTable tableName="report_query">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cust_query_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="target_entity" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="visibility" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="filters" type="text" />
+            <column name="generated_query" type="text" />
+        </createTable>
+        <addUniqueConstraint columnNames="code, creator, visibility" constraintName="uk_report_query_composed"
+                             deferrable="false" disabled="false" initiallyDeferred="false" tableName="report_query" />
+
+        <createTable tableName="report_query_fields">
+            <column name="id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="field" type="varchar(255)" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="report_query_fields"
+                                 constraintName="fk_report_query_fields_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="report_query"/>
+
+    </changeSet>
+
     <!-- end procedure -->
    <!-- keep this always as the last changeSet to remove all rebuild logs -->
 	    <changeSet id="rebuild-4.6-struct-complete" author="AndriusKarpavicius">
@@ -15785,6 +15827,7 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#20210622-INTRD-272" author="TarikFA." />
     <changeSet id="#INTRD-242_20210623" author="ZBariki" />
     <changeSet id="#6168_20210624" author="HatimOUDAD" />
+    <changeSet id="#INTRD-257_20210706" author="ZBariki" />
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

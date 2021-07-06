@@ -3135,15 +3135,15 @@ END $$;]]>
         <sql>CREATE UNIQUE INDEX account_entity_code_index ON ${db.schema.adapted}account_entity(lower(code), account_type)</sql>
 
     </changeSet>
-
+    
     <changeSet id="#5257_20200527" author="AndriusKarpavicius" dbms="postgresql" >
         <addColumn tableName="billing_wallet_operation">
             <column name="reject_reason" type="text"/>
         </addColumn>
     </changeSet>
 
-    <changeSet id="#4895_20200515" author="MohammedAmineTazi">
-       <createSequence sequenceName="cat_fixed_date_seq"/>
+    <changeSet id="#4895_20200515" author="MohammedAmineTazi">        
+       <createSequence sequenceName="cat_fixed_date_seq"/> 
         <createTable tableName="cat_fixed_date">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_fixed_date_pkey" />
@@ -3156,16 +3156,16 @@ END $$;]]>
             </column>
             <column name="cat_calendar_id" type="bigint" >
             	<constraints nullable="false" />
-            </column>
+            </column>           
             <column name="version" type="int4" />
         </createTable>
         <addForeignKeyConstraint constraintName="cat_fixed_date_cat_calendar_fk" baseColumnNames="cat_calendar_id" baseTableName="cat_fixed_date" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_calendar" />  
     </changeSet>
 
     <changeSet id="#5279_20200608_Cancellation of a billing run is impossible" author="anasseh">
         <sql>CREATE INDEX ao_inv_idx ON ${db.schema.adapted}ar_account_operation  (invoice_id)</sql>
-        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>
+        <sql>CREATE INDEX rt_argr_f_idx ON ${db.schema.adapted}billing_rated_transaction  (aggregate_id_f)</sql>               
     </changeSet>
     
     <changeSet id="#5266_20200622" author="AbdelmounaimAkadid">
@@ -3212,26 +3212,26 @@ END $$;]]>
             <column name="invoice_date_delay_el" type="varchar(2000)"/>
             <column name="transaction_date_el" type="varchar(2000)"/>
         </addColumn>
-
+        
         <sql>update ${db.schema.adapted}billing_cycle set billing_template_name_el = billing_template_name where billing_template_name_el is null</sql>
         <sql>update ${db.schema.adapted}billing_cycle set due_date_delay_el = due_date_delay where due_date_delay_el is null</sql>
         <sql>update ${db.schema.adapted}billing_cycle set transaction_date_delay_el = transaction_date_delay where transaction_date_delay is not null</sql>
         <sql>update ${db.schema.adapted}billing_cycle set invoice_date_production_delay_el = invoice_date_production_delay where invoice_date_production_delay is not null</sql>
         <sql>update ${db.schema.adapted}billing_cycle set invoice_date_delay_el = invoice_date_delay where invoice_date_delay is not null</sql>
-
+                
         <dropColumn tableName="billing_cycle" columnName="transaction_date_delay"/>
         <dropColumn tableName="billing_cycle" columnName="invoice_date_production_delay"/>
         <dropColumn tableName="billing_cycle" columnName="invoice_date_delay"/>
         <dropColumn tableName="billing_cycle" columnName="due_date_delay"/>
         <dropColumn tableName="billing_cycle" columnName="billing_template_name"/>
     </changeSet>
-
-
+    
+    
     <changeSet id="#5372_20200711" author="AndriusKarpavicius">
         <sql>update ${db.schema.adapted}billing_invoice_type set billing_template_name_el = billing_template_name where billing_template_name_el is null</sql>
-        <dropColumn tableName="billing_invoice_type" columnName="billing_template_name"/>
+        <dropColumn tableName="billing_invoice_type" columnName="billing_template_name"/>        
     </changeSet>
-
+    
     <changeSet id="#5303_20200629" author="hznibar" >
         <addColumn tableName="rating_cdr">
             <column name="times_tried" type="int4"/>
@@ -3298,9 +3298,9 @@ END $$;]]>
         <addColumn tableName="wo_aggregation_settings">
             <column name="aggregation_rounding" type="int4" defaultValueNumeric="2"/>
             <column name="aggregation_rounding_mode" type="varchar(50)" defaultValue="NEAREST"/>
-        </addColumn>
+        </addColumn>     
      </changeSet>
-
+ 
     <changeSet id="#5388_20200715" author="AndriusKarpavicius">
         <modifyDataType tableName="adm_notification" columnName="event_type_filter" newDataType="varchar(25)"/>
     </changeSet>
@@ -3380,7 +3380,7 @@ END $$;]]>
         <createSequence sequenceName="document_seq" startValue="1"/>
         <createSequence sequenceName="document_category_seq" startValue="1"/>
     </changeSet>
-
+    
     <changeSet id="#4764_20200720" author="MohammedELAZZOUZI">
         <addColumn tableName="cat_wallet_template">
             <column name="low_balance_level_el" type="varchar(2000)"/>
@@ -3413,7 +3413,7 @@ END $$;]]>
             <column name="payment_day_in_month_el" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
-
+    
     <changeSet id="#4156_20120719" author="anasseh">
 		<addColumn tableName="meveo_filter">
 			<column name="polling_query" type="text"/>
@@ -3673,8 +3673,8 @@ END $$;]]>
         <sql>create index billing_subscription_minimum_amount_el_index on ${db.schema.adapted}billing_subscription(minimum_amount_el) where minimum_amount_el is not null</sql>
     	<sql>create index billing_service_instance_minimum_amount_el_index on ${db.schema.adapted}billing_service_instance(minimum_amount_el) where minimum_amount_el is not null</sql>
     </changeSet>
-
-
+    
+    
      <changeSet id="#5155_20200928" author="Mbarek-Ay">
         <addColumn tableName="cust_cet">
             <column name="disableable" type="${type.boolean}" defaultValueNumeric="0">
@@ -3725,7 +3725,7 @@ END $$;]]>
                                  constraintName="cat_offer_allowed_offer_change_fk2" referencedTableName="cat_offer_template"
                                  referencedColumnNames="id"/>
     </changeSet>
-
+    
     <changeSet id="#5621_20201104_offer_template" author="NabilOUACHI" failOnError="false">
         <addColumn tableName="billing_subscription">
             <column name="valid_from" type="datetime"/>
@@ -3743,7 +3743,7 @@ END $$;]]>
                                  constraintName="offer_template_offer_template_fk" referencedTableName="cat_offer_template"
                                  referencedColumnNames="id"/>
     </changeSet>
-
+    
     <changeSet id="#5975_20210225_offer_template_allowed_offer_change_should_be_many_to_many" author="MounirBOUKAYOUA" failOnError="false">
         <dropColumn tableName="cat_offer_template">
             <column name="offer_template_id"></column>
@@ -3767,7 +3767,7 @@ END $$;]]>
         <addForeignKeyConstraint baseTableName="cat_offer_allowed_offer_change" baseColumnNames="allowed_offer_change_id"
                                  constraintName="cat_offer_allowed_offer_change_fk2" referencedTableName="cat_offer_template"
                                  referencedColumnNames="id"/>
-    </changeSet>
+    </changeSet>   
 
 
     <changeSet id="#5599_20201029" author="AndriusKarpavicius">
@@ -8291,7 +8291,7 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
 
     <!-- end media post -->
-
+  
 	<changeSet id="#5627_20201212" author="MohammedELAZZOUZI">
         <addColumn tableName="billing_billing_run">
             <column name="skip_validation_script" type="${type.boolean}"/>
@@ -8544,11 +8544,11 @@ public class OrderAdvancement extends ModuleScript {
         <sql>CREATE INDEX billing_service_instance_st_index on ${db.schema.adapted}billing_service_instance (service_template_id)</sql>
         <sql>CREATE INDEX billing_wallet_operation_sub_index on ${db.schema.adapted}billing_wallet_operation (subscription_id)</sql>
     </changeSet>
-
+    
     <changeSet id="#5993_20210304" author="HatimOUDAD">
         <addUniqueConstraint columnNames="country_code" constraintName="UniqueConstraint_adm__country_code" tableName="adm_country" />
     </changeSet>
-
+    
     <changeSet id="#5863_22122020" author="AbdelmounaimAkadid">
 		<addColumn tableName="ar_ddrequest_lot_op">
             <column name="generate_payment_lines" type="${type.boolean}" defaultValueNumeric="1" />
@@ -8561,13 +8561,13 @@ public class OrderAdvancement extends ModuleScript {
         <sql>CREATE INDEX billing_invoice_agregate_br_index on ${db.schema.adapted}billing_invoice_agregate (billing_run_id)</sql>
         <sql>CREATE INDEX rt_br_index ON billing_rated_transaction (billing_run_id) where status='BILLED'</sql>
     </changeSet>
-
+    
     <changeSet id="#6040_20210323" author="amineTazi">
         <addColumn tableName="dwh_report_extract">
             <column name="file_separator" type="varchar(1)" defaultValue=","/>
         </addColumn>
     </changeSet>
-
+    
     <changeSet id="#6012_20210323" author="MohamedAliHammal">
         <dropForeignKeyConstraint baseTableName="adm_inbound_resp_cookies" constraintName="fk_1kyctwmlumac9aoikhb3kmc02"/>
         <addForeignKeyConstraint baseColumnNames="inboundrequest_id" baseTableName="adm_inbound_resp_cookies" constraintName="fk_1kyctwmlumac9aoikhb3kmc02" deferrable="false" initiallyDeferred="false"
@@ -8593,16 +8593,16 @@ public class OrderAdvancement extends ModuleScript {
         <addColumn tableName="job_execution">
             <column name="job_status" type="varchar(14)"/>
         </addColumn>
-    </changeSet>
-
+    </changeSet>    
+        
     <changeSet id="4756_20210311" author="Andrius">
     	<addColumn tableName="meveo_job_instance">
     		<column name="job_speed" type="varchar(10)" defaultValue="NORMAL" />
     	</addColumn>
     	<sql>update ${db.schema.adapted}job_execution set job_launcher='TRIGGER' where job_launcher='TRIGER'</sql>
     </changeSet>
-
-
+    
+    
     <changeSet id="6055_20210330" author="Andrius" dbms="postgresql">
     	<sql>CREATE OPERATOR ^|(
 			  PROCEDURE = jsonb_exists_any,
@@ -8610,7 +8610,7 @@ public class OrderAdvancement extends ModuleScript {
 			  RIGHTARG = _text,
 			  RESTRICT = contsel,
 			  JOIN = contjoinsel)</sql>
-
+		
 		<sql>CREATE OPERATOR CLASS jsonb_ops_custom
 			   FOR TYPE jsonb USING gin AS
 			   OPERATOR 10  ^|(jsonb, _text),
@@ -8621,8 +8621,8 @@ public class OrderAdvancement extends ModuleScript {
 			   FUNCTION 6  gin_triconsistent_jsonb(internal, smallint, jsonb, integer, internal, internal, internal);
 			   </sql>
     </changeSet>
-
-
+    
+    
     <changeSet id="#5622_20210406" author="AbdelmounaimAkadid">
 	    <sql>
             ALTER TABLE ${db.schema.adapted}billing_wallet_operation ALTER COLUMN charge_instance_id DROP NOT NULL
@@ -8756,7 +8756,7 @@ public class OrderAdvancement extends ModuleScript {
 			baseTableName="billing_invoice_configuration"
 			referencedColumnNames="id" />
 	</changeSet>
-
+	
 	<changeSet id="#5623_20210427" author="Mbarek">
 		<preConditions onFail="MARK_RAN">
 	       <not>
@@ -8768,18 +8768,18 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
       <addForeignKeyConstraint baseColumnNames="quote_offer_id" baseTableName="cpq_order_offer" constraintName="fk_cpq_order_offer_quote_offer_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quote_offer" />
-
+                                                     
       <addColumn tableName="cpq_order_product">
             <column name="quote_product_id" type="bigint"/>
         </addColumn>
       <addForeignKeyConstraint baseColumnNames="quote_product_id" baseTableName="cpq_order_product" constraintName="fk_cpq_order_product_quote_product_id" deferrable="false" initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_product" />
-
+                                 
       <addColumn tableName="cpq_order_lot">
             <column name="quote_lot_id" type="bigint"/>
         </addColumn>
       <addForeignKeyConstraint baseColumnNames="quote_lot_id" baseTableName="cpq_order_lot" constraintName="fk_cpq_order_lot_quote_lot_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_lot" />                                                   
     </changeSet>
 
 	<changeSet id="#cpq_add_missing_migration" author="AbdelmounaimAkadid">
@@ -8815,20 +8815,20 @@ public class OrderAdvancement extends ModuleScript {
     	<addColumn tableName="cat_offer_template">
     		<column name="offer_model_id" type="bigint"/>
     	</addColumn>
-
+    	
       <addForeignKeyConstraint baseColumnNames="offer_model_id" baseTableName="cat_offer_template" constraintName="fk_offer_template_offer_model_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />    
 	</changeSet>
 
       <changeSet id="#5595_540499_20210430" author="TarikFA.">
         <addColumn tableName="cpq_product">
             <column name="product_model_id" type="bigint"/>
         </addColumn>
-
+        
       <addForeignKeyConstraint baseColumnNames="product_model_id" baseTableName="cpq_product" constraintName="fk_cpq_product_model_id" deferrable="false" initiallyDeferred="false"
-                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_product" />    
     </changeSet>
-
+    
     <changeSet id="#5595_540504_20210503" author="TarikFA.">
         <addColumn tableName="cpq_quote_version">
             <column name="cf_values" type="${type.json}" />
@@ -8854,13 +8854,13 @@ public class OrderAdvancement extends ModuleScript {
             <column name="previews_status" type="varchar(20)"/>
         </addColumn>
     </changeSet>
-
+    
     <changeSet id="#5595_20210512" author="RachidAityaazza">
        <renameColumn tableName="cpq_quote" newColumnName="previous_status" oldColumnName="previews_status"
                       columnDataType="varchar(20)"/>
         <sql>update ${db.schema.adapted}cpq_quote set previous_status='IN_PROGRESS' where previous_status is null</sql>
     </changeSet>
-
+    
     <changeSet id="#6122_20210517" author="AbdelmounaimAkadid">
     	<sql>update ${db.schema.adapted}billing_invoice set is_already_added_discount = 0;</sql>
     	<sql>update ${db.schema.adapted}billing_invoice set is_already_added_discount = 1 where invoice_id in (select invoice_id from billing_invoice_agregate where discount_aggregate = 1);</sql>
@@ -8873,45 +8873,45 @@ public class OrderAdvancement extends ModuleScript {
     	<sql>update ${db.schema.adapted}billing_invoice set payment_status = status where status IN ('PAID', 'PPAID', 'UNPAID', 'ABANDONED', 'REFUNDED', 'DISPUTED');</sql>
     	<sql>update ${db.schema.adapted}billing_invoice set status = 'VALIDATED' where status IN ('GENERATED', 'PAID', 'PPAID', 'UNPAID', 'ABANDONED', 'REFUNDED', 'DISPUTED');</sql>
     	<sql>update ${db.schema.adapted}billing_invoice set status = 'NEW' where status = 'CREATED';</sql>
-
-    	<sql>UPDATE ${db.schema.adapted}crm_custom_field_tmpl SET field_type = 'CHECKBOX_LIST', value_required = 0, default_value = 'VALIDATED', storage_type = 'LIST'
+    	
+    	<sql>UPDATE ${db.schema.adapted}crm_custom_field_tmpl SET field_type = 'CHECKBOX_LIST', value_required = 0, default_value = 'VALIDATED', storage_type = 'LIST' 
     		WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code ='invoicesToProcess';</sql>
 
 
 		<sql>DELETE FROM ${db.schema.adapted}crm_custom_field_tmpl_val where customfieldtemplate_id in (
-								SELECT id FROM "crm_custom_field_tmpl"
+								SELECT id FROM "crm_custom_field_tmpl" 
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess');</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'New', 'NEW' FROM "crm_custom_field_tmpl"
+								SELECT id, 'New', 'NEW' FROM "crm_custom_field_tmpl" 
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Draft', 'DRAFT' FROM "crm_custom_field_tmpl"
+								SELECT id, 'Draft', 'DRAFT' FROM "crm_custom_field_tmpl" 
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Canceled', 'CANCELED' FROM "crm_custom_field_tmpl"
+								SELECT id, 'Canceled', 'CANCELED' FROM "crm_custom_field_tmpl" 
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Suspect', 'SUSPECT' FROM "crm_custom_field_tmpl"
+								SELECT id, 'Suspect', 'SUSPECT' FROM "crm_custom_field_tmpl" 
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Validated', 'VALIDATED' FROM "crm_custom_field_tmpl"
+								SELECT id, 'Validated', 'VALIDATED' FROM "crm_custom_field_tmpl" 
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
 
 		<sql>INSERT INTO ${db.schema.adapted}crm_custom_field_tmpl_val(
 								    customfieldtemplate_id, listvalues, listvalues_key)
-								SELECT id, 'Rejected', 'REJECTED' FROM "crm_custom_field_tmpl"
+								SELECT id, 'Rejected', 'REJECTED' FROM "crm_custom_field_tmpl" 
 								WHERE applies_to = 'JobInstance_XMLInvoiceGenerationJob' AND code = 'invoicesToProcess';</sql>
-
+    	
     </changeSet>
 
 
@@ -8925,8 +8925,8 @@ public class OrderAdvancement extends ModuleScript {
 		<addColumn tableName="cpq_quote_price">
 		 <column name="quote_offer_id" type="bigint" />
 		</addColumn>
-
-		<addColumn tableName="order_price">
+		
+		<addColumn tableName="order_price"> 
 		<column name="order_offer_id" type="bigint" />
 		</addColumn>
 
@@ -8952,12 +8952,12 @@ public class OrderAdvancement extends ModuleScript {
         </sql>
         <addNotNullConstraint tableName="cpq_quote_version" columnName="created"/>
     </changeSet>
-
+    
     <changeSet id="#6122_20210524" author="AbdelmounaimAkadid">
     	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = REPLACE(cf_values, '"string":"DraftOnly"', '"listString":["DRAFT"]') where job_template = 'XMLInvoiceGenerationJob';</sql>
     	<sql>UPDATE ${db.schema.adapted}meveo_job_instance set cf_values = REPLACE(cf_values, '"string":"FinalOnly"', '"listString":["VALIDATED"]') where job_template = 'XMLInvoiceGenerationJob';</sql>
    	</changeSet>
-
+   	
    	<changeSet   id="#20210123_540_281_1" author="TarikFA.">
         <sql>update ${db.schema.adapted}adm_role set uuid = 'role'||id where uuid is null</sql>
     </changeSet>
@@ -8973,12 +8973,12 @@ public class OrderAdvancement extends ModuleScript {
     <changeSet   id="#20210123_540_281_5" author="TarikFA.">
         <sql>update ${db.schema.adapted}ar_payment_token set uuid = 'payment_token'||id where uuid is null</sql>
     </changeSet>
-
+    
 
     <changeSet id="#5599_20210526" author="AbdelmounaimAkadid">
     	<sql>CREATE INDEX idx_billing_invoice_agr_amount_on_aggr_id  ON billing_invoice_agr_amount (aggr_id)</sql>
     </changeSet>
-
+    
     <changeSet id="#5416_20210526" author="AbdelmounaimAkadid">
     	<sql>CREATE INDEX idx_ar_ao_payment_histories__ao_id ON ar_ao_payment_histories(ao_id)</sql>
     </changeSet>
@@ -8993,12 +8993,12 @@ public class OrderAdvancement extends ModuleScript {
     <changeSet id="#6147_20210530" author="anasseh">
 	    <sql>CREATE INDEX idx_ar_payment_history_external_payment_id   ON ${db.schema.adapted}ar_payment_history (external_payment_id );</sql>
     </changeSet>
-
+    
     <changeSet id="#559_20210603" author="TarikFA.">
     	<sql>update crm_customer_category set tax_category_id = -1 where tax_category_id is null</sql>
     	<addNotNullConstraint tableName="crm_customer_category" columnName="tax_category_id"/>
     </changeSet>
-
+    
     <changeSet id="#20210607_540_563" author="TarikFA.">
     	<sql>INSERT INTO ${db.schema.adapted}billing_accounting_article (id,"version",created,creator,code,description,tax_class_id,invoice_sub_category_id,description_i18n,disabled,uuid)
 				VALUES (nextval('billing_accounting_article_seq'),1,'2021-06-03 16:23:10.262','opencell.admin','PROD-STD','PROD-STD',-1,-2,'{}',0,'63ef9cee-f498-4908-PROD-STD');</sql>
@@ -9007,7 +9007,7 @@ public class OrderAdvancement extends ModuleScript {
 		<sql>INSERT INTO ${db.schema.adapted}cat_discount_plan (id,"version",disabled,created,updated,code,description,max_duration,min_duration,creator,updater,uuid,start_date,end_date,duration_unit,discount_plan_type,status,status_date,initial_quantity,used_quantity,application_limit)
 				VALUES (nextval('cat_discount_plan_seq'),0,0,'2021-06-07 15:52:06.068','2021-06-07 15:52:06.643','DISC-STD','DISC-STD',99999,0,'opencell.admin','opencell.admin','bb686d5b-4c81-432c-bfd9','2021-01-01','2022-12-31','DAY','PRODUCT','ACTIVE','2021-06-07 15:51:06.643',0,0,0);</sql>
     </changeSet>
-
+    
     <changeSet id="#20210608-540-527" author="Rachid.Aityaazza">
         <addColumn tableName="cpq_commercial_order">
             <column name="discount_plan_id" type="bigint"/>
@@ -9024,17 +9024,17 @@ public class OrderAdvancement extends ModuleScript {
                                  initiallyDeferred="false"
                                  onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cpq_quote_version"/>
     </changeSet>
-
+    
  <changeSet id="#20210614_540_update_script_quotation_and_order" author="TarikFA.">
-
-     <sql><![CDATA[update ${db.schema.adapted}meveo_script_instance
+   
+     <sql><![CDATA[update ${db.schema.adapted}meveo_script_instance 
      			set script = 'package org.meveo.service.quote.script;
 
 	public class QuoteValidation extends QuoteValidationScript {}'
 	where code = 'org.meveo.api.billing.QuoteValidation'
         ]]></sql>
 
-     <sql><![CDATA[update ${db.schema.adapted}meveo_script_instance
+     <sql><![CDATA[update ${db.schema.adapted}meveo_script_instance 
      			set script = 'package org.meveo.service.quote.script;
 
 	public class OrderAdvancement extends OrderAdvancementScript {}'
@@ -9050,7 +9050,7 @@ public class OrderAdvancement extends ModuleScript {
         </addColumn>
         <dropNotNullConstraint columnDataType="datetime" columnName="last_transaction_date" tableName="billing_billing_run"/>
     </changeSet>
-
+    
     <changeSet id="#20210622-INTRD-272" author="TarikFA.">
     	<sql>update ${db.schema.adapted}billing_tax_category set version = 0 where version is null</sql>
     	<sql>update ${db.schema.adapted}billing_invoice_cat set version = 0 where version is null</sql>
@@ -9058,7 +9058,7 @@ public class OrderAdvancement extends ModuleScript {
     	<sql>update ${db.schema.adapted}billing_tax set version = 0 where version is null</sql>
     	<sql>update ${db.schema.adapted}billing_tax_class set version = 0 where version is null</sql>
     </changeSet>
-
+    
     <changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA.">
     	<preConditions onFail="MARK_RAN" onSqlOutput="TEST">
     		<sqlCheck expectedResult="0">select count(*) from ${db.schema.adapted}meveo_script_instance where code = 'org.meveo.service.quote.script.QuoteValidation'</sqlCheck>
@@ -9068,7 +9068,7 @@ public class OrderAdvancement extends ModuleScript {
             public class QuoteValidation extends QuoteValidationScript {}
             ');]]>
         </sql>
-
+        
         <insert tableName="adm_notification">
         	<column name="id" value="-55" />
         	<column name="version" value="0"/>
@@ -9085,29 +9085,29 @@ public class OrderAdvancement extends ModuleScript {
         	<column name="run_async" value="0"/>
         	<column name="save_successful_notif" value="1"/>
         </insert>
-
+        
         <insert tableName="adm_notification_params">
         	<column name="notification_id" value="-55" />
         	<column name="params" value="#{event}" />
         	<column name="params_key" value="cpqQuote" />
         </insert>
-
+        
         <insert tableName="adm_script_notification">
         	<column name="id" value="-55"/>
         </insert>
-
+            
     </changeSet>
-
+    
     <changeSet id="#20210623-INTRD-277-orderAdvacementScript" author="TarikFA.">
     	<preConditions onFail="MARK_RAN" onSqlOutput="TEST">
     		<sqlCheck expectedResult="0">select count(*) from ${db.schema.adapted}meveo_script_instance where code = 'org.meveo.service.quote.script.OrderAdvancement'</sqlCheck>
     	</preConditions>
-
+    	
     		<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-33, 0, 0, now(), 'org.meveo.service.quote.script.OrderAdvancement', 'order advancemnt script', 'JAVA', '
             package org.meveo.service.quote.script;
             public class OrderAdvancement extends OrderAdvancementScript {}
             ');]]></sql>
-
+        
             <insert tableName="adm_notification">
             	<column name="id" value="-56" />
             	<column name="version" value="0"/>
@@ -9123,17 +9123,17 @@ public class OrderAdvancement extends ModuleScript {
             	<column name="run_async" value="0"/>
             	<column name="save_successful_notif" value="1"/>
             </insert>
-
+            
             <insert tableName="adm_notification_params">
             	<column name="notification_id" value="-56" />
             	<column name="params" value="#{event}" />
             	<column name="params_key" value="commercialOrder" />
             </insert>
-
+            
             <insert tableName="adm_script_notification">
             	<column name="id" value="-56"/>
             </insert>
-
+            
     </changeSet>
 
     <changeSet id="#INTRD-339_20210625" author="ZBariki">
@@ -9141,17 +9141,73 @@ public class OrderAdvancement extends ModuleScript {
                              deferrable="false" disabled="false" initiallyDeferred="false" tableName="generic_sequence" />
     </changeSet>
 
+    <changeSet id="#INTRD-257_20210625" author="ZBariki">
+        <createSequence sequenceName="cust_query_seq" startValue="1" />
+        <createTable tableName="cust_query">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cust_query_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="target_entity" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="visibility" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="filters" type="text" />
+            <column name="generated_query" type="text" />
+        </createTable>
+        <addUniqueConstraint columnNames="code, creator, visibility" constraintName="uk_cust_query_composed"
+                             deferrable="false" disabled="false" initiallyDeferred="false" tableName="cust_query" />
+
+        <createTable tableName="custom_query_fields">
+            <column name="id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="field" type="varchar(255)" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="custom_query_fields"
+                                 constraintName="fk_custom_query_fields_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="cust_query"/>
+    </changeSet>
+
     <changeSet id="#INTRD-339_20210625" author="ZBariki">
         <addUniqueConstraint columnNames="code" constraintName="uk_genericSeq_9fnf93rp352nkw2kpdbari17yr"
                              deferrable="false" disabled="false" initiallyDeferred="false" tableName="generic_sequence" />
     </changeSet>
-
+    
     <changeSet id="#6168_20210624" author="HatimOUDAD">
         <addColumn tableName="com_meveo_instance">
             <column name="client_id" type="varchar(60)" />
             <column name="client_secret" type="varchar(60)" />
             <column name="authentication_type" type="varchar(60)" />
         </addColumn>
+    </changeSet>
+
+    <changeSet id="#INTRD-257_20210706" author="ZBariki">
+        <dropForeignKeyConstraint baseTableName="custom_query_fields" constraintName="fk_custom_query_fields_id" />
+        <dropUniqueConstraint tableName="custom_query_fields" constraintName="uk_cust_query_composed"
+                              uniqueColumns="code, creator, visibility" />
+        <renameTable newTableName="report_query" oldTableName="cust_query" />
+        <renameTable newTableName="report_query_fields" oldTableName="custom_query_fields" />
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="report_query_fields"
+                                 constraintName="fk_report_query_fields_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="report_query"/>
+        <renameSequence newSequenceName="report_query_seq" oldSequenceName="cust_query_seq" />
+        <addUniqueConstraint columnNames="code, creator, visibility" constraintName="uk_report_query_composed"
+                             deferrable="false" disabled="false" initiallyDeferred="false" tableName="report_query" />
     </changeSet>
 
     <changeSet id="#INTRD-248_30062021" author="Mounir_BOUKAYOUA">
@@ -9162,5 +9218,4 @@ public class OrderAdvancement extends ModuleScript {
             <column name="reactivation_date" type="datetime" />
         </addColumn>
     </changeSet>
-
 </databaseChangeLog>
