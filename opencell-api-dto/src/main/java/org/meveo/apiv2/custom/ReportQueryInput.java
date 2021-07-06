@@ -12,8 +12,8 @@ import java.util.Map;
 
 @Immutable
 @Style(jdkOnly = true)
-@JsonDeserialize(as = ImmutableCustomQueryInput.class)
-public interface CustomQueryInput {
+@JsonDeserialize(as = ImmutableReportQueryInput.class)
+public interface ReportQueryInput {
 
     @Schema(description = "Custom query code")
     String getQueryName();

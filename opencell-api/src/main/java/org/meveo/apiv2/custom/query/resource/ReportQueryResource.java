@@ -8,9 +8,9 @@ import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.meveo.apiv2.custom.CustomQueryInput;
+import org.meveo.apiv2.custom.ReportQueryInput;
 import org.meveo.apiv2.models.ApiException;
-import org.meveo.model.custom.query.CustomQuery;
+import org.meveo.model.custom.query.ReportQuery;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -20,58 +20,58 @@ import javax.ws.rs.core.Response;
 @Path("/queryManagement/customQueries")
 @Consumes(APPLICATION_JSON)
 @Produces(APPLICATION_JSON)
-public interface CustomQueryResource {
+public interface ReportQueryResource {
 
     @GET
     @Path("/{queryId}")
-    @Operation(summary = "This endpoint allows to load a custom query resource", tags = {"CustomQuery"},
-            description = "Return a custom query", responses = {
+    @Operation(summary = "This endpoint allows to load a report query resource", tags = {"ReportQuery"},
+            description = "Return a report query", responses = {
             @ApiResponse(responseCode = "200",
                     description = "Query successfully loaded"),
             @ApiResponse(responseCode = "404",
                     description = "Query does not exist")})
     Response find(
-            @Parameter(description = "Custom query id", required = true) @PathParam("queryId") Long id);
+            @Parameter(description = "Report query id", required = true) @PathParam("queryId") Long id);
 
     @DELETE
     @Path("/{queryId}")
-    @Operation(summary = "This endpoint allows to delete a custom query resource", tags = {"CustomQuery"},
-            description = "delete custom query", responses = {
+    @Operation(summary = "This endpoint allows to delete a report query resource", tags = {"ReportQuery"},
+            description = "delete report query", responses = {
             @ApiResponse(responseCode = "204",
                     description = "Query successfully deleted"),
             @ApiResponse(responseCode = "404",
                     description = "Query does not exist")})
     Response delete(
-            @Parameter(description = "Custom query id", required = true) @PathParam("queryId") Long id);
+            @Parameter(description = "report query id", required = true) @PathParam("queryId") Long id);
 
     @GET
-    @Operation(summary = "Return a list of custom queries", tags = {"CustomQuery" },
-            description = "Returns a list of  custom queries",
+    @Operation(summary = "Return a list of report queries", tags = {"ReportQuery" },
+            description = "Returns a list of report queries",
             responses = {
             @ApiResponse(headers = {
                     @Header(name = "ETag",
                             description = "a pseudo-unique identifier that represents the version of the data sent back.",
                             schema = @Schema(type = "integer", format = "int64")) },
-                    description = "list of custom queries",
-                    content = @Content(schema = @Schema(implementation = CustomQuery.class))),
-            @ApiResponse(responseCode = "200", description = "Custom queries list"),
+                    description = "list of report queries",
+                    content = @Content(schema = @Schema(implementation = ReportQuery.class))),
+            @ApiResponse(responseCode = "200", description = "report queries list"),
             @ApiResponse(responseCode = "404", description = "No data found",
                     content = @Content(schema = @Schema(implementation = ApiException.class))) })
-    Response getCustomQueries(@DefaultValue("0") @QueryParam("offset") Long offset,
+    Response getReportQueries(@DefaultValue("0") @QueryParam("offset") Long offset,
                               @DefaultValue("50") @QueryParam("limit") Long limit,
                               @QueryParam("sort") String sort, @QueryParam("orderBy") String orderBy,
                               @QueryParam("filter") String filter, @Context Request request);
 
     @POST
-    @Operation(summary = "Create a new custom query", tags = {"CustomQuery" }, description = "Create a new custom query",
+    @Operation(summary = "Create a new report query", tags = {"ReportQuery" }, description = "Create a new report query",
             responses = {
                     @ApiResponse(responseCode = "200",
-                            description = "Custom query successfully created, and the id is returned in the response"),
+                            description = "Report query successfully created, and the id is returned in the response"),
                     @ApiResponse(responseCode = "204",
-                            description = "Custom query successfully created"),
+                            description = "Report query successfully created"),
                     @ApiResponse(responseCode = "404",
                             description = "Target entity does not exist") })
-    Response createCustomQuery(
-            @Parameter(description = "Custom query object", required = true) CustomQueryInput customQuery);
+    Response createReportQuery(
+            @Parameter(description = "Report query object", required = true) ReportQueryInput reportQuery);
 
 }

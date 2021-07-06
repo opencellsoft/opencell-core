@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 @Entity
-@Table(name = "cust_query")
+@Table(name = "report_query")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-        parameters = { @Parameter(name = "sequence_name", value = "cust_query_seq"), })
-public class CustomQuery extends BusinessEntity {
+        parameters = { @Parameter(name = "sequence_name", value = "report_query_seq"), })
+public class ReportQuery extends BusinessEntity {
 
     @Column(name = "target_entity")
     private String targetEntity;
@@ -25,7 +25,7 @@ public class CustomQuery extends BusinessEntity {
     private QueryVisibilityEnum visibility;
 
     @ElementCollection
-    @CollectionTable(name = "custom_query_fields", joinColumns = @JoinColumn(name = "id"))
+    @CollectionTable(name = "report_query_fields", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "field")
     private List<String> fields;
 

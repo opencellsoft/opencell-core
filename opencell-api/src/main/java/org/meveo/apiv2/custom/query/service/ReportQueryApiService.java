@@ -9,11 +9,11 @@ import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.custom.query.CustomQuery;
+import org.meveo.model.custom.query.ReportQuery;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.custom.CustomQueryService;
+import org.meveo.service.custom.ReportQueryService;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class CustomQueryApiService implements ApiService<CustomQuery> {
+public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     @Inject
-    private CustomQueryService customQueryService;
+    private ReportQueryService reportQueryService;
 
     @Inject
     @CurrentUser
@@ -35,30 +35,30 @@ public class CustomQueryApiService implements ApiService<CustomQuery> {
     private List<String> fetchFields = asList("fields");
 
     @Override
-    public List<CustomQuery> list(Long offset, Long limit, String sort, String orderBy, String filter) {
+    public List<ReportQuery> list(Long offset, Long limit, String sort, String orderBy, String filter) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(offset.intValue(),
                 limit.intValue(), null, filter, fetchFields, null, null);
-        return customQueryService.customQueriesAllowedForUser(paginationConfiguration, currentUser.getUserName());
+        return reportQueryService.reportQueriesAllowedForUser(paginationConfiguration, currentUser.getUserName());
     }
 
     @Override
     public Long getCount(String filter) {
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(null, null,
                 null, filter, null, null, null);
-        return customQueryService.count(paginationConfiguration);
+        return reportQueryService.count(paginationConfiguration);
     }
 
     @Override
-    public Optional<CustomQuery> findById(Long id) {
-        return ofNullable(customQueryService.findById(id, fetchFields));
+    public Optional<ReportQuery> findById(Long id) {
+        return ofNullable(reportQueryService.findById(id, fetchFields));
     }
 
     @Override
-    public CustomQuery create(CustomQuery entity) {
+    public ReportQuery create(ReportQuery entity) {
         Class<?> targetEntity = validateTargetEntity(entity.getTargetEntity());
         try {
             entity.setGeneratedQuery(generateQuery(entity, targetEntity.getSimpleName()));
-            customQueryService.create(entity);
+            reportQueryService.create(entity);
             return entity;
         } catch (Exception exception) {
             throw new BadRequestException(exception.getMessage(), exception.getCause());
@@ -73,7 +73,7 @@ public class CustomQueryApiService implements ApiService<CustomQuery> {
         }
     }
 
-    private String generateQuery(CustomQuery entity, String targetEntity) {
+    private String generateQuery(ReportQuery entity, String targetEntity) {
         PersistenceService persistenceService =
                 (PersistenceService) getServiceInterface(targetEntity + "Service");
         PaginationConfiguration configuration = new PaginationConfiguration(null);
@@ -111,27 +111,27 @@ public class CustomQueryApiService implements ApiService<CustomQuery> {
     }
 
     @Override
-    public Optional<CustomQuery> update(Long id, CustomQuery baseEntity) {
+    public Optional<ReportQuery> update(Long id, ReportQuery baseEntity) {
         return empty();
     }
 
     @Override
-    public Optional<CustomQuery> patch(Long id, CustomQuery baseEntity) {
+    public Optional<ReportQuery> patch(Long id, ReportQuery baseEntity) {
         return empty();
     }
 
     @Override
-    public Optional<CustomQuery> delete(Long id) {
-        CustomQuery customQuery = customQueryService.findById(id);
-        if (customQuery != null) {
-            customQueryService.remove(customQuery);
-            return of(customQuery);
+    public Optional<ReportQuery> delete(Long id) {
+        ReportQuery reportQuery = reportQueryService.findById(id);
+        if (reportQuery != null) {
+            reportQueryService.remove(reportQuery);
+            return of(reportQuery);
         }
         return empty();
     }
 
     @Override
-    public Optional<CustomQuery> findByCode(String code) {
-        return of(customQueryService.findByCode(code, fetchFields));
+    public Optional<ReportQuery> findByCode(String code) {
+        return of(reportQueryService.findByCode(code, fetchFields));
     }
 }

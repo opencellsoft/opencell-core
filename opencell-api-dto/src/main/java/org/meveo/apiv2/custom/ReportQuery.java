@@ -12,8 +12,8 @@ import java.util.Map;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
-@JsonDeserialize(as = ImmutableCustomQuery.class)
-public interface CustomQuery extends Resource {
+@JsonDeserialize(as = ImmutableReportQuery.class)
+public interface ReportQuery extends Resource {
 
     @Schema(description = "Custom query code")
     String getCode();
