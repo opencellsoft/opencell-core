@@ -69,7 +69,7 @@ public class AccountsManagementResourceImpl implements AccountsManagementResourc
             return Response.status(404).entity("Subscription {code=[code]} doesn't exist".replace("[code]", subscriptionCode)).build();
         }
 
-        if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CLOSED) {
+        if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED) {
             return Response.status(403)
                 .entity("Cannot move a terminated subscription {id=[id], code=[code]}".replace("[id]", subscription.getId().toString()).replace("[code]", subscriptionCode))
                 .build();
