@@ -33,6 +33,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.util.IOUtils;
+import org.elasticsearch.common.io.stream.InputStreamStreamInput;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VFSUtils;
 import org.jboss.vfs.VirtualFile;
@@ -272,8 +273,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 
 	                File sourceFile = new File(sourcePath);
 	                if (!sourceFile.exists()) {
-	                    VirtualFile vfDir = VFS
-	                        .getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/" + "quote");
+	                    VirtualFile vfDir = VFS.getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/default/quote");
 	                    log.info("default jaspers path :" + vfDir.getPathName());
 	                    URL vfPath = VFSUtils.getPhysicalURL(vfDir);
 	                    sourceFile = new File(vfPath.getPath());  

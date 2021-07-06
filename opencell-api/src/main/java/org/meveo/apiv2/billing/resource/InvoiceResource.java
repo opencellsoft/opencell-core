@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.dto.response.InvoicesDto;
 import org.meveo.apiv2.billing.BasicInvoice;
 import org.meveo.apiv2.billing.Invoice;
 import org.meveo.apiv2.billing.InvoiceInput;
@@ -244,5 +245,19 @@ public interface InvoiceResource {
 	Response find(@Parameter(description = "invoice Number of the Invoice", required = true)
 						@PathParam("invoiceNumber") String invoiceNumber,
 						@Context Request request);
+	
+
+    @POST
+    @Path("/{invoicId}/duplication")
+    @Operation(
+    		summary = "this endpoint allow to duplicate invoice",
+    		description = "dupicate invoice with the new status",
+    		responses = {
+    				@ApiResponse(description= "will return new invoice duplicated",
+    							content=@Content(
+    										schema = @Schema(
+    														implementation = InvoicesDto.class)))
+    		})
+    Response duplicate(@PathParam("invoicId") Long invoiceId);
 
 }

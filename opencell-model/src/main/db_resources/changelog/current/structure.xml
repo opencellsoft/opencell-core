@@ -9140,7 +9140,48 @@ public class OrderAdvancement extends ModuleScript {
         <addUniqueConstraint columnNames="code" constraintName="uk_genericSeq_9fnf93rp352nkw2kpdbari17yr"
                              deferrable="false" disabled="false" initiallyDeferred="false" tableName="generic_sequence" />
     </changeSet>
-    
+
+    <changeSet id="#INTRD-257_20210625" author="ZBariki">
+        <createSequence sequenceName="cust_query_seq" startValue="1" />
+        <createTable tableName="cust_query">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cust_query_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="target_entity" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="visibility" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="filters" type="text" />
+            <column name="generated_query" type="text" />
+        </createTable>
+        <addUniqueConstraint columnNames="code, creator, visibility" constraintName="uk_cust_query_composed"
+                             deferrable="false" disabled="false" initiallyDeferred="false" tableName="cust_query" />
+
+        <createTable tableName="custom_query_fields">
+            <column name="id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="field" type="varchar(255)" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="custom_query_fields"
+                                 constraintName="fk_custom_query_fields_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="cust_query"/>
+    </changeSet>
+
     <changeSet id="#INTRD-339_20210625" author="ZBariki">
         <addUniqueConstraint columnNames="code" constraintName="uk_genericSeq_9fnf93rp352nkw2kpdbari17yr"
                              deferrable="false" disabled="false" initiallyDeferred="false" tableName="generic_sequence" />
@@ -9153,5 +9194,28 @@ public class OrderAdvancement extends ModuleScript {
             <column name="authentication_type" type="varchar(60)" />
         </addColumn>
     </changeSet>
-    
+
+    <changeSet id="#INTRD-257_20210706" author="ZBariki">
+        <dropForeignKeyConstraint baseTableName="custom_query_fields" constraintName="fk_custom_query_fields_id" />
+        <dropUniqueConstraint tableName="custom_query_fields" constraintName="uk_cust_query_composed"
+                              uniqueColumns="code, creator, visibility" />
+        <renameTable newTableName="report_query" oldTableName="cust_query" />
+        <renameTable newTableName="report_query_fields" oldTableName="custom_query_fields" />
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="report_query_fields"
+                                 constraintName="fk_report_query_fields_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="report_query"/>
+        <renameSequence newSequenceName="report_query_seq" oldSequenceName="cust_query_seq" />
+        <addUniqueConstraint columnNames="code, creator, visibility" constraintName="uk_report_query_composed"
+                             deferrable="false" disabled="false" initiallyDeferred="false" tableName="report_query" />
+    </changeSet>
+
+    <changeSet id="#INTRD-248_30062021" author="Mounir_BOUKAYOUA">
+        <addColumn tableName="billing_charge_instance">
+            <column name="reactivation_date" type="datetime" />
+        </addColumn>
+        <addColumn tableName="billing_service_instance">
+            <column name="reactivation_date" type="datetime" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

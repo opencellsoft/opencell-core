@@ -1,5 +1,7 @@
 package org.meveo.apiv2;
 
+import static java.util.stream.Collectors.toSet;
+
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import org.apache.commons.collections.map.HashedMap;
 import org.json.simple.JSONObject;
@@ -13,6 +15,7 @@ import org.meveo.apiv2.billing.impl.InvoiceResourceImpl;
 import org.meveo.apiv2.billing.impl.InvoicingResourceImpl;
 import org.meveo.apiv2.billing.impl.RatedTransactionResourceImpl;
 import org.meveo.apiv2.catalog.resource.DiscountPlanResourceImpl;
+import org.meveo.apiv2.report.query.impl.ReportQueryResourceImpl;
 import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.generic.GenericResourceImpl;
 import org.meveo.apiv2.generic.NotYetImplementedResource;
@@ -33,7 +36,6 @@ import javax.ws.rs.core.Application;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApplicationPath("/api/rest/v2")
@@ -72,7 +74,8 @@ public class GenericOpencellRestful extends Application {
 				OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class,
 				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class,
 				DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, ValidationExceptionMapper.class,
-				BusinessExceptionMapper.class, InvoicingResourceImpl.class).collect(Collectors.toSet());
+				BusinessExceptionMapper.class, InvoicingResourceImpl.class, ReportQueryResourceImpl.class)
+                .collect(toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
 			resources.add(GenericApiLoggingFilter.class);
 			log.info(

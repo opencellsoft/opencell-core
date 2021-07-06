@@ -69,6 +69,7 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.DateUtils;
@@ -606,7 +607,60 @@ public class Invoice extends AuditableEntity implements ICustomFieldEntity, ISea
   	@JoinColumn(name = "commercial_order_id", referencedColumnName = "id")
   	private CommercialOrder commercialOrder;
 
-    /**
+
+    public Invoice() {
+	}
+
+    
+    public Invoice(Invoice copy) {
+		this.billingAccount = copy.billingAccount;
+		this.paymentMethodType = copy.paymentMethodType;
+		this.dueDate = copy.dueDate;
+		this.invoiceDate = copy.invoiceDate;
+		this.discountPlan = copy.discountPlan;
+		this.amountWithoutTax = copy.amountWithoutTax;
+		this.amountTax = copy.amountTax;
+		this.amountWithTax = copy.amountWithTax;
+		this.netToPay = copy.netToPay;
+		this.tradingCurrency = copy.tradingCurrency;
+		this.tradingLanguage = copy.tradingLanguage;
+		this.tradingCountry = copy.tradingCountry;
+		this.alias = copy.alias;
+		this.iban = copy.iban;
+		this.isDetailedInvoice = copy.isDetailedInvoice;
+		this.discountRate = copy.discountRate;
+		this.discountAmount = copy.discountAmount;
+		this.externalRef = copy.externalRef;
+		setUUIDIfNull();
+		this.cfValues = copy.cfValues;
+		this.cfAccumulatedValues = copy.cfAccumulatedValues;
+		this.seller = copy.seller;
+		this.invoiceType = copy.invoiceType;
+
+		this.quote = null;
+		this.commercialOrder = null;
+		this.status = InvoiceStatusEnum.NEW;
+		this.paymentStatus = InvoicePaymentStatusEnum.NONE;
+		this.alreadySent = false;
+		this.invoiceNumber = null;
+		this.temporaryInvoiceNumber = null;
+		this.comment = null;
+		this.linkedInvoices = new HashSet<Invoice>();
+		this.orders = new ArrayList<Order>();
+		this.xmlFilename = null;
+		this.pdfFilename = null;
+		this.rejectReason = null;
+		
+		this.xmlDate = null;
+		this.pdfDate = null;
+		this.emailSentDate = null;
+		this.paymentStatusDate = null;
+		this.invoiceLines = new ArrayList<InvoiceLine>();
+		this.invoiceAgregates = new ArrayList<InvoiceAgregate>();
+	}
+
+
+	/**
      * 3583 : dueDate and invoiceDate should be truncated before persist or update.
      */
     @PrePersist

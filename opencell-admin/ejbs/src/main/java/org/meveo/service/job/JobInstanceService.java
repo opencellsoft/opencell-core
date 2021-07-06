@@ -209,21 +209,11 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
         log.info("Remove jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
 
-        String providerCode = currentUser.getProviderCode();
         if (jobInstance.getId() == null) {
             log.info("removing jobInstance entity with null id, something is wrong");
 
-        } else if (jobTimers.containsKey(new CacheKeyLong(providerCode, jobInstance.getId()))) {
-            try {
-                Timer timer = jobTimers.get(new CacheKeyLong(providerCode, jobInstance.getId()));
-                timer.cancel();
-            } catch (Exception ex) {
-                log.error("cannot cancel timer " + ex);
-            }
-            jobTimers.remove(new CacheKeyLong(providerCode, jobInstance.getId()));
-        } else {
-            log.warn("jobInstance timer not found, cannot remove it");
         }
+        unscheduleJob(jobInstance.getId());
         super.remove(jobInstance);
 
         jobCacheContainerProvider.removeJobInstance(jobInstance.getId());
@@ -248,7 +238,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
         jobInstance = super.disable(jobInstance);
 
         log.info("Disabling jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
-        scheduleUnscheduleJob(jobInstance);
+        unscheduleJob(jobInstance.getId());
 
         clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.disable);
 

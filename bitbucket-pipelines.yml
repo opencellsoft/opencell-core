@@ -16,11 +16,21 @@ definitions:
           - mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
         artifacts:
           - target/**
+    - step: &mirror-to-github
+        name: Mirror to Github
+        script:
+          - git push --mirror git@github.com:opencellsoft/opencell-core.git
 
 pipelines:                 # More info here: https://confluence.atlassian.com/bitbucket/configure-bitbucket-pipelines-yml-792298910.html
-  branches:
-    11.X:
+  custom: # Pipelines that can only be triggered manually
+    sonar:
       - step: *build-test-sonarcloud
+  branches:
+#    '{integration,*.X}':
+#      - step: *build-test-sonarcloud
+    'release/*':
+      - step: *build-test-sonarcloud
+      - step: *mirror-to-github
   pull-requests:
     '**':
       - step: *build-test-sonarcloud

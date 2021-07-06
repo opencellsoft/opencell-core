@@ -88,6 +88,7 @@ import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.catalog.IImageUpload;
+import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldValue;
@@ -699,6 +700,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 Map<String, String> mapStringAndType = new HashMap();
                 mapStringAndType.put("fullQualifiedTypeName", att.getJavaType().toString());
                 mapStringAndType.put("shortTypeName", att.getJavaType().getSimpleName());
+                mapStringAndType.put("isEntity",  Boolean.toString(BaseEntity.class.isAssignableFrom(att.getJavaType()) || ServiceTemplate.class.isAssignableFrom(att.getJavaType())));
                 mapAttributeAndType.put(att.getName(), mapStringAndType);
             } else {
                 if (!resultsCFTmpl.isEmpty()) {
@@ -708,6 +710,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             Map<String, String> mapStringAndType = new HashMap();
                             mapStringAndType.put("fullQualifiedTypeName", aCFTmpl.getFieldType().getDataClass().toString());
                             mapStringAndType.put("shortTypeName", aCFTmpl.getFieldType().getDataClass().getSimpleName());
+                            mapStringAndType.put("isEntity",  Boolean.toString(BaseEntity.class.isAssignableFrom(aCFTmpl.getFieldType().getDataClass()) || ServiceTemplate.class.isAssignableFrom(aCFTmpl.getFieldType().getDataClass())));
                             mapCFValues.put(aCFTmpl.getCode(), mapStringAndType);
                         }
                     }

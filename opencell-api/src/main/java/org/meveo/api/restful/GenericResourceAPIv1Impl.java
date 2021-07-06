@@ -5,6 +5,7 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.restful.filter.AuthenticationFilter;
+import org.meveo.api.restful.pagingFiltering.PagingAndFilteringRest;
 import org.meveo.api.restful.services.Apiv1DeleteService;
 import org.meveo.api.restful.services.Apiv1GetService;
 import org.meveo.api.restful.services.Apiv1PostService;
@@ -62,7 +63,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
      * This request is used to retrieve all entities, or also a particular entity
      */
     @Override
-    public Response getRequest() throws URISyntaxException, IOException {
+    public Response getRequest( PagingAndFilteringRest pagingAndFiltering ) throws URISyntaxException, IOException {
         String aGetPath = GenericOpencellRestfulAPIv1.API_VERSION + uriInfo.getPath();
 
         segmentsOfPathAPIv1 = uriInfo.getPathSegments();
@@ -73,7 +74,7 @@ public class GenericResourceAPIv1Impl implements GenericResourceAPIv1 {
 
         // to get all entities
         if ( GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.containsKey( aGetPath ) ) {
-            return getService.getAllEntities( uriInfo, aGetPath );
+            return getService.getAllEntities( pagingAndFiltering, uriInfo, aGetPath );
         }
         // to get a particular entity
         else if ( GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.containsKey( getAnEntityPath ) ) {

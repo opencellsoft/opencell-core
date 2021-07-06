@@ -58,6 +58,9 @@ public class ServiceInstanceDto extends BusinessEntityDto {
     /** The subscription date. */
     private Date subscriptionDate;
 
+    /** The reactivation date. */
+    private Date reactivationDate;
+
     /** The termination date. */
     private Date terminationDate;
 
@@ -175,6 +178,7 @@ public class ServiceInstanceDto extends BusinessEntityDto {
         statusDate = serviceInstance.getStatusDate();
         subscriptionDate = serviceInstance.getSubscriptionDate();
         terminationDate = serviceInstance.getTerminationDate();
+        reactivationDate = serviceInstance.getReactivationDate();
         quantity = serviceInstance.getQuantity();
         orderNumber = serviceInstance.getOrderNumber();
         if (serviceInstance.getSubscriptionTerminationReason() != null) {
@@ -315,6 +319,24 @@ public class ServiceInstanceDto extends BusinessEntityDto {
      */
     public void setSubscriptionDate(Date subscriptionDate) {
         this.subscriptionDate = subscriptionDate;
+    }
+
+    /**
+     * Get reactivation date
+     *
+     * @return reactivation date
+     */
+    public Date getReactivationDate() {
+        return reactivationDate;
+    }
+
+    /**
+     * Set reactivation date
+     *
+     * @param reactivationDate reactivation date
+     */
+    public void setReactivationDate(Date reactivationDate) {
+        this.reactivationDate = reactivationDate;
     }
 
     /**

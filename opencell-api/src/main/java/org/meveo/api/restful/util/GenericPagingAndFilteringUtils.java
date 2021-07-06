@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections.MapUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.restful.pagingFiltering.ImmutablePagingAndFilteringRest;
+import org.meveo.api.restful.pagingFiltering.PagingAndFilteringRest;
 import org.meveo.apiv2.generic.core.GenericRequestMapper;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 
@@ -50,6 +52,65 @@ public class GenericPagingAndFilteringUtils {
     }
 
     /**
+     * Function used to create an instance of PagingAndFiltering from the generic pagingAndFilteringRest
+     *
+     * @param pagingAndFilteringRest PagingAndFilteringRest containing all query params (limit, offset, sort, filters etc.)
+     * @return an instance of PagingAndFiltering
+     * set paging and filtering as following format :
+     *         "offset": 0,
+     *         "limit": 4,
+     *         "sort": "-description,-id",
+     *         filters : {
+     *               "likeCriteria description": "*Description*"
+     *               "code": "*FR",
+     *               "SQL": "code='SELLER_FR'",
+     *               "inList id": [-3,1],
+     *               "ne id": -3,
+     *               "fromRange id": -6,
+     *               "toRange id": 0
+     *         }
+     */
+    public void constructPagingAndFiltering(PagingAndFilteringRest pagingAndFilteringRest) {
+        if ( pagingAndFilteringRest == null )
+            pagingAndFilteringRest = ImmutablePagingAndFilteringRest.builder().build();
+
+        pagingAndFiltering = new PagingAndFiltering();
+
+        pagingAndFiltering.setLimit( pagingAndFilteringRest.getLimit() );
+        pagingAndFiltering.setOffset( pagingAndFilteringRest.getOffset() );
+
+        String allSortFieldsAndOrders = pagingAndFilteringRest.getSort();
+        String[] allSortFieldsSplit = allSortFieldsAndOrders.split(MULTI_SORTING_DELIMITER);
+        StringBuilder sortFields = new StringBuilder();
+        for ( int i = 0; i < allSortFieldsSplit.length - 1; i++ ) {
+            if ( allSortFieldsSplit[i].charAt(0) == DESCENDING_SIGN ) {
+                // Remove the sign '-' in case of DESCENDING
+                sortFields.append( allSortFieldsSplit[i].substring(1) + BLANK_SPACE
+                        + DESCENDING_ORDER + MULTI_SORTING_DELIMITER + BLANK_SPACE );
+            }
+            else {
+                sortFields.append( allSortFieldsSplit[i] + BLANK_SPACE
+                        + ASCENDING_ORDER + MULTI_SORTING_DELIMITER + BLANK_SPACE );
+            }
+        }
+        if ( allSortFieldsSplit[allSortFieldsSplit.length - 1].charAt(0) == DESCENDING_SIGN ) {
+            // Remove the sign '-' in case of DESCENDING
+            sortFields.append( allSortFieldsSplit[allSortFieldsSplit.length - 1].substring(1) + BLANK_SPACE
+                    + DESCENDING_ORDER );
+        }
+        else {
+            sortFields.append( allSortFieldsSplit[allSortFieldsSplit.length - 1] + BLANK_SPACE
+                    + ASCENDING_ORDER );
+        }
+        pagingAndFiltering.setSortBy( sortFields.toString() );
+
+        if ( ! MapUtils.isEmpty(pagingAndFilteringRest.getFilters()) ) {
+            Map<String, Object> genericFilters = new HashMap<>(pagingAndFilteringRest.getFilters());
+            pagingAndFiltering.setFilters( genericFilters );
+        }
+    }
+
+    /**
      * Is used to create an instance of PagingAndFiltering
      *
      * @param queryParams a multivaluedMap containing all query params (limit, offset, etc.)
@@ -77,19 +138,19 @@ public class GenericPagingAndFilteringUtils {
                         sortOrders.append( DESCENDING_ORDER + MULTI_SORTING_DELIMITER );
                         // Remove the sign '-' in case of DESCENDING
                         sortFields.append( allSortFieldsSplit[i].substring(1) + BLANK_SPACE
-                                            + DESCENDING_ORDER + MULTI_SORTING_DELIMITER + BLANK_SPACE );
+                                + DESCENDING_ORDER + MULTI_SORTING_DELIMITER + BLANK_SPACE );
                     }
                     else {
                         sortOrders.append( ASCENDING_ORDER + MULTI_SORTING_DELIMITER );
                         sortFields.append( allSortFieldsSplit[i] + BLANK_SPACE
-                                            + ASCENDING_ORDER + MULTI_SORTING_DELIMITER + BLANK_SPACE );
+                                + ASCENDING_ORDER + MULTI_SORTING_DELIMITER + BLANK_SPACE );
                     }
                 }
                 if ( allSortFieldsSplit[allSortFieldsSplit.length - 1].charAt(0) == DESCENDING_SIGN ) {
                     sortOrders.append( DESCENDING_ORDER );
                     // Remove the sign '-' in case of DESCENDING
                     sortFields.append( allSortFieldsSplit[allSortFieldsSplit.length - 1].substring(1) + BLANK_SPACE
-                                        + DESCENDING_ORDER );
+                            + DESCENDING_ORDER );
                 }
                 else {
                     sortOrders.append( ASCENDING_ORDER );

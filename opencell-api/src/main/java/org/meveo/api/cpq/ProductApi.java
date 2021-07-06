@@ -3,6 +3,7 @@ package org.meveo.api.cpq;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +17,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.DiscountPlanApi;
 import org.meveo.api.catalog.DiscountPlanItemApi;
 import org.meveo.api.catalog.OfferTemplateApi;
@@ -168,6 +168,7 @@ public class ProductApi extends BaseApi {
 				productVersion.setShortDescription(productDto.getLabel());
 				productVersion.setStatus(VersionStatusEnum.DRAFT);
 				productVersion.setStatusDate(Calendar.getInstance().getTime());
+				productVersion.getValidity().setFrom(new Date());
 				productVersionService.create(productVersion);
 				response.setCurrentProductVersion(new ProductVersionDto(productVersion));
 			}

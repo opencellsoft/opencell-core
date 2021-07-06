@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.api.restful.GenericOpencellRestfulAPIv1;
 import org.meveo.api.restful.filter.AuthenticationFilter;
+import org.meveo.api.restful.pagingFiltering.PagingAndFilteringRest;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.commons.utils.StringUtils;
@@ -47,7 +48,7 @@ public class Apiv1GetService {
     /*
      * Function used to retrieve all entities
      */
-    public Response getAllEntities(UriInfo uriInfo, String aGetPath) throws IOException, URISyntaxException {
+    public Response getAllEntities(PagingAndFilteringRest pagingAndFiltering, UriInfo uriInfo, String aGetPath) throws IOException, URISyntaxException {
         URI redirectURI;
 
         pathIBaseRS = GenericOpencellRestfulAPIv1.MAP_RESTFUL_PATH_AND_IBASE_RS_PATH.get( aGetPath );
@@ -71,7 +72,7 @@ public class Apiv1GetService {
             entityClassName = pathIBaseRS.split( FORWARD_SLASH )[ pathIBaseRS.split( FORWARD_SLASH ).length - 1 ];
 
         queryParamsMap = uriInfo.getQueryParameters();
-        GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(queryParamsMap);
+        GenericPagingAndFilteringUtils.getInstance().constructPagingAndFiltering(pagingAndFiltering);
         Class entityClass = GenericHelper.getEntityClass( Inflector.getInstance().singularize(entityClassName) );
         GenericPagingAndFilteringUtils.getInstance().generatePagingConfig(entityClass);
 
