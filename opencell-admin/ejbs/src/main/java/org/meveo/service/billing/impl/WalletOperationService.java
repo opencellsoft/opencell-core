@@ -17,6 +17,29 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.util.Collections.emptyList;
+import static org.meveo.commons.utils.NumberUtils.round;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.BusinessException.ErrorContextAttributeEnum;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
@@ -33,9 +56,30 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.*;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.ChargeApplicationModeEnum;
+import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.OneShotChargeInstance;
+import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletInstance;
+import org.meveo.model.billing.WalletOperation;
+import org.meveo.model.billing.WalletOperationAggregationSettings;
+import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.catalog.Calendar;
-import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.RecurringChargeTemplate;
+import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.order.Order;
 import org.meveo.model.payments.CustomerAccount;
@@ -46,25 +90,14 @@ import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.*;
+import org.meveo.service.catalog.impl.CalendarService;
+import org.meveo.service.catalog.impl.ChargeTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
+import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
+import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.filter.FilterService;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.emptyList;
-import static org.meveo.commons.utils.NumberUtils.round;
 
 /**
  * Service class for WalletOperation entity
@@ -1087,7 +1120,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             qb.addCriterionEntity("op.chargeInstance.chargeTemplate.invoiceSubCategory", invoiceSubCategory);
         }
         qb.addCriterionEntity("op.wallet", walletInstance);
-        qb.addSql(" op.status = 'OPEN'");
+        qb.addSql("op.status = 'OPEN'");
         if (from != null) {
             qb.addCriterion("operationDate", ">=", from, false);
         }
@@ -1118,7 +1151,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             return Collections.emptyList();
         }
     }
-
+    
     public Long countNonTreatedWOByBA(BillingAccount billingAccount) {
         try {
             return (Long) getEntityManager().createNamedQuery("WalletOperation.countNotTreatedByBA").setParameter("billingAccount", billingAccount).getSingleResult();
@@ -1144,6 +1177,28 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
             log.warn("failed to countNonTreated WO by CA", e);
             return null;
         }
+    }
+
+    public Long countNotBilledWOBySubscription(Subscription subscription) {
+
+        try {
+            return (Long) getEntityManager().createNamedQuery("WalletOperation.countNotBilledWOBySubscription").setParameter("subscription", subscription).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNotBilledWOBySubscription", e);
+            return 0L;
+        }
+    }
+
+    public int moveNotBilledWOToUA(WalletInstance newWallet, Subscription subscription) {
+        return getEntityManager().createNamedQuery("WalletOperation.moveNotBilledWOToUA")
+                .setParameter("newWallet", newWallet)
+                .setParameter("subscription", subscription).executeUpdate();
+    }
+
+    public int moveAndRerateNotBilledWOToUA(WalletInstance wallet, Subscription subscription) {
+        return getEntityManager().createNamedQuery("WalletOperation.moveAndRerateNotBilledWOToUA")
+                .setParameter("newWallet", wallet)
+                .setParameter("subscription", subscription).executeUpdate();
     }
 
     @SuppressWarnings("unchecked")
