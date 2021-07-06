@@ -1,4 +1,4 @@
-package org.meveo.apiv2.custom.query.impl;
+package org.meveo.apiv2.report.query.impl;
 
 import static java.util.Arrays.asList;
 import static java.util.Optional.empty;
@@ -6,19 +6,19 @@ import static java.util.Optional.of;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.meveo.apiv2.custom.ImmutableReportQueryInput.builder;
-import static org.meveo.model.custom.query.QueryVisibilityEnum.PRIVATE;
-import static org.meveo.model.custom.query.QueryVisibilityEnum.PUBLIC;
+import static org.meveo.apiv2.report.ImmutableReportQueryInput.builder;
+import static org.meveo.model.report.query.QueryVisibilityEnum.PRIVATE;
+import static org.meveo.model.report.query.QueryVisibilityEnum.PUBLIC;
 import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.meveo.apiv2.custom.ReportQueries;
-import org.meveo.apiv2.custom.ReportQueryInput;
-import org.meveo.apiv2.custom.ImmutableReportQuery;
-import org.meveo.apiv2.custom.query.service.ReportQueryApiService;
-import org.meveo.model.custom.query.ReportQuery;
+import org.meveo.apiv2.report.ReportQueries;
+import org.meveo.apiv2.report.ReportQueryInput;
+import org.meveo.apiv2.report.ImmutableReportQuery;
+import org.meveo.apiv2.report.query.service.ReportQueryApiService;
+import org.meveo.model.report.query.ReportQuery;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -64,7 +64,7 @@ public class ReportQueryResourceImplTest {
     @Test
     public void shouldReturnCustomQuery() {
         Response response = customQueryResource.find(1L);
-        org.meveo.apiv2.custom.ReportQuery reportQuery = (ImmutableReportQuery) response.getEntity();
+        org.meveo.apiv2.report.ReportQuery reportQuery = (ImmutableReportQuery) response.getEntity();
 
         assertEquals(200, response.getStatus());
         assertEquals(PUBLIC, reportQuery.getVisibility());
@@ -84,7 +84,7 @@ public class ReportQueryResourceImplTest {
         Response response = customQueryResource.createReportQuery(input);
         assertEquals(201, response.getStatus());
         assertThat(response.getEntity(), instanceOf(ImmutableReportQuery.class));
-        org.meveo.apiv2.custom.ReportQuery reportQuery = (ImmutableReportQuery) response.getEntity();
+        org.meveo.apiv2.report.ReportQuery reportQuery = (ImmutableReportQuery) response.getEntity();
         assertEquals(2, reportQuery.getFields().size());
     }
 

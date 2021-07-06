@@ -1,10 +1,10 @@
-package org.meveo.apiv2.custom;
+package org.meveo.apiv2.report;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;
-import org.meveo.model.custom.query.QueryVisibilityEnum;
+import org.meveo.model.report.query.QueryVisibilityEnum;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -15,24 +15,24 @@ import java.util.Map;
 @JsonDeserialize(as = ImmutableReportQueryInput.class)
 public interface ReportQueryInput {
 
-    @Schema(description = "Custom query code")
+    @Schema(description = "Report query code")
     String getQueryName();
 
     @Nullable
-    @Schema(description = "Custom query description")
+    @Schema(description = "Report query description")
     String getQueryDescription();
 
-    @Schema(description = "Custom query description")
+    @Schema(description = "Report query description")
     String getTargetEntity();
 
-    @Schema(description = "Custom query description")
+    @Schema(description = "Report query description")
     QueryVisibilityEnum getVisibility();
 
     @Nullable
-    @Schema(description = "Custom query description")
+    @Schema(description = "Report query description")
     List<String> getFields();
 
     @Nullable
-    @Schema(description = "Custom query description")
+    @Schema(description = "Report query description")
     Map<String, String> getFilters();
 }

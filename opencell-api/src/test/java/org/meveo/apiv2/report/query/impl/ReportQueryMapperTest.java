@@ -1,14 +1,14 @@
-package org.meveo.apiv2.custom.query.impl;
+package org.meveo.apiv2.report.query.impl;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
-import static org.meveo.apiv2.custom.ImmutableReportQueryInput.builder;
+import static org.meveo.apiv2.report.ImmutableReportQueryInput.builder;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.meveo.apiv2.custom.ReportQueryInput;
-import org.meveo.model.custom.query.ReportQuery;
-import org.meveo.model.custom.query.QueryVisibilityEnum;
+import org.meveo.apiv2.report.ReportQueryInput;
+import org.meveo.model.report.query.ReportQuery;
+import org.meveo.model.report.query.QueryVisibilityEnum;
 
 import java.util.Arrays;
 
@@ -45,8 +45,8 @@ public class ReportQueryMapperTest {
         entity.setTargetEntity("org.meveo.model.billing.BillingAccount");
         entity.setFields(Arrays.asList("code", "description"));
 
-        org.meveo.apiv2.custom.ReportQuery resource = mapper.toResource(entity);
-        assertThat(resource, instanceOf(org.meveo.apiv2.custom.ReportQuery.class));
+        org.meveo.apiv2.report.ReportQuery resource = mapper.toResource(entity);
+        assertThat(resource, instanceOf(org.meveo.apiv2.report.ReportQuery.class));
         assertEquals(resource.getCode(), entity.getCode());
     }
 }

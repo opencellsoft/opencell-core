@@ -1,4 +1,4 @@
-package org.meveo.apiv2.custom.query.resource;
+package org.meveo.apiv2.report.query.resource;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -8,16 +8,16 @@ import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.meveo.apiv2.custom.ReportQueryInput;
+import org.meveo.apiv2.report.ReportQueryInput;
 import org.meveo.apiv2.models.ApiException;
-import org.meveo.model.custom.query.ReportQuery;
+import org.meveo.model.report.query.ReportQuery;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
-@Path("/queryManagement/customQueries")
+@Path("/queryManagement/reportQueries")
 @Consumes(APPLICATION_JSON)
 @Produces(APPLICATION_JSON)
 public interface ReportQueryResource {

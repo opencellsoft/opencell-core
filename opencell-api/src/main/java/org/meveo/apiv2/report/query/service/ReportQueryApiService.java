@@ -1,4 +1,4 @@
-package org.meveo.apiv2.custom.query.service;
+package org.meveo.apiv2.report.query.service;
 
 import static java.lang.Class.forName;
 import static java.util.Arrays.asList;
@@ -9,11 +9,11 @@ import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.custom.query.ReportQuery;
+import org.meveo.model.report.query.ReportQuery;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
-import org.meveo.service.custom.ReportQueryService;
+import org.meveo.service.report.ReportQueryService;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;

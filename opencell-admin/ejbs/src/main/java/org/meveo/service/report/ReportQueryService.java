@@ -1,7 +1,7 @@
-package org.meveo.service.custom;
+package org.meveo.service.report;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.model.custom.query.ReportQuery;
+import org.meveo.model.report.query.ReportQuery;
 import org.meveo.service.base.BusinessService;
 
 import javax.ejb.Stateless;

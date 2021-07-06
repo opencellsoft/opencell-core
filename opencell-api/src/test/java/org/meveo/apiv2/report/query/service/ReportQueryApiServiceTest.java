@@ -1,15 +1,15 @@
-package org.meveo.apiv2.custom.query.service;
+package org.meveo.apiv2.report.query.service;
 
 import static org.junit.Assert.*;
-import static org.meveo.model.custom.query.QueryVisibilityEnum.PUBLIC;
+import static org.meveo.model.report.query.QueryVisibilityEnum.PUBLIC;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.meveo.model.custom.query.ReportQuery;
-import org.meveo.service.custom.ReportQueryService;
+import org.meveo.model.report.query.ReportQuery;
+import org.meveo.service.report.ReportQueryService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
