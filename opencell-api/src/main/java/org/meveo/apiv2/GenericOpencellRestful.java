@@ -72,7 +72,7 @@ public class GenericOpencellRestful extends Application {
 				OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class,
 				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class,
 				DiscountPlanInstanceResourceImpl.class, RatedTransactionResourceImpl.class, ValidationExceptionMapper.class,
-				BusinessExceptionMapper.class, InvoicingResourceImpl.class, AccountsManagementResourceImpl.class)
+				BusinessExceptionMapper.class, InvoicingResourceImpl.class, AccountsManagementResourceImpl.class, ReportQueryResourceImpl.class)
 		        .collect(Collectors.toSet());
 		if (GENERIC_API_REQUEST_LOGGING_CONFIG.equalsIgnoreCase("true")) {
 			resources.add(GenericApiLoggingFilter.class);

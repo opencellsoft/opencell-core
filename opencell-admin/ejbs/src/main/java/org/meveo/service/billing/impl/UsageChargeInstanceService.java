@@ -124,7 +124,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
     }
 
     public UsageChargeInstance reactivateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date reactivationDate) throws BusinessException {
-        usageChargeInstance.setChargeDate(reactivationDate);
+        usageChargeInstance.setReactivationDate(reactivationDate);
         usageChargeInstance.setTerminationDate(null);
         usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
         usageChargeInstance = update(usageChargeInstance);
