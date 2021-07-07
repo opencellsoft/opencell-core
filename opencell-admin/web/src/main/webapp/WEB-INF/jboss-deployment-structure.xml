@@ -28,6 +28,12 @@
           <module name="javax.validation.api"/>
           <module name="org.jboss.ejb3"/>
           <module name="org.keycloak.keycloak-adapter-core" />
+          <module name="org.joda.time"/>
+          <module name="org.apache.commons.lang3"/>
+          <module name="com.google.guava"/>
+          <module name="com.fasterxml.jackson.dataformat.jackson-dataformat-yaml"/>
+          
+          
           
         </dependencies>          
 	</deployment>
