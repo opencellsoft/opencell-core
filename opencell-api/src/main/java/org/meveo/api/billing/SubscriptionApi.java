@@ -2758,6 +2758,10 @@ public class SubscriptionApi extends BaseApi {
         if (existingSubscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, code);
         }
+        if (existingSubscription.getStatus() == SubscriptionStatusEnum.RESILIATED
+                || existingSubscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
+            throw new BusinessApiException("Couldn't patch a subscription with status RESILIATED or CANCELED");
+        }
 
         Date effectiveDate = subscriptionPatchDto.getEffectiveDate() == null ? new Date(): subscriptionPatchDto.getEffectiveDate();
 
