@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>opencell-admin</artifactId>
@@ -138,20 +139,20 @@
                     </execution>
                 </executions>
             </plugin>
-                <plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <useIncrementalCompilation>false</useIncrementalCompilation>
-                    	<release>11</release>
-                    </configuration>
-                    <dependencies>
-                    	<dependency>
-								<groupId>org.ow2.asm</groupId>
-								<artifactId>asm</artifactId>
-								<version>7.2</version>
-							</dependency>
-					</dependencies>
-                </plugin>            
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
+                    <release>11</release>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>7.2</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -256,9 +257,9 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        
+
         <!-- Log4j2 -->
-		<dependency>
+        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>2.8.2</version>
@@ -300,14 +301,10 @@
         </dependency>
 
         <dependency>
-		    <groupId>org.jboss.spec.javax.enterprise.concurrent</groupId>
-		    <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
-		    </dependency>
-        <!-- <dependency> -->
-        <!-- <groupId>org.javassist</groupId> -->
-        <!-- <artifactId>javassist</artifactId> -->
-        <!-- <scope>provided</scope> -->
-        <!-- </dependency> -->
+            <groupId>org.jboss.spec.javax.enterprise.concurrent</groupId>
+            <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.liquibase</groupId>
@@ -411,6 +408,10 @@
                     <artifactId>bcprov-jdk15on</artifactId>
                     <groupId>org.bouncycastle</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jdt.core.compiler</groupId>
+                    <artifactId>ecj</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -434,7 +435,8 @@
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <artifactId>jackson-core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -450,14 +452,10 @@
             <artifactId>joda-time</artifactId>
         </dependency>
 
-        <!-- <dependency> -->
-        <!-- <groupId>xalan</groupId> -->
-        <!-- <artifactId>xalan</artifactId> -->
-        <!-- </dependency> -->
-
         <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -592,26 +590,18 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+<!--             <scope>test</scope> -->
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-api-maven</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- <dependency> -->
-        <!-- <groupId>org.jboss.resteasy</groupId> -->
-        <!-- <artifactId>jaxrs-api</artifactId> -->
-        <!-- </dependency> -->
-
-        <!-- <dependency> -->
-        <!-- <groupId>org.jboss.spec.javax.ws.rs</groupId> -->
-        <!-- <artifactId>jboss-jaxrs-api_2.0_spec</artifactId> -->
-        <!-- </dependency> -->
 
         <dependency>
             <groupId>junit</groupId>
@@ -631,24 +621,23 @@
             <version>1.11</version>
         </dependency>
 
-
         <dependency>
             <groupId>com.ingenico.connect.gateway</groupId>
             <artifactId>connect-sdk-java</artifactId>
             <version>${version.ingenico-connect-sdk}</version>
         </dependency>
 
-		<dependency>
-		  <groupId>com.paypal.sdk</groupId>
-		  <artifactId>rest-api-sdk</artifactId>
-		  <version>${version.paypal-sdk}</version>
-		</dependency>
-		
-		<dependency>
-		  <groupId>com.stripe</groupId>
-		  <artifactId>stripe-java</artifactId>
-		  <version>${version.stripe-sdk}</version>
-		</dependency>
+        <dependency>
+            <groupId>com.paypal.sdk</groupId>
+            <artifactId>rest-api-sdk</artifactId>
+            <version>${version.paypal-sdk}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>${version.stripe-sdk}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.keycloak</groupId>
@@ -680,19 +669,7 @@
             <version>4.2</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpasyncclient</artifactId>
-            <version>4.1.2</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- Micro profile dependencies included in WF 18-->
+        <!-- Micro profile dependencies included in WF 18 -->
         <dependency>
             <groupId>org.eclipse.microprofile.metrics</groupId>
             <artifactId>microprofile-metrics-api</artifactId>

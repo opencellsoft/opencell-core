@@ -31,7 +31,9 @@ public class StdDefaultDateFormat extends StdDateFormat {
         Calendar defCal = Calendar.getInstance(TimeZone.getDefault());
         
         DATE_FORMAT_RFC1123.setCalendar(defCal);
-        DATE_FORMAT_ISO8601.setCalendar(defCal);
+        // Not found in hackson 2.11.3
+        //DATE_FORMAT_ISO8601.setCalendar(defCal);
+        
         // not found in jackson 2.9.9
 //        DATE_FORMAT_ISO8601_Z.setCalendar(defCal);
 //        DATE_FORMAT_PLAIN.setCalendar(defCal);
