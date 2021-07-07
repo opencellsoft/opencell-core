@@ -271,6 +271,13 @@
         <createSequence sequenceName="query_scheduler_seq" startValue="1" />
         <createSequence sequenceName="query_result_seq" startValue="1" />
         <createSequence sequenceName="query_execution_result_seq" startValue="1" />
+         <createSequence sequenceName="dunning_settings_seq" startValue="1" />
+        <createSequence sequenceName="dunning_pause_reasons_seq" startValue="1" />
+        <createSequence sequenceName="dunning_stop_reasons_seq" startValue="1" />
+        <createSequence sequenceName="dunning_collection_plan_statuses_seq" startValue="1" />
+        <createSequence sequenceName="invoice_dunning_statuses_seq" startValue="1" />
+        <createSequence sequenceName="dunning_collection_management_seq" startValue="1" />
+        <createSequence sequenceName="dunning_payment_retries_seq" startValue="1" />
     </changeSet>
     
      
@@ -14906,6 +14913,186 @@ $$ LANGUAGE plpgsql;
             referencedColumnNames="id" referencedTableName="query_scheduler" />
         <addForeignKeyConstraint baseColumnNames="report_query_id" baseTableName="query_execution_result" constraintName="fk_report_query_execution" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="report_query" />
+    </changeSet>
+    
+    <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay">
+    
+        <createTable tableName="dunning_settings">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_settings_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="dunning_mode" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="max_dunning_levels" type="int"/>
+            <column name="max_days_outstanding" type="int"/>
+            <column name="allow_interest_for_delay" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="interest_for_delay_rate" type="numeric(23, 12)" />
+            <column name="allow_dunning_charges" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="apply_dunning_charge_fx_exchange_rate" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="accounting_article_id" type="bigint" />
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="uk_dunning_settings" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dunning_settings" />
+        <addForeignKeyConstraint baseColumnNames="accounting_article_id" baseTableName="dunning_settings"
+                                 constraintName="fk_dunning_settings_accounting_article_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="billing_accounting_article"/>
+                                 
+         <createTable tableName="dunning_pause_reasons">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_pause_reasons_pkey" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            
+            <column name="language" type="varchar(50)" />
+            <column name="pause_reason" type="varchar(1000)" />
+            <column name="description" type="varchar(255)" /> 
+            <column name="dunning_settings_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_pause_reasons"
+                                 constraintName="fk_dunning_settings_pause_reasons_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
+                                 
+         <createTable tableName="dunning_stop_reasons">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_stop_reasons_pkey" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            
+            <column name="language" type="varchar(50)" />
+            <column name="stop_reason" type="varchar(1000)" />
+            <column name="description" type="varchar(255)" /> 
+            <column name="dunning_settings_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_stop_reasons"
+                                 constraintName="fk_dunning_settings_stop_reasons_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>   
+                                 
+        <createTable tableName="dunning_collection_plan_statuses">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_collection_plan_statuses_pkey" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            
+            <column name="language" type="varchar(50)" />
+            <column name="status" type="varchar(50)" />
+            <column name="context" type="varchar(255)" /> 
+            <column name="dunning_settings_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_plan_statuses"
+                                 constraintName="fk_dunning_settings_collection_plan_statuses_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>
+                                 
+         <createTable tableName="invoice_dunning_statuses">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="invoice_dunning_statuses_pkey" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            
+            <column name="language" type="varchar(50)" />
+            <column name="status" type="varchar(50)" />
+            <column name="context" type="varchar(255)" /> 
+            <column name="dunning_settings_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="invoice_dunning_statuses"
+                                 constraintName="fk_dunning_settings_invoice_statuses_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/> 
+                                 
+         <createTable tableName="dunning_collection_management">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_collection_management_pkey" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+             <column name="include_collection_agency" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="email_collection_agency" type="varchar(100)" />
+            <column name="agent_first_name_item" type="varchar(100)" />
+            <column name="agent_last_name_item" type="varchar(100)" />
+            <column name="agent_email_item" type="varchar(100)" />
+            <column name="dunning_settings_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_collection_management"
+                                 constraintName="fk_dunning_settings_collection_management_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/> 
+                                 
+       <createTable tableName="dunning_payment_retries">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dunning_payment_retries_pkey" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="payment_method" type="varchar(100)" />
+            <column name="psp" type="varchar(255)" />
+            <column name="num_pay_retries" type="int4" />
+            <column name="pay_retry_frequency_unit" type="varchar(255)" />
+            <column name="dunning_settings_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="dunning_settings_id" baseTableName="dunning_payment_retries"
+                                 constraintName="fk_dunning_settings_payment_retries_id" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="dunning_settings"/>                                                                                                                                                         
     </changeSet>
 
     <!-- end procedure -->
