@@ -78,7 +78,12 @@ public interface ReportQueryResource {
     @Path(("/queryExecutionResult/{queryexecutionResultId}/results"))
     @Operation( summary = "This API will convert the generate report file to json.", 
     			tags = {"ReportQuery"}, 
-    			description = "look for the query result by its id get its path location, and transform csv file to json")
+    			description = "look for the query result by its id get its path location, and transform csv file to json",
+    		            responses = {
+    		                    @ApiResponse(responseCode = "200",
+    		                            description = "query execution result successfully generated"),
+    		                    @ApiResponse(responseCode = "404",
+    		                            description = "the Report query execution does not exist / the file path is missing / file path doesn't exist / file extension is not CSV format ") })
     Response findQueryResult(@PathParam("queryexecutionResultId") Long queryexecutionResultId);
 
 }
