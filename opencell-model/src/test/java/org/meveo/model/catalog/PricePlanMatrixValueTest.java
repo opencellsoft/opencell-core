@@ -43,7 +43,7 @@ public class PricePlanMatrixValueTest {
 
         QuoteAttribute monthlyQuoteAttribute = new QuoteAttribute();
         monthlyQuoteAttribute.setAttribute(listAttribute);
-        monthlyQuoteAttribute.setStringValue("Monthly ; Annually");
+        monthlyQuoteAttribute.setStringValue("Monthly;Annually");
 
         PricePlanMatrixColumn bcColumn = createColumn(listAttribute, ColumnTypeEnum.String);
 
