@@ -20,7 +20,15 @@ package org.meveo.service.billing.impl;
 import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -40,8 +48,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.Auditable;
-import org.meveo.model.DatePeriod;
 import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
@@ -60,7 +66,6 @@ import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.DiscountPlan;
-import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplate;
@@ -843,6 +848,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
             subscription.setNotifyOfRenewalDate(null);
         }
         subscription.autoUpdateEndOfEngagementDate();
+    }
+
+    public int updateOwner(Subscription subscription, UserAccount newOwner) {
+        return getEntityManager().createNamedQuery("Subscription.updateOwner")
+                .setParameter("newOwner", newOwner)
+                .setParameter("id", subscription.getId()).executeUpdate();
     }
 
     public Subscription findByCodeAndValidityDate(String subscriptionCode, Date date) {

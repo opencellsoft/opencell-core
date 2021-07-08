@@ -17,7 +17,7 @@ public enum ColumnTypeEnum {
             switch (attributeValue.getAttribute().getAttributeType()) {
                 case LIST_MULTIPLE_TEXT:
                 case LIST_TEXT: {
-                    return Stream.of(attributeValue.getStringValue().split(" ; "))
+                    return Stream.of(attributeValue.getStringValue().split(";"))
                             .anyMatch(value -> value.equals(pricePlanMatrixValue.getStringValue()));
                 }
                 case TEXT:
@@ -52,7 +52,7 @@ public enum ColumnTypeEnum {
                 }
                 case LIST_NUMERIC:
                 case LIST_MULTIPLE_NUMERIC: {
-                    return Stream.of(attributeValue.getStringValue().split(" ; "))
+                    return Stream.of(attributeValue.getStringValue().split(";"))
                             .map(value -> BigDecimal.valueOf(java.lang.Double.parseDouble(value)))
                             .anyMatch(number -> number.equals(BigDecimal.valueOf(pricePlanMatrixValue.getLongValue().doubleValue())));
                 }
@@ -85,16 +85,19 @@ public enum ColumnTypeEnum {
                             return true;
                         }
                         BigDecimal value = pricePlanMatrixValue.getDoubleValue() != null ? BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue()) : BigDecimal.valueOf(pricePlanMatrixValue.getLongValue());
-                        return (Double) quote == value.doubleValue();
+                        return ColumnTypeEnum.parseValue(quote) == value.doubleValue();
                     }
                 }
                 case LIST_MULTIPLE_NUMERIC: {
                     if (attributeValue.getStringValue() == null) {
                         return true;
                     }
-                    return Stream.of(pricePlanMatrixValue.getStringValue().split(" ; "))
+                    return Stream.of(pricePlanMatrixValue.getStringValue().split(";"))
                             .map(number -> BigDecimal.valueOf(java.lang.Double.parseDouble(number)))
-                            .anyMatch(number -> number.doubleValue() == (Double) quote);
+                            .anyMatch(number -> {
+                                double value = parseValue(quote);
+                                return number.doubleValue() == value;
+                            });
                 }
                 default:
                     return false;
@@ -166,6 +169,16 @@ public enum ColumnTypeEnum {
             return pricePlanMatrixValue.getStringValue() == null;
         }
     };
+
+    private static double parseValue(Object quote) {
+        double value;
+        if(quote instanceof String) {
+            value = java.lang.Double.parseDouble((String) quote);
+        } else {
+            value = (Double) quote;
+        }
+        return value;
+    }
 
     public abstract boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue);
 

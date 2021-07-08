@@ -361,6 +361,9 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
     @Transient
     private List<Long> exceptionalRTIds;
 
+    @Transient
+    private List<Long> exceptionalILIds;
+
 
     public BillingRun getNextBillingRun() {
 		return nextBillingRun;
@@ -850,5 +853,13 @@ public class BillingRun extends AuditableEntity implements ICustomFieldEntity, I
 
     public boolean isExceptionalBR() {
 	    return (this.filters !=null && !this.filters.isEmpty());
+    }
+
+    public List<Long> getExceptionalILIds() {
+        return exceptionalILIds;
+    }
+
+    public void setExceptionalILIds(List<Long> exceptionalILIds) {
+        this.exceptionalILIds = exceptionalILIds;
     }
 }
