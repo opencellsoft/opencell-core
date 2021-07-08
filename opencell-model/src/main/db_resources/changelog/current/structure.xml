@@ -9311,7 +9311,7 @@ public class OrderAdvancement extends ModuleScript {
     </changeSet>
 
     <changeSet id="#INTRD-254_20210706" author="AmineBENAICHA">
-        <addColumn tableName="com_meveo_instance">
+        <addColumn tableName="billing_wallet_operation">
             <column name="old_wallet_id" type="bigint" />
         </addColumn>
     </changeSet>
