@@ -2550,6 +2550,7 @@
 			<column name="apply_in_advance" type="${type.boolean}" />
 			<column name="charged_to_date" type="datetime"/>
 			<column name="charge_to_date_on_termination" type="datetime"/>
+			<column name="reactivation_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-168">
@@ -3225,6 +3226,7 @@
             <column name="product_version_id" type="bigint" />
             <column name="quote_product_id" type="bigint" />
             <column name="minimum_article_id" type="bigint" />
+            <column name="reactivation_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-192">
