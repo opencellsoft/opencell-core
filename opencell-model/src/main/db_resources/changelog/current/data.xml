@@ -3939,6 +3939,31 @@ Opencell team.
     </changeSet>
    
    <changeSet id="J215_20210708" author="Mohammed_ELAZZOUZI">
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.ServiceImportScript" />
+            <column name="src_type" value="JAVA_CLASS" />
+            <column name="description" value="script processor to import service instances]"/>
+            <column name="created" valueDate="now()" />
+        </insert>
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.ServiceImportScript" />
+            <column name="src_type" value="JAVA_CLASS" />
+            <column name="description" value="script processor to import access points"/>
+            <column name="created" valueDate="now()" />
+        </insert>
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.SubscriptionImportScript" />
+            <column name="src_type" value="JAVA_CLASS" />
+            <column name="description" value="script processor to import subscriptions"/>
+            <column name="created" valueDate="now()" />
+        </insert>
+   
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-40" />
             <column name="version" valueNumeric="0" />
@@ -3957,7 +3982,6 @@ Opencell team.
             <column name="uuid" value="importServicesJob" />
             <column name="run_on_nodes" value="null" />
             <column name="single_node" value="1" />
-            
             <column name="cf_values">
 	            <![CDATA[{"oneFilePerJob":[{"boolean":false}],
 	            "FlatFileProcessingJob_outputDir":[{"string":"/imports/accessPoints/outputs"}],
@@ -3992,8 +4016,6 @@ Opencell team.
             </column>
             <column name="verbose_report" value="1" />
           </insert>
-          
-          
           <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-41" />
             <column name="version" valueNumeric="0" />
