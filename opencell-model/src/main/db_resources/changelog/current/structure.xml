@@ -9308,8 +9308,7 @@ public class OrderAdvancement extends ModuleScript {
             referencedColumnNames="id" referencedTableName="query_scheduler" />
         <addForeignKeyConstraint baseColumnNames="report_query_id" baseTableName="query_execution_result" constraintName="fk_report_query_execution" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="report_query" />
-    </changeSet>
-    
+    </changeSet>  
     <changeSet id="#INTRD-634_20210706" author="Mbarek-Ay">
         <createSequence sequenceName="dunning_settings_seq" startValue="1" />
         <createSequence sequenceName="dunning_pause_reasons_seq" startValue="1" />
@@ -9495,7 +9494,12 @@ public class OrderAdvancement extends ModuleScript {
                                  constraintName="fk_dunning_settings_payment_retries_id" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="id" referencedTableName="dunning_settings"/>                                                            
-                                                                                                       
+ 
+ </changeSet>
+    <changeSet id="#INTRD-254_20210706" author="AmineBENAICHA">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="old_wallet_id" type="bigint" />
+        </addColumn>
     </changeSet>
     
 </databaseChangeLog>

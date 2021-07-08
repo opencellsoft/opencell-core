@@ -2557,6 +2557,7 @@
 			<column name="apply_in_advance" type="${type.boolean}" />
 			<column name="charged_to_date" type="datetime"/>
 			<column name="charge_to_date_on_termination" type="datetime"/>
+			<column name="reactivation_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-168">
@@ -3232,6 +3233,7 @@
             <column name="product_version_id" type="bigint" />
             <column name="quote_product_id" type="bigint" />
             <column name="minimum_article_id" type="bigint" />
+            <column name="reactivation_date" type="datetime" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-192">
@@ -3594,6 +3596,7 @@
             <column name="order_lot_id" type="bigint" />
             <column name="product_version_id" type="bigint" />
             <column name="refunds_wo_id" type="bigint"/>
+            <column name="old_wallet_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
@@ -16109,6 +16112,8 @@ $$ LANGUAGE plpgsql;
     <changeSet id="#INTRD-242_20210623" author="ZBariki" />
     <changeSet id="#6168_20210624" author="HatimOUDAD" />
     <changeSet id="#INTRD-257_20210706" author="ZBariki" />
+    <changeSet id="#INTRD-248_30062021" author="Mounir_BOUKAYOUA" />
+    <changeSet id="#INTRD-254_20210706" author="AmineBENAICHA" />
 
     <!-- DONT REMOVE THIS CHANGESET -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

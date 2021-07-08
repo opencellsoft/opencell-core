@@ -1,5 +1,6 @@
 package org.meveo.apiv2.report.query.impl;
 
+import static java.util.Optional.ofNullable;
 import static org.meveo.apiv2.report.ImmutableReportQuery.builder;
 
 import org.meveo.admin.exception.BusinessException;
@@ -13,17 +14,17 @@ public class ReportQueryMapper extends ResourceMapper<org.meveo.apiv2.report.Rep
     @Override
     protected org.meveo.apiv2.report.ReportQuery toResource(ReportQuery entity) {
         try {
-            ImmutableReportQuery resource = builder()
+
+            ImmutableReportQuery.Builder builder = builder()
                     .code(entity.getCode())
                     .description(entity.getDescription())
                     .targetEntity(entity.getTargetEntity())
                     .visibility(entity.getVisibility())
-                    .fields(entity.getFields())
-                    .filters(entity.getFilters())
-                    .generatedQuery(entity.getGeneratedQuery())
-                    .build();
+                    .generatedQuery(entity.getGeneratedQuery());
+            ofNullable(entity.getFields()).ifPresent(fields -> builder.fields(fields));
+            ofNullable(entity.getFilters()).ifPresent(filters -> builder.filters(filters));
             return builder()
-                    .from(resource)
+                    .from(builder.build())
                     .id(entity.getId())
                     .build();
         } catch (Exception exception) {
