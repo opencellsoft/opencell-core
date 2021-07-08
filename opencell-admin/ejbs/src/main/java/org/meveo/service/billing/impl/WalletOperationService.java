@@ -1180,7 +1180,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
     }
 
     public Long countNotBilledWOBySubscription(Subscription subscription) {
-
         try {
             return (Long) getEntityManager().createNamedQuery("WalletOperation.countNotBilledWOBySubscription").setParameter("subscription", subscription).getSingleResult();
         } catch (NoResultException e) {

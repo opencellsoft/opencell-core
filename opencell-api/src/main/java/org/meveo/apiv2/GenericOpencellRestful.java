@@ -37,6 +37,7 @@ import org.meveo.apiv2.generic.core.GenericHelper;
 import org.meveo.apiv2.generic.exception.BadRequestExceptionMapper;
 import org.meveo.apiv2.generic.exception.BusinessExceptionMapper;
 import org.meveo.apiv2.generic.exception.EJBTransactionRolledbackExceptionMapper;
+import org.meveo.apiv2.generic.exception.ForbiddenExceptionMapper;
 import org.meveo.apiv2.generic.exception.IllegalArgumentExceptionMapper;
 import org.meveo.apiv2.generic.exception.MeveoExceptionMapper;
 import org.meveo.apiv2.generic.exception.NotFoundExceptionMapper;
@@ -81,7 +82,7 @@ public class GenericOpencellRestful extends Application {
 		Set<Class<?>> resources = Stream.of(VersionImpl.class, GenericResourceImpl.class,
 				NotYetImplementedResource.class, NotFoundExceptionMapper.class, BadRequestExceptionMapper.class,
 				MeveoExceptionMapper.class, IllegalArgumentExceptionMapper.class,
-				EJBTransactionRolledbackExceptionMapper.class, OpenApiResource.class, DocumentResourceImpl.class,
+				EJBTransactionRolledbackExceptionMapper.class, ForbiddenExceptionMapper.class, OpenApiResource.class, DocumentResourceImpl.class,
 				GenericJacksonProvider.class, ProductResourceImpl.class, OrderItemResourceImpl.class,
 				OrderResourceImpl.class, AccountingArticleResourceImpl.class, ArticleMappingLineResourceImpl.class,
 				ArticleMappingResourceImpl.class, InvoiceResourceImpl.class, DiscountPlanResourceImpl.class,
