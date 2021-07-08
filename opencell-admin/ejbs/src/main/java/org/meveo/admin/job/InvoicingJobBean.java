@@ -39,7 +39,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.*;
 import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
@@ -382,7 +381,7 @@ public class InvoicingJobBean extends BaseJobBean {
         MinAmountForAccounts minAmountForAccountsIncludesFirstRun = minAmountForAccounts.includesFirstRun(!alreadyInstantiatedMinRTs);
 
         Function<IBillableEntity, List<Invoice>> task = (entityToInvoice) -> invoiceService.createAgregatesAndInvoiceInNewTransaction(entityToInvoice,
-                billingRun, billingRun.isExceptionalBR() ? billingRunService.createRatedTransactionFilter(billingRun.getFilters()) : null,
+                billingRun, billingRun.isExceptionalBR() ? billingRunService.createFilter(billingRun, false) : null,
                 null, null, null, minAmountForAccounts, false, !billingRun.isSkipValidationScript());
 
         List<List<Invoice>> invoices = iteratorBasedJobProcessing.processItemsAndAgregateResults(jobExecutionResult,

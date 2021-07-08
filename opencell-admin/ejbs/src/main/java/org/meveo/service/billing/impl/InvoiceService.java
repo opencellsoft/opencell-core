@@ -4782,8 +4782,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                                                           BillingCycle defaultBillingCycle, InvoiceType defaultInvoiceType,
                                                           Filter filter, Date firstTransactionDate, Date lastTransactionDate,
                                                           boolean isDraft, PaymentMethod defaultPaymentMethod, Invoice existingInvoice) throws BusinessException {
-        List<InvoiceLine>invoiceLines = existingInvoice != null? invoiceLinesService.listInvoiceLinesByInvoice(existingInvoice.getId()) : getInvoiceLines(entityToInvoice, filter, firstTransactionDate, lastTransactionDate, isDraft);
-		boolean moreIls = invoiceLines.size() == rtPaginationSize;
+        List<InvoiceLine> invoiceLines = existingInvoice != null ?
+                invoiceLinesService.listInvoiceLinesByInvoice(existingInvoice.getId()) :
+                getInvoiceLines(entityToInvoice, filter, firstTransactionDate, lastTransactionDate, isDraft);
+        boolean moreIls = invoiceLines.size() == rtPaginationSize;
         if (log.isDebugEnabled()) {
             log.debug("Split {} Invoice Lines for {}/{} in to billing account/seller/invoice type groups. {} invoice Lines to retrieve.",
                     invoiceLines.size(), entityToInvoice.getClass().getSimpleName(), entityToInvoice.getId(), moreIls ? "More" : "No more");

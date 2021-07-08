@@ -1,25 +1,27 @@
 package org.meveo.admin.job;
 
+import static java.lang.String.format;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
+import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
+import static org.meveo.model.billing.BillingRunStatusEnum.VALIDATED;
+
 import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
-import org.meveo.model.billing.InvoiceSequence;
-import org.meveo.model.billing.InvoiceStatusEnum;
+import org.meveo.model.billing.*;
+import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.JobSpeedEnum;
-import org.meveo.service.billing.impl.BillingRunExtensionService;
-import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.InvoicesToNumberInfo;
-import org.meveo.service.billing.impl.ServiceSingleton;
+import org.meveo.service.billing.impl.*;
 import org.slf4j.Logger;
 
 import javax.ejb.Stateless;
@@ -28,16 +30,10 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import java.util.Collection;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import static java.lang.String.format;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
-import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
 
 @Stateless
 public class InvoicingJobV2Bean extends BaseJobBean {
@@ -61,6 +57,12 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 
     @Inject
     private IteratorBasedJobProcessing iteratorBasedJobProcessing;
+
+    @Inject
+    private InvoiceLineService invoiceLineService;
+
+    @Inject
+    private RatedTransactionService ratedTransactionService;
     
 
     @JpaAmpNewTx
@@ -74,21 +76,26 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             List<Long> billingRunIds = billingRunWrappers != null ? extractBRIds(billingRunWrappers) : emptyList();
             Map<String, Object> filters = new HashedMap();
             if (billingRunIds.isEmpty()) {
-                filters.put("status", BillingRunStatusEnum.INVOICE_LINES_CREATED);
+                filters.put("status", INVOICE_LINES_CREATED);
             } else {
                 filters.put("inList id", billingRunIds);
             }
             PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
             List<BillingRun> billingRuns = billingRunService.list(paginationConfiguration);
             if (billingRuns.isEmpty()) {
-                List<String> errors = List.of("No valid billing run with status=PREVALIDATED found");
+                List<String> errors = List.of("No valid billing run with status=INVOICE_LINES_CREATED found");
                 result.setErrors(errors);
             } else {
                 validateBRList(billingRuns, result);
                 for (BillingRun billingRun : billingRuns) {
+                    if(billingRun.isExceptionalBR()) {
+                        if(addExceptionalInvoiceLineIds(billingRun) == 0) {
+                            result.setReport("Exceptional Billing filters returning no invoice line to process");
+                        }
+                    }
                     billingRunService.createAggregatesAndInvoiceWithIl(billingRun, 1, 0, jobInstance.getId());
                     assignInvoiceNumberAndIncrementBAInvoiceDates(billingRun, result);
-                    billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.VALIDATED, null);;
+                    billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, VALIDATED, null);
                 }
                 result.setNbItemsCorrectlyProcessed(billingRuns.size());
             }
@@ -106,20 +113,41 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 
     private void validateBRList(List<BillingRun> billingRuns, JobExecutionResultImpl result) {
         List<BillingRun> excludedBRs = billingRuns.stream()
-                                            .filter(br -> br.getStatus() != BillingRunStatusEnum.INVOICE_LINES_CREATED)
+                                            .filter(br -> br.getStatus() != INVOICE_LINES_CREATED)
                                             .collect(toList());
         excludedBRs.forEach(br -> result.registerWarning(format("BillingRun[id={%d}] has been ignored. " +
-                                        "Only Billing runs with status=PREVALIDATED can be processed", br.getId())));
+                                        "Only Billing runs with status=INVOICE_LINES_CREATED can be processed", br.getId())));
         result.setNbItemsProcessedWithWarning(excludedBRs.size());
         billingRuns.removeAll(excludedBRs);
     }
+
+    private int addExceptionalInvoiceLineIds(BillingRun billingRun) {
+        QueryBuilder queryBuilder = fromFilters(billingRun.getFilters());
+        List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
+        billingRun.setExceptionalILIds(ratedTransactions
+                .stream()
+                .map(RatedTransaction::getInvoiceLine)
+                .map(InvoiceLine::getId)
+                .collect(toList()));
+        return billingRun.getExceptionalILIds().size();
+    }
+
+
+    private QueryBuilder fromFilters(Map<String, String> filters) {
+        QueryBuilder queryBuilder;
+        if(filters.containsKey("SQL")) {
+            queryBuilder = new QueryBuilder(filters.get("SQL"));
+        } else {
+            PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
+            queryBuilder = invoiceLineService.getQuery(configuration);
+        }
+        return queryBuilder;
+    }
+
     /**
      * Assign invoice number and increment BA invoice dates.
      *
      * @param billingRun The billing run
-     * @param nbRuns the nb runs
-     * @param waitingMillis The waiting millis
-     * @param jobInstanceId The job instance id
      * @param jobExecutionResult the Job execution result
      * @throws BusinessException the business exception
      */
