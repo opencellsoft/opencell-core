@@ -85,7 +85,7 @@ public enum ColumnTypeEnum {
                             return true;
                         }
                         BigDecimal value = pricePlanMatrixValue.getDoubleValue() != null ? BigDecimal.valueOf(pricePlanMatrixValue.getDoubleValue()) : BigDecimal.valueOf(pricePlanMatrixValue.getLongValue());
-                        return (Double) quote == value.doubleValue();
+                        return ColumnTypeEnum.parseValue(quote) == value.doubleValue();
                     }
                 }
                 case LIST_MULTIPLE_NUMERIC: {
@@ -95,12 +95,7 @@ public enum ColumnTypeEnum {
                     return Stream.of(pricePlanMatrixValue.getStringValue().split(";"))
                             .map(number -> BigDecimal.valueOf(java.lang.Double.parseDouble(number)))
                             .anyMatch(number -> {
-                                double value;
-                                if(quote instanceof String) {
-                                    value = java.lang.Double.parseDouble((java.lang.String) quote);
-                                } else {
-                                    value = (Double) quote;
-                                }
+                                double value = parseValue(quote);
                                 return number.doubleValue() == value;
                             });
                 }
@@ -174,6 +169,16 @@ public enum ColumnTypeEnum {
             return pricePlanMatrixValue.getStringValue() == null;
         }
     };
+
+    private static double parseValue(Object quote) {
+        double value;
+        if(quote instanceof String) {
+            value = java.lang.Double.parseDouble((String) quote);
+        } else {
+            value = (Double) quote;
+        }
+        return value;
+    }
 
     public abstract boolean valueMatch(PricePlanMatrixValue pricePlanMatrixValue, AttributeValue attributeValue);
 
