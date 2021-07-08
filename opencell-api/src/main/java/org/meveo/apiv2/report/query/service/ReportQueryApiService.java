@@ -20,7 +20,6 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class ReportQueryApiService implements ApiService<ReportQuery> {
@@ -77,18 +76,15 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
         PersistenceService persistenceService =
                 (PersistenceService) getServiceInterface(targetEntity + "Service");
         PaginationConfiguration configuration = new PaginationConfiguration(null);
-        QueryBuilder queryBuilder = persistenceService.getQuery(configuration);
-        for (Map.Entry<String, String> entry : entity.getFilters().entrySet()) {
-            queryBuilder.addCriterion("a." + entry.getKey(), "=", entry.getValue(), false);
+        if(entity.getFilters() != null) {
+            configuration.setFilters(new HashMap<>(entity.getFilters()));
         }
+        QueryBuilder queryBuilder = persistenceService.getQuery(configuration);
         String generatedQuery;
         if (entity.getFields() != null && !entity.getFields().isEmpty()) {
             generatedQuery = addFields(queryBuilder.getSqlString(), entity.getFields());
         } else {
             generatedQuery = queryBuilder.getSqlString();
-        }
-        if (queryBuilder.getParams() != null) {
-            generatedQuery = setParametersValues(new HashMap<>(entity.getFilters()), generatedQuery);
         }
         return generatedQuery;
     }
@@ -101,13 +97,6 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
                 .append(query)
                 .toString();
         return generatedQuery;
-    }
-
-    private String setParametersValues(Map<String, Object> params, String query) {
-        for (Map.Entry<String, Object> param : params.entrySet()) {
-            query = query.replace(":a_" + param.getKey(), "\'" + param.getValue() + "\'");
-        }
-        return query;
     }
 
     @Override
