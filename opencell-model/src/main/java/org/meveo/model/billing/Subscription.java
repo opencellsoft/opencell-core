@@ -19,12 +19,56 @@ package org.meveo.model.billing;
 
 import static javax.persistence.FetchType.LAZY;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Email;
-import org.meveo.model.*;
+import org.meveo.model.BusinessCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.DatePeriod;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IBillableEntity;
+import org.meveo.model.ICounterEntity;
+import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.IDiscountable;
+import org.meveo.model.IWFEntity;
+import org.meveo.model.ObservableEntity;
+import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.audit.AuditChangeTypeEnum;
@@ -43,17 +87,6 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Subscription
@@ -83,7 +116,8 @@ import java.util.Map;
         @NamedQuery(name = "Subscription.getSubscriptionsWithMinAmountByBA", query = "select s from Subscription s where s.minimumAmountEl is not null AND s.status = org.meveo.model.billing.SubscriptionStatusEnum.ACTIVE AND s.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "Subscription.getSellersByBA", query = "select distinct s.seller from Subscription s where s.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "Subscription.listByCustomer", query = "select s from Subscription s inner join s.userAccount ua inner join ua.billingAccount ba inner join ba.customerAccount ca inner join ca.customer c where c=:customer order by s.code asc"),
-        @NamedQuery(name = "Subscription.getCountByParent", query = "select count(*) from Subscription s where s.userAccount=:parent")})
+        @NamedQuery(name = "Subscription.getCountByParent", query = "select count(*) from Subscription s where s.userAccount=:parent"),
+        @NamedQuery(name = "Subscription.updateOwner", query = "update Subscription s set s.userAccount=:newOwner where s.id=:id")})
 public class Subscription extends BusinessCFEntity implements IBillableEntity, IWFEntity, IDiscountable, ICounterEntity {
 
     private static final long serialVersionUID = 1L;
