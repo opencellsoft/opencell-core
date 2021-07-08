@@ -3589,6 +3589,7 @@
             <column name="order_lot_id" type="bigint" />
             <column name="product_version_id" type="bigint" />
             <column name="refunds_wo_id" type="bigint"/>
+            <column name="old_wallet_id" type="bigint" />
         </createTable>
         <modifySql dbms="postgresql">
         	<append value=" PARTITION BY LIST(status)"/>
