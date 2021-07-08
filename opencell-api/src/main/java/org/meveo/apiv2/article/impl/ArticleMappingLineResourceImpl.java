@@ -6,6 +6,8 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 
 import org.meveo.apiv2.article.ArticleMappingLine;
 import org.meveo.apiv2.article.ImmutableArticleMappingLine;
@@ -22,13 +24,23 @@ public class ArticleMappingLineResourceImpl implements ArticleMappingLineResourc
 
     @Override
     public Response createArticleMappingLine(ArticleMappingLine articleMappingLine) {
-        org.meveo.model.article.ArticleMappingLine articleMappingLineEntity = articleMappingLineApiService.create(mapper.toEntity(articleMappingLine));
-        return Response
-                .created(LinkGenerator.getUriBuilderFromResource(ArticleMappingLineResource.class, articleMappingLineEntity.getId()).build())
-                .entity(toResourceOrderWithLink(mapper.toResource(articleMappingLineEntity)))
-                .build();
+    	try {
+    		org.meveo.model.article.ArticleMappingLine articleMappingLineEntity = articleMappingLineApiService.create(mapper.toEntity(articleMappingLine));
+            return Response
+                    .created(LinkGenerator.getUriBuilderFromResource(ArticleMappingLineResource.class, articleMappingLineEntity.getId()).build())
+                    .entity(toResourceOrderWithLink(mapper.toResource(articleMappingLineEntity)))
+                    .build();
+		} catch (Exception e) {
+			return toError(e, Status.BAD_REQUEST);
+        }
     }
-
+    
+    private Response toError(Exception e, Status s) {
+        ResponseBuilder rb = Response.status(s);
+        rb.entity(e.getMessage());
+        return rb.build();   
+    }
+    
 	@Override
 	public Response updateArticleMappingLine(Long id, ArticleMappingLine articleMappingLine) {
         org.meveo.model.article.ArticleMappingLine articleMappingLineEntity = 

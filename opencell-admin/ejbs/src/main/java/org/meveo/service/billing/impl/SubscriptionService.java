@@ -59,6 +59,7 @@ import org.meveo.model.billing.SubscriptionRenewal.RenewalPeriodUnitEnum;
 import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.OfferServiceTemplate;
@@ -843,6 +844,12 @@ public class SubscriptionService extends BusinessService<Subscription> {
             subscription.setNotifyOfRenewalDate(null);
         }
         subscription.autoUpdateEndOfEngagementDate();
+    }
+
+    public int updateOwner(Subscription subscription, UserAccount newOwner) {
+        return getEntityManager().createNamedQuery("Subscription.updateOwner")
+                .setParameter("newOwner", newOwner)
+                .setParameter("id", subscription.getId()).executeUpdate();
     }
 
     public Subscription findByCodeAndValidityDate(String subscriptionCode, Date date) {

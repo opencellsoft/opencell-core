@@ -17,6 +17,37 @@
  */
 package org.meveo.model.billing;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
+import java.util.UUID;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -28,21 +59,16 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.catalog.*;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.RoundingModeEnum;
+import org.meveo.model.catalog.UnitOfMeasure;
 import org.meveo.model.cpq.commercial.OrderInfo;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.tax.TaxClass;
-
-import javax.persistence.*;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Date;
-import java.util.UUID;
 
 /**
  * Consumption operation
@@ -105,6 +131,10 @@ import java.util.UUID;
         @NamedQuery(name = "WalletOperation.countNotTreatedByUA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount=:userAccount"),
         @NamedQuery(name = "WalletOperation.countNotTreatedByCA", query = "SELECT count(*) FROM WalletOperation o WHERE o.status <> 'TREATED' AND o.wallet.userAccount.billingAccount.customerAccount=:customerAccount"),
 
+        @NamedQuery(name = "WalletOperation.countNotBilledWOBySubscription", query = "SELECT count(*) FROM WalletOperation o WHERE o.status IN ('OPEN', 'TO_RERATE', 'F_TO_RERATE', 'SCHEDULED') AND o.subscription=:subscription"),
+        @NamedQuery(name = "WalletOperation.moveNotBilledWOToUA", query = "UPDATE WalletOperation o SET o.oldWallet=o.wallet, o.wallet=:newWallet WHERE o.id IN (SELECT o1.id FROM WalletOperation o1 left join o1.ratedTransaction rt WHERE (o1.status IN ('OPEN', 'TO_RERATE', 'F_TO_RERATE', 'SCHEDULED') OR (o1.status='TREATED' AND rt.status='OPEN')) AND o1.subscription=:subscription)"),
+        @NamedQuery(name = "WalletOperation.moveAndRerateNotBilledWOToUA", query = "UPDATE WalletOperation o SET o.status='TO_RERATE', o.oldWallet=o.wallet, o.wallet=:newWallet WHERE o.id IN (SELECT o1.id FROM WalletOperation o1 left join o1.ratedTransaction rt WHERE (o1.status IN ('OPEN', 'TO_RERATE', 'F_TO_RERATE', 'SCHEDULED') OR (o1.status='TREATED' AND rt.status='OPEN')) AND o1.subscription=:subscription)"),
+
         @NamedQuery(name = "WalletOperation.countNbrWalletsOperationByStatus", query = "select o.status, count(o.id) from WalletOperation o group by o.status"),
         
         @NamedQuery(name = "WalletOperation.detachWOsFromSubscription", query = "UPDATE WalletOperation set chargeInstance = null, serviceInstance = null where chargeInstance.id IN (SELECT id from ChargeInstance where subscription=:subscription)"),
@@ -163,6 +193,13 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")
     private WalletInstance wallet;
+    
+    /**
+     * The old wallet on which the operation is applied. (in case of subscription transfer)
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "old_wallet_id")
+    private WalletInstance oldWallet;
 
     /**
      * Operation date
@@ -750,6 +787,14 @@ public class WalletOperation extends BaseEntity implements ICustomFieldEntity {
 
     public void setWallet(WalletInstance wallet) {
         this.wallet = wallet;
+    }  
+
+    public WalletInstance getOldWallet() {
+        return oldWallet;
+    }
+
+    public void setOldWallet(WalletInstance oldWallet) {
+        this.oldWallet = oldWallet;
     }
 
     public Date getOperationDate() {
