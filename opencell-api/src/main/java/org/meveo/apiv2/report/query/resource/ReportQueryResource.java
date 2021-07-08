@@ -73,5 +73,12 @@ public interface ReportQueryResource {
                             description = "Target entity does not exist") })
     Response createReportQuery(
             @Parameter(description = "Report query object", required = true) ReportQueryInput reportQuery);
+    
+    @GET
+    @Path(("/queryExecutionResult/{queryexecutionResultId}/results"))
+    @Operation( summary = "This API will convert the generate report file to json.", 
+    			tags = {"ReportQuery"}, 
+    			description = "look for the query result by its id get its path location, and transform csv file to json")
+    Response findQueryResult(@PathParam("queryexecutionResultId") Long queryexecutionResultId);
 
 }

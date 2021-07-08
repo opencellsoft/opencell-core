@@ -1,14 +1,6 @@
 package org.meveo.apiv2.report.query.impl;
 
-import org.meveo.apiv2.report.ImmutableReportQueries;
-import org.meveo.apiv2.report.ImmutableReportQuery;
-import org.meveo.apiv2.report.ReportQueries;
-import org.meveo.apiv2.report.ReportQueryInput;
-
-import org.meveo.apiv2.report.query.resource.ReportQueryResource;
-import org.meveo.apiv2.report.query.service.ReportQueryApiService;
-import org.meveo.apiv2.ordering.common.LinkGenerator;
-import org.meveo.model.report.query.ReportQuery;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -16,12 +8,23 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import java.util.List;
+
+import org.meveo.apiv2.ordering.common.LinkGenerator;
+import org.meveo.apiv2.query.execution.QueryExecutionResultApiService;
+import org.meveo.apiv2.report.ImmutableReportQueries;
+import org.meveo.apiv2.report.ImmutableReportQuery;
+import org.meveo.apiv2.report.ReportQueries;
+import org.meveo.apiv2.report.ReportQueryInput;
+import org.meveo.apiv2.report.query.resource.ReportQueryResource;
+import org.meveo.apiv2.report.query.service.ReportQueryApiService;
+import org.meveo.model.report.query.ReportQuery;
 
 public class ReportQueryResourceImpl implements ReportQueryResource {
 
     @Inject
     private ReportQueryApiService reportQueryApiService;
+    @Inject
+    private QueryExecutionResultApiService queryExecutionResultApiService;
 
     private ReportQueryMapper mapper = new ReportQueryMapper();
 
@@ -76,4 +79,12 @@ public class ReportQueryResourceImpl implements ReportQueryResource {
                 .entity(mapper.toResource(entity))
                 .build();
     }
+
+	@Override
+	public Response findQueryResult(Long queryexecutionResultId) {
+		var queryExecutionResult = queryExecutionResultApiService.findById(queryexecutionResultId)
+															.orElseThrow(() -> new NotFoundException("The query execution result with {" + queryexecutionResultId + "} does not exists"));
+		var result = queryExecutionResultApiService.convertQueryExectionResultToJson(queryExecutionResult);
+		return Response.ok(result != null ? result : "").build();
+	}
 }
