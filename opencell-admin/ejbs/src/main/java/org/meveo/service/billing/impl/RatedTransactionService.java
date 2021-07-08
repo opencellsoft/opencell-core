@@ -415,7 +415,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             return null;
         }
     }
-
+    
     public Long countNotInvoicedRTByBA(BillingAccount billingAccount) {
         try {
             return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotInvoicedByBA").setParameter("billingAccount", billingAccount).getSingleResult();
@@ -441,6 +441,31 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             log.warn("failed to countNotInvoiced RT by CA", e);
             return null;
         }
+    }
+
+    public Long countNotBilledRTBySubscription(Subscription subscription) {
+        try {
+            return (Long) getEntityManager().createNamedQuery("RatedTransaction.countNotBilledRTBySubscription").setParameter("subscription", subscription).getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("failed to countNotBilledRTBySubscription", e);
+            return 0L;
+        }
+    }
+
+    public int moveNotBilledRTToUA(WalletInstance newWallet, Subscription subscription) {
+        return getEntityManager().createNamedQuery("RatedTransaction.moveNotBilledRTToUA")
+                .setParameter("newWallet", newWallet)
+                .setParameter("newBillingAccount", newWallet.getUserAccount().getBillingAccount())
+                .setParameter("newUserAccount", newWallet.getUserAccount())
+                .setParameter("subscription", subscription).executeUpdate();
+    }
+
+    public int moveAndRerateNotBilledRTToUA(WalletInstance newWallet, Subscription subscription) {
+        return getEntityManager().createNamedQuery("RatedTransaction.moveAndRerateNotBilledRTToUA")
+                .setParameter("newWallet", newWallet)
+                .setParameter("newBillingAccount", newWallet.getUserAccount().getBillingAccount())
+                .setParameter("newUserAccount", newWallet.getUserAccount())
+                .setParameter("subscription", subscription).executeUpdate();
     }
 
     /**

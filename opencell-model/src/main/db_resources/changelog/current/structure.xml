@@ -9309,4 +9309,11 @@ public class OrderAdvancement extends ModuleScript {
         <addForeignKeyConstraint baseColumnNames="report_query_id" baseTableName="query_execution_result" constraintName="fk_report_query_execution" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
             referencedColumnNames="id" referencedTableName="report_query" />
     </changeSet>
+
+    <changeSet id="#INTRD-254_20210706" author="AmineBENAICHA">
+        <addColumn tableName="com_meveo_instance">
+            <column name="old_wallet_id" type="bigint" />
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
