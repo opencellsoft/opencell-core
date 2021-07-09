@@ -18,7 +18,6 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.cpq.commercial.InvoiceLine;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -123,19 +122,8 @@ public class InvoiceLinesJobBean extends BaseJobBean {
     }
 
     private void addExceptionalBillingRunData(BillingRun billingRun) {
-        QueryBuilder queryBuilder = fromFilters(billingRun.getFilters());
+        QueryBuilder queryBuilder = invoiceLinesService.fromFilters(billingRun.getFilters());
         billingRun.setExceptionalRTIds(queryBuilder.getIdQuery(ratedTransactionService.getEntityManager()).getResultList());
-    }
-
-    private QueryBuilder fromFilters(Map<String, String> filters) {
-        QueryBuilder queryBuilder;
-        if(filters.containsKey("SQL")) {
-            queryBuilder = new QueryBuilder(filters.get("SQL"));
-        } else {
-            PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
-            queryBuilder = ratedTransactionService.getQuery(configuration);
-        }
-        return queryBuilder;
     }
 
     private long validateBRList(List<BillingRun> billingRuns, JobExecutionResultImpl result) {

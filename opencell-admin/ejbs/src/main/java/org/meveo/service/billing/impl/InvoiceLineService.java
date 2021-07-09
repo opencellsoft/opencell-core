@@ -10,6 +10,7 @@ import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN
 import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN_AMOUNT_UA;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
@@ -34,21 +36,7 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.billing.Amounts;
-import org.meveo.model.billing.ApplyMinimumModeEnum;
-import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.ExtraMinAmount;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceLineStatusEnum;
-import org.meveo.model.billing.InvoiceSubCategory;
-import org.meveo.model.billing.MinAmountData;
-import org.meveo.model.billing.MinAmountForAccounts;
-import org.meveo.model.billing.MinAmountsResult;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.UserAccount;
+import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -67,6 +55,7 @@ import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.tax.TaxMappingService;
 import org.meveo.service.tax.TaxMappingService.TaxInfo;
+
 @Stateless
 public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
@@ -84,6 +73,9 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 
     @Inject
     private MinAmountService minAmountService;
+
+    @Inject
+    private RatedTransactionService ratedTransactionService;
 
     public List<InvoiceLine> findByCommercialOrder(CommercialOrder commercialOrder) {
         return getEntityManager().createNamedQuery("InvoiceLine.findByCommercialOrder", InvoiceLine.class)
@@ -507,7 +499,37 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         try {
             return qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {
-            return new ArrayList<InvoiceLine>();
+            return new ArrayList<>();
         }
 	}
+
+    /**
+     * Create Query builder from a map of filters
+     * filters : Map of filters
+     * Return : QueryBuilder
+     */
+    public QueryBuilder fromFilters(Map<String, String> filters) {
+        QueryBuilder queryBuilder;
+        if(filters.containsKey("SQL")) {
+            queryBuilder = new QueryBuilder(filters.get("SQL"));
+        } else {
+            Map<String, Object> queryFilters = new HashMap<>();
+            for (Map.Entry<String, String> entry : filters.entrySet()) {
+                try {
+                    Field field = RatedTransaction.class.getDeclaredField(entry.getKey());
+                    if(field.getType().isEnum()) {
+                        queryFilters.put(entry.getKey(),
+                                Enum.valueOf((Class<Enum>) field.getType(), entry.getValue().toUpperCase()));
+                    } else {
+                        queryFilters.put(entry.getKey(), entry.getValue());
+                    }
+                } catch (NoSuchFieldException exception) {
+                    queryFilters.put(entry.getKey(), entry.getValue());
+                }
+            }
+            PaginationConfiguration configuration = new PaginationConfiguration(queryFilters);
+            queryBuilder = ratedTransactionService.getQuery(configuration);
+        }
+        return queryBuilder;
+    }
 }
