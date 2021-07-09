@@ -123,4 +123,16 @@ public interface ReportQueryResource {
     Response createQueryScheduler(
     		@Parameter(description = "report query id", required = true) @PathParam("reportQueryId") Long id,
             @Parameter(description = "Query scheduler object", required = true) QuerySchedulerInput queryScheduler);
+
+    @POST
+    @Path("/{queryId}/execute")
+    @Operation(summary = "execute report query", tags = {"ReportQuery"}, description = "Execute report query",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Query successfully executed"),
+                    @ApiResponse(responseCode = "404",
+                            description = "Query does not exists")})
+    Response execute(@Parameter(description = "Query id", required = true) @PathParam("queryId") Long id,
+                     @Parameter(description = "Execution type Synchronously or asynchronously")
+                     @QueryParam("async") boolean async);
 }

@@ -3848,5 +3848,64 @@ public class ServiceTemplateToProductScript extends Script {
 		</insert>
 		
 	</changeSet>
+    <changeSet id="INTRD-263_20210716" author="ZBariki">
+        <insert tableName="com_message_template">
+            <column name="media" value="EMAIL" />
+            <column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="REPORT_QUERY_RESULT_SUCCESS" />
+            <column name="type" value="OTHER" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="description" value="Report query result" />
+            <column name="subject" value="[opencell] Query result query.name query execution start date" />
+            <column name="textcontent">
+                <![CDATA[Dear #{userName},
+
+The result for your query is ready.
+Check the result on Opencell Portal direct link to the result on the portal
+
+Query : #{reportQueryName}
+Started : #{startDate}
+Duration : #{duration}
+Line count : #{lineCount}
+
+Best regards,
+
+Opencell team.
+                ]]>
+            </column>
+        </insert>
+        <insert tableName="com_message_template">
+            <column name="media" value="EMAIL" />
+            <column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="now()" />
+            <column name="code" value="REPORT_QUERY_RESULT_FAILURE" />
+            <column name="type" value="OTHER" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="description" value="Report query failure notification" />
+            <column name="subject" value="[opencell] Query failed query.name query execution start date" />
+            <column name="textcontent">
+                <![CDATA[Dear #{userName},
+
+Query execution failed with error :
+#{error}
+
+Contact your administrator or support.
+
+Query : #{reportQueryName}
+Started : #{startDate}
+Duration : #{duration}
+
+Best regards,
+
+Opencell team.
+                ]]>
+            </column>
+        </insert>
+    </changeSet>
 		
 </databaseChangeLog>
