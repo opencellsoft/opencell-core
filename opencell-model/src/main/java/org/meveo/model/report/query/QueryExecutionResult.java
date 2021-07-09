@@ -138,4 +138,18 @@ public class QueryExecutionResult extends AuditableEntity {
 	public void setQueryScheduler(QueryScheduler queryScheduler) {
 		this.queryScheduler = queryScheduler;
 	}
+
+	/**
+	 * @return the reportQuery
+	 */
+	public ReportQuery getReportQuery() {
+		return reportQuery;
+	}
+
+	/**
+	 * @param reportQuery the reportQuery to set
+	 */
+	public void setReportQuery(ReportQuery reportQuery) {
+		this.reportQuery = reportQuery;
+	}
 }
