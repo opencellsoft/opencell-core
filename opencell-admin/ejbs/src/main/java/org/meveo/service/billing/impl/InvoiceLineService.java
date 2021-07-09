@@ -11,6 +11,8 @@ import static org.meveo.model.cpq.commercial.InvoiceLineMinAmountTypeEnum.IL_MIN
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -152,7 +154,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
         }
         return emptyList();
     }
-    
+
     public List<InvoiceLine> listInvoiceLinesByInvoice(long invoiceId) {
         try {
             return getEntityManager().createNamedQuery("InvoiceLine.InvoiceLinesByInvoiceID", InvoiceLine.class)
@@ -163,7 +165,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
             return emptyList();
         }
     }
-    
+
 
     public void createInvoiceLine(CommercialOrder commercialOrder, AccountingArticle accountingArticle, ProductVersion productVersion,OrderLot orderLot, BigDecimal amountWithoutTaxToBeInvoiced, BigDecimal amountWithTaxToBeInvoiced, BigDecimal taxAmountToBeInvoiced, BigDecimal totalTaxRate) {
         InvoiceLine invoiceLine = new InvoiceLine();
@@ -339,12 +341,12 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
     public MinAmountForAccounts isMinAmountForAccountsActivated(IBillableEntity entity, ApplyMinimumModeEnum applyMinimumModeEnum) {
         return new MinAmountForAccounts(minAmountService.isMinUsed(), entity, applyMinimumModeEnum);
     }
-    
-    
+
+
 	/**
-	 * @param invoice 
+	 * @param invoice
 	 * @param invoiceLineRessource
-	 * @return 
+	 * @return
 	 */
 	public InvoiceLine create(Invoice invoice, org.meveo.apiv2.billing.InvoiceLine invoiceLineRessource) {
 		InvoiceLine invoiceLine = initInvoiceLineFromRessource(invoiceLineRessource, null);
@@ -352,7 +354,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		create(invoiceLine);
 		return invoiceLine;
 	}
-	
+
 	public InvoiceLine initInvoiceLineFromRessource(org.meveo.apiv2.billing.InvoiceLine resource, InvoiceLine invoiceLine) {
 		if(invoiceLine==null) {
 			invoiceLine = new InvoiceLine();
@@ -372,7 +374,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		Optional.ofNullable(resource.getDiscountAmount()).ifPresent(invoiceLine::setDiscountAmount);
 		Optional.ofNullable(resource.getLabel()).ifPresent(invoiceLine::setLabel);
 		Optional.ofNullable(resource.getRawAmount()).ifPresent(invoiceLine::setRawAmount);
-		
+
 		if(resource.getServiceInstanceCode()!=null) {
 			invoiceLine.setServiceInstance((ServiceInstance)tryToFindByEntityClassAndCode(ServiceInstance.class, resource.getServiceInstanceCode()));
 		}
@@ -403,26 +405,26 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
 		if(resource.getOfferTemplateCode()!=null) {
 			invoiceLine.setOfferTemplate((OfferTemplate)tryToFindByEntityClassAndCode(OfferTemplate.class, resource.getOfferTemplateCode()));
 		}
-		
+
 		if(resource.isTaxRecalculated()!=null){
 			invoiceLine.setTaxRecalculated( resource.isTaxRecalculated());
 		}
-		
+
 		var datePeriod = new DatePeriod();
 		if(resource.getStartDate() != null)
 			datePeriod.setFrom(resource.getStartDate());
 		if(resource.getEndDate() != null)
 			datePeriod.setTo(resource.getEndDate());
-		
+
 		invoiceLine.setValidity(datePeriod);
 		invoiceLine.setProductVersion((ProductVersion)tryToFindByEntityClassAndId(ProductVersion.class, resource.getProductVersionId()));
 		invoiceLine.setOfferServiceTemplate((OfferServiceTemplate) tryToFindByEntityClassAndId(OfferServiceTemplate.class, resource.getOfferServiceTemplateId()));
 		invoiceLine.setCommercialOrder((CommercialOrder)tryToFindByEntityClassAndId(CommercialOrder.class, resource.getCommercialOrderId()));
 		invoiceLine.setBillingRun((BillingRun)tryToFindByEntityClassAndId(BillingRun.class, resource.getBillingRunId()));
-		
+
 		return invoiceLine;
 	}
-	
+
 	/**
 	 * @param invoice
 	 * @param invoiceLine
@@ -470,7 +472,7 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
                 .setParameter("invoicesIds", invoicesIds)
                 .executeUpdate();
     }
-    
+
     /**
      * Get a list of invoiceable Invoice Liness for a given BllingAccount and a list of ids
      *
@@ -510,26 +512,57 @@ public class InvoiceLineService extends PersistenceService<InvoiceLine> {
      */
     public QueryBuilder fromFilters(Map<String, String> filters) {
         QueryBuilder queryBuilder;
-        if(filters.containsKey("SQL")) {
+        if (filters.containsKey("SQL")) {
             queryBuilder = new QueryBuilder(filters.get("SQL"));
         } else {
-            Map<String, Object> queryFilters = new HashMap<>();
-            for (Map.Entry<String, String> entry : filters.entrySet()) {
-                try {
-                    Field field = RatedTransaction.class.getDeclaredField(entry.getKey());
-                    if(field.getType().isEnum()) {
-                        queryFilters.put(entry.getKey(),
-                                Enum.valueOf((Class<Enum>) field.getType(), entry.getValue().toUpperCase()));
-                    } else {
-                        queryFilters.put(entry.getKey(), entry.getValue());
-                    }
-                } catch (NoSuchFieldException exception) {
-                    queryFilters.put(entry.getKey(), entry.getValue());
-                }
-            }
-            PaginationConfiguration configuration = new PaginationConfiguration(queryFilters);
+            PaginationConfiguration configuration = new PaginationConfiguration(convertFilters(filters));
             queryBuilder = ratedTransactionService.getQuery(configuration);
         }
         return queryBuilder;
+    }
+
+    /**
+     * Convert filters maps from String to field type
+     * filters : Map of filters Map<String, String>
+     * Return : converted map of filters Map<String, Object>
+     */
+    private Map<String, Object> convertFilters(Map<String, String> filters) {
+        Map<String, Object> convertedFilters = new HashMap<>();
+        for (Map.Entry<String, String> entry : filters.entrySet()) {
+            String[] fieldsName = entry.getKey().split(" ");
+            if (fieldsName.length == 1) {
+                convertedFilters.put(entry.getKey(), convert(RatedTransaction.class, entry, entry.getKey()));
+            } else {
+                convertedFilters.put(entry.getKey(), convert(RatedTransaction.class, entry, fieldsName[1]));
+            }
+        }
+        return convertedFilters;
+    }
+
+    private Object convert(Class<?> entity, Map.Entry<String, String> filterEntry, String fieldName) {
+        try {
+            Field field = entity.getDeclaredField(fieldName);
+            if (!field.getType().isEnum() && !field.getType().isAssignableFrom(String.class)) {
+                if (Number.class.isAssignableFrom(field.getType())) {
+                    return toNumber(entity, fieldName, filterEntry.getValue());
+                }
+            }
+            if (field.getType().isEnum()) {
+                return Enum.valueOf((Class<Enum>) field.getType(), filterEntry.getValue().toUpperCase());
+            }
+            return filterEntry.getValue();
+        } catch (NoSuchFieldException | NoSuchMethodException | IllegalAccessException |
+                InvocationTargetException exception) {
+            log.error(exception.getMessage());
+        }
+        return null;
+    }
+
+    private Object toNumber(Class<?> entity, String key, String value) throws NoSuchFieldException, NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException {
+        Long longValue = Long.valueOf(value);
+        Class<?> type = entity.getDeclaredField(key).getType();
+        Method method = type.getMethod("valueOf", long.class);
+        return method.invoke(type, longValue);
     }
 }
