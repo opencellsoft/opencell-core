@@ -25,6 +25,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
+import org.immutables.value.internal.$processor$.meta.$GsonMirrors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.ValidationException;
@@ -53,6 +54,7 @@ import org.meveo.util.MeveoParamBean;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.math.BigDecimal;
@@ -73,6 +75,7 @@ import static java.util.stream.Collectors.joining;
  * @author Abdellatif BARI
  * @lastModifiedVersion 9.3.1
  */
+@Named
 public class NativePersistenceService extends BaseService {
 
     /**

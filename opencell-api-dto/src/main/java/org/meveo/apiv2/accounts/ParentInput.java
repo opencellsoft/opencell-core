@@ -10,14 +10,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
-@JsonDeserialize(as = ImmutableConsumerInput.class)
-public interface ConsumerInput {
+@JsonDeserialize(as = ImmutableParentInput.class)
+public interface ParentInput {
 
-    @Schema(description = "Consumer id")
+    @Schema(description = "Parent id")
     @Nullable
-    Long getConsumerId();
+    Long getParentId();
 
-    @Schema(description = "Consumer code")
+    @Schema(description = "Parent code")
     @Nullable
-    String getConsumerCode();
+    String getParentCode();
 }

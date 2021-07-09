@@ -80,13 +80,13 @@ public class AccountsManagementApiServiceTest {
 
     @Test(expected = ForbiddenException.class)
     public void test_transferSubscription_with_consumerInput_all_filled() {
-        ConsumerInput input = builder().id(1L).code("code").build();
+        ConsumerInput input = builder().consumerId(1L).consumerCode("code").build();
         accountsManagementApiService.transferSubscription(null, input, OpenTransactionsActionEnum.NONE);
     }
 
     @Test(expected = NotFoundException.class)
     public void test_transferSubscription_with_a_non_existent_ua_id() {
-        ConsumerInput input = builder().id(0L).build();
+        ConsumerInput input = builder().consumerId(0L).build();
         accountsManagementApiService.transferSubscription(null, input, OpenTransactionsActionEnum.NONE);
     }
 
@@ -95,7 +95,7 @@ public class AccountsManagementApiServiceTest {
         expectedEx.expect(ForbiddenException.class);
         expectedEx.expectMessage("Cannot move a terminated subscription {id=1, code=TR_SU}");
 
-        ConsumerInput input = builder().id(1L).build();
+        ConsumerInput input = builder().consumerId(1L).build();
         accountsManagementApiService.transferSubscription("TR_SU", input, OpenTransactionsActionEnum.NONE);
     }
 }

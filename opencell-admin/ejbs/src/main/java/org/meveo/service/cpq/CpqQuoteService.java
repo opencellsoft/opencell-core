@@ -338,10 +338,7 @@ public class CpqQuoteService extends BusinessService<CpqQuote> {
 	   
 	    public CpqQuote produceQuotePdf(CpqQuote quote) throws BusinessException {
 	    	generateQuotePdf(quote);
-	    	quote.setStatusDate(new Date()); 
-	    	pdfGeneratedEventProducer.fire(quote);
-	    	quote = updateNoCheck(quote);
-	    	entityUpdatedEventProducer.fire(quote);
+	    	pdfGeneratedEventProducer.fire(quote); 
 	    	return quote;
 	    }
 	    
