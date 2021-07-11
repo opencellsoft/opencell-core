@@ -1,27 +1,26 @@
 package org.meveo.api.dto.response.cpq;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.ChargeTemplateDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.CommercialRuleHeaderDTO;
+import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.dto.cpq.MediaDto;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.model.cpq.Attribute;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 
@@ -55,6 +54,10 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 	@XmlElementWrapper(name = "medias")
     @XmlElement(name = "medias")
     private List<MediaDto> medias=new ArrayList<MediaDto>();
+
+	@XmlElementWrapper(name = "groupedAttributes")
+	@XmlElement(name ="groupedAttributes")
+	private List<GroupedAttributeDto> groupedAttributes;
 
     /**
      * The status response of the web service response.
@@ -92,6 +95,11 @@ public class GetAttributeDtoResponse extends AttributeDTO{
     			}).collect(Collectors.toList());
     		}   	
     	}
+ 		if(attribute.getGroupedAttributes() != null){
+ 			this.groupedAttributes = attribute.getGroupedAttributes().stream()
+					.map(ga -> new GroupedAttributeDto(ga))
+					.collect(Collectors.toList());
+		}
  	}
     
 
@@ -170,21 +178,12 @@ public class GetAttributeDtoResponse extends AttributeDTO{
 	public void setAssignedAttributes(List<AttributeDTO> assignedAttributes) {
 		this.assignedAttributes = assignedAttributes;
 	}
-	
-	
 
+	public List<GroupedAttributeDto> getGroupedAttributes() {
+		return groupedAttributes;
+	}
 
-
-
-
-    
-  
- 
-	
-	
-	
-	 
-	
-	
-	
+	public void setGroupedAttributes(List<GroupedAttributeDto> groupedAttributes) {
+		this.groupedAttributes = groupedAttributes;
+	}
 }
