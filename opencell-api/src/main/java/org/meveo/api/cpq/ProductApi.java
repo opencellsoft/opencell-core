@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,6 +31,7 @@ import org.meveo.api.dto.cpq.GroupedAttributeDto;
 import org.meveo.api.dto.cpq.OfferContextDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.ProductChargeTemplateMappingDto;
+import org.meveo.api.dto.cpq.ProductContextDTO;
 import org.meveo.api.dto.cpq.ProductDto;
 import org.meveo.api.dto.cpq.ProductVersionDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -57,6 +60,7 @@ import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.ProductLine;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.ProductStatusEnum;
+import org.meveo.model.cpq.enums.RuleTypeEnum;
 import org.meveo.model.cpq.enums.VersionStatusEnum;
 import org.meveo.model.cpq.offer.OfferComponent;
 import org.meveo.model.cpq.tags.Tag;
@@ -987,7 +991,7 @@ public class ProductApi extends BaseApi {
                 attributeDto.setCommercialRuleCodes(commercialRuleCodes);
                 attributeDto.setRuled(true);
                 boolean isSelectable = commercialRuleHeaderService.isElementSelectable(offerCode, commercialRules, offerContextDTO.getSelectedProducts());
-                processReplacementRules(commercialRules, offerContextDTO.getSelectedProducts(), attributeDto);
+                //processReplacementRules(commercialRules, offerContextDTO.getSelectedProducts(), attributeDto);
                 attributeDto.setSelectable(isSelectable);
             }
         }
