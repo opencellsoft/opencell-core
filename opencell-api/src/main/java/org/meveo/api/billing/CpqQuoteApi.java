@@ -1769,7 +1769,8 @@ public class CpqQuoteApi extends BaseApi {
                         discountQuotePrice.setQuoteVersion(quoteVersion);
                         discountQuotePrice.setChargeTemplate(quotePrice.getChargeTemplate());
                         if (PriceTypeEnum.RECURRING.equals(discountQuotePrice.getPriceTypeEnum())) {
-                            Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(((RecurringChargeTemplate) quotePrice.getChargeTemplate()).getAttributeDuration(), ((RecurringChargeTemplate) quotePrice.getChargeTemplate()).getDurationTermInMonth()));
+                            RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) quotePrice.getChargeTemplate();
+                            Long recurrenceDuration = Long.valueOf(getDurationTerminInMonth(recurringChargeTemplate.getAttributeDuration(), recurringChargeTemplate.getDurationTermInMonth()));
                             discountQuotePrice.setRecurrenceDuration(recurrenceDuration);
                             //quotePrice.setRecurrencePeriodicity(((RecurringChargeTemplate)wo.getChargeInstance().getChargeTemplate()).getCalendar());
                             discountQuotePrice.setAmountWithTax(discountQuotePrice.getAmountWithTax().multiply(BigDecimal.valueOf(recurrenceDuration)));
@@ -1779,6 +1780,11 @@ public class CpqQuoteApi extends BaseApi {
 
                             //set AmountWithoutTaxWithDiscount
                             quotePrice.setAmountWithoutTaxWithDiscount(quotePrice.getAmountWithoutTax().add(discountQuotePrice.getAmountWithoutTax()));
+                        }else if (PriceTypeEnum.USAGE.equals(quotePrice.getPriceTypeEnum()) && ((UsageChargeTemplate) quotePrice.getChargeTemplate()).getUsageQuantityAttribute() != null){
+                            UsageChargeTemplate usageChargeTemplate = (UsageChargeTemplate) quotePrice.getChargeTemplate();
+                            Long usageQuantity = Long.valueOf(getDurationTerminInMonth(usageChargeTemplate.getUsageQuantityAttribute(), 1));
+                            quotePrice.setRecurrenceDuration(usageQuantity);
+                            overrideAmounts(quotePrice, usageQuantity);
                         }
                         discountQuotePrice.setTaxRate(taxPercent);
                         quotePriceService.create(discountQuotePrice);
