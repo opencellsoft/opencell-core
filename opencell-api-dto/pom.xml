@@ -6,7 +6,7 @@
 		<groupId>com.opencellsoft</groupId>
 		<artifactId>opencell</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>V11.0.2.Snapshot</version>
+		<version>V11.0.3.Snapshot-SNAPSHOT</version>
 	</parent>
 	<artifactId>opencell-api-dto</artifactId>
 	<name>Opencell API DTO</name>
