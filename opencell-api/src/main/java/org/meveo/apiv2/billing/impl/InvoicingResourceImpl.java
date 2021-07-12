@@ -1,13 +1,15 @@
 package org.meveo.apiv2.billing.impl;
 
-import org.meveo.apiv2.billing.ExceptionalBillingRun;
-import org.meveo.apiv2.billing.resource.InvoicingResource;
-import org.meveo.apiv2.billing.service.BillingRunApiService;
-import org.meveo.apiv2.generic.common.LinkGenerator;
-
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
+
+import org.meveo.apiv2.article.resource.AccountingArticleResource;
+import org.meveo.apiv2.billing.ExceptionalBillingRun;
+import org.meveo.apiv2.billing.ImmutableExceptionalBillingRun;
+import org.meveo.apiv2.billing.resource.InvoicingResource;
+import org.meveo.apiv2.billing.service.BillingRunApiService;
+import org.meveo.apiv2.generic.common.LinkGenerator;
 
 public class InvoicingResourceImpl implements InvoicingResource {
 
@@ -28,7 +30,18 @@ public class InvoicingResourceImpl implements InvoicingResource {
         org.meveo.model.billing.BillingRun billingRunEntity = invoicingApiService.create(mapper.toEntity(billingRun));
         return Response
                 .created(LinkGenerator.getUriBuilderFromResource(InvoicingResource.class, billingRunEntity.getId()).build())
-                .entity(billingRunEntity.getId())
+                .entity(toResourceOrderWithLink(mapper.toResource(billingRunEntity)))
                 .build();
     }
+
+    private ImmutableExceptionalBillingRun toResourceOrderWithLink(ExceptionalBillingRun exceptionBillingRun) {
+        return ImmutableExceptionalBillingRun.copyOf(exceptionBillingRun)
+                .withLinks(
+                        new LinkGenerator.SelfLinkGenerator(InvoicingResource.class)
+                                .withId(exceptionBillingRun.getId())
+                                .withGetAction().withPostAction().withPutAction().withPatchAction().withDeleteAction()
+                                .build()
+                );
+    }
+
 }

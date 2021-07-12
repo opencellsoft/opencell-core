@@ -4,6 +4,7 @@ import static java.util.UUID.randomUUID;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
 
 import org.meveo.apiv2.billing.ExceptionalBillingRun;
+import org.meveo.apiv2.billing.ImmutableExceptionalBillingRun;
 import org.meveo.apiv2.ordering.ResourceMapper;
 import org.meveo.model.billing.BillingRun;
 
@@ -27,6 +28,16 @@ public class InvoicingMapper extends ResourceMapper<ExceptionalBillingRun, Billi
 
     @Override
     protected ExceptionalBillingRun toResource(BillingRun entity) {
-        return null;
+        return ImmutableExceptionalBillingRun.builder()
+        		.id(entity.getId())
+        		.invoiceDate(entity.getInvoiceDate())
+        		.collectionDate(entity.getCollectionDate())
+        		.suspectAutoAction(entity.getSuspectAutoAction())
+        		.rejectAutoAction(entity.getRejectAutoAction())
+        		.isSkipValidationScript(entity.isSkipValidationScript())
+        		.filters(entity.getFilters())
+        		.isComputeDatesAtValidation(entity.getComputeDatesAtValidation())
+        		.billingRunTypeEnum(entity.getProcessType())
+        		.build();
     }
 }
