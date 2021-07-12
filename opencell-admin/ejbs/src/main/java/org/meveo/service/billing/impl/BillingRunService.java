@@ -17,6 +17,7 @@
  */
 package org.meveo.service.billing.impl;
 
+import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.joining;
 
 import java.math.BigDecimal;
@@ -638,6 +639,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             return billingAccountService.findBillingAccounts(billingCycle, startDate, endDate);
 
         } else {
+            if(billingRun.isExceptionalBR() &&
+                    ((billingRun.getExceptionalILIds() != null && billingRun.getExceptionalILIds().isEmpty()) ||
+                            (billingRun.getExceptionalRTIds() != null && billingRun.getExceptionalRTIds().isEmpty()))) {
+                return EMPTY_LIST;
+            }
             if (billingRun.getExceptionalRTIds() != null && !billingRun.getExceptionalRTIds().isEmpty()) {
                 return (List<BillingAccount>) ratedTransactionService.getEntityManager()
                         .createNamedQuery("RatedTransaction.BillingAccountByRTIds")
@@ -1051,7 +1057,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         if(billingRun.isExceptionalBR()) {
             if(billingRun.getExceptionalRTIds().isEmpty()) {
-                return Collections.EMPTY_LIST;
+                return EMPTY_LIST;
             }
             return getEntityManager()
                     .createNamedQuery("RatedTransaction.sumTotalInvoiceableByRtIdInBatch", AmountsToInvoice.class)

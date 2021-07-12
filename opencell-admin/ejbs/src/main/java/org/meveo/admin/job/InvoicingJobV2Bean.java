@@ -30,7 +30,6 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -122,7 +121,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     }
 
     private int addExceptionalInvoiceLineIds(BillingRun billingRun) {
-        QueryBuilder queryBuilder = fromFilters(billingRun.getFilters());
+        QueryBuilder queryBuilder = invoiceLineService.fromFilters(billingRun.getFilters());
         List<RatedTransaction> ratedTransactions = queryBuilder.getQuery(ratedTransactionService.getEntityManager()).getResultList();
         billingRun.setExceptionalILIds(ratedTransactions
                 .stream()
@@ -130,18 +129,6 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 .map(InvoiceLine::getId)
                 .collect(toList()));
         return billingRun.getExceptionalILIds().size();
-    }
-
-
-    private QueryBuilder fromFilters(Map<String, String> filters) {
-        QueryBuilder queryBuilder;
-        if(filters.containsKey("SQL")) {
-            queryBuilder = new QueryBuilder(filters.get("SQL"));
-        } else {
-            PaginationConfiguration configuration = new PaginationConfiguration(new HashMap<>(filters));
-            queryBuilder = invoiceLineService.getQuery(configuration);
-        }
-        return queryBuilder;
     }
 
     /**
