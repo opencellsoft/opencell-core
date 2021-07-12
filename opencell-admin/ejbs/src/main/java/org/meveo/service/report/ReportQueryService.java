@@ -1,6 +1,7 @@
 package org.meveo.service.report;
 
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,9 +16,13 @@ import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
 import org.meveo.model.report.query.ReportQuery;
 import org.meveo.service.base.BusinessService;
 
@@ -55,23 +60,59 @@ public class ReportQueryService extends BusinessService<ReportQuery> {
     	return response;
     }
     
+    private static final String RESULT_EMPTY_MSG = "Execution of the query doesn't return any data";
+
 	public byte[] generateCsvFromResultReportQuery(ReportQuery reportQuery, String fileName) throws IOException, BusinessException {
-    	String columnHeader = String.join(";", findColumnHeaderForReportQuery(reportQuery));
+    	return generateFileByExtension(reportQuery, fileName, QueryExecutionResultFormatEnum.CSV);
+    }
+
+	public byte[] generateExcelFromResultReportQuery(ReportQuery reportQuery, String fileName) throws IOException, BusinessException {
+    	return generateFileByExtension(reportQuery, fileName, QueryExecutionResultFormatEnum.EXCEL);
+    }
+	
+	private byte[] generateFileByExtension(ReportQuery reportQuery, String fileName, QueryExecutionResultFormatEnum format) throws IOException, BusinessException  {
+		var columnnHeader = findColumnHeaderForReportQuery(reportQuery);
     	List<String> selectResult = executeQuery(reportQuery);
     	if(selectResult == null || selectResult.isEmpty())
-    		throw new BusinessException("Execution of the query doesn't return any data");
-    	Path tempFile = Files.createTempFile(fileName, ".csv");
+    		throw new BusinessException(RESULT_EMPTY_MSG);
+    	Path tempFile = Files.createTempFile(fileName, format.getExtension());
     	try(FileWriter fw = new FileWriter(tempFile.toFile(), true); BufferedWriter bw = new BufferedWriter(fw)){
-    		bw.write(columnHeader);
-	    	for (String line : selectResult) {
-	    		bw.newLine();
-	    		bw.write(line);
-			}
-	    	bw.close();
-	    	fw.close();
+    		if(format == QueryExecutionResultFormatEnum.CSV) {
+	    		bw.write(String.join(";", columnnHeader));
+		    	for (String line : selectResult) {
+		    		bw.newLine();
+		    		bw.write(line);
+				}
+		    	bw.close();
+		    	fw.close();
+    		}else if (format == QueryExecutionResultFormatEnum.EXCEL) {
+    			var wb = new XSSFWorkbook();
+    			XSSFSheet  sheet = wb.createSheet(reportQuery.getTargetEntity());
+    			int i = 0;
+    			int j = 0;
+				var rowHeader = sheet.createRow(i++);
+    			for (String header : columnnHeader) {
+    				Cell cell = rowHeader.createCell(j++);
+    				cell.setCellValue(header);
+				}
+    			for (String rowSelect : selectResult) {
+    				rowHeader = sheet.createRow(i++);
+    				j = 0;
+    				var splitLine = rowSelect.split(";");
+    				for (String field : splitLine) {
+    					Cell cell = rowHeader.createCell(j++);
+        				cell.setCellValue(field);
+					}
+				}
+
+    			FileOutputStream fileOut = new FileOutputStream(tempFile.toFile());
+    			wb.write(fileOut);
+    			fileOut.close();
+    			wb.close();
+    		}
     	}
     	return Files.readAllBytes(tempFile);
-    }
+	}
     
     
     private Set<String> findColumnHeaderForReportQuery(ReportQuery reportQuery){
