@@ -2,6 +2,8 @@ package org.meveo.apiv2.report.query.resource;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import java.io.IOException;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -10,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.meveo.apiv2.report.ReportQueryInput;
 import org.meveo.apiv2.models.ApiException;
+import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
 import org.meveo.model.report.query.ReportQuery;
 
 import javax.ws.rs.*;
@@ -85,5 +88,18 @@ public interface ReportQueryResource {
     		                    @ApiResponse(responseCode = "404",
     		                            description = "the Report query execution does not exist / the file path is missing / file path doesn't exist / file extension is not CSV format ") })
     Response findQueryResult(@PathParam("queryexecutionResultId") Long queryexecutionResultId);
+    
+    @GET
+    @Path("/{queryId}/download")
+    @Operation( summary = "This API will download result query as csv or excel format.", 
+    			tags = {"ReportQuery"}, 
+    			description = "download result query execution as scv or excel format",
+    		            responses = {
+    		                    @ApiResponse(responseCode = "200",
+    		                            description = "query execution result is downloaded"),
+    		                    @ApiResponse(responseCode = "404",
+    		                            description = "the Report query execution does not exist") })
+    Response downloadQueryExecutionResult(@PathParam("queryId" ) Long queryExecutionResultId, 
+    									 @Parameter(description = "format of the file to be downloaded, by default it CSV format", required = false) @QueryParam("format") @DefaultValue("CSV") QueryExecutionResultFormatEnum format) throws IOException;
 
 }

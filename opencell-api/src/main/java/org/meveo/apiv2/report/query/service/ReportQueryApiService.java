@@ -1,14 +1,16 @@
 package org.meveo.apiv2.report.query.service;
 
-import static java.lang.Class.forName;
 import static java.util.Arrays.asList;
 import static java.util.Optional.*;
 import static java.util.stream.Collectors.joining;
+import static org.meveo.apiv2.generic.core.GenericHelper.getEntityClass;
 import static org.meveo.commons.utils.EjbUtils.getServiceInterface;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.report.query.QueryExecutionResultFormatEnum;
 import org.meveo.model.report.query.ReportQuery;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -17,7 +19,8 @@ import org.meveo.service.report.ReportQueryService;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +32,7 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     @Inject
     @CurrentUser
-    protected MeveoUser currentUser;
+    private MeveoUser currentUser;
 
     private List<String> fetchFields = asList("fields");
 
@@ -54,21 +57,13 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
 
     @Override
     public ReportQuery create(ReportQuery entity) {
-        Class<?> targetEntity = validateTargetEntity(entity.getTargetEntity());
+        Class<?> targetEntity = getEntityClass(entity.getTargetEntity());
         try {
             entity.setGeneratedQuery(generateQuery(entity, targetEntity.getSimpleName()));
             reportQueryService.create(entity);
             return entity;
         } catch (Exception exception) {
             throw new BadRequestException(exception.getMessage(), exception.getCause());
-        }
-    }
-
-    private Class<?> validateTargetEntity(String targetEntity) {
-        try {
-            return forName(targetEntity);
-        } catch (ClassNotFoundException exception) {
-            throw new NotFoundException("Target entity does not exist");
         }
     }
 
@@ -123,4 +118,13 @@ public class ReportQueryApiService implements ApiService<ReportQuery> {
     public Optional<ReportQuery> findByCode(String code) {
         return of(reportQueryService.findByCode(code, fetchFields));
     }
+
+	public byte[] donwloadQueryExecutionResult(ReportQuery reportQuery, QueryExecutionResultFormatEnum format, String fileName) throws IOException, BusinessException{
+		if(format == QueryExecutionResultFormatEnum.CSV) {
+			return reportQueryService.generateCsvFromResultReportQuery(reportQuery, fileName);
+		}else if(format == QueryExecutionResultFormatEnum.EXCEL) {
+			
+		}
+		return null;
+	}
 }

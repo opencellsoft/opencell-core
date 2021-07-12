@@ -364,6 +364,18 @@ public class DefaultObserver {
         log.debug("Defaut observer: check cpq quote status updated {}", cpqQuote.getId());
         checkEvent(NotificationEventTypeEnum.STATUS_UPDATED, cpqQuote);
     }
+    
+    
+    /**
+     * Handle Quote PDF generated event
+     * 
+     * @param Quote quote
+     * @throws BusinessException General business exception
+     */
+    public void pdfGenerated(@Observes @PDFGenerated CpqQuote quote) throws BusinessException {
+        log.debug("Defaut observer: PDF generated for quote {} ", quote.getId());
+        checkEvent(NotificationEventTypeEnum.PDF_GENERATED, quote);
+    }
 
     public void commercialOrderStatusUpdated(@Observes @StatusUpdated CommercialOrder commercialOrder){
         log.debug("Defaut observer: check commercial order status updated {}", commercialOrder.getId());

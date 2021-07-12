@@ -137,7 +137,7 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
                 events.add(NotificationEventTypeEnum.REJECTED);
             } else if (clazzStr.equals(CounterPeriod.class.getName())) {
                 events.add(NotificationEventTypeEnum.COUNTER_DEDUCED);
-            } else if (clazzStr.equals(Subscription.class.getName()) || clazzStr.equals(ServiceInstance.class.getName()) || clazzStr.equals(CpqQuote.class.getName())) {
+            } else if (clazzStr.equals(Subscription.class.getName()) || clazzStr.equals(ServiceInstance.class.getName())) {
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
                 events.add(NotificationEventTypeEnum.RENEWAL_UPDATED);
                 events.add(NotificationEventTypeEnum.END_OF_TERM);
@@ -153,6 +153,9 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
             } else if (clazzStr.equals(CommercialOrder.class.getName())) {
                 events.add(NotificationEventTypeEnum.ADVT_RATE_INCREASED);
                 events.add(NotificationEventTypeEnum.STATUS_UPDATED);
+            }else if (clazzStr.equals(CpqQuote.class.getName())) {
+            	events.add(NotificationEventTypeEnum.STATUS_UPDATED);
+            	events.add(NotificationEventTypeEnum.PDF_GENERATED);
             }
         } else if (hasNotificableEntity(clazz)) {
             // No longer is being used

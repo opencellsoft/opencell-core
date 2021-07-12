@@ -53,7 +53,7 @@ public class QueryExecutionResult extends AuditableEntity {
 	
 	@Enumerated(value = EnumType.STRING)
 	@Column(name = "query_execution_mode")
-	private QueryStatusEnum queryExecutionMode;
+	private QueryExecutionModeEnum queryExecutionMode;
 	
 	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "query_scheduler_id")
@@ -123,11 +123,11 @@ public class QueryExecutionResult extends AuditableEntity {
 		this.queryStatus = queryStatus;
 	}
 
-	public QueryStatusEnum getQueryExecutionMode() {
+	public QueryExecutionModeEnum getQueryExecutionMode() {
 		return queryExecutionMode;
 	}
 
-	public void setQueryExecutionMode(QueryStatusEnum queryExecutionMode) {
+	public void setQueryExecutionMode(QueryExecutionModeEnum queryExecutionMode) {
 		this.queryExecutionMode = queryExecutionMode;
 	}
 
@@ -137,5 +137,19 @@ public class QueryExecutionResult extends AuditableEntity {
 
 	public void setQueryScheduler(QueryScheduler queryScheduler) {
 		this.queryScheduler = queryScheduler;
+	}
+
+	/**
+	 * @return the reportQuery
+	 */
+	public ReportQuery getReportQuery() {
+		return reportQuery;
+	}
+
+	/**
+	 * @param reportQuery the reportQuery to set
+	 */
+	public void setReportQuery(ReportQuery reportQuery) {
+		this.reportQuery = reportQuery;
 	}
 }
