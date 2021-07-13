@@ -172,6 +172,11 @@ public class AttributeDTO extends EnableBusinessDto {
 					.map(ga -> new GroupedAttributeDto(ga))
 					.collect(Collectors.toList());
 		}
+		if(attribute.getTags() != null){
+			this.tagCodes = attribute.getTags().stream()
+								.map(tag -> tag.getCode())
+								.collect(Collectors.toList());
+		}
     }
     
     public AttributeDTO(Attribute attribute, CustomFieldsDto customFieldsDto) {

@@ -288,11 +288,13 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
         QuoteVersion quoteVersion = quoteProduct.getQuoteVersion();
         List<CommercialRuleHeader> productRules = quoteProduct.getProductVersion().getProduct().getCommercialRuleHeader()
                 .stream()
+                .filter(commercialRuleHeader -> !commercialRuleHeader.isDisabled())
                 .filter(commercialRuleHeader -> RuleTypeEnum.REPLACEMENT.equals(commercialRuleHeader.getRuleType()))
                 .collect(Collectors.toList());
         productRules.stream()
                 .forEach(
                         commercialRuleHeader -> {
+                            log.info("about to apply replacement rule: " + commercialRuleHeader.getCode());
                             Optional<QuoteAttribute> attributeToReplace = quoteProduct.getQuoteAttributes()
                                     .stream()
                                     .filter(quoteAttribute -> quoteAttribute.getAttribute().getCode().equals(commercialRuleHeader.getTargetAttribute().getCode()))
