@@ -286,7 +286,10 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
 
     public void processProductReplacementRule(QuoteProduct quoteProduct) {
         QuoteVersion quoteVersion = quoteProduct.getQuoteVersion();
-        List<CommercialRuleHeader> productRules = quoteProduct.getProductVersion().getProduct().getCommercialRuleHeader();
+        List<CommercialRuleHeader> productRules = quoteProduct.getProductVersion().getProduct().getCommercialRuleHeader()
+                .stream()
+                .filter(commercialRuleHeader -> RuleTypeEnum.REPLACEMENT.equals(commercialRuleHeader.getRuleType()))
+                .collect(Collectors.toList());
         productRules.stream()
                 .forEach(
                         commercialRuleHeader -> {
@@ -371,7 +374,12 @@ public class CommercialRuleHeaderService extends BusinessService<CommercialRuleH
             case COUNT:
             case NUMERIC:
             case INTEGER:
-                quoteAttributeToUpdate.setDoubleValue(Double.parseDouble(sourceAttributeValue));
+            case LIST_MULTIPLE_NUMERIC:
+                try {
+                    quoteAttributeToUpdate.setDoubleValue(Double.parseDouble(sourceAttributeValue));
+                }catch (Exception exp){
+                    log.error("can not parse attribute value to double: " + sourceAttributeValue);
+                }
                 quoteAttributeToUpdate.setStringValue(sourceAttributeValue);
                 break;
             case LIST_MULTIPLE_TEXT:

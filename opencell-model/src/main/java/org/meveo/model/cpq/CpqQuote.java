@@ -413,7 +413,8 @@ public class CpqQuote extends BusinessEntity  {
 	 * @param status the status to set
 	 */
 	public void setStatus(String status) {
-		this.previousStatus = this.status;
+		if(!status.equals(this.status))
+			this.previousStatus = this.status;
 		this.status = status;
 	}
 	/**
